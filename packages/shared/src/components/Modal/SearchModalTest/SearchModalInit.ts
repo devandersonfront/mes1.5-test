@@ -1,0 +1,68 @@
+interface SearchInitType {
+  title: string //모달의 제목
+  searchFilter: string[] //검색 옵션 리스트
+  excelColumnType: string //테이블 헤더 지정값 modalInit.ts 파일의 키값
+}
+
+export const SearchInit: Record<string, SearchInitType> = {
+  user: {
+    title: '유저 검색',
+    searchFilter: ['성명', '직책', '권한'],
+    excelColumnType: 'userSearch'
+  },
+  customer: {
+    title: '거래처 검색',
+    searchFilter: ['거래처명', '대표자명', '담당자명', '사업자 번호'],
+    excelColumnType: 'customerSearch'
+  },
+  factory: {
+    title: '공장 검색',
+    searchFilter: ['공장명', '담당자명'],
+    excelColumnType: 'factorySearch'
+  },
+  segment: {
+    title: '공장 세분화명 검색',
+    searchFilter: ['공장명', '세분화명', '담당자명'],
+    excelColumnType: 'segmentSearch'
+  },
+  model: {
+    title: '모델명 검색',
+    searchFilter: ['거래처명', '대표자명', '사업자 번호', '모델명'],
+    excelColumnType: 'modelSearch'
+  },
+  rawMaterial: {
+    title: '원자재 검색',
+    searchFilter: ['원자재 CODE', '원자재 품명', '재질', '거래처'],
+    excelColumnType: 'rawMaterialSearch'
+  },
+  subMaterial: {
+    title: '부자재 검색',
+    searchFilter: ['부자재 CODE', '부자재 품명', '거래처'],
+    excelColumnType: 'subMaterialSearch'
+  },
+  mold: {
+    title: '금형 검색',
+    searchFilter: ['CODE', '금형명'],
+    excelColumnType: 'moldSearch'
+  },
+  machine: {
+    title: '기계 검색',
+    searchFilter: ['제조 번호', '기게 이름', '기계 종류', '톤 수', '공장명'],
+    excelColumnType: 'machineSearch'
+  },
+  device: {
+    title: '기계 검색',
+    searchFilter: ['제조 번호', '기게 이름', '기계 종류', '톤 수', '공장명'],
+    excelColumnType: 'deviceSearch'
+  },
+  product: {
+    title: '제품 검색',
+    searchFilter: ['거래처', '모델', 'CODE', '품명'],
+    excelColumnType: 'productSearch'
+  },
+  order: {
+    title: '수주 검색',
+    searchFilter: ['수주 번호', '거래처', '모델', 'CODE', '품명'],
+    excelColumnType: 'productSearch'
+  },
+}

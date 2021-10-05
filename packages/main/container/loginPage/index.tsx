@@ -1,0 +1,75 @@
+import React from 'react'
+import { NextPage } from 'next'
+import DefaultButton from '../../component/DefaultButton'
+import WelcomeInput from '../../component/InputBox/WelcomeInput'
+import WelcomeContainer from '../../component/Welcome/WelcomeContainer'
+import { useRouter } from 'next/router'
+import { requestApi } from '../../common/RequestFunctions'
+import { IResponseType } from '../../common/@types/type'
+import { setToken } from '../../common/tokenManager'
+import Notiflix from 'notiflix'
+import {useDispatch, useSelector} from 'react-redux'
+import {setUserInfoAction} from '../../reducer/userInfo'
+
+interface IProps {
+  children?: any
+  data: IReqType
+  setData: (data: IReqType) => void
+}
+
+interface IReqType {
+  id: string,
+  password: string
+}
+
+const LoginPage: NextPage<IProps> = ({children, data, setData }) => {
+  const router = useRouter()
+
+  const dispatch = useDispatch()
+
+
+  const onClickLogin = async () => {
+    Notiflix.Loading.dots('MES System 접속 중...')
+    const res:IResponseType = await requestApi('post', '/anonymous/login', data)
+
+    if(res) {
+      if(res.status === 200) {
+        setToken( res.results )
+        dispatch(setUserInfoAction({
+          name: res.results.name,
+          profile: res.results.profilePath
+        }))
+        router.push('/mes/dashboard').then()
+      } else {
+        alert(res.message)
+      }
+    }
+  }
+
+  const onKeyDownEnter = async (key: string) => {
+    if (key === 'Enter')
+      await onClickLogin().then(() => Notiflix.Loading.remove(500))
+  }
+
+  return (
+    <WelcomeContainer>
+      <div style={{width: 320}}>
+        <p style={{fontSize: 36, marginBottom: 26, textAlign: 'left', fontFamily: 'Roboto', fontWeight: 'bold'}}>Log In</p>
+        <WelcomeInput type="email" value={data.id} title={'ID (e-mail)'}
+                     onChangeEvent={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                       setData({...data, id: e.target.value})
+                   }} hint={'이메일을 입력해주세요.'}/>
+        <WelcomeInput type="password" value={data.password} title={'Password'}
+                     onChangeEvent={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                         setData({...data, password: e.target.value})
+                     }} hint={'비밀번호를 입력해주세요.'} onKeyDown={onKeyDownEnter}/>
+        <DefaultButton title={'로그인'} onClick={() => onClickLogin().then(() => Notiflix.Loading.remove(500) ) } />
+        <p style={{marginTop:"15px", textDecoration:"underline", cursor: 'pointer'}} onClick={()=>{ router.push("/mes/modify/findpassword")}}>
+          비밀번호 찾기
+        </p>
+      </div>
+    </WelcomeContainer>
+  )
+}
+
+export default LoginPage

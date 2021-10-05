@@ -1,0 +1,1 @@
+{"ast":null,"code":"//기준정보관리\nexport { BasicFactory } from './container/BasicFactory';","map":{"version":3,"sources":["/Users/user/Desktop/sizl/mono_pop/packages/basic/src/index.tsx"],"names":["BasicFactory"],"mappings":"AAAA;AACA,SAAQA,YAAR,QAA2B,0BAA3B","sourcesContent":["//기준정보관리\nexport {BasicFactory} from './container/BasicFactory'\n"]},"metadata":{},"sourceType":"module"}
