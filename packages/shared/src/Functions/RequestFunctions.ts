@@ -33,11 +33,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
       }
       return Axios.get(tmpUrl, token && {'headers': {'Authorization': token}, responseType: contentsType})
         .then((result) => {
-          // if(result.data.status !== 200){
-          //   Notiflix.Report.failure('불러올 수 없습니다.', result.data.message, '확인')
-          //   return false
-          // }
-          return result.data
+          return result
         })
         .catch((error) => {
           if(error.response.status === 406 || error.response.status === 401) {
@@ -59,27 +55,14 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
 
       return Axios.post(postUrl, data, token && {'headers': {'Authorization': token}, responseType: contentsType})
         .then((result) => {
-          if(result.data.status !== 200 ){
-            Notiflix.Report.failure('저장할 수 없습니다.', result.data.message, '확인')
-            return false
-          }
-          return result.data
+          return result
         })
         .catch((error) => {
-          if(error.response.status === 400) {
-            Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
-          }else if(error.response.status === 500){
-            Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-          }
           return false
         })
     case 'put':
       return Axios.put(ENDPOINT+url, data,token && {'headers': {'Authorization': token}, responseType: contentsType})
         .then((result) => {
-          if(result.data.status !== 200){
-            Notiflix.Report.failure('저장할 수 없습니다.', result.data.message, '확인')
-            return false
-          }
           return result
         })
         .catch((error: AxiosError) => {
@@ -91,16 +74,9 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         data: data
       })
         .then((result) => {
-          if(result.data.status !== 200){
-            Notiflix.Report.failure('삭제할 수 없습니다.', result.data.message, '확인')
-            return false
-          }
           return result
         })
         .catch((error) => {
-          if(error.response.status === 400) {
-            Notiflix.Report.failure('삭제할 수 없습니다.', '입력값을 확인해주세요', '확인')
-          }
           return false
         })
   }
