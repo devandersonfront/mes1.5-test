@@ -1,0 +1,13 @@
+node_modules/
+packages/main/node_modules/
+packages/main/.next/
+packages/main/package-lock.json/
+packages/mes/node_modules/
+packages/mes/.next/
+packages/mes/package-lock.json/
+packages/basic/node_modules/
+packages/basic/.next/
+packages/basic/package-lock.json/
+
+package-lock.json
+yarn.lock
