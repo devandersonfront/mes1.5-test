@@ -33,7 +33,7 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", start_date: moment().format('YYYY-MM-DD'),
+    name: "", id: "", order_date: moment().format('YYYY-MM-DD'),
     limit_date: moment().format('YYYY-MM-DD')
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["orderModify"])

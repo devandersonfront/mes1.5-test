@@ -284,7 +284,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
               }}
               style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
-              <p>저장</p>
+              <p>확인</p>
             </div>
           </div>
         </div>

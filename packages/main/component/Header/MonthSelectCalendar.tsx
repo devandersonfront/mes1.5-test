@@ -49,7 +49,11 @@ const MonthSelectCalendar = ({selectDate, setSelectDate, onChangeSelectDate, set
                         maxDate={dataLimit ? new Date() : new Date("2100.01.01")}
                     />
                     <div style={{display: 'flex', width: '100%', }}>
-                        <div style={{width: '50%', height: 32, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                        <div style={{width: '50%', height: 32, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                            onClick={() => {
+                                setOnCalendar(false);
+                            }}
+                        >
                             <p style={{padding: 0, margin: 0, textAlign: 'center'}}>취소</p>
                         </div>
                         <div style={{width: '50%', height: 32, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}} onClick={() => {

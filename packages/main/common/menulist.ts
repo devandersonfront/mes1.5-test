@@ -110,8 +110,8 @@ const MES_MENUS: IMenuType[] = [
   {
     title: '부자재 관리', url: '',
     subMenu: [
-      {title: '부자재 입고 등록', url: '/mes/rawmaterialV1u/input'},
-      {title: '부자재 재고 현황', url: '/mes/rawmaterialV1u/stock'},
+      {title: '부자재 입고 등록', url: '/mes/submaterialV1u/input'},
+      {title: '부자재 재고 현황', url: '/mes/submaterialV1u/stock'},
     ]
   },
   {
@@ -123,7 +123,7 @@ const MES_MENUS: IMenuType[] = [
   {
     title: '재고 관리', url: '',
     subMenu: [
-      {title: '재고 현황', url: '/mes/stockV2'},
+      {title: '재고 현황', url: '/mes/stockV2/list'},
       {title: '생산/납품 현황', url: '/mes/stock/productlist'},
       {title: '생산/납품 현황(관리자용)', url: '/mes/stock/admin'},
     ]

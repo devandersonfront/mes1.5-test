@@ -27,8 +27,8 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
-    {title: '수주번호', infoWidth: 144, key: 'customer'},
     {title: '지시 고유 번호', infoWidth: 144, key: 'model'},
+    {title: 'LOT 번호', infoWidth: 144, key: 'customer'},
     {title: '거래처', infoWidth: 144, key: 'customer'},
     {title: '모델', infoWidth: 144, key: 'model'},
   ],
@@ -41,9 +41,9 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
   [
     {title: '단위', infoWidth: 144, key: 'unit'},
     {title: '목표 생산량', infoWidth: 144, key: 'goal'},
-    {title: '총 카운터', infoWidth: 144, key: 'unit'},
-    {title: '총 양품 수량', infoWidth: 144, key: 'goal'},
-    {title: '총 불량 수량', infoWidth: 144, key: 'goal'},
+    {title: '작업자', infoWidth: 144, key: 'unit'},
+    {title: '양품 수량', infoWidth: 144, key: 'goal'},
+    {title: '불량 수량', infoWidth: 144, key: 'goal'},
   ],
 ]
 
@@ -171,7 +171,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>금형 정보 (해당 제품을 만드는데 사용한 금형을 선택해주세요. 선택 가능 금형이 없으면 금형 수정 버튼을 줄러 금형 정보를 수정해주세요)</p>
+            }}>금형 정보 (해당 제품을 만드는데 사용한 금형을 선택해주세요. 선택 가능 금형이 없으면 금형 수정 버튼을 눌러 금형 정보를 수정해주세요)</p>
             <div style={{display: 'flex'}}>
               <Button>
                 <p>엑셀로 받기</p>
@@ -249,9 +249,9 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               onClick={() => {
                 setIsOpen(false)
               }}
-              style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
-              <p>취소</p>
+              <p style={{color: '#717C90'}}>취소</p>
             </div>
             <div
               onClick={() => {

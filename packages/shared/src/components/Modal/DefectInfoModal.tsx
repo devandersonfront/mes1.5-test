@@ -129,6 +129,22 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     setBomDummy([...tmp])
   }
 
+  const AddComma = (number:number) => {
+    let regexp = /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g;
+    return number.toString().replace(regexp, ",");
+  }
+
+  const totalDefect = () => {
+    let total = 0
+    searchList.map(v => {
+      if(v.amount){
+        total += Number(v.amount)
+      }
+    })
+
+    return AddComma(total)
+  }
+
   const ModalContents = () => {
     return <>
       <div style={{
@@ -190,9 +206,9 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p style={{margin: 0, padding: 0, fontSize: 22, fontWeight: 'bold'}}>총 불량 개수</p>
                 <div style={{
                   backgroundColor: 'white', width: 144, height: 28, border: '1px solid #B3B3B3', marginLeft: 16, marginRight: 32,
-                  display: 'flex', alignItems: 'center', paddingTop:3
+                  display: 'flex', alignItems: 'center', paddingTop:3, paddingLeft: 8
                 }}>
-                  <p style={{margin:0, padding: 0}}>0</p>
+                  <p style={{margin:0, padding: 0}}>{totalDefect()}</p>
                 </div>
               </div>
               <Button>

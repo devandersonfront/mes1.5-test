@@ -43,16 +43,16 @@ const UnitContainer = ({ row, column, setRow}: IProps) => {
             ? <p style={{ color: '#ffffff4d' }}>
               {column.placeholder}
             </p>
-            : <p>{title}</p>
+            : <p style={{color: column.textType === 'Modal' ? 'black' : 'white'}}>{title}</p>
         }
       </UnitValue>
       <UnitBox>
         {
           column.searchType === 'rawin'
-            ? <span>{row.type === 'COIL' ? 'kg' : '장'}</span>
+            ? <span>{row.type ? row.type === 'COIL' ? 'kg' : '장' : ''}</span>
             : column.type === 'selectUnit'
               ? <span>{row.unit}</span>
-              : <span>{column.unitData}</span>
+              : <span >{column.unitData}</span>
         }
       </UnitBox>
     </UnitWrapper>

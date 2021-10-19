@@ -392,10 +392,10 @@ const Productlist = () => {
                     <ProfileHeader/>
                     <PageHeader
                         title={"생산/납품 현황(관리자용)"}
-                        buttons={["데이터 불러오기", onHide ? "선택 행 숨김 취소" : "선택 행 숨김", "저장하기", "엑셀로 받기"]}
+                        buttons={["데이터 불러오기", "저장하기", "엑셀로 받기"]}
                         buttonsOnclick={buttonClickEvents}
                         isSearch={true}
-                        searchOptionList={["고객사명","고객사 모델","CODE", "품명"]}
+                        searchOptionList={["거래처","모델","CODE", "품명"]}
                         onChangeSearchOption={setOption}
                         isCalendar={true}
                         searchKeyword={keyword}

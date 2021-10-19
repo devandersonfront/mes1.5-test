@@ -160,7 +160,7 @@ export const searchModalList: any = {
   moldUse: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '금형명', width: 472, formatter: LineBorderContainer, type: 'Modal'},
+    {key: 'name', name: '금형명', formatter: LineBorderContainer, type: 'Modal'},
     {key: 'spare', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '여'},
         {pk: 'spare', name: '부'},
@@ -171,7 +171,7 @@ export const searchModalList: any = {
   ],
   machineUse: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'machine_name', name: '기계 이름', width: 560, formatter: LineBorderContainer, placeholder: '-', type: 'Modal' },
+    {key: 'machine_name', name: '기계 이름', formatter: LineBorderContainer, placeholder: '-', type: 'Modal' },
     {key: 'mfr_code', name: '제조 번호', width: 160, formatter: LineBorderContainer, placeholder: '-', type: 'Modal', textAlign: 'center' },
     {key: 'code', name: '기계 종류', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
     {key: 'spare', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
@@ -183,7 +183,7 @@ export const searchModalList: any = {
   moldList: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '금형명', width: 472, formatter: LineBorderContainer, type: 'Modal'},
+    {key: 'name', name: '금형명', formatter: LineBorderContainer, type: 'Modal'},
     {key: 'cavity', name: '캐비티', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'spm', name: 'SPM', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'dieheigth', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
@@ -321,7 +321,7 @@ export const searchModalList: any = {
   workRegister: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'lot', name: 'LOT 번호', formatter: LotNumberRegister, editor: TextEditor, textAlign: 'center', width: 300},
-    {key: 'worker', name: '작업자', formatter: ManagerSearchModal, textAlign: 'center'},
+    {key: 'worker', name: '작업자', formatter: SearchModalTest, type: 'user', width: 118, modalType: true},
     {key: 'start', name: '작업 시작 일시', formatter: CalendarBox, textAlign: 'center'},
     {key: 'end', name: '작업 종료 일시', formatter: CalendarBox, textAlign: 'center'},
     {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center'},
@@ -340,7 +340,7 @@ export const searchModalList: any = {
     {key: 'end', name: '작업 종료 일시', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center'},
     {key: 'good', name: '양품 수량', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'poor', name: '불량 수량 (유형별 수량은 숫자 클릭)', formatter: DefectInfoModal, textAlign: 'center', width: 250},
+    {key: 'poor', name: '불량 수량 (유형별 수량은 숫자 클릭)', formatter: DefectInfoModal, textAlign: 'center', width: 250, readonly: true},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'input', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center'},
     {key: 'mold', name: '금형', formatter: MoldListModal, textAlign: 'center', type: 'Modal'},
@@ -352,7 +352,7 @@ export const searchModalList: any = {
   ],
   defectCount: [
     {key: 'reason', name: '불량 유형'},
-    {key: 'amount', width: 194, name: '불량 개수', editor: TextEditor, formatter: UnitContainer, textType: 'Modal', searchType: 'pause'},
+    {key: 'amount', width: 194, name: '불량 개수', editor: TextEditor, formatter: UnitContainer, unitData: 'EA', textType: 'Modal', searchType: 'pause'},
   ],
 
   //검색 모달 엑셀 헤더
@@ -363,7 +363,7 @@ export const searchModalList: any = {
     {key: 'user_id', name: '아이디'},
   ],
   customerSearch: [
-    {key: 'customer_id', name: '거래처명'},
+    {key: 'customer_id', name: '거래처'},
     {key: 'rep', name: '대표자명'},
     {key: 'manager', name: '담당자명'},
     {key: 'address', name: '주소'},
@@ -382,7 +382,7 @@ export const searchModalList: any = {
     {key: 'manager', name: '담당자명'},
   ],
   modelSearch: [
-    {key: 'customer', name: '고객사명'},
+    {key: 'customer', name: '거래처'},
     {key: 'ceo', name: '대표자명'},
     {key: 'crn', name: '사업자 번호'},
     {key: 'model', name: '모델명'},

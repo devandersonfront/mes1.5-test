@@ -387,7 +387,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
       <PageHeader
         title={"원자재 입고 등록"}
         buttons={
-          ['엑셀로 받기', '행추가', '저장하기', '삭제']
+          ['행추가', '저장하기', '삭제']
         }
         buttonsOnclick={
           () => {}

@@ -93,8 +93,7 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
 
   const getSummaryInfo = (info) => {
     // selector.data[selector.index][info.key]
-      return '-'
-
+    return '-'
   }
 
   const ModalContents = () => {

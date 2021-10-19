@@ -290,11 +290,21 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
             />
           </div>
           <div style={{ height: 46, display: 'flex', alignItems: 'flex-end'}}>
+            {
+              column.type !== 'readonly' && <div
+                  onClick={() => {
+                    setIsOpen(false)
+                  }}
+                  style={{width: '50%', height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              >
+                  <p>취소</p>
+              </div>
+            }
             <div
               onClick={() => setIsOpen(false)}
-              style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              style={{width: column.type !== 'readonly' ? "50%" : '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
-              <p>확인</p>
+              <p>{column.type !== 'readonly' ? '선택 완료' : '확인'}</p>
             </div>
           </div>
         </div>

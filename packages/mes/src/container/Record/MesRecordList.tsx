@@ -47,7 +47,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
   },])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["recordListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
+  const [optionList, setOptionList] = useState<string[]>(['수주번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
@@ -75,13 +75,9 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         selectDate={selectDate}
         //@ts-ignore
         setSelectDate={(date) => setSelectDate(date)}
-        title={"작업지시서 리스트"}
-        buttons={
-          ['엑셀로 받기', '수정하기']
-        }
         title={"작업 일보 리스트"}
         buttons={
-          ['엑셀로 받기', '수정 하기']
+          ['엑셀로 받기', '수정하기']
         }
         buttonsOnclick={
           () => {}
@@ -109,17 +105,6 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/mold?page=${page}`)
-          }
-        }}
       />
       <ExcelDownloadModal
         isOpen={excelOpen}

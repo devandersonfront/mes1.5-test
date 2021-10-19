@@ -72,7 +72,12 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
           ['엑셀로 받기', '수정하기']
         }
         buttonsOnclick={
-          () => {}
+          (e) => {
+            switch(e){
+              case 1:
+                router.push('/mes/order/modify')
+            }
+          }
           // onClickHeaderButton
         }
       />
@@ -97,17 +102,6 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/mold?page=${page}`)
-          }
-        }}
       />
       <ExcelDownloadModal
         isOpen={excelOpen}

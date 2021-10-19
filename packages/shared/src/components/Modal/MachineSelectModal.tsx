@@ -28,8 +28,8 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
-    {title: '수주번호', infoWidth: 144, key: 'customer'},
     {title: '지시 고유 번호', infoWidth: 144, key: 'model'},
+    {title: 'LOT 번호', infoWidth: 144, key: 'customer'},
     {title: '거래처', infoWidth: 144, key: 'customer'},
     {title: '모델', infoWidth: 144, key: 'model'},
   ],
@@ -42,9 +42,9 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
   [
     {title: '단위', infoWidth: 144, key: 'unit'},
     {title: '목표 생산량', infoWidth: 144, key: 'goal'},
-    {title: '총 카운터', infoWidth: 144, key: 'unit'},
-    {title: '총 양품 수량', infoWidth: 144, key: 'goal'},
-    {title: '총 불량 수량', infoWidth: 144, key: 'goal'},
+    {title: '작업자', infoWidth: 144, key: 'unit'},
+    {title: '양품 수량', infoWidth: 144, key: 'goal'},
+    {title: '불량 수량', infoWidth: 144, key: 'goal'},
   ],
 ]
 
@@ -174,9 +174,9 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
               margin: 0,
             }}>기계 정보 (해당 제품 생산하는데 사용한 모든 기계를 입력해주세요. 선택 가능 기계가 없으면 기계 수정 버튼을 눌러 기계 정보를 수정해주세요)</p>
             <div style={{display: 'flex'}}>
-              <Button>
-                <p>엑셀로 받기</p>
-              </Button>
+              {/*<Button>*/}
+              {/*  <p>엑셀로 받기</p>*/}
+              {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>
@@ -213,7 +213,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-                <p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 금형 리스트 (여려금형을 동시에 선택하여 사용할 수 있습니다)</p>
+                {/*<p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 금형 리스트 (여려금형을 동시에 선택하여 사용할 수 있습니다)</p>*/}
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
@@ -250,9 +250,9 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
               onClick={() => {
                 setIsOpen(false)
               }}
-              style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
-              <p>취소</p>
+              <p style={{color: '#717C90'}}>취소</p>
             </div>
             <div
               onClick={() => {

@@ -27,6 +27,7 @@ export interface IExcelHeaderType {
   modalInitData?: any
   summaryType?: any
   modalType?: boolean
+  readonly?: boolean
 }
 
 export interface IResponseType {

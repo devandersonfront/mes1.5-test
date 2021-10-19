@@ -302,9 +302,9 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
               onClick={() => {
                 setIsOpen(false)
               }}
-              style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
-              <p>취소</p>
+              <p style={{color: '#717C90'}}>취소</p>
             </div>
             <div
               onClick={() => {

@@ -22,7 +22,7 @@ const HeaderFilter = ({row, column, setRow, onChangeOption}: IProps) => {
             {column.options.map((v)=>{
                 return (
                     <Option value={v.status} >
-                        {v.name}
+                      <p style={{margin:0, padding: 0, fontWeight: 'bold'}}>{v.name}</p>
                     </Option>
                 )
             })}
@@ -42,6 +42,7 @@ const Select = styled.select`
     border:none;
     color:white;
     font-size:14px;
+    font-weight: bold;
     display:flex;
     justify-content:center;
     align-items:center;

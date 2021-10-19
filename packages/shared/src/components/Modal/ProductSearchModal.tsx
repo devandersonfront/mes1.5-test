@@ -155,7 +155,7 @@ const ProductSearchModal = ({column, row, onRowChange}: IProps) => {
     }
 
     return <>
-      <div style={{width: '100%', height: column.type === 'Modal' ? 32 : 40}} onClick={() => {
+      <div style={{width: '100%', height: column.type === 'Modal' ? 32 : 40, paddingLeft: 8,}} onClick={() => {
         // setIsOpen(true)
       }}>
         {/*{ row[`${column.key}`]}*/}

@@ -268,14 +268,14 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   {
                     tabRef.current && tabRef.current.clientWidth < 63
                       ? focusIndex !== i
-                        ? <><p onClick={() => {setFocusIndex(i)}}>{v.code}</p></>
-                        : <>
-                              <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
-                                deleteTab(i)
-                              }}>
-                              <img style={{width: 20, height: 20}} src={IcX}/>
-                            </div>
-                          </>
+                      ? <><p onClick={() => {setFocusIndex(i)}}>{v.code}</p></>
+                      : <>
+                        <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
+                          deleteTab(i)
+                        }}>
+                          <img style={{width: 20, height: 20}} src={IcX}/>
+                        </div>
+                      </>
                       : <>
                         <p onClick={() => {setFocusIndex(i)}}
                            style={{color: focusIndex === i ? "white" : '#353B48'}}
@@ -351,7 +351,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               setRow={(e) => {
                 let tmp = e.map((v, index) => {
                   if(v.newTab === true){
-                    addNewTab(bomDummy.length+1)
+                    const newTabIndex = bomDummy.length+1
+                    addNewTab(newTabIndex)
+                    setFocusIndex(newTabIndex-1)
                   }
 
                   return {
@@ -386,9 +388,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               onClick={() => {
                 setIsOpen(false)
               }}
-              style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
-              <p>취소</p>
+              <p style={{color: '#717C90'}}>취소</p>
             </div>
             <div
               onClick={() => {

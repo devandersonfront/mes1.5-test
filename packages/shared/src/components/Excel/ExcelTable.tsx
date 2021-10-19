@@ -168,6 +168,10 @@ const DataGridTable = styled(DataGrid)`
   ::-webkit-scrollbar-corner{
     display:none;
   }
+
+  .rdg-header-row > .rdg-cell {
+    padding: 0 8px;
+  }
   
   ${(props:any) => props.state === "searchModal" ? "" : 
     `

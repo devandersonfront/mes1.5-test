@@ -13,6 +13,7 @@ import {searchModalList} from '../../../common/modalInit'
 import Search_icon from '../../../../public/images/btn_search.png'
 import {RequestMethod} from '../../../common/RequestFunctions'
 import {SearchInit} from './SearchModalInit'
+import {MoldRegisterModal} from '../MoldRegisterModal'
 
 interface IProps {
   column: IExcelHeaderType
@@ -43,6 +44,19 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }, [column.type])
 
+  const getContents = () => {
+    if(row[`${column.key}`]){
+      return row[column.key]
+    }else{
+      if(searchModalInit && searchModalInit.placeholder){
+        return searchModalInit.placeholder
+      }else{
+        return column.placeholder
+      }
+    }
+  }
+
+
   return (
     <SearchModalWrapper >
       <div style={ column.modalType
@@ -51,7 +65,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       } onClick={() => {
         setIsOpen(true)
       }}>
-        {row[`${column.key}`] ?? column.placeholder}
+        {getContents()}
       </div>
       <div style={{
         display: 'flex',
@@ -101,10 +115,15 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 fontWeight: 'bold',
                 margin: 0,
               }}>{searchModalInit && searchModalInit.title}</p>
-              <div style={{cursor: 'pointer'}} onClick={() => {
-                setIsOpen(false)
-              }}>
-                <img style={{width: 20, height: 20}} src={IcX}/>
+              <div style={{display: 'flex'}}>
+                {
+                  column.type === 'mold' && <MoldRegisterModal column={column} row={row} onRowChange={onRowChange}/>
+                }
+                <div style={{cursor: 'pointer', marginLeft: 22}} onClick={() => {
+                  setIsOpen(false)
+                }}>
+                  <img style={{width: 20, height: 20}} src={IcX}/>
+                </div>
               </div>
             </div>
             <div style={{

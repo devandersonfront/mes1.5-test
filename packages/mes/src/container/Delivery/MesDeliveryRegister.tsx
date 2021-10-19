@@ -59,7 +59,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
       <PageHeader
         title={"납품 정보 등록"}
         buttons={
-          ['엑셀로 받기', '행추가', '저장하기', '삭제']
+          [ '행추가', '저장하기', '삭제']
         }
         buttonsOnclick={
           () => {}

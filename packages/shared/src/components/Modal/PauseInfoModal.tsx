@@ -129,6 +129,25 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     setBomDummy([...tmp])
   }
 
+  const totalTime = () => {
+    let total = 0
+    searchList.map(v => {
+      if(v.amount) {
+        total += v.amount
+      }
+    })
+
+    let sec = total
+    let hour = Math.floor(sec/3600)
+    sec = sec%3600
+    let min = Math.floor(sec/60)
+    sec = sec%60
+
+    console.log(`${hour}:${min}:${sec}`)
+
+    return `${hour >= 10 ? hour : '0'+hour}:${min >= 10 ? min : '0'+min}:${sec >= 10 ? sec : '0'+sec}`
+  }
+
   const ModalContents = () => {
     return <>
       <div style={{
@@ -192,7 +211,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   backgroundColor: 'white', width: 144, height: 28, border: '1px solid #B3B3B3', marginLeft: 16, marginRight: 32,
                   display: 'flex', alignItems: 'center', paddingTop:3
                 }}>
-                  <p style={{margin:0, padding: 0}}>00:00:00</p>
+                  <p style={{margin:0, padding: '0 0 0 8px'}}>{totalTime()}</p>
                 </div>
               </div>
               <Button>
@@ -214,6 +233,17 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 let ppr_id = ''
                 let reason = ''
                 let tmpRow = e.map((v, i) => {
+                  let amount = 0
+                  if(v.amount){
+                    if(typeof v.amount !== 'number'){
+                      console.log(v.amount)
+                      const time = v.amount.split(':')
+                      amount = (Number(time[0])*3600)+(Number(time[1])*60)+Number(time[2])
+                    }else{
+                      amount = v.amount
+                    }
+                  }
+
                   if(v.add) {
                     addIndex = i+1
                     reason = v.reason
@@ -221,7 +251,8 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   }
                   return {
                     ...v,
-                    add: false
+                    add: false,
+                    amount
                   }
                 })
                 if(addIndex){
@@ -245,23 +276,27 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             />
           </div>
           <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+            {
+              !column.readonly && <div
+                onClick={() => {
+                  setIsOpen(false)
+                }}
+                style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              >
+                <p style={{color: '#717C90'}}>취소</p>
+              </div>
+            }
             <div
               onClick={() => {
-                setIsOpen(false)
-              }}
-              style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p>취소</p>
-            </div>
-            <div
-              onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
-                  onRowChange({
-                    ...row,
-                    ...searchList[selectRow],
-                    name: row.name,
-                    isChange: true
-                  })
+                if(!column.readonly){
+                  if(selectRow !== undefined && selectRow !== null){
+                    onRowChange({
+                      ...row,
+                      ...searchList[selectRow],
+                      name: row.name,
+                      isChange: true
+                    })
+                  }
                 }
                 setIsOpen(false)
               }}
