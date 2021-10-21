@@ -195,18 +195,18 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `moldList`,{
+    const res = await RequestMethod('get', `factoryList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages
+        page: res.page,
+        total: res.totalPages
       })
       cleanUpData(res)
     }else if (res.state === 401) {

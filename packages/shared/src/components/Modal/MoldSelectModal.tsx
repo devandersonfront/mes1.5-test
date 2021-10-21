@@ -173,9 +173,6 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               margin: 0,
             }}>금형 정보 (해당 제품을 만드는데 사용한 금형을 선택해주세요. 선택 가능 금형이 없으면 금형 수정 버튼을 눌러 금형 정보를 수정해주세요)</p>
             <div style={{display: 'flex'}}>
-              <Button>
-                <p>엑셀로 받기</p>
-              </Button>
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>

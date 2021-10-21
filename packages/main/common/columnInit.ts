@@ -27,6 +27,8 @@ import OperationMachineSearchModal from "../component/Modal/OperationMachineSear
 // @ts-ignore
 import StatusComponent from '../component/Formatter/StatusComponent'
 import MultipleSelectModal from "../component/Modal/MultipleSelectModal";
+import {PlaceholderBox} from 'shared/src/components/Formatter/PlaceholderBox'
+import {SearchModalTest} from 'shared/src/components/Modal/SearchModalTest'
 
 
 
@@ -400,10 +402,10 @@ export const columnlist: any = {
     {key: 'worker', name: '작업자', width:118,},
   ],
   qualityDefectTop: [
-    {key: 'customer_id', name: '거래처명', searchType: 'rawin', width: 150},
-    {key: 'cm_id', name: '모델', searchType: 'rawin', width: 150},
-    {key: 'code', name: 'CODE', formatter: ProductSearchModal, searchType: 'rawin', width: 150},
-    {key: 'name', name: '품명', width: 150},
+    {key: 'customer_id', name: '거래처명', searchType: 'rawin', width: 150, formatter: PlaceholderBox, placeholder: '자동입력'},
+    {key: 'cm_id', name: '모델', searchType: 'rawin', width: 150, formatter: PlaceholderBox, placeholder: '자동입력'},
+    {key: 'code', name: 'CODE', formatter: SearchModalTest, type: 'product', width: 150},
+    {key: 'name', name: '품명', width: 150, formatter: PlaceholderBox, placeholder: '자동입력'},
     // {key: 'process_id', name: '공정 종류', width: 150, formatter: ProcessSearchModal},
     // {key: 'pdr_id', name: '불량 유형', width: 150, formatter: DefectSearchModal},
   ],

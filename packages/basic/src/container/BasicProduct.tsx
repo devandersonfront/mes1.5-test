@@ -36,7 +36,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
+  const [optionList, setOptionList] = useState<string[]>(['거래처', '모델', '코드', '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -400,7 +400,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
           optionIndex={optionIndex}
           title={"제품 등록 관리"}
           buttons={
-            ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
+            ['엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }
           buttonsOnclick={
             () => {}

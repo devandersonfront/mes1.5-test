@@ -200,7 +200,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           </div>
           <HeaderTable>
             <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>고객사명</HeaderTableText>
+              <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
               <HeaderTableText>-</HeaderTableText>

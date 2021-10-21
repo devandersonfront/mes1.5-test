@@ -352,7 +352,7 @@ export const searchModalList: any = {
   ],
   defectCount: [
     {key: 'reason', name: '불량 유형'},
-    {key: 'amount', width: 194, name: '불량 개수', editor: TextEditor, formatter: UnitContainer, unitData: 'EA', textType: 'Modal', searchType: 'pause'},
+    {key: 'amount', width: 194, name: '불량 개수', editor: TextEditor, formatter: UnitContainer, unitData: 'EA', textType: 'Modal', searchType: 'pause', placeholder: '숫자만 입력'},
   ],
 
   //검색 모달 엑셀 헤더

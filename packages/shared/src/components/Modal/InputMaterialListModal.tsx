@@ -36,6 +36,28 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
   [{title: '단위', infoWidth: 144, key: 'unit'},{title: '목표 생산량', infoWidth: 144, key: 'goal'},],
 ]
 
+const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: string}[][] = [
+  [
+    {title: '지시 고유번호', infoWidth: 144, key: 'customer'},
+    {title: 'LOT 번호', infoWidth: 144, key: 'model'},
+    {title: '거래처', infoWidth: 144, key: 'model'},
+    {title: '모델', infoWidth: 144, key: 'model'},
+  ],
+  [
+    {title: 'CODE', infoWidth: 144, key: 'customer'},
+    {title: '품명', infoWidth: 144, key: 'model'},
+    {title: '품목 종류', infoWidth: 144, key: 'model'},
+    {title: '생산 공정', infoWidth: 144, key: 'model'},
+  ],
+  [
+    {title: '단위', infoWidth: 144, key: 'customer'},
+    {title: '목표 생산량', infoWidth: 144, key: 'model'},
+    {title: '작업자', infoWidth: 144, key: 'model'},
+    {title: '양품 수량', infoWidth: 144, key: 'model'},
+    {title: '불량 수량', infoWidth: 144, key: 'model'},
+  ],
+]
+
 
 
 const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
@@ -201,7 +223,32 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             </div>
           </div>
           {
-            headerItems && headerItems.map((infos, index) => {
+            column.type === 'readonly'
+              ? headerWorkItems && headerWorkItems.map((infos, index) => {
+              return (
+                <HeaderTable>
+                  {
+                    infos.map(info => {
+                      return (
+                        <>
+                          <HeaderTableTitle>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>{info.title}</HeaderTableText>
+                          </HeaderTableTitle>
+                          <HeaderTableTextInput style={{width: info.infoWidth}}>
+                            <HeaderTableText>
+                              {/*{getSummaryInfo(info)}*/}
+                              -
+                            </HeaderTableText>
+                            {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
+                          </HeaderTableTextInput>
+                        </>
+                      )
+                    })
+                  }
+                </HeaderTable>
+              )
+            })
+              : headerItems && headerItems.map((infos, index) => {
               return (
                 <HeaderTable>
                   {
@@ -324,12 +371,22 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               headerAlign={'center'}
             />
           </div>
-          <div style={{ height: 54, display: 'flex', alignItems: 'flex-end'}}>
+          <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
+            {
+              column.type !== 'readonly' && <div
+                  onClick={() => {
+                    setIsOpen(false)
+                  }}
+                  style={{width: '50%', height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              >
+                  <p>취소</p>
+              </div>
+            }
             <div
               onClick={() => setIsOpen(false)}
-              style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              style={{width: column.type !== 'readonly' ? "50%" : '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
-              <p>확인</p>
+              <p>{column.type !== 'readonly' ? '선택 완료' : '확인'}</p>
             </div>
           </div>
         </div>

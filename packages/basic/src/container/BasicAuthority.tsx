@@ -46,20 +46,10 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
 
   const loadAuthorityList = async () => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', 'authorityList',
-      {
-        path: {
-          page: 1,
-          renderItem: MAX_VALUE
-        }
-      })
+    const res = await RequestMethod('get', 'authorityAll')
 
-    if(res && res.status === 200) {
-      setRow([...res.results.info_list])
-    }else if (res.state === 401) {
-      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-        router.back()
-      })
+    if(res) {
+      setRow([...res])
     }
   }
 
@@ -69,6 +59,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
       let tmp = dmenu
       if (tmp.value) tmp.check = list.indexOf(tmp.value) !== -1;
       // using stack structure, recursively add authorities
+
       tmp.child = tmp.child.map(inner => MenuDivide(inner))
 
       let cnt = 0
@@ -109,11 +100,11 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
   const updateAuth = async (data: any) => {
     if(data.ca_id){
       const updatedAuthorities = changeAuthToList(data.authorities)
-      await RequestMethod('put', 'authorityUpdate', {
+      await RequestMethod('post', 'authoritySave', {
         ...data,
         authorities: updatedAuthorities
       }).then(async (res: AxiosResponse) => {
-        if (res.status === 200){
+        if (res){
           await new Promise((resolve) => {
             changeListToAuth(updatedAuthorities)
             // update row datum
@@ -132,12 +123,13 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
   const createAuth = async (data: any) => {
     if(data){
       const addedAuthorities = changeAuthToList(data.authorities)
-      const res = await RequestMethod('post', 'authorityCreate', {
+      const res = await RequestMethod('post', 'authoritySave', {
+        ca_id: undefined,
         name: data.name,
         authorities: addedAuthorities
       })
 
-      if (res.status === 200){
+      if (res){
         await new Promise((resolve) => {
           changeListToAuth(addedAuthorities)
           // update row datum
@@ -156,9 +148,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
 
   const deleteAuth = async () => {
     if(selectIndex !== -1 && row[selectIndex].ca_id){
-      const res = await RequestMethod('delete', 'authorityDelete', {
-        ca_id: row[selectIndex].ca_id
-      })
+      const res = await RequestMethod('delete', 'authorityDelete', row[selectIndex])
 
       if (res.status === 200){
         Notiflix.Report.success('삭제 성공!', '권한이 성공적으로 삭제됐습니다.', '확인', () => {

@@ -40,7 +40,7 @@ const UnitContainer = ({ row, column, setRow}: IProps) => {
       <UnitValue>
         {
           !title && column.placeholder
-            ? <p style={{ color: '#ffffff4d' }}>
+            ? <p style={{ color: column.textType === 'Modal' ? '#0000004d' : '#ffffff4d' }}>
               {column.placeholder}
             </p>
             : <p style={{color: column.textType === 'Modal' ? 'black' : 'white'}}>{title}</p>

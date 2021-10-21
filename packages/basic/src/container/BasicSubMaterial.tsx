@@ -36,7 +36,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["submaterial"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
+  const [optionList, setOptionList] = useState<string[]>(['부자재 코드', '부자재 품명', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -398,7 +398,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"부자재 기본정보 등록"}
+          title={"부자재 기본정보"}
           buttons={
             ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }

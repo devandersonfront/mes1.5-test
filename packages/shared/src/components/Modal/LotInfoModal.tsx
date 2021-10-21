@@ -142,9 +142,9 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
               margin: 0,
             }}>LOT별 재고 현황</p>
             <div style={{display: 'flex'}}>
-              <Button>
-                <p>엑셀로 받기</p>
-              </Button>
+              {/*<Button>*/}
+              {/*  <p>엑셀로 받기</p>*/}
+              {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>
@@ -264,7 +264,7 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
             />
           </div>
           { column.type === "readonly" ?
-            <div style={{height: 40, display: 'flex', alignItems: 'flex-end'}}>
+            <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
               <div
                 onClick={() => {
                   if (selectRow !== undefined && selectRow !== null) {
@@ -289,7 +289,7 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
                 <p>확인</p>
               </div>
             </div>
-            : <div style={{height: 40, display: 'flex', alignItems: 'flex-end'}}>
+            : <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
             <div
               onClick={() => {
                 setIsOpen(false)

@@ -95,8 +95,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
     let res = await RequestMethod('post', `memberSave`,
-      {
-        members: basicRow.map((row, i) => {
+      basicRow.map((row, i) => {
           if(selectList.has(row.id)){
             let additional:any[] = []
             column.map((v) => {
@@ -111,7 +110,8 @@ const BasicUser = ({page, keyword, option}: IProps) => {
               ...row,
               ...selectData,
               id: row.tmpId,
-              authority: row.authorityPK,
+              authority: 4,
+              version: row.version ?? null,
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -127,21 +127,20 @@ const BasicUser = ({page, keyword, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v)
-      })
+        }).filter((v) => v))
+
+    console.log("saveRes", res)
 
     if(res){
-      if(res.status === 200){
-        Notiflix.Report.success('저장되었습니다.','','확인');
-        if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+      Notiflix.Report.success('저장되었습니다.','','확인');
+      if(keyword){
+        SearchBasic(keyword, option, page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }else{
+        LoadBasic(page).then(() => {
+          Notiflix.Loading.remove()
+        })
       }
     }
   }
@@ -149,27 +148,49 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   const DeleteBasic = async () => {
 
     const res = await RequestMethod('delete', `memberDelete`,
-      {
-        members: basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
 
-            return row.tmpId
+          let selectData: any = {}
+
+          return {
+            ...row,
+            ...selectData,
+            id: row.tmpId,
+            authority: row.authorityPK,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
           }
-        }).filter((v) => v)
-      })
+
+        }
+      }).filter((v) => v))
 
     if(res) {
-      if(res.status === 200){
-        Notiflix.Report.success('삭제되었습니다.','','확인');
-        if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      if(keyword){
+        SearchBasic(keyword, option, page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }else{
+        LoadBasic(page).then(() => {
+          Notiflix.Loading.remove()
+        })
       }
     }
 
@@ -178,19 +199,19 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   const LoadBasic = async (page?: number) => {
     const res = await RequestMethod('get', `memberList`,{
       path: {
-        page: (page || page !== 0) ? page : 1,
+        page: 1,
         renderItem: 18,
       }
     })
 
-    if(res && res.status === 200){
-      if(res.results.totalPages < page){
+    if(res){
+      if(res.totalPages < page){
         LoadBasic(page - 1)
       }else{
         setPageInfo({
           ...pageInfo,
-          page: res.results.page,
-          total: res.results.totalPages
+          page: res.page,
+          total: res.totalPages
         })
         cleanUpData(res)
       }
@@ -283,7 +304,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
-      res.results.menus && res.results.menus.map((menu: any) => {
+      res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
             id: menu.id,
@@ -313,7 +334,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       }
     }).filter((v:any) => v)
 
-    let additionalMenus = res.results.menus ? res.results.menus.map((menu:any) => {
+    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
           id: menu.id,
@@ -326,7 +347,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         }
       }
     }).filter((v: any) => v) : []
-    tmpRow = res.results.info_list
+    tmpRow = res.info_list
 
     loadAllSelectItems([...tmpColumn, ...additionalMenus])
 
@@ -355,6 +376,8 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         ...row,
         ...realTableData,
         ...appendAdditional,
+        authority: row.ca_id.name,
+        authorityPK: row.ca_id.ca_id,
         id: `process_${random_id}`,
       }
     })

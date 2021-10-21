@@ -32,12 +32,12 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([
-    {name: "", id: ""},
+    {name: "", id: "", },
     { id: "", name: "400톤 2호기", weldingType: '선택없음', type: '프레스', mfrCode: '125-77-123', interwork: '유', user_id: '차지훈', manufacturer:'Aidas'},
   ])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["machineV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
+  const [optionList, setOptionList] = useState<string[]>(['기계 제조사', '기계 이름', '기계 종류', '제조 번호'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({

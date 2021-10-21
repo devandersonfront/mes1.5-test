@@ -527,7 +527,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
           setOptionIndex(option)
         }}
         optionIndex={optionIndex}
-        title={"고객사 모델 관리"}
+        title={"모델 관리"}
         buttons={
           ['엑셀로 등록','엑셀로 받기', '항목관리', '행 추가', '저장하기', '삭제']
         }

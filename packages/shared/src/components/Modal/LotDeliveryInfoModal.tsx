@@ -97,12 +97,12 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     return <>
       <div style={{
         width: '100%',
-        backgroundColor: 'white'
+        backgroundColor: column.type === 'base' || column.type === 'baseReadonly' ? '#00000000' : 'white'
       }}>
         <div onClick={() => {
           setIsOpen(true)
         }}>
-          <p style={{textDecoration: 'underline', padding: 0, margin: 0, color: 'black', textAlign: 'center'}}>LOT 보기</p>
+          <p style={{textDecoration: 'underline', padding: 0, margin: 0, color: column.type === 'base' || column.type === 'baseReadonly' ? 'white' : 'black', textAlign: 'center'}}>LOT 보기</p>
         </div>
       </div>
     </>
@@ -196,6 +196,17 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
             <HeaderTableTextInput style={{width: 144}}>
               <HeaderTableText>EA</HeaderTableText>
             </HeaderTableTextInput>
+            {
+              column.type === 'base' &&
+              <>
+                  <HeaderTableTitle>
+                      <HeaderTableText style={{fontWeight: 'bold'}}>총 재고량</HeaderTableText>
+                  </HeaderTableTitle>
+                  <HeaderTableTextInput style={{width: 144}}>
+                      <HeaderTableText>55</HeaderTableText>
+                  </HeaderTableTextInput>
+              </>
+            }
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>총 납품 수량</HeaderTableText>
             </HeaderTableTitle>
@@ -236,16 +247,72 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               headerAlign={'center'}
             />
           </div>
-          <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
-            <div
-              onClick={() => {
-                setIsOpen(false)
-              }}
-              style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer'}}
-            >
-              <p>확인</p>
+          { column.type === "readonly" ?
+            <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
+              <div
+                onClick={() => {
+                  if (selectRow !== undefined && selectRow !== null) {
+                    onRowChange({
+                      ...row,
+                      ...searchList[selectRow],
+                      name: row.name,
+                      isChange: true
+                    })
+                  }
+                  setIsOpen(false)
+                }}
+                style={{
+                  width: '100%',
+                  height: 40,
+                  backgroundColor: POINT_COLOR,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <p>확인</p>
+              </div>
             </div>
-          </div>
+            : <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
+              <div
+                onClick={() => {
+                  setIsOpen(false)
+                }}
+                style={{
+                  width: 888,
+                  height: 40,
+                  backgroundColor: '#b3b3b3',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <p>취소</p>
+              </div>
+              <div
+                onClick={() => {
+                  if (selectRow !== undefined && selectRow !== null) {
+                    onRowChange({
+                      ...row,
+                      ...searchList[selectRow],
+                      name: row.name,
+                      isChange: true
+                    })
+                  }
+                  setIsOpen(false)
+                }}
+                style={{
+                  width: 888,
+                  height: 40,
+                  backgroundColor: POINT_COLOR,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <p>선택 완료</p>
+              </div>
+            </div>}
         </div>
       </Modal>
     </SearchModalWrapper>

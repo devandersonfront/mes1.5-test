@@ -70,6 +70,24 @@ export const BomRegisterInit = {
   tableMoveButton: 'BOM 수정'
 }
 
+export const BomInfoInit = {
+  title: 'BOM정보 (해당 제품을 만드는데 사용할 자재를 선택해주세요. 자재 정보가 없으면 BOM 수정 버튼을 눌러 BOM 정보를 수정해주세요)',
+  buttonText: 'BOM 보기',
+  modalKey: 'bomRegister',
+  summaryInfo: [
+    [{title: '고객사명', infoWidth: 144, key: 'customer'}, {title: '모델', infoWidth: 144, key: 'model'},],
+    [
+      {title: 'CODE', infoWidth: 144, key: 'code'},
+      {title: '품명', infoWidth: 144, key: 'name'},
+      {title: '품목 종류', infoWidth: 144, key: 'type'},
+      {title: '생산 공정', infoWidth: 144, key: 'process'},
+    ],
+    [{title: '단위', infoWidth: 144, key: 'unit'},{title: '목표 생산량', infoWidth: 144, key: 'goal'},],
+  ],
+  // tableMoveButton: 'BOM 수정'
+  readonly: true
+}
+
 export interface InfoInitType {
   existText?: string //값이 있을 때 텍스트
   buttonText?: string //값이 없을 때 텍스트

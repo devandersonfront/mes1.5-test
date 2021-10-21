@@ -48,37 +48,47 @@ export const AUTHORITY_LIST = [
           { title: "유저 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_HR_01" },
           { title: "권한 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_HR_02" },
         ] },
-      { title: "고객사 관리", show: false, checkable: true, check: false, child: [
-          { title: "고객사 정보 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_01" },
-          { title: "고객사 모델 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_08" },
+      { title: "공장 기본정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_11"},
+      { title: "거래처 관리", show: false, checkable: true, check: false, child: [
+          { title: "거래처 정보 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_01" },
+          { title: "모델 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_08" },
         ]},
       { title: "공정 관리", show: false, checkable: true, check: false, child: [
           { title: "공정 종류 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_02" },
-          { title: "일시정지 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_09" },
+          { title: "공정 일시정지 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_09" },
         ]},
-      { title: "품질 기본 정보", show: false, checkable: true, check: false, child: [
+      { title: "품질 기본정보", show: false, checkable: true, check: false, child: [
           { title: "공정별 불량 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_03" },
         ]},
+      { title: "주변장치 기본정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_12" },
       { title: "기계 기본 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_04" },
-      { title: "제품 등록 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_05" },
-      { title: "원자재 기본 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_06" },
       { title: "금형 기본 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_07" },
+      { title: "원자재 기본 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_06" },
+      { title: "원자재 기본 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_13" },
+      { title: "제품 등록 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_05" },
     ] },
   {
     title: "MES", show: false, checkable: false,
     child: [
+      { title: "영업 관리", show: false, checkable: true, check: false, child: [
+          { title: "수주 정보 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_SALES_01" },
+          { title: "수주 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_SALES_02" },
+          { title: "납품 정보 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_SALES_03" },
+          { title: "납품 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_SALES_04" },
+        ] },
       { title: "생산 관리", show: false, checkable: true, check: false, child: [
           { title: "작업지시서 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_01" },
           { title: "작업지시서 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_02" },
-          { title: "작업완료 등록(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_05" },
-          { title: "작업완료 등록(작업자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_03" },
-          { title: "작업완료 리스트(합산)", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_07" },
-          { title: "작업완료 리스트(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_06" },
-          { title: "작업완료 리스트(작업자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_04" },
+          { title: "작업일보 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_04" },
+          { title: "작업완료 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_06" },
         ] },
       { title: "원자재 관리", show: false, checkable: true, check: false, child: [
           { title: "원자재 입고 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_RMAT_01" },
           { title: "원자재 재고 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_RMAT_02" },
+        ] },
+      { title: "부자재 관리", show: false, checkable: true, check: false, child: [
+          { title: "부자재 입고 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_WIP_01" },
+          { title: "부자재 재고 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_WIP_02" },
         ] },
       { title: "품질 관리", show: false, checkable: true, check: false, child: [
           { title: "불량 통계", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_01" },
@@ -88,14 +98,14 @@ export const AUTHORITY_LIST = [
           { title: "생산/납품 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_STK_02" },
           { title: "생산/납품 현황(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_STK_03" },
         ] },
-      { title: "납품 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_SHPT_01" },
-      { title: "KPI",     show: false, checkable: true, check: false, child: [
-          { title: "생산지수(P)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_01" },
-          { title: "품질지수(Q)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_02" },
-          { title: "원가지수(C)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_03" },
-          { title: "납기지수(D)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_04" },
-          { title: "에너지지수(E)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_05" },
-        ] },
+      // { title: "납품 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_SHPT_01" },
+      // { title: "KPI",     show: false, checkable: true, check: false, child: [
+      //     { title: "생산지수(P)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_01" },
+      //     { title: "품질지수(Q)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_02" },
+      //     { title: "원가지수(C)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_03" },
+      //     { title: "납기지수(D)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_04" },
+      //     { title: "에너지지수(E)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_05" },
+      //   ] },
     ]
   },
   { title: "PMS", show: false, checkable: false,
@@ -130,15 +140,15 @@ export const AUTHORITY_LIST = [
         ] },
     ]
   },
-  {
-    title: "Setting", show: false, checkable: false,
-    child: [
-      { title: "공지사항", show: false, checkable: true, check: false, child: [], value: "ROLE_SET_01" },
-      { title: "버전관리", show: false, checkable: true, check: false, child: [], value: "ROLE_SET_02" },
-      { title: "Q&A", show: false, checkable: true, check: false, child: [], value: "ROLE_SET_03" },
-      { title: "사용 설명서", show: false, checkable: true, check: false, child: [], value: "ROLE_SET_04" },
-    ]
-  }
+  // {
+  //   title: "Setting", show: false, checkable: false,
+  //   child: [
+  //     { title: "공지사항", show: false, checkable: true, check: false, child: [], value: "ROLE_SET_01" },
+  //     { title: "버전관리", show: false, checkable: true, check: false, child: [], value: "ROLE_SET_02" },
+  //     { title: "Q&A", show: false, checkable: true, check: false, child: [], value: "ROLE_SET_03" },
+  //     { title: "사용 설명서", show: false, checkable: true, check: false, child: [], value: "ROLE_SET_04" },
+  //   ]
+  // }
 ]
 
 const MACHINE_CODE = [

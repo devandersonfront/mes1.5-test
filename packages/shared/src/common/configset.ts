@@ -19,7 +19,7 @@ export const BUTTON_TEXT_COLOR: string = '#ffffff' as const
 export const BG_COLOR_SUB3: string = '#353b48' as const
 export const POINT_COLOR_3: string = '#e7e9eb' as const
 
-export const SF_ADDRESS = "3.35.51.217"
+export const SF_ADDRESS = "15.164.129.67"
 
 export const isLocalhost = () => {
   //@ts-ignore
@@ -31,7 +31,7 @@ export const isLocalhost = () => {
 }
 
 // export const SF_ENDPOINT = `http://${isLocalhost()}:9910`
-export const SF_ENDPOINT = `http://${isLocalhost()}:8299`
+export const SF_ENDPOINT = `http://${isLocalhost()}:8443`
 export const SF_ENDPOINT_EXCEL = `http://${isLocalhost()}:8399`
 export const SF_ENDPOINT_ADMIN = `http://${isLocalhost()}:8286/api`
 export const SF_ENDPOINT_FILE = `http://${isLocalhost()}:8099`

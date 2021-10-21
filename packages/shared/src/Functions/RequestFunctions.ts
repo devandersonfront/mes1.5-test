@@ -242,7 +242,7 @@ const ApiList = {
   itemDelete: `/api/v1/items/delete`,
 
   //all
-  authorityAll: `/api/v1/member/auth/all`,
+  authorityAll: `/api/v1/auth/all`,
 
   //fetch
   summaryFetch: `/api/v1/stock/summary/fetch`,

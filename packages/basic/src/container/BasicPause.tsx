@@ -289,7 +289,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
 
   return (
     <div>
-      <PageHeader title={"일시정지 유형 등록"} />
+      <PageHeader title={"공정 일시정지 유형 등록"} />
       <div style={{marginTop:15}}>
         <ExcelTable
           editable
@@ -306,7 +306,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
                         <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
                             {processBasicRow[selectRow] && processBasicRow[selectRow].name}
                         </span>
-          <ButtonGroup buttons={["엑셀로 업로드", "엑셀로 받기", "행 추가", "저장하기", "삭제"]} buttonsOnclick={buttonEvents}/>
+          <ButtonGroup buttons={["엑셀로 등록", "엑셀로 받기", "행 추가", "저장하기", "삭제"]} buttonsOnclick={buttonEvents}/>
         </div>
         <ExcelTable
           editable

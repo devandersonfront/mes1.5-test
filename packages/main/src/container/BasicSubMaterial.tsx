@@ -398,7 +398,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"부자재 기본정보 등록"}
+          title={"부자재 기본정보"}
           buttons={
             ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }

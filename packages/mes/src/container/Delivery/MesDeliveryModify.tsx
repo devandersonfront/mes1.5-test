@@ -34,7 +34,7 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     name: "", id: "", start_date: moment().format('YYYY-MM-DD'),
-    limit_date: moment().format('YYYY-MM-DD')
+    delivery_date: moment().format('YYYY-MM-DD')
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["deliveryModify"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())

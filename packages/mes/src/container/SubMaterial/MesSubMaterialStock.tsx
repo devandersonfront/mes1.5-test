@@ -41,7 +41,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["substockV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처'])
+  const [optionList, setOptionList] = useState<string[]>(['부자재 CODE', '부자재 품명', '재질', '부자재 LOT 번호', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -419,7 +419,12 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
           ['엑셀로 받기', '수정하기', '저장하기', '삭제']
         }
         buttonsOnclick={
-          () => {}
+          (e) => {
+            switch(e) {
+              case 0:
+                router.push('/mes/submaterialV1u/modify')
+            }
+          }
           // onClickHeaderButton
         }
       />

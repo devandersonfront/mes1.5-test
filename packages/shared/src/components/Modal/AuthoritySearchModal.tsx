@@ -69,15 +69,10 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.map((row: any, index: number) => {
+    if(res){
+      let searchList = res.map((row: any, index: number) => {
+        console.log(row)
         return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
       })
 
       setSearchList([...searchList])

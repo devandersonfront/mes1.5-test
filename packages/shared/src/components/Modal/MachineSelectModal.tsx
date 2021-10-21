@@ -213,7 +213,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-                {/*<p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 금형 리스트 (여려금형을 동시에 선택하여 사용할 수 있습니다)</p>*/}
+                <p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 기계 리스트</p>
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>

@@ -40,6 +40,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return result.data
         })
         .catch((error) => {
+          console.log(error)
           if(error.response.status === 406 || error.response.status === 401) {
             return {
               state: 401
@@ -59,11 +60,11 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
 
       return Axios.post(postUrl, data, token && {'headers': {'Authorization': token}, responseType: contentsType})
         .then((result) => {
-          if(result.data.status !== 200 ){
-            Notiflix.Report.failure('저장할 수 없습니다.', result.data.message, '확인')
-            return false
+          if(result.data){
+            return result.data
+          }else{
+            return true
           }
-          return result.data
         })
         .catch((error) => {
           if(error.response.status === 400) {
@@ -91,11 +92,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         data: data
       })
         .then((result) => {
-          if(result.data.status !== 200){
-            Notiflix.Report.failure('삭제할 수 없습니다.', result.data.message, '확인')
-            return false
-          }
-          return result
+          return true
         })
         .catch((error) => {
           if(error.response.status === 400) {
@@ -171,6 +168,7 @@ const ApiList = {
   authorityUpdate: `/api/v1/member/auth/update`,
 
   //save
+  authoritySave: `/api/v1/auth/save`,
   memberSave: `/api/v1/member/save`,
   customerSave: `/api/v1/customer/save`,
   modelSave: `/api/v1/customer/model/save`,
@@ -199,7 +197,7 @@ const ApiList = {
   operationRecent:`/api/v1/operation/recent`,
 
   //delete
-  authorityDelete: `/api/v1/member/auth/delete`,
+  authorityDelete: `/api/v1/auth/delete`,
   memberDelete: `/api/v1/member/delete`,
   customerDelete: `/api/v1/customer/delete`,
   modelDelete: `/api/v1/customer/model/delete`,
@@ -238,6 +236,7 @@ const ApiList = {
   shipmentList: '/api/v1/shipment/list',
   recordList: `/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
+  factoryList: `/api/v1/factory/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -266,7 +265,7 @@ const ApiList = {
   itemDelete: `/api/v1/items/delete`,
 
   //all
-  authorityAll: `/api/v1/member/auth/all`,
+  authorityAll: `/api/v1/auth/all`,
 
   //fetch
   summaryFetch: `/api/v1/stock/summary/fetch`,

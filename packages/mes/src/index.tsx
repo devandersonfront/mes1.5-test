@@ -24,3 +24,5 @@ export {MesRawMaterialStockModify} from './container/RawMaterial/MesRawMaterialS
 export {MesSubMaterialInput} from './container/SubMaterial/MesSubMaterialInput'
 export {MesSubMaterialStock} from './container/SubMaterial/MesSubMaterialStock'
 export {MesSubMaterialStockModify} from './container/SubMaterial/MesSubMaterialStockModify'
+//품질관리
+export {MesQualityDefect} from './container/Quality/MesQualityDefect'

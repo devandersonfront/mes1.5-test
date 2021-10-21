@@ -11,7 +11,7 @@ interface IProps {
 }
 
 const AddTabButton = ({ row, column, onRowChange}: IProps) => {
-  const [title, setTitle] = useState<string>("BOM 보기")
+  const [title, setTitle] = useState<string>(column.key === 'lot' ? "LOT 보기" : "BOM 보기")
 
   return (
     <div style={{

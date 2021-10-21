@@ -416,10 +416,15 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         setSelectDate={setSelectDate}
         title={"원자재 재고 현황"}
         buttons={
-          ['엑셀로 받기', '수정하기', '저장하기', '삭제']
+          [ '수정하기', '저장하기', '삭제']
         }
         buttonsOnclick={
-          () => {}
+          (e) => {
+            switch(e) {
+              case 0:
+                router.push('/mes/rawmaterialV1u/modify')
+            }
+          }
           // onClickHeaderButton
         }
       />

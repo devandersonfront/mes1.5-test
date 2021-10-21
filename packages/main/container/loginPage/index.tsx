@@ -4,7 +4,7 @@ import DefaultButton from '../../component/DefaultButton'
 import WelcomeInput from '../../component/InputBox/WelcomeInput'
 import WelcomeContainer from '../../component/Welcome/WelcomeContainer'
 import { useRouter } from 'next/router'
-import { requestApi } from '../../common/RequestFunctions'
+import { requestApi } from 'shared'
 import { IResponseType } from '../../common/@types/type'
 import { setToken } from '../../common/tokenManager'
 import Notiflix from 'notiflix'
@@ -30,19 +30,15 @@ const LoginPage: NextPage<IProps> = ({children, data, setData }) => {
 
   const onClickLogin = async () => {
     Notiflix.Loading.dots('MES System 접속 중...')
-    const res:IResponseType = await requestApi('post', '/anonymous/login', data)
+    const res = await requestApi('post', '/anonymous/login', data)
 
     if(res) {
-      if(res.status === 200) {
-        setToken( res.results )
-        dispatch(setUserInfoAction({
-          name: res.results.name,
-          profile: res.results.profilePath
-        }))
-        router.push('/mes/dashboard').then()
-      } else {
-        alert(res.message)
-      }
+      setToken( res )
+      dispatch(setUserInfoAction({
+        name: res.name,
+        profile: res.profilePath
+      }))
+      router.push('/mes/dashboard').then()
     }
   }
 
