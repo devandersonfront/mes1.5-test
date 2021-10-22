@@ -14,7 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import {UnitBox, UnitValue, UnitWrapper, UploadButton} from '../../styles/styledComponents'
 import Notiflix from 'notiflix'
-import UnitContainer from '../Unit/UnitContainer'
+import {UnitContainer} from '../Unit/UnitContainer'
 
 interface IProps {
   column: IExcelHeaderType
