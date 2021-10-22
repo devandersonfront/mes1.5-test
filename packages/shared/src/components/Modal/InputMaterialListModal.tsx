@@ -334,7 +334,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={searchModalList.InputLotInfo}
+              headerList={column.type === 'readonly' ? searchModalList.InputLotReadonlyInfo : searchModalList.InputLotInfo}
               row={searchList ?? [{}]}
               setRow={(e) => {
                 let tmp = e.map((v, index) => {

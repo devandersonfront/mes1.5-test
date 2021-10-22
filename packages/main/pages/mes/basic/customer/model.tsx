@@ -37,13 +37,4 @@ export const getServerSideProps = (ctx: NextPageContext) => {
     }
 }
 
-// BasicContainer.getInitialProps = async ({ query }) => {
-//     let { page, keyword, opt } = query
-//     if (typeof page === 'string')
-//         page = parseInt(page);
-//     if (typeof opt === 'string')
-//         opt = parseInt(opt);
-//     return { page, keyword, option: opt };
-// }
-
 export default BasicContainer;

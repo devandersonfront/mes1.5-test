@@ -14,6 +14,9 @@ import Search_icon from '../../../../public/images/btn_search.png'
 import {RequestMethod} from '../../../common/RequestFunctions'
 import {SearchInit} from './SearchModalInit'
 import {MoldRegisterModal} from '../MoldRegisterModal'
+import Notiflix from 'notiflix'
+import {SearchModalResult, SearchResultSort} from '../../../Functions/SearchResultSort'
+
 
 interface IProps {
   column: IExcelHeaderType
@@ -44,6 +47,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }, [column.type])
 
+  useEffect(() => {
+    if(isOpen){
+      LoadBasic();
+    }
+  }, [isOpen])
+
   const getContents = () => {
     if(row[`${column.key}`]){
       return row[column.key]
@@ -56,6 +65,21 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }
 
+  const LoadBasic = async (page?: number) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `${column.type}Search`,{
+      path: {
+        page: 1,
+        renderItem: 18,
+      }
+    })
+
+    if(res){
+      setSearchList([...SearchResultSort(res.info_list, column.type)])
+      Notiflix.Loading.remove()
+    }
+
+  }
 
   return (
     <SearchModalWrapper >
@@ -200,6 +224,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     searchList[e].border = true
                     setSearchList([...searchList])
                   }
+                  console.log(searchList[e])
                   setSelectRow(e)
                 }}
                 type={'searchModal'}
@@ -218,6 +243,11 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
+                onRowChange({
+                  ...row,
+                  ...SearchModalResult(searchList[selectRow], column.type),
+                  name: row.name
+                })
               }}
               style={{backgroundColor: POINT_COLOR}}
             >

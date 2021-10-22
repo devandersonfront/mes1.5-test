@@ -81,11 +81,11 @@ export const columnlist: any = {
   factory: [
     {key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력'},
     {key: 'address', name: '공장 주소', width: 480, editor: TextEditor},
-    {key: 'manager', name: '담당자', width: 120, formatter: SearchModalTest, type: 'member'},
+    {key: 'manager', name: '담당자', width: 120, formatter: SearchModalTest, type: 'user'},
     {key: 'appointment', name: '직책', width: 120, editor: TextEditor, formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: 'cellphone', name: '전화번호', width: 120, editor: TextEditor, formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: 'fax', name: '비고', width: 120, editor: TextEditor, formatter: PlaceholderBox, placeholder: '내용 입력'},
-    {key: 'segment', name: '공장 세분화', width: 120, formatter: InfoModal, type: 'factoryRegister', summaryType: 'factory'},
+    {key: 'telephone', name: '전화번호', width: 120, editor: TextEditor, formatter: PlaceholderBox, placeholder: '자동 입력'},
+    {key: 'description', name: '비고', width: 120, editor: TextEditor, formatter: PlaceholderBox, placeholder: '내용 입력'},
+    {key: 'affiliated_id', name: '공장 세분화', width: 120, formatter: InfoModal, type: 'factoryRegister', summaryType: 'factory'},
   ],
   customer: [
     {key: 'name', editor: TextEditor},
@@ -99,7 +99,7 @@ export const columnlist: any = {
     {key: 'photo', formatter: FileEditer},
   ],
   model: [
-    {key: 'customer', formatter: SearchModalTest, type: 'customer'},
+    {key: 'customer_id', formatter: SearchModalTest, type: 'customer'},
     {key: 'crn'},
     {key: 'model', editor: TextEditor},
   ],

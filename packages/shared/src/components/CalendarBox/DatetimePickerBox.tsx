@@ -85,6 +85,7 @@ const DatetimePickerBox = ({ row, column, onRowChange, onClose }: IProps) => {
 
   return (
     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>
+
       <ThemeProvider theme={darkTheme}>
       <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
         <DateTimePicker

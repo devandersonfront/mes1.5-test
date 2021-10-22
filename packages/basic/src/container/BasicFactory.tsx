@@ -45,18 +45,18 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
-  // useEffect(() => {
-  //   setOptionIndex(option)
-  //   if(keyword){
-  //     SearchBasic(keyword, option, page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }else{
-  //     LoadBasic(page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [page, keyword, option])
+  useEffect(() => {
+    setOptionIndex(option)
+    if(keyword){
+      SearchBasic(keyword, option, page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }else{
+      LoadBasic(page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }
+  }, [page, keyword, option])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -113,9 +113,8 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
     let res: any
-    res = await RequestMethod('post', `moldSave`,
-      {
-        ['molds']: basicRow.map((row, i) => {
+    res = await RequestMethod('post', `factorySave`,
+      basicRow.map((row, i) => {
           if(selectList.has(row.id)){
             let selectKey: string[] = []
             let additional:any[] = []
@@ -129,34 +128,9 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
               }
             })
 
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-            })
-
             return {
               ...row,
-              ...selectData,
+              manager: row.user,
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -172,26 +146,74 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v)
-      })
+        }).filter((v) => v))
 
 
     if(res){
-      if(res.status === 200){
-        Notiflix.Report.success('저장되었습니다.','','확인');
-        if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+      Notiflix.Report.success('저장되었습니다.','','확인');
+      if(keyword){
+        SearchBasic(keyword, option, page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }else{
+        LoadBasic(page).then(() => {
+          Notiflix.Loading.remove()
+        })
       }
     }
   }
 
+  const DeleteBasic = async () => {
+
+    const res = await RequestMethod('delete', `factoryDelete`,
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
+
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          return {
+            ...row,
+            manager: row.user,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
+          }
+
+        }
+      }).filter((v) => v))
+
+    if(res) {
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      if(keyword){
+        SearchBasic(keyword, option, page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }else{
+        LoadBasic(page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }
+    }
+
+  }
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
@@ -222,7 +244,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `factorySearch`,{
       path: {
         page: isPaging ?? 1,
         renderItem: 18,
@@ -244,11 +266,11 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
   }
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["mold"];
+    let tmpColumn = columnlist["factory"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
-      res.results.menus && res.results.menus.map((menu: any) => {
+      res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
             id: menu.id,
@@ -276,7 +298,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       }
     }).filter((v:any) => v)
 
-    let additionalMenus = res.results.menus ? res.results.menus.map((menu:any) => {
+    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
           id: menu.id,
@@ -291,7 +313,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     }).filter((v: any) => v) : []
 
 
-    tmpRow = res.results.info_list
+    tmpRow = res.info_list
 
 
     loadAllSelectItems( [
@@ -334,24 +356,11 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
 
       let random_id = Math.random()*1000;
       return {
-        cm_id:(index === 0 || row.ppd.seq === 1) ? row.product.raw_material.model.model : undefined,
-        cm_idPK:row.product.raw_material.model.cm_id,
-        mold_id:row.mold_id,
-        mold_name:row.ppd.mold_name,
-        limit:row.limit,
-        inspect:row.inspect,
-        current:row.current,
-        customer_id: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.model.customer.name : undefined,
-        customer_idPK: row.product.raw_material.model.customer.customer_id,
-        code: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.code : undefined,
-        name: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.name : undefined,
-        seq: row.ppd.seq,
-        cavity: row.ppd.cavity,
-        spm: row.spm,
-        slideHeight: row.slideHeight,
-        process_id: row.ppd.process.name,
-        ...appendAdditional,
-        id: `mold_${random_id}`,
+        ...row,
+        user: row.member ?? undefined,
+        managerPk: row.member ? row.member.name : '',
+        manager: row.member ? row.member.user_id : '',
+        id: `factory_${random_id}`,
       }
     })
 
@@ -378,6 +387,23 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         break;
       case 2:
         SaveBasic()
+        break;
+      case 3:
+        let items = {}
+
+        const random_id = Math.random()*1000
+
+        setBasicRow([
+          {
+            ...items,
+            id: `factory_${random_id}`,
+            additional: [],
+          },
+          ...basicRow
+        ])
+        break;
+      case 4:
+        SaveBasic();
         break;
     }
   }

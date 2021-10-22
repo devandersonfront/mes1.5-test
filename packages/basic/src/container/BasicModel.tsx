@@ -80,7 +80,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
 
         let pk = "";
 
-        res.results.info_list && res.results.info_list.length && Object.keys(res.results.info_list[0]).map((v) => {
+        res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
           if(v.indexOf('_id') !== -1){
             pk = v
           }
@@ -88,7 +88,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
 
         return {
           ...v,
-          selectList: [...res.results.info_list.map((value: any) => {
+          selectList: [...res.info_list.map((value: any) => {
             return {
               ...value,
               name: value.name,
@@ -126,8 +126,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
   const SaveBasic = async () => {
     let res: any
     res = await RequestMethod('post', `modelSave`,
-      {
-        ['models']: basicRow.map((row, i) => {
+      basicRow.map((row, i) => {
           if(selectList.has(row.id)){
             let selectKey: string[] = []
             let additional:any[] = []
@@ -169,6 +168,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
             return {
               ...row,
               ...selectData,
+              customer: row.customerArray,
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -184,8 +184,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v)
-      })
+        }).filter((v) => v))
 
 
     if(res){
@@ -252,16 +251,16 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
-      if(res.results.totalPages < page){
+    if(res){
+      if(res.totalPages < page){
         LoadBasic(page - 1).then(() => {
           Notiflix.Loading.remove()
         })
       }else{
         setPageInfo({
           ...pageInfo,
-          page: res.results.page,
-          total: res.results.totalPages
+          page: res.page,
+          total: res.totalPages
         })
         cleanUpData(res)
       }
@@ -292,8 +291,8 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     if(res && res.status === 200){
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages
+        page: res.page,
+        total: res.totalPages
       })
       cleanUpData(res)
     }
@@ -333,7 +332,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
-      res.results.menus && res.results.menus.map((menu: any) => {
+      res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
             id: menu.id,
@@ -363,7 +362,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       }
     }).filter((v:any) => v)
 
-    let additionalMenus = res.results.menus ? res.results.menus.map((menu:any) => {
+    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
           id: menu.id,
@@ -378,7 +377,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     }).filter((v: any) => v) : []
 
 
-    tmpRow = res.results.info_list
+    tmpRow = res.info_list
 
     loadAllSelectItems( [
       ...tmpColumn,

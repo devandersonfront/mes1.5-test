@@ -67,7 +67,6 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
           <BoxWrap style={{backgroundColor: 'white', flexDirection: 'row', display: 'flex'}}>
             <div  style={{display: 'inline-block', float: 'left', flex: 1, marginRight: 20}}>
               <Calendar
-
                 maxDate={column.maxDate ? new Date() : moment('2999-12-31').subtract(1, 'days').toDate() }
                 onChange={(date) => {
                   setSelect(date)

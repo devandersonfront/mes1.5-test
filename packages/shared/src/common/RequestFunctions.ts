@@ -171,7 +171,7 @@ const ApiList = {
   authoritySave: `/api/v1/auth/save`,
   memberSave: `/api/v1/member/save`,
   customerSave: `/api/v1/customer/save`,
-  modelSave: `/api/v1/customer/model/save`,
+  modelSave: `/api/v1/model/save`,
   processSave: `/api/v1/process/save`,
   machineSave: `/api/v1/machine/save`,
   productSave: `/api/v1/product/save`,
@@ -186,6 +186,7 @@ const ApiList = {
   operationSave: `/api/v1/operation/save`,
   shipmentSave: `/api/v1/shipment/save`,
   recordSave: `/api/v1/record/save`,
+  factorySave: `/api/v1/factory/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -200,7 +201,7 @@ const ApiList = {
   authorityDelete: `/api/v1/auth/delete`,
   memberDelete: `/api/v1/member/delete`,
   customerDelete: `/api/v1/customer/delete`,
-  modelDelete: `/api/v1/customer/model/delete`,
+  modelDelete: `/api/v1/model/delete`,
   processDelete: `/api/v1/process/delete`,
   machineDelete: `/api/v1/machine/delete`,
   productDelete: `/api/v1/product/delete`,
@@ -212,12 +213,13 @@ const ApiList = {
   operationDelete: `/api/v1/operation/delete`,
   shipmentDelete: '/api/v1/shipment/delete',
   stockSummaryDelete: `/api/v1/stock/summary/delete`,
+  factoryDelete: `api/v1/factory/delete`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,
   memberList: `/api/v1/member/list`,
   customerList: `/api/v1/customer/list`,
-  modelList: `/api/v1/customer/model/list`,
+  modelList: `/api/v1/model/list`,
   processList: `/api/v1/process/list`,
   machineList: `/api/v1/machine/list`,
   productList: `/api/v1/product/list`,
@@ -240,8 +242,9 @@ const ApiList = {
 
   //search
   memberSearch: `/api/v1/member/search`,
+  userSearch: `/api/v1/member/search`,
   customerSearch: `/api/v1/customer/search`,
-  modelSearch: `/api/v1/customer/model/search`,
+  modelSearch: `/api/v1/model/search`,
   processSearch: `/api/v1/process/search`,
   machineSearch: `/api/v1/machine/search`,
   productSearch: `/api/v1/product/search`,
@@ -256,6 +259,7 @@ const ApiList = {
   recordSearch: `/api/v1/record/search`,
   shipmentSearch: `/api/v1/shipment/search`,
   recordSumSearch: `/api/v1/record/summation/search`,
+  factorySearch: `/api/v1`,
 
   recordDefect: `/api/v1/record/defect`,
   recordPause: `/api/v1/record/pause`,
