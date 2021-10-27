@@ -45,18 +45,18 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
-  // useEffect(() => {
-  //   setOptionIndex(option)
-  //   if(keyword){
-  //     SearchBasic(keyword, option, page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }else{
-  //     LoadBasic(page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [page, keyword, option])
+  useEffect(() => {
+    setOptionIndex(option)
+    if(keyword){
+      SearchBasic(keyword, option, page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }else{
+      LoadBasic(page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }
+  }, [page, keyword, option])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -76,14 +76,14 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
         let pk = "";
 
-        res.results.info_list && res.results.info_list.length && Object.keys(res.results.info_list[0]).map((v) => {
+        res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
           if(v.indexOf('_id') !== -1){
             pk = v
           }
         })
         return {
           ...v,
-          selectList: [...res.results.info_list.map((value: any) => {
+          selectList: [...res.info_list.map((value: any) => {
             return {
               ...value,
               name: tmpKey === 'model' ? value.model : value.name,
@@ -113,9 +113,8 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
     let res: any
-    res = await RequestMethod('post', `moldSave`,
-      {
-        ['molds']: basicRow.map((row, i) => {
+    res = await RequestMethod('post', `machineSave`,
+      basicRow.map((row, i) => {
           if(selectList.has(row.id)){
             let selectKey: string[] = []
             let additional:any[] = []
@@ -172,22 +171,19 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v)
-      })
+        }).filter((v) => v))
 
 
     if(res){
-      if(res.status === 200){
-        Notiflix.Report.success('저장되었습니다.','','확인');
-        if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+      Notiflix.Report.success('저장되었습니다.','','확인');
+      if(keyword){
+        SearchBasic(keyword, option, page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }else{
+        LoadBasic(page).then(() => {
+          Notiflix.Loading.remove()
+        })
       }
     }
   }
@@ -195,18 +191,18 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `moldList`,{
+    const res = await RequestMethod('get', `machineList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages
+        page: res.page,
+        total: res.totalPages
       })
       cleanUpData(res)
     }else if (res.state === 401) {
@@ -236,19 +232,19 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     if(res && res.status === 200){
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages
+        page: res.page,
+        total: res.totalPages
       })
       cleanUpData(res)
     }
   }
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["mold"];
+    let tmpColumn = columnlist["machineV2"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
-      res.results.menus && res.results.menus.map((menu: any) => {
+      res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
             id: menu.id,
@@ -276,7 +272,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       }
     }).filter((v:any) => v)
 
-    let additionalMenus = res.results.menus ? res.results.menus.map((menu:any) => {
+    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
           id: menu.id,
@@ -291,7 +287,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     }).filter((v: any) => v) : []
 
 
-    tmpRow = res.results.info_list
+    tmpRow = res.info_list
 
 
     loadAllSelectItems( [
@@ -369,16 +365,55 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch(index){
       case 0:
-        setExcelOpen(true)
+        // setExcelUploadOpen(true)
         break;
       case 1:
-
-        router.push(`/mes/item/manage/mold`)
-
+        setExcelOpen(true)
         break;
       case 2:
-        SaveBasic()
+        router.push(`/mes/item/manage/process`)
         break;
+      case 3:
+        let items = {}
+
+        column.map((value) => {
+          if(value.selectList && value.selectList.length){
+            items = {
+              ...value.selectList[0],
+              [value.key] : value.selectList[0].name,
+              [value.key+'PK'] : value.selectList[0].pk, //여기 봐야됨!
+              ...items,
+            }
+          }
+        })
+
+        const random_id = Math.random()*1000
+
+        setBasicRow([
+          {
+            ...items,
+            id: `process_${random_id}`,
+            name: null,
+            additional: [],
+          },
+          ...basicRow
+        ])
+        break;
+
+      case 4:
+        SaveBasic()
+
+        break;
+      case 5:
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          ()=>{
+            // DeleteBasic()
+          },
+          ()=>{}
+        )
+
+        break;
+
     }
   }
 
@@ -403,10 +438,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           buttons={
             ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }
-          buttonsOnclick={
-            () => {}
-            // onClickHeaderButton
-          }
+          buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
           editable

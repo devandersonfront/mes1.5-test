@@ -133,7 +133,7 @@ export const columnlist: any = {
     {key: 'volt', editor: TextEditor, formatter: UnitContainer, unitData: 'V'},
   ],
   machineV2:[
-    {key: 'manufacturer',name: '기계 제조사',  editor: TextEditor, width: 118},
+    {key: 'mfrName',name: '기계 제조사',  editor: TextEditor, width: 118},
     {key: 'name', name: '기계 이름', editor: TextEditor, width: 118},
     {key: 'type', name: '기계 종류', formatter: DropDownEditor, selectList: [
         {pk: 0, name: "선택없음"},
@@ -168,7 +168,7 @@ export const columnlist: any = {
     {key: 'segmentFactory',name: '공장 세분화명', width: 118, formatter: SearchModalTest, type: 'segment',},
   ],
   device: [
-    {key: 'manufacturer', name: '장치 제조사', editor: TextEditor},
+    {key: 'mfrName', name: '장치 제조사', editor: TextEditor},
     {key: 'name', name: '장치 이름', editor: TextEditor},
     {key: 'type', name: '장치 종류', formatter: DropDownEditor, selectList: [
         {pk: 0, name: "선택없음"},

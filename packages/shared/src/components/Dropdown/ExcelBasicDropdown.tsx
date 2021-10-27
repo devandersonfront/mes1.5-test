@@ -14,6 +14,9 @@ interface IProps {
 }
 
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
+  useEffect(() => {
+    console.log(row[column.key])
+  }, [row[column.key]])
   return (
     <select
       className={'editDropdown'}

@@ -26,6 +26,17 @@ export interface IProps {
   option?: number
 }
 
+const deviceList = [
+  {pk: 0, name: "선택없음"},
+  {pk: 1, name: "미스피드 검출장치"},
+  {pk: 2, name: "하사점 검출장치"},
+  {pk: 3, name: "로드모니터"},
+  {pk: 4, name: "앵글시퀀서"},
+  {pk: 5, name: "엔코더"},
+  {pk: 6, name: "통관센서"},
+  {pk: 7, name: "유틸리티 센서"},
+]
+
 const BasicDevice = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
@@ -44,19 +55,18 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
-  // useEffect(() => {
-  //   setOptionIndex(option)
-  //   if(keyword){
-  //     SearchBasic(keyword, option, page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }else{
-  //     LoadBasic(page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [page, keyword, option])
-
+  useEffect(() => {
+    setOptionIndex(option)
+    if(keyword){
+      SearchBasic(keyword, option, page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }else{
+      LoadBasic(page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }
+  }, [page, keyword, option])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -75,14 +85,14 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
 
         let pk = "";
 
-        res.results.info_list && res.results.info_list.length && Object.keys(res.results.info_list[0]).map((v) => {
+        res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
           if(v.indexOf('_id') !== -1){
             pk = v
           }
         })
         return {
           ...v,
-          selectList: [...res.results.info_list.map((value: any) => {
+          selectList: [...res.info_list.map((value: any) => {
             return {
               ...value,
               name: tmpKey === 'model' ? value.model : value.name,
@@ -112,9 +122,8 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
     let res: any
-    res = await RequestMethod('post', `moldSave`,
-      {
-        ['molds']: basicRow.map((row, i) => {
+    res = await RequestMethod('post', `deviceSave`,
+      basicRow.map((row, i) => {
           if(selectList.has(row.id)){
             let selectKey: string[] = []
             let additional:any[] = []
@@ -171,22 +180,19 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v)
-      })
+        }).filter((v) => v))
 
 
     if(res){
-      if(res.status === 200){
-        Notiflix.Report.success('저장되었습니다.','','확인');
-        if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+      Notiflix.Report.success('저장되었습니다.','','확인');
+      if(keyword){
+        SearchBasic(keyword, option, page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }else{
+        LoadBasic(page).then(() => {
+          Notiflix.Loading.remove()
+        })
       }
     }
   }
@@ -194,18 +200,18 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `moldList`,{
+    const res = await RequestMethod('get', `deviceList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages
+        page: res.page,
+        total: res.totalPages
       })
       cleanUpData(res)
     }else if (res.state === 401) {
@@ -235,19 +241,19 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     if(res && res.status === 200){
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages
+        page: res.page,
+        total: res.totalPages
       })
       cleanUpData(res)
     }
   }
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["mold"];
+    let tmpColumn = columnlist["device"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
-      res.results.menus && res.results.menus.map((menu: any) => {
+      res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
             id: menu.id,
@@ -275,7 +281,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       }
     }).filter((v:any) => v)
 
-    let additionalMenus = res.results.menus ? res.results.menus.map((menu:any) => {
+    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
           id: menu.id,
@@ -290,8 +296,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     }).filter((v: any) => v) : []
 
 
-    tmpRow = res.results.info_list
-
+    tmpRow = res.info_list
 
     loadAllSelectItems( [
       ...tmpColumn,
@@ -332,24 +337,12 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       })
 
       let random_id = Math.random()*1000;
+      console.log(row.type)
       return {
-        cm_id:(index === 0 || row.ppd.seq === 1) ? row.product.raw_material.model.model : undefined,
-        cm_idPK:row.product.raw_material.model.cm_id,
-        mold_id:row.mold_id,
-        mold_name:row.ppd.mold_name,
-        limit:row.limit,
-        inspect:row.inspect,
-        current:row.current,
-        customer_id: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.model.customer.name : undefined,
-        customer_idPK: row.product.raw_material.model.customer.customer_id,
-        code: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.code : undefined,
-        name: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.name : undefined,
-        seq: row.ppd.seq,
-        cavity: row.ppd.cavity,
-        spm: row.spm,
-        slideHeight: row.slideHeight,
-        process_id: row.ppd.process.name,
+        ...row,
         ...appendAdditional,
+        type_id: row.type,
+        type: deviceList[row.type].name,
         id: `mold_${random_id}`,
       }
     })
@@ -365,19 +358,135 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     excelDownload(column, basicRow, `mold`, "mold", tmpSelectList)
   }
 
+  const DeleteBasic = async () => {
+    const res = await RequestMethod('delete', `deviceDelete`,
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
+
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          let selectData: any = {}
+
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
+              }
+            }
+
+            if(v === 'unitWeight') {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(row['unitWeight'])
+              }
+            }
+
+            if(v === 'tmpId') {
+              selectData = {
+                ...selectData,
+                id: row['tmpId']
+              }
+            }
+          })
+
+          return {
+            ...row,
+            ...selectData,
+            type: row.type_id,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
+          }
+
+        }
+      }).filter((v) => v))
+
+    if(res) {
+      Notiflix.Report.success('삭제 성공!', '', '확인', () => {
+        if(Number(page) === 1){
+          LoadBasic(1).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }else{
+          // if(keyword){
+          //   router.push(`/mes/basic/customer?page=1&keyword=${keyword}&opt=${option}`)
+          // }else{
+          //   router.push(`/mes/basic/customer?page=1`)
+          // }
+        }
+      })
+    }
+  }
+
   const onClickHeaderButton = (index: number) => {
     switch(index){
       case 0:
-        setExcelOpen(true)
+        // setExcelUploadOpen(true)
         break;
       case 1:
-
-        router.push(`/mes/item/manage/mold`)
-
+        setExcelOpen(true)
         break;
       case 2:
-        SaveBasic()
+        router.push(`/mes/item/manage/process`)
         break;
+      case 3:
+        let items = {}
+
+        column.map((value) => {
+          if(value.selectList && value.selectList.length){
+            items = {
+              ...value.selectList[0],
+              [value.key] : value.selectList[0].name,
+              [value.key+'PK'] : value.selectList[0].pk, //여기 봐야됨!
+              ...items,
+            }
+          }
+        })
+
+        const random_id = Math.random()*1000
+
+        setBasicRow([
+          {
+            ...items,
+            id: `process_${random_id}`,
+            name: null,
+            additional: [],
+          },
+          ...basicRow
+        ])
+        break;
+
+      case 4:
+        SaveBasic()
+
+        break;
+      case 5:
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          ()=>{DeleteBasic()},
+          ()=>{}
+        )
+
+        break;
+
     }
   }
 
@@ -402,10 +511,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
           buttons={
             ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }
-          buttonsOnclick={
-            () => {}
-            // onClickHeaderButton
-          }
+          buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
           editable

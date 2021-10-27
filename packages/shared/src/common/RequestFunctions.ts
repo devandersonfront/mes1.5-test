@@ -187,6 +187,7 @@ const ApiList = {
   shipmentSave: `/api/v1/shipment/save`,
   recordSave: `/api/v1/record/save`,
   factorySave: `/api/v1/factory/save`,
+  deviceSave: `/api/v1/device/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -213,7 +214,8 @@ const ApiList = {
   operationDelete: `/api/v1/operation/delete`,
   shipmentDelete: '/api/v1/shipment/delete',
   stockSummaryDelete: `/api/v1/stock/summary/delete`,
-  factoryDelete: `api/v1/factory/delete`,
+  factoryDelete: `/api/v1/factory/delete`,
+  deviceDelete: `/api/v1/device/delete`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,
@@ -239,6 +241,7 @@ const ApiList = {
   recordList: `/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
   factoryList: `/api/v1/factory/list`,
+  deviceList: `/api/v1/device/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,

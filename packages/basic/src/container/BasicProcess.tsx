@@ -60,8 +60,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
     let res = await RequestMethod('post', `processSave`,
-      {
-        processes: basicRow.map((row, i) => {
+      basicRow.map((row, i) => {
           if(selectList.has(row.id)){
             let selectKey: string[] = []
             let additional:any[] = []
@@ -80,8 +79,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
             return {
               ...row,
               ...selectData,
-              additional: [
-                ...additional.map(v => {
+              additional: additional.map(v => {
                   if(row[v.name]) {
                     return {
                       id: v.id,
@@ -91,12 +89,11 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
                     }
                   }
                 }).filter((v) => v)
-              ]
             }
 
           }
         }).filter((v) => v)
-      })
+    )
 
     if(res){
       if(res.status === 200){
@@ -159,16 +156,16 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
-      if(res.results.totalPages < page){
+    if(res){
+      if(res.totalPages < page){
         LoadBasic(page - 1).then(() => {
           Notiflix.Loading.remove()
         })
       }else{
         setPageInfo({
           ...pageInfo,
-          page: res.results.page,
-          total: res.results.totalPages
+          page: res.page,
+          total: res.totalPages
         })
         cleanUpData(res)
       }
@@ -252,7 +249,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
-      res.results.menus && res.results.menus.map((menu: any) => {
+      res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
             id: menu.id,
@@ -282,7 +279,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       }
     }).filter((v:any) => v)
 
-    let additionalMenus = res.results.menus ? res.results.menus.map((menu:any) => {
+    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
           id: menu.id,
@@ -303,7 +300,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       }
     }), ...additionalMenus])
 
-    tmpRow = res.results.info_list
+    tmpRow = res.info_list
 
     let additionalData: any[] = []
 
@@ -363,7 +360,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
             items = {
               ...value.selectList[0],
               [value.key] : value.selectList[0].name,
-              [value.key+'PK'] : value.selectList[0].pk,//여기 봐야됨!
+              [value.key+'PK'] : value.selectList[0].pk, //여기 봐야됨!
               ...items,
             }
           }
