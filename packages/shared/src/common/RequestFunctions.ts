@@ -31,6 +31,8 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           })
         }
       }
+
+      console.log(tmpUrl)
       return Axios.get(tmpUrl, token && {'headers': {'Authorization': token}, responseType: contentsType})
         .then((result) => {
           // if(result.data.status !== 200){
@@ -188,6 +190,8 @@ const ApiList = {
   recordSave: `/api/v1/record/save`,
   factorySave: `/api/v1/factory/save`,
   deviceSave: `/api/v1/device/save`,
+  rawMaterialSave: `/api/v1/raw-material/save`,
+  subMaterialSave: `/api/v1/sub-material/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -207,6 +211,8 @@ const ApiList = {
   machineDelete: `/api/v1/machine/delete`,
   productDelete: `/api/v1/product/delete`,
   rawmaterialDelete: `/api/v1/rawmaterial/delete`,
+  rawMaterialDelete: `/api/v1/raw-material/delete`,
+  subMaterialDelete: `/api/v1/sub-material/delete`,
   moldDelete: `/api/v1/mold/delete`,
   pauseDelete: `/api/v1/process/reason/pause/delete`,
   defectDelete: `/api/v1/process/reason/defect/delete`,
@@ -242,6 +248,8 @@ const ApiList = {
   recordSumList: `/api/v1/record/summation/list`,
   factoryList: `/api/v1/factory/list`,
   deviceList: `/api/v1/device/list`,
+  rawMaterialList: `/api/v1/raw-material/list`,
+  subMaterialList: `/api/v1/sub-material/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -278,5 +286,8 @@ const ApiList = {
   summaryFetch: `/api/v1/stock/summary/fetch`,
   excelDownload: `${SF_ENDPOINT_EXCEL}/api/v1/download`,
   excelFormatDownload: `${SF_ENDPOINT_EXCEL}/api/v1/format/download`,
-  excelUpload: `${SF_ENDPOINT_EXCEL}/api/v1/format/upload`
+  excelUpload: `${SF_ENDPOINT_EXCEL}/api/v1/format/upload`,
+
+  bomLoad: `/api/v1/bom`,
+  bomSave: `/api/v1/bom/save`,
 }

@@ -26,6 +26,16 @@ export interface IProps {
   option?: number
 }
 
+const machineList = [
+  {pk: 0, name: "선택없음"},
+  {pk: 1, name: "프레스"},
+  {pk: 2, name: "로봇"},
+  {pk: 3, name: "용접기"},
+  {pk: 4, name: "밀링"},
+  {pk: 5, name: "선반"},
+  {pk: 6, name: "탭핑기"},
+]
+
 const BasicMachineV1u = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
@@ -239,6 +249,84 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const DeleteBasic = async () => {
+
+    const res = await RequestMethod('delete', `machineDelete`,
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
+
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          let selectData: any = {}
+
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
+              }
+            }
+
+            if(v === 'unitWeight') {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(row['unitWeight'])
+              }
+            }
+
+            if(v === 'tmpId') {
+              selectData = {
+                ...selectData,
+                id: row['tmpId']
+              }
+            }
+          })
+
+          return {
+            ...row,
+            ...selectData,
+            type: row.type_id,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
+          }
+
+        }
+      }).filter((v) => v))
+
+    if(res) {
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      if(keyword){
+        SearchBasic(keyword, option, page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }else{
+        LoadBasic(page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }
+    }
+
+  }
+
   const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["machineV2"];
     let tmpRow = []
@@ -330,23 +418,10 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
       let random_id = Math.random()*1000;
       return {
-        cm_id:(index === 0 || row.ppd.seq === 1) ? row.product.raw_material.model.model : undefined,
-        cm_idPK:row.product.raw_material.model.cm_id,
-        mold_id:row.mold_id,
-        mold_name:row.ppd.mold_name,
-        limit:row.limit,
-        inspect:row.inspect,
-        current:row.current,
-        customer_id: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.model.customer.name : undefined,
-        customer_idPK: row.product.raw_material.model.customer.customer_id,
-        code: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.code : undefined,
-        name: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.name : undefined,
-        seq: row.ppd.seq,
-        cavity: row.ppd.cavity,
-        spm: row.spm,
-        slideHeight: row.slideHeight,
-        process_id: row.ppd.process.name,
+        ...row,
         ...appendAdditional,
+        type: row.type ? machineList[row.type].name : '선택없음',
+        type_id: row.type ? machineList[row.type].pk : 0,
         id: `mold_${random_id}`,
       }
     })
@@ -407,7 +482,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       case 5:
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{
-            // DeleteBasic()
+            DeleteBasic()
           },
           ()=>{}
         )

@@ -203,7 +203,7 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-                <p style={{fontSize: 22, padding: 0, marginBottom: 8}}>작업이력</p>
+                <p style={{fontSize: 22, padding: 0, marginBottom: 8}}>{column.type === 'readonly'? "LOT 별 수량" : "작업이력"}</p>
               </div>
             </div>
             <div style={{height: '100%', display: 'flex', alignItems:"flex-end", paddingBottom: 7}}>
@@ -352,7 +352,7 @@ const Button = styled.button`
     justify-content:center;
     align-items:center;
     cursor:pointer;
-    
+
 `;
 
 const HeaderTable = styled.div`
@@ -383,7 +383,7 @@ const HeaderTableText = styled.p`
 const HeaderTableTitle = styled.div`
   width: 99px;
   padding: 0 8px;
-  display: flex; 
+  display: flex;
   align-items: center;
 `
 

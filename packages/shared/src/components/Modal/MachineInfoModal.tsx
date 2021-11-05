@@ -173,13 +173,13 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>고객사명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{row.customerArray ? row.customerArray.name : '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -187,25 +187,25 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{row.code ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{row.name ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{row.type ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{row.process ? row.process.name : "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -213,7 +213,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{row.unit ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
@@ -307,8 +307,12 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 if(selectRow !== undefined && selectRow !== null){
                   onRowChange({
                     ...row,
-                    ...searchList[selectRow],
-                    name: row.name,
+                    machines: searchList.map((v, i) => {
+                      return {
+                        sequence: i+1,
+                        machine: v
+                      }
+                    }),
                     isChange: true
                   })
                 }

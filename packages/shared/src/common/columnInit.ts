@@ -164,8 +164,8 @@ export const columnlist: any = {
     {key: 'device', name: '주변장치', formatter: InfoModal, width: 118, type: 'deviceRegister', summaryType: 'device'},
     {key: 'tons', name: '톤 수',editor: TextEditor, formatter: UnitContainer, unitData: 'T', width: 118},
     {key: 'volt', name: '사용 전압',editor: TextEditor, formatter: UnitContainer, unitData: 'V', width: 118},
-    {key: 'factory', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory',},
-    {key: 'segmentFactory',name: '공장 세분화명', width: 118, formatter: SearchModalTest, type: 'segment',},
+    {key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory',},
+    {key: 'affiliated_id',name: '공장 세분화명', width: 118, formatter: SearchModalTest, type: 'segment',},
   ],
   device: [
     {key: 'mfrName', name: '장치 제조사', editor: TextEditor},
@@ -213,9 +213,9 @@ export const columnlist: any = {
     {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
     {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: 'type', name: '품목 종류',  formatter: DropDownEditor, selectList: [
-        {pk: 'finish', name: '완제품'},
-        {pk: 'half', name: '반제품'},
-        {pk: 'supply', name: '재공품'},
+        {pk: '2', name: '완제품'},
+        {pk: '0', name: '반제품'},
+        {pk: '1', name: '재공품'},
       ]},
     {key: 'unit', name: '단위', formatter: DropDownEditor, selectList: [
         {pk: 'EA', name: 'EA'},
@@ -225,12 +225,10 @@ export const columnlist: any = {
         {pk: 'ml', name: 'ml'},
         {pk: 'L', name: 'L'},
       ]},
-    {key: 'bom', name: 'BOM', formatter: BomInfoModal},
-    {key: 'process', name: '생산 공정', formatter: DropDownEditor, selectList: [
-        {pk: 'EA', name: 'EA'},
-      ]},
-    {key: 'mold', name: '금형', formatter: MoldInfoModal},
-    {key: 'machine', name: '기계', formatter: MachineInfoModal},
+    {key: 'bom_root', name: 'BOM', formatter: BomInfoModal},
+    {key: 'process_id', name: '생산 공정', formatter: ProcessSearchModal},
+    {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
+    {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
     {key: 'uph', name: '기준 UPH', editor: TextEditor, formatter: PlaceholderBox, placeholder: 0},
   ],
   // rawmaterial: [
@@ -252,12 +250,12 @@ export const columnlist: any = {
     {key: 'width', name: '가로(COIL 폭)', editor: TextEditor, formatter: UnitContainer, unitData: 'mm'},
     {key: 'height', name: '세로(Feeder)', editor: TextEditor, formatter: UnitContainer, unitData: 'mm'},
     {key: 'type', name: '재질 종류', formatter: DropDownEditor, selectList: [
-        {pk: 'COIL', name: 'COIL'},
-        {pk: 'SHEET', name: 'SHEET'}
+        {pk: 1, name: 'COIL'},
+        {pk: 2, name: 'SHEET'}
       ]},
     {key: 'stock', name: '원자재 재고량', editor: TextEditor, formatter: UnitContainer, unitData: 'kg', searchType: 'rawin'},
-    {key: 'customer', name: '거래처', formatter: SearchModalTest, type: 'customer' },
-    {key: 'useDate', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력'},
+    {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer' },
+    {key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력'},
   ],
   submaterial: [
     {key: 'code', name: '부자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
@@ -271,7 +269,7 @@ export const columnlist: any = {
         {pk: 'L', name: 'L'},
       ]},
     {key: 'stock', name: '부자재 재고량', editor: TextEditor, formatter: UnitContainer, type: 'selectUnit'},
-    {key: 'customer', name: '거래처', editor: TextEditor, formatter: SearchModalTest, type: 'customer'},
+    {key: 'customer_id', name: '거래처', editor: TextEditor, formatter: SearchModalTest, type: 'customer'},
   ],
   mold: [
     {key: 'customer_id', },
@@ -290,9 +288,9 @@ export const columnlist: any = {
 
   ],
   moldV2: [
-    {key: 'code', name: 'CODE', formatter: PlaceholderBox, placeholder: 'CODE 입력' },
-    {key: 'name', name: '금형명',formatter: PlaceholderBox, placeholder: '금형명 입력'},
-    {key: 'cavity', name: '캐비티',formatter: PlaceholderBox, placeholder: '0'},
+    {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력' },
+    {key: 'name', name: '금형명', editor: TextEditor,formatter: PlaceholderBox, placeholder: '금형명 입력'},
+    {key: 'cavity', name: '캐비티',editor: TextEditor,formatter: UnitContainer, unitData: 'EA', placeholder: '0'},
     {key: 'spm', name: 'SPM',editor: TextEditor,formatter: PlaceholderBox, placeholder: '0'},
     {key: 'slideHeight', name: '슬라이드 위치',editor: TextEditor,formatter: PlaceholderBox, placeholder: '0'},
     {key: 'limit', name: '최대타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
@@ -371,7 +369,7 @@ export const columnlist: any = {
   rawinV1u: [
     {key: 'code',name:'원자재 CODE', formatter: ProductSearchModal, searchType: 'rawin', frozen: true, placeholder: '원자재 CODE'},
     {key: 'name', name:'원자재 품명', frozen: true, formatter: PlaceholderBox, placeholder:'자동 입력'},
-    {key: 'texture', name:'원자재 재질', formatter: PlaceholderBox, placeholder:'자동 입력'},
+    {key: 'texture', name:'재질', formatter: PlaceholderBox, placeholder:'자동 입력'},
     {key: 'depth', name:'두께', formatter: UnitContainer, unitData: 'T', placeholder: '0'},
     {key: 'width', name:'가로(COIL 폭)', formatter: UnitContainer, unitData: 'mm', placeholder: '0' },
     {key: 'height', name:'세로(Feeder)', formatter: UnitContainer, unitData: 'mm', placeholder: '0'},
@@ -387,7 +385,7 @@ export const columnlist: any = {
     {key: 'elapsedDay', name: '경과일', formatter: UseDateCell, width: 118},
     {key: 'code',name:'원자재 CODE', formatter: PlaceholderBox, placeholder: '원자재 CODE', width: 118},
     {key: 'name', name:'원자재 품명', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
-    {key: 'texture', name:'원자재 재질', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
+    {key: 'texture', name:'재질', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
     {key: 'depth', name:'두께', formatter: UnitContainer, unitData: 'T', placeholder: '0', width: 118},
     {key: 'width', name:'가로(COIL 폭)', formatter: UnitContainer, unitData: 'mm', placeholder: '0', width: 118 },
     {key: 'height', name:'세로(Feeder)', formatter: UnitContainer, unitData: 'mm', placeholder: '0', width: 118},
@@ -662,10 +660,10 @@ export const columnlist: any = {
     {key: 'worker', name: '작업자', width:118,},
   ],
   qualityDefectTop: [
-    {key: 'customer_id', name: '거래처명', searchType: 'rawin', width: 150, formatter: PlaceholderBox, placeholder: '자동입력'},
-    {key: 'cm_id', name: '모델', searchType: 'rawin', width: 150, formatter: PlaceholderBox, placeholder: '자동입력'},
-    {key: 'code', name: 'CODE', formatter: SearchModalTest, type: 'product', width: 150},
-    {key: 'name', name: '품명', width: 150, formatter: PlaceholderBox, placeholder: '자동입력'},
+    {key: 'customer_id', name: '거래처명', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
+    {key: 'cm_id', name: '모델', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
+    {key: 'code', name: 'CODE', formatter: SearchModalTest, type: 'product'},
+    {key: 'name', name: '품명', formatter: PlaceholderBox, placeholder: '자동입력'},
   ],
   qualityDefectContents: [
     {key: 'process_id', name: '공정명', width: 220},
@@ -861,7 +859,7 @@ export const columnlist: any = {
     {key:"type", name:"품목 종류", width: 118   },
     {key:"unit", name:"단위", width: 118   },
     {key:"delivery_date", name:"납품 날짜", width: 118, formatter:CalendarBox},
-    {key:"lot", name:"LOT 선택", width: 118   },
+    {key:"lot", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base'  },
     {key:"delivery_stock", name:"총 납품 수량", width: 118   },
   ],
 

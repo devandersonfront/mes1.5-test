@@ -430,7 +430,7 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
               />
             </div>
           </div>
-          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+          <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
             <FooterButton
               onClick={() => {
                 setIsOpen(false)

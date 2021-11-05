@@ -44,18 +44,18 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
-  // useEffect(() => {
-  //   setOptionIndex(option)
-  //   if(keyword){
-  //     SearchBasic(keyword, option, page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }else{
-  //     LoadBasic(page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [page, keyword, option])
+  useEffect(() => {
+    setOptionIndex(option)
+    if(keyword){
+      SearchBasic(keyword, option, page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }else{
+      LoadBasic(page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }
+  }, [page, keyword, option])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -75,14 +75,14 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
 
         let pk = "";
 
-        res.results.info_list && res.results.info_list.length && Object.keys(res.results.info_list[0]).map((v) => {
+        res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
           if(v.indexOf('_id') !== -1){
             pk = v
           }
         })
         return {
           ...v,
-          selectList: [...res.results.info_list.map((value: any) => {
+          selectList: [...res.info_list.map((value: any) => {
             return {
               ...value,
               name: tmpKey === 'model' ? value.model : value.name,
@@ -112,9 +112,8 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
     let res: any
-    res = await RequestMethod('post', `moldSave`,
-      {
-        ['molds']: basicRow.map((row, i) => {
+    res = await RequestMethod('post', `productSave`,
+      basicRow.map((row, i) => {
           if(selectList.has(row.id)){
             let selectKey: string[] = []
             let additional:any[] = []
@@ -156,6 +155,10 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
             return {
               ...row,
               ...selectData,
+              customer: row.customerArray,
+              customer_id: row.customerArray.customer_id,
+              model: row.modelArray,
+              standard_uph: row.uph,
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -171,22 +174,19 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v)
-      })
+        }).filter((v) => v))
 
 
     if(res){
-      if(res.status === 200){
-        Notiflix.Report.success('저장되었습니다.','','확인');
-        if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+      Notiflix.Report.success('저장되었습니다.','','확인');
+      if(keyword){
+        SearchBasic(keyword, option, page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }else{
+        LoadBasic(page).then(() => {
+          Notiflix.Loading.remove()
+        })
       }
     }
   }
@@ -194,18 +194,18 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `moldList`,{
+    const res = await RequestMethod('get', `productList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages
+        page: res.page,
+        total: res.totalPages
       })
       cleanUpData(res)
     }else if (res.state === 401) {
@@ -235,19 +235,19 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     if(res && res.status === 200){
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages
+        page: res.page,
+        total: res.totalPages
       })
       cleanUpData(res)
     }
   }
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["mold"];
+    let tmpColumn = columnlist["productV1u"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
-      res.results.menus && res.results.menus.map((menu: any) => {
+      res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
             id: menu.id,
@@ -275,7 +275,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       }
     }).filter((v:any) => v)
 
-    let additionalMenus = res.results.menus ? res.results.menus.map((menu:any) => {
+    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
           id: menu.id,
@@ -290,7 +290,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     }).filter((v: any) => v) : []
 
 
-    tmpRow = res.results.info_list
+    tmpRow = res.info_list
 
 
     loadAllSelectItems( [
@@ -333,23 +333,13 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
 
       let random_id = Math.random()*1000;
       return {
-        cm_id:(index === 0 || row.ppd.seq === 1) ? row.product.raw_material.model.model : undefined,
-        cm_idPK:row.product.raw_material.model.cm_id,
-        mold_id:row.mold_id,
-        mold_name:row.ppd.mold_name,
-        limit:row.limit,
-        inspect:row.inspect,
-        current:row.current,
-        customer_id: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.model.customer.name : undefined,
-        customer_idPK: row.product.raw_material.model.customer.customer_id,
-        code: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.code : undefined,
-        name: (index === 0 || row.ppd.seq === 1) ? row.product.raw_material.name : undefined,
-        seq: row.ppd.seq,
-        cavity: row.ppd.cavity,
-        spm: row.spm,
-        slideHeight: row.slideHeight,
-        process_id: row.ppd.process.name,
+        ...row,
         ...appendAdditional,
+        customer_id: row.customer.name,
+        customerArray: row.customer,
+        cm_id: row.model.model,
+        modelArray: row.model,
+        process_id: row.process.name,
         id: `mold_${random_id}`,
       }
     })
@@ -371,13 +361,49 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         setExcelOpen(true)
         break;
       case 1:
-
-        router.push(`/mes/item/manage/mold`)
-
+        router.push(`/mes/item/manage/machine`)
         break;
       case 2:
-        SaveBasic()
+        let items = {}
+
+        column.map((value) => {
+          if(value.selectList && value.selectList.length){
+            items = {
+              ...value.selectList[0],
+              [value.key] : value.selectList[0].name,
+              [value.key+'PK'] : value.selectList[0].pk, //여기 봐야됨!
+              ...items,
+            }
+          }
+        })
+
+        const random_id = Math.random()*1000
+
+        setBasicRow([
+          {
+            ...items,
+            id: `process_${random_id}`,
+            name: null,
+            additional: [],
+          },
+          ...basicRow
+        ])
         break;
+
+      case 3:
+        SaveBasic()
+
+        break;
+      case 4:
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          ()=>{
+            // DeleteBasic()
+          },
+          ()=>{}
+        )
+
+        break;
+
     }
   }
 
@@ -403,8 +429,8 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
             ['엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }
           buttonsOnclick={
-            () => {}
-            // onClickHeaderButton
+            // () => {}
+            onClickHeaderButton
           }
         />
         <ExcelTable

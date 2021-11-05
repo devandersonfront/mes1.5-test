@@ -53,10 +53,10 @@ export const searchModalList: any = {
     {key: 'crn', name: '사업자 번호', formatter: LineBorderContainer},
   ],
   process: [
-    {key: 'name', name: '공정명'},
+    {key: 'name', name: '공정명', formatter: LineBorderContainer},
   ],
   model: [
-    {key: 'customer', name: '고객사명', formatter: LineBorderContainer},
+    {key: 'customer_name', name: '고객사명', formatter: LineBorderContainer},
     {key: 'ceo', name: '대표자명', formatter: LineBorderContainer},
     {key: 'crn', name: '사업자 번호', formatter: LineBorderContainer},
     {key: 'model', name: '모델명', formatter: LineBorderContainer},
@@ -83,7 +83,7 @@ export const searchModalList: any = {
     {key: 'manufacturer', name: '제조사'},
   ],
   mold: [
-    {key: 'code', name: 'CODE', formatter: LineBorderContainer},
+    {key: 'code', name: 'CODE', textAlign: 'center', formatter: LineBorderContainer},
     {key: 'name', name: '금형명', formatter: LineBorderContainer},
     {key: 'cavity', name: '캐비티', formatter: LineBorderContainer},
     {key: 'spm', name: 'SPM', formatter: LineBorderContainer},
@@ -120,9 +120,9 @@ export const searchModalList: any = {
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
   ],
   moldInfo: [
-    {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
+    {key: 'seq', name: '번호', textAlign: 'center', width: 64, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '금형명', width: 472, formatter: MoldSearchModal, type: 'Modal' },
+    {key: 'name', name: '금형명', width: 472, formatter: SearchModalTest, type: 'mold', modalType: true },
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '기본'},
         {pk: 'spare', name: '스페어'},
@@ -133,32 +133,31 @@ export const searchModalList: any = {
   ],
   machineInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'machine_name', name: '기계 이름', width: 560, formatter: MachineSearchModal, placeholder: '-', type: 'Modal' },
-    {key: 'mfr_code', name: '제조 번호', width: 160, formatter: LineBorderContainer, placeholder: '-', type: 'Modal', textAlign: 'center' },
-    {key: 'code', name: '기계 종류', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
+    {key: 'name', name: '기계 이름', width: 560, formatter: SearchModalTest, type: 'machine', modalType: true},
+    {key: 'mfrCode', name: '제조 번호', width: 160, formatter: LineBorderContainer, placeholder: '-', type: 'Modal', textAlign: 'center' },
+    {key: 'type', name: '기계 종류', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '기본'},
         {pk: 'spare', name: '스페어'},
       ], type: 'Modal'},
-
   ],
   bomInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
-    {key: 'code', name: 'CODE', width: 425, formatter: ProductSearchModal, placeholder: '-', type: 'Modal' },
-    {key: 'name', name: '금형명', width: 280, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
-        {pk: 'basic', name: '기본'},
-        {pk: 'spare', name: '스페어'},
+    {key: 'code', name: 'CODE', width: 425, formatter: SearchModalTest, placeholder: '-', type: 'product', modalType: true},
+    {key: 'mold', name: '금형명', width: 280, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'setting', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
+        {pk: 0, name: '기본'},
+        {pk: 1, name: '스페어'},
       ], type: 'Modal'},
-    {key: 'material_type', name: '품목 종류', width: 160, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'type', name: '품목 종류', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'unit', name: '단위', width: 160, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'percent', name: '사용량', width: 160, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'usage', name: '사용량', width: 160, formatter: LineBorderContainer, editor: TextEditor, placeholder: '-'},
     {key: 'process', name: '생산 공정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-'},
   ],
 
   moldUse: [
-    {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
+    {key: 'seq', name: '번호', width: 64, textAlign: 'center', formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer },
     {key: 'name', name: '금형명', formatter: LineBorderContainer, type: 'Modal'},
     {key: 'spare', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
@@ -181,7 +180,7 @@ export const searchModalList: any = {
 
   ],
   moldList: [
-    {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
+    {key: 'seq', name: '번호', width: 64, textAlign: 'center', formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
     {key: 'name', name: '금형명', formatter: LineBorderContainer, type: 'Modal'},
     {key: 'cavity', name: '캐비티', width: 160, formatter: LineBorderContainer, placeholder: '0'},
@@ -195,7 +194,6 @@ export const searchModalList: any = {
     {key: 'code', name: '기계 종류', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
 
   ],
-
   select_machine: [
     {key: 'index', name: '순번', width:80},
     {key: 'name', name: '기계명'},
@@ -348,20 +346,20 @@ export const searchModalList: any = {
     {key: 'worker', name: '작업자', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'start', name: '작업 시작 일시', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'end', name: '작업 종료 일시', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center'},
+    {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', type: 'readonly'},
     {key: 'good', name: '양품 수량', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'poor', name: '불량 수량 (유형별 수량은 숫자 클릭)', formatter: DefectInfoModal, textAlign: 'center', width: 250, readonly: true},
+    {key: 'poor', name: '불량 수량 (유형별 수량은 숫자 클릭)', formatter: DefectInfoModal, textAlign: 'center', width: 250, type: 'readonly'},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'input', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center', type: 'readonly'},
     {key: 'mold', name: '금형', formatter: MoldListModal, textAlign: 'center', type: 'Modal'},
     {key: 'machine', name: '기계', formatter: MachineListModal, textAlign: 'center', type: 'Modal'},
   ],
   pauseTime: [
-    {key: 'reason', name: '일시 정지 유형'},
+    {key: 'reason', name: '일시 정지 유형', formatter: LineBorderContainer},
     {key: 'amount', width: 194, name: '시간', editor: TextEditor, formatter: TimeFormatter, textType: 'Modal', searchType: 'pause'},
   ],
   defectCount: [
-    {key: 'reason', name: '불량 유형'},
+    {key: 'reason', name: '불량 유형', formatter: LineBorderContainer},
     {key: 'amount', width: 194, name: '불량 개수', editor: TextEditor, formatter: UnitContainer, unitData: 'EA', textType: 'Modal', searchType: 'pause', placeholder: '숫자만 입력'},
   ],
 
@@ -393,7 +391,7 @@ export const searchModalList: any = {
   ],
   modelSearch: [
     {key: 'customer', name: '거래처'},
-    {key: 'ceo', name: '대표자명'},
+    {key: 'rep', name: '대표자명'},
     {key: 'crn', name: '사업자 번호'},
     {key: 'model', name: '모델명'},
   ],
@@ -443,8 +441,8 @@ export const searchModalList: any = {
     {key: 'segment', name: '공장 세분화명'},
   ],
   productSearch: [
-    {key: 'customer', name: '거래처'},
-    {key: 'model', name: '모델'},
+    {key: 'customer_name', name: '거래처'},
+    {key: 'model_name', name: '모델'},
     {key: 'code', name: 'CODE'},
     {key: 'name', name: '품명'},
     {key: 'type', name: '품목 종류'},

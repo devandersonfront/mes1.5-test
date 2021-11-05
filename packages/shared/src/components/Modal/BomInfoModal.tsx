@@ -38,8 +38,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([
-    {seq: 1, code: 'SUS-111', name: 'SUS360', spare: '기본', material_type: '원자재', unit: 'kg', cavity: '1', process: '-'},
-    {seq: 2, code: 'PT-111', name: 'PT10', spare: '스페어', material_type: '부자재', unit: 'EA', cavity: '1', process: '-'},
+    {seq: 1,}
   ])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -50,9 +49,14 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      if(row.bom_root_id){
+
+        SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+          Notiflix.Loading.remove()
+        })
+      } else {
+        setIsOpen(false)
+      }
     }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
@@ -76,18 +80,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const SearchBasic = async (keyword: any, option: number, page: number) => {
     Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
+    // setKeyword(keyword)
+    // setOptionIndex(option)
+    const res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
 
     if(res && res.status === 200){
       let searchList = res.results.info_list.map((row: any, index: number) => {
@@ -102,6 +97,28 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
       setSearchList([...searchList])
     }
+  }
+
+  const SaveBasic = async () => {
+    let body = searchList.map((v, i) => {
+      return {
+        seq: v.seq,
+        parent: {
+          ...row
+        },
+        child: {
+          ...v.product
+        },
+        key: row.bom_root_id,
+        setting: row.setting,
+        usage: row.usage
+      }
+    })
+
+    const res = await RequestMethod('post', `bomSave`,body)
+
+    console.log(res)
+
   }
 
   const addNewTab = (index: number) => {
@@ -203,13 +220,13 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -217,25 +234,25 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{bomDummy[focusIndex].code}</HeaderTableText>
+              <HeaderTableText>{row.code ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{bomDummy[focusIndex].name}</HeaderTableText>
+              <HeaderTableText>{row.name ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{bomDummy[focusIndex].material_type}</HeaderTableText>
+              <HeaderTableText>{row.type ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{bomDummy[focusIndex].process}</HeaderTableText>
+              <HeaderTableText>{row.process ? row.process.name : "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -394,7 +411,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             </div>
             <div
               onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
+                SaveBasic()
+                if(selectRow !== undefined && selectRow !== null) {
                   onRowChange({
                     ...row,
                     ...searchList[selectRow],

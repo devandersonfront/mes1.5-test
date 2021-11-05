@@ -241,7 +241,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               headerAlign={'center'}
             />
           </div>
-          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+          <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
             <div
               onClick={() => {
                 setIsOpen(false)

@@ -277,18 +277,18 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           </div>
           <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
             {
-              !column.readonly && <div
+              column.type !== 'readonly' && <div
                 onClick={() => {
                   setIsOpen(false)
                 }}
-                style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                style={{width: "50%", height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
               >
                 <p style={{color: '#717C90'}}>취소</p>
               </div>
             }
             <div
               onClick={() => {
-                if(!column.readonly){
+                if(column.type !== 'readonly'){
                   if(selectRow !== undefined && selectRow !== null){
                     onRowChange({
                       ...row,
@@ -300,9 +300,9 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 }
                 setIsOpen(false)
               }}
-              style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              style={{width: column.type !== 'readonly' ? "50%" : "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
-              <p>등록하기</p>
+              <p>{column.type !== 'readonly' ? "등록하기" : "확인"}</p>
             </div>
           </div>
         </div>

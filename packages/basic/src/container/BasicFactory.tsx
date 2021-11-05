@@ -357,9 +357,11 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       let random_id = Math.random()*1000;
       return {
         ...row,
-        user: row.member ?? undefined,
-        managerPk: row.member ? row.member.name : '',
-        manager: row.member ? row.member.user_id : '',
+        user: row.manager ?? undefined,
+        managerPk: row.manager ? row.manager.user_id : '',
+        manager: row.manager ? row.manager.name : '',
+        appointment: row.manager ? row.manager.appointment : '',
+        telephone: row.manager ? row.manager.telephone : '',
         id: `factory_${random_id}`,
       }
     })

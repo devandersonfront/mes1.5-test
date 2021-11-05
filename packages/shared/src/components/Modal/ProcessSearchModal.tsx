@@ -57,8 +57,6 @@ const ProcessSearchModal = ({column, row, onRowChange}: IProps) => {
     }else{
       tmpData = {
         ...row,
-        process_id: row.name,
-        process_idPK: row.process_id
       }
     }
 
@@ -69,7 +67,7 @@ const ProcessSearchModal = ({column, row, onRowChange}: IProps) => {
     Notiflix.Loading.circle()
     setKeyword(keyword)
     setOptionIndex(option)
-    const res = await RequestMethod('get', `processList`,{
+    const res = await RequestMethod('get', `processSearch`,{
       path: {
         page: page,
         renderItem: 7,
@@ -80,15 +78,15 @@ const ProcessSearchModal = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
+    if(res){
+      let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
 
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
+        page: res.page,
+        total: res.totalPages,
       })
 
       setSearchList([...searchList])
@@ -236,6 +234,13 @@ const ProcessSearchModal = ({column, row, onRowChange}: IProps) => {
                 rowHeight={32}
                 height={576}
                 setSelectRow={(e) => {
+                  if(!searchList[e].border){
+                    searchList.map((v,i)=>{
+                      v.border = false;
+                    })
+                    searchList[e].border = true
+                    setSearchList([...searchList])
+                  }
                   setSelectRow(e)
                 }}
                 type={'searchModal'}
@@ -265,7 +270,8 @@ const ProcessSearchModal = ({column, row, onRowChange}: IProps) => {
                   if(selectRow !== undefined && selectRow !== null){
                       onRowChange({
                         ...row,
-                        ...searchList[selectRow],
+                        process: searchList[selectRow],
+                        process_id: searchList[selectRow].name,
                         name: row.name,
                         isChange: true
                       })

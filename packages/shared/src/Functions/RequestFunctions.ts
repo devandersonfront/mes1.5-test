@@ -36,6 +36,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return result
         })
         .catch((error) => {
+          console.log(error)
           if(error.response.status === 406 || error.response.status === 401) {
             return {
               state: 401
@@ -248,5 +249,8 @@ const ApiList = {
   summaryFetch: `/api/v1/stock/summary/fetch`,
   excelDownload: `${SF_ENDPOINT_EXCEL}/api/v1/download`,
   excelFormatDownload: `${SF_ENDPOINT_EXCEL}/api/v1/format/download`,
-  excelUpload: `${SF_ENDPOINT_EXCEL}/api/v1/format/upload`
+  excelUpload: `${SF_ENDPOINT_EXCEL}/api/v1/format/upload`,
+
+  bomLoad: `/api/v1/bom`,
+  bomSave: `/api/v1/bom/save`
 }

@@ -169,6 +169,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
               ...row,
               ...selectData,
               customer: row.customerArray,
+              // customer_iu: row.customer_id,
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -188,7 +189,6 @@ const BasicModel = ({page, keyword, option}: IProps) => {
 
 
     if(res){
-      if(res.status === 200){
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
           SearchBasic(keyword, option, page).then(() => {
@@ -199,46 +199,86 @@ const BasicModel = ({page, keyword, option}: IProps) => {
             Notiflix.Loading.remove()
           })
         }
-      }
     }
   }
 
   const DeleteBasic = async () => {
     const res = await RequestMethod('delete', `modelDelete`,
-      {
-        ['models']: basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let pk = ""
-            Object.keys(row).map((v:string) => {
-              if(v.indexOf("_id") !== -1){
-                pk = v
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
+
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          let selectData: any = {}
+
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
               }
-            })
+            }
 
-            pk = 'cm_id'
+            if(v === 'unitWeight') {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(row['unitWeight'])
+              }
+            }
 
-            return row[pk]
+            if(v === 'tmpId') {
+              selectData = {
+                ...selectData,
+                id: row['tmpId']
+              }
+            }
+          })
 
+          return {
+            ...row,
+            ...selectData,
+            customer: row.customerArray,
+            // customer_iu: row.customer_id,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
           }
-        }).filter((v) => v)
-      })
+
+        }
+      }).filter((v) => v))
 
     if(res) {
-      if(res.status === 200){
-        Notiflix.Report.success('삭제 성공!', '', '확인', () => {
-          if(Number(page) === 1){
-            LoadBasic(1).then(() => {
-              Notiflix.Loading.remove()
-            })
+      Notiflix.Report.success('삭제 성공!', '', '확인', () => {
+        if(Number(page) === 1){
+          LoadBasic(1).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }else{
+          if(keyword){
+            router.push(`/mes/basic/customer/model?page=1&keyword=${keyword}&opt=${option}`)
           }else{
-            if(keyword){
-              router.push(`/mes/basic/customer/model?page=1&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/customer/model?page=1`)
-            }
+            router.push(`/mes/basic/customer/model?page=1`)
           }
-        })
-      }
+        }
+      })
     }
   }
 
@@ -419,8 +459,9 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       })
       let random_id = Math.random()*1000;
       return {
+        ...row,
         cm_id:row.cm_id,
-        customer: row.customer.name,
+        customerArray: row.customer,
         customer_id: row.customer.name,
         customer_idPK: row.customer.customer_id,
         customerPK: row.customer.customer_id,
