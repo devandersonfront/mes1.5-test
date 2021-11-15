@@ -13,3 +13,4 @@ package-lock.json
 yarn.lock
 lerna-debug.log
 .idea
+.idea/*.xml
