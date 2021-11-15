@@ -54,7 +54,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
 
   const cleanUpBasicData = (res:any) => {
     let tmpRow = [];
-    tmpRow = res.data.results.info_list.map((column: any,index:number) => {
+    tmpRow = res.info_list.map((column: any,index:number) => {
       let menuData: object = {};
 
       menuData = {
@@ -72,91 +72,101 @@ const BasicPause = ({page, keyword, option}: IProps) => {
   }
 
   const LoadPauseList = async (value:string) => {
-    const res = await RequestMethod("get", `pauseReasonList`,{
+    console.log("RES", value)
+    // const res =
+    await RequestMethod("get", `pauseReasonList`, {
       path: {
-        page:1,
-        renderItem:51,
-        process_id:value
+        page: 1,
+        renderItem: 51,
+        process_id: value
       }
     })
+        .then((res) => {
 
-    if(res && res.status === 200){
-      let tmpColumn = columnlist[`pauseReason`];
-      tmpColumn = tmpColumn.map((value:any,index:number) => {
-        return {...value, key:value.key, name:value.name, width:value.width}
-      })
-      setPauseColumn(tmpColumn);
+          let tmpColumn = columnlist[`pauseReason`];
+          tmpColumn = tmpColumn.map((value: any, index: number) => {
+            return {...value, key: value.key, name: value.name, width: value.width}
+          })
+          setPauseColumn(tmpColumn);
 
-      let tmpRow = [];
-      tmpRow = res.results.info_list.map((column: any,index:number) => {
-        let menuData: object = {};
+          let tmpRow = [];
+          tmpRow = res.info_list.map((column: any, index: number) => {
+            let menuData: object = {};
 
-        menuData = {
-          index:index+1,
-          width: column.width,
-        }
-        let random_id = Math.random()*1000;
-        return {
-          id: random_id,
-          ...column,
-          ...menuData
-        }
-      })
-      Notiflix.Loading.remove(300);
-      setPauseBasicRow([...tmpRow]);
-    }
+            menuData = {
+              index: index + 1,
+              width: column.width,
+            }
+            let random_id = Math.random() * 1000;
+            return {
+              id: random_id,
+              ...column,
+              ...menuData
+            }
+          })
+          Notiflix.Loading.remove(300);
+          setPauseBasicRow([...tmpRow]);
+
+        })
+        .catch((err) => {
+          console.log(err)
+        })
   }
 
   const LoadBasic = async () => {
     Notiflix.Loading.standard();
-    const res = await RequestMethod('get', `processList`,{
+    console.log("LoadBasic")
+    // const res = await
+    RequestMethod('get', `processList`,{
       path: {
         page: 1,
-        renderItem: 51,
+        renderItem:51,
       }
-    })
-    if(res && res.status === 200){
-      let tmpColumn = columnlist[`pause`];
-      if(res.results.info_list.length > 0){
-        setProcessId(res.results.info_list[selectRow].process_id);
-      }
-      let tmpRow = []
-      tmpColumn = tmpColumn.map((column: any) => {
-        let menuData: object = {};
-
-        res.results.menus.map((menu: any) => {
-          if(menu.colName === column.key){
-            menuData = {
-              id: menu.id,
-              name: menu.title,
-              width: 1560
+    }).then((res) => {
+          console.log(res);
+            let tmpColumn = columnlist[`pause`];
+            if(res.info_list.length > 0){
+              setProcessId(res.info_list[selectRow].process_id);
             }
-          }
-        })
+            let tmpRow = []
+            tmpColumn = tmpColumn.map((column: any) => {
+              let menuData: object = {};
 
-        return {
-          ...column,
-          ...menuData
-        }
-      })
-      tmpRow = res.results.info_list
-      if(res.results.info_list.length > 0){
-        LoadPauseList(res.results.info_list[selectRow].process_id);
-      }else{
-        Notiflix.Loading.remove(300);
-      }
-      setProcessColumn(tmpColumn);
-      setProcessBasicRow([...tmpRow.map((row: any) => {
-        return {
-          ...row,
-        }
-      })])
-      Notiflix.Loading.remove(300);
-    }else if (res.state === 401) {
-      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-        router.back()
-      })
-    }
+              res.menus.map((menu: any) => {
+                if(menu.colName === column.key){
+                  menuData = {
+                    id: menu.id,
+                    name: menu.title,
+                    width: 1560
+                  }
+                }
+              })
+
+              return {
+                ...column,
+                ...menuData
+              }
+            })
+            tmpRow = res.info_list
+            if(res.info_list.length > 0){
+              LoadPauseList(res.info_list[selectRow].process_id);
+            }else{
+              Notiflix.Loading.remove(300);
+            }
+            setProcessColumn(tmpColumn);
+            setProcessBasicRow([...tmpRow.map((row: any) => {
+              return {
+                ...row,
+              }
+            })])
+            Notiflix.Loading.remove(300);
+
+        })
+        .catch((err) => {
+          Notiflix.Report.failure('불러올 수 없습니다.', err, '확인', () => {
+            router.back()
+          })
+        })
   }
   const downloadExcel = () => {
     let tmpSelectList: boolean[] = []
@@ -195,23 +205,23 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           Notiflix.Report.warning("선택된 공정이 없습니다.","","확인");
         }
         return
+
       case 3 :
         Notiflix.Loading.standard();
         let savePauseBasicRow:any[] = [];
-        pauseBasicRow.map((value)=>{
+        pauseBasicRow.map((value,index)=>{
           if(value.reason === "" || value.reason === undefined){
           }else{
-            savePauseBasicRow.push(value);
+            savePauseBasicRow.push({...value, process_id:processBasicRow[selectRow].process_id, seq:index+1});
           }
         })
 
         if(pauseBasicRow.length > 0 ) {
-          RequestMethod("post", `pauseSave`, {
-            process_id: processBasicRow[selectRow].process_id,
-            reasons: savePauseBasicRow
-          }).then(() => {
-            Notiflix.Report.success("저장되었습니다.", "", "확인");
-            LoadBasic();
+          RequestMethod("post", `pauseSave`, savePauseBasicRow
+          ).then(() => {
+            Notiflix.Report.success("저장되었습니다.", "", "확인", () => {
+              LoadPauseList(processBasicRow[selectRow].process_id);
+            });
           }).catch((e) => {
             Notiflix.Loading.remove(300);
             Notiflix.Report.warning("관리자에게 문의하세요.", "", "확인");
@@ -225,13 +235,12 @@ const BasicPause = ({page, keyword, option}: IProps) => {
       case 4 :
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           async()=>{
-            const idList:number[] = [];
+            const idList = [];
             const spliceArray:number[] = [];
 
-            pauseBasicRow.map((v,i)=> {
+            pauseBasicRow.map((v)=> {
               if(selectList.has(v.id)){
-                spliceArray.push(i);
-                idList.push(v.ppr_id)
+                idList.push(v)
               }
             })
 
@@ -241,12 +250,15 @@ const BasicPause = ({page, keyword, option}: IProps) => {
               tmpPauseBasicRow.splice(value, 1);
             })
 
-            const res = await RequestMethod("delete", `pauseDelete`, {reasons:idList.filter(v => v) } );
+            const res = await RequestMethod("delete", `pauseDelete`, idList );
 
-            if(res && res.status === 200){
-              Notiflix.Report.success("삭제되었습니다.",""," 확인");
-              sortObject(tmpPauseBasicRow);
-              // LoadPauseList(processBasicRow[selectRow].process_id);
+            if(res){
+              Notiflix.Report.success("삭제되었습니다.",""," 확인", () => {
+                sortObject(tmpPauseBasicRow);
+                LoadPauseList(processBasicRow[selectRow].process_id);
+              });
+            }else{
+              Notiflix.Report.success("에러가 발생했습니다.",""," 확인");
             }
           },
           ()=>{}
@@ -279,6 +291,12 @@ const BasicPause = ({page, keyword, option}: IProps) => {
   useEffect(()=>{
     LoadBasic();
   },[])
+
+  useEffect(()=>{
+    if(processBasicRow.length > 0){
+      LoadPauseList(processBasicRow[selectRow].process_id)
+    }
+  }, [selectRow])
 
   useEffect(()=>{
     if(state){
