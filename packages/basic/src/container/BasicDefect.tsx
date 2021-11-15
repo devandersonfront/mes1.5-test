@@ -32,7 +32,6 @@ export interface IProps {
   option?: number
 }
 
-const title = '권한 관리'
 
 const BasicDefect = ({page, keyword, option}: IProps) => {
 
@@ -62,7 +61,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
 
   const cleanUpBasicData = (res:any) => {
     let tmpRow = [];
-    tmpRow = res.data.results.info_list.map((column: any,index:number) => {
+    tmpRow = res.data.info_list.map((column: any,index:number) => {
       let menuData: object = {};
 
       menuData = {
@@ -90,7 +89,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       let tmpColumn = columnlist[`defectReason`];
       tmpColumn = tmpColumn.map((value:any,index:number) => {
         return {...value, key:value.key, name:value.name, width:value.width}
@@ -98,7 +97,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
       setPauseColumn(tmpColumn);
       // tmpColumn.push({key:})
       let tmpRow = [];
-      tmpRow = res.results.info_list.map((column: any,index:number) => {
+      tmpRow = res.info_list.map((column: any,index:number) => {
         let menuData: object = {};
 
         menuData = {
@@ -130,16 +129,16 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         renderItem: 51,
       }
     })
-    if(res && res.status === 200){
-      if(res.results.info_list.length > 0){
-        setProcessId(res.results.info_list[selectRow].process_id)
+    if(res){
+      if(res.info_list.length > 0){
+        setProcessId(res.info_list[selectRow].process_id)
       }
       let tmpColumn = columnlist[`pause`];
       let tmpRow = []
       tmpColumn = tmpColumn.map((column: any) => {
         let menuData: object = {};
 
-        res.results.menus.map((menu: any) => {
+        res.menus.map((menu: any) => {
           if(menu.colName === column.key){
             menuData = {
               id: menu.id,
@@ -154,9 +153,9 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
           ...menuData
         }
       })
-      tmpRow = res.results.info_list
-      if(res.results.info_list.length > 0){
-        LoadPauseList(res.results.info_list[selectRow].process_id);
+      tmpRow = res.info_list
+      if(res.info_list.length > 0){
+        LoadPauseList(res.info_list[selectRow].process_id);
       }else{
         Notiflix.Loading.remove(300);
       }
@@ -215,21 +214,21 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         // let validation = true;
         Notiflix.Loading.standard();
         let savePauseBasicRow:any[] = [];
-        pauseBasicRow.map((value)=>{
+        pauseBasicRow.map((value, i)=>{
+          console.log(value);
           if(value.reason === "" || value.reason === undefined){
             // validation = false;
           }else{
-            savePauseBasicRow.push(value);
+            savePauseBasicRow.push({...value, process_id:processBasicRow[selectRow].process_id, seq:i+1});
           }
         })
         if(pauseBasicRow.length > 0 ){
-          RequestMethod("post", `defectSave`, {
-            process_id:processBasicRow[selectRow].process_id,
-            reasons:savePauseBasicRow
-          }).then(()=>{
+          RequestMethod("post", `defectSave`, savePauseBasicRow
+        ).then(()=>{
             Notiflix.Loading.remove(300);
             Notiflix.Report.success("저장되었습니다.","","확인");
-            LoadBasic();
+            LoadPauseList(processBasicRow[selectRow].process_id);
+
           })
         }else{
           Notiflix.Loading.remove(300);
@@ -240,31 +239,42 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
       case 4 :
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           async()=>{
-            const idList:number[] = [];
-            const spliceArray:number[] = [];
+            const idList = [];
+            // const spliceArray:number[] = [];
 
             pauseBasicRow.map((v,i)=> {
               if(selectList.has(v.id)){
-                spliceArray.push(i);
-                idList.push(v.pdr_id)
+                // spliceArray.push(i);
+                idList.push(v)
               }
             })
 
             const tmpPauseBasicRow = [...pauseBasicRow];
-            spliceArray.reverse();
-            spliceArray.map((value, index)=>{
-              tmpPauseBasicRow.splice(value, 1);
-            })
+            // spliceArray.reverse();
+            // spliceArray.map((value, index)=>{
+            //   tmpPauseBasicRow.splice(value, 1);
+            // })
 
-            const res = await RequestMethod("delete", `defectDelete`, {reasons:idList.filter(v => v) } );
+            const res = await RequestMethod("delete", `defectDelete`, idList );
 
-            if(res && res.status === 200){
-              Notiflix.Report.success("삭제되었습니다.","","확인");
-              sortObject(tmpPauseBasicRow);
-              // LoadPauseList(processBasicRow[selectRow].process_id);
+            if(res){
+              Notiflix.Report.success("삭제되었습니다.","","확인", () => {
+                sortObject(tmpPauseBasicRow);
+                LoadPauseList(processBasicRow[selectRow].process_id);
+              });
             }
           },
-          ()=>{}
+          ()=>{
+              const idList = [];
+            pauseBasicRow.map((v,i)=> {
+              if(selectList.has(v.id)){
+                // spliceArray.push(i);
+                idList.push(v)
+              }
+            })
+              console.log(idList)
+
+          }
         );
 
 
