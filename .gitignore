@@ -12,3 +12,4 @@ packages/basic/package-lock.json/
 package-lock.json
 yarn.lock
 lerna-debug.log
+.idea

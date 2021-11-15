@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d4593b64-abec-4741-922f-07e0b3db17a3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/packages/basic/src/container/BasicDefect.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/basic/src/container/BasicDefect.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/basic/src/container/BasicPause.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/basic/src/container/BasicPause.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
