@@ -155,7 +155,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
             return {
               ...row,
               ...selectData,
-              customer: row.customerArray,
+              // customer: row.customerArray,
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -175,7 +175,6 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
 
 
     if(res){
-      if(res.status === 200){
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
           SearchBasic(keyword, option, page).then(() => {
@@ -186,7 +185,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
             Notiflix.Loading.remove()
           })
         }
-      }
+
     }
   }
 
@@ -232,22 +231,24 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
             }
           })
 
-          return {
-            ...row,
-            ...selectData,
-            customer: row.customerArray,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
+          if(row.customerId){
+            return {
+              ...row,
+              ...selectData,
+              // customer: row.customerArray,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
                   }
-                }
-              }).filter((v) => v)
-            ]
+                }).filter((v) => v)
+              ]
+            }
           }
 
         }
@@ -412,11 +413,11 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
-        customer_id: row.customer.name,
+        customer_id: row.customer?.name ?? "",
         id: `mold_${random_id}`,
       }
     })
-
+    console.log("result ?? : ",tmpBasicRow);
     setBasicRow([...tmpBasicRow])
   }
 
@@ -482,7 +483,6 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
 
     }
   }
-
   return (
     <div>
         <PageHeader
@@ -523,7 +523,18 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
             e.map(v => {
               if(v.isChange) tmp.add(v.id)
             })
+
             setSelectList(tmp)
+            console.log("기존 데이터 : ", basicRow)
+            console.log("e : ", e);
+            e.map((value, index)=>{
+              if(value.customerArray){
+                basicRow[index].customer = value;
+              }
+            })
+            console.log("changeData : ", basicRow);
+
+            // setBasicRow([...basicRow])
             setBasicRow(e)
           }}
           selectList={selectList}

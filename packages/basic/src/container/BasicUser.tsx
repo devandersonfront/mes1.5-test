@@ -48,7 +48,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
     page: 1,
     total: 1
   })
-
   useEffect(() => {
     if(keyword){
       SearchBasic(keyword, option, page)
@@ -94,6 +93,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    console.log(basicRow);
     let res = await RequestMethod('post', `memberSave`,
       basicRow.map((row, i) => {
           if(selectList.has(row.id)){
@@ -110,7 +110,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
               ...row,
               ...selectData,
               id: row.tmpId,
-              authority: 4,
+              authority: row.authorityPK,
               version: row.version ?? null,
               additional: [
                 ...additional.map(v => {
@@ -481,6 +481,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
           })
+          console.log(e);
           setSelectList(tmp)
           setBasicRow(e)
         }}

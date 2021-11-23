@@ -181,22 +181,24 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
               }
             }
           })
-
-          return {
-            ...row,
-            ...selectData,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
+          if(row.customer_id){
+            return {
+              ...row,
+              ...selectData,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
                   }
-                }
-              }).filter((v) => v)
-            ]
+                }).filter((v) => v)
+              ]
+            }
+
           }
 
         }

@@ -48,7 +48,7 @@ export const AUTHORITY_LIST = [
           { title: "유저 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_HR_01" },
           { title: "권한 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_HR_02" },
         ] },
-      { title: "공장 기본정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_11"},
+      { title: "공장 기준정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_11"},
       { title: "거래처 관리", show: false, checkable: true, check: false, child: [
           { title: "거래처 정보 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_01" },
           { title: "모델 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_08" },
@@ -57,14 +57,14 @@ export const AUTHORITY_LIST = [
           { title: "공정 종류 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_02" },
           { title: "공정 일시정지 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_09" },
         ]},
-      { title: "품질 기본정보", show: false, checkable: true, check: false, child: [
+      { title: "품질 기준정보", show: false, checkable: true, check: false, child: [
           { title: "공정별 불량 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_03" },
         ]},
-      { title: "주변장치 기본정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_12" },
-      { title: "기계 기본 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_04" },
-      { title: "금형 기본 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_07" },
-      { title: "원자재 기본 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_06" },
-      { title: "원자재 기본 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_13" },
+      { title: "주변장치 기준정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_12" },
+      { title: "기계 기준 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_04" },
+      { title: "금형 기준 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_07" },
+      { title: "원자재 기준 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_06" },
+      { title: "원자재 기준 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_13" },
       { title: "제품 등록 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_05" },
     ] },
   {

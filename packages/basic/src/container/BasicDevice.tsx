@@ -161,10 +161,11 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
                 }
               }
             })
-
+            console.log(row, selectData)
             return {
               ...row,
               ...selectData,
+              type:row.type_id,
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -398,23 +399,26 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
               }
             }
           })
-
-          return {
-            ...row,
-            ...selectData,
-            type: row.type_id,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
+          console.log(row)
+          if(row.device_id){
+            return {
+              ...row,
+              ...selectData,
+              type: row.type_id,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
                   }
-                }
-              }).filter((v) => v)
-            ]
+                }).filter((v) => v)
+              ]
+            }
+
           }
 
         }
@@ -507,7 +511,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"주변장치 기본정보"}
+          title={"주변장치 기준정보"}
           buttons={
             ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }

@@ -7,7 +7,7 @@
   "scripts": {
     "bootstrap": "npm install; lerna bootstrap;",
     "package:main": "lerna run --scope main --stream dev",
-    "start": "run-p --print-label package:*",
+    "start": "run-p --print-label package:* ",
     "build": "lerna run --parallel build",
     "clean": "lerna clean; rm -rf node_modules; yarn run bootstrap"
   },

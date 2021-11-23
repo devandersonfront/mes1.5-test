@@ -54,7 +54,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   }, [isOpen])
 
   const getContents = () => {
-    console.log(row)
+    // console.log(row)
     if(row[`${column.key}`]){
       return row[column.key]
     }else{
@@ -225,7 +225,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     searchList[e].border = true
                     setSearchList([...searchList])
                   }
-                  console.log(searchList[e])
+                  console.log(searchList[e], e)
                   setSelectRow(e)
                 }}
                 type={'searchModal'}

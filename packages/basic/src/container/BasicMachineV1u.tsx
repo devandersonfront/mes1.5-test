@@ -36,6 +36,13 @@ const machineList = [
   {pk: 6, name: "탭핑기"},
 ]
 
+const weldingType = [
+  {pk:0, name: "선택없음"},
+  {pk:1, name: "아르곤"},
+  {pk:2, name: "통합"},
+  {pk:3, name: "스팟"},
+]
+
 const BasicMachineV1u = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
@@ -123,8 +130,15 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
     let res: any
+    // console.log(basicRow)
+    // basicRow.map((value, index)=>{
+    //   if(selectList.has(value.id)){
+    //     console.log({...value, interwork:value.interworkPK === "true"})
+    //   }
+    // })
     res = await RequestMethod('post', `machineSave`,
       basicRow.map((row, i) => {
+
           if(selectList.has(row.id)){
             let selectKey: string[] = []
             let additional:any[] = []
@@ -162,10 +176,13 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
                 }
               }
             })
-
+            console.log("result Data : ", row, selectData, Boolean(row.interworkPK))
             return {
               ...row,
               ...selectData,
+              type: row.typePK,
+              weldingType: weldingType.filter((value) => value.name === row.weldingType)[0].pk,
+              interwork: row.interworkPK === "true",
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -290,7 +307,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
               }
             }
           })
-
+          console.log(row)
           return {
             ...row,
             ...selectData,
@@ -417,11 +434,13 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       })
 
       let random_id = Math.random()*1000;
+      console.log(row.weldingType)
       return {
         ...row,
         ...appendAdditional,
         type: row.type ? machineList[row.type].name : '선택없음',
         type_id: row.type ? machineList[row.type].pk : 0,
+        weldingType: row.weldingType ? weldingType[row.weldingType].name : "선택없음",
         id: `mold_${random_id}`,
       }
     })
@@ -525,6 +544,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           row={basicRow}
           // setRow={setBasicRow}
           setRow={(e) => {
+            console.log(e)
             let tmp: Set<any> = selectList
             e.map(v => {
               if(v.isChange) tmp.add(v.id)

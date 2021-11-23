@@ -52,7 +52,10 @@ export const SearchModalResult = (selectData, type: string) => {
   switch(type) {
     case 'user': {
       return {
-        ...selectData,
+        // ...selectData,
+        appointment: selectData.appointment,
+        telephone: selectData.telephone,
+        description: selectData.description,
         manager: selectData.name,
         managerPk: selectData.user_id,
         user: selectData
@@ -79,6 +82,12 @@ export const SearchModalResult = (selectData, type: string) => {
         process: selectData.process.name,
         product: {...selectData},
         bom_root_id: selectData.bom_root_id
+      }
+    }
+    case 'customer': {
+      return {
+        customer_id:selectData.name,
+        customer:selectData.customerArray
       }
     }
     default : {
