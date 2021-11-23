@@ -1,5 +1,7 @@
+import {TransferCodeToValue} from '../common/TransferFunction'
 
 export const SearchResultSort = (infoList, type: string) => {
+  console.log('infolist', infoList)
   switch(type) {
     case 'user': {
       return infoList.map((v) => {
@@ -35,9 +37,37 @@ export const SearchResultSort = (infoList, type: string) => {
       return infoList.map((v) => {
         return {
           ...v,
-          customer_name: v.customer.name,
+          customer_name: v.customer ? v.customer.name : "",
+          model_name: v.model ? v.model.model : "",
+        }
+      })
+    }
+    case 'rawmaterial': {
+      return infoList.map((v) => {
+        return {
+          ...v,
+          customerArray: v.customer,
           customer: v.customer.name,
-          model_name: v.model.model,
+          rawName: v.name,
+        }
+      })
+    }
+    case 'submaterial': {
+      return infoList.map((v) => {
+        return {
+          ...v,
+          customerArray: v.customer,
+          customer: v.customer ? v.customer.name : "",
+          subName: v.name,
+        }
+      })
+    }
+    case 'factory': {
+      return infoList.map((v) => {
+        return {
+          ...v,
+          managerArray: v.manager,
+          manager: v.manager.name,
         }
       })
     }
@@ -48,7 +78,6 @@ export const SearchResultSort = (infoList, type: string) => {
 }
 
 export const SearchModalResult = (selectData, type: string) => {
-  console.log(type, selectData)
   switch(type) {
     case 'user': {
       return {
@@ -75,13 +104,43 @@ export const SearchModalResult = (selectData, type: string) => {
     case 'product': {
       return {
         code: selectData.code,
-        mold: selectData.molds && selectData.molds.length !== 0 ?  selectData.molds[0].mold.name : "-",
+        name: selectData.name,
         type: selectData.type,
+        type_name: TransferCodeToValue(selectData.type, 'material'),
         unit: selectData.unit,
         usage: selectData.usage,
         process: selectData.process.name,
         product: {...selectData},
-        bom_root_id: selectData.bom_root_id
+        bom_root_id: selectData.bom_root_id,
+      }
+    }
+    case 'rawmaterial': {
+      return {
+        ...selectData,
+        type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
+        raw_material: {
+          ...selectData,
+          customer: selectData.customerArray
+        }
+      }
+    }
+    case 'submaterial': {
+      return {
+        ...selectData,
+        sub_material: {
+          ...selectData,
+          customer: selectData.customerArray
+        }
+      }
+    }
+    case 'factory': {
+      return {
+        ...selectData,
+        factory: {
+          ...selectData,
+          manager: selectData.managerArray,
+        },
+        factory_id: selectData.name
       }
     }
     case 'customer': {

@@ -307,23 +307,24 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
               }
             }
           })
-          console.log(row)
-          return {
-            ...row,
-            ...selectData,
-            type: row.type_id,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
+          if(row.machine_id){
+            return {
+              ...row,
+              ...selectData,
+              type: row.type_id,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
                   }
-                }
-              }).filter((v) => v)
-            ]
+                }).filter((v) => v)
+              ]
+            }
           }
 
         }
@@ -399,7 +400,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       ...tmpColumn,
       ...additionalMenus
     ] )
-
 
     let selectKey = ""
     let additionalData: any[] = []

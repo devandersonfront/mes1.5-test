@@ -111,6 +111,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
               ...selectData,
               id: row.tmpId,
               authority: row.authorityPK,
+              user_id: row.tmpId,
               version: row.version ?? null,
               additional: [
                 ...additional.map(v => {
@@ -128,8 +129,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
 
           }
         }).filter((v) => v))
-
-    console.log("saveRes", res)
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인');
@@ -156,26 +155,27 @@ const BasicUser = ({page, keyword, option}: IProps) => {
               additional.push(v)
             }
           })
-
           let selectData: any = {}
-
-          return {
-            ...row,
-            ...selectData,
-            id: row.tmpId,
-            authority: row.authorityPK,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
+          if(row.user_id){
+            return {
+              ...row,
+              ...selectData,
+              id: row.tmpId,
+              authority: row.authorityPK,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
                   }
-                }
-              }).filter((v) => v)
-            ]
+                }).filter((v) => v)
+              ]
+            }
+
           }
 
         }

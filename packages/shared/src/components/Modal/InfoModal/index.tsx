@@ -20,6 +20,7 @@ import {insert_summary_info} from '../../../reducer/infoModal'
 import {RootState} from '../../../../../main/reducer'
 import {SearchInit} from '../SearchModalTest/SearchModalInit'
 import {InfoInit, InfoInitType, SummaryInfoInit} from './InfoModalInit'
+import {SearchModalResult, SearchResultSort} from '../../../Functions/SearchResultSort'
 
 interface IProps {
   column: IExcelHeaderType
@@ -57,9 +58,14 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(column.type){
+      console.log(column.type)
       setInfoModalInit(InfoInit[column.type])
+      if(isOpen){
+        console.log(row, column.key)
+        setSearchList([...SearchResultSort(row[column.key], 'product')])
+      }
     }
-  }, [column.type])
+  }, [column.type, isOpen])
 
   useEffect(() => {
     if(isOpen){
@@ -306,7 +312,7 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
                             </HeaderTableTitle>
                             <HeaderTableTextInput style={{width: info.width ?? '144px'}}>
                               <HeaderTableText>
-                                {getSummaryInfo(info)}
+                                {row[info.key]}
                               </HeaderTableText>
                               {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                             </HeaderTableTextInput>

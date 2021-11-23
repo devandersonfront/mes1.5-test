@@ -340,6 +340,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         cm_id: row.model.model,
         modelArray: row.model,
         process_id: row.process.name,
+        processArray: row.process,
         id: `mold_${random_id}`,
       }
     })

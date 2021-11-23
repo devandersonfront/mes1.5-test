@@ -27,10 +27,12 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         background:row.border ? "#19B9DF80" : "white",
         cursor: 'pointer',
       }} onClick={() => {
-        onRowChange({
-          ...row,
-          newTab: true
-        })
+        if(row.type === 2){
+          onRowChange({
+            ...row,
+            newTab: true
+          })
+        }
       }}>
         <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{title}</p>
       </div>

@@ -15,6 +15,7 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
+import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {
   column: IExcelHeaderType
@@ -49,6 +50,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      console.log(row.bom_root_id)
       if(row.bom_root_id){
 
         SearchBasic(searchKeyword, optionIndex, 1).then(() => {
@@ -67,13 +69,65 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   //   }
   // }, [pageInfo.page])
 
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
+  const changeRow = (tmpRow: any, key?: string) => {
+    let tmpData = []
+    let row = [];
+    if(typeof tmpRow === 'string'){
+      let tmpRowArray = tmpRow.split('\n')
+
+      row = tmpRowArray.map(v => {
+        if(v !== ""){
+          let tmp = JSON.parse(v)
+          return tmp
+        }
+      }).filter(v=>v)
+    }else{
+      row = [{...tmpRow}]
     }
+
+
+    tmpData = row.map((v, i) => {
+      let childData: any = {}
+      console.log(v)
+      switch(v.type){
+        case 0:{
+          childData = v.child_rm
+          break;
+        }
+        case 1:{
+          childData = v.child_sm
+          break;
+        }
+        case 2:{
+          childData = v.child_product
+          break;
+        }
+      }
+      console.log(v.type, childData)
+      return {
+        ...childData,
+        seq: i+1,
+        code: childData.code,
+        type: v.type,
+        tab: v.type,
+        type_name: TransferCodeToValue(v.type, 'material'),
+        unit: childData.unit,
+        usage: v.usage,
+        version: v.version,
+        processArray: childData.process ?? null,
+        process: childData.process ? childData.process.name : null,
+        bom_root_id: childData.bom_root_id,
+        product: v.type === 2 ?{
+          ...childData,
+        }: null,
+        raw_material: v.type === 0 ?{
+          ...childData,
+        }: null,
+        sub_material: v.type === 1 ?{
+          ...childData,
+        }: null
+      }
+    })
 
     return tmpData
   }
@@ -84,16 +138,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     // setOptionIndex(option)
     const res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
+    if(res){
+      let searchList = changeRow(res)
 
       setSearchList([...searchList])
     }
@@ -101,23 +147,35 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const SaveBasic = async () => {
     let body = searchList.map((v, i) => {
+      console.log(v.tab, v)
       return {
-        seq: v.seq,
+        seq: i+1,
         parent: {
-          ...row
+          ...row,
+          process: row.processArray
         },
-        child: {
+        child_product: v.tab === 2 ? {
           ...v.product
-        },
+        } : null,
+        child_rm: v.tab === 0 ? {
+          ...v.raw_material
+        } : null,
+        child_sm: v.tab === 1 ? {
+          ...v.sub_material
+        } : null,
+        type: v.tab,
         key: row.bom_root_id,
-        setting: row.setting,
-        usage: row.usage
+        setting: v.setting,
+        usage: v.usage,
+        version: v.version
       }
     })
 
     const res = await RequestMethod('post', `bomSave`,body)
 
-    console.log(res)
+    if(res) {
+
+    }
 
   }
 
@@ -246,13 +304,13 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.type ?? "-"}</HeaderTableText>
+              <HeaderTableText>{row.type ? TransferCodeToValue(row.type, 'material') : "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.process ? row.process.name : "-"}</HeaderTableText>
+              <HeaderTableText>{row.processArray ? row.processArray.name : "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -260,13 +318,13 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>생산수량</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{bomDummy[focusIndex].cavity}</HeaderTableText>
+              <HeaderTableText>1</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{bomDummy[focusIndex].unit}</HeaderTableText>
+              <HeaderTableText>{row.unit ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
@@ -359,6 +417,16 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               }}>
                 <p>아래로</p>
               </Button>
+              <Button style={{marginLeft: 16}} onClick={() => {
+                let tmpRow = [...searchList]
+
+                tmpRow.splice(selectRow, 1)
+                console.log(selectRow, tmpRow)
+
+                setSearchList([...tmpRow])
+              }}>
+                <p>삭제</p>
+              </Button>
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
@@ -378,6 +446,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     newTab: false
                   }
                 })
+                console.log("e",e)
                 setSearchList([...tmp])
               }}
               width={1746}

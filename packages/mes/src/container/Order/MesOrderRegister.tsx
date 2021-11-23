@@ -33,8 +33,8 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", order_date: moment().format('YYYY-MM-DD'),
-    limit_date: moment().format('YYYY-MM-DD')
+    name: "", id: "", date: moment().format('YYYY-MM-DD'),
+    deadline: moment().format('YYYY-MM-DD')
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["orderRegister"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -82,17 +82,6 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
-      {/*<PaginationComponent*/}
-      {/*  currentPage={pageInfo.page}*/}
-      {/*  totalPage={pageInfo.total}*/}
-      {/*  setPage={(page) => {*/}
-      {/*    if(keyword){*/}
-      {/*      router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)*/}
-      {/*    }else{*/}
-      {/*      router.push(`/mes/basic/mold?page=${page}`)*/}
-      {/*    }*/}
-      {/*  }}*/}
-      {/*/>*/}
       <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}

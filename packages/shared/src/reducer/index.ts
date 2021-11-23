@@ -4,13 +4,15 @@ import menuState from './menuState'
 import MachineSelectReducer from "./machineSelect";
 import MulitpleSelectModal from "./ProductSelect";
 import infoModal from './infoModal'
+import modifyInfo from './modifyInfo'
 
 const rootReducer = combineReducers({
   userInfo,
   menuState,
   MachineSelectReducer,
   MulitpleSelectModal,
-  infoModal
+  infoModal,
+  modifyInfo
 })
 
 export {rootReducer};
