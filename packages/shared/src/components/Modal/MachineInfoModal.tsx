@@ -15,6 +15,7 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
+import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {
   column: IExcelHeaderType
@@ -40,9 +41,13 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      setSearchList(row.machines.map((v,i) => {
+        return {
+          ...v,
+          ...v.machine,
+          seq: i+1
+        }
+      }) ?? [{seq: 1}])
     }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
@@ -199,7 +204,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.type ?? "-"}</HeaderTableText>
+              <HeaderTableText>{row.type ? TransferCodeToValue(row.type, 'material') : "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
@@ -267,6 +272,16 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             }}>
               <p>아래로</p>
             </Button>
+            <Button style={{marginLeft: 16}} onClick={() => {
+              let tmpRow = [...searchList]
+
+              tmpRow.splice(selectRow, 1)
+              console.log(selectRow, tmpRow)
+
+              setSearchList([...tmpRow])
+            }}>
+              <p>삭제</p>
+            </Button>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
@@ -298,7 +313,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               onClick={() => {
                 setIsOpen(false)
               }}
-              style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>취소</p>
             </div>

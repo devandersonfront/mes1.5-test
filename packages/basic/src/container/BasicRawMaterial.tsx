@@ -136,20 +136,6 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
                   [v.split('PK')[0]]: row[v]
                 }
               }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
             })
 
             return {
@@ -175,17 +161,15 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
 
 
     if(res){
-      if(res.status === 200){
-        Notiflix.Report.success('저장되었습니다.','','확인');
-        if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+      Notiflix.Report.success('저장되었습니다.','','확인');
+      if(keyword){
+        SearchBasic(keyword, option, page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }else{
+        LoadBasic(page).then(() => {
+          Notiflix.Loading.remove()
+        })
       }
     }
   }

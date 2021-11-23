@@ -84,6 +84,7 @@ export {OrderRegisterButton} from "./components/Buttons/OrderRegisterButton"
 //캘린더
 import {CalendarBox} from "./components/CalendarBox/CalendarBox"
 import {DatetimePickerBox} from "./components/CalendarBox/DatetimePickerBox"
+import {rootReducer} from './reducer'
 
 export {UseDateCell} from "./components/Cell/UseDateCell"
 export {RelationWork} from "./components/Cell/RelationWork"
@@ -153,6 +154,12 @@ export {TestModule} from "./components/ComponentTest"
 export {PaginationComponent} from "./components/Pagination/PaginationComponent"
 
 export {rootReducer} from "./reducer"
+
+type RootState = ReturnType<typeof rootReducer>
+export {RootState}
+
+//redux
+export {setModifyInitData, SET_MENU_STATE} from "./reducer/modifyInfo"
 
 export type {
   IMenuType,

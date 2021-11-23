@@ -383,7 +383,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       ...additionalMenus
     ] )
 
-
     let selectKey = ""
     let additionalData: any[] = []
     tmpColumn.map((v: any) => {

@@ -16,6 +16,8 @@ import {SearchInit} from './SearchModalInit'
 import {MoldRegisterModal} from '../MoldRegisterModal'
 import Notiflix from 'notiflix'
 import {SearchModalResult, SearchResultSort} from '../../../Functions/SearchResultSort'
+import {Select} from '@material-ui/core'
+import {TransferCodeToValue} from '../../../common/TransferFunction'
 
 
 interface IProps {
@@ -38,23 +40,41 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{}])
+  const [tab, setTab] = useState<number>(0)
 
   const [searchModalInit, setSearchModalInit] = useState<any>()
 
   useEffect(() => {
     if(column.type){
-      setSearchModalInit(SearchInit[column.type])
+      if(column.type === "bom"){
+        setSearchList([{}])
+        switch(tab){
+          case 0:{
+            setSearchModalInit(SearchInit.rawmaterial)
+            break;
+          }
+          case 1:{
+            setSearchModalInit(SearchInit.submaterial)
+            break;
+          }
+          case 2:{
+            setSearchModalInit(SearchInit.product)
+            break;
+          }
+        }
+      }else{
+        setSearchModalInit(SearchInit[column.type])
+      }
     }
-  }, [column.type])
+  }, [column.type, tab])
 
   useEffect(() => {
     if(isOpen){
       LoadBasic();
     }
-  }, [isOpen])
+  }, [isOpen, searchModalInit])
 
   const getContents = () => {
-    console.log(row)
     if(row[`${column.key}`]){
       return row[column.key]
     }else{
@@ -68,15 +88,16 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `${column.type}Search`,{
+    const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`,{
       path: {
         page: 1,
         renderItem: 18,
       }
     })
 
+
     if(res){
-      setSearchList([...SearchResultSort(res.info_list, column.type)])
+      setSearchList([...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
       Notiflix.Loading.remove()
     }
 
@@ -85,8 +106,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   return (
     <SearchModalWrapper >
       <div style={ column.modalType
-        ? {width: 'calc(100% - 32px)', height: 32, opacity: row[`${column.key}`] ? 1 : .3}
-        : {width: 'calc(100% - 40px)', height: 40, opacity: row[`${column.key}`] ? 1 : .3}
+        ? {width: 'calc(100% - 32px)', height: 32, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
+        : {width: 'calc(100% - 40px)', height: 40, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
       } onClick={() => {
         setIsOpen(true)
       }}>
@@ -134,15 +155,30 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               display: 'flex',
               justifyContent: 'space-between'
             }}>
-              <p style={{
-                color: 'black',
-                fontSize: 22,
-                fontWeight: 'bold',
-                margin: 0,
-              }}>{searchModalInit && searchModalInit.title}</p>
+              <div style={{display: 'flex'}}>
+                <p style={{
+                  color: 'black',
+                  fontSize: 22,
+                  fontWeight: 'bold',
+                  margin: 0,
+                }}>{searchModalInit && searchModalInit.title}</p>
+                {
+                  column.type === 'bom' && <div style={{marginLeft: 20}}>
+                      <Select value={tab} onChange={(e) => {
+                        setTab(Number(e.target.value))
+                      }}>
+                          <option value={0}>원자재</option>
+                          <option value={1}>부자재</option>
+                          <option value={2}>제품</option>
+                      </Select>
+                  </div>
+                }
+              </div>
               <div style={{display: 'flex'}}>
                 {
-                  column.type === 'mold' && <MoldRegisterModal column={column} row={row} onRowChange={onRowChange}/>
+                  column.type === 'mold' && <MoldRegisterModal column={column} row={row} onRowChange={onRowChange} register={() => {
+                    LoadBasic();
+                  }}/>
                 }
                 <div style={{cursor: 'pointer', marginLeft: 22}} onClick={() => {
                   setIsOpen(false)
@@ -211,7 +247,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             </div>
             <div style={{padding: '0 16px 0 16px', width: 856}}>
               <ExcelTable
-                headerList={searchModalInit && searchModalList[`${searchModalInit.excelColumnType}`]}
+                headerList={searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
                 row={searchList ?? []}
                 setRow={() => {}}
                 width={1744}
@@ -225,7 +261,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     searchList[e].border = true
                     setSearchList([...searchList])
                   }
-                  console.log(searchList[e])
                   setSelectRow(e)
                 }}
                 type={'searchModal'}
@@ -246,8 +281,11 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 setIsOpen(false)
                 onRowChange({
                   ...row,
-                  name: row.name,
-                  ...SearchModalResult(searchList[selectRow], column.type),
+                  ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
+                  name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
+                  tab: column.type === 'bom' ? tab : undefined,
+                  type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
+                  version: row.version,
                 })
               }}
               style={{backgroundColor: POINT_COLOR}}

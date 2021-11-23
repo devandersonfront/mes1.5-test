@@ -126,13 +126,9 @@ export const InfoInit: Record<string, InfoInitType> = {
     readonly: true,
     buttonText: '품목 등록',
     existText: '품목 보기',
-    title: '주변장치 정보',
-    excelColumnType: 'deviceInfo',
+    title: '생산 품목 정보',
+    excelColumnType: 'product',
     excelDownload: true,
-    leftTopHeader: {
-      type: 'titleButton',
-      title: '반·완제품'
-    }
   },
   bomInfo: {
     buttonText: 'BOM 등록',
@@ -225,11 +221,11 @@ export const SummaryInfoInit: Record<string, Array<SummaryInfoInitType[]>> = {
     [
       {title: '캐비티', key: 'cavity', unit: 'EA'},
       {title: 'SPM', key: 'spm'},
-      {title: '슬라이드 위치', key: 'dieHeight'},
+      {title: '슬라이드 위치', key: 'slideHeight'},
     ],
     [
-      {title: '최대 타수', key: 'max'},
-      {title: '점검 타수', key: 'check'},
+      {title: '최대 타수', key: 'limit'},
+      {title: '점검 타수', key: 'inspect'},
       {title: '현재 타수', key: 'current'},
     ],
   ],

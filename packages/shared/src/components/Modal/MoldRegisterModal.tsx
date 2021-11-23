@@ -23,37 +23,27 @@ interface IProps {
   column: IExcelHeaderType
   row: any
   onRowChange: (e: any) => void
+  register: () => void
 }
 
 interface IRequestData {
   code: string
-  mold_name: string
+  name: string
   cavity: string
   spm: string
-  dieHeight: string
+  slideHeight: string
   limit: string
-  check: string
+  inspect: string
   current: string
 }
 
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
-const MoldRegisterModal = ({column, row, onRowChange}: IProps) => {
+const MoldRegisterModal = ({column, row, onRowChange, register}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('금형')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
-  const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([
-    {code: 'SU-M-3', name:'OP10', cavity:'1', spm: '24', dieHeight: '10', limit: '0', check: '0', current: '0'}
-  ])
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
 
   const [requestData, setRequestData] = useState<IRequestData>({
-    code: '', cavity: '', check: '', current: '', dieHeight: '', limit: '', mold_name: '', spm: ''
+    code: '', cavity: '', inspect: '', current: '', slideHeight: '', limit: '', name: '', spm: ''
   })
 
   const changeRequestData = (changeType: string) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -63,47 +53,22 @@ const MoldRegisterModal = ({column, row, onRowChange}: IProps) => {
     })
   }
 
-  const changeRow = (row: any, key?: string) => {
-    console.log('factory row', row)
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null,
-      factory: row.name,
+  const SaveBasic = async () => {
+    let body = [{
+      ...requestData,
+      period: 0,
+      additional:[],
+    }]
+
+    const res = await RequestMethod('post', `moldSave`,body)
+
+    if(res) {
+      Notiflix.Report.success('저장되었습니다.','','확인', ()=> {
+
+      });
+
     }
 
-    return tmpData
-  }
-
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
-    }
   }
 
   const ModalContents = () => {
@@ -175,7 +140,7 @@ const MoldRegisterModal = ({column, row, onRowChange}: IProps) => {
               <TableBackground>
                 <TableItems style={{width: 160}}><p>금형명</p></TableItems>
                 <TableItems style={{width: 1152}}>
-                  <RegisterInput value={requestData['mold_name']} onChange={changeRequestData('mold_name')} placeholder={'금형명 입력'}/>
+                  <RegisterInput value={requestData['name']} onChange={changeRequestData('name')} placeholder={'금형명 입력'}/>
                 </TableItems>
               </TableBackground>
               <TableBackground>
@@ -193,7 +158,7 @@ const MoldRegisterModal = ({column, row, onRowChange}: IProps) => {
               <TableBackground>
                 <TableItems style={{width: 160}}><p>슬라이드 위치</p></TableItems>
                 <TableItems style={{width: 1152}}>
-                  <RegisterInput value={requestData['dieHeight']} onChange={changeRequestData('dieHeight')} placeholder={'0'}/>
+                  <RegisterInput value={requestData['slideHeight']} onChange={changeRequestData('slideHeight')} placeholder={'0'}/>
                 </TableItems>
               </TableBackground>
               <TableBackground>
@@ -205,7 +170,7 @@ const MoldRegisterModal = ({column, row, onRowChange}: IProps) => {
               <TableBackground>
                 <TableItems style={{width: 160}}><p>점검 타수</p></TableItems>
                 <TableItems style={{width: 1152}}>
-                  <RegisterInput value={requestData['check']} onChange={changeRequestData('check')} placeholder={'타수 입력'}/>
+                  <RegisterInput value={requestData['inspect']} onChange={changeRequestData('inspect')} placeholder={'타수 입력'}/>
                 </TableItems>
               </TableBackground>
               <TableBackground>
@@ -227,15 +192,10 @@ const MoldRegisterModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
-                  onRowChange({
-                    ...row,
-                    ...searchList[selectRow],
-                    name: row.name,
-                    isChange: true
-                  })
-                }
-                setIsOpen(false)
+                SaveBasic().then(() => {
+                  register()
+                  setIsOpen(false)
+                })
               }}
               style={{width: '50%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >

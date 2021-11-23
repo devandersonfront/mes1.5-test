@@ -36,11 +36,14 @@ export const searchModalList: any = {
     {key: 'user_id', name: '아이디', formatter: LineBorderContainer},
   ],
   product: [
-    {key: 'customer', name: '고객사명', formatter: LineBorderContainer},
-    {key: 'model', name: '모델', formatter: LineBorderContainer},
+    {key: 'customer_name', name: '고객사명', formatter: LineBorderContainer},
+    {key: 'model_name', name: '모델', formatter: LineBorderContainer},
     {key: 'code', name: 'code', formatter: LineBorderContainer},
     {key: 'name', name: '품명', formatter: LineBorderContainer},
-    {key: 'texture', name: '재질', formatter: LineBorderContainer},
+    {key: 'type', name: '종류', formatter: LineBorderContainer},
+    {key: 'unit', name: '단위', formatter: LineBorderContainer},
+    {key: 'stock', name: '재고수량', formatter: LineBorderContainer},
+    // {key: 'spare', name: '기본/스페어 설정', formatter: LineBorderContainer},
   ],
   customer: [
     {key: 'customer_id', name: '고객사명', formatter: LineBorderContainer},
@@ -87,9 +90,9 @@ export const searchModalList: any = {
     {key: 'name', name: '금형명', formatter: LineBorderContainer},
     {key: 'cavity', name: '캐비티', formatter: LineBorderContainer},
     {key: 'spm', name: 'SPM', formatter: LineBorderContainer},
-    {key: 'dieHeight', name: '슬라이드 위치', formatter: LineBorderContainer},
+    {key: 'slideHeight', name: '슬라이드 위치', formatter: LineBorderContainer},
     {key: 'limit', name: '최대 타수', formatter: LineBorderContainer},
-    {key: 'check', name: '점검 타수', formatter: LineBorderContainer},
+    {key: 'inspect', name: '점검 타수', formatter: LineBorderContainer},
     {key: 'current', name: '현재 타수', formatter: LineBorderContainer},
   ],
 
@@ -143,13 +146,13 @@ export const searchModalList: any = {
   ],
   bomInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
-    {key: 'code', name: 'CODE', width: 425, formatter: SearchModalTest, placeholder: '-', type: 'product', modalType: true},
-    {key: 'mold', name: '금형명', width: 280, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'code', name: 'CODE', width: 425, formatter: SearchModalTest, placeholder: '-', type: 'bom', modalType: true},
+    {key: 'name', name: '품명', width: 280, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'setting', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 0, name: '기본'},
         {pk: 1, name: '스페어'},
       ], type: 'Modal'},
-    {key: 'type', name: '품목 종류', width: 160, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'type_name', name: '품목 종류', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'unit', name: '단위', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'usage', name: '사용량', width: 160, formatter: LineBorderContainer, editor: TextEditor, placeholder: '-'},
     {key: 'process', name: '생산 공정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
@@ -378,7 +381,7 @@ export const searchModalList: any = {
     {key: 'crn', name: '사업자 번호'},
   ],
   factorySearch: [
-    {key: 'factory', name: '공장명'},
+    {key: 'name', name: '공장명'},
     {key: 'address', name: '주소'},
     {key: 'manager', name: '담당자명'},
     {key: 'description', name: '비고'},
@@ -395,7 +398,7 @@ export const searchModalList: any = {
     {key: 'crn', name: '사업자 번호'},
     {key: 'model', name: '모델명'},
   ],
-  rawMaterialSearch: [
+  rawmaterialSearch: [
     {key: 'code', name: '원자재 CODE'},
     {key: 'name', name: '원자재 품명'},
     {key: 'texture', name: '재질'},
@@ -405,7 +408,7 @@ export const searchModalList: any = {
     {key: 'type', name: '재질 종류'},
     {key: 'customer', name: '거래처'},
   ],
-  subMaterialSearch: [
+  submaterialSearch: [
     {key: 'code', name: '부자재 CODE'},
     {key: 'name', name: '부자재 품명'},
     {key: 'unit', name: '단위'},

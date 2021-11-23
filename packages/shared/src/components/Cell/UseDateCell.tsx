@@ -29,13 +29,9 @@ const UseDateCell = ({ row, column, onRowChange }: IProps) => {
     const now = moment();
     const useDate = moment(date)
 
-    console.log(now.format('YYYY-MM-DD'), useDate.format('YYYY-MM-DD'))
-
     const elapsedDay = Math.floor(Number(moment.duration(now.diff(useDate)).asDays()))
 
-    console.log(row, )
-
-    if( row.useDate && elapsedDay >= row.useDate ){
+    if( row.useDate && elapsedDay >= row.expiration ){
       setBgColor('red')
     }else{
       setBgColor(undefined)

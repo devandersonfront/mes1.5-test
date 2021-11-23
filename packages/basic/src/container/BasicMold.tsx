@@ -31,10 +31,7 @@ const BasicMold = ({page, keyword, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([
-    {name: "", id: ""},
-    {id: "", code: 'SU-M-3', name: 'OP10', cavity: 1, spm: 24, slideHeight: 10, product: {}},
-  ])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["moldV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['CODE', '금형명'])

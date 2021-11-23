@@ -109,7 +109,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
             return {
               ...row,
               ...selectData,
-              id: row.tmpId,
+              user_id: row.tmpId,
               authority: 4,
               version: row.version ?? null,
               additional: [
@@ -128,8 +128,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
 
           }
         }).filter((v) => v))
-
-    console.log("saveRes", res)
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인');

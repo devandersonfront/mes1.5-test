@@ -9,63 +9,63 @@ export const SearchInit: Record<string, SearchInitType> = {
   user: {
     title: '유저 검색',
     searchFilter: ['성명', '직책', '권한'],
-    excelColumnType: 'userSearch'
+    excelColumnType: 'user'
   },
   customer: {
     title: '거래처 검색',
     searchFilter: ['거래처명', '대표자명', '담당자명', '사업자 번호'],
-    excelColumnType: 'customerSearch'
+    excelColumnType: 'customer'
   },
   factory: {
     title: '공장 검색',
     searchFilter: ['공장명', '담당자명'],
-    excelColumnType: 'factorySearch'
+    excelColumnType: 'factory'
   },
   segment: {
     title: '공장 세분화명 검색',
     searchFilter: ['공장명', '세분화명', '담당자명'],
-    excelColumnType: 'segmentSearch'
+    excelColumnType: 'segment'
   },
   model: {
     title: '모델명 검색',
     searchFilter: ['거래처명', '대표자명', '사업자 번호', '모델명'],
-    excelColumnType: 'modelSearch'
+    excelColumnType: 'model'
   },
-  rawMaterial: {
+  rawmaterial: {
     title: '원자재 검색',
     searchFilter: ['원자재 CODE', '원자재 품명', '재질', '거래처'],
-    excelColumnType: 'rawMaterialSearch'
+    excelColumnType: 'rawmaterial'
   },
-  subMaterial: {
+  submaterial: {
     title: '부자재 검색',
     searchFilter: ['부자재 CODE', '부자재 품명', '거래처'],
-    excelColumnType: 'subMaterialSearch'
+    excelColumnType: 'submaterial'
   },
   mold: {
     title: '금형 검색',
     searchFilter: ['CODE', '금형명'],
-    excelColumnType: 'moldSearch'
+    excelColumnType: 'mold'
   },
   machine: {
     title: '기계 검색',
     searchFilter: ['제조 번호', '기게 이름', '기계 종류', '톤 수', '공장명'],
-    excelColumnType: 'machineSearch'
+    excelColumnType: 'machine'
   },
   device: {
     title: '주변장치 검색',
     searchFilter: ['제조 번호', '기게 이름', '기계 종류', '톤 수', '공장명'],
-    excelColumnType: 'deviceSearch'
+    excelColumnType: 'device'
   },
   product: {
     title: '제품 검색',
     searchFilter: ['거래처', '모델', 'CODE', '품명'],
-    excelColumnType: 'productSearch',
+    excelColumnType: 'product',
     placeholder: 'CODE 검색'
   },
   order: {
     title: '수주 검색',
     searchFilter: ['수주 번호', '거래처', '모델', 'CODE', '품명'],
-    excelColumnType: 'orderSearch',
+    excelColumnType: 'order',
     placeholder: '수주번호입력'
   },
 }

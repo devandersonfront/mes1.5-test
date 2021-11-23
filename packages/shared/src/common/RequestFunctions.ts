@@ -6,6 +6,7 @@ import Notiflix from 'notiflix'
 type RequestType = 'get' | 'post' | 'delete' | 'put'
 
 export const requestApi = async (type: RequestType,url: string, data?: any, token?: any, contentsType?: 'blob') => {
+  Notiflix.Loading.circle()
 
   const ENDPOINT = `${SF_ENDPOINT}`
 
@@ -31,14 +32,13 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           })
         }
       }
-
-      console.log(tmpUrl)
       return Axios.get(tmpUrl, token && {'headers': {'Authorization': token}, responseType: contentsType})
         .then((result) => {
           // if(result.data.status !== 200){
           //   Notiflix.Report.failure('불러올 수 없습니다.', result.data.message, '확인')
           //   return false
           // }
+          Notiflix.Loading.remove(300)
           return result.data
         })
         .catch((error) => {
@@ -48,6 +48,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
               state: 401
             }
           }else if(error.response.status === 500){
+            Notiflix.Loading.remove(300)
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
             return false
           }
@@ -62,6 +63,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
 
       return Axios.post(postUrl, data, token && {'headers': {'Authorization': token}, responseType: contentsType})
         .then((result) => {
+          Notiflix.Loading.remove(300)
           if(result.data){
             return result.data
           }else{
@@ -69,6 +71,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           }
         })
         .catch((error) => {
+          Notiflix.Loading.remove(300)
           if(error.response.status === 400) {
             Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
           }else if(error.response.status === 500){
@@ -79,6 +82,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
     case 'put':
       return Axios.put(ENDPOINT+url, data,token && {'headers': {'Authorization': token}, responseType: contentsType})
         .then((result) => {
+          Notiflix.Loading.remove(300)
           if(result.data.status !== 200){
             Notiflix.Report.failure('저장할 수 없습니다.', result.data.message, '확인')
             return false
@@ -86,6 +90,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return result
         })
         .catch((error: AxiosError) => {
+          Notiflix.Loading.remove(300)
           return false
         })
     case 'delete':
@@ -94,9 +99,11 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         data: data
       })
         .then((result) => {
+          Notiflix.Loading.remove(300)
           return true
         })
         .catch((error) => {
+          Notiflix.Loading.remove(300)
           if(error.response.status === 400) {
             Notiflix.Report.failure('삭제할 수 없습니다.', '입력값을 확인해주세요', '확인')
           }
@@ -192,6 +199,8 @@ const ApiList = {
   deviceSave: `/api/v1/device/save`,
   rawMaterialSave: `/api/v1/raw-material/save`,
   subMaterialSave: `/api/v1/sub-material/save`,
+  lotRmSave: `/api/v1/lot-rm/save`,
+  lotSmSave: `/api/v1/lot-sm/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -216,12 +225,13 @@ const ApiList = {
   moldDelete: `/api/v1/mold/delete`,
   pauseDelete: `/api/v1/process/reason/pause/delete`,
   defectDelete: `/api/v1/process/reason/defect/delete`,
-  rawinDelete: `/api/v1/rawmaterial/warehouse/delete`,
+  rawinDelete: `/api/v1/lot-rm/delete`,
   operationDelete: `/api/v1/operation/delete`,
   shipmentDelete: '/api/v1/shipment/delete',
   stockSummaryDelete: `/api/v1/stock/summary/delete`,
   factoryDelete: `/api/v1/factory/delete`,
   deviceDelete: `/api/v1/device/delete`,
+  subinDelete: `/api/v1/lot-sm/delete`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,
@@ -250,6 +260,8 @@ const ApiList = {
   deviceList: `/api/v1/device/list`,
   rawMaterialList: `/api/v1/raw-material/list`,
   subMaterialList: `/api/v1/sub-material/list`,
+  rawInList: `/api/v1/lot-rm/list`,
+  subInList: `/api/v1/lot-sm/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -260,7 +272,7 @@ const ApiList = {
   machineSearch: `/api/v1/machine/search`,
   productSearch: `/api/v1/product/search`,
   pauseSearch: `/api/v1/process/reason/pause/search`,
-  rawmaterialSearch: `/api/v1/rawmaterial/search`,
+  rawmaterialSearch: `/api/v1/raw-material/search`,
   moldSearch: `/api/v1/mold/search`,
   defectReasonSearch: `/api/v1/process/reason/defect/search`,
   rawinSearch: `/api/v1/rawmaterial/warehouse/search`,
@@ -270,7 +282,9 @@ const ApiList = {
   recordSearch: `/api/v1/record/search`,
   shipmentSearch: `/api/v1/shipment/search`,
   recordSumSearch: `/api/v1/record/summation/search`,
-  factorySearch: `/api/v1`,
+  submaterialSearch: `/api/v1/sub-material/search`,
+  factorySearch: `/api/v1/factory/search`,
+  subFactorySearch: `/api/v1/subFactory/search`,
 
   recordDefect: `/api/v1/record/defect`,
   recordPause: `/api/v1/record/pause`,

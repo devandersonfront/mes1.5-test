@@ -16,8 +16,7 @@ import {
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
-import {NextPageContext} from 'next'
+  import {loadAll} from 'react-cookies'
 import TreeViewTable from '../../../main/component/TreeView/TreeView'
 import {IMenu} from '../../../main/common/@types/type'
 import {AUTHORITY_LIST} from '../../../main/common/configset'
@@ -189,16 +188,16 @@ const BasicModel = ({page, keyword, option}: IProps) => {
 
 
     if(res){
-        Notiflix.Report.success('저장되었습니다.','','확인');
-        if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+      Notiflix.Report.success('저장되었습니다.','','확인');
+      if(keyword){
+        SearchBasic(keyword, option, page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }else{
+        LoadBasic(page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }
     }
   }
 
@@ -304,10 +303,6 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         })
         cleanUpData(res)
       }
-    }else if (res.state === 401) {
-      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-        router.back()
-      })
     }
   }
 
@@ -328,7 +323,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
