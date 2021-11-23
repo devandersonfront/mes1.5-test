@@ -98,6 +98,7 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
 
   const getSummaryInfo = (info) => {
     // selector.data[selector.index][info.key]
+    console.log(selector.data)
     return '-'
   }
 
@@ -449,9 +450,10 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
             { infoModalInit && !infoModalInit.readonly && <FooterButton
               onClick={() => {
                 if (selectRow !== undefined && selectRow !== null) {
+                  console.log("row : ",row, "searchList : ", searchList, "selectRow : ",selectRow)
                   onRowChange({
                     ...row,
-                    ...searchList[selectRow],
+                    devices:searchList,
                     name: row.name,
                     isChange: true
                   })

@@ -48,7 +48,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
     page: 1,
     total: 1
   })
-
   useEffect(() => {
     if(keyword){
       SearchBasic(keyword, option, page)
@@ -94,6 +93,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    console.log(basicRow);
     let res = await RequestMethod('post', `memberSave`,
       basicRow.map((row, i) => {
           if(selectList.has(row.id)){
@@ -109,8 +109,9 @@ const BasicUser = ({page, keyword, option}: IProps) => {
             return {
               ...row,
               ...selectData,
+              id: row.tmpId,
+              authority: row.authorityPK,
               user_id: row.tmpId,
-              authority: 4,
               version: row.version ?? null,
               additional: [
                 ...additional.map(v => {
@@ -154,26 +155,27 @@ const BasicUser = ({page, keyword, option}: IProps) => {
               additional.push(v)
             }
           })
-
           let selectData: any = {}
-
-          return {
-            ...row,
-            ...selectData,
-            id: row.tmpId,
-            authority: row.authorityPK,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
+          if(row.user_id){
+            return {
+              ...row,
+              ...selectData,
+              id: row.tmpId,
+              authority: row.authorityPK,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
                   }
-                }
-              }).filter((v) => v)
-            ]
+                }).filter((v) => v)
+              ]
+            }
+
           }
 
         }
@@ -479,6 +481,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
           })
+          console.log(e);
           setSelectList(tmp)
           setBasicRow(e)
         }}

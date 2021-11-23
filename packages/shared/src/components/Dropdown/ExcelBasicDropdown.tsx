@@ -15,7 +15,7 @@ interface IProps {
 
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
   useEffect(() => {
-    console.log(row[column.key])
+    // console.log(row[column.key])
   }, [row[column.key]])
   return (
     <select
@@ -30,7 +30,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         backgroundSize: '24px',
         backgroundColor: column.type === 'Modal' ? row.border ? '#19B9DF80' : 'white' : '#00000000'
       }}
-      value={row[column.key]}
+      value={row[column.key] ? row[column.key] : "무"}
       onChange={(event) => {
         let pk = "";
         Object.keys(column && column.selectList ? column.selectList[0] : []).map((v) => {

@@ -115,6 +115,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     let res: any
     res = await RequestMethod('post', `factorySave`,
       basicRow.map((row, i) => {
+        console.log(row)
           if(selectList.has(row.id)){
             let selectKey: string[] = []
             let additional:any[] = []
@@ -179,22 +180,24 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
               additional.push(v)
             }
           })
-
-          return {
-            ...row,
-            manager: row.user,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
+          if(row.factory_id){
+            return {
+              ...row,
+              manager: row.user,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
                   }
-                }
-              }).filter((v) => v)
-            ]
+                }).filter((v) => v)
+              ]
+            }
+
           }
 
         }
@@ -407,6 +410,9 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       case 4:
         SaveBasic();
         break;
+      case 5:
+        DeleteBasic();
+        break;
     }
   }
 
@@ -427,7 +433,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"공장 기본정보"}
+          title={"공장 기준정보"}
           buttons={
             ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }
@@ -447,6 +453,9 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
             e.map(v => {
               if(v.isChange) tmp.add(v.id)
             })
+            console.log(selectList)
+
+            console.log("e : ", e)
             setSelectList(tmp)
             setBasicRow(e)
           }}

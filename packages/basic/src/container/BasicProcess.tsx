@@ -96,7 +96,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     )
 
     if(res){
-      if(res.status === 200){
+
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
           SearchBasic(keyword, option, page).then(() => {
@@ -107,29 +107,66 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
             Notiflix.Loading.remove()
           })
         }
-      }
+
     }
   }
 
   const DeleteBasic = async () => {
     const res = await RequestMethod('delete', `processDelete`,
-      {
-        processes: basicRow.map((row, i) => {
+
+        // processes: basicRow.map((row, i) => {
+        //   if(selectList.has(row.id)){
+        //     let pk = ""
+        //     Object.keys(row).map((v:string) => {
+        //       if(v.indexOf("_id") !== -1){
+        //         pk = v
+        //       }
+        //     })
+        //     console.log(row);
+        //     if(row.process_id){
+        //       return row[pk]
+        //     }
+        //   }
+        // }).filter((v) => v)
+        basicRow.map((row, i) => {
           if(selectList.has(row.id)){
-            let pk = ""
-            Object.keys(row).map((v:string) => {
-              if(v.indexOf("_id") !== -1){
-                pk = v
+            let selectKey: string[] = []
+            let additional:any[] = []
+            column.map((v) => {
+              if(v.selectList){
+                selectKey.push(v.key)
+              }
+
+              if(v.type === 'additional'){
+                additional.push(v)
               }
             })
 
-            return row[pk]
+            let selectData: any = {}
+            console.log(row);
+            if(row.process_id){
+              return {
+                ...row,
+                ...selectData,
+                additional: additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
+                  }
+                }).filter((v) => v)
+              }
+            }
+
           }
         }).filter((v) => v)
-      })
+      )
 
     if(res) {
-      if(res.status === 200){
+
         Notiflix.Report.success('삭제 성공!', '공정 데이터를 삭제하였습니다.', '확인', () => {
           if(Number(page) === 1){
             LoadBasic(1).then(() => {
@@ -143,7 +180,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
             }
           }
         })
-      }
+
     }
   }
 

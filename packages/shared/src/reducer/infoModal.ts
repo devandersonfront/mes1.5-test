@@ -10,7 +10,14 @@ export const insert_summary_info = (payload:any) => {
     type:INSERT_SUMMARY_INFO,
     payload:payload
   }
+
 }
+
+// factory
+// device
+// mold
+// product
+// product_no_cavity
 
 type DefaultAction = ReturnType<typeof insert_summary_info>;
 

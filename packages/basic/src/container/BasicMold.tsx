@@ -171,7 +171,6 @@ const BasicMold = ({page, keyword, option}: IProps) => {
 
 
     if(res){
-      if(res.status === 200){
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
           SearchBasic(keyword, option, page).then(() => {
@@ -182,7 +181,6 @@ const BasicMold = ({page, keyword, option}: IProps) => {
             Notiflix.Loading.remove()
           })
         }
-      }
     }
   }
 
@@ -252,22 +250,24 @@ const BasicMold = ({page, keyword, option}: IProps) => {
               }
             }
           })
-
-          return {
-            ...row,
-            ...selectData,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
+          if(row.mold_id){
+            return {
+              ...row,
+              ...selectData,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
                   }
-                }
-              }).filter((v) => v)
-            ]
+                }).filter((v) => v)
+              ]
+            }
+
           }
 
         }

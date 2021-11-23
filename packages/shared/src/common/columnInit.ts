@@ -161,7 +161,7 @@ export const columnlist: any = {
         {pk: 'true', name: '유'},
         {pk: 'false', name: '무'}
       ], width: 118},
-    {key: 'device', name: '주변장치', formatter: InfoModal, width: 118, type: 'deviceRegister', summaryType: 'device'},
+    {key: 'device_id', name: '주변장치', formatter: InfoModal, width: 118, type: 'deviceRegister', summaryType: 'device'},
     {key: 'tons', name: '톤 수',editor: TextEditor, formatter: UnitContainer, unitData: 'T', width: 118},
     {key: 'volt', name: '사용 전압',editor: TextEditor, formatter: UnitContainer, unitData: 'V', width: 118},
     {key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory',},

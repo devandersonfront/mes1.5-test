@@ -58,6 +58,25 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
   }, [page, keyword, option])
 
 
+  const settingType = (type:any) => {
+    switch (type){
+      case 1:
+        return "COIL"
+
+      case 2:
+        return "SHEET"
+
+      case "COIL" :
+        return 1
+
+      case "SHEET" :
+        return 2
+
+      default:
+        break;
+    }
+  }
+
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
@@ -141,6 +160,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
             return {
               ...row,
               ...selectData,
+              type:settingType(row.type),
               customer: row.customerArray,
               additional: [
                 ...additional.map(v => {
@@ -304,7 +324,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
     })
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-
+      console.log("oneLine : ", row)
       let appendAdditional: any = {}
 
       row.additional && row.additional.map((v: any) => {
@@ -315,9 +335,11 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
       })
 
       let random_id = Math.random()*1000;
+      console.log("row.type ::: ", row.type)
       return {
         ...row,
         ...appendAdditional,
+        type: settingType(row.type) ,
         customer_id: row.customer && row.customer.name,
         id: `rawmaterial_${random_id}`,
       }
@@ -375,23 +397,26 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
               }
             }
           })
-
-          return {
-            ...row,
-            ...selectData,
-            customer: row.customerArray,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
+          console.log(row);
+          if(row.rm_id){
+            return {
+              ...row,
+              ...selectData,
+              customer: row.customerArray,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
                   }
-                }
-              }).filter((v) => v)
-            ]
+                }).filter((v) => v)
+              ]
+            }
+
           }
 
         }
