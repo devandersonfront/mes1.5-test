@@ -36,7 +36,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["submaterial"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['부자재 코드', '부자재 품명', '거래처'])
+  const [optionList, setOptionList] = useState<string[]>(['부자재 CODE', '부자재 품명', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -62,7 +62,6 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
         let tmpKey = v.key
-
 
         let res: any
         res = await RequestMethod('get', `${tmpKey}List`,{
@@ -298,7 +297,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `submaterialSearch`,{
       path: {
         page: isPaging ?? 1,
         renderItem: 18,
@@ -309,7 +308,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res ){
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -490,9 +489,9 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             if(keyword){
-              router.push(`/mes/basic/device?page=1&keyword=${keyword}&opt=${optionIndex}`)
+              router.push(`/mes/basic/submaterial?page=1&keyword=${keyword}&opt=${optionIndex}`)
             }else{
-              router.push(`/mes/basic/device?page=1&keyword=`)
+              router.push(`/mes/basic/submaterial?page=1&keyword=`)
             }
           }}
           searchOptionList={optionList}
@@ -500,7 +499,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"부자재 기본정보"}
+          title={"부자재 기준정보"}
           buttons={
             ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }
@@ -547,9 +546,9 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
           totalPage={pageInfo.total}
           setPage={(page) => {
             if(keyword){
-              router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
+              router.push(`/mes/basic/submaterial?page=${page}&keyword=${keyword}&opt=${option}`)
             }else{
-              router.push(`/mes/basic/mold?page=${page}`)
+              router.push(`/mes/basic/submaterial?page=${page}`)
             }
           }}
         />

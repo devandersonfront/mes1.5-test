@@ -98,16 +98,16 @@ const SegmentFactorySearchModal = ({column, row, onRowChange}: IProps) => {
 
   const ModalContents = () => {
     if(column.searchType === 'operation' && row.index !== 1){
-      return <></>
+      return (<></>)
     }
 
     if(column.disableType === 'record' && row.osd_id){
-      return <div style={{width: '100%', height: 40, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+      return (<div style={{width: '100%', height: 40, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <p>{row[`${column.key}`]}</p>
-      </div>
+      </div>)
     }
 
-    return <>
+    return( <>
       <div style={{width: 'calc(100% - 40px)', height: 40}} onClick={() => {
         setIsOpen(true)
       }}>
@@ -125,7 +125,7 @@ const SegmentFactorySearchModal = ({column, row, onRowChange}: IProps) => {
       }}>
         <img style={{width: 20, height: 20}} src={IcSearchButton}/>
       </div>
-    </>
+    </>)
   }
 
   return (
@@ -196,7 +196,7 @@ const SegmentFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 {
                   optionList && optionList.map((v, i) => {
                     if(v){
-                      return <option value={i}>{v}</option>
+                      return (<option value={i}>{v}</option>)
                     }
                   })
                 }

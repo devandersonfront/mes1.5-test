@@ -62,6 +62,9 @@ import {PauseInfoModal} from '../components/Modal/PauseInfoModal'
 import {FinishCancelButton} from '../components/Buttons/FinishCancelButton'
 import {OrderRegisterButton} from '../components/Buttons/OrderRegisterButton'
 import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
+import DaumAddressModal from "../components/InputBox/DaumAddressModal";
+import {ManagerSearchModal} from "../components/Modal/ManagerSearchModal";
+import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFactorySearchModal";
 
 
 
@@ -80,12 +83,12 @@ export const columnlist: any = {
   ],
   factory: [
     {key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력'},
-    {key: 'address', name: '공장 주소', width: 480, editor: TextEditor},
+    {key: 'address', name: '공장 주소', width: 480, formatter: DaumAddressModal},
     {key: 'manager', name: '담당자', width: 120, formatter: SearchModalTest, type: 'user'},
     {key: 'appointment', name: '직책', width: 120, formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: 'telephone', name: '전화번호', width: 120, formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: 'description', name: '비고', width: 120, editor: TextEditor, formatter: PlaceholderBox, placeholder: '내용 입력'},
-    {key: 'affiliated_id', name: '공장 세분화', width: 120, formatter: InfoModal, type: 'factoryRegister', summaryType: 'factory'},
+    {key: 'affiliated_id', name: '공장 세분화', width: 120, formatter: /*InfoModal*/ FactoryInfoModal, type: 'factoryRegister', summaryType: 'factory'},
   ],
   customer: [
     {key: 'name', editor: TextEditor},
@@ -94,7 +97,7 @@ export const columnlist: any = {
     {key: 'telephone', editor: TextEditor},
     {key: 'cellphone', editor: TextEditor},
     {key: 'fax', editor: TextEditor},
-    {key: 'address', editor: TextEditor},
+    {key: 'address', formatter: DaumAddressModal},
     {key: 'crn', editor: TextEditor},
     {key: 'photo', formatter: FileEditer},
   ],
@@ -152,7 +155,7 @@ export const columnlist: any = {
       ], width: 118},
     {key: 'madeAt', name: '제조 연월일', formatter: CalendarBox, width: 118},
     {key: 'mfrCode', name: '제조 번호(필수)', editor: TextEditor, width: 118},
-    {key: 'user_id', name: '담당자', formatter: SearchModalTest, type: 'member', width: 118},
+    {key: 'manager', name: '담당자', formatter: SearchModalTest, type: 'user', width: 118},
     {key: 'photo', name: '기계사진', formatter: FileEditer, width: 118},
     {key: 'qualify', name: '스펙 명판 사진', formatter: FileEditer, width: 118},
     {key: 'capacity', name: '능력 명판 사진', formatter: FileEditer, width: 118},
@@ -161,11 +164,12 @@ export const columnlist: any = {
         {pk: 'true', name: '유'},
         {pk: 'false', name: '무'}
       ], width: 118},
-    {key: 'device_id', name: '주변장치', formatter: InfoModal, width: 118, type: 'deviceRegister', summaryType: 'device'},
+    {key: 'device_id', name: '주변장치', formatter: /*InfoModal*/ DeviceInfoModal, width: 118, type: 'deviceRegister', summaryType: 'device'},
     {key: 'tons', name: '톤 수',editor: TextEditor, formatter: UnitContainer, unitData: 'T', width: 118},
     {key: 'volt', name: '사용 전압',editor: TextEditor, formatter: UnitContainer, unitData: 'V', width: 118},
     {key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory',},
-    {key: 'affiliated_id',name: '공장 세분화명', width: 118, formatter: SearchModalTest, type: 'subFactory',},
+    {key: 'affiliated_id',name: '공장 세분화명', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory',},
+    {key: 'product_id',name: '생산 품목', width: 118, formatter: ProductInfoModal, type:"machine"},
   ],
   device: [
     {key: 'mfrName', name: '장치 제조사', editor: TextEditor},
@@ -225,7 +229,7 @@ export const columnlist: any = {
         {pk: 'ml', name: 'ml'},
         {pk: 'L', name: 'L'},
       ]},
-    {key: 'bom_root', name: 'BOM', formatter: BomInfoModal},
+    {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister"},
     {key: 'process_id', name: '생산 공정', formatter: ProcessSearchModal},
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
@@ -295,9 +299,10 @@ export const columnlist: any = {
     {key: 'slideHeight', name: '슬라이드 위치',editor: TextEditor,formatter: PlaceholderBox, placeholder: '0'},
     {key: 'limit', name: '최대타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
     {key: 'inspect', name: '점검타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
+    {key: 'inspect', name: '점검주기', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
     {key: 'current', name: '현재타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
-    // {key: 'product', name: '생산품목', formatter: ProductInfoModal},
-    {key: 'product_id', name: '생산품목', formatter: InfoModal, type: 'productInfo', summaryType: 'mold'},
+    {key: 'product_id', name: '생산품목', formatter: ProductInfoModal, type:"mold"},
+    // {key: 'product_id', name: '생산품목', formatter: InfoModal, type: 'productInfo', summaryType: 'mold'},
   ],
   productprocess: [
     {key: 'customer', name: '거래처명', width:118},

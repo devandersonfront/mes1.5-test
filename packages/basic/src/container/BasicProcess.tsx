@@ -229,11 +229,11 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages
+        page: res.page,
+        total: res.totalPages
       })
       cleanUpData(res)
     }
@@ -254,6 +254,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     return {
       process_id: row.process_id,
       name: row.name,
+      version: row.version,
       ...tmpData
     }
   }
@@ -468,6 +469,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
           })
+          console.log(e)
           setSelectList(tmp)
           setBasicRow(e)
         }}

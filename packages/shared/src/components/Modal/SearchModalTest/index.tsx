@@ -72,11 +72,15 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     if(isOpen){
       LoadBasic();
     }
-  }, [isOpen, searchModalInit])
+  }, [isOpen, searchModalInit, keyword, optionIndex])
 
   const getContents = () => {
     if(row[`${column.key}`]){
-      return row[column.key]
+      if( typeof row[`${column.key}`] === "string"){
+        return row[column.key];
+      }else{
+        return row[column.key].name;
+      }
     }else{
       if(searchModalInit && searchModalInit.placeholder){
         return searchModalInit.placeholder
@@ -86,12 +90,18 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }
 
+
+
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`,{
       path: {
         page: 1,
         renderItem: 18,
+      },
+      params:{
+        keyword:keyword,
+        opt:optionIndex
       }
     })
 
@@ -199,6 +209,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 <select
                   defaultValue={'-'}
                   onChange={(e) => {
+                    setOptionIndex(Number(e.target.value))
                     // SearchBasic('', Number(e.target.value))
                   }}
                   style={{
@@ -213,7 +224,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 >
                   {
                     searchModalInit && searchModalInit.searchFilter.map((v, i) => {
-                      return <option value={i}>{v}</option>
+                      return (<option value={i}>{v}</option>)
                     })
                   }
                 </select>
@@ -282,10 +293,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 onRowChange({
                   ...row,
                   ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
+                  manager: column.type === "factory" ? row.manager : SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                   name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
                   tab: column.type === 'bom' ? tab : undefined,
                   type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
                   version: row.version,
+                  isChange:true
                 })
               }}
               style={{backgroundColor: POINT_COLOR}}

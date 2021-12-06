@@ -33,11 +33,11 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
 
   const [basicRow, setBasicRow] = useState<Array<any>>([
     {name: "", id: ""},
-    {name: "드랑금속", id: "", address: '인천시 연수구 송도미래로125 송도타워 123동 11-10호', manager: '차지훈', appointment: '실장', cellphone: '02)777-1235',},
+    // {name: "드랑금속", id: "", address: '인천시 연수구 송도미래로125 송도타워 123동 11-10호', manager: '차지훈', appointment: '실장', cellphone: '02)777-1235',},
   ])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["factory"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
+  const [optionList, setOptionList] = useState<string[]>(['공장명','주소', '담당자명', '담당자 직책', '담당자 휴대폰 번호'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -63,7 +63,6 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
         let tmpKey = v.key
-
 
         let res: any
         res = await RequestMethod('get', `${tmpKey}List`,{
@@ -253,16 +252,17 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         renderItem: 18,
       },
       params: {
+        sorts:"created",
         keyword: keyword ?? '',
-        opt: option ?? 0
+        opt: option ?? 0,
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages
+        page: res.page,
+        total: res.totalPages
       })
       cleanUpData(res)
     }
@@ -423,9 +423,9 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             if(keyword){
-              router.push(`/mes/basic/mold?page=1&keyword=${keyword}&opt=${optionIndex}`)
+              router.push(`/mes/basic/factory?page=1&keyword=${keyword}&opt=${optionIndex}`)
             }else{
-              router.push(`/mes/basic/mold?page=1&keyword=`)
+              router.push(`/mes/basic/factory?page=1&keyword=`)
             }
           }}
           searchOptionList={optionList}
@@ -453,11 +453,8 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
             e.map(v => {
               if(v.isChange) tmp.add(v.id)
             })
-            console.log(selectList)
-
-            console.log("e : ", e)
             setSelectList(tmp)
-            setBasicRow(e)
+            setBasicRow([...e])
           }}
           selectList={selectList}
           //@ts-ignore

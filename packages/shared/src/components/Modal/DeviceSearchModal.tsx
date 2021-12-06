@@ -37,19 +37,19 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
     total: 1
   })
 
-  // useEffect(() => {
-  //   if(isOpen) SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-  //     Notiflix.Loading.remove()
-  //   })
-  // }, [isOpen, searchKeyword])
-  // console.log(row)
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
+  useEffect(() => {
+    if(isOpen) SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+      Notiflix.Loading.remove()
+    })
+  }, [isOpen, searchKeyword])
+  console.log(row)
+  useEffect(() => {
+    if(pageInfo.total > 1){
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }
+  }, [pageInfo.page])
 
   const changeRow = (row: any, key?: string) => {
     let tmpData = {
@@ -66,30 +66,32 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
     Notiflix.Loading.circle()
     setKeyword(keyword)
     setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
+    const res = await RequestMethod('get', `deviceSearch`,{
       path: {
         page: page,
         renderItem: 18,
       },
       params: {
+        // sorts:"name",
+        // types:0,
         keyword: keyword ?? '',
-        opt: option ?? 0
+        opt: option ?? 0,
       }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
+    // if(res && res.status === 200){
+      let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
 
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
+        page: res.page,
+        total: res.totalPages,
       })
 
       setSearchList([...searchList])
-    }
+    // }
   }
 
   const ModalContents = () => {
@@ -232,11 +234,20 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
             <ExcelTable
               headerList={searchModalList.device}
               row={searchList ?? []}
-              setRow={() => {}}
+              setRow={(e) => {
+                console.log(e)
+              }}
               width={1746}
               rowHeight={32}
               height={576}
               setSelectRow={(e) => {
+                if(!searchList[e].border){
+                  searchList.map((v,i)=>{
+                    v.border = false;
+                  })
+                  searchList[e].border = true
+                  setSearchList([...searchList])
+                }
                 setSelectRow(e)
               }}
               type={'searchModal'}
@@ -264,6 +275,7 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 if(selectRow !== undefined && selectRow !== null){
+                  console.log(row, searchList)
                   onRowChange({
                     ...row,
                     ...searchList[selectRow],

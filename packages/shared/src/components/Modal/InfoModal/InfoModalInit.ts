@@ -186,13 +186,13 @@ export interface SummaryInfoInitType {
 export const SummaryInfoInit: Record<string, Array<SummaryInfoInitType[]>> = {
   factory: [
     [
-      {title: '공장명', key: 'factory'},
+      {title: '공장명', key: 'name'},
       {title: '공장 주소', key: 'address', width: 786},
     ],
     [
-      {title: '담당자', key: 'name'},
+      {title: '담당자', key: 'manager'},
       {title: '직책', key: 'appointment'},
-      {title: '전화번호', key: 'cellphone', width: 465},
+      {title: '전화번호', key: 'telephone', width: 465},
     ],
     [
       {title: '비고', key: 'description', width: 1107},

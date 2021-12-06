@@ -47,7 +47,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["device"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
+  const [optionList, setOptionList] = useState<string[]>(["장치 제조사", "장치 이름", "장치 종류", "제조 번호"])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -121,80 +121,90 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
-    let res: any
-    res = await RequestMethod('post', `deviceSave`,
-      basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let selectKey: string[] = []
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
-
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-            })
-            console.log(row, selectData)
-            return {
-              ...row,
-              ...selectData,
-              type:row.type_id,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
-          }
-        }).filter((v) => v))
-
-
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
+    let pass = true;
+    basicRow.map((value)=>{
+      if(value.mfrCode === undefined || value.mfrCode === ""){
+        pass = false;
+        return Notiflix.Report.failure("경고", "제조 번호를 입력해주세요.", "확인")
       }
+    })
+    if(pass){
+      let res: any
+      res = await RequestMethod('post', `deviceSave`,
+        basicRow.map((row, i) => {
+            if(selectList.has(row.id)){
+              let selectKey: string[] = []
+              let additional:any[] = []
+              column.map((v) => {
+                if(v.selectList){
+                  selectKey.push(v.key)
+                }
+
+                if(v.type === 'additional'){
+                  additional.push(v)
+                }
+              })
+
+              let selectData: any = {}
+
+              Object.keys(row).map(v => {
+                if(v.indexOf('PK') !== -1) {
+                  selectData = {
+                    ...selectData,
+                    [v.split('PK')[0]]: row[v]
+                  }
+                }
+
+                if(v === 'unitWeight') {
+                  selectData = {
+                    ...selectData,
+                    unitWeight: Number(row['unitWeight'])
+                  }
+                }
+
+                if(v === 'tmpId') {
+                  selectData = {
+                    ...selectData,
+                    id: row['tmpId']
+                  }
+                }
+              })
+              console.log(row, selectData)
+              return {
+                ...row,
+                ...selectData,
+                type:row.type_id,
+                additional: [
+                  ...additional.map(v => {
+                    if(row[v.name]) {
+                      return {
+                        id: v.id,
+                        title: v.name,
+                        value: row[v.name],
+                        unit: v.unit
+                      }
+                    }
+                  }).filter((v) => v)
+                ]
+              }
+
+            }
+          }).filter((v) => v))
+
+
+      if(res){
+        Notiflix.Report.success('저장되었습니다.','','확인');
+        if(keyword){
+          SearchBasic(keyword, option, page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }else{
+          LoadBasic(page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+      }
+
     }
   }
 
@@ -228,7 +238,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `deviceSearch`,{
       path: {
         page: isPaging ?? 1,
         renderItem: 18,
@@ -239,7 +249,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,

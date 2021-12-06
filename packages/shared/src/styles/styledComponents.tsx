@@ -301,8 +301,8 @@ export const SearchModalStyle = styled.div`
 
     .rdg{
         border:none;
-        
     }
+    
     .rdg-cell{
         //border:none;
         border: 0.5px solid #B3B3B3;
@@ -351,7 +351,7 @@ export const SearchModalStyle = styled.div`
     }
     
     .rdg-row[aria-selected=true]{
-        background: blue;
+        // background: blue;
         &:hover{
             background:none;
             // background-color:none;
@@ -359,7 +359,7 @@ export const SearchModalStyle = styled.div`
     }
    
     .rdg-row[aria-selected=true]{
-        background: blue;
+        // background: blue;
     }
     
 

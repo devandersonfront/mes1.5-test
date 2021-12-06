@@ -16,6 +16,14 @@ import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {TransferCodeToValue} from '../../common/TransferFunction'
+import {
+  change_summary_info_index,
+  delete_summary_info,
+  insert_summary_info,
+  reset_summary_info
+} from "../../reducer/infoModal";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../reducer";
 
 interface IProps {
   column: IExcelHeaderType
@@ -28,46 +36,58 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const tabRef = useRef(null)
-
-  const [bomDummy, setBomDummy] = useState<any[]>([
-    {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
-  ])
+  const tabStore = useSelector((rootState: RootState) => rootState.infoModal)
+  console.log("tabStore : ", tabStore)
+  const dispatch = useDispatch();
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([
     {seq: 1,}
   ])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
   const [focusIndex, setFocusIndex] = useState<number>(0)
+
+  const [headerData, setHeaderData] = useState<any>();
 
   useEffect(() => {
     if(isOpen) {
-      console.log(row.bom_root_id)
       if(row.bom_root_id){
-
-        SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+        SearchBasic().then(() => {
           Notiflix.Loading.remove()
         })
       } else {
         setIsOpen(false)
       }
+    }else{
+      dispatch(reset_summary_info());
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
+
+  useEffect(() => {
+     if(tabStore.data.length <= 0){
+        setIsOpen(false);
+      }
+      getModalData()
+
+  },[tabStore])
+
+  const getModalData = async() => {
+
+    if(tabStore.data[tabStore.index]){
+      RequestMethod("get", "bomLoad", {path: { key: tabStore.data[tabStore.index] }})
+          .then((res) => {
+            const result = changeRow(res);
+            // console.log(result)
+            // console.log(headerData)
+            // console.log(result[selectRow].parent)
+            console.log("result : ", result)
+            setSearchList([...result])
+            setHeaderData(result[tabStore.index].parent)
+          })
+    }
+  }
+
 
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpData = []
@@ -85,10 +105,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       row = [{...tmpRow}]
     }
 
-
     tmpData = row.map((v, i) => {
       let childData: any = {}
-      console.log(v)
       switch(v.type){
         case 0:{
           childData = v.child_rm
@@ -103,7 +121,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           break;
         }
       }
-      console.log(v.type, childData)
       return {
         ...childData,
         seq: i+1,
@@ -116,38 +133,46 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         version: v.version,
         processArray: childData.process ?? null,
         process: childData.process ? childData.process.name : null,
-        bom_root_id: childData.bom_root_id,
+        // bom_root_id: childData.bom_root_id,
         product: v.type === 2 ?{
           ...childData,
         }: null,
+        product_id: v.parent.product_id,
         raw_material: v.type === 0 ?{
           ...childData,
         }: null,
         sub_material: v.type === 1 ?{
           ...childData,
-        }: null
+        }: null,
+        parent:v.parent
       }
     })
-
+    console.log(tmpData);
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
+  const SearchBasic = async (selectKey?:string) => {
     Notiflix.Loading.circle()
     // setKeyword(keyword)
     // setOptionIndex(option)
-    const res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
+    let res;
+    if(selectKey){
+      res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
+    }else{
+      res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
+    }
 
     if(res){
       let searchList = changeRow(res)
 
+      dispatch(insert_summary_info({data:row.bom_root_id, title:row.code}));
+      console.log("searchList : ", searchList)
       setSearchList([...searchList])
     }
   }
 
   const SaveBasic = async () => {
     let body = searchList.map((v, i) => {
-      console.log(v.tab, v)
       return {
         seq: i+1,
         parent: {
@@ -174,30 +199,30 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     const res = await RequestMethod('post', `bomSave`,body)
 
     if(res) {
+      setIsOpen(false)
 
     }
 
   }
 
-  const addNewTab = (index: number) => {
-    let tmp = bomDummy
-    tmp.push({code: 'SU-20210701-'+index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
-    setBomDummy([...tmp])
-  }
-
-  const deleteTab = (index: number) => {
-    if(bomDummy.length - 1 === focusIndex){
-      console.log('last')
-      setFocusIndex(focusIndex-1)
-    }
-    if(bomDummy.length === 1) {
-      return setIsOpen(false)
-    }
-
-    let tmp = bomDummy
-    tmp.splice(index, 1)
-    setBomDummy([...tmp])
-  }
+  // const addNewTab = (index: number) => {
+  //   let tmp = bomMark
+  //   tmp.push({code: 'SU-20210701-'+index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
+  //   setBomMark([...tmp])
+  // }
+  //
+  // const deleteTab = (index: number) => {
+  //   if(bomMark.length - 1 === focusIndex){
+  //     setFocusIndex(focusIndex-1)
+  //   }
+  //   if(bomMark.length === 1) {
+  //     return setIsOpen(false)
+  //   }
+  //
+  //   let tmp = bomMark
+  //   tmp.splice(index, 1)
+  //   setBomMark([...tmp])
+  // }
 
   const ModalContents = () => {
     if(modify){
@@ -278,13 +303,13 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
+              <HeaderTableText>{headerData ? headerData.customer.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
+              <HeaderTableText>{headerData ? headerData.model.model : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -292,25 +317,25 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.code ?? "-"}</HeaderTableText>
+              <HeaderTableText>{headerData ? headerData.code :row.code ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.name ?? "-"}</HeaderTableText>
+              <HeaderTableText>{headerData ? headerData.name : row.name ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.type ? TransferCodeToValue(row.type, 'material') : "-"}</HeaderTableText>
+              <HeaderTableText>{headerData ? TransferCodeToValue(headerData.type, 'productType') :row.type || row.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.processArray ? row.processArray.name : "-"}</HeaderTableText>
+              <HeaderTableText>{headerData? headerData.process.name : row.processArray ? row.processArray.name : "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -324,15 +349,16 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.unit ?? "-"}</HeaderTableText>
+              <HeaderTableText>{headerData ? headerData.unit : row.unit ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-              {bomDummy.map((v, i) => {
+              {tabStore.title.map((v, i) => {
                 return <TabBox ref={i === 0 ? tabRef : null} style={
-                  focusIndex === i ? {
+                  // focusIndex === i ? {
+                  tabStore.index === i ? {
                     backgroundColor: '#19B9DF',
                     opacity: 1
                   } : {
@@ -341,26 +367,30 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   }
                 }>
                   {
-                    tabRef.current && tabRef.current.clientWidth < 63
-                      ? focusIndex !== i
-                      ? <><p onClick={() => {setFocusIndex(i)}}>{v.code}</p></>
-                      : <>
-                        <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
-                          deleteTab(i)
-                        }}>
-                          <img style={{width: 20, height: 20}} src={IcX}/>
-                        </div>
-                      </>
-                      : <>
-                        <p onClick={() => {setFocusIndex(i)}}
-                           style={{color: focusIndex === i ? "white" : '#353B48'}}
-                        >{v.code}</p>
-                        <div style={{cursor: 'pointer', width: 20, height: 20}} onClick={() => {
-                          deleteTab(i)
-                        }}>
-                          <img style={{width: 20, height: 20}} src={IcX}/>
-                        </div>
-                      </>
+                    tabRef.current && tabRef.current.clientWidth < 63 ?
+                        // focusIndex !== i ?
+                        tabStore.index !== i ?
+                            <p onClick={() => {setFocusIndex(i)}}>{tabStore.title[i]}</p>
+                            :
+                            <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
+                              dispatch(delete_summary_info(i));
+                            }}>
+                              <img style={{width: 20, height: 20}} src={IcX}/>
+                            </div>
+                            :
+                            <>
+                              <p onClick={() => {
+                                setFocusIndex(i)
+                                dispatch(change_summary_info_index(i));
+                              }}
+                                 // style={{color: focusIndex === i ? "white" : '#353B48'}}
+                                 style={{color: tabStore.index === i ? "white" : '#353B48'}}
+                              >{tabStore.title[i]}</p>
+                              <div style={{cursor: 'pointer', width: 20, height: 20}} onClick={() => {
+                              }}>
+                                <img style={{width: 20, height: 20}} src={IcX}/>
+                              </div>
+                            </>
                   }
                 </TabBox>
               })}
@@ -421,7 +451,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 let tmpRow = [...searchList]
 
                 tmpRow.splice(selectRow, 1)
-                console.log(selectRow, tmpRow)
 
                 setSearchList([...tmpRow])
               }}>
@@ -435,18 +464,17 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               row={searchList ?? [{}]}
               setRow={(e) => {
                 let tmp = e.map((v, index) => {
-                  if(v.newTab === true){
-                    const newTabIndex = bomDummy.length+1
-                    addNewTab(newTabIndex)
-                    setFocusIndex(newTabIndex-1)
-                  }
+                  // if(v.newTab === true){
+                  //   const newTabIndex = bomMark.length+1
+                  //   addNewTab(newTabIndex)
+                  //   setFocusIndex(newTabIndex-1)
+                  // }
 
                   return {
                     ...v,
                     newTab: false
                   }
                 })
-                console.log("e",e)
                 setSearchList([...tmp])
               }}
               width={1746}
@@ -463,6 +491,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   searchList[e].border = true
                   setSearchList([...searchList])
                 }
+                console.log(e)
                 setSelectRow(e)
               }}
               type={'searchModal'}
@@ -489,7 +518,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     isChange: true
                   })
                 }
-                setIsOpen(false)
+
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >

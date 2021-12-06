@@ -103,6 +103,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
       onRowsChange={setRow}
       emptyRowsView={() => <div>empty</div>}
       onSelectedRows={(e:any)=>{
+        console.log(e)
       }}
       onSelectedRowsChange={setSelectedRows}
       selectedRows={selectedRows}
@@ -131,7 +132,6 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
         }
       }}
       clickable={clickable}
-
     />
   }
 

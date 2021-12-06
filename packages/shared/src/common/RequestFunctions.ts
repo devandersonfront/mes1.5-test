@@ -201,12 +201,14 @@ const ApiList = {
   subMaterialSave: `/api/v1/sub-material/save`,
   lotRmSave: `/api/v1/lot-rm/save`,
   lotSmSave: `/api/v1/lot-sm/save`,
+  subFactorySave: `/api/v1/subFactory/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
 
   //load
   authorityLoad: `/api/v1/member/auth/load`,
+  productLoad: `/api/v1/product/load`,
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -232,6 +234,7 @@ const ApiList = {
   factoryDelete: `/api/v1/factory/delete`,
   deviceDelete: `/api/v1/device/delete`,
   subinDelete: `/api/v1/lot-sm/delete`,
+  subFactoryDelete: `/api/v1/subFactory/delete`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,
@@ -262,6 +265,7 @@ const ApiList = {
   subMaterialList: `/api/v1/sub-material/list`,
   rawInList: `/api/v1/lot-rm/list`,
   subInList: `/api/v1/lot-sm/list`,
+  subFactoryList: `/api/v1/subFactory/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -292,6 +296,8 @@ const ApiList = {
   itemList: `/api/v1/items/list`,
   itemSave: `/api/v1/items/save`,
   itemDelete: `/api/v1/items/delete`,
+
+  deviceSearch: `/api/v1/device/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,

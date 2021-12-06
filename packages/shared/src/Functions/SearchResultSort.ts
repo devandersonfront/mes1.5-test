@@ -47,7 +47,7 @@ export const SearchResultSort = (infoList, type: string) => {
         return {
           ...v,
           customerArray: v.customer,
-          customer: v.customer.name,
+          customer: v.customer ? v.customer.name : "",
           rawName: v.name,
         }
       })
