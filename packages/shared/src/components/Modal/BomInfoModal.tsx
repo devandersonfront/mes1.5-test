@@ -65,17 +65,17 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }, [isOpen, searchKeyword])
 
   useEffect(() => {
-     if(tabStore.data.length <= 0){
+     if(tabStore.code.length <= 0){
         setIsOpen(false);
-      }
+     }
       getModalData()
 
   },[tabStore])
 
   const getModalData = async() => {
 
-    if(tabStore.data[tabStore.index]){
-      RequestMethod("get", "bomLoad", {path: { key: tabStore.data[tabStore.index] }})
+    if(tabStore.code[tabStore.index]){
+      RequestMethod("get", "bomLoad", {path: { key: tabStore.code[tabStore.index] }})
           .then((res) => {
             const result = changeRow(res);
             // console.log(result)
@@ -83,7 +83,13 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             // console.log(result[selectRow].parent)
             console.log("result : ", result)
             setSearchList([...result])
-            setHeaderData(result[tabStore.index].parent)
+            result.map((value, i) => {
+              if(tabStore.code[tabStore.index] == value.parent.bom_root_id){
+                console.log(tabStore.code[tabStore.index], i)
+                setHeaderData(result[0].parent)
+
+              }
+            })
           })
     }
   }
@@ -164,8 +170,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
     if(res){
       let searchList = changeRow(res)
-
-      dispatch(insert_summary_info({data:row.bom_root_id, title:row.code}));
+      console.log("row : ", row)
+      dispatch(insert_summary_info({code:row.bom_root_id, title:row.code, data:searchList}));
       console.log("searchList : ", searchList)
       setSearchList([...searchList])
     }

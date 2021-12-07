@@ -39,7 +39,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         }
           if(row.bom_root_id){
             console.log(row.bom_root_id);
-            dispatch(add_summary_info({data:row.bom_root_id, title:row.code, index:tabStore.index+1}))
+            dispatch(add_summary_info({code:row.bom_root_id, title:row.code, index:tabStore.index+1}))
           }else{
             Notiflix.Report.warning("경고","등록된 BOM 정보가 없습니다.","확인", () => {})
           }

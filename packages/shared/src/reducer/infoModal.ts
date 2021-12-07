@@ -1,13 +1,15 @@
 interface ModalType {
-  data: string[],
+  code: string[],
   title: string[],
   index: number,
+  data?: any[]
 }
 
 export const initalState:ModalType = {
-  data: [],
+  code: [],
   title: [],
-  index: 0
+  index: 0,
+  data:[]
 }
 
 const INSERT_SUMMARY_INFO = "INSERT_SUMMARY_INFO";
@@ -15,6 +17,8 @@ const ADD_SUMMARY_INFO = "ADD_SUMMARY_INFO";
 const CHANGE_SUMMARY_INFO_INDEX = "CHANGE_SUMMARY_INFO_INDEX";
 const DELETE_SUMMARY_INFO = "DELETE_SUMMARY_INFO";
 const RESET_SUMMARY_INFO = "RESET_SUMMARY_INFO";
+const ADD_SUMMARY_INFO_DATA = "ADD_SUMMARY_INFO_DATA";
+
 
 export const insert_summary_info = (payload:any) => {
   return {
@@ -45,6 +49,11 @@ export const reset_summary_info = () => {
   }
 }
 
+export const add_summary_info_data = (payload:any[]) => ({
+  type:ADD_SUMMARY_INFO_DATA,
+  payload: payload
+})
+
 // factory
 // device
 // mold
@@ -53,24 +62,24 @@ export const reset_summary_info = () => {
 
 type DefaultAction = ReturnType<typeof insert_summary_info> | ReturnType<typeof reset_summary_info> |
                      ReturnType<typeof delete_summary_info> | ReturnType<typeof add_summary_info> |
-                     ReturnType<typeof change_summary_info_index>
+                     ReturnType<typeof change_summary_info_index> | ReturnType<typeof add_summary_info_data>
     ;
 
 const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
   switch (type){
     case INSERT_SUMMARY_INFO :
       const insertState = {...state};
-      const insertPayload = payload as {data, title};
+      const insertPayload = payload as {code, title};
 
       insertState.title.push(insertPayload.title);
-      insertState.data.push(insertPayload.data);
+      insertState.code.push(insertPayload.code);
       return insertState;
 
     case ADD_SUMMARY_INFO:
       const addState = {...state};
-      const addPayload = payload as {data, title, index};
+      const addPayload = payload as {code, title, index};
       addState.title.push(addPayload.title);
-      addState.data.push(addPayload.data);
+      addState.code.push(addPayload.code);
       addState.index = addPayload.index;
       return addState;
 
@@ -83,7 +92,7 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
 
     case RESET_SUMMARY_INFO :
       return {
-        data: [],
+        code: [],
         title: [],
         index: 0
       }
@@ -92,13 +101,22 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
       const deleteState = {...state};
       console.log("DELETE_SUMMARY_INFO : ", payload)
       // const deletePayload = payload as number;
-      deleteState.data.splice(payload, 1);
+      deleteState.code.splice(payload, 1);
       deleteState.title.splice(payload, 1);
 
       return deleteState;
 
-default :
-  return state
+    case ADD_SUMMARY_INFO_DATA:
+      const addDataState = {...state};
+      console.log("ADD_SUMMARY_INFO_DATA : ", payload);
+      const addDataPayload = payload as any[];
+
+      addDataState.data.push(addDataPayload)
+
+      return addDataState;
+
+    default :
+      return state
 }
 }
 
