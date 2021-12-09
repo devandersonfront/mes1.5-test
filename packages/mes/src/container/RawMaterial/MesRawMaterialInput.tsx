@@ -117,10 +117,11 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
 
 
   const onClickHeaderButton = (index: number) => {
+    const randomID = Math.random()*100;
     switch(index){
       case 0:
         setBasicRow([
-          {},
+          {id:`rm${randomID}`, date: moment().format('YYYY-MM-DD')},
           ...basicRow
         ])
         break;
@@ -159,6 +160,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
+          console.log("e : ", e);
           setBasicRow(e)
         }}
         selectList={selectList}

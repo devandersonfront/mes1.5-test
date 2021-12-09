@@ -58,11 +58,11 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(column.type){
-      console.log(column.type)
       setInfoModalInit(InfoInit[column.type])
       if(isOpen){
         console.log(row, column.key)
-        setSearchList([...SearchResultSort(row[column.key], 'product')])
+
+        // setSearchList([...SearchResultSort(row[column.summaryType], column.)])
       }
     }
   }, [column.type, isOpen])
@@ -75,6 +75,10 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
       }))
     }
   }, [row, isOpen])
+
+  useEffect(()=>{
+    loadData(column.summaryType);
+  },[])
 
   const deleteTab = (index: number) => {
     if(bomDummy.length - 1 === focusIndex){
@@ -94,6 +98,36 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
     let tmp = bomDummy
     tmp.push({code: 'SU-20210701-'+index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
     setBomDummy([...tmp])
+  }
+
+  const saveSubFactory = async() => {
+    //여기서 factoryRegister / deviceRegister / bomRegister를 가지고 저장을 나눈다.
+    console.log("row : ", row, "searchList : ", searchList)
+    const result = [];
+    searchList.map((e, index)=>{
+      let sub:any = {};
+      sub.factory_id = row.factory_id;
+      sub.seq = e.seq;
+      sub.name = e.segmentName;
+      sub.manager = {...searchList[index], user_id:searchList[index].user_idPK, authority: searchList[index].authorityPK};
+      sub.description = e.description;
+      result.push(sub);
+    })
+
+    console.log("result : ", result);
+    await RequestMethod("post", "subFactorySave",result)
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err)=>{
+          console.log(err)
+        })
+
+  }
+
+  const loadData = (value:string) => {
+    //여기서 무슨 정보의 모달인지 구분 후 데이터를 가져온다. || summaryType이 아닐수도 있음
+    console.log(value)
   }
 
   const getSummaryInfo = (info) => {
@@ -400,6 +434,8 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
                 setRow={
                   (e) => {
                     let tmp = e.map((v, index) => {
+                      v.name = v.user_id;
+                      console.log("v : ", v)
                       if(v.newTab === true){
                         const newTabIndex = bomDummy.length+1
                         addNewTab(newTabIndex)
@@ -411,7 +447,9 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
                         newTab: false
                       }
                     })
-                    setSearchList([...tmp])
+                    console.log("!!!!!!!!!!!e : ", e)
+                    console.log("!!!!!!!!!!!tmp : ", tmp)
+                    // setSearchList([...tmp])
                     setSearchList([...e])
                   }
                 }
@@ -449,16 +487,17 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
             </FooterButton>
             { infoModalInit && !infoModalInit.readonly && <FooterButton
               onClick={() => {
-                if (selectRow !== undefined && selectRow !== null) {
-                  console.log("row : ",row, "searchList : ", searchList, "selectRow : ",selectRow)
-                  onRowChange({
-                    ...row,
-                    devices:searchList,
-                    name: row.name,
-                    isChange: true
-                  })
-                }
-                setIsOpen(false)
+                // if (selectRow !== undefined && selectRow !== null) {
+                //   console.log("row : ",row, "searchList : ", searchList, "selectRow : ",selectRow)
+                //   onRowChange({
+                //     ...row,
+                //     devices:searchList,
+                //     name: row.name,
+                //     isChange: true
+                //   })
+                // }
+                saveSubFactory();
+                // setIsOpen(false)
               }}
               style={{
                 backgroundColor: POINT_COLOR,

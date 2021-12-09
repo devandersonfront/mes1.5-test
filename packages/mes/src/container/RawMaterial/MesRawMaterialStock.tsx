@@ -38,11 +38,13 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    date: dummyDate.format('YYYY-MM-DD'), useDate: 10,
-    code: 'SUS-111', name: 'SUS360', texture: 'SUS360', depth: '1.2', width: 3000, height: 3000, type: 'COIL', amount: 1000,
-    number: `${dummyDate.format('YYMMDD')}-01-01`, current: 1000, customer: '한국상사',
-  }])
+  const [basicRow, setBasicRow] = useState<Array<any>>([
+      // {
+    // date: dummyDate.format('YYYY-MM-DD'), useDate: 10,
+    // code: 'SUS-111', name: 'SUS360', texture: 'SUS360', depth: '1.2', width: 3000, height: 3000, type: 'COIL', amount: 1000,
+    // number: `${dummyDate.format('YYMMDD')}-01-01`, current: 1000, customer: '한국상사',
+  // }
+  ])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawstockV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처'])
@@ -58,6 +60,12 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
     to: moment().endOf('isoWeek').format('YYYY-MM-DD')
   });
 
+  const [nzState, setNzState] = useState<boolean>(false);
+
+  const changeNzState = (value:boolean) => {
+    setNzState(value);
+  }
+
   useEffect(() => {
     setOptionIndex(option)
     if(keyword){
@@ -69,7 +77,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [page, keyword, option, nzState])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -109,7 +117,8 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeNzState
           }
         }else{
           return v
@@ -131,6 +140,9 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
+      },
+      params:{
+        nz:nzState
       }
     })
 
@@ -154,18 +166,19 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `rawInListSearch`,{
       path: {
         page: isPaging ?? 1,
         renderItem: 18,
       },
       params: {
         keyword: keyword ?? '',
-        opt: option ?? 0
+        opt: option ?? 0,
+        nz:nzState
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -274,7 +287,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         width: row.raw_material.width,
         height: row.raw_material.height,
         type: TransferCodeToValue(row.raw_material.type, 'rawMaterialType'),
-        customer_id: row.raw_material.customer.name,
+        customer_id: row.raw_material?.customer?.name ?? "-",
         expiration: row.raw_material.expiration,
         ...appendAdditional,
         id: `rawin_${random_id}`,
@@ -346,6 +359,10 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch(index){
       case 0:
+        if(selectList.size <= 0){
+          Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
+          return
+        }
         dispatch(setModifyInitData({
           modifyInfo: [
             ...basicRow.map(v => {
@@ -375,9 +392,9 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
           if(keyword){
-            router.push(`/mes/rawmaterial/input?page=1&keyword=${keyword}&opt=${optionIndex}`)
+            router.push(`/mes/rawmaterialV1u/stock?page=1&keyword=${keyword}&opt=${optionIndex}`)
           }else{
-            router.push(`/mes/rawmaterial/input?page=1&keyword=`)
+            router.push(`/mes/rawmaterialV1u/stock?page=1&keyword=`)
           }
         }}
         searchOptionList={optionList}
@@ -432,9 +449,9 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         totalPage={pageInfo.total}
         setPage={(page) => {
           if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
+            router.push(`/mes/rawmaterialV1u/stock?page=${page}&keyword=${keyword}&opt=${option}`)
           }else{
-            router.push(`/mes/basic/mold?page=${page}`)
+            router.push(`/mes/rawmaterialV1u/stock?page=${page}`)
           }
         }}
       />

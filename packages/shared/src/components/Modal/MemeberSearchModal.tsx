@@ -182,7 +182,7 @@ const MemberSearchModal = ({column, row, onRowChange}: IProps) => {
                 >
                   {
                     optionList && optionList.member.map((v, i) => {
-                      return <option value={i}>{v}</option>
+                      return (<option value={i}>{v}</option>)
                     })
                   }
                 </select>

@@ -36,13 +36,13 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
-
+  // console.log(row, column)
   useEffect(() => {
-    if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
-    }
+    // if(isOpen) {
+    //   SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+    //     Notiflix.Loading.remove()
+    //   })
+    // }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
   //   if(pageInfo.total > 1){
@@ -67,7 +67,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     Notiflix.Loading.circle()
     setKeyword(keyword)
     setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
+    const res = await RequestMethod('get', `deviceSearch`,{
       path: {
         page: page,
         renderItem: 18,
@@ -94,18 +94,54 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const ModalContents = () => {
-    return <>
-      <div style={{
-        padding: '3.5px 0px 0px 3.5px',
-        width: '100%'
-      }}>
-      <UploadButton onClick={() => {
-        setIsOpen(true)
-      }}>
-        <p>주변장치 등록</p>
-      </UploadButton>
-      </div>
-    </>
+
+    if(row.devices?.length > 0){
+      return (
+          <>
+            <div style={{
+              padding: '3.5px 0px 0px 3.5px',
+              width: '100%'
+            }}>
+              <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
+                setIsOpen(true)
+              }}>
+                <p style={{color: 'white', textDecoration: 'underline'}}>주변장치 보기</p>
+              </UploadButton>
+            </div>
+          </>
+      )
+    }else{
+      return (<>
+        <div style={{
+          padding: '3.5px 0px 0px 3.5px',
+          width: '100%'
+        }}>
+        <UploadButton onClick={() => {
+          setIsOpen(true)
+        }}>
+          <p>주변장치 등록</p>
+        </UploadButton>
+        </div>
+      </>)
+
+    }
+  }
+
+  const getManagerName = () => {
+    if(row.manager){
+      switch (typeof row.manager){
+        case "string":
+
+          return row.manager;
+        case "object":
+
+
+          return row.manager.name;
+        default:
+           return ""
+      }
+
+    }
   }
 
   return (
@@ -157,13 +193,13 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>기계제조사</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>Aidaas</HeaderTableText>
+              <HeaderTableText>{row.mfrName}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>기계 이름</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 770}}>
-              <HeaderTableText>400톤 2호기</HeaderTableText>
+              <HeaderTableText>{row.name}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -171,25 +207,27 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>기계종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>프레스</HeaderTableText>
+              <HeaderTableText>{row.type}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>용접종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>선택 없음</HeaderTableText>
+              <HeaderTableText>{row.weldingType}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>제조번호</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>125-77-123</HeaderTableText>
+              <HeaderTableText>{row.mfrCode}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>담당자</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>차지훈</HeaderTableText>
+              {/*<HeaderTableText>{row.manager}</HeaderTableText>*/}
+              <HeaderTableText>{getManagerName()}</HeaderTableText>
+              {/*<HeaderTableText>{typeof row.manager == "object" ? row.manager.name : row.manager }</HeaderTableText>*/}
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -197,7 +235,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>오버홀</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>유</HeaderTableText>
+              <HeaderTableText>{row.interwork ? "유" : "무"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
@@ -256,7 +294,11 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
             <ExcelTable
               headerList={searchModalList.deviceInfo}
               row={searchList ?? [{}]}
-              setRow={(e) => setSearchList([...e])}
+              setRow={(e) => {
+                // console.log(e)
+                searchList[selectRow].device =
+                setSearchList([...e])
+              }}
               width={1746}
               rowHeight={32}
               height={560}
@@ -289,10 +331,13 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 if(selectRow !== undefined && selectRow !== null){
+                  // console.log(row, searchList[selectRow], )
                   onRowChange({
                     ...row,
-                    ...searchList[selectRow],
+                    // ...searchList[selectRow],
+                    machine_idPK:row.machine_id,
                     name: row.name,
+                    devices:searchList,
                     isChange: true
                   })
                 }

@@ -28,7 +28,7 @@ export interface IProps {
 }
 
 const title = '유저 관리'
-const optList = ['사용자명', '이메일', '직책명', '전화번호', '권한명']
+const optList = ['성명', '이메일', '직책명', '전화번호', '권한명']
 
 const BasicUser = ({page, keyword, option}: IProps) => {
   const router = useRouter()
@@ -111,7 +111,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
               ...selectData,
               id: row.tmpId,
               authority: row.authorityPK,
-              user_id: row.tmpId,
+              // user_id: row.tmpId,
               version: row.version ?? null,
               additional: [
                 ...additional.map(v => {
@@ -233,15 +233,15 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       },
       params: {
         keyword: keyword ?? '',
-        opt: option ?? 0
+        opt: option ?? 0,
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages
+        page: res.page,
+        total: res.totalPages
       })
       cleanUpData(res)
     }

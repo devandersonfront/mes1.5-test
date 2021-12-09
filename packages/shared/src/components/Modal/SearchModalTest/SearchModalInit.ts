@@ -21,6 +21,12 @@ export const SearchInit: Record<string, SearchInitType> = {
     searchFilter: ['공장명', '담당자명'],
     excelColumnType: 'factory'
   },
+  subFactory: {
+    title: "공장 세분화",
+    searchFilter:["공장명", "세분화명"],
+    placeholder:"세분화명",
+    excelColumnType:"subFactory"
+  },
   segment: {
     title: '공장 세분화명 검색',
     searchFilter: ['공장명', '세분화명', '담당자명'],
@@ -28,6 +34,11 @@ export const SearchInit: Record<string, SearchInitType> = {
   },
   model: {
     title: '모델명 검색',
+    searchFilter: ['거래처명', '대표자명', '사업자 번호', '모델명'],
+    excelColumnType: 'model'
+  },
+  customerModel: {
+    title: "모델명 검색",
     searchFilter: ['거래처명', '대표자명', '사업자 번호', '모델명'],
     excelColumnType: 'model'
   },

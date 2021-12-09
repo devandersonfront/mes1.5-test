@@ -36,7 +36,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawmaterial"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['원자재 코드', '원자재 품명', '재질', '거래처'])
+  const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -156,12 +156,12 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
                 }
               }
             })
-
+            console.log(row)
             return {
               ...row,
               ...selectData,
               type:settingType(row.type),
-              customer: row.customerArray,
+              // customer: row.customerArray,
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -224,7 +224,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `rawmaterialSearch`,{
       path: {
         page: isPaging ?? 1,
         renderItem: 18,
@@ -235,7 +235,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -397,7 +397,6 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
               }
             }
           })
-          console.log(row);
           if(row.rm_id){
             return {
               ...row,
@@ -414,7 +413,8 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
                     }
                   }
                 }).filter((v) => v)
-              ]
+              ],
+              type:settingType(row.type)
             }
 
           }
@@ -499,9 +499,9 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             if(keyword){
-              router.push(`/mes/basic/device?page=1&keyword=${keyword}&opt=${optionIndex}`)
+              router.push(`/mes/basic/rawmaterialV1u?page=1&keyword=${keyword}&opt=${optionIndex}`)
             }else{
-              router.push(`/mes/basic/device?page=1&keyword=`)
+              router.push(`/mes/basic/rawmaterialV1u?page=1&keyword=`)
             }
           }}
           searchOptionList={optionList}
@@ -509,7 +509,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"원자재 기본정보"}
+          title={"원자재 기준정보"}
           buttons={
             ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }
@@ -555,8 +555,8 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`원자재 기준정보`}
+        sheetname={`원자재 기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

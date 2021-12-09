@@ -111,7 +111,18 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    Notiflix.Loading.standard();
     let res: any
+    const check = basicRow.map((row) => {
+      if(selectList.has(row.id) && !row.code && !row.name){
+          Notiflix.Loading.remove(300)
+          Notiflix.Report.failure("CODE를 입력해주세요.","","확인", )
+        return false
+      }
+    })
+    if(check.includes(false)){
+      return
+    }
     res = await RequestMethod('post', `productSave`,
       basicRow.map((row, i) => {
           if(selectList.has(row.id)){
@@ -191,6 +202,49 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const DeleteBasic = async() => {
+    Notiflix.Loading.circle();
+    let res: any
+    let data:any[] = [];
+    const check = basicRow.map((row) => {
+      if(selectList.has(row.id) && !row.code && !row.name){
+        Notiflix.Loading.remove(300)
+        Notiflix.Report.failure("CODE를 입력해주세요.","","확인", )
+        return false
+      }
+    })
+    if(check.includes(false)){
+      return
+    }
+
+
+    basicRow.map((value,index)=>{
+      if(selectList.has(value.id)){
+        let tmpRow = {...value};
+        console.log(value)
+        tmpRow.type = value.type_id;
+        data.push(tmpRow);
+
+      }
+    })
+
+    console.log("basicRow : ", basicRow, " selectList : ", selectList, " data : ", data);
+
+    await RequestMethod("delete", "productDelete", data)
+        .then((res) => {
+          console.log(res)
+          Notiflix.Loading.remove(300);
+          Notiflix.Report.success("삭제되었습니다.","","확인", () =>LoadBasic(1))
+        })
+        .catch((err) => {
+          console.log(err)
+          Notiflix.Loading.remove(300);
+          alert("fuck")
+        })
+
+
+  }
+
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
@@ -221,7 +275,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `productSearch`,{
       path: {
         page: isPaging ?? 1,
         renderItem: 18,
@@ -231,8 +285,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         opt: option ?? 0
       }
     })
-
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -332,15 +385,18 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       })
 
       let random_id = Math.random()*1000;
+
       return {
         ...row,
         ...appendAdditional,
         customer_id: row.customer.name,
         customerArray: row.customer,
-        cm_id: row.model.model,
+        cm_id: row.model?.model,
         modelArray: row.model,
-        process_id: row.process.name,
+        process_id: row.process?.name,
         processArray: row.process,
+        type_id: row.type,
+        type: column[4].selectList[row.type].name ,
         id: `mold_${random_id}`,
       }
     })
@@ -398,7 +454,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       case 4:
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{
-            // DeleteBasic()
+            DeleteBasic()
           },
           ()=>{}
         )
@@ -415,9 +471,9 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             if(keyword){
-              router.push(`/mes/basic/device?page=1&keyword=${keyword}&opt=${optionIndex}`)
+              router.push(`/mes/basic/productV1u?page=1&keyword=${keyword}&opt=${optionIndex}`)
             }else{
-              router.push(`/mes/basic/device?page=1&keyword=`)
+              router.push(`/mes/basic/productV1u?page=1&keyword=`)
             }
           }}
           searchOptionList={optionList}
@@ -461,9 +517,9 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
           totalPage={pageInfo.total}
           setPage={(page) => {
             if(keyword){
-              router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
+              router.push(`/mes/basic/productV1u?page=${page}&keyword=${keyword}&opt=${option}`)
             }else{
-              router.push(`/mes/basic/mold?page=${page}`)
+              router.push(`/mes/basic/productV1u?page=${page}`)
             }
           }}
         />

@@ -126,6 +126,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     let res: any
     res = await RequestMethod('post', `modelSave`,
       basicRow.map((row, i) => {
+        console.log(row)
           if(selectList.has(row.id)){
             let selectKey: string[] = []
             let additional:any[] = []
@@ -163,12 +164,11 @@ const BasicModel = ({page, keyword, option}: IProps) => {
                 }
               }
             })
-
+            console.log(selectData)
             return {
               ...row,
               ...selectData,
-              customer: row.customerArray,
-              // customer_iu: row.customer_id,
+              customer: row.customerArray ?? row.customer,
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -287,6 +287,9 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 19,
+      },
+      params:{
+        sorts:"created"
       }
     })
 
@@ -318,6 +321,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         renderItem: 18,
       },
       params: {
+        sorts:"created",
         keyword: keyword ?? '',
         opt: option ?? 0
       }

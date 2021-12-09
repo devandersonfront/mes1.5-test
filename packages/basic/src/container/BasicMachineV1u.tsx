@@ -5,18 +5,16 @@ import {
   RequestMethod,
   columnlist,
   MAX_VALUE,
-  DropDownEditor,
   TextEditor,
   excelDownload,
   PaginationComponent,
   ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
+  IExcelHeaderType
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 
 export interface IProps {
@@ -90,7 +88,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           }
         })
 
-
         let pk = "";
 
         res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
@@ -130,89 +127,23 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
     let res: any
-    // console.log(basicRow)
-    // basicRow.map((value, index)=>{
-    //   if(selectList.has(value.id)){
-    //     console.log({...value, interwork:value.interworkPK === "true"})
-    //   }
-    // })
-    res = await RequestMethod('post', `machineSave`,
-      basicRow.map((row, i) => {
+    let result = [];
+    basicRow.map((value, index)=>{
+      if(selectList.has(value.id)){
+        cleanForRegister(value)
 
-          if(selectList.has(row.id)){
-            let selectKey: string[] = []
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
-
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-            })
-            console.log("result Data : ", row, selectData, Boolean(row.interworkPK))
-            return {
-              ...row,
-              ...selectData,
-              type: row.typePK,
-              weldingType: weldingType.filter((value) => value.name === row.weldingType)[0].pk,
-              interwork: row.interworkPK === "true",
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
-          }
-        }).filter((v) => v))
-
-
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
+        result.push(cleanForRegister(value))
       }
-    }
+
+    })
+      RequestMethod('post', `machineSave`, result)
+          .then((res) => {
+            Notiflix.Report.success("저장되었습니다.","","확인");
+            LoadBasic(page);
+          }).catch((err) =>{
+            console.log(err)
+          })
+
   }
 
 
@@ -224,7 +155,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         renderItem: 18,
       }
     })
-
     if(res){
       setPageInfo({
         ...pageInfo,
@@ -245,7 +175,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `machineSearch`,{
       path: {
         page: isPaging ?? 1,
         renderItem: 18,
@@ -256,7 +186,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -267,81 +197,32 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
   }
 
   const DeleteBasic = async () => {
-
-    const res = await RequestMethod('delete', `machineDelete`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
-
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
-
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
-              }
-            }
-
-            if(v === 'unitWeight') {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(row['unitWeight'])
-              }
-            }
-
-            if(v === 'tmpId') {
-              selectData = {
-                ...selectData,
-                id: row['tmpId']
-              }
-            }
-          })
-          if(row.machine_id){
-            return {
-              ...row,
-              ...selectData,
-              type: row.type_id,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
-            }
-          }
-
+    let result = [];
+    basicRow.map((value, index)=>{
+      if(selectList.has(value.id)){
+        cleanForRegister(value)
+        if(value.machine_id){
+          result.push(cleanForRegister(value))
         }
-      }).filter((v) => v))
-
-    if(res) {
-      Notiflix.Report.success('삭제되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
       }
-    }
+
+    })
+    RequestMethod("delete", "machineDelete", result)
+        .then((res) => {
+          Notiflix.Report.success( "삭제되었습니다.", "", "확인");
+          if(keyword){
+            SearchBasic(keyword, option, page).then(() => {
+              Notiflix.Loading.remove()
+            })
+          }else{
+            LoadBasic(page).then(() => {
+              Notiflix.Loading.remove()
+            })
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
 
   }
 
@@ -434,18 +315,43 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       })
 
       let random_id = Math.random()*1000;
-      console.log(row.weldingType)
       return {
         ...row,
         ...appendAdditional,
         type: row.type ? machineList[row.type].name : '선택없음',
         type_id: row.type ? machineList[row.type].pk : 0,
         weldingType: row.weldingType ? weldingType[row.weldingType].name : "선택없음",
+        factory_id: row.factory?.name,
+        affiliated_id: row.subFactory?.name,
         id: `mold_${random_id}`,
       }
     })
-
+    console.log("tmpBasicRow : ", tmpBasicRow)
     setBasicRow([...tmpBasicRow])
+    // setBasicRow([{ id: "", name: "400톤 2호기", weldingType: '선택없음', type: '프레스', mfrCode: '125-77-123', interwork: '유', user_id: '차지훈', manufacturer:'Aidas'}])
+  }
+
+  const cleanForRegister = (value:any) => {
+    const tempData = {...value};
+    console.log("value : ", value)
+    let weldingPK = 0;
+    weldingType.map((welding)=>{
+      if(welding.name === value.weldingType){
+        weldingPK = welding.pk;
+      }
+    })
+    tempData.machine_id =  value.machine_idPK ?? value.machine_id;
+    tempData.type = value.type_id;
+    tempData.manager = value.user ?? value.manager;
+    if(value.subFactory !== null && value.subFactory !== undefined){
+      tempData.subFactory = {...value.subFactory, manager:value.subFactory.manager_info};
+    }
+    tempData.weldingType = weldingPK;
+    tempData.interwork = value.interworkPK === "true";
+    console.log(tempData)
+    // tempData.device.manager
+    return tempData
+
   }
 
   const downloadExcel = () => {
@@ -518,9 +424,9 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             if(keyword){
-              router.push(`/mes/basic/device?page=1&keyword=${keyword}&opt=${optionIndex}`)
+              router.push(`/mes/basic/machine?page=1&keyword=${keyword}&opt=${optionIndex}`)
             }else{
-              router.push(`/mes/basic/device?page=1&keyword=`)
+              router.push(`/mes/basic/machine?page=1&keyword=`)
             }
           }}
           searchOptionList={optionList}
@@ -528,7 +434,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"기계 기본정보"}
+          title={"기계 기준정보"}
           buttons={
             ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }
@@ -562,9 +468,9 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           totalPage={pageInfo.total}
           setPage={(page) => {
             if(keyword){
-              router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
+              router.push(`/mes/basic/machine?page=${page}&keyword=${keyword}&opt=${option}`)
             }else{
-              router.push(`/mes/basic/mold?page=${page}`)
+              router.push(`/mes/basic/machine?page=${page}`)
             }
           }}
         />
@@ -572,8 +478,8 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`기계기준정보`}
+        sheetname={`기계기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

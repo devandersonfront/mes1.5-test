@@ -54,8 +54,27 @@ const MesStockList = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
+  const getData = async() => {
+    await RequestMethod("get", "stockList", {
+      path:{
+        page:1,
+        renderItem:18
+      },
+      // params:{
+      //   sorts:"created"
+      // }
+    })
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+  }
+
   useEffect(() => {
-    Notiflix.Loading.remove()
+    Notiflix.Loading.remove();
+    getData();
   }, [])
 
   return (

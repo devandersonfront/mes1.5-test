@@ -15,6 +15,8 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
+// @ts-ignore
+import {SelectColumn} from 'react-data-grid'
 
 interface IProps {
   column: IExcelHeaderType
@@ -25,11 +27,13 @@ interface IProps {
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
+  // console.log(row, column)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
+  const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -39,12 +43,12 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+        Notiflix.Loading.remove()
+      })
     }
   }, [isOpen, searchKeyword])
-  console.log(row)
+
   // useEffect(() => {
   //   if(pageInfo.total > 1){
   //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -54,11 +58,18 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
   // }, [pageInfo.page])
 
   const changeRow = (row: any, key?: string) => {
+
+    let random_id = Math.random()*1000;
+
     let tmpData = {
       ...row,
       machine_id: row.name,
       machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
+      manager: row.manager,
+      manager_name: row.manager?.name,
+      appointment: row.manager?.appointment,
+      telephone:row.manager?.telephone,
+      id: `subFactory_${random_id}`
     }
 
     return tmpData
@@ -68,45 +79,138 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     Notiflix.Loading.circle()
     setKeyword(keyword)
     setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
+
+    if(!row.factory_id && !row.factory?.factory_id){
+      return
+    }
+
+    const res = await RequestMethod('get', `subFactoryList`,{
       path: {
+        factory_id: column.type === "subFactory" ? row.factory.factory_id : row.factory_id,
+        // factory_id: row.factory_id,
         page: page,
         renderItem: 18,
       },
       params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
+        sorts:"name"
       }
     })
+    // if(res && res.status === 200){
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
+      let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
-
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
+        page: res.page,
+        total: res.totalPages,
       })
 
       setSearchList([...searchList])
+    // }
+  }
+  const saveSubFactory = async () => {
+    // Notiflix.Loading.standard();
+    let result = [];
+
+    searchList.map((value) => {
+      const oneSubFactory:any = {...value};
+      if(value.manager.user_idPK){
+        oneSubFactory.manager.user_id = value.manager.user_idPK;
+      }
+      oneSubFactory.manager.authority = value.manager.authorityPK;
+      // oneSubFactory.user_id = value.manager.user_idPK;
+      // value.name = value.segmentName;
+      oneSubFactory.factory_id = row.factory_id;
+
+      result.push(oneSubFactory);
+    })
+    console.log("searchList : ", searchList)
+    console.log("result : ", result);
+    if(result.filter((subFactory) => {
+      if(subFactory.factory_id){
+        return true
+      }else{
+        return false
+      }
+    }).length > 0){
+      await RequestMethod("post", "subFactorySave", result)
+          .then((res) => {
+            Notiflix.Loading.remove(300);
+            Notiflix.Report.success("확인","저장되었습니다.","확인",() => setIsOpen(false))
+          })
+          .catch((err) => {
+            console.log(err);
+            Notiflix.Loading.remove(300);
+            Notiflix.Report.failure("경고","예상치 못한 에러가 발생했습니다.","확인",() => setIsOpen(false))
+          })
+    }else {
+            Notiflix.Loading.remove(300);
+            Notiflix.Report.failure("경고","공장을 먼저 등록해주시기 바랍니다.","확인",() => setIsOpen(false))
     }
   }
 
+  const deleteSubFactory = async() => {
+    // Notiflix.Loading.standard();
+
+    const deleteRows = [];
+
+    searchList.map((row)=>{
+      if(selectList.has(row.id)){
+          deleteRows.push(row);
+      }
+    })
+
+    await RequestMethod("delete", "subFactoryDelete",deleteRows.filter((row)=> row.sf_id))
+        .then((res)=>{
+          Notiflix.Report.success("확인", "삭제되었습니다.", "확인" ,() =>{
+            SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove()
+            });
+          })
+        })
+        .catch((err) => {
+
+        })
+  }
   const ModalContents = () => {
-    return <>
-      <div style={{
-        padding: '3.5px 0px 0px 3.5px',
-        width: '100%'
-      }}>
-      <UploadButton onClick={() => {
-        setIsOpen(true)
-      }}>
-        <p>세분화 등록</p>
-      </UploadButton>
-      </div>
-    </>
+    if(row.subFactories && row.subFactories.length > 0){
+      console.log(row.subFactories)
+      return (<>
+        <div style={{
+          padding: '3.5px 0px 0px 3.5px',
+          width: '100%'
+        }}>
+          <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
+            setIsOpen(true)
+          }}>
+            <p style={{color: 'white', textDecoration: 'underline'}}>세분화 보기</p>
+          </UploadButton>
+        </div>
+      </>)
+    }else{
+      return (<>
+        <div style={{
+          padding: '3.5px 0px 0px 3.5px',
+          width: '100%'
+        }}>
+        <UploadButton onClick={() => {
+          setIsOpen(true)
+        }}>
+          <p>세분화 등록</p>
+        </UploadButton>
+        </div>
+      </>)
+
+    }
+  }
+
+  const changeData = (key:string) => {
+    if(column.type === "subFactory" && row.factory){
+      return row["factory"].key
+    }else{
+      return row[key]
+    }
   }
 
   return (
@@ -158,13 +262,13 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>공장명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>드림금속</HeaderTableText>
+              <HeaderTableText>{changeData("name")}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>공장명</HeaderTableText>
+              <HeaderTableText style={{fontWeight: 'bold'}}>공장 주소</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 786}}>
-              <HeaderTableText>인천시 연수구 송도미래로 125 송도타워 123동 11-10호</HeaderTableText>
+              <HeaderTableText>{changeData("address")}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -172,19 +276,19 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>담당자</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>차지훈</HeaderTableText>
+              <HeaderTableText>{changeData("manager")}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>직책</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>실장</HeaderTableText>
+              <HeaderTableText>{changeData("appointment")}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>전화번호</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 480}}>
-              <HeaderTableText>02)777-1235</HeaderTableText>
+              <HeaderTableText>{changeData("telephone")}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -192,21 +296,35 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>비고</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 1090}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{changeData("description") ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
             <Button onClick={() => {
               let tmp = searchList
-
+              let random_id = Math.random()*1000;
               setSearchList([
                 ...searchList,
                 {
-                  seq: searchList.length+1
+                  seq: searchList.length+1,
+                  id: `subFactory_${random_id}`,
                 }
               ])
             }}>
               <p>행 추가</p>
+            </Button>
+            <Button style={{marginLeft: 16}} onClick={() => {
+              let tmp = searchList
+
+              deleteSubFactory()
+              // setSearchList([
+              //   ...searchList,
+              //   {
+              //     seq: searchList.length-1
+              //   }
+              // ])
+            }}>
+              <p>행 삭제</p>
             </Button>
             <Button style={{marginLeft: 16}} onClick={() => {
               if(selectRow === 0){
@@ -249,15 +367,39 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={searchModalList.factoryInfo}
+              headerList={[
+                  SelectColumn,
+                  ...searchModalList.factoryInfo
+              ]}
+
               row={searchList ?? [{}]}
-              setRow={(e) => setSearchList([...e])}
+              setRow={(e) => {
+
+                let tmp: Set<any> = selectList
+                e.map(v => {
+                  if(v.isChange) tmp.add(v.id)
+                })
+                setSelectList(tmp)
+
+                e.map((v)=>{
+                  v.manager_name = v.manager?.name;
+                  v.appointment = v.manager?.appointment;
+                  v.telephone = v.manager?.telephone;
+                })
+
+                console.log(e);
+                setSearchList([...e])
+              }}
               width={1746}
               rowHeight={32}
               height={568}
               // setSelectRow={(e) => {
               //   setSelectRow(e)
               // }}
+              selectList={selectList}
+              setSelectList={(e) => {
+                setSelectList(e as Set<number>);
+              }}
               setSelectRow={(e) => {
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{
@@ -266,8 +408,16 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
                   searchList[e].border = true
                   setSearchList([...searchList])
                 }
+                // if(selectList.has(searchList[e].id)){
+                //   selectList.delete(searchList[e].id)
+                // }else{
+                //   selectList.add(searchList[e].id)
+                // }
+                // setSelectList(selectList);
+                console.log(e)
                 setSelectRow(e)
               }}
+
               type={'searchModal'}
               headerAlign={'center'}
             />
@@ -283,15 +433,17 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
-                  onRowChange({
-                    ...row,
-                    ...searchList[selectRow],
-                    name: row.name,
-                    isChange: true
-                  })
-                }
-                setIsOpen(false)
+                // console.log(selectRow, searchList,  row);
+                saveSubFactory();
+                // if(selectRow !== undefined && selectRow !== null){
+                //   onRowChange({
+                //     ...row,
+                //     ...searchList[selectRow],
+                //     name: row.name,
+                //     isChange: true
+                //   })
+                // }
+                // setIsOpen(false)
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >

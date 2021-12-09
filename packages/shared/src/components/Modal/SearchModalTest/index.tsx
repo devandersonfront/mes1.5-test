@@ -41,7 +41,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{}])
   const [tab, setTab] = useState<number>(0)
-
   const [searchModalInit, setSearchModalInit] = useState<any>()
 
   useEffect(() => {
@@ -72,11 +71,15 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     if(isOpen){
       LoadBasic();
     }
-  }, [isOpen, searchModalInit])
+  }, [isOpen, searchModalInit, optionIndex])
 
   const getContents = () => {
     if(row[`${column.key}`]){
-      return row[column.key]
+      if( typeof row[`${column.key}`] === "string"){
+        return row[column.key];
+      }else{
+        return row[column.key].name;
+      }
     }else{
       if(searchModalInit && searchModalInit.placeholder){
         return searchModalInit.placeholder
@@ -86,12 +89,27 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }
 
+
+
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
+    console.log("keyword : ", keyword)
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`,{
-      path: {
-        page: 1,
-        renderItem: 18,
+      path: column.type === "customerModel" ?
+          {
+            page: 1,
+            renderItem: 18,
+            customer_id: row.customer?.customer_id ?? null
+          }
+          :
+          {
+            page: 1,
+            renderItem: 18,
+          }
+      ,
+      params:{
+        keyword:keyword,
+        opt:optionIndex
       }
     })
 
@@ -199,6 +217,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 <select
                   defaultValue={'-'}
                   onChange={(e) => {
+                    setOptionIndex(Number(e.target.value))
                     // SearchBasic('', Number(e.target.value))
                   }}
                   style={{
@@ -213,7 +232,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 >
                   {
                     searchModalInit && searchModalInit.searchFilter.map((v, i) => {
-                      return <option value={i}>{v}</option>
+                      return (<option value={i}>{v}</option>)
                     })
                   }
                 </select>
@@ -225,6 +244,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 onChange={(e) => {setKeyword(e.target.value)}}
                 onKeyDown={(e) => {
                   if(e.key === 'Enter'){
+                    LoadBasic();
                     // SearchBasic(keyword, optionIndex)
                   }
                 }}
@@ -239,6 +259,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               <div
                 style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
                 onClick={() => {
+                  LoadBasic();
                   // SearchBasic(keyword, optionIndex)
                 }}
               >
@@ -278,14 +299,17 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             </FooterButton>
             <FooterButton
               onClick={() => {
+                console.log("modal Result Button : ", row)
                 setIsOpen(false)
                 onRowChange({
                   ...row,
                   ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
+                  manager: column.type === "factory" ? row.manager : SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                   name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
                   tab: column.type === 'bom' ? tab : undefined,
                   type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
                   version: row.version,
+                  isChange:true
                 })
               }}
               style={{backgroundColor: POINT_COLOR}}

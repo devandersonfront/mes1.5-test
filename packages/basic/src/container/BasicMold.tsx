@@ -300,11 +300,12 @@ const BasicMold = ({page, keyword, option}: IProps) => {
       },
       params: {
         keyword: keyword ?? '',
-        opt: option ?? 0
+        opt: option ?? 0,
+        sorts:"created"
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -441,7 +442,7 @@ const BasicMold = ({page, keyword, option}: IProps) => {
             items = {
               ...value.selectList[0],
               [value.key]: value.selectList[0].name,
-              [value.key + 'PK']: value.selectList[0].pk, //여기 봐야됨!
+              [value.key + 'PK']: value.selectList[0].pk,
               ...items,
             }
           }
@@ -485,9 +486,9 @@ const BasicMold = ({page, keyword, option}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             if(keyword){
-              router.push(`/mes/basic/device?page=1&keyword=${keyword}&opt=${optionIndex}`)
+              router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${optionIndex}`)
             }else{
-              router.push(`/mes/basic/device?page=1&keyword=`)
+              router.push(`/mes/basic/moldV1u?page=1&keyword=`)
             }
           }}
           searchOptionList={optionList}
@@ -495,7 +496,7 @@ const BasicMold = ({page, keyword, option}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"금형 기본정보"}
+          title={"금형 기준정보"}
           buttons={
             ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
           }
@@ -538,8 +539,8 @@ const BasicMold = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

@@ -22,7 +22,19 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
+const machineType = [
+        {mfrName:"기계 제조사", name:"기계 이름",},
+        {type: "기계 종류", weldingType: "용접 종류", mfrCode: "제조번호", manager: "담당자",},
+        {interwork:"오버홀"}
+    ]
+
+const moldType = [
+  {code:"CODE", name:"금형명"},
+  {cavity:"캐비티", spm:"SPM", slideHeight:"슬라이드 위치"},
+  {limit:"최대 타수", inspect:"점검 타수", current:"현재 타수"},
+]
+
+
 
 const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -39,12 +51,12 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      console.log(row)
       // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
       //   Notiflix.Loading.remove()
       // })
     }
   }, [isOpen, searchKeyword])
-  console.log(row)
   // useEffect(() => {
   //   if(pageInfo.total > 1){
   //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -94,8 +106,34 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
+  const settingTitle = (index:number, inindex?:number) => {
+    if(column.type === "mold" && index === 0 ? 450 : 144)
+    switch(column.type){
+      case "mold":
+        let width ;
+        if(index === 0){
+          // width = 450;
+          return 450;
+        }else{
+          // width = 144
+          return 144;
+        }
+
+
+      case "machine":
+        if(index === 0 && inindex === 1){
+          return 755;
+        }else{
+          return 144;
+        }
+        return
+
+    }
+  }
+
+
   const ModalContents = () => {
-    return <>
+    return (<>
       <div style={{
         padding: '3.5px 0px 0px 3.5px',
         width: '100%'
@@ -106,7 +144,7 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
         <p style={{color: 'white', textDecoration: 'underline'}}>품목 보기</p>
       </UploadButton>
       </div>
-    </>
+    </>)
   }
 
   return (
@@ -153,64 +191,79 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
           </div>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 450}}>
-              <HeaderTableText>SU-M-3</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>금형명</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 450}}>
-              <HeaderTableText>OP10</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>캐비티</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>1</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>SPM</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>24</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>슬라이드 위치</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>10</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>최대 타수</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>0</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>점검 타수</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>0</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>현재 타수</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>0</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
+          {moldType.map((header,index)=>{
+            return (
+                <HeaderTable>
+                  {Object.keys(header).map((value,i)=>
+                      <>
+                        <HeaderTableTitle>
+                          <HeaderTableText style={{fontWeight: 'bold'}}>{header[value]}</HeaderTableText>
+                        </HeaderTableTitle>
+                        <HeaderTableTextInput style={{width: settingTitle(index, i)}}>
+                          <HeaderTableText>{typeof row[value] === "boolean" ? row[value] ? "유" : "무" : row[value]}</HeaderTableText>
+                        </HeaderTableTextInput>
+                      </>
+                  )}
+                </HeaderTable>
+            )
+          })}
+          {/*<HeaderTable>*/}
+          {/*  <HeaderTableTitle>*/}
+          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>*/}
+          {/*  </HeaderTableTitle>*/}
+          {/*  <HeaderTableTextInput style={{width: 450}}>*/}
+          {/*    <HeaderTableText>SU-M-3</HeaderTableText>*/}
+          {/*  </HeaderTableTextInput>*/}
+          {/*  <HeaderTableTitle>*/}
+          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>금형명</HeaderTableText>*/}
+          {/*  </HeaderTableTitle>*/}
+          {/*  <HeaderTableTextInput style={{width: 450}}>*/}
+          {/*    <HeaderTableText>OP10</HeaderTableText>*/}
+          {/*  </HeaderTableTextInput>*/}
+          {/*</HeaderTable>*/}
+          {/*<HeaderTable>*/}
+          {/*  <HeaderTableTitle>*/}
+          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>캐비티</HeaderTableText>*/}
+          {/*  </HeaderTableTitle>*/}
+          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
+          {/*    <HeaderTableText>1</HeaderTableText>*/}
+          {/*  </HeaderTableTextInput>*/}
+          {/*  <HeaderTableTitle>*/}
+          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>SPM</HeaderTableText>*/}
+          {/*  </HeaderTableTitle>*/}
+          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
+          {/*    <HeaderTableText>24</HeaderTableText>*/}
+          {/*  </HeaderTableTextInput>*/}
+          {/*  <HeaderTableTitle>*/}
+          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>슬라이드 위치</HeaderTableText>*/}
+          {/*  </HeaderTableTitle>*/}
+          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
+          {/*    <HeaderTableText>10</HeaderTableText>*/}
+          {/*  </HeaderTableTextInput>*/}
+          {/*</HeaderTable>*/}
+          {/*<HeaderTable>*/}
+          {/*  <HeaderTableTitle>*/}
+          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>최대 타수</HeaderTableText>*/}
+          {/*  </HeaderTableTitle>*/}
+          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
+          {/*    <HeaderTableText>0</HeaderTableText>*/}
+          {/*  </HeaderTableTextInput>*/}
+          {/*  <HeaderTableTitle>*/}
+          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>점검 타수</HeaderTableText>*/}
+          {/*  </HeaderTableTitle>*/}
+          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
+          {/*    <HeaderTableText>0</HeaderTableText>*/}
+          {/*  </HeaderTableTextInput>*/}
+          {/*  <HeaderTableTitle>*/}
+          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>현재 타수</HeaderTableText>*/}
+          {/*  </HeaderTableTitle>*/}
+          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
+          {/*    <HeaderTableText>0</HeaderTableText>*/}
+          {/*  </HeaderTableTextInput>*/}
+          {/*</HeaderTable>*/}
           <div style={{display: 'flex', justifyContent: 'flex-start', margin: '24px 0 8px 16px'}}>
             <Button style={{backgroundColor: '#19B9DF'}} onClick={() => {
               let tmp = searchList
-
               setSearchList([
                 ...searchList,
                 {
@@ -224,7 +277,7 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
               headerList={searchModalList.productInfo}
-              row={searchList ?? [{}]}
+              row={row.products ?? row.product_id ?? [{}]}
               setRow={(e) => setSearchList([...e])}
               width={1746}
               rowHeight={32}
@@ -265,6 +318,8 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
                     isChange: true
                   })
                 }
+                console.log("searchList: ", searchList)
+                console.log("row: ", row)
                 setIsOpen(false)
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}

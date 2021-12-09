@@ -33,7 +33,6 @@ const dummyDate = moment().subtract(10, 'days')
 
 const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   const router = useRouter()
-
   const dispatch = useDispatch()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -48,6 +47,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(['부자재 CODE', '부자재 품명',  '부자재 LOT 번호', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
+
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -57,6 +57,12 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
     from: moment().startOf('isoWeek').format('YYYY-MM-DD'),
     to: moment().endOf('isoWeek').format('YYYY-MM-DD')
   });
+
+  const [nzState, setNzState] = useState<boolean>(false);
+
+  const changeNzState = (value:boolean) => {
+    setNzState(value);
+  }
 
   useEffect(() => {
     setOptionIndex(option)
@@ -69,7 +75,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [page, keyword, option, nzState])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -108,7 +114,8 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeNzState
           }
         }else{
           return v
@@ -130,6 +137,9 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
+      },
+      params:{
+        nz:nzState
       }
     })
 
@@ -153,18 +163,19 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `lotSmSearch`,{
       path: {
         page: isPaging ?? 1,
         renderItem: 18,
       },
       params: {
         keyword: keyword ?? '',
-        opt: option ?? 0
+        opt: option ?? 0,
+        nz:nzState
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -269,7 +280,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         wip_id: row.sub_material.code,
         unit: row.sub_material.unit,
         name: row.sub_material.name,
-        customer_id: row.sub_material.customer.name,
+        customer_id: row.sub_material?.customer?.name ?? "-",
         ...appendAdditional,
         id: `rawin_${random_id}`,
       }
@@ -280,7 +291,6 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
 
   const DeleteBasic = async () => {
     Notiflix.Loading.circle()
-
 
     const res = await RequestMethod('delete', `subinDelete`,
       basicRow.map((row, i) => {
@@ -318,16 +328,17 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
 
     if(res) {
       Notiflix.Loading.remove(200)
-      Notiflix.Report.success('삭제되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }
+      Notiflix.Report.success('삭제되었습니다.','','확인',()=>{
+        if(keyword){
+          SearchBasic(keyword, option, page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }else{
+          LoadBasic(page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+      });
     }
 
   }
@@ -343,6 +354,11 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch(index){
       case 1:
+        console.log(selectList.size)
+        if(selectList.size <= 0){
+          Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
+          return
+        }
         dispatch(setModifyInitData({
           modifyInfo: [
             ...basicRow.map(v => {
@@ -360,7 +376,9 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         router.push(`/mes/item/manage/mold`)
         break;
       case 3:
-        DeleteBasic()
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소", () => {
+          DeleteBasic()
+        }, () =>{})
         break;
     }
   }
@@ -372,9 +390,9 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
           if(keyword){
-            router.push(`/mes/rawmaterial/input?page=1&keyword=${keyword}&opt=${optionIndex}`)
+            router.push(`/mes/submaterialV1u/stock?page=1&keyword=${keyword}&opt=${optionIndex}`)
           }else{
-            router.push(`/mes/rawmaterial/input?page=1&keyword=`)
+            router.push(`/mes/submaterialV1u/stock?page=1&keyword=`)
           }
         }}
         searchOptionList={optionList}
@@ -402,7 +420,6 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
           ...column
         ]}
         row={basicRow}
-        // setRow={setBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
           e.map(v => {
@@ -421,9 +438,9 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         totalPage={pageInfo.total}
         setPage={(page) => {
           if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
+            router.push(`/mes/submaterialV1u/stock?page=${page}&keyword=${keyword}&opt=${option}`)
           }else{
-            router.push(`/mes/basic/mold?page=${page}`)
+            router.push(`/mes/submaterialV1u/stock?page=${page}`)
           }
         }}
       />

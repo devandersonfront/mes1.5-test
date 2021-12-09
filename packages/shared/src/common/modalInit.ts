@@ -55,7 +55,10 @@ export const searchModalList: any = {
     {key: 'address', name: '주소', formatter: LineBorderContainer},
     {key: 'crn', name: '사업자 번호', formatter: LineBorderContainer},
   ],
-  process: [
+  authority: [
+    {key: 'name', name: '권한명', formatter: LineBorderContainer},
+  ]
+  ,process: [
     {key: 'name', name: '공정명', formatter: LineBorderContainer},
   ],
   model: [
@@ -83,7 +86,7 @@ export const searchModalList: any = {
   ],
   device: [
     {key: 'name', name: '주변장치명'},
-    {key: 'manufacturer', name: '제조사'},
+    {key: 'mfrName', name: '제조사'},
   ],
   mold: [
     {key: 'code', name: 'CODE', textAlign: 'center', formatter: LineBorderContainer},
@@ -98,18 +101,18 @@ export const searchModalList: any = {
 
   factoryInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'segmentName', name: '세분화명', width: 576, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '세분화명 입력'},
-    {key: 'user_id', name: '담당자', width: 392, formatter: ManagerSearchModal},
+    {key: 'name', name: '세분화명', width: 576, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '세분화명 입력'},
+    {key: 'manager_name', name: '담당자', width: 392, formatter: ManagerSearchModal, type:"modal"},
     {key: 'appointment', name: '직책', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력'},
     {key: 'telephone', name: '전화번호', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력'},
     {key: 'description', name: '비고', width: 370, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '내용 입력'},
   ],
   deviceInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
-    {key: 'device_code', name: '제조 번호', width: 440, formatter: DeviceSearchModal, type: 'Modal', placeholder: '주변장치를 선택해 주세요'},
+    {key: 'mfrCode', name: '제조 번호', width: 440, formatter: DeviceSearchModal, type: 'Modal', placeholder: '주변장치를 선택해 주세요'},
     {key: 'name', name: '장치 이름', width: 440, formatter: LineBorderContainer, placeholder: '주변장치를 선택해 주세요' },
-    {key: 'manufacturer', name: '제조사', width: 160, formatter: LineBorderContainer},
-    {key: 'machine_type', name: '장치 종류', width: 160, formatter: LineBorderContainer},
+    {key: 'mfrName', name: '제조사', width: 160, formatter: LineBorderContainer},
+    {key: 'type', name: '장치 종류', width: 160, formatter: LineBorderContainer},
     {key: 'user_id', name: '담당자', width: 160, formatter: LineBorderContainer},
   ],
   productInfo: [
@@ -386,6 +389,12 @@ export const searchModalList: any = {
     {key: 'manager', name: '담당자명'},
     {key: 'description', name: '비고'},
   ],
+  subFactorySearch:[
+    {key: 'name', name: "세분화명"},
+    {key: 'manager', name: '담당자명'},
+    {key: 'telephone', name: '전화번호'},
+    {key: 'description', name: '비고'},
+  ],
   segmentSearch: [
     {key: 'factory', name: '공장명'},
     {key: 'address', name: '주소'},
@@ -429,11 +438,11 @@ export const searchModalList: any = {
     {key: 'name', name: '기계 이름'},
     {key: 'type', name: '기계 종류'},
     {key: 'weldingType', name: '용접 종류'},
-    {key: 'manufacture', name: '기계 제조사'},
-    {key: 'ton', name: '톤 수'},
+    {key: 'mfrName', name: '기계 제조사'},
+    {key: 'tons', name: '톤 수'},
     {key: 'volt', name: '사용 전압'},
-    {key: 'factory', name: '공장명'},
-    {key: 'segment', name: '공장 세분화명'},
+    {key: 'factory_id', name: '공장명'},
+    {key: 'affiliated_id', name: '공장 세분화명'},
   ],
   deviceSearch: [
     {key: 'mfrCode', name: '제조번호'},

@@ -84,15 +84,15 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res ){
       let searchList = res.results.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
 
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
+        page: res.page,
+        total: res.totalPages,
       })
 
       setSearchList([...searchList])

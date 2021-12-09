@@ -39,7 +39,6 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
-
   useEffect(() => {
     if(isOpen) SearchBasic(searchKeyword, optionIndex, 1).then(() => {
       Notiflix.Loading.remove()
@@ -56,10 +55,16 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
 
   const changeRow = (row: any, key?: string) => {
     let tmpData: any = {
+      ...row,
       user_id: row.name,
       user_idPK: row.user_id,
+      // name:"",
+      id:row.id,
       appointment: row.appointment,
-      telephone: row.telephone
+      telephone: row.telephone,
+      authority: row.ca_id.name,
+      authorityPK: row.authority,
+
     }
 
     if(column.searchType === 'list'){
@@ -86,40 +91,78 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
+    if(res ){
+      let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
 
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
+        page: res.page,
+        total: res.totalPages,
       })
 
       setSearchList([...searchList])
     }
   }
 
+  const contentView = () => {
+    switch(column.type){
+      case "board":
+
+        return (
+            <>
+              <div style={{width: '100%', height: 40}} onClick={() => {}}>
+                {/*{ row[`${column.key}`]}*/}
+                <LineBorderContainer row={{...row, color:"none"}} column={column} setRow={() => {}}/>
+              </div>
+              <div style={{
+                display: 'flex',
+                backgroundColor: POINT_COLOR,
+                width: column.modalType ? 30 : 38,
+                height: column.modalType ? 30 : 38,
+                justifyContent: 'center',
+                alignItems: 'center'
+              }} onClick={() => {
+                setIsOpen(true)
+              }}>
+                <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
+
+              </div>
+            </>
+        )
+      case "modal":
+
+        return (
+            <>
+              <div style={{width: '100%', height: 30}} onClick={() => {}}>
+                {/*{ row[`${column.key}`]}*/}
+                <LineBorderContainer row={row} column={column} setRow={() => {}}/>
+              </div>
+              <div style={{
+                display: 'flex',
+                backgroundColor: POINT_COLOR,
+                width: 30,
+                height: 30,
+                justifyContent: 'center',
+                alignItems: 'center'
+              }} onClick={() => {
+                setIsOpen(true)
+              }}>
+                <img style={{width: 16.3, height: 16.3}} src={IcSearchButton}/>
+              </div>
+            </>
+        )
+
+      default:
+        return
+
+    }
+  }
+
   return (
     <SearchModalWrapper >
-      <div style={{width: '100%', height: 30}} onClick={() => {
-      }}>
-        {/*{ row[`${column.key}`]}*/}
-        <LineBorderContainer row={row} column={column} setRow={() => {}}/>
-      </div>
-      <div style={{
-        display: 'flex',
-        backgroundColor: POINT_COLOR,
-        width: 30,
-        height: 30,
-        justifyContent: 'center',
-        alignItems: 'center'
-      }} onClick={() => {
-        setIsOpen(true)
-      }}>
-        <img style={{width: 16.3, height: 16.3}} src={IcSearchButton}/>
-      </div>
+      {contentView()}
       <Modal isOpen={isOpen} style={{
         content: {
           top: '50%',
@@ -221,12 +264,22 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
               <ExcelTable
                 headerList={searchModalList.member}
                 row={searchList ?? []}
-                setRow={() => {}}
+                setRow={(e) => {
+                  console.log("cccncncncncn : ", e)
+                }}
                 width={1750}
                 rowHeight={32}
                 height={576}
                 setSelectRow={(e) => {
                   setSelectRow(e)
+                  console.log(e)
+                  if(!searchList[e].border){
+                    searchList.map((v,i)=>{
+                      v.border = false;
+                    })
+                    searchList[e].border = true
+                    setSearchList([...searchList])
+                  }
                 }}
                 type={'searchModal'}
               />
@@ -252,15 +305,26 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
               </div>
               <div
                 onClick={() => {
+                  console.log(row, column)
                   console.log(searchList[selectRow])
                   if(selectRow !== undefined && selectRow !== null){
-
-                      onRowChange({
+                      console.log({
                         ...row,
-                        ...searchList[selectRow],
-                        name: row.name,
+                        // ...searchList[selectRow],
+                        // user_id: searchList[selectRow].user_idPK,
+                        manager_info: searchList[selectRow],
+                        // name: "",
                         isChange: true
                       })
+                      // onRowChange({
+                      //   ...row,
+                      //   // ...searchList[selectRow],
+                      //   // user_id: searchList[selectRow].user_idPK,
+                      //   manager: searchList[selectRow],
+                      //   // name: "",
+                      //   isChange: true
+                      // })
+                    onRowChange({...row, manager_info: searchList[selectRow], isChange: true})
                   }
                   setIsOpen(false)
                 }}

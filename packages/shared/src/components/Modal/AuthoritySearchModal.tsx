@@ -217,13 +217,20 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div style={{padding: '0 16px 0 16px', width: 1776}}>
               <ExcelTable
-                headerList={searchModalList.process}
+                headerList={searchModalList.authority}
                 row={searchList ?? []}
                 setRow={() => {}}
                 width={1750}
                 rowHeight={32}
                 height={642}
                 setSelectRow={(e) => {
+                  if(!searchList[e].border){
+                    searchList.map((v,i)=>{
+                      v.border = false;
+                    })
+                    searchList[e].border = true
+                    setSearchList([...searchList])
+                  }
                   setSelectRow(e)
                 }}
                 type={'searchModal'}
@@ -242,11 +249,18 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
               <div
                 onClick={() => {
                   setOptionIndex(0)
+                  console.log(searchList[selectRow])
                   if(selectRow !== undefined && selectRow !== null){
                       onRowChange({
                         ...row,
                         ...searchList[selectRow],
+                        ca_id:{
+                          ca_id: searchList[selectRow].ca_id,
+                          name:searchList[selectRow].name,
+                          authorities:searchList[selectRow].authorities
+                        },
                         name: row.name,
+                        version:row.version,
                         isChange: true
                       })
                   }

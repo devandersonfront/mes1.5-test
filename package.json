@@ -61,6 +61,7 @@
     "react-cookies": "^0.1.1",
     "react-cool-onclickoutside": "^1.6.2",
     "react-data-grid": "^7.0.0-canary.49",
+    "react-daum-postcode": "^3.0.1",
     "react-day-picker": "^7.4.10",
     "react-dom": "next",
     "react-modal": "^3.14.3",
