@@ -61,8 +61,6 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
       setInfoModalInit(InfoInit[column.type])
       if(isOpen){
         console.log(row, column.key)
-
-        // setSearchList([...SearchResultSort(row[column.summaryType], column.)])
       }
     }
   }, [column.type, isOpen])
@@ -132,7 +130,7 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
 
   const getSummaryInfo = (info) => {
     // selector.data[selector.index][info.key]
-    console.log(selector.data)
+    console.log(selector.datas)
     return '-'
   }
 

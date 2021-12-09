@@ -7,7 +7,7 @@ export const SearchResultSort = (infoList, type: string) => {
       return infoList.map((v) => {
         return {
           ...v,
-          ca_name: v.ca_id.name
+          ca_name: v.ca_id.name,
         }
       })
     }
@@ -39,6 +39,7 @@ export const SearchResultSort = (infoList, type: string) => {
           ...v,
           customer_name: v.customer ? v.customer.name : "",
           model_name: v.model ? v.model.model : "",
+          type_name: TransferCodeToValue(v.type, 'material'),
         }
       })
     }
@@ -47,7 +48,7 @@ export const SearchResultSort = (infoList, type: string) => {
         return {
           ...v,
           customerArray: v.customer,
-          customer: v.customer ? v.customer.name : "",
+          customer: v.customer?.name ?? "",
           rawName: v.name,
         }
       })
@@ -63,13 +64,26 @@ export const SearchResultSort = (infoList, type: string) => {
       })
     }
     case 'factory': {
-      return infoList.map((v) => {
+      return infoList ? infoList.map((v) => {
         return {
           ...v,
           managerArray: v.manager,
           manager: v.manager.name,
         }
-      })
+      }) : []
+    }
+    case 'contract': {
+      return infoList ? infoList.map((v) => {
+        return {
+          ...v,
+          customer_name: v.product.customer?.name,
+          model_name: v.product.model?.model,
+          product_code: v.product.code,
+          product_name: v.product.name,
+          product_type: TransferCodeToValue(v.product.type, 'material'),
+          product_unit: v.product.unit,
+        }
+      }) : []
     }
     case 'machine': {
       return infoList.map((v) => {
@@ -95,8 +109,10 @@ export const SearchModalResult = (selectData, type: string) => {
         telephone: selectData.telephone,
         description: selectData.description,
         manager: selectData.name,
+        worker_name: selectData.name,
         managerPk: selectData.user_id,
-        user: selectData
+        user: selectData,
+        worker: selectData,
       }
     }
     case 'model': {
@@ -114,15 +130,20 @@ export const SearchModalResult = (selectData, type: string) => {
       return {
         code: selectData.code,
         name: selectData.name,
-        type: selectData.type,
+        type: TransferCodeToValue(selectData.type, 'material'),
+        customer: selectData.customer ? selectData.customer.name : '',
+        model: selectData.model ? selectData.model.model : '',
         type_name: TransferCodeToValue(selectData.type, 'material'),
         unit: selectData.unit,
         usage: selectData.usage,
         process: selectData.process?.name ?? "-",
+        product_name: selectData.name,
+        product_type: TransferCodeToValue(selectData.type, 'material'),
+        product_unit: selectData.unit,
         product: {...selectData},
         bom_root_id: selectData.bom_root_id,
-        customer: selectData.customer,
-        model: selectData.model
+        customerData: selectData.customer,
+        modelData: selectData.model
       }
     }
     case 'rawmaterial': {
@@ -158,6 +179,24 @@ export const SearchModalResult = (selectData, type: string) => {
       return {
         customer_id:selectData.name,
         customer:selectData.customerArray
+      }
+    }
+    case 'contract': {
+      return {
+        contract: {
+          ...selectData,
+        },
+        product: {
+          ...selectData.product
+        },
+        customer: selectData.product.customer?.name,
+        model: selectData.product.model?.model,
+        code: selectData.product.code,
+        product_name: selectData.product.name,
+        type: TransferCodeToValue(selectData.product.type, 'material'),
+        unit: selectData.product.unit,
+        process: selectData.product.process.name,
+        contract_id: selectData.identification
       }
     }
     default : {

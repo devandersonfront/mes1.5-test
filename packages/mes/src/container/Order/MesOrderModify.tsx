@@ -10,7 +10,7 @@ import {
   excelDownload,
   PaginationComponent,
   ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
+  IExcelHeaderType, IItemMenuType, RootState
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -19,6 +19,7 @@ import {useRouter} from 'next/router'
 import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
+import {useSelector} from 'react-redux'
 
 interface IProps {
   children?: any
@@ -29,6 +30,7 @@ interface IProps {
 
 const MesOrderModify = ({page, keyword, option}: IProps) => {
   const router = useRouter()
+  const selector = useSelector((state:RootState) => state.modifyInfo)
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
@@ -51,8 +53,80 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
-    Notiflix.Loading.remove()
-  }, [])
+    setBasicRow([...selector.modifyInfo])
+  }, [selector])
+
+  const SaveBasic = async () => {
+    let res: any
+    res = await RequestMethod('post', `contractSave`,
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
+
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          let selectData: any = {}
+
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
+              }
+            }
+          })
+
+          return {
+            ...row,
+            ...selectData,
+            customer: row.customerArray,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
+          }
+
+        }
+      }).filter((v) => v))
+
+
+    if(res){
+      Notiflix.Report.success('저장되었습니다.','','확인', () => {
+        router.push('/mes/order/list')
+      });
+    }
+  }
+
+  const onClickHeaderButton = (index: number) => {
+    switch(index){
+      case 0:
+        SaveBasic()
+
+        break;
+      case 1:
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          ()=>{},
+          ()=>{}
+        )
+        break;
+    }
+  }
 
   return (
     <div>
@@ -61,10 +135,7 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
         buttons={
           ['저장하기', '삭제']
         }
-        buttonsOnclick={
-          () => {}
-          // onClickHeaderButton
-        }
+        buttonsOnclick={onClickHeaderButton}
       />
       <ExcelTable
         editable

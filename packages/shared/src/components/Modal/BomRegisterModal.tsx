@@ -16,6 +16,10 @@ import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {BomInfoModal} from './BomInfoModal'
+import {TransferCodeToValue} from '../../common/TransferFunction'
+import {useDispatch, useSelector} from 'react-redux'
+import {insert_summary_info, reset_summary_info} from '../../reducer/infoModal'
+import {RootState} from '../../index'
 
 interface IProps {
   column: IExcelHeaderType
@@ -41,10 +45,13 @@ const summaryDummy = {customer: '-', model: '-', code: 'SU-20210701-3', name:'SU
 
 const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
+  const dispatch = useDispatch()
+  const selector = useSelector((state:RootState) => state.infoModal)
 
   const [bomDummy, setBomDummy] = useState<any[]>([
     {customer: '-', model: '-', code: 'SU-20210701-3', name:'SU900-1', type: 'type', unit: 'EA'},
   ])
+  const [summaryData, setSummaryData] = useState<any>({})
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
@@ -52,14 +59,8 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>(
-    [
-      {
-        seq: 1, code: 'SUS-111', name: 'SUS360', spare: '여', type: '원자재', unit: 'kg', cavity: 1, disturbance: 50, stock: '1,500', process: '-'
-      },
-      {
-        seq: 2, code: 'PT-111', name: 'PT10', spare: '부', type: '부자재', unit: 'EA', cavity: 1, disturbance: 50, stock: '1,000', process: '-'
-      },
-    ])
+    [{}])
+  const [tabs, setTabs] = useState<string[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -69,57 +70,129 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      if(row.product?.bom_root_id){
+        setInfoModal(row.product, 0)
+      } else {
+        setIsOpen(false)
+      }
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
 
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
+  useEffect(() => {
+    console.log(selector)
+    if(selector.data[selector.index]){
+      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+        Notiflix.Loading.remove()
+      })
     }
+  }, [selector])
+
+  const setInfoModal = async (product: any, index: number) => {
+    if(selector){
+      setTabs([...selector.title, product.code])
+      await dispatch(insert_summary_info({
+        data: [...selector.data, product.bom_root_id],
+        title: [...selector.title, product.code],
+        index
+      }))
+    }
+  }
+
+  const changeRow = (tmpRow: any, key?: string) => {
+    let tmpData = []
+    let tmpRows = [];
+    if(typeof tmpRow === 'string'){
+      let tmpRowArray = tmpRow.split('\n')
+
+      tmpRows = tmpRowArray.map(v => {
+        if(v !== ""){
+          let tmp = JSON.parse(v)
+          return tmp
+        }
+      }).filter(v=>v)
+    }else{
+      tmpRows = [{...tmpRow}]
+    }
+
+
+    tmpData = tmpRows.map((v, i) => {
+      let childData: any = {}
+      switch(v.type){
+        case 0:{
+          childData = v.child_rm
+          break;
+        }
+        case 1:{
+          childData = v.child_sm
+          break;
+        }
+        case 2:{
+          childData = v.child_product
+          break;
+        }
+      }
+
+      if(i === 0) {
+        setSummaryData({
+          // ...res.parent
+          customer: v.parent?.customer?.name,
+          model: v.parent?.model?.model,
+          code: v.parent?.code,
+          name: v.parent?.name,
+          process: v.parent?.process?.name,
+          type: TransferCodeToValue(v.parent.type, 'material'),
+          unit: v.parent?.unit,
+          goal: row.goal,
+        })
+      }
+
+      return {
+        ...childData,
+        seq: i+1,
+        code: childData.code,
+        type: TransferCodeToValue(v.type, 'material'),
+        tab: v.type,
+        type_name: TransferCodeToValue(v.type, 'material'),
+        unit: childData.unit ?? "-",
+        parent: v.parent,
+        usage: v.usage,
+        version: v.version,
+        setting: v.setting,
+        stock: childData.stock,
+        disturbance: Number(row.goal) * Number(v.usage),
+        processArray: childData.process ?? null,
+        process: childData.process ? childData.process.name : '-',
+        bom_root_id: childData.bom_root_id,
+        product: v.type === 2 ?{
+          ...childData,
+        }: null,
+        raw_material: v.type === 0 ?{
+          ...childData,
+        }: null,
+        sub_material: v.type === 1 ?{
+          ...childData,
+        }: null
+      }
+    })
 
     return tmpData
   }
 
   const SearchBasic = async (keyword: any, option: number, page: number) => {
     Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
+    // setKeyword(keyword)
+    // setOptionIndex(option)
+    const res = await RequestMethod('get', `bomLoad`,{path: { key: selector.data[selector.index] }})
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
+    if(res){
+      let searchList = changeRow(res)
+      console.log('row', res )
+      setSearchList([...searchList.map(v => {
+        return {
+          ...v,
+          spare: '부'
+        }
+      })])
     }
   }
 
@@ -130,7 +203,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const deleteTab = (index: number) => {
-    console.log(bomDummy.length, focusIndex)
     if(bomDummy.length - 1 === focusIndex){
       console.log('last')
       setFocusIndex(focusIndex-1)
@@ -149,10 +221,10 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
       <div style={{
         width: '100%'
       }}>
-      <div onClick={() => {
-        setIsOpen(true)
-      }}>
-        <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
+        <div onClick={() => {
+          setIsOpen(true)
+        }}>
+          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
         </div>
       </div>
     </>
@@ -208,11 +280,11 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                       return (
                         <>
                           <HeaderTableTitle>
-                            <HeaderTableText style={{fontWeight: 'bold'}}>{info.title}</HeaderTableText>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>{info.title ?? "-"}</HeaderTableText>
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
                             <HeaderTableText>
-                              {summaryDummy[info.key]}
+                              {summaryData[info.key]}
                               {/*-*/}
                             </HeaderTableText>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
@@ -228,7 +300,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-              {bomDummy.map((v, i) => {
+              {tabs.map((v, i) => {
                 return <TabBox ref={i === 0 ? tabRef : null} style={
                   focusIndex === i ? {
                     backgroundColor: '#19B9DF',
@@ -241,7 +313,12 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                   {
                     tabRef.current && tabRef.current.clientWidth < 63
                       ? focusIndex !== i
-                      ? <><p onClick={() => {setFocusIndex(i)}}>{v.code}</p></>
+                      ? <><p onClick={() => {
+                        dispatch(insert_summary_info({
+                          ...selector,
+                          index: i
+                        }))
+                      }}>{v}</p></>
                       : <>
                         <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
                           deleteTab(i)
@@ -252,7 +329,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                       : <>
                         <p onClick={() => {setFocusIndex(i)}}
                            style={{color: focusIndex === i ? "white" : '#353B48'}}
-                        >{v.code}</p>
+                        >{v}</p>
                         <div style={{cursor: 'pointer', width: 20, height: 20}} onClick={() => {
                           deleteTab(i)
                         }}>
@@ -310,6 +387,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
           <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
             <div
               onClick={() => {
+                dispatch(reset_summary_info())
                 setIsOpen(false)
               }}
               style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
@@ -318,14 +396,32 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
-                  onRowChange({
-                    ...row,
-                    ...searchList[selectRow],
-                    name: row.name,
-                    isChange: true
-                  })
-                }
+                onRowChange({
+                  ...row,
+                  input_bom: [
+                    ...searchList.map((v, i) => {
+                      console.log(v.spare === '여')
+                      if(v.spare === '여'){
+                        return {
+                          bom: {
+                            seq: i+1,
+                            type: v.tab,
+                            parent: v.parent,
+                            child_product: v.tab === 2 ? {...v.product} : null,
+                            child_rm: v.tab === 0 ? {...v.raw_material} : null,
+                            child_sm: v.tab === 1 ? {...v.sub_material} : null,
+                            key: v.parent.bom_root_id,
+                            setting: v.setting,
+                            usage: v.usage,
+                          }
+                        }
+                      }
+                    }).filter(v=>v)
+                  ],
+                  name: row.name,
+                  isChange: true
+                })
+                dispatch(reset_summary_info())
                 setIsOpen(false)
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}

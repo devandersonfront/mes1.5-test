@@ -31,7 +31,6 @@ const MesStockList = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
   const [basicRow, setBasicRow] = useState<Array<any>>([
     {
       customer: '진주상사', model: '한국차', code: 'SU-20210701-1', material_name: 'SU900',

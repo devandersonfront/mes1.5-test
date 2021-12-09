@@ -62,18 +62,15 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      setSearchList([...row.product.molds.map((v, index) => {
+        return {
+          ...v.mold,
+          sequence: index+1,
+          spare: '부',
+        }
+      })])
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
 
   const changeRow = (row: any, key?: string) => {
     let tmpData = {
@@ -255,8 +252,18 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
                 if(selectRow !== undefined && selectRow !== null){
                   onRowChange({
                     ...row,
-                    ...searchList[selectRow],
                     name: row.name,
+                    molds: searchList.map(v => {
+                      return {
+                        mold: {
+                          sequence: v.sequence,
+                          mold: {
+                            ...v
+                          },
+                          setting: v.spare === '여' ? 0 : 1
+                        }
+                      }
+                    }),
                     isChange: true
                   })
                 }

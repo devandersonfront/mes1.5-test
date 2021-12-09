@@ -1,9 +1,3 @@
-// interface ModalType {
-//   code: string[],
-//   title: string[],
-//   index: number,
-//   data?: any[]
-// }
 import {RequestMethod} from "../common/RequestFunctions";
 import {TransferCodeToValue} from "../common/TransferFunction";
 
@@ -32,7 +26,7 @@ const RESET_SUMMARY_INFO = "RESET_SUMMARY_INFO";
 const ADD_SUMMARY_INFO_DATA = "ADD_SUMMARY_INFO_DATA";
 
 
-export const insert_summary_info = (payload:{code:string, title:string, data:any[], headerData:any}) => {
+export const insert_summary_info = (payload: { data: any; index: number }) => {
   return {
     type:INSERT_SUMMARY_INFO,
     payload:payload
@@ -65,12 +59,6 @@ export const add_summary_info_data = (payload:any[]) => ({
   type:ADD_SUMMARY_INFO_DATA,
   payload: payload
 })
-
-// factory
-// device
-// mold
-// product
-// product_no_cavity
 
 type DefaultAction = ReturnType<typeof insert_summary_info> | ReturnType<typeof reset_summary_info> |
                      ReturnType<typeof delete_summary_info> | ReturnType<typeof add_summary_info> |
@@ -166,21 +154,6 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
       // addState.code.push(addPayload.code);
       addState.index = addPayload.index;
 
-      // RequestMethod("get", "bomLoad", {path: { key: addPayload.code }})
-      //     .then((res) => {
-      //       const result = changeRow(res);
-      //       console.log("result : ", result)
-      //       // setSearchList([...result])
-      //       result.map((value, i) => {
-      //         if(addState.datas[addState.index].code == value.parent.bom_root_id){
-      //           // console.log(tabStore.datas[tabStore.index].code, i)
-      //           console.log(addState.datas[addState.index].code, i)
-      //           // addState.datas[addPayload.index].headerData = result[0].parent;
-      //           addDataObject.headerData = result[0].parent;
-      //         }
-      //       })
-      //     })
-
       addState.datas.push(addDataObject);
       console.log("addState : ", addState )
 
@@ -233,10 +206,9 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
 
 
       return addDataState;
-
     default :
       return state
-}
+  }
 }
 
 

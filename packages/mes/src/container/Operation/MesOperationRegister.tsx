@@ -2,26 +2,20 @@ import React, {useEffect, useState} from 'react'
 import {
   ExcelTable,
   Header as PageHeader,
-  RequestMethod,
   columnlist,
-  MAX_VALUE,
-  DropDownEditor,
-  TextEditor,
-  excelDownload,
   PaginationComponent,
   ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
+  IExcelHeaderType, RequestMethod,
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
+import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 
 interface IProps {
-  children?: any
   page?: number
   keyword?: string
   option?: number
@@ -33,18 +27,189 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", start_date: moment().format('YYYY-MM-DD'),
-    limit_date: moment().format('YYYY-MM-DD')
+    name: "", id: "", date: moment().format('YYYY-MM-DD'),
+    deadline: moment().format('YYYY-MM-DD')
   }])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["operationRegisterV2"])
+  const [isFirst, setIsFirst] = useState<boolean>(true)
+  const [column, _] = useState<Array<IExcelHeaderType>>(columnlist["operationRegisterV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
-  const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+
+  useEffect(() => {
+    console.log('basicRow', basicRow)
+  }, [basicRow])
+
+  const SaveBasic = async () => {
+    let res: any
+    res = await RequestMethod('post', `sheetSave`,
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
+
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          let selectData: any = {}
+
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
+              }
+            }
+
+            if(v === 'unitWeight') {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(row['unitWeight'])
+              }
+            }
+
+            if(v === 'tmpId') {
+              selectData = {
+                ...selectData,
+                id: row['tmpId']
+              }
+            }
+          })
+
+          return {
+            ...row,
+            ...selectData,
+            input_bom: row.input_bom ?? [],
+            status: 1,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
+          }
+
+        }
+      }).filter((v) => v))
+
+
+    if(res){
+      Notiflix.Report.success('저장되었습니다.','','확인', () => {
+        router.push('/mes/operationV1u/list')
+      });
+
+    }
+  }
+
+  const loadLatestSheet = async (product_id: string) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `sheetLatestList`,{
+      path: { product_id }
+    })
+
+    if(res){
+      console.log(res)
+      setBasicRow([{
+        contract: res.contract,
+        contract_id: res.contract?.identification ?? "-",
+        date: res.date,
+        deadline: res.deadline,
+        customer: res.product.customer?.name,
+        model: res.product.model?.model,
+        code: res.product.code,
+        product: res.product,
+        product_name: res.product.name,
+        type: res.product.type ? TransferCodeToValue(res.product.type, 'material') : '',
+        unit: res.product.unit,
+        process: res.product.process?.name,
+        goal: res.goal
+      }])
+    }else if (res.state === 401) {
+      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
+        router.back()
+      })
+    }
+
+    setIsFirst(false)
+  }
+
+  const loadGraphSheet = async (product_id: string) => {
+    console.log('graph')
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `sheetGraphList`,{
+      path: { product_id }
+    })
+
+    if(res){
+      console.log(res)
+      setBasicRow([{
+        ...basicRow[0],
+        goal: 0,
+      }, ...res.map(v => {
+        if(v.type === 2){
+          console.log(v)
+          return {
+            ...v,
+            product: v.child_product,
+            date: moment().format('YYYY-MM-DD'),
+            deadline: moment().format('YYYY-MM-DD'),
+            customer: v.child_product.customer?.name,
+            model: v.child_product.model?.model,
+            product_name: v.child_product.name,
+            code: v.child_product.code,
+            type: TransferCodeToValue(v.type, 'material'),
+            unit: v.child_product.unit,
+            process: v.child_product.process?.name,
+            readonly: true,
+          }
+        }
+      }).filter(v => v)])
+    }else if (res.state === 401) {
+      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
+        router.back()
+      })
+    }
+
+    setIsFirst(false)
+  }
+
+  const onClickHeaderButton = (index: number) => {
+    switch(index){
+      case 0:
+        // console.log(basicRow)
+        if(basicRow[0].product.product_id){
+          loadGraphSheet(basicRow[0].product.product_id)
+        }
+        break;
+      case 1:
+        setExcelOpen(true)
+        break;
+      case 2:
+        SaveBasic()
+        break;
+      case 3:
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          ()=>{},
+          ()=>{}
+        )
+        break;
+    }
+  }
 
   useEffect(() => {
     Notiflix.Loading.remove()
@@ -58,8 +223,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           ['BOM 기준으로 보기', '행추가', '저장하기', '삭제']
         }
         buttonsOnclick={
-          () => {}
-          // onClickHeaderButton
+          // () => {}
+          onClickHeaderButton
         }
       />
       <ExcelTable
@@ -75,6 +240,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           let tmp: Set<any> = selectList
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
+            if(v.product?.product_id && isFirst) loadLatestSheet(v.product.product_id)
           })
           setSelectList(tmp)
           setBasicRow(e)

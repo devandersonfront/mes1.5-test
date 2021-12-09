@@ -76,7 +76,7 @@ export const SearchInit: Record<string, SearchInitType> = {
   order: {
     title: '수주 검색',
     searchFilter: ['수주 번호', '거래처', '모델', 'CODE', '품명'],
-    excelColumnType: 'order',
+    excelColumnType: 'contract',
     placeholder: '수주번호입력'
   },
 }

@@ -26,8 +26,6 @@ interface IProps {
 
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
-
-
 const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const tabRef = useRef(null)
 
@@ -37,6 +35,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
+  const [totalCount, setTotalCount] = useState<number>(0)
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
@@ -54,10 +53,23 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+    if(column.type !== 'readonly'){
+      if(isOpen && row.process_id && searchList.findIndex((e) => !!e.amount ) === -1) {
+        loadDefectList()
+      }
+    }else{
+      if(row && row.defect_reasons){
+        let total = 0
+        setSearchList([...row.defect_reasons.map(v => {
+          total += v.amount
+          return ({
+            ...v,
+            ...v.defect_reason,
+          })
+        })])
+
+        setTotalCount(total)
+      }
     }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
@@ -145,6 +157,25 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     return AddComma(total)
   }
 
+  const loadDefectList = async () => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `defectReasonList`,{
+      path: {
+        page: 1,
+        renderItem: 18,
+        process_id: row.process_id,
+      }
+    })
+
+    if(res){
+      let searchList = res.info_list.map((row: any, index: number) => {
+        return changeRow(row)
+      })
+
+      setSearchList([...searchList])
+    }
+  }
+
   const ModalContents = () => {
     return <>
       <div style={{
@@ -162,7 +193,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         }} onClick={() => {
           setIsOpen(true)
         }}>
-          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>3</p>
+          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>{totalCount}</p>
         </div>
       </div>
     </>
@@ -208,7 +239,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   backgroundColor: 'white', width: 144, height: 28, border: '1px solid #B3B3B3', marginLeft: 16, marginRight: 32,
                   display: 'flex', alignItems: 'center', paddingTop:3, paddingLeft: 8
                 }}>
-                  <p style={{margin:0, padding: 0}}>{totalDefect()}</p>
+                  <p style={{margin:0, padding: 0}}>{totalCount}</p>
                 </div>
               </div>
               <Button>
@@ -229,17 +260,26 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 let addIndex = 0
                 let ppr_id = ''
                 let reason = ''
+                let total = 0
                 let tmpRow = e.map((v, i) => {
                   if(v.add) {
                     addIndex = i+1
                     reason = v.reason
                     ppr_id = v.ppr_id
                   }
+
+                  if(v.amount){
+                    total += Number(v.amount)
+                  }
+
                   return {
                     ...v,
                     add: false
                   }
                 })
+
+                setTotalCount(total)
+
                 if(addIndex){
                   tmpRow.splice(addIndex, 0, {
                     ppr_id,
@@ -277,7 +317,13 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 if(selectRow !== undefined && selectRow !== null){
                   onRowChange({
                     ...row,
-                    ...searchList[selectRow],
+                    poor_quantity: totalCount,
+                    defect_reasons: [
+                      ...searchList.map(v => ({
+                        amount: v.amount,
+                        defect_reason: v
+                      }))
+                    ],
                     name: row.name,
                     isChange: true
                   })

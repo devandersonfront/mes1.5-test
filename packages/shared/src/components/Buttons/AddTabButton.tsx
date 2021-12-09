@@ -5,7 +5,8 @@ import {useRouter} from 'next/router'
 import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";
 import {add_summary_info} from "../../reducer/infoModal";
-import {RootState} from "../../reducer";
+import {RequestMethod, RootState} from '../../index'
+import {insert_summary_info} from '../../reducer/infoModal'
 
 interface IProps {
   row: any
@@ -17,9 +18,46 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   const tabStore = useSelector((root:RootState) => root.infoModal);
   const dispatch = useDispatch();
   const [title, setTitle] = useState<string>(column.key === 'lot' ? "LOT 보기" : "BOM 보기")
+  const selector = useSelector((state:RootState) => state.infoModal)
+
+  const loadMaterialLot = async (type) => {
+    console.log(type)
+    let res
+
+    switch(type){
+      case 0:
+        res = await RequestMethod('get', `lotRmList`, {
+          params: {
+            rm_id: row.rm_id
+          }
+        })
+        break;
+      case 1:
+        res = await RequestMethod('get', `lotSmList`, {
+          params: {
+            sm_id: row.sm_id
+          }
+        })
+        break;
+      case 2:
+        res = await RequestMethod('get', `recordList`, {
+          params: {
+            productIds: row.product_id
+          }
+        })
+        break;
+    }
+
+    if(res){
+      onRowChange({
+        ...row,
+        lotList: [...res.info_list]
+      })
+    }
+  }
+
   return (
-    <div style={{
-    }}>
+    <div>
       <div style={{
         fontSize: '15px',
         margin: 0,
@@ -31,12 +69,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         background:row.border ? "#19B9DF80" : "white",
         cursor: 'pointer',
       }} onClick={() => {
-        if(row.type === 2){
-          // onRowChange({
-          //   ...row,
-          //   newTab: true
-          // })
-        }
           if(row.bom_root_id){
             console.log(row.bom_root_id, row);
             dispatch(add_summary_info({code:row.bom_root_id, title:row.code, index:tabStore.index+1}))

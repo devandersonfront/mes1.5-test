@@ -62,9 +62,13 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      setSearchList([...row.molds.map(v => {
+        return {
+          ...v,
+          ...v.mold,
+          ...v.mold.mold,
+        }
+      })])
     }
   }, [isOpen, searchKeyword])
   // useEffect(() => {

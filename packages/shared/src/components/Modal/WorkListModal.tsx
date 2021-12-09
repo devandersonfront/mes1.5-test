@@ -70,58 +70,64 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+    if(row.contract?.contract_id) {
+      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+        Notiflix.Loading.remove()
+
+      })
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
 
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
+  const changeRow = (tmpRow: any, key?: string) => {
+    let tmpRes = [];
+    let totalGood = 0;
+    let totalPoor = 0;
+    if(typeof tmpRow === 'string'){
+      let tmpRowArray = tmpRow.split('\n')
+
+      tmpRes = tmpRowArray.map(v => {
+        if(v !== ""){
+          let tmp = JSON.parse(v)
+          totalGood += tmp.good_quantity
+          totalPoor += tmp.poor_quantity
+          return tmp
+        }
+      }).filter(v=>v)
+    }else{
+      tmpRes = [{...tmpRow}]
     }
 
-    return tmpData
+    onRowChange({
+      ...row,
+      total_good_quantity: totalGood,
+      total_poor_quantity: totalPoor,
+      total_counter: totalGood + totalPoor
+    })
+
+    return tmpRes
   }
 
   const SearchBasic = async (keyword: any, option: number, page: number) => {
     Notiflix.Loading.circle()
     setKeyword(keyword)
     setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
+    const res = await RequestMethod('get', `recordAll`,{
       params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
+        contractIds: row.contract.contract_id
       }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
+    if(!!res){
+      let tmpList = changeRow(res, )
 
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
+      setSearchList([...tmpList.map((v, i) => {
+        return {
+          ...v,
+          worker_name: v.worker.name,
+          sum: v.good_quantity+v.poor_quantity,
+          seq: i+1
+        }
+      })])
     }
   }
 

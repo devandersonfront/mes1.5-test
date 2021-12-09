@@ -24,6 +24,8 @@ interface IProps {
 
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
+const amount=50;
+
 const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
@@ -101,7 +103,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         <div onClick={() => {
           setIsOpen(true)
         }}>
-          <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>50</p>
+          <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{amount}</p>
         </div>
       </div>
     </>

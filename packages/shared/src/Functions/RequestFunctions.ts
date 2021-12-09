@@ -215,6 +215,8 @@ const ApiList = {
   shipmentList: '/api/v1/shipment/list',
   recordList: `/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
+  lotRmList: `/api/v1/lot-rm/list`,
+  lotSmList: `/api/v1/lot-sm/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -234,6 +236,8 @@ const ApiList = {
   recordSearch: `/api/v1/record/search`,
   shipmentSearch: `/api/v1/shipment/search`,
   recordSumSearch: `/api/v1/record/summation/search`,
+  lotRmSearch: `/api/v1/lot-rm/search`,
+  lotSmSearch: `/api/v1/lot-sm/search`,
 
   recordDefect: `/api/v1/record/defect`,
   recordPause: `/api/v1/record/pause`,

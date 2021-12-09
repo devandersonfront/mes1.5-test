@@ -16,6 +16,7 @@ import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {BomInfoModal} from './BomInfoModal'
+import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {
   column: IExcelHeaderType
@@ -70,9 +71,11 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [summaryData, setSummaryData] = useState<any>({})
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [lotList, setLotList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -82,28 +85,78 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      console.log(row)
+      changeRow(row.input_bom)
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
 
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
-    }
+  const changeRow = (tmpRow: any, key?: string) => {
+    let tmpData = []
+    let tmpRows = tmpRow;
 
-    return tmpData
+    console.log(tmpRow)
+
+    tmpData = tmpRows.map((v, i) => {
+      let childData: any = {}
+      switch(v.bom.type){
+        case 0:{
+          childData = v.bom.child_rm
+          break;
+        }
+        case 1:{
+          childData = v.bom.child_sm
+          break;
+        }
+        case 2:{
+          childData = v.bom.child_product
+          break;
+        }
+      }
+
+      if(i === 0) {
+        setSummaryData({
+          // ...res.parent
+          customer: row.product.customer?.name,
+          model: row.product.model?.model,
+          code: row.product.code,
+          name: row.product.name,
+          process: row.product.process?.name,
+          type: TransferCodeToValue(row.product.type, 'material'),
+          unit: row.product.unit,
+          goal: row.goal,
+        })
+      }
+
+      return {
+        ...childData,
+        seq: i+1,
+        code: childData.code,
+        type: TransferCodeToValue(v.bom.type, 'material'),
+        tab: v.bom.type,
+        type_name: TransferCodeToValue(v.bom.type, 'material'),
+        unit: childData.unit ?? "-",
+        parent: v.bom.parent,
+        usage: v.bom.usage,
+        version: v.bom.version,
+        setting: v.bom.setting,
+        stock: childData.stock,
+        disturbance: Number(row.goal) * Number(v.bom.usage),
+        processArray: childData.process ?? null,
+        process: childData.process ? childData.process.name : '-',
+        bom_root_id: childData.bom_root_id,
+        product: v.bom.type === 2 ?{
+          ...childData,
+        }: null,
+        raw_material: v.bom.type === 0 ?{
+          ...childData,
+        }: null,
+        sub_material: v.bom.type === 1 ?{
+          ...childData,
+        }: null
+      }
+    })
+
+    setSearchList([...tmpData])
   }
 
   const SearchBasic = async (keyword: any, option: number, page: number) => {
@@ -155,6 +208,10 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     let tmp = bomDummy
     tmp.splice(index, 1)
     setBomDummy([...tmp])
+  }
+
+  const getSummaryInfo = (info) => {
+    return summaryData[info.key] ?? '-'
   }
 
   const ModalContents = () => {
@@ -236,8 +293,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
                             <HeaderTableText>
-                              {/*{getSummaryInfo(info)}*/}
-                              -
+                              {getSummaryInfo(info)}
                             </HeaderTableText>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>
@@ -260,8 +316,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
                             <HeaderTableText>
-                              {/*{getSummaryInfo(info)}*/}
-                              -
+                              {getSummaryInfo(info)}
                             </HeaderTableText>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>
@@ -295,8 +350,16 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                     setFocusIndex(newTabIndex-1)
                   }
 
+                  if(v.lotList){
+                    setLotList([...v.lotList.map((v,i) => ({
+                      ...v,
+                      seq: i+1
+                    }))])
+                  }
+
                   return {
                     ...v,
+                    lotList: undefined,
                     newTab: false
                   }
                 })
@@ -309,13 +372,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               //   setSelectRow(e)
               // }}
               setSelectRow={(e) => {
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
                 setSelectRow(e)
               }}
               type={'searchModal'}
@@ -335,7 +391,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
               headerList={column.type === 'readonly' ? searchModalList.InputLotReadonlyInfo : searchModalList.InputLotInfo}
-              row={searchList ?? [{}]}
+              row={lotList ?? [{}]}
               setRow={(e) => {
                 let tmp = e.map((v, index) => {
                   if(v.newTab === true){
@@ -346,27 +402,24 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
                   return {
                     ...v,
+                    spare: '여',
                     newTab: false
                   }
                 })
-                setSearchList([...tmp])
+                let tmpSearchList = [...searchList]
+                if(selectRow >= 0) {
+
+                  tmpSearchList[selectRow] = {
+                    ...tmpSearchList[selectRow],
+                    lots: tmp
+                  }
+                }
+                setSearchList([...tmpSearchList])
+                setLotList([...tmp])
               }}
               width={1746}
               rowHeight={32}
               height={192}
-              // setSelectRow={(e) => {
-              //   setSelectRow(e)
-              // }}
-              setSelectRow={(e) => {
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
-                setSelectRow(e)
-              }}
               type={'searchModal'}
               headerAlign={'center'}
             />
@@ -383,7 +436,42 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               </div>
             }
             <div
-              onClick={() => setIsOpen(false)}
+              onClick={() =>{
+                if(column.type === 'readonly'){
+                  setIsOpen(false)
+                }else{
+                  let bomList = []
+                  searchList.map((bom, index) => {
+                    console.log('bom', bom)
+                    bom.lots?.map(lot => {
+                      console.log('lot', lot)
+                      if(Number(lot.amount)){
+                        bomList.push({
+                          record_id: row.record_id,
+                          ...row.input_bom[index],
+                          lot: {
+                            elapsed: lot.elapsed,
+                            type: bom.tab,
+                            child_lot_rm: bom.tab === 0 ? {...lot} : null,
+                            child_lot_sm: bom.tab === 1 ? {...lot} : null,
+                            child_lot_record: bom.tab === 2 ? {...lot} : null,
+                            warehousing: lot.warehousing,
+                            date: lot.date,
+                            current: lot.current,
+                            amount: lot.amount
+                          }
+                        })
+                      }
+                    })
+                  })
+                  onRowChange({
+                    ...row,
+                    bom: bomList
+                  })
+                  console.log(bomList)
+                  setIsOpen(false)
+                }
+              }}
               style={{width: column.type !== 'readonly' ? "50%" : '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>{column.type !== 'readonly' ? '선택 완료' : '확인'}</p>

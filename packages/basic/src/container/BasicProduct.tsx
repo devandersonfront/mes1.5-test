@@ -391,7 +391,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         ...appendAdditional,
         customer_id: row.customer.name,
         customerArray: row.customer,
-        cm_id: row.model?.model,
+        cm_id: row.model?.model ?? "-",
         modelArray: row.model,
         process_id: row.process?.name,
         processArray: row.process,

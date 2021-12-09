@@ -37,7 +37,8 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [totalTime, setTotalTime] = useState<string>('00:00:00')
+  const [totalSec, setTotalSec] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([
@@ -54,21 +55,38 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+    if(column.type !== 'readonly'){
+      if(isOpen && row.process_id && searchList.findIndex((e) => !!e.amount ) === -1) {
+        loadPauseList()
+      }
+    }else{
+      if(row && row.pause_reasons){
+        let total = 0
+        setSearchList([...row.pause_reasons.map(v => {
+          console.log(v)
+
+          let sec = v.amount
+          let hour = Math.floor(sec/3600)
+          sec = sec%3600
+          let min = Math.floor(sec/60)
+          sec = sec%60
+
+          total+=v.amount
+
+          return {
+            ...v,
+            ...v.pause_reason,
+            amount: `${hour >= 10 ? hour : '0'+hour}:${min >= 10 ? min : '0'+min}:${sec >= 10 ? sec : '0'+sec}`
+          }
+        })])
+
+        sumTotalTime(total)
+      }
     }
-  }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
+  }, [isOpen, row, searchKeyword])
 
   const changeRow = (row: any, key?: string) => {
+    console.log(row)
     let tmpData = {
       ...row,
       machine_id: row.name,
@@ -79,73 +97,34 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
-    }
-  }
-
-  const addNewTab = (index: number) => {
-    let tmp = bomDummy
-    tmp.push({code: 'SU-20210701-'+index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
-    setBomDummy([...tmp])
-  }
-
-  const deleteTab = (index: number) => {
-    if(bomDummy.length - 1 === focusIndex){
-      console.log('last')
-      setFocusIndex(focusIndex-1)
-    }
-    if(bomDummy.length === 1) {
-      return setIsOpen(false)
-    }
-
-    let tmp = bomDummy
-    tmp.splice(index, 1)
-    setBomDummy([...tmp])
-  }
-
-  const totalTime = () => {
-    let total = 0
-    searchList.map(v => {
-      if(v.amount) {
-        total += v.amount
-      }
-    })
-
+  const sumTotalTime = (total: number) => {
     let sec = total
     let hour = Math.floor(sec/3600)
     sec = sec%3600
     let min = Math.floor(sec/60)
     sec = sec%60
 
-    console.log(`${hour}:${min}:${sec}`)
+    setTotalSec(sec)
+    setTotalTime(`${hour >= 10 ? hour : '0'+hour}:${min >= 10 ? min : '0'+min}:${sec >= 10 ? sec : '0'+sec}`)
+  }
 
-    return `${hour >= 10 ? hour : '0'+hour}:${min >= 10 ? min : '0'+min}:${sec >= 10 ? sec : '0'+sec}`
+  const loadPauseList = async () => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `pauseReasonList`,{
+      path: {
+        page: 1,
+        renderItem: 18,
+        process_id: row.process_id,
+      }
+    })
+
+    if(res){
+      let searchList = res.info_list.map((row: any, index: number) => {
+        return changeRow(row)
+      })
+
+      setSearchList([...searchList])
+    }
   }
 
   const ModalContents = () => {
@@ -161,11 +140,11 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           justifyContent: 'center',
           alignItems: 'center',
           color: '#0D0D0D',
-          background:row.border ? "#19B9DF80" : column.type === 'default' ? '#353B48'  : "white",
+          background: row.border ? "#19B9DF80" : (column.type === 'default' || !column.modalType) ? '#353B48'  : "white",
         }} onClick={() => {
           setIsOpen(true)
         }}>
-          <p style={{color: column.type === 'default' ? 'white': '#0d0d0d', textDecoration: 'underline', margin: 0, padding: 0}}>00:00:00</p>
+          <p style={{color: (column.type === 'default' || !column.modalType) ? 'white': '#0d0d0d', textDecoration: 'underline', margin: 0, padding: 0}}>{totalTime}</p>
         </div>
       </div>
     </>
@@ -211,7 +190,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   backgroundColor: 'white', width: 144, height: 28, border: '1px solid #B3B3B3', marginLeft: 16, marginRight: 32,
                   display: 'flex', alignItems: 'center', paddingTop:3
                 }}>
-                  <p style={{margin:0, padding: '0 0 0 8px'}}>{totalTime()}</p>
+                  <p style={{margin:0, padding: '0 0 0 8px'}}>{totalTime}</p>
                 </div>
               </div>
               <Button>
@@ -232,27 +211,33 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 let addIndex = 0
                 let ppr_id = ''
                 let reason = ''
+                let total = 0
                 let tmpRow = e.map((v, i) => {
-                  let amount = 0
-                  if(v.amount){
-                    if(typeof v.amount !== 'number'){
-                      console.log(v.amount)
-                      const time = v.amount.split(':')
-                      amount = (Number(time[0])*3600)+(Number(time[1])*60)+Number(time[2])
-                    }else{
-                      amount = v.amount
-                    }
-                  }
-
+                  let time_sec = 0
                   if(v.add) {
                     addIndex = i+1
                     reason = v.reason
                     ppr_id = v.ppr_id
                   }
+
+                  if(v.amount){
+
+                    const times = v.amount.split(':')
+                    let hour = Number(times[0])
+                    let min = Number(times[1])
+                    let sec = Number(times[2])
+
+                    time_sec = (hour*3600)+(min*60)+sec
+
+                    total = total+time_sec
+                  }
+
+                  sumTotalTime(total)
+
                   return {
                     ...v,
+                    time_sec,
                     add: false,
-                    amount
                   }
                 })
                 if(addIndex){
@@ -292,7 +277,15 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   if(selectRow !== undefined && selectRow !== null){
                     onRowChange({
                       ...row,
-                      ...searchList[selectRow],
+                      pause_reasons: [
+                        ...searchList.map(v => {
+                          console.log(v)
+                          return ({
+                            amount: v.time_sec,
+                            pause_reason: v
+                          })
+                        })
+                      ],
                       name: row.name,
                       isChange: true
                     })
@@ -328,67 +321,6 @@ const Button = styled.button`
     justify-content:center;
     align-items:center;
     cursor:pointer;
-
 `;
-
-const TabBox = styled.button`
-  max-width: 214.5px;
-  min-width: 40px;
-  height: 32px;
-  background-color: #19B9DF;
-  opacity: 0.5;
-  border: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-right: 4px;
-  cursor: pointer;
-  flex: 1;
-  p {
-    font-size: 15px;
-    width: 168px;
-    text-overflow: ellipsis;
-    color: white;
-    padding-left: 8px;
-    text-align: left;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-`;
-
-const HeaderTable = styled.div`
-  width: 1744px;
-  height: 32px;
-  margin: 0 16px;
-  background-color: #F4F6FA;
-  border: 0.5px solid #B3B3B3;
-  display: flex
-`
-
-const HeaderTableTextInput = styled.div`
-  background-color: #ffffff;
-  padding-left: 3px;
-  height: 27px;
-  border: 0.5px solid #B3B3B3;
-  margin-top:2px;
-  margin-right: 70px;
-  display: flex;
-  align-items: center;
-`
-
-const HeaderTableText = styled.p`
-  margin: 0;
-  font-size: 15px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-`
-
-const HeaderTableTitle = styled.div`
-  width: 99px;
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-`
 
 export {PauseInfoModal}

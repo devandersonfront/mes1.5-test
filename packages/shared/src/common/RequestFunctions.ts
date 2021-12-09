@@ -202,6 +202,8 @@ const ApiList = {
   lotRmSave: `/api/v1/lot-rm/save`,
   lotSmSave: `/api/v1/lot-sm/save`,
   subFactorySave: `/api/v1/subFactory/save`,
+  contractSave: `/api/v1/contract/save`,
+  sheetSave: `/api/v1/sheet/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -235,6 +237,7 @@ const ApiList = {
   deviceDelete: `/api/v1/device/delete`,
   subinDelete: `/api/v1/lot-sm/delete`,
   subFactoryDelete: `/api/v1/subFactory/delete`,
+  contractDelete: `/api/v1/contract/delete`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,
@@ -255,7 +258,7 @@ const ApiList = {
   stockProductList: '/api/v1/stock/summary',
   stockSummaryList: '/api/v1/stock/summary/list',
   operactionList: `/api/v1/operation/list`,
-  defectList: `/api/v1/quality/statistics/defect`,
+  defectList: `/api/v1/process/statistics/defect`,
   shipmentList: '/api/v1/shipment/list',
   recordList: `/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
@@ -266,6 +269,13 @@ const ApiList = {
   rawInList: `/api/v1/lot-rm/list`,
   subInList: `/api/v1/lot-sm/list`,
   subFactoryList: `/api/v1/subFactory/list`,
+  contractList: `/api/v1/contract/list`,
+  sheetList: `/api/v1/sheet/list`,
+  sheetLatestList: `/api/v1/sheet/latest`,
+  sheetGraphList: `/api/v1/bom/graph`,
+  lotRmList: `/api/v1/lot-rm/list`,
+  lotSmList: `/api/v1/lot-sm/list`,
+  recordGroupList: `/api/v1/record/groups`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -290,6 +300,8 @@ const ApiList = {
   factorySearch: `/api/v1/factory/search`,
   subFactorySearch: `/api/v1/subFactory/search`,
   rawInListSearch: `/api/v1/lot-rm/search`,
+  contractSearch: `/api/v1/contract/search`,
+  lotRmSearch: `/api/v1/lot-rm/search`,
   lotSmSearch: `/api/v1/lot-sm/search`,
 
   recordDefect: `/api/v1/record/defect`,
@@ -303,6 +315,7 @@ const ApiList = {
 
   //all
   authorityAll: `/api/v1/auth/all`,
+  recordAll: `/api/v1/record/all`,
 
   //fetch
   summaryFetch: `/api/v1/stock/summary/fetch`,

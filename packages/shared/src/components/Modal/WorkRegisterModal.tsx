@@ -27,23 +27,23 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
-    {title: '수주번호', infoWidth: 144, key: 'customer'},
-    {title: '지시 고유 번호', infoWidth: 144, key: 'model'},
-    {title: '거래처', infoWidth: 144, key: 'customer'},
-    {title: '모델', infoWidth: 144, key: 'model'},
+    {title: '수주번호', infoWidth: 144, key: 'contract_id'},
+    {title: '지시 고유 번호', infoWidth: 144, key: 'identification'},
+    {title: '거래처', infoWidth: 144, key: 'customer_id'},
+    {title: '모델', infoWidth: 144, key: 'cm_id'},
   ],
   [
-    {title: 'CODE', infoWidth: 144, key: 'code'},
+    {title: 'CODE', infoWidth: 144, key: 'product_id'},
     {title: '품명', infoWidth: 144, key: 'name'},
     {title: '품목 종류', infoWidth: 144, key: 'type'},
-    {title: '생산 공정', infoWidth: 144, key: 'process'},
+    {title: '생산 공정', infoWidth: 144, key: 'process_id'},
   ],
   [
     {title: '단위', infoWidth: 144, key: 'unit'},
     {title: '목표 생산량', infoWidth: 144, key: 'goal'},
     {title: '총 카운터', infoWidth: 144, key: 'unit'},
-    {title: '총 양품 수량', infoWidth: 144, key: 'goal'},
-    {title: '총 불량 수량', infoWidth: 144, key: 'goal'},
+    {title: '총 양품 수량', infoWidth: 144, key: 'total_good_quantity'},
+    {title: '총 불량 수량', infoWidth: 144, key: 'total_poor_quantity'},
   ],
 ]
 
@@ -53,7 +53,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
 
   const [bomDummy, setBomDummy] = useState<any[]>([
-    {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
+    {sequence: '1', code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
   ])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -61,7 +61,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([{sequence: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -71,70 +71,19 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      console.log(row)
+      setSearchList([{...searchList[0], process_id: row.product?.process?.process_id ?? '-', input_bom: row.input_bom, product: row.product, goal: row.goal}])
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
-
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
-    }
-
-    return tmpData
-  }
-
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
-    }
-  }
 
   const addNewTab = (index: number) => {
     let tmp = bomDummy
-    tmp.push({code: 'SU-20210701-'+index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
+    tmp.push({code: 'SU-20210701-'+ index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
     setBomDummy([...tmp])
   }
 
   const deleteTab = (index: number) => {
-    console.log(bomDummy.length, focusIndex)
     if(bomDummy.length - 1 === focusIndex){
-      console.log('last')
       setFocusIndex(focusIndex-1)
     }
     if(bomDummy.length === 1) {
@@ -144,6 +93,55 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
     let tmp = bomDummy
     tmp.splice(index, 1)
     setBomDummy([...tmp])
+  }
+
+  const SaveBasic = async () => {
+    let res = await RequestMethod('post', `recordSave`,
+      searchList.map((v, i) => {
+        let selectData: any = {}
+
+        Object.keys(v).map(v => {
+          if(v.indexOf('PK') !== -1) {
+            selectData = {
+              ...selectData,
+              [v.split('PK')[0]]: v[v]
+            }
+          }
+
+          if(v === 'unitWeight') {
+            selectData = {
+              ...selectData,
+              unitWeight: Number(v['unitWeight'])
+            }
+          }
+
+          if(v === 'tmpId') {
+            selectData = {
+              ...selectData,
+              id: v['tmpId']
+            }
+          }
+        })
+
+        return {
+          ...v,
+          ...selectData,
+          operation_sheet: {
+            ...row,
+            status: row.status_no
+          },
+          input_bom: [],
+          status: 0,
+        }
+      }).filter((v) => v))
+
+
+    if(res){
+      Notiflix.Report.success('저장되었습니다.','','확인', () => {
+        setIsOpen(false)
+      });
+
+    }
   }
 
   const ModalContents = () => {
@@ -159,6 +157,10 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         </UploadButton>
       </div>
     </>
+  }
+
+  const getSummaryInfo = (info) => {
+    return row[info.key] ?? '-'
   }
 
   return (
@@ -218,8 +220,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
                             <HeaderTableText>
-                              {/*{getSummaryInfo(info)}*/}
-                              -
+                              {getSummaryInfo(info)}
                             </HeaderTableText>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>
@@ -257,6 +258,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
               headerList={searchModalList.workRegister}
               row={searchList ?? [{}]}
               setRow={(e) => {
+                console.log(e)
                 let tmp = e.map((v, index) => {
                   if(v.newTab === true){
                     const newTabIndex = bomDummy.length+1
@@ -269,7 +271,11 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                     newTab: false
                   }
                 })
-                setSearchList([...tmp])
+                console.log(tmp)
+                setSearchList([...tmp.map(v => {
+                  console.log('v', v)
+                  return v
+                })])
               }}
               width={1746}
               rowHeight={32}
@@ -278,19 +284,19 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
               //   setSelectRow(e)
               // }}
               setSelectRow={(e) => {
-                setSearchList([...searchList.map((v,i)=>{
-                  if(i === e){
-                    return {
-                      ...v,
-                      border: !v.border
-                    }
-                  }else{
-                    return {
-                      ...v,
-                      border: false
-                    }
-                  }
-                })])
+                // setSearchList([...searchList.map((v,i)=>{
+                //   if(i === e){
+                //     return {
+                //       ...v,
+                //       border: !v.border
+                //     }
+                //   }else{
+                //     return {
+                //       ...v,
+                //       border: false
+                //     }
+                //   }
+                // })])
                 setSelectRow(e)
               }}
               type={'searchModal'}
@@ -308,15 +314,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
-                  onRowChange({
-                    ...row,
-                    ...searchList[selectRow],
-                    name: row.name,
-                    isChange: true
-                  })
-                }
-                setIsOpen(false)
+                SaveBasic()
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >

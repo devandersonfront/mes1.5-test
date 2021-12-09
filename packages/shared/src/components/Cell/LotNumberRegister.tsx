@@ -19,15 +19,13 @@ interface IProps {
 }
 
 const LotNumberRegister = ({ row, column, onRowChange }: IProps) => {
-  const [title, setTitle] = useState<string>("연관 작업 보기")
-  const [bgColor, setBgColor] = useState<string>()
-
-
   return (
     <div style={{display: 'flex', justifyContent: 'space-between'}}>
-      <div style={{paddingLeft: 8}}>20210517-001</div>
+      <div style={{paddingLeft: 8}}>{row[column.key]}</div>
       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-        <CreateBtn>
+        <CreateBtn onClick={() => {
+
+        }}>
           생성
         </CreateBtn>
         <div style={{width: 4}}/>
@@ -46,6 +44,7 @@ const CreateBtn = styled.div`
   justify-content: center;
   align-items: center;
   display: flex;
+  cursor: pointer;
   p {
     margin: 0;
     padding: 0;

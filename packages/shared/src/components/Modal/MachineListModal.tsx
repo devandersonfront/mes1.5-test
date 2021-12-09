@@ -62,9 +62,15 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      if(isOpen) {
+        setSearchList([...row.machines.map(v => {
+          return {
+            ...v,
+            ...v.machine,
+            ...v.machine.machine,
+          }
+        })])
+      }
     }
   }, [isOpen, searchKeyword])
   // useEffect(() => {

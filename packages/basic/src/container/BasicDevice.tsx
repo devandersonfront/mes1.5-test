@@ -499,9 +499,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
           ()=>{DeleteBasic()},
           ()=>{}
         )
-
         break;
-
     }
   }
 

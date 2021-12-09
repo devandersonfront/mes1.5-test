@@ -16,6 +16,7 @@ import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {BomInfoModal} from './BomInfoModal'
+import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {
   column: IExcelHeaderType
@@ -50,6 +51,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
+  const [summaryData, setSummaryData] = useState<any>({})
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -60,58 +62,100 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      console.log(row.operation_sheet?.product?.product_id)
+      // loadRecordGroup(1, row.operation_sheet?.product?.product_id)
+      changeRow(row.input_bom)
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
 
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
-    }
-
-    return tmpData
-  }
-
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
+  const loadRecordGroup = async (page: number, product_id: number) => {
+    // Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `recordGroupList`,{
       path: {
+        product_id: product_id,
         page: page,
         renderItem: 18,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
     })
+
+    console.log(res)
 
     if(res && res.status === 200){
       let searchList = res.results.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
 
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
       setSearchList([...searchList])
     }
+  }
+
+  const changeRow = (tmpRow: any, key?: string) => {
+    let tmpData = []
+    let tmpRows = tmpRow;
+
+    console.log(tmpRow)
+
+    tmpData = tmpRows.map((v, i) => {
+      let childData: any = {}
+      switch(v.bom.type){
+        case 0:{
+          childData = v.bom.child_rm
+          break;
+        }
+        case 1:{
+          childData = v.bom.child_sm
+          break;
+        }
+        case 2:{
+          childData = v.bom.child_product
+          break;
+        }
+      }
+
+      if(i === 0) {
+        setSummaryData({
+          // ...res.parent
+          customer: row.product.customer?.name,
+          model: row.product.model?.model,
+          code: row.product.code,
+          name: row.product.name,
+          process: row.product.process?.name,
+          type: TransferCodeToValue(row.product.type, 'material'),
+          unit: row.product.unit,
+          goal: row.goal,
+        })
+      }
+
+      return {
+        ...childData,
+        seq: i+1,
+        code: childData.code,
+        type: TransferCodeToValue(v.bom.type, 'material'),
+        tab: v.bom.type,
+        type_name: TransferCodeToValue(v.bom.type, 'material'),
+        unit: childData.unit ?? "-",
+        parent: v.bom.parent,
+        usage: v.bom.usage,
+        version: v.bom.version,
+        setting: v.bom.setting,
+        stock: childData.stock,
+        disturbance: Number(row.goal) * Number(v.bom.usage),
+        processArray: childData.process ?? null,
+        process: childData.process ? childData.process.name : '-',
+        bom_root_id: childData.bom_root_id,
+        product: v.bom.type === 2 ?{
+          ...childData,
+        }: null,
+        raw_material: v.bom.type === 0 ?{
+          ...childData,
+        }: null,
+        sub_material: v.bom.type === 1 ?{
+          ...childData,
+        }: null
+      }
+    })
+
+    setSearchList([...tmpData])
   }
 
   const addNewTab = (index: number) => {
@@ -141,13 +185,17 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
         // padding: '3.5px 0px 0px 3.5px',
         width: '100%'
       }}>
-      <div onClick={() => {
-        setIsOpen(true)
-      }}>
-        <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
+        <div onClick={() => {
+          setIsOpen(true)
+        }}>
+          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
         </div>
       </div>
     </>
+  }
+
+  const getSummaryInfo = (info) => {
+    return summaryData[info.key] ?? '-'
   }
 
   return (
@@ -205,8 +253,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
                             <HeaderTableText>
-                              {/*{getSummaryInfo(info)}*/}
-                              -
+                              {getSummaryInfo(info)}
                             </HeaderTableText>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>

@@ -63,9 +63,12 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      setSearchList([...row.product.machines.map((v, index) => {
+        return {
+          ...v.machine,
+          sequence: index+1
+        }
+      })])
     }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
@@ -259,7 +262,17 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                 if(selectRow !== undefined && selectRow !== null){
                   onRowChange({
                     ...row,
-                    ...searchList[selectRow],
+                    machines: searchList.map(v => {
+                      return {
+                        machine: {
+                          sequence: v.sequence,
+                          machine: {
+                            ...v
+                          },
+                          setting: v.spare === '여' ? 0 : 1
+                        }
+                      }
+                    }),
                     name: row.name,
                     isChange: true
                   })

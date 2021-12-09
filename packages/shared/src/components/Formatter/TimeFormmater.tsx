@@ -9,27 +9,11 @@ interface IProps {
 }
 
 const TimeFormatter = ({row, column, setRow}: IProps) => {
-  const [time, setTime] = React.useState<string | undefined>()
-
-  useEffect(() => {
-    if(row[column.key]){
-      let sec = Number(row[column.key])
-      let hour = Math.floor(sec/3600)
-      sec = sec%3600
-      let min = Math.floor(sec/60)
-      sec = sec%60
-
-      console.log(`${hour}:${min}:${sec}`)
-
-      setTime(`${hour >= 10 ? hour : '0'+hour}:${min >= 10 ? min : '0'+min}:${sec >= 10 ? sec : '0'+sec}`)
-    }
-  }, [row])
-
   return(
     <Background style={{background: "white"}} onClick={()=>{
     }} >
       <p style={{padding: 0, color: row[column.key] ? '#0D0D0D' : '#0D0D0D66', width: '100%', textAlign: column.textAlign ?? 'left' }}>
-        {time ?? "00:00:00"}
+        {row[column.key] ?? "00:00:00"}
       </p>
     </Background>
   )

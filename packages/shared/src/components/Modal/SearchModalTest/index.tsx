@@ -89,8 +89,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }
 
-
-
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
     console.log("keyword : ", keyword)
@@ -113,9 +111,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-
     if(res){
       setSearchList([...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
+      console.log('data')
       Notiflix.Loading.remove()
     }
 
@@ -245,7 +243,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 onKeyDown={(e) => {
                   if(e.key === 'Enter'){
                     LoadBasic();
-                    // SearchBasic(keyword, optionIndex)
                   }
                 }}
                 style={{
@@ -260,7 +257,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
                 onClick={() => {
                   LoadBasic();
-                  // SearchBasic(keyword, optionIndex)
                 }}
               >
                 <img src={Search_icon} style={{width:"16px",height:"16px"}} />

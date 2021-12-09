@@ -1,4 +1,4 @@
-type TransferType = "productType" | "material" | "rawMaterialType"
+type TransferType = "productType" | "material" | "rawMaterialType" | "workStatus"
 
 interface CodeType {
   code: number
@@ -21,6 +21,11 @@ const RAW_MATERIAL_TYPE_CODE: Array<CodeType> = [
   {code: 2, value: "SHEET"},
 ]
 
+const WORK_STATUS: Array<CodeType> = [
+  {code: 0, value: '작업 중'},
+  {code: 1, value: '시작 전'},
+  {code: 2, value: '작업 종료'},
+]
 
 export const TransferCodeToValue = (code: number, type:TransferType) => {
   let value = "";
@@ -50,6 +55,13 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
         }
       })
       break;
+    }
+    case 'workStatus': {
+      WORK_STATUS.map(v => {
+        if(v.code === code){
+          value = v.value;
+        }
+      })
     }
   }
 

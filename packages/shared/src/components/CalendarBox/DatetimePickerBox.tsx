@@ -16,6 +16,8 @@ import {
 } from '@material-ui/pickers'
 import MomentUtils from "@date-io/moment";
 import {ThemeProvider} from 'styled-components'
+// @ts-ignore
+import calendarWhite from '../../../public/images/calendar_icon_black.png'
 
 interface IProps {
   row: any
@@ -97,6 +99,7 @@ const DatetimePickerBox = ({ row, column, onRowChange, onClose }: IProps) => {
         />
       </MuiPickersUtilsProvider>
       </ThemeProvider>
+      <img src={calendarWhite} style={{width: 24, height: 24}}/>
     </div>
 
   );
