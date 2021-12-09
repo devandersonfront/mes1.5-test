@@ -41,7 +41,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{}])
   const [tab, setTab] = useState<number>(0)
-
   const [searchModalInit, setSearchModalInit] = useState<any>()
 
   useEffect(() => {
@@ -72,7 +71,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     if(isOpen){
       LoadBasic();
     }
-  }, [isOpen, searchModalInit, keyword, optionIndex])
+  }, [isOpen, searchModalInit, optionIndex])
 
   const getContents = () => {
     if(row[`${column.key}`]){
@@ -94,11 +93,20 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
+    console.log("keyword : ", keyword)
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`,{
-      path: {
-        page: 1,
-        renderItem: 18,
-      },
+      path: column.type === "customerModel" ?
+          {
+            page: 1,
+            renderItem: 18,
+            customer_id: row.customer?.customer_id ?? null
+          }
+          :
+          {
+            page: 1,
+            renderItem: 18,
+          }
+      ,
       params:{
         keyword:keyword,
         opt:optionIndex
@@ -236,6 +244,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 onChange={(e) => {setKeyword(e.target.value)}}
                 onKeyDown={(e) => {
                   if(e.key === 'Enter'){
+                    LoadBasic();
                     // SearchBasic(keyword, optionIndex)
                   }
                 }}
@@ -250,6 +259,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               <div
                 style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
                 onClick={() => {
+                  LoadBasic();
                   // SearchBasic(keyword, optionIndex)
                 }}
               >
@@ -289,6 +299,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             </FooterButton>
             <FooterButton
               onClick={() => {
+                console.log("modal Result Button : ", row)
                 setIsOpen(false)
                 onRowChange({
                   ...row,

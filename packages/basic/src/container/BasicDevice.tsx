@@ -47,7 +47,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["device"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(["장치 제조사", "장치 이름", "장치 종류", "제조 번호"])
+  const [optionList, setOptionList] = useState<string[]>(["장치 제조사", "장치 이름", "제조 번호", "담당자"])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -174,6 +174,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
                 ...row,
                 ...selectData,
                 type:row.type_id,
+                manager: row.user,
                 additional: [
                   ...additional.map(v => {
                     if(row[v.name]) {

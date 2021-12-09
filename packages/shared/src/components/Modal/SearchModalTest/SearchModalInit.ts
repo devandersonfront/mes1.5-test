@@ -37,6 +37,11 @@ export const SearchInit: Record<string, SearchInitType> = {
     searchFilter: ['거래처명', '대표자명', '사업자 번호', '모델명'],
     excelColumnType: 'model'
   },
+  customerModel: {
+    title: "모델명 검색",
+    searchFilter: ['거래처명', '대표자명', '사업자 번호', '모델명'],
+    excelColumnType: 'model'
+  },
   rawmaterial: {
     title: '원자재 검색',
     searchFilter: ['원자재 CODE', '원자재 품명', '재질', '거래처'],

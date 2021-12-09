@@ -156,12 +156,12 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
                 }
               }
             })
-
+            console.log(row)
             return {
               ...row,
               ...selectData,
               type:settingType(row.type),
-              customer: row.customerArray,
+              // customer: row.customerArray,
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -397,7 +397,6 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
               }
             }
           })
-          console.log(row);
           if(row.rm_id){
             return {
               ...row,

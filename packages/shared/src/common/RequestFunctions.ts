@@ -289,6 +289,8 @@ const ApiList = {
   submaterialSearch: `/api/v1/sub-material/search`,
   factorySearch: `/api/v1/factory/search`,
   subFactorySearch: `/api/v1/subFactory/search`,
+  rawInListSearch: `/api/v1/lot-rm/search`,
+  lotSmSearch: `/api/v1/lot-sm/search`,
 
   recordDefect: `/api/v1/record/defect`,
   recordPause: `/api/v1/record/pause`,

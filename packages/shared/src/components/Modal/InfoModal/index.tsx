@@ -77,7 +77,6 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
   }, [row, isOpen])
 
   useEffect(()=>{
-    console.log("왜 4번?", row)
     loadData(column.summaryType);
   },[])
 

@@ -48,7 +48,6 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
 
   const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
   const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`qualityDefectContents`].map(v => {
-    console.log(v.key)
     if(v.key === 'amount'){
       return {
         ...v,
@@ -78,6 +77,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
   }
 
   useEffect(() => {
+    console.log(processBasicRow)
     if(processBasicRow[0].product_id){
       LoadBasic().then(() => {
         Notiflix.Loading.remove()
@@ -87,6 +87,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
 
   const LoadPauseList = async (value:string) => {
     Notiflix.Loading.circle()
+    console.log("????????????????????????????")
     const res = await RequestMethod("get", `defectReasonList`,{
       path: {
         page:1,
@@ -95,7 +96,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       let tmpColumn = columnlist[`defectReason`];
       tmpColumn = tmpColumn.map((value:any,index:number) => {
         return {...value, key:value.key, name:value.name, width:value.width}
@@ -103,7 +104,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
       setPauseColumn(tmpColumn);
       // tmpColumn.push({key:})
       let tmpRow = [];
-      tmpRow = res.results.info_list.map((column: any,index:number) => {
+      tmpRow = res.info_list.map((column: any,index:number) => {
         let menuData: object = {};
 
         menuData = {
@@ -126,11 +127,12 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
 
   const LoadBasic = async () => {
     Notiflix.Loading.circle()
+
     const res = await RequestMethod('get', `defectList`,{
       path: {
         product_id: processBasicRow[0].product_id,
-        process_id: processBasicRow[0].process_idPK,
-        pdr_id: processBasicRow[0].pdr_idPK
+        // process_id: processBasicRow[0].process_idPK,
+        // pdr_id: processBasicRow[0].pdr_idPK
       },
       params: {
         opt: headerStatus,
@@ -138,7 +140,9 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
         to: selectDate.to,
       }
     })
-    if(res && res.status === 200){
+    console.log(res)
+
+    if(res){
       let tmpColumn = columnlist[`defectReason`];
       let tmpRow = []
 
@@ -147,15 +151,16 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
       if(res.results.length >= 0){
         setPauseBasicRow(tmpRow.map(v => {
           let random_id = Math.random() * 1000
+          LoadPauseList(v.process.process_id).then(() => {
+            Notiflix.Loading.remove()
+          })
           return {
             ...v,
             id: `processDefect_${random_id}`,
             reason: v.pdr.reason,
             process_id: v.process.name
           }
-          LoadPauseList(v.process.process_id).then(() => {
-            Notiflix.Loading.remove()
-          })
+
         }))
       }
     }else if (res.state === 401) {
@@ -230,7 +235,20 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
           ...processColumn
         ]}
         row={processBasicRow}
-        setRow={setProcessBasicRow}
+        setRow={(e) => {
+
+          const tmpBasicRow = [...e];
+          tmpBasicRow[0] = {
+            ...tmpBasicRow[0],
+            customer: tmpBasicRow[0].customer.name,
+            customerData: tmpBasicRow[0].customer,
+            model: tmpBasicRow[0].model.model,
+            modelData: tmpBasicRow[0].model,
+            product_id: tmpBasicRow[0].product.product_id
+          }
+          console.log("tmpBasicRow : ", tmpBasicRow)
+          setProcessBasicRow(tmpBasicRow)
+        }}
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}

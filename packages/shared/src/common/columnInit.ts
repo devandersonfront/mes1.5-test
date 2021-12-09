@@ -186,7 +186,7 @@ export const columnlist: any = {
       ]},
     {key: 'madeAt', name: '제조 연월일', formatter: CalendarBox},
     {key: 'mfrCode', name: '제조 번호(필수)', editor: TextEditor},
-    {key: 'user_id', name: '담당자', formatter: MemberSearchModal},
+    {key: 'manager', name: '담당자', formatter: SearchModalTest, type:"user"},
     {key: 'photo', name: '장치사진', formatter: FileEditer},
     {key: 'qualify', name: '스펙 명판 사진', formatter: FileEditer},
     {key: 'capacity', name: '능력 명판 사진', formatter: FileEditer},
@@ -213,13 +213,13 @@ export const columnlist: any = {
   ],
   productV1u: [
     {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-'},
-    {key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'model', placeholder: '-'},
+    {key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-'},
     {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
     {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: 'type', name: '품목 종류',  formatter: DropDownEditor, selectList: [
-        {pk: '2', name: '완제품'},
         {pk: '0', name: '반제품'},
         {pk: '1', name: '재공품'},
+        {pk: '2', name: '완제품'},
       ]},
     {key: 'unit', name: '단위', formatter: DropDownEditor, selectList: [
         {pk: 'EA', name: 'EA'},
@@ -665,8 +665,8 @@ export const columnlist: any = {
     {key: 'worker', name: '작업자', width:118,},
   ],
   qualityDefectTop: [
-    {key: 'customer_id', name: '거래처명', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
-    {key: 'cm_id', name: '모델', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
+    {key: 'customer', name: '거래처명', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
+    {key: 'model', name: '모델', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
     {key: 'code', name: 'CODE', formatter: SearchModalTest, type: 'product'},
     {key: 'name', name: '품명', formatter: PlaceholderBox, placeholder: '자동입력'},
   ],

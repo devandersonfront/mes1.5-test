@@ -33,7 +33,7 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", date: moment().format('YYYY-MM-DD')
+    name: "", id: "sm"+Math.random()*100, date: moment().format('YYYY-MM-DD')
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["subinV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -118,11 +118,11 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
 
 
   const onClickHeaderButton = (index: number) => {
-    console.log(index)
+    const randomID = Math.random()*100;
     switch(index){
       case 0:
         setBasicRow([
-          {},
+          {id:`sm${randomID}`, date: moment().format('YYYY-MM-DD')},
           ...basicRow
         ])
         break;
@@ -130,6 +130,12 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
         SaveBasic()
         break;
       case 2:
+
+        console.log(selectList);
+        selectList.forEach((value) => {
+
+        })
+
         break;
     }
   }

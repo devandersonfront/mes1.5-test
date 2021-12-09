@@ -37,7 +37,6 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const tabRef = useRef(null)
   const tabStore = useSelector((rootState: RootState) => rootState.infoModal)
-  console.log("tabStore : ", tabStore)
   const dispatch = useDispatch();
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -45,7 +44,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [searchList, setSearchList] = useState<any[]>([
     {seq: 1,}
   ])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   const [headerData, setHeaderData] = useState<any>();
@@ -58,34 +56,35 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         })
       } else {
         setIsOpen(false)
+        Notiflix.Report.warning("데이터를 저장해주시기 바랍니다.", "", "확인",)
       }
     }else{
       dispatch(reset_summary_info());
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen])
 
   useEffect(() => {
-     if(tabStore.code.length <= 0){
+     if(tabStore.datas.length <= 0){
         setIsOpen(false);
      }
-      getModalData()
+  },[tabStore, ])
 
-  },[tabStore])
+  useEffect(() => {
+    if(isOpen) getModalData()
+  },[tabStore.index])
 
   const getModalData = async() => {
-
-    if(tabStore.code[tabStore.index]){
-      RequestMethod("get", "bomLoad", {path: { key: tabStore.code[tabStore.index] }})
+    console.log(tabStore.datas[tabStore.index], tabStore);
+    if(tabStore.datas[tabStore.index]?.code){
+      await RequestMethod("get", "bomLoad", {path: { key: tabStore.datas[tabStore.index].code }})
           .then((res) => {
             const result = changeRow(res);
             // console.log(result)
             // console.log(headerData)
             // console.log(result[selectRow].parent)
-            console.log("result : ", result)
             setSearchList([...result])
             result.map((value, i) => {
-              if(tabStore.code[tabStore.index] == value.parent.bom_root_id){
-                console.log(tabStore.code[tabStore.index], i)
+              if(tabStore.datas[tabStore.index].code == value.parent.bom_root_id){
                 setHeaderData(result[0].parent)
 
               }
@@ -110,7 +109,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }else{
       row = [{...tmpRow}]
     }
-
     tmpData = row.map((v, i) => {
       let childData: any = {}
       switch(v.type){
@@ -153,26 +151,23 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         parent:v.parent
       }
     })
-    console.log(tmpData);
     return tmpData
   }
 
   const SearchBasic = async (selectKey?:string) => {
     Notiflix.Loading.circle()
-    // setKeyword(keyword)
-    // setOptionIndex(option)
     let res;
     if(selectKey){
       res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
+      let searchList = changeRow(res)
+      dispatch(insert_summary_info({code:row.bom_root_id, title:row.code, data:searchList, headerData:row}));
+      setSearchList([...searchList])
+
     }else{
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
-    }
-
-    if(res){
       let searchList = changeRow(res)
-      console.log("row : ", row)
-      dispatch(insert_summary_info({code:row.bom_root_id, title:row.code, data:searchList}));
-      console.log("searchList : ", searchList)
+      console.log("no selectKey : ", searchList)
+      dispatch(insert_summary_info({code:row.bom_root_id, title:row.code, data:searchList, headerData:row}));
       setSearchList([...searchList])
     }
   }
@@ -183,7 +178,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         seq: i+1,
         parent: {
           ...row,
-          process: row.processArray
+          process: row.processArray,
+          type: row.typePK ?? row.type
         },
         child_product: v.tab === 2 ? {
           ...v.product
@@ -196,7 +192,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         } : null,
         type: v.tab,
         key: row.bom_root_id,
-        setting: v.setting,
+        setting: v.setting === "스페어" ? 1 : 0,
         usage: v.usage,
         version: v.version
       }
@@ -205,8 +201,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     const res = await RequestMethod('post', `bomSave`,body)
 
     if(res) {
-      setIsOpen(false)
-
+      Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
     }
 
   }
@@ -310,6 +305,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
               <HeaderTableText>{headerData ? headerData.customer.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
+              {/*<HeaderTableText>{tabStore.datas[tabStore.index]?.headerData ? tabStore.datas[tabStore.index].headerData.customerArray.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>*/}
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
@@ -341,7 +337,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData? headerData.process.name : row.processArray ? row.processArray.name : "-"}</HeaderTableText>
+              <HeaderTableText>{headerData ? headerData.process?.name : row.processArray ? row.processArray.name : "-"}</HeaderTableText>
+              {/*<HeaderTableText>{row.processArray ? row.processArray.name : "-"}</HeaderTableText>*/}
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -361,7 +358,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-              {tabStore.title.map((v, i) => {
+              {tabStore.datas.map((v, i) => {
                 return <TabBox ref={i === 0 ? tabRef : null} style={
                   // focusIndex === i ? {
                   tabStore.index === i ? {
@@ -376,7 +373,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     tabRef.current && tabRef.current.clientWidth < 63 ?
                         // focusIndex !== i ?
                         tabStore.index !== i ?
-                            <p onClick={() => {setFocusIndex(i)}}>{tabStore.title[i]}</p>
+                            <p onClick={() => {setFocusIndex(i)}}>{v.title}</p>
+                            // <p onClick={() => {setFocusIndex(i)}}>{tabStore.datas[i].title}</p>
                             :
                             <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
                               dispatch(delete_summary_info(i));
@@ -391,8 +389,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                               }}
                                  // style={{color: focusIndex === i ? "white" : '#353B48'}}
                                  style={{color: tabStore.index === i ? "white" : '#353B48'}}
-                              >{tabStore.title[i]}</p>
+                              >{tabStore.datas[i].title}</p>
                               <div style={{cursor: 'pointer', width: 20, height: 20}} onClick={() => {
+                                dispatch(delete_summary_info(i));
                               }}>
                                 <img style={{width: 20, height: 20}} src={IcX}/>
                               </div>
@@ -416,9 +415,10 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>행 추가</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-                if(selectRow === 0){
+                if(selectRow === 0 || selectRow === undefined){
                   return
                 }
+                console.log(selectRow)
                 let tmpRow = searchList
 
                 let tmp = tmpRow[selectRow]
@@ -426,6 +426,14 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 tmpRow[selectRow - 1] = tmp
 
                 setSearchList([...tmpRow.map((v, i) => {
+                  if(!searchList[selectRow-1].border){
+                    searchList.map((v,i)=>{
+                      v.border = false;
+                    })
+                    searchList[selectRow-1].border = true
+                    setSearchList([...searchList])
+                  }
+                  setSelectRow(selectRow -1)
                   return {
                     ...v,
                     seq: i+1
@@ -435,7 +443,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>위로</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-                if(selectRow === searchList.length-1){
+                if(selectRow === searchList.length-1 || selectRow === undefined){
                   return
                 }
                 let tmpRow = searchList
@@ -445,6 +453,14 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 tmpRow[selectRow + 1] = tmp
 
                 setSearchList([...tmpRow.map((v, i) => {
+                  if(!searchList[selectRow+1].border){
+                    searchList.map((v,i)=>{
+                      v.border = false;
+                    })
+                    searchList[selectRow+1].border = true
+                    setSearchList([...searchList])
+                  }
+                  setSelectRow(selectRow +1)
                   return {
                     ...v,
                     seq: i+1
@@ -468,19 +484,15 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             <ExcelTable
               headerList={searchModalList.bomInfo}
               row={searchList ?? [{}]}
+              // row={tabStore.datas[tabStore.index]?.data ?? searchList ?? [{}]}
               setRow={(e) => {
                 let tmp = e.map((v, index) => {
-                  // if(v.newTab === true){
-                  //   const newTabIndex = bomMark.length+1
-                  //   addNewTab(newTabIndex)
-                  //   setFocusIndex(newTabIndex-1)
-                  // }
-
                   return {
                     ...v,
                     newTab: false
                   }
                 })
+                console.log(tmp)
                 setSearchList([...tmp])
               }}
               width={1746}
@@ -497,7 +509,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   searchList[e].border = true
                   setSearchList([...searchList])
                 }
-                console.log(e)
                 setSelectRow(e)
               }}
               type={'searchModal'}
@@ -517,12 +528,21 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               onClick={() => {
                 SaveBasic()
                 if(selectRow !== undefined && selectRow !== null) {
-                  onRowChange({
-                    ...row,
-                    ...searchList[selectRow],
-                    name: row.name,
-                    isChange: true
-                  })
+                  onRowChange(
+                      column.type === "bomRegister" ?
+                      {
+                          ...row,
+                          isChange: true
+                      }
+                      :
+                      {
+                          ...row,
+                          ...searchList[selectRow],
+                          name: row.name,
+                          isChange: true
+                      }
+
+                        )
                 }
 
               }}
@@ -616,4 +636,4 @@ const HeaderTableTitle = styled.div`
   align-items: center;
 `
 
-export {BomInfoModal}
+export {BomInfoModal};

@@ -254,7 +254,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       params: {
         sorts:"created",
         keyword: keyword ?? '',
-        opt: option ?? 0,
+        opt: option ?? 0
       }
     })
 

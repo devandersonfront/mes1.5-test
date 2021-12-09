@@ -188,7 +188,6 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
   }
 
   const DeleteBasic = async () => {
-
     const res = await RequestMethod('delete', `subMaterialDelete`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
@@ -228,8 +227,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
               }
             }
           })
-
-          if(row.customerId){
+          // if(row.customerId){
             return {
               ...row,
               ...selectData,
@@ -247,8 +245,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
                 }).filter((v) => v)
               ]
             }
-          }
-
+          // }
         }
       }).filter((v) => v))
 

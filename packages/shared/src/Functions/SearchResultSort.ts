@@ -1,7 +1,7 @@
 import {TransferCodeToValue} from '../common/TransferFunction'
 
 export const SearchResultSort = (infoList, type: string) => {
-  console.log('infolist', infoList)
+  console.log('infolist', infoList, type)
   switch(type) {
     case 'user': {
       return infoList.map((v) => {
@@ -71,6 +71,15 @@ export const SearchResultSort = (infoList, type: string) => {
         }
       })
     }
+    case 'machine': {
+      return infoList.map((v) => {
+        return {
+          ...v,
+          factory_id: v.factory?.name,
+          affiliated_id: v.subFactory?.name,
+        }
+      })
+    }
     default : {
       return infoList
     }
@@ -109,9 +118,11 @@ export const SearchModalResult = (selectData, type: string) => {
         type_name: TransferCodeToValue(selectData.type, 'material'),
         unit: selectData.unit,
         usage: selectData.usage,
-        process: selectData.process.name,
+        process: selectData.process?.name ?? "-",
         product: {...selectData},
         bom_root_id: selectData.bom_root_id,
+        customer: selectData.customer,
+        model: selectData.model
       }
     }
     case 'rawmaterial': {

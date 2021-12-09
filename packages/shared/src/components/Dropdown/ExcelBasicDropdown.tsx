@@ -15,15 +15,15 @@ interface IProps {
 
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
 
-  const selectType = () => {
-    let result = "";
-    column.selectList.map((value)=>{
-      if(value.pk == row.type){
-         result = value.name;
-      }
-    })
-    return result
-  }
+  // const selectType = () => {
+  //   let result = "";
+  //   column.selectList.map((value)=>{
+  //     if(value.pk == row.type){
+  //        result = value.name;
+  //     }
+  //   })
+  //   return result
+  // }
 
   useEffect(() => {
     // console.log(row[column.key])
@@ -41,7 +41,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         backgroundSize: '24px',
         backgroundColor: column.type === 'Modal' ? row.border ? '#19B9DF80' : 'white' : '#00000000'
       }}
-      value={column.key === "type" ? selectType() : row[column.key] ? row[column.key] : "무"}
+      value={/*column.key === "type" ? selectType() :*/ row[column.key] ? row[column.key] : "무"}
       // value={selectType()}
       onChange={(event) => {
         let pk = "";
