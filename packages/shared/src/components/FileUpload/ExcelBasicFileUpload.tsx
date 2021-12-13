@@ -2,9 +2,12 @@ import React, {useEffect, useRef} from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 //@ts-ignore
 import Icon_X from '../../../public/images/file_delete_button.png'
+import Notiflix from "notiflix";
 import {UploadButton} from '../../styles/styledComponents'
 import {uploadTempFile} from '../../common/fileFuctuons'
 import {SF_ENDPOINT_RESOURCE} from '../../common/configset'
+import {RequestMethod} from "../../common/RequestFunctions";
+import ImageOpenModal from "../Modal/ImageOpenModal";
 
 interface IProps {
   row: any
@@ -22,6 +25,11 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
     fileRef.current.click();
   }
 
+  const [onImage, setOnImage] = React.useState<boolean>(false)
+  const [imgUrl, setImgUrl] = React.useState<string>("");
+  const changeSetOnImage = (value:boolean) => {
+      setOnImage(value)
+  }
   return (
     // <input
     //   className={'editCell'}
@@ -37,6 +45,9 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
       justifyContent: 'center',
       alignItems: 'center'
     }}>
+        {/*{onImage && */}
+        <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage}/>
+        {/*}*/}
       {
         row[column.key] ?
           <div style={{
@@ -62,16 +73,30 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                 whiteSpace:'nowrap'
               }}
               onClick={() => {
-                if(row[column.key+'Path']){
-                  window.open(SF_ENDPOINT_RESOURCE+`/${row[column.key+'Path']}`)
-                }else{
-                  window.open(SF_ENDPOINT_RESOURCE+`${row[column.key+'Resource']}`)
-                }
+                  RequestMethod("get", "anonymousLoad", {
+                      path:{
+                        uuid:row[column.key]
+                      }
+                  })
+                      .then((res) => {
+                          console.log(res);
+                          setImgUrl(res.url)
+                          setOnImage(true)
+                      })
+                      .catch((err) => {
+                          Notiflix.Report.failure("에러","에러입니다.","확인")
+                      })
+                // if(row[column.key+'Path']){
+                //   window.open(SF_ENDPOINT_RESOURCE+`/${row[column.key+'Path']}`)
+                // }else{
+                //   window.open(SF_ENDPOINT_RESOURCE+`${row[column.key+'Resource']}`)
+                // }
               }}
             >
-              {
-                row[column.key]
-              }
+              {/*{*/}
+              {/*  row[column.key]*/}
+              {/*}*/}
+              이미지 보기
             </p>
           </div>
           : <>
@@ -91,10 +116,11 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         onChange={async (e) => {
           if(e.target.files && e.target.files.length !== 0) {
             const uploadImg = await uploadTempFile(e.target.files[0], true)
+              console.log("uploadImg : ", uploadImg)
             onRowChange({
               ...row,
-              [column.key]: uploadImg.results.path,
-              [column.key+'Resource']: uploadImg.results.resource,
+              [column.key]: uploadImg.UUID,
+              [column.key+'Resource']: uploadImg.resource,
               isChange: true
             })
           }

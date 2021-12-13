@@ -46,6 +46,12 @@ export interface IItemMenuType {
   hide?: boolean
   width?: number
   unit?: number
+  unit_id?:number
+  sequence?:number
+  colName?:string
+  tab?:string
+  moddable?:boolean
+  moddablePK?:any
 }
 
 export type MachineType = {

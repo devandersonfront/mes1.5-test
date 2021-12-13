@@ -179,7 +179,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         parent: {
           ...row,
           process: row.processArray,
-          type: row.typePK ?? row.type
+          type: row.type_id ?? row.type
         },
         child_product: v.tab === 2 ? {
           ...v.product

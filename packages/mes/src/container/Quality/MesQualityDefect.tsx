@@ -87,7 +87,6 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
 
   const LoadPauseList = async (value:string) => {
     Notiflix.Loading.circle()
-    console.log("????????????????????????????")
     const res = await RequestMethod("get", `defectReasonList`,{
       path: {
         page:1,
@@ -142,18 +141,32 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
     })
     console.log(res)
 
-    if(res){
+    let row = [];
+    if(typeof res === 'string'){
+      let tmpRowArray = res.split('\n')
+
+      row = tmpRowArray.map(v => {
+        if(v !== ""){
+          let tmp = JSON.parse(v)
+          return tmp
+        }
+      }).filter(v=>v)
+    }else{
+      row = [{...res}]
+    }
+    if(row){
       let tmpColumn = columnlist[`defectReason`];
       let tmpRow = []
 
       tmpRow = res.results
 
-      if(res.results.length >= 0){
-        setPauseBasicRow(tmpRow.map(v => {
+      if(row.length >= 0){
+        // setPauseBasicRow(tmpRow.map(v => {
+        setPauseBasicRow(row.map(v => {
           let random_id = Math.random() * 1000
-          LoadPauseList(v.process.process_id).then(() => {
-            Notiflix.Loading.remove()
-          })
+          // LoadPauseList(v.process.process_id).then(() => {
+          //   Notiflix.Loading.remove()
+          // })
           return {
             ...v,
             id: `processDefect_${random_id}`,
@@ -236,14 +249,15 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
         ]}
         row={processBasicRow}
         setRow={(e) => {
-
+          console.log("e : ", e)
           const tmpBasicRow = [...e];
+          console.log("tmpBasicRow : ", tmpBasicRow)
           tmpBasicRow[0] = {
             ...tmpBasicRow[0],
-            customer: tmpBasicRow[0].customer.name,
-            customerData: tmpBasicRow[0].customer,
-            model: tmpBasicRow[0].model.model,
-            modelData: tmpBasicRow[0].model,
+            // customer: tmpBasicRow[0].customer.name,
+            // customerData: tmpBasicRow[0].customer,
+            // model: tmpBasicRow[0].model.model,
+            // modelData: tmpBasicRow[0].model,
             product_id: tmpBasicRow[0].product.product_id
           }
           console.log("tmpBasicRow : ", tmpBasicRow)

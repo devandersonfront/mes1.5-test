@@ -15,6 +15,7 @@ export interface IExcelHeaderType {
   searchType?: string
   tab?:string
   id?:number
+  mi_id?:number
   disableType?: string
   textType?: string
   options?:{status:number, name:string}[]
@@ -22,6 +23,9 @@ export interface IExcelHeaderType {
   maxDate?:boolean
   theme?: string
   toFix?: number
+  moddable?:boolean
+  hide?:boolean
+  version?:number
 }
 
 export interface IResponseType {

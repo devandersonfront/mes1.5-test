@@ -150,9 +150,9 @@ export const columnlist: any = {
   ],
   additionalItem:[
     {key: 'title', editor: TextEditor, name: "추가 항목명", width: 1290},
-    {key: 'needUnit', formatter: DropDownEditor, selectList: [
-        {unit_id: '0', name: "필요"},
-        {unit_id: '1', name: "불필요"}
+    {key: 'moddable', formatter: DropDownEditor, selectList: [
+        {moddable_id: '0', name: "필요"},
+        {moddable_id: '1', name: "불필요"}
       ], name: "단위 필요 유무"},
     {key: 'unit', formatter: DropDownEditor, selectList: [
         {unit_id: '0', name: "개별관리"},

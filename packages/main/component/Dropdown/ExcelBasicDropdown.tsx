@@ -9,6 +9,14 @@ interface IProps {
 }
 
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
+
+  const settingText = (value:boolean) => {
+    if(value){
+      return column.selectList[0].name
+    }else{
+      return column.selectList[1].name
+    }
+  }
   return (
     <select
       className={'editDropdown'}
@@ -17,7 +25,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         width: '100%',
         padding: '0 8px 0 9px'
       }}
-      value={row[column.key]}
+      value={typeof row[column.key] === "boolean" ? settingText(row[column.key]) : row[column.key]}
       onChange={(event) => {
         let pk = "";
         Object.keys(column && column.selectList ? column.selectList[0] : []).map((v) => {

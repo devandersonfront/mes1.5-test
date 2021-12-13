@@ -5,8 +5,8 @@ import Notiflix from 'notiflix'
 
 type RequestType = 'get' | 'post' | 'delete' | 'put'
 
-export const requestApi = async (type: RequestType,url: string, data?: any, token?: any, contentsType?: 'blob') => {
-
+export const requestApi = async (type: RequestType,url: string, data?: any, token?: any, contentsType?: 'blob', tab?:string) => {
+  console.log("tab : ", tab)
   const ENDPOINT = `${SF_ENDPOINT}`
 
   switch(type){
@@ -53,13 +53,15 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
       let postUrl:string = ''
       if(url.indexOf('http://') !== -1){
         postUrl = url
+      }else if(tab){
+        postUrl = ENDPOINT+url+"/"+tab
       }else{
         postUrl = ENDPOINT+url
       }
 
       return Axios.post(postUrl, data, token && {'headers': {'Authorization': token}, responseType: contentsType})
         .then((result) => {
-          if(result.data.status !== 200 ){
+          if(result.status !== 200){
             Notiflix.Report.failure('저장할 수 없습니다.', result.data.message, '확인')
             return false
           }
@@ -91,7 +93,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         data: data
       })
         .then((result) => {
-          if(result.data.status !== 200){
+          if(result.status !== 200){
             Notiflix.Report.failure('삭제할 수 없습니다.', result.data.message, '확인')
             return false
           }
@@ -106,8 +108,8 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
   }
 }
 
-export const RequestMethod = async (MethodType: RequestType, apiType: string, data?: any, token?: string, responseType?: 'blob') => {
-  const tokenData = token ?? cookie.load('userInfo').token
+export const RequestMethod = async (MethodType: RequestType, apiType: string, data?: any, token?: string, responseType?: 'blob', tab?:string) => {
+  const tokenData = token ?? cookie.load('userInfo').token;
   if(apiType === 'excelDownload'){
     return Axios.post(ApiList[apiType], data, tokenData && {'headers': {'Authorization': tokenData}, responseType: responseType})
       .then((result) => {
@@ -157,7 +159,7 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
         return false
       })
   } else {
-    const response = await requestApi(MethodType, ApiList[apiType], data, tokenData, responseType)
+    const response = await requestApi(MethodType, ApiList[apiType], data, tokenData, responseType, tab)
     return response
   }
 }
@@ -261,9 +263,9 @@ const ApiList = {
   recordDefect: `/api/v1/record/defect`,
   recordPause: `/api/v1/record/pause`,
 
-  itemList: `/api/v1/items/list`,
-  itemSave: `/api/v1/items/save`,
-  itemDelete: `/api/v1/items/delete`,
+  itemList: `/menu/list`,
+  itemSave: `/menu/save`,
+  itemDelete: `/menu/delete`,
 
   //all
   authorityAll: `/api/v1/member/auth/all`,

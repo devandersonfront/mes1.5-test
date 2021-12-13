@@ -32,7 +32,7 @@ export const getServerSideProps = async (ctx: any) => {
       case 'member':
         return {
           title: '유저 관리',
-          code: 'ROLE_HR_01'
+          code: 'ROLE_HR_02'
         }
       case 'customer':
         return {
@@ -59,6 +59,11 @@ export const getServerSideProps = async (ctx: any) => {
           title: '원자재 기본정보',
           code: 'ROLE_BASE_06'
         }
+      case 'submaterial':
+        return {
+          title: '부자재 기본정보',
+          code: 'ROLE_BASE_13'
+        }
       case 'mold':
         return {
           title: '금형 기본정보',
@@ -68,6 +73,11 @@ export const getServerSideProps = async (ctx: any) => {
         return {
           title: "고객사 모델정보",
           code: 'ROLE_BASE_08'
+        }
+      case 'factory' :
+        return {
+          title:"공장 기본정보",
+          code: "ROLE_BASE_11"
         }
       case 'rawin':
         return {
@@ -94,7 +104,11 @@ export const getServerSideProps = async (ctx: any) => {
           title:"재고현황",
           code:"ROLE_STK_01"
         }
-
+      case "device":
+        return {
+          title: "주변창지 정보관리",
+          code:"ROLE_BASE_12"
+        }
     }
   }
 
@@ -128,55 +142,60 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         tab: code
       }
     })
-
-    if(res && res.status === 200){
-      const results = res.results
+    console.log("res : ", res)
+    if(res){
+      const results = res
 
       let baseList = results.bases
-      let addiList = results.additional
+      let addiList = results.additional.map((value)=>{
+        const randomID = Math.random()*100;
+        return {...value, id:"addi_"+randomID};
+      })
 
       setBaseItem(baseList)
-      setAddiItem(addiList.map((v: any, i: number) => {
-        const random_id = Math.random() * 1000
-
-        return {
-          ...v,
-          unit: unitData[v.unit_id].name,
-          unit_id: unitData[v.unit_id].unit_id,
-          unitPK: unitData[v.unit_id].unit_id,
-          id: random_id
-        }
-      }))
+      setAddiItem(addiList)
+      // setAddiItem(addiList.map((v: any, i: number) => {
+      //   const random_id = Math.random() * 1000
+      //
+      //   return {
+      //     ...v,
+      //     unit: unitData[v.unit_id].name,
+      //     unit_id: unitData[v.unit_id].unit_id,
+      //     unitPK: unitData[v.unit_id].unit_id,
+      //     id: random_id
+      //   }
+      // }))
     }
   }
 
   const saveItem = async (code: string, items: IItemMenuType[], type?: 'additional') => {
-    const res =  await RequestMethod('post', 'itemSave', {
-      tab: code,
-      menus: type ? items.map(v => {
-        if(v.title){
-          return {
-            ...v,
-            unit: v['unitPK'],
-          }
-        }
-      }).filter(v => v) : items
-    })
-
-    if(res && res.status === 200) {
+    const res =  await RequestMethod('post', 'itemSave',items
+        // {
+        //   tab: code,
+        //   menus: type ? items.map(v => {
+        //     if(v.title){
+        //       return {
+        //         ...v,
+        //         unit: v['unitPK'],
+        //       }
+        //     }
+        //   }).filter(v => v) : items,
+        // }
+        ,undefined , undefined ,code)
+    if(res !== null || res !== undefined) {
       listItem(code)
       Notiflix.Notify.success("저장되었습니다.")
     }
   }
 
   const deleteItem = async (code: string, items: IItemMenuType[]) => {
-    let idList:number[] = [];
+    let idList:IItemMenuType[] = [];
     const spliceArray:number[] = [];
-
+    console.log(items)
     items.map((v,i)=> {
       if(selectList.has(v.id as number)){
         spliceArray.push(i);
-        idList.push(v.mi_id)
+        idList.push(v)
       }
     })
 
@@ -189,12 +208,15 @@ const ItemManagePage = ({title, type, code}: IProps) => {
     })
 
     if(idList.length > 0) {
-      const res = await RequestMethod('delete', 'itemDelete', {
-        tab: code,
-        menus: idList
-      })
+      const res = await RequestMethod('delete', 'itemDelete',
+          // {
+          //         tab: code,
+          //         menus: idList
+          //       }
+          idList
+      )
 
-      if (res && res.status) {
+      if (res) {
         Notiflix.Report.success("삭제되었습니다.", "", "확인");
       }
 
@@ -240,10 +262,27 @@ const ItemManagePage = ({title, type, code}: IProps) => {
           {code !== "ROLE_STK_01" &&
               <>
                 <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
-                  <HeaderButton onClick={() => saveItem(code, addiItem, 'additional')} key={`btnCreate`}>추가항목 저장</HeaderButton>
                   <HeaderButton onClick={() => {
-                    const random_id = Math.random() * 1000
-                    setAddiItem([...addiItem, {id: `item_${random_id}`}])
+                    const resultArray = [];
+                    console.log("addiItem : ", addiItem)
+                    baseItem.map((value)=>{
+                      resultArray.push({...value})
+                    })
+                    addiItem.map((value)=>{
+                      resultArray.push({...value, unit:value.unit_id ?? value.unit, moddable: value.moddablePK === "1" ? false : true})
+                    })
+                    console.log("resultArray : ", resultArray)
+                    saveItem(code, resultArray, 'additional')
+                  }} key={`btnCreate`}>추가항목 저장</HeaderButton>
+                  <HeaderButton onClick={() => {
+                    const random_id = Math.random() * 1000;
+                    setAddiItem([...addiItem, {
+                      id: `item_${random_id}`,
+                      width: 118,
+                      sequence:baseItem.length,
+                      tab:baseItem[0].tab
+                    }])
+
                   }} key={`btnCreate`}>행 추가</HeaderButton>
                   <HeaderButton onClick={() => deleteItem(code, addiItem)} key={`btnCreate`}>삭제</HeaderButton>
                 </div>
