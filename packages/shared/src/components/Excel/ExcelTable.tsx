@@ -80,13 +80,31 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
         tempData.map((time,i)=>{
             clearTimeout(time)
         })
-        // headerList[v-1].width = i;
-        //
-        // setHeaderList && setHeaderList(headerList)
         tempData.push(
             setTimeout(()=>{
-              let tmpHeader = headerList[v].name.indexOf('(필수)') === -1 ? headerList[v].name : headerList[v-1].name.split('(필수)')[0]
-              RequestMethod("post", "itemSave", {tab:headerList[v].tab, menus:[{mi_id:headerList[v].id, width:i <= 80 ? 80 : i,title:tmpHeader, hide:false}]} )
+              const tmpHeader = [];
+              headerList.map((value,index)=>{
+                let tmpOneLine:any = {};
+                if(value.key !== "select-row"){
+                  if(index === v){
+                    tmpOneLine = {...value, mi_id:value.id, width:i <= 80 ? 80 : i,colName:value.key, title:value.name.split("(필수)")[0], hide:value.hide };
+                  }
+                  else if(value.type === "additional"){
+                    tmpOneLine = {...value, mi_id:value.id, colName:value.key, title:value.name, hide:value.hide, tab:headerList[1].tab, version:headerList[1].version  };
+                    console.log("tmpOneLine : ", tmpOneLine,)
+                  }
+                  else{
+                    tmpOneLine = {...value, mi_id:value.id, colName:value.key, title:value.name.split("(필수)")[0], hide:value.hide };
+                  }
+                }
+                tmpHeader.push(tmpOneLine);
+              })
+              headerList[v] = {...headerList[v], mi_id: headerList[v].id, width:i <= 80 ? 80 : i, }
+              RequestMethod("post", "itemSave", tmpHeader.filter(v=>v.key)
+              // {
+              //         mi_id:headerList[v].id, width:i <= 80 ? 80 : i,title:tmpHeader, hide:false, unit:headerList[v].unitData, moddable: headerList[v].moddable
+              //       }
+              , undefined, undefined, headerList[v].tab )
                   .then((res)=> {
                     headerList[v].width = i <= 80 ? 80 : i;
 

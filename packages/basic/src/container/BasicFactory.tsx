@@ -111,39 +111,51 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    const searchAiID = (rowAdditional:any[], index:number) => {
+      let result:number = undefined;
+      rowAdditional.map((addi, i)=>{
+        if(index === i){
+          result = addi.ai_id;
+        }
+      })
+
+      return result;
+    }
+
     let res: any
     res = await RequestMethod('post', `factorySave`,
       basicRow.map((row, i) => {
-        console.log(row)
-          if(selectList.has(row.id)){
-            let selectKey: string[] = []
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
-
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            return {
-              ...row,
-              manager: row.user,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
+        if(selectList.has(row.id)){
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.type === 'additional'){
+              additional.push(v)
             }
+          })
+          return {
+            ...row,
+            id: row.tmpId,
+            authority: row.authorityPK,
+            manager: row.user,
+            version: row.version ?? null,
+            additional: [
+              ...additional.map((v, index)=>{
+                if(!row[v.colName]) return undefined;
+                console.log(row.additional, " || v : ",v)
+                console.log("i : index ||| ", i, index, v.version)
+                // result.push(
+                return {
+                  mi_id: v.id,
+                  title: v.name,
+                  value: row[v.colName] ?? "",
+                  unit: v.unit,
+                  ai_id: searchAiID(row.additional, index) ?? undefined,
+                  version:row.additional[index]?.version ?? undefined
+                }
+                // )
+              }).filter((v) => v)
+            ]
+          }
 
           }
         }).filter((v) => v))
@@ -276,19 +288,27 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
-            id: menu.id,
+            id: menu.mi_id,
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
-            unit:menu.unit
+            unit:menu.unit,
+            moddable: !menu.moddable,
+            version: menu.version,
+            sequence: menu.sequence,
+            hide: menu.hide
           }
         } else if(menu.colName === 'id' && column.key === 'tmpId'){
           menuData = {
-            id: menu.id,
+            id: menu.mi_id,
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
-            unit:menu.unit
+            unit:menu.unit,
+            moddable: !menu.moddable,
+            version: menu.version,
+            sequence: menu.sequence,
+            hide: menu.hide
           }
         }
       })
@@ -304,13 +324,18 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
-          id: menu.id,
+          id: menu.mi_id,
           name: menu.title,
           width: menu.width,
-          key: menu.title,
+          // key: menu.title,
+          key: menu.mi_id,
           editor: TextEditor,
           type: 'additional',
-          unit: menu.unit
+          unit: menu.unit,
+          tab: menu.tab,
+          version: menu.version,
+          colName: menu.mi_id,
+
         }
       }
     }).filter((v: any) => v) : []
@@ -353,13 +378,15 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       row.additional && row.additional.map((v: any) => {
         appendAdditional = {
           ...appendAdditional,
-          [v.title]: v.value
+          [v.mi_id]: v.value
         }
       })
 
       let random_id = Math.random()*1000;
+      console.log("??????????? : ", appendAdditional)
       return {
         ...row,
+        ...appendAdditional,
         user: row.manager ?? undefined,
         managerPk: row.manager ? row.manager.user_id : '',
         manager: row.manager ? row.manager.name : '',
@@ -368,7 +395,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         id: `factory_${random_id}`,
       }
     })
-
+    console.log("tmpBasicRow : ", tmpBasicRow)
     setBasicRow([...tmpBasicRow])
   }
 
@@ -387,11 +414,12 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         break;
       case 1:
 
-        router.push(`/mes/item/manage/mold`)
+        router.push(`/mes/item/manage/factory`)
 
         break;
       case 2:
-        SaveBasic()
+        // SaveBasic()
+        router.push(`/mes/item/manage/factory`)
         break;
       case 3:
         let items = {}
@@ -466,9 +494,9 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
           totalPage={pageInfo.total}
           setPage={(page) => {
             if(keyword){
-              router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
+              router.push(`/mes/basic/factory?page=${page}&keyword=${keyword}&opt=${option}`)
             }else{
-              router.push(`/mes/basic/mold?page=${page}`)
+              router.push(`/mes/basic/factory?page=${page}`)
             }
           }}
         />

@@ -26,7 +26,7 @@ const RESET_SUMMARY_INFO = "RESET_SUMMARY_INFO";
 const ADD_SUMMARY_INFO_DATA = "ADD_SUMMARY_INFO_DATA";
 
 
-export const insert_summary_info = (payload: { data: any; index: number }) => {
+export const insert_summary_info = (payload: {code:string, title:string, data:any[], headerData:any}) => {
   return {
     type:INSERT_SUMMARY_INFO,
     payload:payload

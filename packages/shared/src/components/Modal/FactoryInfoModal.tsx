@@ -125,8 +125,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
       result.push(oneSubFactory);
     })
-    console.log("searchList : ", searchList)
-    console.log("result : ", result);
     if(result.filter((subFactory) => {
       if(subFactory.factory_id){
         return true
@@ -175,7 +173,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
   }
   const ModalContents = () => {
     if(row.subFactories && row.subFactories.length > 0){
-      console.log(row.subFactories)
       return (<>
         <div style={{
           padding: '3.5px 0px 0px 3.5px',

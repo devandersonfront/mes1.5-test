@@ -135,9 +135,11 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
 
         return (
             <>
-              <div style={{width: '100%', height: 30}} onClick={() => {}}>
+              <div style={{width: '100%', height: 30, background:row.border ? "#19B9DF80" :  row.color ? row.color :"white"}} onClick={() => {}}>
                 {/*{ row[`${column.key}`]}*/}
-                <LineBorderContainer row={row} column={column} setRow={() => {}}/>
+                {/*dldl*/}
+                {searchList[selectRow]?.name ?? ""}
+                {/*<LineBorderContainer row={row} column={column} setRow={() => {}}/>*/}
               </div>
               <div style={{
                 display: 'flex',

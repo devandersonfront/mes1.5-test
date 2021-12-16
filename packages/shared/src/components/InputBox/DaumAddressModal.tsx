@@ -37,7 +37,7 @@ const DaumAddressModal = ({ row, column, onRowChange }:IProps) => {
 
     const ModalContents = () => {
         return <>
-            <div style={{width: 'calc(100% - 40px)', height: 40}} onClick={() => {
+            <div style={{ height: 40, display:"flex", justifyContent:"center", }} onClick={() => {
                 setIsOpen(true)
             }}>
                 { row[`${column.key}`]}

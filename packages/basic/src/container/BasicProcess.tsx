@@ -58,37 +58,106 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     }
   }, [page, keyword, option])
 
+  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+    let tmpColumn = column.map(async (v: any) => {
+      if(v.selectList && v.selectList.length === 0){
+        let tmpKey = v.key
+        // let res: any
+
+        const res = await RequestMethod('get', `${v.key}All`, )
+
+        // res = await RequestMethod('get', `${tmpKey}List`,{
+        //   path: {
+        //     page: 1,
+        //     renderItem: MAX_VALUE,
+        //   }
+        // })
+
+
+        // let pk = "";
+        //
+        // res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
+        //   if(v.indexOf('_id') !== -1){
+        //     pk = v
+        //   }
+        // })
+
+        return {
+          ...v,
+          selectList: [...res.result.map((value: any) => {
+            return {
+              ...value,
+              // name: value.name,
+              // name: tmpKey === 'model' ? value.model : value.name,
+              pk: value.ca_id
+            }
+          })]
+        }
+
+
+      }else{
+        if(v.selectList){
+          return {
+            ...v,
+            pk: v.unit_id
+          }
+        }else{
+          return v
+        }
+      }
+    })
+
+    // if(type !== 'productprocess'){
+    Promise.all(tmpColumn).then(res => {
+      setColumn([...res.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
+    })
+    // }
+  }
   const SaveBasic = async () => {
+
+    const searchAiID = (rowAdditional:any[], index:number) => {
+      let result:number = undefined;
+      rowAdditional?.map((addi, i)=>{
+        if(index === i){
+          result = addi.ai_id;
+        }
+      })
+      return result;
+    }
     let res = await RequestMethod('post', `processSave`,
       basicRow.map((row, i) => {
           if(selectList.has(row.id)){
-            let selectKey: string[] = []
+
             let additional:any[] = []
             column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
 
-              if(v.type === 'additional'){
+              if(v.type === "additional"){
                 additional.push(v)
               }
             })
-
             let selectData: any = {}
 
             return {
               ...row,
               ...selectData,
-              additional: additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
+              additional: [
+                ...additional.map((v, index)=>{
+                  if(!row[v.colName]) return undefined;
+                  return {
+                    mi_id: v.id,
+                    title: v.name,
+                    value: row[v.colName] ?? "",
+                    unit: v.unit,
+                    ai_id: searchAiID(row.additional, index) ?? undefined,
+                    version:row?.additional[index]?.version ?? undefined
                   }
                 }).filter((v) => v)
+              ],
             }
 
           }
@@ -114,20 +183,6 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   const DeleteBasic = async () => {
     const res = await RequestMethod('delete', `processDelete`,
 
-        // processes: basicRow.map((row, i) => {
-        //   if(selectList.has(row.id)){
-        //     let pk = ""
-        //     Object.keys(row).map((v:string) => {
-        //       if(v.indexOf("_id") !== -1){
-        //         pk = v
-        //       }
-        //     })
-        //     console.log(row);
-        //     if(row.process_id){
-        //       return row[pk]
-        //     }
-        //   }
-        // }).filter((v) => v)
         basicRow.map((row, i) => {
           if(selectList.has(row.id)){
             let selectKey: string[] = []
@@ -143,7 +198,6 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
             })
 
             let selectData: any = {}
-            console.log(row);
             if(row.process_id){
               return {
                 ...row,
@@ -189,7 +243,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     const res = await RequestMethod('get', `processList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
-        renderItem: 18,
+        renderItem: 3,
       }
     })
 
@@ -290,21 +344,27 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
-            id: menu.id,
+            id: menu.mi_id,
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
             unit:menu.unit,
-            moddable: !menu.moddable
+            moddable: !menu.moddable,
+            version: menu.version,
+            sequence: menu.sequence,
+            hide: menu.hide
           }
         } else if(menu.colName === 'id' && column.key === 'tmpId'){
           menuData = {
-            id: menu.id,
+            id: menu.mi_id,
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
             unit:menu.unit,
-            moddable: !menu.moddable
+            moddable: !menu.moddable,
+            version: menu.version,
+            sequence: menu.sequence,
+            hide: menu.hide
           }
         }
       })
@@ -320,48 +380,42 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
-          id: menu.id,
+          id: menu.mi_id,
           name: menu.title,
           width: menu.width,
-          key: menu.title,
+          // key: menu.title,
+          key: menu.mi_id,
           editor: TextEditor,
           type: 'additional',
-          unit: menu.unit
+          unit: menu.unit,
+          tab: menu.tab,
+          version: menu.version,
+          colName: menu.mi_id,
         }
       }
     }).filter((v: any) => v) : []
 
-    setColumn([...tmpColumn.map(v=> {
-      return {
-        ...v,
-        name: v.moddable ? v.name+'(필수)' : v.name
-      }
-    }), ...additionalMenus])
+    loadAllSelectItems( [
+      ...tmpColumn,
+      ...additionalMenus
+    ] )
 
     tmpRow = res.info_list
-
-    let additionalData: any[] = []
-
-    additionalMenus.map((v: any) => {
-      if(v.type === 'additional'){
-        additionalData.push(v.key)
-      }
-    })
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
       let realTableData: any = changeRow(row)
       let appendAdditional: any = {}
-
       row.additional && row.additional.map((v: any) => {
         appendAdditional = {
           ...appendAdditional,
-          [v.title]: v.value
+          [v.mi_id]: v.value
         }
       })
 
       const random_id = Math.random()*1000
 
       return {
+        ...row,
         ...realTableData,
         ...appendAdditional,
         id: `process_${random_id}`,
@@ -469,7 +523,6 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
           })
-          console.log(e)
           setSelectList(tmp)
           setBasicRow(e)
         }}

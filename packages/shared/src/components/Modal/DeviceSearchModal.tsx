@@ -56,7 +56,8 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
       ...row,
       machine_id: row.name,
       machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
+      manager: row.manager ? row.manager.name : null,
+      manager_data: row.manager
     }
 
     return tmpData

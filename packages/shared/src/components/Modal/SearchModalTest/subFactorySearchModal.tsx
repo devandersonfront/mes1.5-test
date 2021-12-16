@@ -28,7 +28,6 @@ interface IProps {
 
 
 const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
-    console.log("Here : ", row)
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [title, setTitle] = useState<string>('')
     const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -39,9 +38,8 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
 
     const [searchModalInit, setSearchModalInit] = useState<any>()
 
-    useEffect(() => {
-        console.log(column.type)
-    }, [column.type, tab])
+    // useEffect(() => {
+    // }, [column.type, tab])
 
     useEffect(() => {
         if(isOpen ){
@@ -68,7 +66,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
         //         return column.placeholder
         //     }
         // }
-        console.log(row.affiliated_id)
         if(row.affiliated_id){
             return row.affiliated_id
         }else {
@@ -90,7 +87,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 opt:optionIndex
             }
         }).then((res) => {
-            console.log(res);
             // setSearchList([...SearchResultSort(res.info_list, "subFactory")])
             const tempData = [];
             res.info_list.map((value)=>{
@@ -291,7 +287,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         <FooterButton
                             onClick={() => {
                                 setIsOpen(false)
-                                console.log(row)
                                 onRowChange({
                                     ...row,
                                     // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),

@@ -147,6 +147,18 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
     </>)
   }
 
+  const cleanUp = (row:any, value:any) => {
+
+    if(typeof row[value] === "object" && row[value] !== null){
+      console.log("object : ", row[value])
+      return row[value].name
+    }else{
+      console.log("else : ", row[value])
+      return row[value] === null ? "-" : row[value];
+    }
+
+  }
+
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -191,18 +203,22 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
           </div>
-          {moldType.map((header,index)=>{
+          {machineType.map((header,index)=>{
             return (
                 <HeaderTable>
-                  {Object.keys(header).map((value,i)=>
-                      <>
-                        <HeaderTableTitle>
-                          <HeaderTableText style={{fontWeight: 'bold'}}>{header[value]}</HeaderTableText>
-                        </HeaderTableTitle>
-                        <HeaderTableTextInput style={{width: settingTitle(index, i)}}>
-                          <HeaderTableText>{typeof row[value] === "boolean" ? row[value] ? "유" : "무" : row[value]}</HeaderTableText>
-                        </HeaderTableTextInput>
-                      </>
+                  {Object.keys(header).map((value,i)=> {
+                    cleanUp(row,  value)
+                    return (
+                        <>
+                          <HeaderTableTitle>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>{header[value]}</HeaderTableText>
+                          </HeaderTableTitle>
+                          <HeaderTableTextInput style={{width: settingTitle(index, i)}}>
+                            {/*<HeaderTableText>{typeof row[value] === "boolean" ? row[value] ? "유" : "무" : row[value]}</HeaderTableText>*/}
+                            <HeaderTableText>{cleanUp(row, value)}</HeaderTableText>
+                          </HeaderTableTextInput>
+                        </>
+                    )}
                   )}
                 </HeaderTable>
             )

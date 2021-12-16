@@ -46,19 +46,24 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([
-    {name: "", id: "", },
-    { id: "", name: "400톤 2호기", weldingType: '선택없음', type: '프레스', mfrCode: '125-77-123', interwork: '유', user_id: '차지훈', manufacturer:'Aidas'},
-  ])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["machineV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['기계 제조사', '기계 이름', '기계 종류', '제조 번호'])
+  const [optionList, setOptionList] = useState<string[]>(['기계 제조사', '기계 이름', "", '제조 번호'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+
+  const [typesState, setTypesState] = useState<number>(null);
+
+  const changeSetTypesState = (value:number) => {
+    setTypesState(value);
+  }
+
+
 
   useEffect(() => {
     setOptionIndex(option)
@@ -71,7 +76,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [page, keyword, option, typesState])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -110,7 +115,8 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result:changeSetTypesState
           }
         }else{
           return v
@@ -128,11 +134,11 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
   const SaveBasic = async () => {
     let res: any
     let result = [];
-    basicRow.map((value, index)=>{
-      if(selectList.has(value.id)){
-        cleanForRegister(value)
+    basicRow.map((row, index)=>{
+      if(selectList.has(row.id)){
+        cleanForRegister(row)
 
-        result.push(cleanForRegister(value))
+        result.push(cleanForRegister(row))
       }
 
     })
@@ -153,7 +159,16 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
-      }
+      },
+
+      params: typesState !== null ?
+          {
+            types:typesState
+          }
+          :
+          {
+
+          }
     })
     if(res){
       setPageInfo({
@@ -162,11 +177,12 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
-    }else if (res.state === 401) {
-      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-        router.back()
-      })
     }
+    // else if (res.state === 401) {
+    //   Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
+    //     router.back()
+    //   })
+    // }
 
   }
 
@@ -180,10 +196,17 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 18,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
+      params: typesState !== null ?
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+            types:0
+          }
+          :
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+          }
     })
 
     if(res){
@@ -234,19 +257,27 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
-            id: menu.id,
+            id: menu.mi_id,
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
-            unit:menu.unit
+            unit:menu.unit,
+            moddable: !menu.moddable,
+            version: menu.version,
+            sequence: menu.sequence,
+            hide: menu.hide
           }
         } else if(menu.colName === 'id' && column.key === 'tmpId'){
           menuData = {
-            id: menu.id,
+            id: menu.mi_id,
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
-            unit:menu.unit
+            unit:menu.unit,
+            moddable: !menu.moddable,
+            version: menu.version,
+            sequence: menu.sequence,
+            hide: menu.hide
           }
         }
       })
@@ -262,13 +293,17 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
-          id: menu.id,
+          id: menu.mi_id,
           name: menu.title,
           width: menu.width,
-          key: menu.title,
+          // key: menu.title,
+          key: menu.mi_id,
           editor: TextEditor,
           type: 'additional',
-          unit: menu.unit
+          unit: menu.unit,
+          tab: menu.tab,
+          version: menu.version,
+          colName: menu.mi_id,
         }
       }
     }).filter((v: any) => v) : []
@@ -310,7 +345,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       row.additional && row.additional.map((v: any) => {
         appendAdditional = {
           ...appendAdditional,
-          [v.title]: v.value
+          [v.mi_id]: v.value
         }
       })
 
@@ -331,8 +366,23 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     // setBasicRow([{ id: "", name: "400톤 2호기", weldingType: '선택없음', type: '프레스', mfrCode: '125-77-123', interwork: '유', user_id: '차지훈', manufacturer:'Aidas'}])
   }
 
+  const searchAiID = (rowAdditional:any[], index:number) => {
+    let result:number = undefined;
+    rowAdditional.map((addi, i)=>{
+      if(index === i){
+        result = addi.ai_id;
+      }
+    })
+    return result;
+  }
   const cleanForRegister = (value:any) => {
     const tempData = {...value};
+    let additional:any[] = []
+    column.map((v) => {
+      if(v.type === 'additional'){
+        additional.push(v)
+      }
+    })
     console.log("value : ", value)
     let weldingPK = 0;
     weldingType.map((welding)=>{
@@ -348,6 +398,20 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     }
     tempData.weldingType = weldingPK;
     tempData.interwork = value.interworkPK === "true";
+    tempData.additional =[
+      ...additional.map((v, index)=>{
+          if(!value[v.colName]) return undefined;
+          return {
+            mi_id: v.id,
+            title: v.name,
+            value: value[v.colName] ?? "",
+            unit: v.unit,
+            ai_id: searchAiID(value.additional, index) ?? undefined,
+            version:value.additional[index]?.version ?? undefined
+          }
+        }).filter((v) => v)
+    ]
+
     console.log(tempData)
     // tempData.device.manager
     return tempData
@@ -371,7 +435,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         setExcelOpen(true)
         break;
       case 2:
-        router.push(`/mes/item/manage/process`)
+        router.push(`/mes/item/manage/machine`)
         break;
       case 3:
         let items = {}

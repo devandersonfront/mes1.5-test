@@ -43,7 +43,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["model"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','사업자 번호', '모델명'])
+  const [optionList, setOptionList] = useState<string[]>(['거래처명','사업자 번호', '모델명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -123,18 +123,23 @@ const BasicModel = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    console.log(basicRow)
+    const searchAiID = (rowAdditional:any[], index:number) => {
+      let result:number = undefined;
+      rowAdditional.map((addi, i)=>{
+        if(index === i){
+          result = addi.ai_id;
+        }
+      })
+      return result;
+    }
+
     let res: any
     res = await RequestMethod('post', `modelSave`,
       basicRow.map((row, i) => {
-        console.log(row)
           if(selectList.has(row.id)){
-            let selectKey: string[] = []
             let additional:any[] = []
             column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
-
               if(v.type === 'additional'){
                 additional.push(v)
               }
@@ -164,21 +169,26 @@ const BasicModel = ({page, keyword, option}: IProps) => {
                 }
               }
             })
-            console.log(selectData)
+            console.log("row : ", row)
             return {
               ...row,
               ...selectData,
               customer: row.customerArray ?? row.customer,
               additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
+                ...additional.map((v, index)=>{
+                  if(!row[v.colName]) return undefined;
+                  console.log(row.additional, " || v : ",v)
+                  console.log("i : index ||| ", i, index, v.version)
+                  // result.push(
+                  return {
+                    mi_id: v.id,
+                    title: v.name,
+                    value: row[v.colName] ?? "",
+                    unit: v.unit,
+                    ai_id: searchAiID(row.additional, index) ?? undefined,
+                    version:row.additional[index]?.version ?? undefined
                   }
+                  // )
                 }).filter((v) => v)
               ]
             }
@@ -374,21 +384,27 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
-            id: menu.id,
+            id: menu.mi_id,
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
             unit:menu.unit,
-            moddable: !menu.moddable
+            moddable: !menu.moddable,
+            version: menu.version,
+            sequence: menu.sequence,
+            hide: menu.hide
           }
         } else if(menu.colName === 'id' && column.key === 'tmpId'){
           menuData = {
-            id: menu.id,
+            id: menu.mi_id,
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
             unit:menu.unit,
-            moddable: !menu.moddable
+            moddable: !menu.moddable,
+            version: menu.version,
+            sequence: menu.sequence,
+            hide: menu.hide
           }
         }
       })
@@ -404,13 +420,17 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
-          id: menu.id,
+          id: menu.mi_id,
           name: menu.title,
           width: menu.width,
-          key: menu.title,
+          // key: menu.title,
+          key: menu.mi_id,
           editor: TextEditor,
           type: 'additional',
-          unit: menu.unit
+          unit: menu.unit,
+          tab: menu.tab,
+          version: menu.version,
+          colName: menu.mi_id,
         }
       }
     }).filter((v: any) => v) : []
@@ -424,26 +444,26 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     ] )
 
 
-    let selectKey = ""
-    let additionalData: any[] = []
-    tmpColumn.map((v: any) => {
-      if(v.selectList){
-        selectKey = v.key
-      }
-    })
+    // let selectKey = ""
+    // let additionalData: any[] = []
+    // tmpColumn.map((v: any) => {
+    //   if(v.selectList){
+    //     selectKey = v.key
+    //   }
+    // })
 
-    additionalMenus.map((v: any) => {
-      if(v.type === 'additional'){
-        additionalData.push(v.key)
-      }
-    })
+    // additionalMenus.map((v: any) => {
+    //   if(v.type === 'additional'){
+    //     additionalData.push(v.key)
+    //   }
+    // })
 
-    let pk = "";
-    Object.keys(tmpRow).map((v) => {
-      if(v.indexOf('_id') !== -1){
-        pk = v
-      }
-    })
+    // let pk = "";
+    // Object.keys(tmpRow).map((v) => {
+    //   if(v.indexOf('_id') !== -1){
+    //     pk = v
+    //   }
+    // })
 
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
@@ -452,7 +472,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       row.additional && row.additional.map((v: any) => {
         appendAdditional = {
           ...appendAdditional,
-          [v.title]: v.value
+          [v.mi_id]: v.value
 
         }
       })

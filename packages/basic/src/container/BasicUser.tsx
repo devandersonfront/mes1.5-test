@@ -28,7 +28,7 @@ export interface IProps {
 }
 
 const title = '유저 관리'
-const optList = ['성명', '이메일', '직책명', '전화번호', '권한명']
+const optList = ['성명', '이메일', '직책명', '전화번호',]
 
 const BasicUser = ({page, keyword, option}: IProps) => {
   const router = useRouter()
@@ -93,7 +93,17 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
-    console.log(basicRow);
+
+    const searchAiID = (rowAdditional:any[], index:number) => {
+      let result:number = undefined;
+      rowAdditional.map((addi, i)=>{
+        if(index === i){
+          result = addi.ai_id;
+        }
+      })
+      return result;
+    }
+
     let res = await RequestMethod('post', `memberSave`,
       basicRow.map((row, i) => {
           if(selectList.has(row.id)){
@@ -103,25 +113,22 @@ const BasicUser = ({page, keyword, option}: IProps) => {
                 additional.push(v)
               }
             })
-
-            let selectData: any = {}
-
             return {
               ...row,
-              ...selectData,
               id: row.tmpId,
               authority: row.authorityPK,
               // user_id: row.tmpId,
               version: row.version ?? null,
               additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
+              ...additional.map((v, index)=>{
+                if(!row[v.colName]) return undefined;
+                   return {
+                    mi_id: v.id,
+                    title: v.name,
+                    value: row[v.colName] ?? "",
+                    unit: v.unit,
+                    ai_id: searchAiID(row.additional, index) ?? undefined,
+                    version:row.additional[index]?.version ?? undefined
                   }
                 }).filter((v) => v)
               ]
@@ -129,7 +136,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
 
           }
         }).filter((v) => v))
-
+    //
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인');
       if(keyword){
@@ -145,7 +152,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   }
 
   const DeleteBasic = async () => {
-
     const res = await RequestMethod('delete', `memberDelete`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
@@ -199,7 +205,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   const LoadBasic = async (page?: number) => {
     const res = await RequestMethod('get', `memberList`,{
       path: {
-        page: 1,
+        page: page ?? 1,
         renderItem: 18,
       }
     })
@@ -307,21 +313,27 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       res.menus && res.menus.map((menu: any) => {
         if(menu.colName === column.key){
           menuData = {
-            id: menu.id,
+            id: menu.mi_id,
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
             unit:menu.unit,
-            moddable: !menu.moddable
+            moddable: !menu.moddable,
+            version: menu.version,
+            sequence: menu.sequence,
+            hide: menu.hide
           }
         } else if(menu.colName === 'id' && column.key === 'tmpId'){
           menuData = {
-            id: menu.id,
+            id: menu.mi_id,
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
             unit:menu.unit,
-            moddable: !menu.moddable
+            moddable: !menu.moddable,
+            version: menu.version,
+            sequence: menu.sequence,
+            hide: menu.hide
           }
         }
       })
@@ -337,27 +349,30 @@ const BasicUser = ({page, keyword, option}: IProps) => {
     let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {
-          id: menu.id,
+          id: menu.mi_id,
           name: menu.title,
           width: menu.width,
-          key: menu.title,
+          // key: menu.title,
+          key: menu.mi_id,
           editor: TextEditor,
           type: 'additional',
-          unit: menu.unit
+          unit: menu.unit,
+          tab: menu.tab,
+          version: menu.version,
+          colName: menu.mi_id,
         }
       }
-    }).filter((v: any) => v) : []
+    }).filter((v: any) => v) : [];
+    // let additionalData: any[] = []
+
+    // additionalMenus.map((v: any) => {
+    //   if(v.type === 'additional'){
+    //     additionalData.push(v.key)
+    //   }
+    // })
+
     tmpRow = res.info_list
-
     loadAllSelectItems([...tmpColumn, ...additionalMenus])
-
-    let additionalData: any[] = []
-
-    additionalMenus.map((v: any) => {
-      if(v.type === 'additional'){
-        additionalData.push(v.key)
-      }
-    })
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
       let realTableData: any = changeRow(row)
@@ -366,19 +381,18 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       row.additional && row.additional.map((v: any) => {
         appendAdditional = {
           ...appendAdditional,
-          [v.title]: v.value
+          [v.mi_id]: v.value
         }
       })
 
       const random_id = Math.random()*1000
-
       return {
         ...row,
         ...realTableData,
         ...appendAdditional,
         authority: row.ca_id.name,
         authorityPK: row.ca_id.ca_id,
-        id: `process_${random_id}`,
+        id: `user_${random_id}`,
       }
     })
     setBasicRow([...tmpBasicRow])
@@ -432,7 +446,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
 
       case 4:
         SaveBasic()
-
         break;
       case 5:
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
@@ -481,7 +494,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
           })
-          console.log(e);
+          console.log(e)
           setSelectList(tmp)
           setBasicRow(e)
         }}
@@ -508,13 +521,13 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         filename={`유저관리`}
         sheetname={`유저관리`}
         selectList={selectList}
-        tab={'ROLE_HR_01'}
+        tab={'ROLE_HR_02'}
         setIsOpen={setExcelDownOpen}
       />
       <ExcelUploadModal
         isOpen={excelUploadOpen}
         setIsOpen={setExcelUploadOpen}
-        tab={'ROLE_HR_01'}
+        tab={'ROLE_HR_02'}
         cleanUpBasicData={cleanUpBasicData}
       />
     </div>
