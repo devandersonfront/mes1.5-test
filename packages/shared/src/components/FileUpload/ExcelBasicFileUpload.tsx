@@ -20,7 +20,7 @@ interface IProps {
 const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
   const fileRef = useRef(null)
 
-  const onClickImageUpload = (index: string) => {// input[type='file'] ref함
+  const onClickImageUpload = (index: string) => {// input[type='file']
     // @ts-ignore
     fileRef.current.click();
   }
@@ -115,15 +115,19 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         hidden
         onChange={async (e) => {
           if(e.target.files && e.target.files.length !== 0) {
-            const uploadImg = await uploadTempFile(e.target.files[0], true)
+              // Buffer.from(e.target.files[0]);
+              const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
+
               console.log("uploadImg : ", uploadImg)
+
             onRowChange({
               ...row,
               [column.key]: uploadImg.UUID,
-              [column.key+'Resource']: uploadImg.resource,
+              [column.key+'Resource']: uploadImg.url,
               isChange: true
             })
           }
+
         }}
       />
     </div>

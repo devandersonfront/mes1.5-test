@@ -138,7 +138,18 @@ export const columnlist: any = {
   machineV2:[ //기계기본정보
     {key: 'mfrName',name: '기계 제조사',  editor: TextEditor, width: 118},
     {key: 'name', name: '기계 이름', editor: TextEditor, width: 118},
-    {key: 'type', name: '기계 종류', formatter: DropDownEditor, selectList: [
+    {key: 'type', name: '기계 종류', formatter: DropDownEditor, headerRenderer: HeaderFilter,
+      options:[
+        {status: undefined, name: "기계 종류"},
+        {status: 0, name: "선택없음"},
+        {status: 1, name: "프레스"},
+        {status: 2, name: "로봇"},
+        {status: 3, name: "용접기"},
+        {status: 4, name: "밀링"},
+        {status: 5, name: "선반"},
+        {status: 6, name: "탭핑기"},
+      ],
+      selectList: [
         {pk: 0, name: "선택없음"},
         {pk: 1, name: "프레스"},
         {pk: 2, name: "로봇"},
@@ -174,7 +185,19 @@ export const columnlist: any = {
   device: [
     {key: 'mfrName', name: '장치 제조사', editor: TextEditor},
     {key: 'name', name: '장치 이름', editor: TextEditor},
-    {key: 'type', name: '장치 종류', formatter: DropDownEditor, selectList: [
+    {key: 'type', name: '장치 종류', formatter: DropDownEditor,headerRenderer: HeaderFilter,
+      options:[
+        {status: null, name: "장치 종류"},
+        {status: 0, name: "선택 없음"},
+        {status: 1, name: "미스피드 검출장치"},
+        {status: 2, name: "하사점 검출장치"},
+        {status: 3, name: "로드모니터"},
+        {status: 4, name: "앵글시퀀서"},
+        {status: 5, name: "엔코더"},
+        {status: 6, name: "통관센서"},
+        {status: 7, name: "유틸리티 센서"},
+          ],
+      selectList: [
         {pk: 0, name: "선택없음"},
         {pk: 1, name: "미스피드 검출장치"},
         {pk: 2, name: "하사점 검출장치"},

@@ -28,7 +28,7 @@ export interface IProps {
 }
 
 const title = '유저 관리'
-const optList = ['성명', '이메일', '직책명', '전화번호', '권한명']
+const optList = ['성명', '이메일', '직책명', '전화번호',]
 
 const BasicUser = ({page, keyword, option}: IProps) => {
   const router = useRouter()
@@ -93,48 +93,16 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
-    console.log("basicRow : ", basicRow)
-    const result = [];
 
-    const searchAiID = (value) => {
+    const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
-      basicRow.map((row)=>{
-        row.additional.map((addi)=>{
-          if(addi.mi_id == value){
-            console.log("??? : " , addi.ad_id);
-            result = addi.ai_id;
-          }
-        })
+      rowAdditional.map((addi, i)=>{
+        if(index === i){
+          result = addi.ai_id;
+        }
       })
-
       return result;
     }
-
-    // basicRow.map((row, i)=>{
-    //   if(selectList.has(row.id)){
-    //     let additional:any[] = [];
-    //     column.map((v) => {
-    //       if(v.type === 'additional'){
-    //         additional.push(v)
-    //       }
-    //     })
-    //     console.log("additional : ", additional)
-    //     additional.map((v, index)=>{
-    //       console.log(row.additional, " || v : ",v)
-    //       console.log("i : index ||| ", i, index)
-    //       result.push({
-    //         mi_id: v.id,
-    //         title: v.name,
-    //         value: row[v.colName],
-    //         unit: v.unit,
-    //         ai_id: searchAiID(v.id) ?? undefined
-    //       })
-    //     })
-    //
-    //   }
-    // })
-    // console.log("result : ", result)
-    // let res = await RequestMethod('post', `memberSave`,result);
 
     let res = await RequestMethod('post', `memberSave`,
       basicRow.map((row, i) => {
@@ -145,7 +113,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
                 additional.push(v)
               }
             })
-            console.log("additional : ", additional)
             return {
               ...row,
               id: row.tmpId,
@@ -154,18 +121,15 @@ const BasicUser = ({page, keyword, option}: IProps) => {
               version: row.version ?? null,
               additional: [
               ...additional.map((v, index)=>{
-                  console.log(row.additional, " || v : ",v)
-                  console.log("i : index ||| ", i, index)
-                  // result.push(
-                     return {
+                if(!row[v.colName]) return undefined;
+                   return {
                     mi_id: v.id,
                     title: v.name,
-                    value: row[v.colName],
+                    value: row[v.colName] ?? "",
                     unit: v.unit,
-                    ai_id: searchAiID(v.id) ?? undefined,
-                    version:v.version
+                    ai_id: searchAiID(row.additional, index) ?? undefined,
+                    version:row.additional[index]?.version ?? undefined
                   }
-                  // )
                 }).filter((v) => v)
               ]
             }
@@ -241,7 +205,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   const LoadBasic = async (page?: number) => {
     const res = await RequestMethod('get', `memberList`,{
       path: {
-        page: 1,
+        page: page ?? 1,
         renderItem: 18,
       }
     })
@@ -383,7 +347,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
     }).filter((v:any) => v)
 
     let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-      console.log(menu)
       if(menu.colName === null){
         return {
           id: menu.mi_id,
@@ -400,7 +363,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         }
       }
     }).filter((v: any) => v) : [];
-    console.log("additionalMenus : ", additionalMenus)
     // let additionalData: any[] = []
 
     // additionalMenus.map((v: any) => {
@@ -409,18 +371,14 @@ const BasicUser = ({page, keyword, option}: IProps) => {
     //   }
     // })
 
-    console.log("additionalMenus : ", additionalMenus)
     tmpRow = res.info_list
-    console.log([...tmpColumn, ...additionalMenus])
     loadAllSelectItems([...tmpColumn, ...additionalMenus])
-
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
       let realTableData: any = changeRow(row)
       let appendAdditional: any = {}
 
       row.additional && row.additional.map((v: any) => {
-        console.log("v : ", v)
         appendAdditional = {
           ...appendAdditional,
           [v.mi_id]: v.value
@@ -428,17 +386,15 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       })
 
       const random_id = Math.random()*1000
-      console.log("appendAdditional : ", appendAdditional)
       return {
         ...row,
         ...realTableData,
         ...appendAdditional,
         authority: row.ca_id.name,
         authorityPK: row.ca_id.ca_id,
-        id: `process_${random_id}`,
+        id: `user_${random_id}`,
       }
     })
-    console.log("tmpBasicRow : ", tmpBasicRow)
     setBasicRow([...tmpBasicRow])
   }
 

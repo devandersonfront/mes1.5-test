@@ -43,6 +43,21 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [tab, setTab] = useState<number>(0)
   const [searchModalInit, setSearchModalInit] = useState<any>()
 
+  // const io = new IntersectionObserver( entries => {
+  //   entries.forEach(entry => {
+  //     // 관찰 대상이 viewport 안에 들어온 경우 'tada' 클래스를 추가
+  //     if (entry.intersectionRatio > 0) {
+  //       console.log("???");
+  //       // entry.target.classList.add('tada');
+  //     }
+  //     // 그 외의 경우 'tada' 클래스 제거
+  //     else {
+  //       // entry.target.classList.remove('tada');
+  //       console.log("!!!");
+  //     }
+  //   })
+  // })
+
   useEffect(() => {
     if(column.type){
       if(column.type === "bom"){

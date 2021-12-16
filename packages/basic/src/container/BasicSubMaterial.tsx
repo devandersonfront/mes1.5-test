@@ -110,17 +110,23 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
+
+    const searchAiID = (rowAdditional:any[], index:number) => {
+      let result:number = undefined;
+      rowAdditional.map((addi, i)=>{
+        if(index === i){
+          result = addi.ai_id;
+        }
+      })
+      return result;
+    }
+
     let res: any
     res = await RequestMethod('post', `subMaterialSave`,
       basicRow.map((row, i) => {
           if(selectList.has(row.id)){
-            let selectKey: string[] = []
             let additional:any[] = []
             column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
-
               if(v.type === 'additional'){
                 additional.push(v)
               }
@@ -156,14 +162,15 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
               ...selectData,
               // customer: row.customerArray,
               additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
+                ...additional.map((v, index)=>{
+                  if(!row[v.colName]) return undefined;
+                  return {
+                    mi_id: v.id,
+                    title: v.name,
+                    value: row[v.colName] ?? "",
+                    unit: v.unit,
+                    ai_id: searchAiID(row.additional, index) ?? undefined,
+                    version:row.additional[index]?.version ?? undefined
                   }
                 }).filter((v) => v)
               ]
@@ -362,7 +369,8 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
           id: menu.mi_id,
           name: menu.title,
           width: menu.width,
-          key: menu.title,
+          // key: menu.title,
+          key: menu.mi_id,
           editor: TextEditor,
           type: 'additional',
           unit: menu.unit,
@@ -411,7 +419,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
       row.additional && row.additional.map((v: any) => {
         appendAdditional = {
           ...appendAdditional,
-          [v.title]: v.value
+          [v.mi_id]: v.value
         }
       })
 
@@ -445,7 +453,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
         setExcelOpen(true)
         break;
       case 2:
-        router.push(`/mes/item/manage/process`)
+        router.push(`/mes/item/manage/submaterial`)
         break;
       case 3:
         let items = {}

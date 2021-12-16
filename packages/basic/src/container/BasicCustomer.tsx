@@ -66,6 +66,18 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   }, [page, keyword, option])
 
   const SaveBasic = async () => {
+
+    const searchAiID = (rowAdditional:any[], index:number) => {
+      let result:number = undefined;
+      rowAdditional.map((addi, i)=>{
+        if(index === i){
+          result = addi.ai_id;
+        }
+      })
+      return result;
+    }
+
+
     let res: any
     res = await RequestMethod('post', `customerSave`,
       basicRow.map((row, i) => {
@@ -73,10 +85,6 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
             let selectKey: string[] = []
             let additional:any[] = []
             column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
-
               if(v.type === 'additional'){
                 additional.push(v)
               }
@@ -111,15 +119,20 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
               ...row,
               ...selectData,
               additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
+                ...additional.map((v, index)=>{
+                  if(!row[v.colName]) return undefined;
+                  console.log(row.additional, " || v : ",v)
+                  console.log("i : index ||| ", i, index, v.version)
+                  // result.push(
+                  return {
+                    mi_id: v.id,
+                    title: v.name,
+                    value: row[v.colName] ?? "",
+                    unit: v.unit,
+                    ai_id: searchAiID(row.additional, index) ?? undefined,
+                    version:row.additional[index]?.version ?? undefined
                   }
+                  // )
                 }).filter((v) => v)
               ]
             }
@@ -305,7 +318,6 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     setBasicRow([...tmpBasicRow])
   }
   const cleanUpData = async(res: any) => {
-  console.log("res : ", res)
     let tmpColumn = columnlist["customer"]
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
@@ -352,7 +364,8 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
           id: menu.mi_id,
           name: menu.title,
           width: menu.width,
-          key: menu.title,
+          // key: menu.title,
+          key: menu.mi_id,
           editor: TextEditor,
           type: 'additional',
           unit: menu.unit,
@@ -401,7 +414,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
       row.additional && row.additional.map((v: any) => {
         appendAdditional = {
           ...appendAdditional,
-          [v.title]: v.value
+          [v.mi_id]: v.value
         }
       })
       let random_id = Math.random()*1000;

@@ -22,9 +22,9 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
+  console.log("row : ", row)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -38,11 +38,22 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
   })
   // console.log(row, column)
   useEffect(() => {
-    // if(isOpen) {
-    //   SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }
+    if(isOpen) {
+      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+      //   Notiflix.Loading.remove()
+      // })
+      if(row.devices !== undefined && row.devices !== null && row.devices.length > 0){
+        console.log("row : ", row)
+        const rowDevices = [];
+        row.devices.map((device, index)=>{
+          console.log("device : ", device)
+          rowDevices.push({...device, seq:index+1, manager:device.manager?.name ?? "", manager_data:device.manager});
+
+        })
+        console.log("rowDevices : ", rowDevices)
+        setSearchList(rowDevices);
+      }
+    }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
   //   if(pageInfo.total > 1){
@@ -67,6 +78,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     Notiflix.Loading.circle()
     setKeyword(keyword)
     setOptionIndex(option)
+    // const res = await RequestMethod('get', `machineDetailLoad`,{
     const res = await RequestMethod('get', `deviceSearch`,{
       path: {
         page: page,
@@ -78,15 +90,15 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
+    if(res){
+      let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
 
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
+        page: res.page,
+        total: res.totalPages,
       })
 
       setSearchList([...searchList])
@@ -295,7 +307,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               headerList={searchModalList.deviceInfo}
               row={searchList ?? [{}]}
               setRow={(e) => {
-                // console.log(e)
+                console.log(e)
                 searchList[selectRow].device =
                 setSearchList([...e])
               }}
@@ -330,6 +342,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
+                console.log(row)
                 if(selectRow !== undefined && selectRow !== null){
                   // console.log(row, searchList[selectRow], )
                   onRowChange({
@@ -337,8 +350,13 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
                     // ...searchList[selectRow],
                     machine_idPK:row.machine_id,
                     name: row.name,
-                    devices:searchList,
-                    isChange: true
+                    devices:searchList.map((device)=>{
+                      const tmpDevice = {...device};
+                      tmpDevice.manager = device.manager_data;
+
+                      return tmpDevice
+                    }),
+                    isChange: true,
                   })
                 }
                 setIsOpen(false)

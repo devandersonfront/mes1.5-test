@@ -113,7 +113,7 @@ export const searchModalList: any = {
     {key: 'name', name: '장치 이름', width: 440, formatter: LineBorderContainer, placeholder: '주변장치를 선택해 주세요' },
     {key: 'mfrName', name: '제조사', width: 160, formatter: LineBorderContainer},
     {key: 'type', name: '장치 종류', width: 160, formatter: LineBorderContainer},
-    {key: 'user_id', name: '담당자', width: 160, formatter: LineBorderContainer},
+    {key: 'manager', name: '담당자', width: 160, formatter: LineBorderContainer},
   ],
   productInfo: [
     {key: 'customer', name: '고객사명', width: 160, formatter: LineBorderContainer, placeholder: '-'},

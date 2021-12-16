@@ -214,6 +214,8 @@ const ApiList = {
   //load
   authorityLoad: `/api/v1/member/auth/load`,
   productLoad: `/api/v1/product/load`,
+  productprocessList: `/api/v1/product/process/load`,
+  machineDetailLoad: `/api/v1/machine/load`,
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -256,7 +258,6 @@ const ApiList = {
   defectReasonList: '/api/v1/process/reason/defect/list',
   rawinList: `/api/v1/rawmaterial/warehouse/list`,
   rawstockList: `/api/v1/rawmaterial/warehouse/list`,
-  productprocessList: `/api/v1/product/process/load`,
   stockList: '/api/v1/stock/list',
   stockProductList: '/api/v1/stock/summary',
   stockSummaryList: '/api/v1/stock/summary/list',

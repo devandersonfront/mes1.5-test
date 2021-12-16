@@ -55,6 +55,13 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
+  const [typesState, setTypesState] = useState<number>(null);
+
+  const changeTypesState = (value:number) => {
+    setTypesState(value);
+  }
+
+
   useEffect(() => {
     setOptionIndex(option)
     if(keyword){
@@ -66,7 +73,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [page, keyword, option, typesState])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -105,7 +112,8 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeTypesState
           }
         }else{
           return v
@@ -121,6 +129,17 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
+
+    const searchAiID = (rowAdditional:any[], index:number) => {
+      let result:number = undefined;
+      rowAdditional.map((addi, i)=>{
+        if(index === i){
+          result = addi.ai_id;
+        }
+      })
+      return result;
+    }
+
     let pass = true;
     basicRow.map((value)=>{
       if(value.mfrCode === undefined || value.mfrCode === ""){
@@ -169,21 +188,21 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
                   }
                 }
               })
-              console.log(row, selectData)
               return {
                 ...row,
                 ...selectData,
                 type:row.type_id,
                 manager: row.user,
                 additional: [
-                  ...additional.map(v => {
-                    if(row[v.name]) {
-                      return {
-                        id: v.id,
-                        title: v.name,
-                        value: row[v.name],
-                        unit: v.unit
-                      }
+                  ...additional.map((v, index)=>{
+                    if(!row[v.colName]) return undefined;
+                    return {
+                      mi_id: v.id,
+                      title: v.name,
+                      value: row[v.colName] ?? "",
+                      unit: v.unit,
+                      ai_id: searchAiID(row.additional, index) ?? undefined,
+                      version:row.additional[index]?.version ?? undefined
                     }
                   }).filter((v) => v)
                 ]
@@ -216,7 +235,17 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
-      }
+      },
+      params:
+          typesState !== null ?
+          {
+            types:typesState
+          }
+          :
+          {
+
+          }
+
     })
 
     if(res){
@@ -246,7 +275,8 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       },
       params: {
         keyword: keyword ?? '',
-        opt: option ?? 0
+        opt: option ?? 0,
+        types:typesState
       }
     })
 
@@ -307,7 +337,8 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
           id: menu.mi_id,
           name: menu.title,
           width: menu.width,
-          key: menu.title,
+          // key: menu.title,
+          key: menu.mi_id,
           editor: TextEditor,
           type: 'additional',
           unit: menu.unit,
@@ -355,12 +386,11 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       row.additional && row.additional.map((v: any) => {
         appendAdditional = {
           ...appendAdditional,
-          [v.title]: v.value
+          [v.mi_id]: v.value
         }
       })
 
       let random_id = Math.random()*1000;
-      console.log(row.type)
       return {
         ...row,
         ...appendAdditional,
@@ -421,7 +451,6 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
               }
             }
           })
-          console.log(row)
           if(row.device_id){
             return {
               ...row,
