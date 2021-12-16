@@ -19,7 +19,7 @@ import {BomInfoModal} from './BomInfoModal'
 
 interface IProps {
   row: any
-  onRowChange: (e: any) => void
+  onRowChange: () => void
   isOpen?: boolean
   setIsOpen?: (isOpen: boolean) => void
 }
@@ -134,6 +134,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
+        onRowChange()
         setIsOpen(false)
       });
 

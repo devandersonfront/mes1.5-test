@@ -54,6 +54,89 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.remove()
   }, [])
 
+  useEffect(() => {
+    console.log("basicRow", basicRow)
+  }, [basicRow])
+
+  const SaveBasic = async () => {
+    let res: any
+    res = await RequestMethod('post', `shipmentSave`,
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
+
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          let selectData: any = {}
+
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
+              }
+            }
+          })
+
+          return {
+            ...row,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
+          }
+
+        }
+      }).filter((v) => v))
+
+
+    if(res){
+      Notiflix.Report.success('저장되었습니다.','','확인', () => {
+        router.push('/mes/delivery/list')
+      });
+    }
+  }
+
+  const onClickHeaderButton = (index: number) => {
+    switch(index){
+      case 0:
+        setBasicRow([
+          {
+            name: "", id: "", date: moment().format('YYYY-MM-DD'),
+            deadline: moment().format('YYYY-MM-DD')
+          },
+          ...basicRow
+        ])
+        break;
+      case 1:
+        SaveBasic()
+
+        break;
+      case 2:
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          ()=>{},
+          ()=>{}
+        )
+        break;
+    }
+  }
+
   return (
     <div>
       <PageHeader
@@ -61,10 +144,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         buttons={
           [ '행추가', '저장하기', '삭제']
         }
-        buttonsOnclick={
-          () => {}
-          // onClickHeaderButton
-        }
+        buttonsOnclick={onClickHeaderButton}
       />
       <ExcelTable
         editable

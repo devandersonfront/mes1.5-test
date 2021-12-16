@@ -62,7 +62,7 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      if(isOpen) {
+      if(!!row.machines && row.machines.length){
         setSearchList([...row.machines.map(v => {
           return {
             ...v,
@@ -70,8 +70,11 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
             ...v.machine.machine,
           }
         })])
+      }else{
+        setSearchList([])
       }
     }
+
   }, [isOpen, searchKeyword])
   // useEffect(() => {
   //   if(pageInfo.total > 1){

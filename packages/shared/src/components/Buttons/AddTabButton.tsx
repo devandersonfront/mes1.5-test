@@ -69,13 +69,17 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         background:row.border ? "#19B9DF80" : "white",
         cursor: 'pointer',
       }} onClick={() => {
-          if(row.bom_root_id){
+        if(column.key === 'lot'){
+          loadMaterialLot(row.tab)
+        }else {
+          if (row.bom_root_id) {
             console.log(row.bom_root_id, row);
-            dispatch(add_summary_info({code:row.bom_root_id, title:row.code, index:tabStore.index+1}))
-          }else{
-            Notiflix.Report.warning("경고","등록된 BOM 정보가 없습니다.","확인", () => {})
+            dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1}))
+          } else {
+            Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
+            })
           }
-
+        }
       }}>
         <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{title}</p>
       </div>

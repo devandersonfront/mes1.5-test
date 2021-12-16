@@ -39,7 +39,7 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 
 
 
-const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
+const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
 
   const [bomDummy, setBomDummy] = useState<any[]>([
@@ -54,6 +54,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   const [summaryData, setSummaryData] = useState<any>({})
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
+  const [lotList, setLotList] = useState<any[]>([{seq: 1}])
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -62,9 +63,9 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log(row.operation_sheet?.product?.product_id)
+      console.log('lotInput', row)
       // loadRecordGroup(1, row.operation_sheet?.product?.product_id)
-      changeRow(row.input_bom)
+      // changeRow(row.input_bom)
     }
   }, [isOpen, searchKeyword])
 
@@ -95,18 +96,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
 
     console.log(tmpRow)
 
-    setSummaryData({
-      // ...res.parent
-      customer: row.product.customer?.name,
-      model: row.product.model?.model,
-      code: row.product.code,
-      name: row.product.name,
-      process: row.product.process?.name,
-      type: TransferCodeToValue(row.product.type, 'material'),
-      unit: row.product.unit,
-      goal: row.goal,
-    })
-
     tmpData = tmpRows.map((v, i) => {
       let childData: any = {}
       switch(v.bom.type){
@@ -122,6 +111,20 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
           childData = v.bom.child_product
           break;
         }
+      }
+
+      if(i === 0) {
+        setSummaryData({
+          // ...res.parent
+          customer: row.product.customer?.name,
+          model: row.product.model?.model,
+          code: row.product.code,
+          name: row.product.name,
+          process: row.product.process?.name,
+          type: TransferCodeToValue(row.product.type, 'material'),
+          unit: row.product.unit,
+          goal: row.goal,
+        })
       }
 
       return {
@@ -297,8 +300,58 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={searchModalList.InputInfo}
+              headerList={searchModalList.InputList}
               row={searchList ?? [{}]}
+              setRow={(e) => {
+                let tmp = e.map((v, index) => {
+                  if(v.newTab === true){
+                    const newTabIndex = bomDummy.length+1
+                    addNewTab(newTabIndex)
+                    setFocusIndex(newTabIndex-1)
+                  }
+
+                  if(v.lotList){
+                    setLotList([...v.lotList.map((v,i) => ({
+                      ...v,
+                      seq: i+1
+                    }))])
+                  }
+
+                  return {
+                    ...v,
+                    lotList: undefined,
+                    newTab: false
+                  }
+                })
+                setSearchList([...tmp])
+              }}
+              width={1746}
+              rowHeight={32}
+              height={288}
+              // setSelectRow={(e) => {
+              //   setSelectRow(e)
+              // }}
+              setSelectRow={(e) => {
+                setSelectRow(e)
+              }}
+              type={'searchModal'}
+              headerAlign={'center'}
+            />
+          </div>
+          <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
+            <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
+              <div style={{ display: 'flex', width: 1200}}>
+                <p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 (SUS-111/SUS360)</p>
+              </div>
+            </div>
+            <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
+
+            </div>
+          </div>
+          <div style={{padding: '0 16px', width: 1776}}>
+            <ExcelTable
+              headerList={column.type === 'readonly' ? searchModalList.InputLotReadonlyInfo : searchModalList.InputLotInfo}
+              row={lotList ?? [{}]}
               setRow={(e) => {
                 let tmp = e.map((v, index) => {
                   if(v.newTab === true){
@@ -309,27 +362,24 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
 
                   return {
                     ...v,
+                    spare: '여',
                     newTab: false
                   }
                 })
-                setSearchList([...tmp])
+                let tmpSearchList = [...searchList]
+                if(selectRow >= 0) {
+
+                  tmpSearchList[selectRow] = {
+                    ...tmpSearchList[selectRow],
+                    lots: tmp
+                  }
+                }
+                setSearchList([...tmpSearchList])
+                setLotList([...tmp])
               }}
               width={1746}
               rowHeight={32}
-              height={552}
-              // setSelectRow={(e) => {
-              //   setSelectRow(e)
-              // }}
-              setSelectRow={(e) => {
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
-                setSelectRow(e)
-              }}
+              height={192}
               type={'searchModal'}
               headerAlign={'center'}
             />
@@ -438,4 +488,4 @@ const HeaderTableTitle = styled.div`
   align-items: center;
 `
 
-export {InputMaterialInfoModal}
+export {LotInputInfoModal}

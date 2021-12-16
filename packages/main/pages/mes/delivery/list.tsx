@@ -23,7 +23,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
       <MenuNavigation pageType={'MES'}/>
       <div style={{paddingBottom: 40}}>
         <ProfileHeader/>
-        <MesDeliveryList/>
+        <MesDeliveryList page={page} keyword={keyword} option={option}/>
       </div>
     </div>
   );

@@ -19,6 +19,7 @@ import {useRouter} from 'next/router'
 import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
+import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 
 interface IProps {
   children?: any
@@ -53,28 +54,229 @@ const MesStockList = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
-  const getData = async() => {
-    await RequestMethod("get", "stockList", {
-      path:{
-        page:1,
-        renderItem:18
-      },
-      // params:{
-      //   sorts:"created"
-      // }
+  useEffect(() => {
+    setOptionIndex(option)
+    if(keyword){
+      SearchBasic(keyword, option, page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }else{
+      LoadBasic(page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }
+  }, [page, keyword, option])
+
+  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+    let tmpColumn = column.map(async (v: any) => {
+      if(v.selectList && v.selectList.length === 0){
+        let tmpKey = v.key
+
+        let res: any
+        res = await RequestMethod('get', `${tmpKey}List`,{
+          path: {
+            page: 1,
+            renderItem: MAX_VALUE,
+          }
+        })
+
+
+        let pk = "";
+
+        res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
+          if(v.indexOf('_id') !== -1){
+            pk = v
+          }
+        })
+        return {
+          ...v,
+          selectList: [...res.info_list.map((value: any) => {
+            return {
+              ...value,
+              name: tmpKey === 'model' ? value.model : value.name,
+              pk: value[pk]
+            }
+          })]
+        }
+      }else{
+        if(v.selectList){
+          return {
+            ...v,
+            pk: v.unit_id
+          }
+        }else{
+          return v
+        }
+      }
     })
-        .then((res) => {
-          console.log(res)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+
+    // if(type !== 'productprocess'){
+    Promise.all(tmpColumn).then(res => {
+      setColumn([...res])
+    })
+    // }
   }
 
-  useEffect(() => {
-    Notiflix.Loading.remove();
-    getData();
-  }, [])
+  const LoadBasic = async (page?: number) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `stockList`,{
+      path: {
+        page: (page || page !== 0) ? page : 1,
+        renderItem: 18,
+      }
+    })
+
+    if(res){
+      setPageInfo({
+        ...pageInfo,
+        page: res.page,
+        total: res.totalPages
+      })
+      cleanUpData(res)
+    }else if (res.state === 401) {
+      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
+        router.back()
+      })
+    }
+
+  }
+
+  const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
+    Notiflix.Loading.circle()
+    if(!isPaging){
+      setOptionIndex(option)
+    }
+    const res = await RequestMethod('get', `moldSearch`,{
+      path: {
+        page: isPaging ?? 1,
+        renderItem: 18,
+      },
+      params: {
+        keyword: keyword ?? '',
+        opt: option ?? 0
+      }
+    })
+
+    if(res && res.status === 200){
+      setPageInfo({
+        ...pageInfo,
+        page: res.page,
+        total: res.totalPages
+      })
+      cleanUpData(res)
+    }
+  }
+
+  const cleanUpData = (res: any) => {
+    let tmpColumn = columnlist["stockV2"];
+    let tmpRow = []
+    tmpColumn = tmpColumn.map((column: any) => {
+      let menuData: object | undefined;
+      res.menus && res.menus.map((menu: any) => {
+        if(menu.colName === column.key){
+          menuData = {
+            id: menu.id,
+            name: menu.title,
+            width: menu.width,
+            tab:menu.tab,
+            unit:menu.unit
+          }
+        } else if(menu.colName === 'id' && column.key === 'tmpId'){
+          menuData = {
+            id: menu.id,
+            name: menu.title,
+            width: menu.width,
+            tab:menu.tab,
+            unit:menu.unit
+          }
+        }
+      })
+
+      if(menuData){
+        return {
+          ...column,
+          ...menuData,
+        }
+      }
+    }).filter((v:any) => v)
+
+    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
+      if(menu.colName === null){
+        return {
+          id: menu.id,
+          name: menu.title,
+          width: menu.width,
+          key: menu.title,
+          editor: TextEditor,
+          type: 'additional',
+          unit: menu.unit
+        }
+      }
+    }).filter((v: any) => v) : []
+
+    console.log(res)
+
+
+    tmpRow = res.info_list
+
+
+    loadAllSelectItems( [
+      ...tmpColumn,
+      ...additionalMenus
+    ])
+
+
+    let selectKey = ""
+    let additionalData: any[] = []
+    tmpColumn.map((v: any) => {
+      if(v.selectList){
+        selectKey = v.key
+      }
+    })
+
+    additionalMenus.map((v: any) => {
+      if(v.type === 'additional'){
+        additionalData.push(v.key)
+      }
+    })
+
+    let pk = "";
+    Object.keys(tmpRow).map((v) => {
+      if(v.indexOf('_id') !== -1){
+        pk = v
+      }
+    })
+
+    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+
+      let appendAdditional: any = {}
+
+      row.additional && row.additional.map((v: any) => {
+        appendAdditional = {
+          ...appendAdditional,
+          [v.title]: v.value
+        }
+      })
+
+      let random_id = Math.random()*1000;
+      return {
+        ...row,
+        ...appendAdditional,
+        customer_id: row.customer?.name ?? '-',
+        cm_id: row.model?.model ?? '-',
+        product_id: row.code ?? '-',
+        productId: row.product_id ?? '-',
+        name: row.name ?? '-',
+        type: !Number.isNaN(row.type) ? TransferCodeToValue(row.type, 'productType') : '-',
+        unit: row.unit ?? '-',
+        id: `sheet_${random_id}`,
+      }
+    })
+
+    console.log(tmpBasicRow)
+
+    setBasicRow([...tmpBasicRow])
+  }
 
   return (
     <div>

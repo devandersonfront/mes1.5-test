@@ -148,10 +148,15 @@ export {InputMaterialInfoModal} from './components/Modal/InputMaterialInfoModal'
 export {WorkRegisterModal} from './components/Modal/WorkRegisterModal'
 export {OperationInfoModal} from './components/Modal/OperationInfoModal'
 export {InfoModal} from './components/Modal/InfoModal'
+export {LotInputInfoModal} from './components/Modal/LotInputInfoModal'
 
 export {TestModule} from "./components/ComponentTest"
 
 export {PaginationComponent} from "./components/Pagination/PaginationComponent"
+
+export {UnitContainer} from "./components/Unit/UnitContainer"
+
+export {ProfileHeader} from "./components/Profile/ProfileHeader"
 
 export {rootReducer} from "./reducer"
 

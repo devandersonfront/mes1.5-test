@@ -36,7 +36,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
-   order_num: '-', operation_num: '20210401-03', operation_date: now, limit_date: now,
+   id: '', order_num: '-', operation_num: '20210401-03', operation_date: now, limit_date: now,
     customer: '-', model: '-', code: 'SU-20210701-3', product: 'SU900-1', type: '반제품',
     unit: 'EA', process: '프레스', goal: '50', total_count: '58', total_good: '55', total_uph: '12'
   }])
@@ -263,17 +263,19 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
-        contract_id: row.contract.identification ?? '-' ,
-        customer_id: row.product.customer?.name ?? '-',
-        cm_id: row.product.model?.model ?? '-',
-        product_id: row.product.code ?? '-',
-        name: row.product.name ?? '-',
-        type: TransferCodeToValue(row.product.type, 'material'),
-        unit: row.product.unit,
-        process_id: row.product.process.name,
+        contract_id: row.contract?.identification ?? '-' ,
+        customer_id: row.product?.customer?.name ?? '-',
+        cm_id: row.product?.model?.model ?? '-',
+        product_id: row.product?.code ?? '-',
+        name: row.product?.name ?? '-',
+        type: row.product?.type ? TransferCodeToValue(row.product.type, 'material') : '-',
+        unit: row.product?.unit ?? '-',
+        process_id: row.product?.process?.name ?? "-",
         id: `sheet_${random_id}`,
       }
     })
+
+    console.log(tmpBasicRow)
 
     setBasicRow([...tmpBasicRow])
   }
@@ -310,11 +312,30 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         // setRow={setBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
-          e.map(v => {
+          console.log('e', e)
+          let tmpRes = e.map(v => {
             if(v.isChange) tmp.add(v.id)
+            if(v.update || v.finish){
+              if(keyword){
+                SearchBasic(keyword, option, page).then(() => {
+                  Notiflix.Loading.remove()
+                })
+              }else{
+                LoadBasic(page).then(() => {
+                  Notiflix.Loading.remove()
+                })
+              }
+              return {
+                ...v,
+                update: undefined,
+                finish: undefined,
+              }
+            }
+            return { ...v, }
           })
+
           setSelectList(tmp)
-          setBasicRow(e)
+          setBasicRow([...tmpRes])
         }}
         selectList={selectList}
         //@ts-ignore

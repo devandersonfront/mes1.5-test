@@ -157,7 +157,7 @@ export const searchModalList: any = {
       ], type: 'Modal'},
     {key: 'type_name', name: '품목 종류', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'unit', name: '단위', width: 160, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'usage', name: '사용량', width: 160, formatter: LineBorderContainer, editor: TextEditor, placeholder: '-'},
+    {key: 'usage', name: '사용량', width: 160, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '-'},
     {key: 'process', name: '생산 공정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-'},
   ],
@@ -304,7 +304,7 @@ export const searchModalList: any = {
         {pk: 'basic', name: '여'},
         {pk: 'spare', name: '부'},
       ], type: 'Modal'},
-    {key: 'amount', name: '생산량', formatter: LineBorderContainer, editor: TextEditor, textAlign: 'center'},
+    {key: 'amount', name: '생산량', formatter: LineBorderContainer, editor: TextEditor, textAlign: 'center', type: 'Modal'},
 
   ],
   InputLotReadonlyInfo: [
@@ -332,12 +332,12 @@ export const searchModalList: any = {
   ],
   workRegister: [
     {key: 'sequence', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'lot_number', name: 'LOT 번호', formatter: LotNumberRegister, editor: TextEditor, textAlign: 'center', width: 300},
-    {key: 'worker_name', name: '작업자', formatter: SearchModalTest, type: 'user', width: 118, modalType: true},
+    {key: 'lot_number', name: 'LOT 번호', formatter: LotNumberRegister, editor: TextEditor, textType: 'Modal', textAlign: 'center', width: 300},
+    {key: 'worker_name', name: '작업자', formatter: SearchModalTest, type: 'user', width: 118, modalType: true, placeholder: '작업자 선택'},
     {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200},
     {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200},
     {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true},
-    {key: 'good_quantity', name: '양품 수량', editor: TextEditor, formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'good_quantity', name: '양품 수량', editor: TextEditor, textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'poor_quantity', name: '불량 수량 (유형별 수량은 숫자 클릭)', formatter: DefectInfoModal, textAlign: 'center', width: 250},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center'},
@@ -471,11 +471,11 @@ export const searchModalList: any = {
   ],
   lotStock: [
     {key: 'seq', name: '번호', width: 32, textAlign: 'center'},
-    {key: 'lot', name: 'LOT 번호'},
+    {key: 'lot_number', name: 'LOT 번호'},
     {key: 'start', name: '작업 시작 일시'},
     {key: 'end', name: '작업 종료 일시'},
     {key: 'worker', name: '작업자'},
-    {key: 'stock', name: '재고량'},
+    {key: 'amount', name: '재고량'},
   ],
   operationInfo: [
     {key: 'seq', name: '번호', width: 32, textAlign: 'center'},
@@ -500,9 +500,9 @@ export const searchModalList: any = {
     {key: 'lot_number', name: 'LOT 번호'},
     {key: 'start', name: '작업 시작 일시'},
     {key: 'end', name: '작업 종료 일시'},
-    {key: 'worker', name: '작업자'},
-    {key: 'stock', name: '재고량'},
-    {key: 'delivery_stock', name: '납품 수량'},
+    {key: 'worker_name', name: '작업자'},
+    {key: 'good_quantity', name: '재고량'},
+    {key: 'amount', name: '납품 수량', editor: TextEditor, textType: 'Modal',},
   ]
 }
 

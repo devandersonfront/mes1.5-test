@@ -55,32 +55,33 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    if(column.type !== 'readonly'){
-      if(isOpen && row.process_id && searchList.findIndex((e) => !!e.amount ) === -1) {
-        loadPauseList()
-      }
-    }else{
-      if(row && row.pause_reasons){
-        let total = 0
-        setSearchList([...row.pause_reasons.map(v => {
-          console.log(v)
+    console.log('row', row)
+    if(row['pause_reasons'] && row['pause_reasons'].length){
+      let total = 0
+      setSearchList([...row.pause_reasons.map(v => {
+        console.log(v)
 
-          let sec = v.amount
-          let hour = Math.floor(sec/3600)
-          sec = sec%3600
-          let min = Math.floor(sec/60)
-          sec = sec%60
+        let sec = v.amount
+        let hour = Math.floor(sec / 3600)
+        sec = sec % 3600
+        let min = Math.floor(sec / 60)
+        sec = sec % 60
 
-          total+=v.amount
+        total += v.amount
 
-          return {
-            ...v,
-            ...v.pause_reason,
-            amount: `${hour >= 10 ? hour : '0'+hour}:${min >= 10 ? min : '0'+min}:${sec >= 10 ? sec : '0'+sec}`
-          }
-        })])
+        return {
+          ...v,
+          ...v.pause_reason,
+          amount: `${hour >= 10 ? hour : '0' + hour}:${min >= 10 ? min : '0' + min}:${sec >= 10 ? sec : '0' + sec}`
+        }
+      })])
 
-        sumTotalTime(total)
+      sumTotalTime(total)
+    }else {
+      if (column.type !== 'readonly') {
+        if (isOpen && row.process_id && searchList.findIndex((e) => !!e.amount) === -1) {
+          loadPauseList()
+        }
       }
     }
   }, [isOpen, row, searchKeyword])

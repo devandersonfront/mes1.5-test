@@ -62,22 +62,20 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      setSearchList([...row.molds.map(v => {
-        return {
-          ...v,
-          ...v.mold,
-          ...v.mold.mold,
-        }
-      })])
+      console.log(row)
+      if(!!row.molds && row.molds.length){
+        setSearchList([...row.molds.map(v => {
+          return {
+            ...v,
+            ...v.mold,
+            ...v.mold.mold,
+          }
+        })])
+      }else{
+        setSearchList([])
+      }
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
 
   const changeRow = (row: any, key?: string) => {
     let tmpData = {

@@ -64,9 +64,9 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
   useEffect(() => {
     setOptionIndex(option)
     if(keyword){
-      // SearchBasic(keyword, option, page).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      SearchBasic(keyword, option, page).then(() => {
+        Notiflix.Loading.remove()
+      })
     }else{
       LoadBasic(page).then(() => {
         Notiflix.Loading.remove()
@@ -122,6 +122,34 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
       setColumn([...res])
     })
     // }
+  }
+
+  const SearchBasic = async (keyword, opt, page?: number) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `recordSearch`,{
+      path: {
+        page: (page || page !== 0) ? page : 1,
+        renderItem: 18,
+      },
+      params: {
+        keyword: keyword,
+        opt: 4
+      }
+    })
+
+    if(res){
+      setPageInfo({
+        ...pageInfo,
+        page: res.page,
+        total: res.totalPages
+      })
+      cleanUpData(res)
+    }else if (res.state === 401) {
+      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
+        router.back()
+      })
+    }
+
   }
 
   const LoadBasic = async (page?: number) => {
@@ -245,7 +273,10 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
+        product: row.operation_sheet?.product ?? null,
+        goal: row.operation_sheet?.goal ?? '-',
         contract_id: row.operation_sheet?.contract?.identification ?? '-' ,
+        input_bom: row.operation_sheet?.input_bom ?? [],
         identification: row.operation_sheet?.identification ?? '-',
         product_id: row.operation_sheet?.product?.code ?? '-',
         name: row.operation_sheet?.product?.name ?? '-',
@@ -270,6 +301,9 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         isCalendar
         searchKeyword={""}
         searchOptionList={optionList}
+        onChangeSearchKeyword={(keyword) =>{
+          SearchBasic(keyword, option, 1)
+        }}
         calendarTitle={'종료일'}
         calendarType={'period'}
         selectDate={selectDate}
@@ -325,7 +359,18 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
             }
           }
         }).filter(v => v)]}
-        onRowChange={() => {}}
+        onRowChange={() => {
+          setOptionIndex(option)
+          if(keyword){
+            // SearchBasic(keyword, option, page).then(() => {
+            //   Notiflix.Loading.remove()
+            // })
+          }else{
+            LoadBasic(page).then(() => {
+              Notiflix.Loading.remove()
+            })
+          }}
+        }
         isOpen={excelOpen}
         setIsOpen={setExcelOpen}/>
     </div>

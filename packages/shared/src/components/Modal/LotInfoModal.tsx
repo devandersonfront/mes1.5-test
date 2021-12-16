@@ -39,56 +39,78 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      if(row.productId){
+        SearchBasic('', 0, 1)
+      }else{
+        setSearchList([...row.lots.map(v => {
+          return {
+            seq: 1,
+            lot_number: v.group.sum.lot_number,
+            start: v.group.sum.start,
+            end: v.group.sum.end,
+            worker: v.group.sum.worker?.name ?? '-',
+            amount: v.group.sum.current
+          }
+        })])
+      }
     }
   }, [isOpen, searchKeyword])
   console.log(row)
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
+투
+  const changeRow = (row: any) => {
 
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
+    console.log(row)
+
+    return {
+      seq: 1,
+      lot_number: row.sum.lot_number,
+      start: row.sum.start,
+      end: row.sum.end,
+      worker: row.sum.worker?.name ?? '-',
+      amount: row.sum.current
     }
 
-    return tmpData
   }
 
   const SearchBasic = async (keyword: any, option: number, page: number) => {
     Notiflix.Loading.circle()
     setKeyword(keyword)
     setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
+    const res = await RequestMethod('get', `recordGroupList`,{
       path: {
+        product_id: row.productId,
         page: page,
         renderItem: 18,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
+    console.log(res)
+
+    if(res){
+
+      let tmp
+      if(typeof res === 'string'){
+        let tmpRowArray = res.split('\n')
+
+        tmp = tmpRowArray.map(v => {
+          if(v !== ""){
+            let tmp = JSON.parse(v)
+            return tmp
+          }
+        }).filter(v=>v)
+      }else{
+        tmp = [{...row}]
+      }
+
+      let searchList = tmp.map((row: any, index: number) => {
         return changeRow(row)
       })
 
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
+      // setPageInfo({
+      //   ...pageInfo,
+      //   page: res.results.page,
+      //   total: res.results.totalPages,
+      // })
 
       setSearchList([...searchList])
     }

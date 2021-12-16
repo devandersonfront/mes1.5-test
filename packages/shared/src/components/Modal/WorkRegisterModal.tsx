@@ -16,6 +16,7 @@ import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {BomInfoModal} from './BomInfoModal'
+import moment from 'moment'
 
 interface IProps {
   column: IExcelHeaderType
@@ -41,7 +42,7 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
   [
     {title: '단위', infoWidth: 144, key: 'unit'},
     {title: '목표 생산량', infoWidth: 144, key: 'goal'},
-    {title: '총 카운터', infoWidth: 144, key: 'unit'},
+    {title: '총 카운터', infoWidth: 144, key: 'total_counter'},
     {title: '총 양품 수량', infoWidth: 144, key: 'total_good_quantity'},
     {title: '총 불량 수량', infoWidth: 144, key: 'total_poor_quantity'},
   ],
@@ -72,7 +73,11 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       console.log(row)
-      setSearchList([{...searchList[0], process_id: row.product?.process?.process_id ?? '-', input_bom: row.input_bom, product: row.product, goal: row.goal}])
+      setSearchList([{
+        sequence: 1, good_quantity: 0, process_id: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
+        start: moment(), end: moment(),
+        ...row
+      }])
     }
   }, [isOpen, searchKeyword])
 
@@ -137,10 +142,11 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
 
 
     if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인', () => {
-        setIsOpen(false)
-      });
-
+      onRowChange({
+        ...row,
+        update: true
+      })
+      Notiflix.Report.success('저장되었습니다.','','확인');
     }
   }
 
@@ -258,7 +264,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
               headerList={searchModalList.workRegister}
               row={searchList ?? [{}]}
               setRow={(e) => {
-                console.log(e)
                 let tmp = e.map((v, index) => {
                   if(v.newTab === true){
                     const newTabIndex = bomDummy.length+1
@@ -274,7 +279,10 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 console.log(tmp)
                 setSearchList([...tmp.map(v => {
                   console.log('v', v)
-                  return v
+                  return {
+                    ...v,
+                    sum: Number(v.good_quantity ?? 0)+Number(v.poor_quantity ?? 0)
+                  }
                 })])
               }}
               width={1746}

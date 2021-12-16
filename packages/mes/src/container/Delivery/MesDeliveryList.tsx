@@ -10,7 +10,7 @@ import {
   excelDownload,
   PaginationComponent,
   ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
+  IExcelHeaderType, IItemMenuType, setModifyInitData
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -19,6 +19,8 @@ import {useRouter} from 'next/router'
 import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
+import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
+import {useDispatch} from 'react-redux'
 
 interface IProps {
   children?: any
@@ -28,6 +30,7 @@ interface IProps {
 }
 
 const MesDeliveryList = ({page, keyword, option}: IProps) => {
+  const dispatch = useDispatch()
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -51,8 +54,244 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
+    setOptionIndex(option)
+    if(keyword){
+      SearchBasic(keyword, option, page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }else{
+      LoadBasic(page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }
+  }, [page, keyword, option, selectDate])
+
+  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+    let tmpColumn = column.map(async (v: any) => {
+      if(v.selectList && v.selectList.length === 0){
+        let tmpKey = v.key
+
+
+        let res: any
+        res = await RequestMethod('get', `${tmpKey}List`,{
+          path: {
+            page: 1,
+            renderItem: MAX_VALUE,
+          }
+        })
+
+
+        let pk = "";
+
+        res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
+          if(v.indexOf('_id') !== -1){
+            pk = v
+          }
+        })
+        return {
+          ...v,
+          selectList: [...res.info_list.map((value: any) => {
+            return {
+              ...value,
+              name: tmpKey === 'model' ? value.model : value.name,
+              pk: value[pk]
+            }
+          })]
+        }
+      }else{
+        if(v.selectList){
+          return {
+            ...v,
+            pk: v.unit_id
+          }
+        }else{
+          return v
+        }
+      }
+    })
+
+    // if(type !== 'productprocess'){
+    Promise.all(tmpColumn).then(res => {
+      setColumn([...res])
+    })
+    // }
+  }
+
+  const LoadBasic = async (page?: number) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `shipmentList`,{
+      path: {
+        page: (page || page !== 0) ? page : 1,
+        renderItem: 18,
+      },
+      params: {
+        from: selectDate.from,
+        to: selectDate.to,
+      }
+
+    })
+
+    if(res){
+      setPageInfo({
+        ...pageInfo,
+        page: res.page,
+        total: res.totalPages
+      })
+      cleanUpData(res)
+    }else if (res.state === 401) {
+      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
+        router.back()
+      })
+    }
+
+  }
+
+  const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
+    Notiflix.Loading.circle()
+    if(!isPaging){
+      setOptionIndex(option)
+    }
+    const res = await RequestMethod('get', `moldSearch`,{
+      path: {
+        page: isPaging ?? 1,
+        renderItem: 18,
+      },
+      params: {
+        keyword: keyword ?? '',
+        opt: option ?? 0
+      }
+    })
+
+    if(res && res.status === 200){
+      setPageInfo({
+        ...pageInfo,
+        page: res.page,
+        total: res.totalPages
+      })
+      cleanUpData(res)
+    }
+  }
+
+  const cleanUpData = (res: any) => {
+    let tmpColumn = columnlist["deliveryList"];
+    let tmpRow = []
+    tmpColumn = tmpColumn.map((column: any) => {
+      let menuData: object | undefined;
+      res.menus && res.menus.map((menu: any) => {
+        if(menu.colName === column.key){
+          menuData = {
+            id: menu.id,
+            name: menu.title,
+            width: menu.width,
+            tab:menu.tab,
+            unit:menu.unit
+          }
+        } else if(menu.colName === 'id' && column.key === 'tmpId'){
+          menuData = {
+            id: menu.id,
+            name: menu.title,
+            width: menu.width,
+            tab:menu.tab,
+            unit:menu.unit
+          }
+        }
+      })
+
+      if(menuData){
+        return {
+          ...column,
+          ...menuData,
+        }
+      }
+    }).filter((v:any) => v)
+
+    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
+      if(menu.colName === null){
+        return {
+          id: menu.id,
+          name: menu.title,
+          width: menu.width,
+          key: menu.title,
+          editor: TextEditor,
+          type: 'additional',
+          unit: menu.unit
+        }
+      }
+    }).filter((v: any) => v) : []
+
+
+    tmpRow = res.info_list
+
+
+    loadAllSelectItems( [
+      ...tmpColumn,
+      ...additionalMenus
+    ])
+
+
+    let selectKey = ""
+    let additionalData: any[] = []
+    tmpColumn.map((v: any) => {
+      if(v.selectList){
+        selectKey = v.key
+      }
+    })
+
+    additionalMenus.map((v: any) => {
+      if(v.type === 'additional'){
+        additionalData.push(v.key)
+      }
+    })
+
+    let pk = "";
+    Object.keys(tmpRow).map((v) => {
+      if(v.indexOf('_id') !== -1){
+        pk = v
+      }
+    })
+
+    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+
+      let appendAdditional: any = {}
+
+      row.additional && row.additional.map((v: any) => {
+        appendAdditional = {
+          ...appendAdditional,
+          [v.title]: v.value
+        }
+      })
+
+      const reducer = (accumulator, curr) => {
+        console.log(accumulator,curr)
+        return accumulator.amount + curr.amount;
+      }
+
+      let random_id = Math.random()*1000;
+      return {
+        ...row,
+        ...appendAdditional,
+        status: TransferCodeToValue(row.status, 'workStatus'),
+        status_no: row.status,
+        contract_id: row.contract?.identification ?? '-' ,
+        // operation_sheet: row.
+        customer_id: row.product.customer?.name ?? '-',
+        cm_id: row.product.model?.model ?? '-',
+        product_id: row.product.code ?? '-',
+        code: row.product.code ?? '-',
+        name: row.product.name ?? '-',
+        type: TransferCodeToValue(row.product.type, 'material'),
+        unit: row.product?.unit ?? '-',
+        process_id: row.product?.process?.name ?? '-',
+        amount: row.lots.length > 1 ? row.lots.reduce(reducer) : row.lots[0].amount,
+        id: `sheet_${random_id}`,
+      }
+    })
+
+    console.log(tmpBasicRow)
+
     Notiflix.Loading.remove()
-  }, [])
+    setBasicRow([...tmpBasicRow])
+  }
 
   return (
     <div>
@@ -74,6 +313,14 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
           (e) => {
             switch(e){
               case 1:
+                dispatch(setModifyInitData({
+                  modifyInfo: basicRow.map(v => {
+                    if (selectList.has(v.id)) {
+                      return v
+                    }
+                  }).filter(v => v),
+                  type: 'delivery'
+                }))
                 router.push('/mes/delivery/modify')
             }
           }

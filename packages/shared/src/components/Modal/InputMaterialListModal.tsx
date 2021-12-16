@@ -39,23 +39,23 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 
 const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
-    {title: '지시 고유번호', infoWidth: 144, key: 'customer'},
-    {title: 'LOT 번호', infoWidth: 144, key: 'model'},
-    {title: '거래처', infoWidth: 144, key: 'model'},
+    {title: '지시 고유번호', infoWidth: 144, key: 'identification'},
+    {title: 'LOT 번호', infoWidth: 144, key: 'lot_number'},
+    {title: '거래처', infoWidth: 144, key: 'customer'},
     {title: '모델', infoWidth: 144, key: 'model'},
   ],
   [
-    {title: 'CODE', infoWidth: 144, key: 'customer'},
-    {title: '품명', infoWidth: 144, key: 'model'},
-    {title: '품목 종류', infoWidth: 144, key: 'model'},
-    {title: '생산 공정', infoWidth: 144, key: 'model'},
+    {title: 'CODE', infoWidth: 144, key: 'code'},
+    {title: '품명', infoWidth: 144, key: 'name'},
+    {title: '품목 종류', infoWidth: 144, key: 'type'},
+    {title: '생산 공정', infoWidth: 144, key: 'process'},
   ],
   [
-    {title: '단위', infoWidth: 144, key: 'customer'},
-    {title: '목표 생산량', infoWidth: 144, key: 'model'},
-    {title: '작업자', infoWidth: 144, key: 'model'},
-    {title: '양품 수량', infoWidth: 144, key: 'model'},
-    {title: '불량 수량', infoWidth: 144, key: 'model'},
+    {title: '단위', infoWidth: 144, key: 'unit'},
+    {title: '목표 생산량', infoWidth: 144, key: 'goal'},
+    {title: '작업자', infoWidth: 144, key: 'worker_name'},
+    {title: '양품 수량', infoWidth: 144, key: 'good_quantity'},
+    {title: '불량 수량', infoWidth: 144, key: 'poor_quantity'},
   ],
 ]
 
@@ -85,8 +85,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      if(row.operation_sheet){
+        changeRow(row.operation_sheet.input_bom)
+      }else{
+        changeRow(row.input_bom)
+      }
       console.log(row)
-      changeRow(row.input_bom)
+
     }
   }, [isOpen, searchKeyword])
 
@@ -95,6 +100,25 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     let tmpRows = tmpRow;
 
     console.log(tmpRow)
+
+    console.log(row)
+
+    setSummaryData({
+      // ...res.parent
+      identification: row.identification,
+      lot_number: row.lot_number ?? '-',
+      customer: row.product?.customer?.name,
+      model: row.product?.model?.model,
+      code: row.product?.code,
+      name: row.product?.name,
+      process: row.product?.process?.name,
+      type: row.product?.type ? TransferCodeToValue(row.product.type, 'productType') : "-",
+      unit: row.product?.unit,
+      goal: row.goal,
+      worker_name: row.worker_name ?? '-',
+      good_quantity: row.good_quantity ?? 0,
+      poor_quantity: row.qoor_quantity ?? 0,
+    })
 
     tmpData = tmpRows.map((v, i) => {
       let childData: any = {}
@@ -113,20 +137,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         }
       }
 
-      if(i === 0) {
-        setSummaryData({
-          // ...res.parent
-          customer: row.product.customer?.name,
-          model: row.product.model?.model,
-          code: row.product.code,
-          name: row.product.name,
-          process: row.product.process?.name,
-          type: TransferCodeToValue(row.product.type, 'material'),
-          unit: row.product.unit,
-          goal: row.goal,
-        })
-      }
-
       return {
         ...childData,
         seq: i+1,
@@ -140,7 +150,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         version: v.bom.version,
         setting: v.bom.setting,
         stock: childData.stock,
-        disturbance: Number(row.goal) * Number(v.bom.usage),
+        disturbance: (Number(row.good_quantity ?? 0)+Number(row.poor_quantity ?? 0)) * Number(v.bom.usage),
         processArray: childData.process ?? null,
         process: childData.process ? childData.process.name : '-',
         bom_root_id: childData.bom_root_id,
@@ -280,31 +290,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             </div>
           </div>
           {
-            column.type === 'readonly'
-              ? headerWorkItems && headerWorkItems.map((infos, index) => {
-              return (
-                <HeaderTable>
-                  {
-                    infos.map(info => {
-                      return (
-                        <>
-                          <HeaderTableTitle>
-                            <HeaderTableText style={{fontWeight: 'bold'}}>{info.title}</HeaderTableText>
-                          </HeaderTableTitle>
-                          <HeaderTableTextInput style={{width: info.infoWidth}}>
-                            <HeaderTableText>
-                              {getSummaryInfo(info)}
-                            </HeaderTableText>
-                            {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
-                          </HeaderTableTextInput>
-                        </>
-                      )
-                    })
-                  }
-                </HeaderTable>
-              )
-            })
-              : headerItems && headerItems.map((infos, index) => {
+            headerWorkItems && headerWorkItems.map((infos, index) => {
               return (
                 <HeaderTable>
                   {

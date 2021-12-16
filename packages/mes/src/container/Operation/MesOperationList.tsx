@@ -10,7 +10,7 @@ import {
   excelDownload,
   PaginationComponent,
   ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
+  IExcelHeaderType, IItemMenuType, setModifyInitData
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -20,6 +20,7 @@ import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
+import {useDispatch} from 'react-redux'
 
 interface IProps {
   children?: any
@@ -32,6 +33,7 @@ let now = moment().format('YYYY-MM-DD')
 
 const MesOperationList = ({page, keyword, option}: IProps) => {
   const router = useRouter()
+  const dispatch = useDispatch()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
@@ -128,7 +130,8 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
       },
       params: {
         from: selectDate.from,
-        to: selectDate.to
+        to: selectDate.to,
+        status: '0,1'
       }
 
     })
@@ -171,6 +174,77 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
+    }
+  }
+
+  const DeleteBasic = async () => {
+    const res = await RequestMethod('delete', `sheetDelete`,
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
+
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          let selectData: any = {}
+
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
+              }
+            }
+
+            if(v === 'unitWeight') {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(row['unitWeight'])
+              }
+            }
+
+            if(v === 'tmpId') {
+              selectData = {
+                ...selectData,
+                id: row['tmpId']
+              }
+            }
+          })
+          console.log(row)
+          return {
+            ...row,
+            ...selectData,
+            type: row.type_id,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
+          }
+
+        }
+      }).filter((v) => v))
+
+    if(res) {
+      Notiflix.Report.success('삭제 성공!', '', '확인', () => {
+        LoadBasic(1).then(() => {
+          Notiflix.Loading.remove()
+        })
+      })
     }
   }
 
@@ -270,9 +344,11 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         status: TransferCodeToValue(row.status, 'workStatus'),
         status_no: row.status,
         contract_id: row.contract?.identification ?? '-' ,
+        // operation_sheet: row.
         customer_id: row.product.customer?.name ?? '-',
         cm_id: row.product.model?.model ?? '-',
         product_id: row.product.code ?? '-',
+        code: row.product.code ?? '-',
         name: row.product.name ?? '-',
         type: TransferCodeToValue(row.product.type, 'material'),
         unit: row.product?.unit ?? '-',
@@ -306,10 +382,28 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         }
         buttonsOnclick={
           (e) => {
-            switch(e){
+            switch(e) {
               case 1:
-                router.push('/mes/operationV1u/modify')
+                dispatch(setModifyInitData({
+                  modifyInfo: basicRow.map(v => {
+                    if (selectList.has(v.id)) {
+                      return v
+                    }
+                  }).filter(v => v),
+                  type: 'order'
+                }))
+                router.push('/mes/order/modify')
+                break;
+              case 2:
+                Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+                  ()=>{
+                    DeleteBasic()
+                  },
+                  ()=>{}
+                )
+                break;
             }
+
           }
           // onClickHeaderButton
         }
@@ -325,11 +419,30 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         // setRow={setBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
-          e.map(v => {
+          console.log(e)
+          let tmpRes = e.map(v => {
             if(v.isChange) tmp.add(v.id)
+            if(v.update || v.finish){
+              if(keyword){
+                SearchBasic(keyword, option, page).then(() => {
+                  Notiflix.Loading.remove()
+                })
+              }else{
+                LoadBasic(page).then(() => {
+                  Notiflix.Loading.remove()
+                })
+              }
+              return {
+                ...v,
+                update: undefined,
+                finish: undefined,
+              }
+            }
+            return { ...v, }
           })
+
           setSelectList(tmp)
-          setBasicRow(e)
+          setBasicRow([...tmpRes])
         }}
         selectList={selectList}
         //@ts-ignore

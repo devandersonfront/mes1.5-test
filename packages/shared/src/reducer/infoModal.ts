@@ -132,10 +132,15 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
       const insertState = {...state};
       const insertPayload = payload as {code:string, title:string, data:any[], headerData:any};
 
-      insertState.datas[0].title = insertPayload.title;
-      insertState.datas[0].code = insertPayload.code;
-      insertState.datas[0].data = insertPayload.data;
-      insertState.datas[0].headerData = insertPayload.headerData;
+      insertState.datas.push({
+        title: insertPayload.title,
+        code: insertPayload.code,
+        data: insertPayload.data,
+        headerData: insertPayload.headerData
+      })
+      // insertState.datas[0].code = insertPayload.code;
+      // insertState.datas[0].data = insertPayload.data;
+      // insertState.datas[0].headerData = insertPayload.headerData;
 
       console.log("insertState : ", insertState)
 

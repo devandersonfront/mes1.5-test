@@ -240,18 +240,33 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         </div>
       </>
     }else{
-      return <>
-        <div style={{
-          padding: '3.5px 0px 0px 3.5px',
-          width: '100%'
-        }}>
-          <UploadButton onClick={() => {
-            setIsOpen(true)
+      if(column.type === 'readonly'){
+        return <>
+          <div style={{
+            padding: '3.5px 0px 0px 3.5px',
+            width: '100%'
           }}>
-            <p>BOM 등록</p>
-          </UploadButton>
-        </div>
-      </>
+            <div onClick={() => {
+              setIsOpen(true)
+            }}>
+              <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>
+            </div>
+          </div>
+        </>
+      }else{
+        return <>
+          <div style={{
+            padding: '3.5px 0px 0px 3.5px',
+            width: '100%'
+          }}>
+            <UploadButton onClick={() => {
+              setIsOpen(true)
+            }}>
+              <p>BOM 등록</p>
+            </UploadButton>
+          </div>
+        </>
+      }
     }
   }
 
@@ -516,39 +531,43 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             />
           </div>
           <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+            {
+              column.type !== 'readonly' && <div
+                  onClick={() => {
+                    setIsOpen(false)
+                  }}
+                  style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              >
+                  <p style={{color: '#717C90'}}>취소</p>
+              </div>
+            }
             <div
               onClick={() => {
-                setIsOpen(false)
-              }}
-              style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p style={{color: '#717C90'}}>취소</p>
-            </div>
-            <div
-              onClick={() => {
-                SaveBasic()
-                if(selectRow !== undefined && selectRow !== null) {
-                  onRowChange(
+                if(column.type !== 'readonly'){
+                  SaveBasic()
+                  if(selectRow !== undefined && selectRow !== null) {
+                    onRowChange(
                       column.type === "bomRegister" ?
-                      {
+                        {
                           ...row,
                           isChange: true
-                      }
-                      :
-                      {
+                        }
+                        :
+                        {
                           ...row,
                           ...searchList[selectRow],
                           name: row.name,
                           isChange: true
-                      }
+                        }
 
-                        )
+                    )
+                  }
                 }
-
+                setIsOpen(false)
               }}
-              style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              style={{width: column.type === 'readonly' ? '100%' : '50%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
-              <p>등록하기</p>
+              <p>{column.type !== 'readonly' ? '등록하기' : '확인'}</p>
             </div>
           </div>
         </div>

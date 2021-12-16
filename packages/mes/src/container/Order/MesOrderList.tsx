@@ -148,7 +148,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `contractSearch`,{
       path: {
         page: isPaging ?? 1,
         renderItem: 18,
@@ -159,7 +159,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -364,6 +364,8 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         isCalendar
         searchKeyword={""}
         searchOptionList={optionList}
+        onChangeSearchKeyword={(keyword) => SearchBasic(keyword, option, 1)}
+        onChangeSearchOption={(option) => SearchBasic(keyword, option, 1)}
         calendarTitle={'납품 기한'}
         calendarType={'period'}
         selectDate={selectDate}
@@ -386,6 +388,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
                   type: 'order'
                 }))
                 router.push('/mes/order/modify')
+                break;
               case 2:
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
                   ()=>{
@@ -393,6 +396,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
                   },
                   ()=>{}
                 )
+                break;
             }
 
           }

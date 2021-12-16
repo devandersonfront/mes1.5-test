@@ -5,7 +5,7 @@ import Notiflix from 'notiflix'
 
 type RequestType = 'get' | 'post' | 'delete' | 'put'
 
-export const requestApi = async (type: RequestType,url: string, data?: any, token?: any, contentsType?: 'blob', tab?:string) => {
+export const requestApi = async (type: RequestType,url: string, data?: any, token?: any, contentsType?: 'blob', params?: any) => {
   Notiflix.Loading.circle()
 
   const ENDPOINT = `${SF_ENDPOINT}`
@@ -57,12 +57,19 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
       let postUrl:string = ''
       if(url.indexOf('http://') !== -1){
         postUrl = url
-      }else if(tab){
-        postUrl = ENDPOINT+url+"/"+tab
       }else{
         postUrl = ENDPOINT+url
       }
 
+      if(params){
+        Object.keys(params).map((v, i) => {
+          if(i === 0) {
+            postUrl += `?${v}=${params[v]}`
+          }else{
+            postUrl += `&${v}=${params[v]}`
+          }
+        })
+      }
 
       return Axios.post(postUrl, data, token && {'headers': {'Authorization': token}, responseType: contentsType})
         .then((result) => {
@@ -115,7 +122,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
   }
 }
 
-export const RequestMethod = async (MethodType: RequestType, apiType: string, data?: any, token?: string, responseType?: 'blob', tab?:string) => {
+export const RequestMethod = async (MethodType: RequestType, apiType: string, data?: any, token?: string, responseType?: 'blob', params?: any) => {
   const tokenData = token ?? cookie.load('userInfo').token
   if(apiType === 'excelDownload'){
     return Axios.post(ApiList[apiType], data, tokenData && {'headers': {'Authorization': tokenData}, responseType: responseType})
@@ -166,7 +173,7 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
         return false
       })
   } else {
-    const response = await requestApi(MethodType, ApiList[apiType], data, tokenData, responseType, tab)
+    const response = await requestApi(MethodType, ApiList[apiType], data, tokenData, responseType, params)
     return response
   }
 }
@@ -194,9 +201,8 @@ const ApiList = {
   rawinSave: `/api/v1/rawmaterial/warehouse/save`,
   rawstockSave: `/api/v1/rawmaterial/warehouse/save`,
   productprocessSave: `/api/v1/product/process/save`,
-  stockSummarySave: `/api/v1/stock/summary/save`,
+  stockSummarySave: `/api/v1/stock/summary`,
   operationSave: `/api/v1/operation/save`,
-  shipmentSave: `/api/v1/shipment/save`,
   recordSave: `/api/v1/record/save`,
   factorySave: `/api/v1/factory/save`,
   deviceSave: `/api/v1/device/save`,
@@ -207,6 +213,7 @@ const ApiList = {
   subFactorySave: `/api/v1/subFactory/save`,
   contractSave: `/api/v1/contract/save`,
   sheetSave: `/api/v1/sheet/save`,
+  shipmentSave: `/api/v1/shipment/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -243,6 +250,7 @@ const ApiList = {
   subinDelete: `/api/v1/lot-sm/delete`,
   subFactoryDelete: `/api/v1/subFactory/delete`,
   contractDelete: `/api/v1/contract/delete`,
+  sheetDelete: `/api/v1/sheet/delete`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,
@@ -263,7 +271,6 @@ const ApiList = {
   stockSummaryList: '/api/v1/stock/summary/list',
   operactionList: `/api/v1/operation/list`,
   defectList: `/api/v1/quality/statistics/defect`,
-  shipmentList: '/api/v1/shipment/list',
   recordList: `/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
   factoryList: `/api/v1/factory/list`,
@@ -277,9 +284,11 @@ const ApiList = {
   sheetList: `/api/v1/sheet/list`,
   sheetLatestList: `/api/v1/sheet/latest`,
   sheetGraphList: `/api/v1/bom/graph`,
+  shipmentList: `/api/v1/shipment/list`,
   lotRmList: `/api/v1/lot-rm/list`,
   lotSmList: `/api/v1/lot-sm/list`,
   recordGroupList: `/api/v1/record/groups`,
+  stockAdminList: '/api/v1/stock/admin/summary',
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -326,6 +335,9 @@ const ApiList = {
   excelDownload: `${SF_ENDPOINT_EXCEL}/api/v1/download`,
   excelFormatDownload: `${SF_ENDPOINT_EXCEL}/api/v1/format/download`,
   excelUpload: `${SF_ENDPOINT_EXCEL}/api/v1/format/upload`,
+
+  checkLotDuplication: `/api/v1/record/lot/duplication`,
+  loadMenu: `/menu/authorize/list`,
 
   bomLoad: `/api/v1/bom`,
   bomSave: `/api/v1/bom/save`,

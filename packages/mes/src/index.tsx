@@ -7,6 +7,7 @@ export {MesOperationModify} from './container/Operation/MesOperationModify'
 export {MesRecordList} from './container/Record/MesRecordList'
 //재고 현황
 export {MesStockList} from './container/Stock/MesStockList'
+export {MesStockProductList} from './container/Stock/MesStockProductList'
 //영업 관리
 export {MesOrderRegister} from './container/Order/MesOrderRegister'
 export {MesOrderList} from './container/Order/MesOrderList'

@@ -15,6 +15,7 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
+import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {
   column: IExcelHeaderType
@@ -39,57 +40,114 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      if (row.lots && row.lots.length) {
+        initData()
+      }else if (row.product?.product_id) {
+        SearchBasic()
+      } else {
+        setIsOpen(false)
+        Notiflix.Report.warning('수주를 선택해 주세요.', '', '확인',)
+      }
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
 
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
+  const initData = async() => {
+    let searchList = await SearchBasic().then((results) => {
+      return results.map((v, i) => {
+        let index = row.lots.findIndex((lot) => lot.group.sum.lot_number === v.group.sum.lot_number)
+        console.log(index)
+        if (index !== -1) {
+          return {
+            seq: i + 1,
+            lot_number: v.group.sum.lot_number,
+            start: v.group.sum.start,
+            end: v.group.sum.end,
+            worker_name: v.group.sum.worker.name,
+            good_quantity: v.group.sum.good_quantity,
+            amount: row.lots[index].amount,
+            group: {
+              ...v,
+            },
+            ...v,
+          }
+        }
+
+        return {
+          seq: i + 1,
+          lot_number: v.group.sum.lot_number,
+          start: v.group.sum.start,
+          end: v.group.sum.end,
+          worker_name: v.group.sum.worker.name,
+          good_quantity: v.group.sum.good_quantity,
+          amount: v.amount,
+          group: {
+            ...v,
+          },
+          ...v,
+        }
+      })
+
+    })
+
+    console.log(searchList)
+    setSearchList([...searchList])
+  }
+
+  const changeRow = (tmpRow: any) => {
+    let tmpData = []
+    let row = [];
+    if(typeof tmpRow === 'string'){
+      let tmpRowArray = tmpRow.split('\n')
+
+      row = tmpRowArray.map(v => {
+        if(v !== ""){
+          let tmp = JSON.parse(v)
+          return tmp
+        }
+      }).filter(v=>v)
+    }else{
+      row = [{...tmpRow}]
     }
 
+    console.log(row)
+    tmpData = row.map((v, i) => {
+
+      return {
+        seq: i+1,
+        lot_number: v.sum.lot_number,
+        start: v.sum.start,
+        end: v.sum.end,
+        worker_name: v.sum.worker.name,
+        good_quantity: v.sum.good_quantity,
+        group: {
+          ...v,
+        }
+      }
+    })
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
+  const SearchBasic = async () => {
     Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
+    const res = await RequestMethod('get', `recordGroupList`,{
       path: {
-        page: page,
+        product_id: row.product.product_id,
+        page: 1,
         renderItem: 18,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
+    if(res){
+      const searchList = changeRow(res)
 
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
+        page: res.page,
+        total: res.totalPages,
       })
 
       setSearchList([...searchList])
+      return searchList
     }
   }
 
@@ -151,22 +209,22 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <HeaderTable>
             <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>납품 번호</HeaderTableText>
+              <HeaderTableText style={{fontWeight: 'bold'}}>수주번호</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>20210303-001</HeaderTableText>
+              <HeaderTableText>{row.contract?.identification ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>거래처</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>진주상사</HeaderTableText>
+              <HeaderTableText>{row.customer ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>한국차</HeaderTableText>
+              <HeaderTableText>{row.model ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -174,19 +232,19 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>SU-20210701-1</HeaderTableText>
+              <HeaderTableText>{row.code ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>SU900</HeaderTableText>
+              <HeaderTableText>{row.product_name ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>반제품</HeaderTableText>
+              <HeaderTableText>{row.type ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -194,7 +252,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>EA</HeaderTableText>
+              <HeaderTableText>{row.unit ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             {
               column.type === 'base' &&
@@ -291,14 +349,27 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               </div>
               <div
                 onClick={() => {
-                  if (selectRow !== undefined && selectRow !== null) {
-                    onRowChange({
-                      ...row,
-                      ...searchList[selectRow],
-                      name: row.name,
-                      isChange: true
-                    })
-                  }
+                  let total = 0
+                  let lot = searchList.map(v => {
+                    if(v.amount) total += Number(v.amount)
+                    return {
+                      ...v,
+                      amount: v.amount ?? 0
+                    }
+                  })
+
+                  onRowChange({
+                    ...row,
+                    [column.key]: [...lot.map(v => {
+                      if(Number(v.amount)){
+                        return v
+                      }
+                    }).filter(v=>v)],
+                    amount: total,
+                    name: row.name,
+                    isChange: true
+                  })
+
                   setIsOpen(false)
                 }}
                 style={{

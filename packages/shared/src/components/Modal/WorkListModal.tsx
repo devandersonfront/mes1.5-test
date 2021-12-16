@@ -27,27 +27,25 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
-    {title: '수주번호', infoWidth: 144, key: 'customer'},
-    {title: '지시 고유 번호', infoWidth: 144, key: 'model'},
-    {title: '거래처', infoWidth: 144, key: 'customer'},
-    {title: '모델', infoWidth: 144, key: 'model'},
+    {title: '수주번호', infoWidth: 144, key: 'contract_id'},
+    {title: '지시 고유 번호', infoWidth: 144, key: 'identification'},
+    {title: '거래처', infoWidth: 144, key: 'customer_id'},
+    {title: '모델', infoWidth: 144, key: 'cm_id'},
   ],
   [
     {title: 'CODE', infoWidth: 144, key: 'code'},
     {title: '품명', infoWidth: 144, key: 'name'},
     {title: '품목 종류', infoWidth: 144, key: 'type'},
-    {title: '생산 공정', infoWidth: 144, key: 'process'},
+    {title: '생산 공정', infoWidth: 144, key: 'process_id'},
   ],
   [
     {title: '단위', infoWidth: 144, key: 'unit'},
     {title: '목표 생산량', infoWidth: 144, key: 'goal'},
-    {title: '총 카운터', infoWidth: 144, key: 'unit'},
-    {title: '총 양품 수량', infoWidth: 144, key: 'goal'},
-    {title: '총 불량 수량', infoWidth: 144, key: 'goal'},
+    {title: '총 카운터', infoWidth: 144, key: 'total_counter'},
+    {title: '총 양품 수량', infoWidth: 144, key: 'total_good_quantity'},
+    {title: '총 불량 수량', infoWidth: 144, key: 'total_poor_quantity'},
   ],
 ]
-
-
 
 const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
@@ -70,64 +68,80 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    if(row.contract?.contract_id) {
-      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-        Notiflix.Loading.remove()
-
-      })
+    if(row.os_id) {
+      SearchBasic(searchKeyword, optionIndex, 1)
     }
   }, [isOpen, searchKeyword])
 
   const changeRow = (tmpRow: any, key?: string) => {
-    let tmpRes = [];
-    let totalGood = 0;
-    let totalPoor = 0;
+    let tmpRes = []
+    let totalGood = 0
+    let totalPoor = 0
+    let defectReasons = []
+    let tmpRowArray = []
     if(typeof tmpRow === 'string'){
-      let tmpRowArray = tmpRow.split('\n')
+      tmpRowArray = tmpRow.split('\n')
 
-      tmpRes = tmpRowArray.map(v => {
+      tmpRes = tmpRowArray.map((v, index) => {
         if(v !== ""){
           let tmp = JSON.parse(v)
+          console.log(tmp.good_quantity)
           totalGood += tmp.good_quantity
           totalPoor += tmp.poor_quantity
+
+          if(tmp.defect_reasons){
+            if(defectReasons && defectReasons.length){
+              tmp.defect_reasons.map((defect, index) => {
+                defectReasons[index].amount += defect.amount
+              })
+            } else {
+              defectReasons = tmp.defect_reasons
+            }
+          }
+
           return tmp
         }
       }).filter(v=>v)
     }else{
+      totalGood += tmpRow.good_quantity
+      totalPoor += tmpRow.poor_quantity
+      defectReasons = tmpRow.defect_reasons
       tmpRes = [{...tmpRow}]
     }
 
+    console.log(totalGood, totalPoor)
+
     onRowChange({
       ...row,
+      defect_reasons: defectReasons,
       total_good_quantity: totalGood,
       total_poor_quantity: totalPoor,
-      total_counter: totalGood + totalPoor
+      total_counter: totalGood + totalPoor,
     })
 
-    return tmpRes
+    return tmpRes.map((v, i) => {
+      return {
+        ...v,
+        worker_name: v.worker.name,
+        sum: v.good_quantity+v.poor_quantity,
+        seq: i+1
+      }
+    })
   }
 
   const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
     setKeyword(keyword)
     setOptionIndex(option)
     const res = await RequestMethod('get', `recordAll`,{
       params: {
-        contractIds: row.contract.contract_id
+        sheetIds: row.os_id
       }
     })
 
     if(!!res){
       let tmpList = changeRow(res, )
 
-      setSearchList([...tmpList.map((v, i) => {
-        return {
-          ...v,
-          worker_name: v.worker.name,
-          sum: v.good_quantity+v.poor_quantity,
-          seq: i+1
-        }
-      })])
+      setSearchList([...tmpList])
     }
   }
 
@@ -150,6 +164,10 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     let tmp = bomDummy
     tmp.splice(index, 1)
     setBomDummy([...tmp])
+  }
+
+  const getSummaryInfo = (info) => {
+    return row[info.key] ?? '-'
   }
 
   const ModalContents = () => {
@@ -221,8 +239,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
                             <HeaderTableText>
-                              {/*{getSummaryInfo(info)}*/}
-                              -
+                              {getSummaryInfo(info)}
                             </HeaderTableText>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>

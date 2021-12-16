@@ -105,6 +105,4 @@ const DatetimePickerBox = ({ row, column, onRowChange, onClose }: IProps) => {
   );
 }
 
-
-
 export {DatetimePickerBox};

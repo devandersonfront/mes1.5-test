@@ -18,7 +18,7 @@ import {UploadButton} from '../../styles/styledComponents'
 import {BomInfoModal} from './BomInfoModal'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import {useDispatch, useSelector} from 'react-redux'
-import {insert_summary_info, reset_summary_info} from '../../reducer/infoModal'
+import {change_summary_info_index, insert_summary_info, reset_summary_info} from '../../reducer/infoModal'
 import {RootState} from '../../index'
 
 interface IProps {
@@ -70,30 +70,39 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      if(row.product?.bom_root_id){
-        setInfoModal(row.product, 0)
+      console.log(row)
+      if(row.bom_root_id){
+        SearchBasic().then(() => {
+          Notiflix.Loading.remove()
+        })
       } else {
         setIsOpen(false)
+        Notiflix.Report.warning("제품을 선택해 주세요.", "", "확인",)
       }
+    }else{
+      dispatch(reset_summary_info());
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen, row])
 
-  useEffect(() => {
-    console.log(selector)
-    if(selector.data[selector.index]){
-      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-        Notiflix.Loading.remove()
-      })
-    }
-  }, [selector])
+  // useEffect(() => {
+  //   console.log(selector)
+  //   if(selector.datas[selector.index]){
+  //     SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+  //       Notiflix.Loading.remove()
+  //     })
+  //   }
+  // }, [selector])
 
   const setInfoModal = async (product: any, index: number) => {
+    console.log('product', product)
     if(selector){
-      setTabs([...selector.title, product.code])
       await dispatch(insert_summary_info({
-        data: [...selector.data, product.bom_root_id],
-        title: [...selector.title, product.code],
-        index
+        code: product.code,
+        title: product.name,
+        data:[],
+        headerData: {
+          ...row.parent,
+        }
       }))
     }
   }
@@ -162,6 +171,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         disturbance: Number(row.goal) * Number(v.usage),
         processArray: childData.process ?? null,
         process: childData.process ? childData.process.name : '-',
+        spare:'부',
         bom_root_id: childData.bom_root_id,
         product: v.type === 2 ?{
           ...childData,
@@ -178,22 +188,30 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
+  const SearchBasic = async (selectKey?:string) => {
     Notiflix.Loading.circle()
-    // setKeyword(keyword)
-    // setOptionIndex(option)
-    const res = await RequestMethod('get', `bomLoad`,{path: { key: selector.data[selector.index] }})
-
-    if(res){
-      let searchList = changeRow(res)
-      console.log('row', res )
-      setSearchList([...searchList.map(v => {
-        return {
-          ...v,
-          spare: '부'
+    let res;
+      if(selectKey){
+        res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
+        if(res){
+          let searchList = changeRow(res)
+          dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
+          setSearchList([...searchList])
+        }else{
+          Notiflix.Report.warning("BOM 정보가 없습니다.", "", "확인", () => setIsOpen(false))
         }
-      })])
-    }
+
+      }else{
+        res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
+        if(res){
+          let searchList = changeRow(res)
+          console.log("no selectKey : ", searchList)
+          dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
+          setSearchList([...searchList])
+        }else{
+          Notiflix.Report.warning("BOM 정보가 없습니다.", "", "확인", () => setIsOpen(false))
+        }
+      }
   }
 
   const addNewTab = (index: number) => {
@@ -314,10 +332,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                     tabRef.current && tabRef.current.clientWidth < 63
                       ? focusIndex !== i
                       ? <><p onClick={() => {
-                        dispatch(insert_summary_info({
-                          ...selector,
-                          index: i
-                        }))
+                        dispatch(change_summary_info_index(i))
                       }}>{v}</p></>
                       : <>
                         <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {

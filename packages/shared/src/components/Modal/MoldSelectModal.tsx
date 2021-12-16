@@ -27,8 +27,8 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
-    {title: '지시 고유 번호', infoWidth: 144, key: 'model'},
-    {title: 'LOT 번호', infoWidth: 144, key: 'customer'},
+    {title: '지시 고유 번호', infoWidth: 144, key: 'identification'},
+    {title: 'LOT 번호', infoWidth: 144, key: 'lot_number'},
     {title: '거래처', infoWidth: 144, key: 'customer'},
     {title: '모델', infoWidth: 144, key: 'model'},
   ],
@@ -41,9 +41,9 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
   [
     {title: '단위', infoWidth: 144, key: 'unit'},
     {title: '목표 생산량', infoWidth: 144, key: 'goal'},
-    {title: '작업자', infoWidth: 144, key: 'unit'},
-    {title: '양품 수량', infoWidth: 144, key: 'goal'},
-    {title: '불량 수량', infoWidth: 144, key: 'goal'},
+    {title: '작업자', infoWidth: 144, key: 'worker'},
+    {title: '양품 수량', infoWidth: 144, key: 'good_quantity'},
+    {title: '불량 수량', infoWidth: 144, key: 'poor_quantity'},
   ],
 ]
 
@@ -61,7 +61,27 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
+    if(!row.molds || !row.molds.length){
+      onRowChange({
+        ...row,
+        name: row.name,
+        molds: row.product.molds.map((v, index) => {
+          return {
+            mold: {
+              sequence: index+1,
+              mold: {
+                ...v.mold
+              },
+              setting: v.spare === '여' ? 0 : 1
+            }
+          }
+        }),
+        isChange: true
+      })
+    }
+
     if(isOpen) {
+      console.log(row)
       setSearchList([...row.product.molds.map((v, index) => {
         return {
           ...v.mold,
@@ -136,6 +156,10 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
     </>
   }
 
+  const getSummaryInfo = (info) => {
+    return row[info.key] ?? '-'
+  }
+
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -190,8 +214,8 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
                             <HeaderTableText>
-                              {/*{getSummaryInfo(info)}*/}
-                              -
+                              {getSummaryInfo(info)}
+                              {/*-*/}
                             </HeaderTableText>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>

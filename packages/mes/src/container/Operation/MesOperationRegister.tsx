@@ -125,6 +125,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     if(res){
       console.log(res)
       setBasicRow([{
+        bom_root_id: res.product.bom_root_id,
         contract: res.contract,
         contract_id: res.contract?.identification ?? "-",
         date: res.date,
@@ -243,7 +244,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             if(v.product?.product_id && isFirst) loadLatestSheet(v.product.product_id)
           })
           setSelectList(tmp)
-          setBasicRow(e)
+          setBasicRow([...e])
         }}
         selectList={selectList}
         //@ts-ignore

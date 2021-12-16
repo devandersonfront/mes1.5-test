@@ -53,25 +53,26 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    if(column.type !== 'readonly'){
-      if(isOpen && row.process_id && searchList.findIndex((e) => !!e.amount ) === -1) {
-        loadDefectList()
-      }
-    }else{
-      if(row && row.defect_reasons){
-        let total = 0
-        setSearchList([...row.defect_reasons.map(v => {
-          total += v.amount
-          return ({
-            ...v,
-            ...v.defect_reason,
-          })
-        })])
+    if(row['defect_reasons'] && row['defect_reasons'].length){
+      let total = 0
+      setSearchList([...row.defect_reasons.map(v => {
+        total += Number(v.amount)
+        return ({
+          ...v,
+          ...v.defect_reason,
+        })
+      })])
 
-        setTotalCount(total)
+      setTotalCount(total)
+    }else {
+
+      if(column.type !== 'readonly'){
+        if(isOpen && row.process_id && searchList.findIndex((e) => !!e.amount ) === -1) {
+          loadDefectList()
+        }
       }
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen, searchKeyword, row['defect_reasons']])
   // useEffect(() => {
   //   if(pageInfo.total > 1){
   //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -261,6 +262,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 let ppr_id = ''
                 let reason = ''
                 let total = 0
+                console.log('e',e)
                 let tmpRow = e.map((v, i) => {
                   if(v.add) {
                     addIndex = i+1
