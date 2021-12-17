@@ -64,6 +64,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
             end: v.group.sum.end,
             worker_name: v.group.sum.worker.name,
             good_quantity: v.group.sum.good_quantity,
+            current: v.group.sum.current,
             amount: row.lots[index].amount,
             group: {
               ...v,
@@ -79,6 +80,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           end: v.group.sum.end,
           worker_name: v.group.sum.worker.name,
           good_quantity: v.group.sum.good_quantity,
+          current: v.group.sum.current,
           amount: v.amount,
           group: {
             ...v,
@@ -119,6 +121,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         end: v.sum.end,
         worker_name: v.sum.worker.name,
         good_quantity: v.sum.good_quantity,
+        current: v.sum.current,
         group: {
           ...v,
         }

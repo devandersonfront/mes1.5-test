@@ -41,7 +41,7 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
   [
     {title: '단위', infoWidth: 144, key: 'unit'},
     {title: '목표 생산량', infoWidth: 144, key: 'goal'},
-    {title: '작업자', infoWidth: 144, key: 'worker'},
+    {title: '작업자', infoWidth: 144, key: 'worker_name'},
     {title: '양품 수량', infoWidth: 144, key: 'good_quantity'},
     {title: '불량 수량', infoWidth: 144, key: 'poor_quantity'},
   ],

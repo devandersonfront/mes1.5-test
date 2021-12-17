@@ -77,6 +77,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
   const [lotList, setLotList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
+  const [selectProduct, setSelectProduct] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -337,6 +338,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   }
 
                   if(v.lotList){
+                    setSelectProduct(v.code)
                     setLotList([...v.lotList.map((v,i) => ({
                       ...v,
                       seq: i+1
@@ -367,7 +369,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-                <p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 (SUS-111/SUS360)</p>
+                <p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 ({selectProduct})</p>
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
@@ -427,11 +429,17 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   setIsOpen(false)
                 }else{
                   let bomList = []
+                  let disturbance = 0
                   searchList.map((bom, index) => {
-                    console.log('bom', bom)
+                    let totalAmount = 0
                     bom.lots?.map(lot => {
-                      console.log('lot', lot)
                       if(Number(lot.amount)){
+                        totalAmount += Number(lot.amount)
+
+                        if(Number(lot.amount) > lot.current){
+                          Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
+                        }
+
                         bomList.push({
                           record_id: row.record_id,
                           ...row.input_bom[index],
@@ -444,18 +452,29 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                             warehousing: lot.warehousing,
                             date: lot.date,
                             current: lot.current,
-                            amount: lot.amount
+                            amount: Number(lot.amount) > lot.current ? 0 : lot.amount
                           }
                         })
                       }
                     })
+                    console.log('totalAmount', totalAmount, bom.disturbance)
+
+                    if(totalAmount !== bom.disturbance){
+                      disturbance += 1
+                    }
                   })
-                  onRowChange({
-                    ...row,
-                    bom: bomList
-                  })
-                  console.log(bomList)
-                  setIsOpen(false)
+
+                  if(disturbance === 0){
+                    onRowChange({
+                      ...row,
+                      bom: bomList
+                    })
+                    console.log(bomList)
+                    setIsOpen(false)
+                  }else{
+                    Notiflix.Report.warning(`소요량과 생산량 합계를 일치시켜 주세요`, '', '확인')
+                  }
+
                 }
               }}
               style={{width: column.type !== 'readonly' ? "50%" : '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}

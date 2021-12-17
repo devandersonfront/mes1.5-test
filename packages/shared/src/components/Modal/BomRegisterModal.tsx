@@ -411,6 +411,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
+                console.log(row)
                 onRowChange({
                   ...row,
                   input_bom: [

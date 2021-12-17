@@ -108,7 +108,7 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
-        router.push('/mes/order/list')
+        router.push('/mes/delivery/list')
       });
     }
   }

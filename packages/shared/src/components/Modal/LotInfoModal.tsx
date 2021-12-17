@@ -56,7 +56,7 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   }, [isOpen, searchKeyword])
   console.log(row)
-투
+
   const changeRow = (row: any) => {
 
     console.log(row)
@@ -99,7 +99,7 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
           }
         }).filter(v=>v)
       }else{
-        tmp = [{...row}]
+        tmp = [{...res}]
       }
 
       let searchList = tmp.map((row: any, index: number) => {

@@ -56,12 +56,17 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     if(row['defect_reasons'] && row['defect_reasons'].length){
       let total = 0
       setSearchList([...row.defect_reasons.map(v => {
-        total += Number(v.amount)
+        if(v.amount){
+          total += Number(v.amount)
+        }
+
         return ({
           ...v,
           ...v.defect_reason,
         })
       })])
+
+      console.log(total)
 
       setTotalCount(total)
     }else {
@@ -73,13 +78,6 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       }
     }
   }, [isOpen, searchKeyword, row['defect_reasons']])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
 
   const changeRow = (row: any, key?: string) => {
     let tmpData = {
@@ -164,7 +162,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       path: {
         page: 1,
         renderItem: 18,
-        process_id: row.process_id,
+        process_id: row.processId,
       }
     })
 

@@ -312,6 +312,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               onClick={() => {
                 console.log("modal Result Button : ", row)
                 setIsOpen(false)
+                console.log(searchList[selectRow])
                 onRowChange({
                   ...row,
                   ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),

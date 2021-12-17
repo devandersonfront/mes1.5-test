@@ -27,8 +27,8 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
-    {title: '수주번호', infoWidth: 144, key: 'customer'},
-    {title: '지시 고유 번호', infoWidth: 144, key: 'model'},
+    {title: '지시 고유 번호', infoWidth: 144, key: 'identification'},
+    {title: 'LOT 번호', infoWidth: 144, key: 'lot_number'},
     {title: '거래처', infoWidth: 144, key: 'customer'},
     {title: '모델', infoWidth: 144, key: 'model'},
   ],
@@ -41,9 +41,9 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
   [
     {title: '단위', infoWidth: 144, key: 'unit'},
     {title: '목표 생산량', infoWidth: 144, key: 'goal'},
-    {title: '총 카운터', infoWidth: 144, key: 'unit'},
-    {title: '총 양품 수량', infoWidth: 144, key: 'goal'},
-    {title: '총 불량 수량', infoWidth: 144, key: 'goal'},
+    {title: '작업자', infoWidth: 144, key: 'worker_name'},
+    {title: '양품 수량', infoWidth: 144, key: 'good_quantity'},
+    {title: '불량 수량', infoWidth: 144, key: 'poor_quantity'},
   ],
 ]
 
@@ -148,6 +148,10 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
     </>
   }
 
+  const getSummaryInfo = (info) => {
+    return row[info.key] ?? '-'
+  }
+
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -202,8 +206,7 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
                             <HeaderTableText>
-                              {/*{getSummaryInfo(info)}*/}
-                              -
+                              {getSummaryInfo(info)}
                             </HeaderTableText>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>

@@ -501,7 +501,7 @@ export const searchModalList: any = {
     {key: 'start', name: '작업 시작 일시'},
     {key: 'end', name: '작업 종료 일시'},
     {key: 'worker_name', name: '작업자'},
-    {key: 'good_quantity', name: '재고량'},
+    {key: 'current', name: '재고량'},
     {key: 'amount', name: '납품 수량', editor: TextEditor, textType: 'Modal',},
   ]
 }

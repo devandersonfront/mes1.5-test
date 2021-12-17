@@ -39,7 +39,7 @@ export const SearchResultSort = (infoList, type: string) => {
           ...v,
           customer_name: v.customer ? v.customer.name : "",
           model_name: v.model ? v.model.model : "",
-          type_name: TransferCodeToValue(v.type, 'material'),
+          type_name: TransferCodeToValue(v.type, 'productType'),
         }
       })
     }
@@ -127,6 +127,7 @@ export const SearchModalResult = (selectData, type: string) => {
       }
     }
     case 'product': {
+      console.log(selectData)
       return {
         code: selectData.code,
         name: selectData.name,
