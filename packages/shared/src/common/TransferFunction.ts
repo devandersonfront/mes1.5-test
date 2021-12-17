@@ -65,5 +65,9 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
     }
   }
 
-  return value
+  if(value === ""){
+    return code
+  }else{
+    return value
+  }
 }

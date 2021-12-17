@@ -131,6 +131,7 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
     case INSERT_SUMMARY_INFO :
       const insertState = {...state};
       const insertPayload = payload as {code:string, title:string, data:any[], headerData:any};
+      console.log("First insertState : ", insertState)
 
       insertState.datas.push({
         title: insertPayload.title,
@@ -174,14 +175,7 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
     case RESET_SUMMARY_INFO :
       return {
         index: 0,
-        datas:[
-          {
-            code:"",
-            title:"",
-            data:{},
-            headerData:[],
-          }
-        ]
+        datas:[]
       }
 
     case DELETE_SUMMARY_INFO:

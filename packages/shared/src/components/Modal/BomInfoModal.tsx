@@ -47,7 +47,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   const [headerData, setHeaderData] = useState<any>();
-
   useEffect(() => {
     if(isOpen) {
       if(row.bom_root_id){
@@ -70,23 +69,24 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   },[tabStore, ])
 
   useEffect(() => {
-    if(isOpen) getModalData()
+    if(isOpen ) {
+      getModalData()
+    }
+
   },[tabStore.index])
 
   const getModalData = async() => {
-    console.log(tabStore.datas[tabStore.index], tabStore);
+
     if(tabStore.datas[tabStore.index]?.code){
       await RequestMethod("get", "bomLoad", {path: { key: tabStore.datas[tabStore.index].code }})
           .then((res) => {
             const result = changeRow(res);
-            // console.log(result)
-            // console.log(headerData)
-            // console.log(result[selectRow].parent)
+
             setSearchList([...result])
+
             result.map((value, i) => {
               if(tabStore.datas[tabStore.index].code == value.parent.bom_root_id){
                 setHeaderData(result[0].parent)
-
               }
             })
           })
@@ -166,9 +166,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }else{
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
       let searchList = changeRow(res)
-      console.log("no selectKey : ", searchList)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
-      setSearchList([...searchList])
+      setSearchList(searchList.length > 0 ? searchList : [{seq:1}])
     }
   }
 
@@ -346,6 +345,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
+              {/*<HeaderTableText>{headerData ? TransferCodeToValue(headerData.type, 'productType') :row.type || row.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"}</HeaderTableText>*/}
               <HeaderTableText>{headerData ? TransferCodeToValue(headerData.type, 'productType') :row.type || row.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
@@ -433,7 +433,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 if(selectRow === 0 || selectRow === undefined){
                   return
                 }
-                console.log(selectRow)
                 let tmpRow = searchList
 
                 let tmp = tmpRow[selectRow]
@@ -507,7 +506,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     newTab: false
                   }
                 })
-                console.log(tmp)
                 setSearchList([...tmp])
               }}
               width={1746}
