@@ -21,12 +21,11 @@ interface IProps {
   column: IExcelHeaderType
   row: any
   onRowChange: (e: any) => void
-  modify?: boolean
+
 }
 
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
-const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
+const MachineInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -41,13 +40,16 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      setSearchList(row.machines.map((v,i) => {
-        return {
-          ...v,
-          ...v.machine,
-          seq: i+1
-        }
-      }) ?? [{seq: 1}])
+      if(row?.machines && row?.machines.length > 0){
+        setSearchList(row.machines.map((v,i) => {
+          return {
+            ...v,
+            ...v.machine,
+            seq: i+1
+          }
+        }))
+      }
+
     }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
@@ -58,76 +60,78 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   //   }
   // }, [pageInfo.page])
 
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
-    }
+  // const changeRow = (row: any, key?: string) => {
+  //   let tmpData = {
+  //     ...row,
+  //     machine_id: row.name,
+  //     machine_idPK: row.machine_id,
+  //     manager: row.manager ? row.manager.name : null
+  //   }
+  //
+  //   return tmpData
+  // }
 
-    return tmpData
-  }
-
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res ){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      })
-
-      setSearchList([...searchList])
-    }
-  }
+  // const SearchBasic = async (keyword: any, option: number, page: number) => {
+  //   Notiflix.Loading.circle()
+  //   setKeyword(keyword)
+  //   setOptionIndex(option)
+  //   const res = await RequestMethod('get', `machineSearch`,{
+  //     path: {
+  //       page: page,
+  //       renderItem: 18,
+  //     },
+  //     params: {
+  //       keyword: keyword ?? '',
+  //       opt: option ?? 0
+  //     }
+  //   })
+  //
+  //   if(res ){
+  //     let searchList = res.results.info_list.map((row: any, index: number) => {
+  //       return changeRow(row)
+  //     })
+  //
+  //     setPageInfo({
+  //       ...pageInfo,
+  //       page: res.page,
+  //       total: res.totalPages,
+  //     })
+  //
+  //     setSearchList([...searchList])
+  //   }
+  // }
 
   const ModalContents = () => {
-    if(modify){
-      return <>
-        <div style={{
-          padding: '3.5px 0px 0px 3.5px',
-          width: 112
-        }}>
-          <Button onClick={() => {
-            setIsOpen(true)
+    if(row?.machines){
+      if(row.machines.length > 0){
+        return <>
+          <div style={{
+            padding: '3.5px 0px 0px 3.5px',
+            width: 112
           }}>
-            <p>기계 수정</p>
-          </Button>
-        </div>
-      </>
-    }else{
-      return <>
-        <div style={{
-          padding: '3.5px 0px 0px 3.5px',
-          width: '100%'
-        }}>
-          <UploadButton onClick={() => {
-            setIsOpen(true)
+            <Button onClick={() => {
+              setIsOpen(true)
+            }}>
+              <p>기계 수정</p>
+            </Button>
+          </div>
+        </>
+      }else{
+        return <>
+          <div style={{
+            padding: '3.5px 0px 0px 3.5px',
+            width: '100%'
           }}>
-            <p>기계 등록</p>
-          </UploadButton>
-        </div>
-      </>
+            <UploadButton onClick={() => {
+              setIsOpen(true)
+            }}>
+              <p>기계 등록</p>
+            </UploadButton>
+          </div>
+        </>
+      }
+      }
     }
-  }
 
   return (
     <SearchModalWrapper >
@@ -276,7 +280,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               let tmpRow = [...searchList]
 
               tmpRow.splice(selectRow, 1)
-              console.log(selectRow, tmpRow)
 
               setSearchList([...tmpRow])
             }}>
@@ -286,7 +289,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
               headerList={searchModalList.machineInfo}
-              row={searchList ?? [{}]}
+              row={searchList }
               setRow={(e) => setSearchList([...e])}
               width={1746}
               rowHeight={32}

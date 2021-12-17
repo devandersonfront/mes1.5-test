@@ -80,7 +80,7 @@ export const columnlist: any = {
     {key: 'tmpId', editor: TextEditor},
     {key: 'password', editor: TextEditor},
     {key: 'password-confirm', editor: TextEditor},
-    {key: 'profile', formatter: FileEditer},
+    {key: 'profile', formatter: FileEditer, type:"image"},
   ],
   factory: [
     {key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력'},
@@ -168,10 +168,10 @@ export const columnlist: any = {
     {key: 'madeAt', name: '제조 연월일', formatter: CalendarBox, width: 118},
     {key: 'mfrCode', name: '제조 번호(필수)', editor: TextEditor, width: 118},
     {key: 'manager', name: '담당자', formatter: SearchModalTest, type: 'user', width: 118},
-    {key: 'photo', name: '기계사진', formatter: FileEditer, width: 118},
-    {key: 'qualify', name: '스펙 명판 사진', formatter: FileEditer, width: 118},
-    {key: 'capacity', name: '능력 명판 사진', formatter: FileEditer, width: 118},
-    {key: 'guideline', name: '사용 설명서', formatter: FileEditer, width: 118},
+    {key: 'photo', name: '기계사진', formatter: FileEditer, width: 118, type:"image"},
+    {key: 'qualify', name: '스펙 명판 사진', formatter: FileEditer, width: 118, type:"image"},
+    {key: 'capacity', name: '능력 명판 사진', formatter: FileEditer, width: 118, type:"image"},
+    {key: 'guideline', name: '사용 설명서', formatter: FileEditer, width: 118, type:"image"},
     {key: 'interwork', name: '오버홀 유무', formatter: DropDownEditor, selectList: [
         {pk: 'true', name: '유'},
         {pk: 'false', name: '무'}
@@ -211,10 +211,10 @@ export const columnlist: any = {
     {key: 'madeAt', name: '제조 연월일', formatter: CalendarBox},
     {key: 'mfrCode', name: '제조 번호(필수)', editor: TextEditor},
     {key: 'manager', name: '담당자', formatter: SearchModalTest, type:"user"},
-    {key: 'photo', name: '장치사진', formatter: FileEditer},
-    {key: 'qualify', name: '스펙 명판 사진', formatter: FileEditer},
-    {key: 'capacity', name: '능력 명판 사진', formatter: FileEditer},
-    {key: 'guideline', name: '사용 설명서', formatter: FileEditer},
+    {key: 'photo', name: '장치사진', formatter: FileEditer, type:"image"},
+    {key: 'qualify', name: '스펙 명판 사진', formatter: FileEditer, type:"image"},
+    {key: 'capacity', name: '능력 명판 사진', formatter: FileEditer, type:"image"},
+    {key: 'guideline', name: '사용 설명서', formatter: FileEditer, type:"image"},
     {key: 'factory', name: '공장명', formatter: FactorySearchModal},
     {key: 'segFactory',name: '공장 세분화명', formatter: SegmentFactorySearchModal},
 

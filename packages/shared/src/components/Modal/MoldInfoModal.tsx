@@ -21,12 +21,11 @@ interface IProps {
   column: IExcelHeaderType
   row: any
   onRowChange: (e: any) => void
-  modify?: boolean
 }
 
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
-const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
+const MoldInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -41,13 +40,15 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      setSearchList(row.molds.map((v,i) => {
-        return {
-          ...v,
-          ...v.mold,
-          seq: i+1
-        }
-      }) ?? [{seq: 1}])
+      if(row?.molds && row?.molds.length > 0){
+        setSearchList(row.molds.map((v,i) => {
+          return {
+            ...v,
+            ...v.mold,
+            seq: i+1
+          }
+        }))
+      }
     }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
@@ -69,63 +70,65 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
-    }
-  }
+  // const SearchBasic = async (keyword: any, option: number, page: number) => {
+  //   Notiflix.Loading.circle()
+  //   setKeyword(keyword)
+  //   setOptionIndex(option)
+  //   const res = await RequestMethod('get', `machineSearch`,{
+  //     path: {
+  //       page: page,
+  //       renderItem: 18,
+  //     },
+  //     params: {
+  //       keyword: keyword ?? '',
+  //       opt: option ?? 0
+  //     }
+  //   })
+  //
+  //   if(res && res.status === 200){
+  //     let searchList = res.results.info_list.map((row: any, index: number) => {
+  //       return changeRow(row)
+  //     })
+  //
+  //     setPageInfo({
+  //       ...pageInfo,
+  //       page: res.results.page,
+  //       total: res.results.totalPages,
+  //     })
+  //
+  //     setSearchList([...searchList])
+  //   }
+  // }
 
   const ModalContents = () => {
-    if(modify){
-      return <>
-        <div style={{
-          padding: '3.5px 0px 0px 3.5px',
-          width: 112
-        }}>
-          <Button onClick={() => {
-            setIsOpen(true)
+    if(row?.molds){
+      if(row.molds.length){
+        return <>
+          <div style={{
+            padding: '3.5px 0px 0px 3.5px',
+            width: 112
           }}>
-            <p>금형 수정</p>
-          </Button>
-        </div>
-      </>
-    }else{
-      return <>
-        <div style={{
-          padding: '3.5px 0px 0px 3.5px',
-          width: '100%'
-        }}>
-          <UploadButton onClick={() => {
-            setIsOpen(true)
+            <Button onClick={() => {
+              setIsOpen(true)
+            }}>
+              <p>금형 수정</p>
+            </Button>
+          </div>
+        </>
+      }else{
+        return <>
+          <div style={{
+            padding: '3.5px 0px 0px 3.5px',
+            width: '100%'
           }}>
-            <p>금형 등록</p>
-          </UploadButton>
-        </div>
-      </>
+            <UploadButton onClick={() => {
+              setIsOpen(true)
+            }}>
+              <p>금형 등록</p>
+            </UploadButton>
+          </div>
+        </>
+      }
     }
   }
 
