@@ -56,16 +56,28 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     setOptionIndex(option)
-    if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
-        Notiflix.Loading.remove()
-      })
-    }else{
-      LoadBasic(page).then(() => {
-        Notiflix.Loading.remove()
-      })
+    if(getMenus()){
+      if(keyword){
+        SearchBasic(keyword, option, page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }else{
+        LoadBasic(page).then(() => {
+          Notiflix.Loading.remove()
+        })
+      }
     }
   }, [page, keyword, option])
+
+  const getMenus = async () => {
+    let res = await RequestMethod('get', `loadMenu`, {
+      path: {
+        tab: 'ROLE_PROD_06'
+      }
+    })
+
+    return !!res
+  }
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {

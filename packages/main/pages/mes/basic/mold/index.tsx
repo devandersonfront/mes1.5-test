@@ -32,7 +32,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
     const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
     const [basicRow, setBasicRow] = useState<Array<any>>([{
-        name: "", id: ""
+        id: ""
     }])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["mold"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())

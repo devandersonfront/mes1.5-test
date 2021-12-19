@@ -72,6 +72,7 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
           value = v.value;
         }
       })
+      break
     }
     case 'machine': {
       MACHINE_TYPE.map(v => {
@@ -79,6 +80,7 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
           value = v.value;
         }
       })
+      break
     }
   }
 

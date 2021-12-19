@@ -150,20 +150,17 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   }
 
   const loadGraphSheet = async (product_id: string) => {
-    console.log('graph')
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `sheetGraphList`,{
       path: { product_id }
     })
 
     if(res){
-      console.log(res)
       setBasicRow([{
         ...basicRow[0],
         goal: 0,
       }, ...res.map(v => {
         if(v.type === 2){
-          console.log(v)
           return {
             ...v,
             product: v.child_product,
@@ -198,7 +195,11 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
         break;
       case 1:
-        setExcelOpen(true)
+        setBasicRow([
+          {date: moment().format('YYYY-MM-DD'),
+            deadline: moment().format('YYYY-MM-DD')},
+          ...basicRow
+        ])
         break;
       case 2:
         SaveBasic()
@@ -250,17 +251,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/mold?page=${page}`)
-          }
-        }}
       />
       <ExcelDownloadModal
         isOpen={excelOpen}

@@ -109,8 +109,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       tmpRes = [{...tmpRow}]
     }
 
-    console.log(totalGood, totalPoor)
-
     onRowChange({
       ...row,
       defect_reasons: defectReasons,
