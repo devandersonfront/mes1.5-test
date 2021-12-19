@@ -6,7 +6,7 @@ import Router from 'next/router'
 
 type RequestType = 'get' | 'post' | 'delete' | 'put'
 
-export const requestApi = async (type: RequestType,url: string, data?: any, token?: any, contentsType?: 'blob', params?: any) => {
+export const requestApi = async (type: RequestType,url: string, data?: any, token?: any, contentsType?: 'blob', params?: any, path?:any) => {
   Notiflix.Loading.circle()
 
   const ENDPOINT = `${SF_ENDPOINT}`
@@ -74,6 +74,9 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           }
         })
       }
+      if(path){
+        postUrl += `/${path}`
+      }
 
       return Axios.post(postUrl, data, token && {'headers': {'Authorization': token}, responseType: contentsType})
         .then((result) => {
@@ -128,7 +131,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
   }
 }
 
-export const RequestMethod = async (MethodType: RequestType, apiType: string, data?: any, token?: string, responseType?: 'blob', params?: any) => {
+export const RequestMethod = async (MethodType: RequestType, apiType: string, data?: any, token?: string, responseType?: 'blob', params?: any, path?:any) => {
   const tokenData = token ?? cookie.load('userInfo').token
   if(apiType === 'excelDownload'){
     return Axios.post(ApiList[apiType], data, tokenData && {'headers': {'Authorization': tokenData}, responseType: responseType})
@@ -178,7 +181,7 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
         return false
       })
   } else {
-    const response = await requestApi(MethodType, ApiList[apiType], data, tokenData, responseType, params)
+    const response = await requestApi(MethodType, ApiList[apiType], data, tokenData, responseType, params, path)
     return response
   }
 }
