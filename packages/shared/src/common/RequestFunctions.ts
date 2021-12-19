@@ -316,6 +316,7 @@ const ApiList = {
   contractSearch: `/api/v1/contract/search`,
   lotRmSearch: `/api/v1/lot-rm/search`,
   lotSmSearch: `/api/v1/lot-sm/search`,
+  authSearch: `/api/v1/auth/all`,
 
   recordDefect: `/api/v1/record/defect`,
   recordPause: `/api/v1/record/pause`,

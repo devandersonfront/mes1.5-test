@@ -141,8 +141,6 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
             additional: [
               ...additional.map((v, index)=>{
                 if(!row[v.colName]) return undefined;
-                console.log(row.additional, " || v : ",v)
-                console.log("i : index ||| ", i, index, v.version)
                 // result.push(
                 return {
                   mi_id: v.id,
@@ -383,7 +381,6 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       })
 
       let random_id = Math.random()*1000;
-      console.log("??????????? : ", appendAdditional)
       return {
         ...row,
         ...appendAdditional,
@@ -395,7 +392,6 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         id: `factory_${random_id}`,
       }
     })
-    console.log("tmpBasicRow : ", tmpBasicRow)
     setBasicRow([...tmpBasicRow])
   }
 
