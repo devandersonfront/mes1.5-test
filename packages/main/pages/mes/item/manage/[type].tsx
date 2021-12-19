@@ -179,7 +179,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         //     }
         //   }).filter(v => v) : items,
         // }
-        ,undefined , undefined ,code)
+        ,undefined , undefined ,undefined,code)
     if(res !== null || res !== undefined) {
       listItem(code)
       Notiflix.Notify.success("저장되었습니다.")
