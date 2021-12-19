@@ -60,9 +60,9 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
   const loadingBar = useRef(null);
 
   useEffect(() => {
-    setOptionIndex(option)
+    // setOptionIndex(option)
     if(searchKeyword){
-      SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
+      SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -403,7 +403,10 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
           setPageInfo({page:1, total:1})
 
         }}
-        onChangeSearchOption={(option) => SearchBasic(keyword, option, 1)}
+        onChangeSearchOption={(option) => {
+          // SearchBasic(keyword, option, 1)
+          setOptionIndex(option)
+        }}
         calendarTitle={'납품 기한'}
         calendarType={'period'}
         selectDate={selectDate}

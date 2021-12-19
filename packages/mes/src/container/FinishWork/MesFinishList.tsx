@@ -59,7 +59,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
     // setOptionIndex(option)
     if(getMenus()){
       if(searchKeyword){
-        SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
+        SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }else{
@@ -75,6 +75,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       entries.forEach(entry => {
         if(entry.intersectionRatio > 0){
           if(pageInfo.total > pageInfo.page){
+            console.log(pageInfo.total, pageInfo.page)
             Notiflix.Loading.circle()
             setTimeout(()=>{
               setPageInfo({...pageInfo, page:pageInfo.page+1})
@@ -324,6 +325,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) => {
           setSearchKeyword(keyword)
+          setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
           console.log(option)

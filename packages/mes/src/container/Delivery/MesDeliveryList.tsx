@@ -60,9 +60,9 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
 
 
   useEffect(() => {
-    setOptionIndex(option)
+    // setOptionIndex(option)
     if(searchKeyword){
-      SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
+      SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -331,6 +331,9 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
           console.log("keyword : ", keyword);
           setSearchKeyword(keyword);
           setPageInfo({page:1, total:1})
+        }}
+        onChangeSearchOption={(option) => {
+          setOptionIndex(option)
         }}
         calendarTitle={'납품 날짜'}
         calendarType={'period'}
