@@ -50,6 +50,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
     to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
   });
 
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -60,8 +61,8 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     setOptionIndex(option)
-    if(keyword){
-      SearchBasic(keyword, option, pageInfo.page).then(() => {
+    if(searchKeyword){
+      SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -70,18 +71,19 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       })
     }
 
-  }, [pageInfo.page, keyword, option])
+  }, [pageInfo.page, searchKeyword, option])
 
   useEffect(()=>{
     const scroll = new IntersectionObserver(entries => {
       entries.forEach(entry => {
+        console.log(entry)
         if(entry.intersectionRatio > 0){
           if(pageInfo.total > pageInfo.page){
-            // Notiflix.Loading.circle()
+            Notiflix.Loading.circle()
             setTimeout(()=>{
               setPageInfo({...pageInfo, page:pageInfo.page+1})
               document.querySelector(".ScrollBox").scrollTop = 0;
-            },2000)
+            },1000)
             Notiflix.Loading.remove(300);
           // }
           }else{
@@ -93,6 +95,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       scroll.observe(ref);
     }
   },[ref, pageInfo.page])
+
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
@@ -159,8 +162,8 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         page: res.page,
         total: res.totalPages
       })
-      setRef(document.querySelector(".Next"));
       cleanUpData(res)
+      setRef(document.querySelector(".Next"));
     }else if (res === 401) {
       Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
         router.back()
@@ -177,7 +180,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
     const res = await RequestMethod('get', `contractSearch`,{
       path: {
         page: isPaging ?? 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params: {
         keyword: keyword ?? '',
@@ -393,7 +396,13 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         isCalendar
         searchKeyword={""}
         searchOptionList={optionList}
-        onChangeSearchKeyword={(keyword) => SearchBasic(keyword, option, 1)}
+        onChangeSearchKeyword={(keyword) => {
+          // SearchBasic(keyword, option, 1)
+          console.log("keyword : ", keyword);
+          setSearchKeyword(keyword);
+          setPageInfo({page:1, total:1})
+
+        }}
         onChangeSearchOption={(option) => SearchBasic(keyword, option, 1)}
         calendarTitle={'납품 기한'}
         calendarType={'period'}
@@ -455,7 +464,9 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
           setSelectList={setSelectList}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
-        <div className={"Next"} ref={loadingBar} style={{border:"1px solid", width:"100%", background:"white", height:"50px",}} />
+        <div className={"Next"} ref={loadingBar} style={{width:"100%", height:"50px",display:"flex", justifyContent:"center", alignItems:"center"}} >
+          Loading...
+        </div>
       </ExcelTableBox>
       <ExcelDownloadModal
         isOpen={excelOpen}

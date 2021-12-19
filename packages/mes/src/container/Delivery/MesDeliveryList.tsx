@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {
   ExcelTable,
   Header as PageHeader,
@@ -21,6 +21,7 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from 'react-redux'
+import styled from "styled-components";
 
 interface IProps {
   children?: any
@@ -48,23 +49,50 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
     to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
   });
 
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
 
+  const [ref, setRef] = useState<any>();
+  const loadingBar = useRef(null);
+
+
   useEffect(() => {
     setOptionIndex(option)
-    if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+    if(searchKeyword){
+      SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option, selectDate])
+  }, [pageInfo.page, searchKeyword, option, selectDate])
+
+  useEffect(()=>{
+    const scroll = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.intersectionRatio > 0){
+          if(pageInfo.total > pageInfo.page){
+            Notiflix.Loading.circle()
+            setTimeout(()=>{
+              setPageInfo({...pageInfo, page:pageInfo.page+1})
+              document.querySelector(".ScrollBox").scrollTop = 0;
+            },1000)
+            Notiflix.Loading.remove(300);
+            // }
+          }else{
+          }
+        }
+      })
+    })
+    if(loadingBar.current !== null && ref != undefined){
+      scroll.observe(ref);
+    }
+  },[ref, pageInfo.page])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -121,8 +149,8 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `shipmentList`,{
       path: {
-        page: (page || page !== 0) ? page : 1,
-        renderItem: 18,
+        page: pageInfo.page ?? 1,
+        renderItem: 22,
       },
       params: {
         from: selectDate.from,
@@ -138,7 +166,8 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
-    }else if (res.state === 401) {
+      setRef(document.querySelector(".Next"));
+    }else if (res === 401) {
       Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
         router.back()
       })
@@ -151,10 +180,10 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `shipmentSearch`,{
       path: {
         page: isPaging ?? 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params: {
         keyword: keyword ?? '',
@@ -162,13 +191,14 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
         total: res.totalPages
       })
       cleanUpData(res)
+      setRef(document.querySelector(".Next"));
     }
   }
 
@@ -297,6 +327,11 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         isCalendar
         searchKeyword={""}
         searchOptionList={optionList}
+        onChangeSearchKeyword={(keyword) => {
+          console.log("keyword : ", keyword);
+          setSearchKeyword(keyword);
+          setPageInfo({page:1, total:1})
+        }}
         calendarTitle={'납품 날짜'}
         calendarType={'period'}
         selectDate={selectDate}
@@ -324,39 +359,44 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
           // onClickHeaderButton
         }
       />
-      <ExcelTable
-        editable
-        resizable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList
-          e.map(v => {
-            if(v.isChange) tmp.add(v.id)
-          })
-          setSelectList(tmp)
-          setBasicRow(e)
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/mold?page=${page}`)
-          }
-        }}
-      />
+      <ExcelTableBox className={"ScrollBox"}>
+        <ExcelTable
+          editable
+          resizable
+          headerList={[
+            SelectColumn,
+            ...column
+          ]}
+          row={basicRow}
+          // setRow={setBasicRow}
+          setRow={(e) => {
+            let tmp: Set<any> = selectList
+            e.map(v => {
+              if(v.isChange) tmp.add(v.id)
+            })
+            setSelectList(tmp)
+            setBasicRow(e)
+          }}
+          selectList={selectList}
+          //@ts-ignore
+          setSelectList={setSelectList}
+          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        />
+        <div className={"Next"} ref={loadingBar} style={{width:"100%", height:"50px",display:"flex", justifyContent:"center", alignItems:"center"}} >
+          Loading...
+        </div>
+      </ExcelTableBox>
+      {/*<PaginationComponent*/}
+      {/*  currentPage={pageInfo.page}*/}
+      {/*  totalPage={pageInfo.total}*/}
+      {/*  setPage={(page) => {*/}
+      {/*    if(keyword){*/}
+      {/*      router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)*/}
+      {/*    }else{*/}
+      {/*      router.push(`/mes/basic/mold?page=${page}`)*/}
+      {/*    }*/}
+      {/*  }}*/}
+      {/*/>*/}
       <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
@@ -370,6 +410,28 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
     </div>
   );
 }
+
+const ExcelTableBox = styled.div`
+    height:720px;
+  overflow:scroll;
+::-webkit-scrollbar{
+    display:none;
+    width:${(props:any)=> props.theme};
+    height:8px;
+  }
+
+  ::-webkit-scrollbar-thumb{
+    background:#484848;
+  }
+
+  ::-webkit-scrollbar-track{
+    background:none;
+  }
+
+  ::-webkit-scrollbar-corner{
+    display:none;
+  }
+`;
 
 export const getServerSideProps = (ctx: NextPageContext) => {
   return {
