@@ -22,8 +22,8 @@ const HeaderFilter = ({row, column, setRow, onChangeOption}: IProps) => {
     }}>
       {column.options.map((v)=>{
         return (
-          <Option value={v.status} >
-            <p style={{margin:0, padding: 0, fontWeight: 'bold'}}>{v.name}</p>
+          <Option value={v.status}>
+            {v.name}
           </Option>
         )
       })}
