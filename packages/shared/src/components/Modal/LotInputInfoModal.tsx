@@ -64,8 +64,12 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       console.log('lotInput', row)
-      // loadRecordGroup(1, row.operation_sheet?.product?.product_id)
-      // changeRow(row.input_bom)
+      if(row.input_bom && row.input_bom.length){
+        changeRow(row.input_bom)
+      }else{
+        loadRecordGroup(1, row.operation_sheet?.product?.product_id)
+      }
+
     }
   }, [isOpen, searchKeyword])
 
@@ -130,6 +134,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       return {
         ...childData,
         seq: i+1,
+        bom: row.bom,
         code: childData.code,
         type: TransferCodeToValue(v.bom.type, 'material'),
         tab: v.bom.type,
@@ -384,7 +389,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
               headerAlign={'center'}
             />
           </div>
-          <div style={{ height: 46, display: 'flex', alignItems: 'flex-end'}}>
+          <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
             {
               column.type !== 'readonly' && <div
                   onClick={() => {

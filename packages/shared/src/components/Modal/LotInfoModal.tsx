@@ -57,16 +57,16 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
   }, [isOpen, searchKeyword])
   console.log(row)
 
-  const changeRow = (row: any) => {
+  const changeRow = (row: any, i: number) => {
 
     console.log(row)
 
     return {
-      seq: 1,
+      seq: i+1,
       lot_number: row.sum.lot_number,
       start: row.sum.start,
       end: row.sum.end,
-      worker: row.sum.worker?.name ?? '-',
+      worker: `${row.sum.worker?.name ?? '-'} ${row.elements.length > 1 ? `외 ${row.elements.length-1}명`: ''}`,
       amount: row.sum.current
     }
 
@@ -103,7 +103,7 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
       }
 
       let searchList = tmp.map((row: any, index: number) => {
-        return changeRow(row)
+        return changeRow(row, index)
       })
 
       // setPageInfo({
@@ -179,13 +179,13 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>거래처</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{row.customer_id ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>-</HeaderTableText>
+              <HeaderTableText>{row.cm_id ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -193,19 +193,19 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>SU-20210701-3</HeaderTableText>
+              <HeaderTableText>{row.code ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>SU900-1</HeaderTableText>
+              <HeaderTableText>{row.name ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>반제품</HeaderTableText>
+              <HeaderTableText>{row.type ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -213,13 +213,13 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>EA</HeaderTableText>
+              <HeaderTableText>{row.unit ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>재고량</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>55</HeaderTableText>
+              <HeaderTableText>{row.stock ?? 0}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
@@ -361,21 +361,6 @@ const SearchModalWrapper = styled.div`
   display: flex;
   width: 100%;
 `
-
-const Button = styled.button`
-    width:112px;
-    height:32px;
-    color:white;
-    font-size:15px;
-    border:none;
-    border-radius:6px;
-    background:#717C90;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-
-`;
 
 const HeaderTable = styled.div`
   width: 1744px;

@@ -41,9 +41,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      SearchBasic()
     }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
@@ -55,40 +53,38 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   // }, [pageInfo.page])
 
   const changeRow = (row: any, key?: string) => {
+    let total = 0
+
+    row.lots.map(v => {
+      if(v.amount) total += v.amount
+    })
+
     let tmpData = {
       ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
+      identification: row.identification,
+      date: row.date,
+      total
     }
 
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
+  const SearchBasic = async () => {
     Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
+    const res = await RequestMethod('get', `shipmentList`,{
       path: {
-        page: page,
-        renderItem: 18,
+        page: 1,
+        renderItem: 100000,
       },
       params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
+        contract_id: row.contract_id
       }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
+    if(res){
+      console.log(res)
+      let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
       })
 
       setSearchList([...searchList])

@@ -54,6 +54,9 @@ interface IProps {
   isMachine?: boolean
   setTab?: (tab: string) => void
   calendarTitle?: string
+  isNz?: boolean
+  onChangeNz?: (nz:boolean) => void
+  nz?: boolean
 }
 
 const useStyles = makeStyles(_ => {
@@ -148,7 +151,7 @@ const lightTheme = createMuiTheme({
 const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnclick, isSearch, style, leftButton, onClickMenu, menuIndex,
                       searchKeyword, onChangeSearchKeyword, searchOptionList, onChangeSearchOption, filterList, onChangeFilter,
                       serviceFilterButton, onClickServiceButton, leftButtonOnClick, basicMachineType, typeListOnClick, isCalendar, onChangeSelectDate,
-                      calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle}: IProps) => {
+                      calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz}: IProps) => {
 
   const [machineCheck, setMachineCheck] = React.useState<any>({
     all: true,
@@ -200,6 +203,39 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
               title && <span style={{fontSize: 22, marginRight: 18, marginLeft: 3, fontWeight: 'bold', color: 'white', marginTop:20}}>{title}</span>
             }
             <ButtonWrapper style={{marginTop: 20 }}>
+              {
+                isNz && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
+                    <input id='nzTrue' name={'nz'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                      onChangeNz && onChangeNz(true)
+                    }}/>
+                    <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>재고 0</p>
+                    <label htmlFor="nzTrue">
+                        <div style={{display:"flex", alignItems:"center",}}>
+                          {
+                            nz
+                              ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
+                              : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
+                          }
+
+                            <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>숨김</p>
+                        </div>
+                    </label>
+                    <input id='nzFalse' name={'nz'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                      onChangeNz && onChangeNz(false)
+                    }}/>
+                    <label htmlFor="nzFalse">
+                        <div style={{display:"flex", alignItems:"center",}}>
+                          {
+                            !nz
+                              ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
+                              : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
+                          }
+
+                            <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>표시</p>
+                        </div>
+                    </label>
+                </div>
+              }
               {
                 isCalendar &&
                 selectCalendarType(calendarType)
@@ -296,7 +332,7 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
                     <input
                         value={keyword ?? ""}
                         type={"text"}
-                        placeholder="검색어를 입력해주세요."
+                        placeholder="검색어를 2글자 이상 입력해주세요."
                         onChange={(e) => {setKeyword(e.target.value)}}
                         onKeyDown={(e) => {
                           if(e.key === 'Enter'){

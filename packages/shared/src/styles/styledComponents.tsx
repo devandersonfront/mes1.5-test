@@ -345,8 +345,8 @@ export const SearchModalStyle = styled.div`
         //background:#F4F6FA;
         border: 0.5px solid #b3b3b3;
         color:black;
-        text-align: left;
-        padding: 0px;
+        text-align: center;
+        padding: 0;
         border-top: none;
     }
     

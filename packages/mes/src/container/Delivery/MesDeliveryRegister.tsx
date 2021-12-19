@@ -33,7 +33,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", date: moment().format('YYYY-MM-DD'),
+    date: moment().format('YYYY-MM-DD'),
     limit_date: moment().format('YYYY-MM-DD')
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["deliveryRegister"])
@@ -51,12 +51,54 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
+    getMenus()
     Notiflix.Loading.remove()
   }, [])
 
-  useEffect(() => {
-    console.log("basicRow", basicRow)
-  }, [basicRow])
+  const getMenus = async () => {
+    let res = await RequestMethod('get', `loadMenu`, {
+      path: {
+        tab: 'ROLE_SALES_03'
+      }
+    })
+
+    if(res){
+      console.log(res)
+      let tmpColumn = columnlist["deliveryRegister"]
+
+      tmpColumn = tmpColumn.map((column: any) => {
+        let menuData: object | undefined;
+        res.bases && res.bases.map((menu: any) => {
+          if(menu.colName === column.key){
+            menuData = {
+              id: menu.id,
+              name: menu.title,
+              width: menu.width,
+              tab:menu.tab,
+              unit:menu.unit
+            }
+          } else if(menu.colName === 'id' && column.key === 'tmpId'){
+            menuData = {
+              id: menu.id,
+              name: menu.title,
+              width: menu.width,
+              tab:menu.tab,
+              unit:menu.unit
+            }
+          }
+        })
+
+        if(menuData){
+          return {
+            ...column,
+            ...menuData,
+          }
+        }
+      }).filter((v:any) => v)
+
+      setColumn([...tmpColumn])
+    }
+  }
 
   const SaveBasic = async () => {
     let res: any
@@ -88,6 +130,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
 
           return {
             ...row,
+            lots: row.lot_number,
             additional: [
               ...additional.map(v => {
                 if(row[v.name]) {
@@ -160,8 +203,21 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
           })
+          let tmpRow = e.map((v,i) => {
+            let index = e.findIndex((row) => row.product_id == v.product_id)
+            if(index !== -1 && index == i){
+              return true
+            }else{
+              Notiflix.Report.warning("동시에 같은품목을 두개이상 등록할 수 없습니다.", "", "확인")
+              return false
+            }
+          })
           setSelectList(tmp)
-          setBasicRow(e)
+          if(tmpRow.indexOf(false) !== -1){
+            setBasicRow([...basicRow])
+          }else{
+            setBasicRow([...e])
+          }
         }}
         selectList={selectList}
         //@ts-ignore

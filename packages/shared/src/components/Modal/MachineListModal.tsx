@@ -16,6 +16,7 @@ import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {MoldInfoModal} from './MoldInfoModal'
+import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {
   column: IExcelHeaderType
@@ -25,9 +26,9 @@ interface IProps {
 
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
-const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
+const headerItems: {title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
-    {title: '지시 고유 번호', infoWidth: 144, key: 'identification'},
+    {title: '지시 고유번호', infoWidth: 144, key: 'identification'},
     {title: 'LOT 번호', infoWidth: 144, key: 'lot_number'},
     {title: '거래처', infoWidth: 144, key: 'customer'},
     {title: '모델', infoWidth: 144, key: 'model'},
@@ -63,11 +64,14 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       if(!!row.machines && row.machines.length){
-        setSearchList([...row.machines.map(v => {
+        setSearchList([...row.machines.map((v, index) => {
+
           return {
+            seq: index+1,
             ...v,
             ...v.machine,
             ...v.machine.machine,
+            type: TransferCodeToValue(v.machine.machine.type, 'machine'),
           }
         })])
       }else{

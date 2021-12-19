@@ -143,12 +143,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
-    }else if (res.state === 401) {
-      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-        router.back()
-      })
     }
-
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -167,7 +162,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -378,7 +373,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         setSelectDate={(date) => setSelectDate(date)}
         title={"작업지시서 리스트"}
         buttons={
-          ['엑셀로 받기', '수정하기']
+          ['엑셀로 받기', '수정하기', '삭제']
         }
         buttonsOnclick={
           (e) => {

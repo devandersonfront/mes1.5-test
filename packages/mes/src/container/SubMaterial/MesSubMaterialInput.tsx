@@ -45,6 +45,56 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
+  useEffect(() => {
+    getMenus()
+  }, [])
+
+  const getMenus = async () => {
+    let res = await RequestMethod('get', `loadMenu`, {
+      path: {
+        tab: 'ROLE_WIP_01'
+      }
+    })
+
+    if(res){
+      console.log(res)
+      let tmpColumn = columnlist["subinV1u"]
+
+      tmpColumn = tmpColumn.map((column: any) => {
+        let menuData: object | undefined;
+        res.bases && res.bases.map((menu: any) => {
+          if(menu.colName === column.key){
+            menuData = {
+              id: menu.id,
+              name: menu.title,
+              width: menu.width,
+              tab:menu.tab,
+              unit:menu.unit
+            }
+          } else if(menu.colName === 'id' && column.key === 'tmpId'){
+            menuData = {
+              id: menu.id,
+              name: menu.title,
+              width: menu.width,
+              tab:menu.tab,
+              unit:menu.unit
+            }
+          }
+        })
+
+        if(menuData){
+          return {
+            ...column,
+            ...menuData,
+          }
+        }
+      }).filter((v:any) => v)
+
+      setColumn([...tmpColumn])
+    }
+  }
+
+
   const SaveBasic = async () => {
     let res: any
     res = await RequestMethod('post', `lotSmSave`,
@@ -107,6 +157,13 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
 
         }
       }).filter((v) => v))
+      .catch((error) => {
+        if(error.status === 409){
+          Notiflix.Notify.warning('lot 번호가 충돌된 데이터는 저장되지 않았습니다.')
+          return true
+        }
+        return false
+      })
 
 
     if(res){

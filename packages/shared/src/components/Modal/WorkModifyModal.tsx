@@ -16,6 +16,7 @@ import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {BomInfoModal} from './BomInfoModal'
+import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {
   row: any
@@ -60,6 +61,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{sequence: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
+  const [summaryData, setSummaryData] = useState<any>({})
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -67,7 +69,39 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
+
     if(isOpen) {
+      console.log(row)
+
+      let total_count = 0
+      let good_quantity = 0
+      let poor_quantity = 0
+
+      row.map(v => {
+        total_count += v.good_quantity + v.poor_quantity
+        good_quantity += v.good_quantity
+        poor_quantity += v.poor_quantity
+      })
+
+      setSummaryData({
+        contract_id: row[0].operation_sheet?.contract_id,
+        identification: row[0].operation_sheet?.identification,
+        customer_id: row[0].operation_sheet?.product?.customer?.name,
+        cm_id: row[0].operation_sheet?.product?.model?.model,
+        code: row[0].operation_sheet?.product?.code,
+        name: row[0].operation_sheet?.product?.name,
+        type: row[0].operation_sheet?.product?.type
+        || row[0].operation_sheet?.product?.type === 0
+          ? TransferCodeToValue(row[0].operation_sheet?.product?.type, 'productType')
+          : null,
+        process: row[0].operation_sheet?.product?.process?.name,
+        unit: row[0].operation_sheet?.product?.unit,
+        goal: row[0].operation_sheet?.goal,
+        total_counter: total_count,
+        total_good_quantity: good_quantity,
+        total_poor_quantity: poor_quantity,
+        // unit: row[0].operation_sheet?.product?.unit,
+      })
       setSearchList([...row])
     }
   }, [isOpen, searchKeyword])
@@ -141,6 +175,10 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
     }
   }
 
+  const getSummaryInfo = (info) => {
+    return summaryData[info.key] ?? '-'
+  }
+
   return (
     <Modal isOpen={isOpen} style={{
       content: {
@@ -193,8 +231,8 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
                         </HeaderTableTitle>
                         <HeaderTableTextInput style={{width: info.infoWidth}}>
                           <HeaderTableText>
-                            {/*{getSummaryInfo(info)}*/}
-                            -
+                            {getSummaryInfo(info)}
+                            {/*-*/}
                           </HeaderTableText>
                           {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                         </HeaderTableTextInput>

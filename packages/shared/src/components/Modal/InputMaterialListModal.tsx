@@ -86,13 +86,12 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      console.log(row)
       if(row.operation_sheet){
         changeRow(row.operation_sheet.input_bom)
       }else{
         changeRow(row.input_bom)
       }
-      console.log(row)
-
     }
   }, [isOpen, searchKeyword])
 
@@ -151,10 +150,11 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         version: v.bom.version,
         setting: v.bom.setting,
         stock: childData.stock,
+        bom_lot_list: tmpRow,
         disturbance: (Number(row.good_quantity ?? 0)+Number(row.poor_quantity ?? 0)) * Number(v.bom.usage),
         processArray: childData.process ?? null,
         process: childData.process ? childData.process.name : '-',
-        bom_root_id: childData.bom_root_id,
+        bom: row.bom,
         product: v.bom.type === 2 ?{
           ...childData,
         }: null,
@@ -327,7 +327,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={searchModalList.InputList}
+              headerList={column.type === 'readonly' ? searchModalList.InputListReadonly : searchModalList.InputList}
               row={searchList ?? [{}]}
               setRow={(e) => {
                 let tmp = e.map((v, index) => {

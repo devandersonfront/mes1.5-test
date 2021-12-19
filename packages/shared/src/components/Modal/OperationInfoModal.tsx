@@ -16,6 +16,7 @@ import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {useRouter} from 'next/router'
+import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {
   column: IExcelHeaderType
@@ -44,9 +45,7 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+      SearchBasic()
     }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
@@ -60,41 +59,40 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
   const changeRow = (row: any, key?: string) => {
     let tmpData = {
       ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
+      identification: row.operation_sheet.identification,
+      date: row.operation_sheet.date,
+      customer_id: row.operation_sheet.product.customer.name,
+      cm_id: row.operation_sheet.product.model.model,
+      code: row.operation_sheet.product.code,
+      name: row.operation_sheet.product.name,
+      type: (row.operation_sheet.product.type || row.operation_sheet.product.type === 0) ? TransferCodeToValue(Number(row.operation_sheet.product.type), 'productType') : '-',
+      process: row.operation_sheet.product.process.name,
     }
 
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
+  const SearchBasic = async () => {
     Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
+    const res = await RequestMethod('get', `recordList`, {
       params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
+        contractIds: row.contract_id,
+        nz: true
       }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
+    if(res){
+      console.log('res', res)
+      let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
 
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
+      setSearchList([...searchList.map((v, i) => {
+        return{
+          seq: i+1,
+          ...v,
+        }
+      })])
     }
   }
 
@@ -174,19 +172,19 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>수주번호</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>20210401-001</HeaderTableText>
+              <HeaderTableText>{row.identification ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>수주 날짜</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>2021.04.01</HeaderTableText>
+              <HeaderTableText>{row.date ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>납품 기한</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>2021.05.18</HeaderTableText>
+              <HeaderTableText>{row.deadline ?? ''}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -194,31 +192,31 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>거래처</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>진주상사</HeaderTableText>
+              <HeaderTableText>{row.customer_id ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>한국차</HeaderTableText>
+              <HeaderTableText>{row.cm_id ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>SU-20210701-1</HeaderTableText>
+              <HeaderTableText>{row.code ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>SU900</HeaderTableText>
+              <HeaderTableText>{row.name ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>완제품</HeaderTableText>
+              <HeaderTableText>{row.type ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -226,13 +224,13 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>EA</HeaderTableText>
+              <HeaderTableText>{row.unit ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>수주량</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>50</HeaderTableText>
+              <HeaderTableText>{row.amount ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>

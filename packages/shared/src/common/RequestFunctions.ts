@@ -44,9 +44,9 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         .catch((error) => {
           console.log(error)
           if(error.response.status === 406 || error.response.status === 401) {
-            return {
-              state: 401
-            }
+            Notiflix.Loading.remove(300)
+            Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인')
+            return false
           }else if(error.response.status === 500){
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
@@ -87,7 +87,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           }else if(error.response.status === 500){
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
           }
-          return false
+          throw error.response
         })
     case 'put':
       return Axios.put(ENDPOINT+url, data,token && {'headers': {'Authorization': token}, responseType: contentsType})
@@ -135,7 +135,6 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
         }else if(error.response.status === 500){
           Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
         }
-        return false
       })
   }else if( apiType === 'excelFormatDownload'){
 
@@ -251,6 +250,7 @@ const ApiList = {
   subFactoryDelete: `/api/v1/subFactory/delete`,
   contractDelete: `/api/v1/contract/delete`,
   sheetDelete: `/api/v1/sheet/delete`,
+  recodeDelete: `/api/v1/record/delete`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,

@@ -28,21 +28,24 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
       case 0:
         res = await RequestMethod('get', `lotRmList`, {
           params: {
-            rm_id: row.rm_id
+            rm_id: row.rm_id,
+            nz: true
           }
         })
         break;
       case 1:
         res = await RequestMethod('get', `lotSmList`, {
           params: {
-            sm_id: row.sm_id
+            sm_id: row.sm_id,
+            nz: true
           }
         })
         break;
       case 2:
         res = await RequestMethod('get', `recordList`, {
           params: {
-            productIds: row.product_id
+            productIds: row.product_id,
+            nz: true
           }
         })
         break;
@@ -70,7 +73,45 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         cursor: 'pointer',
       }} onClick={() => {
         if(column.key === 'lot'){
-          loadMaterialLot(row.tab)
+          if(column.type === 'readonly'){
+            let lot = []
+
+            if(row.bom){
+              if(row.bom[row.seq-1].lot && !Array.isArray(row.bom[row.seq-1].lot)){
+                lot = [row.bom[row.seq-1].lot]
+              }else{
+                lot = row.bom[row.seq-1].lot
+              }
+            }
+
+            console.log(lot)
+
+            onRowChange({
+              ...row,
+              lotList: [...lot.map(v => {
+                let type
+
+                switch(v.type){
+                  case 0:
+                    type = 'child_lot_rm'
+                    break
+                  case 1 :
+                    type = 'child_lot_sm'
+                    break
+                  case 2:
+                    type = 'child_lot_record'
+                    break
+                }
+
+                return {
+                  ...v,
+                  ...v[type]
+                }
+              })]
+            })
+          }else{
+            loadMaterialLot(row.tab)
+          }
         }else {
           if (row.bom_root_id) {
             console.log(row.bom_root_id, row);

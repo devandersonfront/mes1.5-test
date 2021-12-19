@@ -47,7 +47,6 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(['부자재 CODE', '부자재 품명',  '부자재 LOT 번호', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
-
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -386,6 +385,9 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   return (
     <div>
       <PageHeader
+        isNz
+        onChangeNz={changeNzState}
+        nz={nzState}
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
@@ -408,7 +410,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         setSelectDate={setSelectDate}
         title={"부자재 재고 현황"}
         buttons={
-          ['엑셀로 받기', '수정하기', '저장하기', '삭제']
+          ['수정하기', '저장하기', '삭제']
         }
         buttonsOnclick={onClickHeaderButton}
       />

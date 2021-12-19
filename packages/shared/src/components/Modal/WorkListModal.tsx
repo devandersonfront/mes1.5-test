@@ -141,7 +141,12 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     if(!!res){
       let tmpList = changeRow(res, )
 
-      setSearchList([...tmpList])
+      setSearchList([...tmpList.map(v => {
+        return {
+          ...row,
+          ...v,
+        }
+      })])
     }
   }
 

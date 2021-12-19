@@ -36,17 +36,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    order_num: '-', operation_num: '20210401-01',
-    start: now, end: now, lot: '20210518-001', worker: '잭슨',
-    code: 'SU-20210701-3', product: 'SU900-1', type: '완제품', unit: 'EA', process: '프레스',
-    goal: '50', total: '0', good: '0', uph: '14'
-  }, {
-    order_num: '-', operation_num: '20210401-02',
-    start: now, end: now, lot: '20210518-001', worker: '토니',
-    code: 'SU-20210701-3', product: 'SU900-1', type: '반제품', unit: 'EA', process: '프레스',
-    goal: '50', total: '0', good: '0', uph: '14'
-  },])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["recordListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['수주번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자'])
@@ -177,6 +167,76 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
       })
     }
 
+  }
+
+  const DeleteBasic = async () => {
+    const res = await RequestMethod('delete', `recodeDelete`,
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
+
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          let selectData: any = {}
+
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
+              }
+            }
+
+            if(v === 'unitWeight') {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(row['unitWeight'])
+              }
+            }
+
+            if(v === 'tmpId') {
+              selectData = {
+                ...selectData,
+                id: row['tmpId']
+              }
+            }
+          })
+          return {
+            ...row,
+            ...selectData,
+            worker: row.user,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
+          }
+
+        }
+      }).filter((v) => v))
+
+    if(res) {
+      Notiflix.Report.success('삭제 성공!', '', '확인', () => {
+        LoadBasic(1).then(() => {
+          Notiflix.Loading.remove()
+        })
+      })
+    }
   }
 
   const cleanUpData = (res: any) => {
@@ -311,13 +371,18 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         setSelectDate={(date) => setSelectDate(date)}
         title={"작업 일보 리스트"}
         buttons={
-          ['엑셀로 받기', '수정하기']
+          ['엑셀로 받기', '수정하기', '삭제']
         }
         buttonsOnclick={
           (e) => {
             switch(e) {
               case 1: {
                 setExcelOpen(true)
+                break
+              }
+              case 2: {
+                DeleteBasic()
+                break
               }
             }
           }

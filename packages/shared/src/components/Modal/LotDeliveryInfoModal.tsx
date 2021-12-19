@@ -33,6 +33,8 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
+  const [totalStock, setTotalStock] = useState<number>(0)
+  const [totalDelivery, setTotalDelivery] = useState<number>(0)
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -40,13 +42,14 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      console.log('row', row)
       if (row.lots && row.lots.length) {
         initData()
       }else if (row.product?.product_id) {
         SearchBasic()
       } else {
         setIsOpen(false)
-        Notiflix.Report.warning('수주를 선택해 주세요.', '', '확인',)
+        Notiflix.Report.warning('수주 또는 품목을 선택해 주세요.', '', '확인',)
       }
     }
   }, [isOpen, searchKeyword])
@@ -264,7 +267,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                       <HeaderTableText style={{fontWeight: 'bold'}}>총 재고량</HeaderTableText>
                   </HeaderTableTitle>
                   <HeaderTableTextInput style={{width: 144}}>
-                      <HeaderTableText>55</HeaderTableText>
+                      <HeaderTableText>{row.product?.stock ?? 0}</HeaderTableText>
                   </HeaderTableTextInput>
               </>
             }
@@ -272,7 +275,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>총 납품 수량</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>50</HeaderTableText>
+              <HeaderTableText>{totalDelivery}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
@@ -285,9 +288,18 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={searchModalList.lotDeliveryInfo}
+              headerList={column.key === 'baseReadonly' ? searchModalList.lotDeliveryInfoReadonly : searchModalList.lotDeliveryInfo}
               row={searchList ?? [{}]}
-              setRow={(e) => setSearchList([...e])}
+              setRow={(e) => {
+                let total = 0
+                setSearchList([...e])
+                e.map(v => {
+                  if(v.amount){
+                    total += Number(v.amount)
+                  }
+                })
+                setTotalDelivery(total)
+              }}
               width={1746}
               rowHeight={32}
               height={568}
@@ -308,7 +320,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               headerAlign={'center'}
             />
           </div>
-          { column.type === "readonly" ?
+          { column.type === "readonly" || column.type === "baseReadonly" ?
             <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
               <div
                 onClick={() => {
@@ -352,9 +364,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               </div>
               <div
                 onClick={() => {
-                  let total = 0
                   let lot = searchList.map(v => {
-                    if(v.amount) total += Number(v.amount)
                     return {
                       ...v,
                       amount: v.amount ?? 0
@@ -368,7 +378,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                         return v
                       }
                     }).filter(v=>v)],
-                    amount: total,
+                    amount: totalDelivery,
                     name: row.name,
                     isChange: true
                   })

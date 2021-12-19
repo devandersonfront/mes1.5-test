@@ -133,6 +133,9 @@ export const SearchModalResult = (selectData, type: string) => {
         name: selectData.name,
         type: TransferCodeToValue(selectData.type, 'material'),
         customer: selectData.customer ? selectData.customer.name : '',
+        customer_id: selectData.customer?.name,
+        cm_id: selectData.model?.model,
+        product_id: selectData.code,
         model: selectData.model ? selectData.model.model : '',
         type_name: TransferCodeToValue(selectData.type, 'material'),
         unit: selectData.unit,
@@ -158,7 +161,9 @@ export const SearchModalResult = (selectData, type: string) => {
     case 'rawmaterial': {
       return {
         ...selectData,
+        rm_id: selectData.code,
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
+        customer_id: selectData.customerArray?.name,
         raw_material: {
           ...selectData,
           customer: selectData.customerArray
@@ -168,6 +173,8 @@ export const SearchModalResult = (selectData, type: string) => {
     case 'submaterial': {
       return {
         ...selectData,
+        wip_id: selectData.code,
+        customer_id: selectData.customerArray?.name,
         sub_material: {
           ...selectData,
           customer: selectData.customerArray
@@ -198,10 +205,15 @@ export const SearchModalResult = (selectData, type: string) => {
         product: {
           ...selectData.product
         },
+        bom_root_id: selectData.product.bom_root_id,
         customer: selectData.product.customer?.name,
+        customer_id: selectData.product.customer?.name,
         model: selectData.product.model?.model,
+        cm_id: selectData.product.model?.model,
         code: selectData.product.code,
+        product_id: selectData.product.code,
         product_name: selectData.product.name,
+        name: selectData.product.name,
         type: TransferCodeToValue(selectData.product.type, 'material'),
         unit: selectData.product.unit,
         process: selectData.product.process.name,

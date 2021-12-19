@@ -388,6 +388,9 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
   return (
     <div>
       <PageHeader
+        isNz
+        nz={nzState}
+        onChangeNz={changeNzState}
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
