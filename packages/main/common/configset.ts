@@ -21,7 +21,7 @@ export const POINT_COLOR_3: string = '#e7e9eb' as const
 
 // export const SF_ADDRESS = "3.35.51.217"
 // export const SF_ADDRESS = "15.164.129.67"
-export const SF_ADDRESS = "3.35.10.40"
+export const SF_ADDRESS = "3.37.196.98"
 // export const SF_ADDRESS = "211.208.115.66"
 
 export const isLocalhost = () => {

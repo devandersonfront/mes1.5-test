@@ -6,7 +6,7 @@ import PageHeader from '../../../../component/Header/Header'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {IExcelHeaderType, IItemMenuType} from '../../../../common/@types/type'
-import {RequestMethod} from '../../../../common/RequestFunctions'
+
 import {columnlist} from '../../../../common/columnInit'
 import {HeaderButton, ItemListTableHeader, ItemListTableWrapper, ItemWrapper} from '../../../../styles/styledComponents'
 import ItemManageBox from '../../../../component/ItemManage/ItemManageBox'
@@ -14,6 +14,7 @@ import ItemManageBox from '../../../../component/ItemManage/ItemManageBox'
 import Notiflix from "notiflix";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../../reducer";
+import {RequestMethod} from "shared";
 
 interface IProps {
   children?: any
@@ -148,7 +149,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         const randomID = Math.random()*100;
         return {...value, id:"addi_"+randomID};
       })
-
+      Notiflix.Loading.remove(300)
       setBaseItem(baseList)
       setAddiItem(addiList)
       // setAddiItem(addiList.map((v: any, i: number) => {
@@ -178,7 +179,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         //     }
         //   }).filter(v => v) : items,
         // }
-        ,undefined , undefined ,code)
+        ,undefined , undefined ,undefined,code)
     if(res !== null || res !== undefined) {
       listItem(code)
       Notiflix.Notify.success("저장되었습니다.")
@@ -232,6 +233,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   }
 
   useEffect(() => {
+    Notiflix.Loading.standard();
     listItem(code)
   }, [])
 
