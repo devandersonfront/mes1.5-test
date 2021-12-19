@@ -237,6 +237,7 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
               width={1746}
               rowHeight={32}
               height={576}
+              setRow={()=>{}}
               setSelectRow={(e) => {
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{

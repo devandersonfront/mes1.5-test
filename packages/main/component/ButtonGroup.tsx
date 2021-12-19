@@ -241,7 +241,9 @@ const PageHeader = ({buttons, typeList, buttonsOnclick, isSearch, style, leftBut
                                     <div style={{display: 'flex'}}>
                                         {
                                             buttons.map((buttonTitle, buttonIndex) => {
-                                                return <HeaderButton onClick={() => buttonsOnclick && buttonsOnclick(buttonIndex)} key={`btn${buttonIndex}`}>{buttonTitle}</HeaderButton>
+                                                if(buttonTitle){
+                                                    return <HeaderButton onClick={() => buttonsOnclick && buttonsOnclick(buttonIndex)} key={`btn${buttonIndex}`}>{buttonTitle}</HeaderButton>
+                                                }
                                             })
                                         }
                                     </div>

@@ -161,7 +161,7 @@ export {ProfileHeader} from "./components/Profile/ProfileHeader"
 export {rootReducer} from "./reducer"
 
 type RootState = ReturnType<typeof rootReducer>
-export {RootState}
+export type {RootState}
 
 //redux
 export {setModifyInitData, SET_MENU_STATE} from "./reducer/modifyInfo"

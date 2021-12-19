@@ -197,7 +197,7 @@ const MoldSearchModal = ({column, row, onRowChange}: IProps) => {
               }
             </div>
             <div style={{display: 'flex'}}>
-              <MoldRegisterModal column={column} onRowChange={() => {}} row={row}/>
+              <MoldRegisterModal column={column} onRowChange={() => {}} row={row} register={()=>{}}/>
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>

@@ -21,11 +21,11 @@ interface IProps {
   column: IExcelHeaderType
   row: any
   onRowChange: (e: any) => void
-
+  modify
 }
 
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
-const MachineInfoModal = ({column, row, onRowChange}: IProps) => {
+const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)

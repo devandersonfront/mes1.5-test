@@ -269,6 +269,7 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
                 width={1750}
                 rowHeight={32}
                 height={576}
+                setRow={()=>{}}
                 setSelectRow={(e) => {
                   setSelectRow(e)
                   if(!searchList[e].border){

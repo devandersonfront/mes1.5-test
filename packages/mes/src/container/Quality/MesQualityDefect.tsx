@@ -20,6 +20,7 @@ import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import PeriodSelectCalendar from '../../../../main/component/Header/PeriodSelectCalendar'
+import ButtonGroup from '../../../../main/component/ButtonGroup'
 
 interface SelectParameter {
   from:string
@@ -270,7 +271,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
         }
         <div style={{display: 'flex', }}>
           <PeriodSelectCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={false} />
-          <PageHeader buttons={['']} buttonsOnclick={buttonEvents}/>
+          <ButtonGroup buttons={['']} buttonsOnclick={buttonEvents}/>
         </div>
       </div>
       <ExcelTable

@@ -64,10 +64,10 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen){
-      dispatch(insert_summary_info({
-        index: selector.index,
-        data: row
-      }))
+      // dispatch(insert_summary_info({
+      //   index: 1,
+      //   data: row
+      // }))
     }
   }, [row, isOpen])
 
