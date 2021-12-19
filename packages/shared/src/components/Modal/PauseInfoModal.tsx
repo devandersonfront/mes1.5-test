@@ -111,7 +111,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const loadPauseList = async () => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `pauseReasonList`,{
+    const res = await RequestMethod('get', `pauseReasonSearch`,{
       path: {
         page: 1,
         renderItem: 18,

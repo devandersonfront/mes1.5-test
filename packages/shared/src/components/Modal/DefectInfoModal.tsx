@@ -158,7 +158,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const loadDefectList = async () => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `defectReasonList`,{
+    const res = await RequestMethod('get', `defectReasonSearch`,{
       path: {
         page: 1,
         renderItem: 18,
