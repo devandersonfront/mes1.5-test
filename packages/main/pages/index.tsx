@@ -49,6 +49,6 @@ export default function Home() {
 
         </div>
       </WelcomePage>
-    </div>
+    </Container>
   )
 }
