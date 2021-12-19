@@ -29,16 +29,20 @@ const LoginPage: NextPage<IProps> = ({children, data, setData }) => {
 
 
   const onClickLogin = async () => {
-    Notiflix.Loading.dots('MES System 접속 중...')
-    const res = await requestApi('post', '/anonymous/login', data)
+    if(data.id && data.password){
+      Notiflix.Loading.dots('MES System 접속 중...')
+      const res = await requestApi('post', '/anonymous/login', data)
 
-    if(res) {
-      setToken( res )
-      dispatch(setUserInfoAction({
-        name: res.name,
-        profile: res.profilePath
-      }))
-      router.push('/mes/dashboard').then()
+      if(res) {
+        setToken( res )
+        dispatch(setUserInfoAction({
+          name: res.name,
+          profile: res.profilePath
+        }))
+        router.push('/mes/dashboard').then()
+      }
+    }else{
+      Notiflix.Report.warning('에러', '아이디와 비밀번호를 입력해주세요', '확인')
     }
   }
 

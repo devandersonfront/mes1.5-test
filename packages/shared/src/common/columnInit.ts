@@ -67,8 +67,6 @@ import {ManagerSearchModal} from "../components/Modal/ManagerSearchModal";
 import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFactorySearchModal";
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
 
-
-
 export const columnlist: any = {
   member: [
     {key: 'name', editor: TextEditor},
@@ -714,15 +712,15 @@ export const columnlist: any = {
     {key:"contract_id", name:"수주 번호", formatter: SearchModalTest, type: 'order', placeholder: '검색'   },
     {key:"date", name:"지시 날짜", formatter: CalendarBox, },
     {key:"deadline", name:"작업 기한", formatter: CalendarBox,},
-    {key:"customer", name:"거래처", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
-    {key:"model", name:"모델", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput' },
+    {key:"customer_id", name:"거래처", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
+    {key:"cm_id", name:"모델", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput' },
     {key:"code", name:"CODE", formatter: SearchModalTest, type: 'product', placeholder: '검색'},
-    {key:"product_name", name:"품명", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
+    {key:"name", name:"품명", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
     {key:"type", name:"품목 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
     {key:"unit", name:"단위", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
-    {key:"process", name:"생산 공정", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
+    {key:"process_id", name:"생산 공정", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
     {key:"goal", name:"목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0'},
-    {key: 'input_bom', name: '자재 선택', formatter: BomRegisterModal, width: 118},
+    {key: 'input', name: '자재 선택', formatter: BomRegisterModal, width: 118},
   ],
   operationListV2: [
     {key:"status", name:"상태", width: 118},
