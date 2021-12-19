@@ -27,11 +27,11 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", date: moment().format('YYYY-MM-DD'),
+    id: "", date: moment().format('YYYY-MM-DD'),
     deadline: moment().format('YYYY-MM-DD')
   }])
   const [isFirst, setIsFirst] = useState<boolean>(true)
-  const [column, _] = useState<Array<IExcelHeaderType>>(columnlist["operationRegisterV2"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationRegisterV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -42,6 +42,51 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   useEffect(() => {
     console.log('basicRow', basicRow)
   }, [basicRow])
+
+  const getMenus = async () => {
+    let res = await RequestMethod('get', `loadMenu`, {
+      path: {
+        tab: 'ROLE_PROD_01'
+      }
+    })
+
+    if(res){
+      console.log(res)
+      let tmpColumn = columnlist["operationRegisterV2"]
+
+      tmpColumn = tmpColumn.map((column: any) => {
+        let menuData: object | undefined;
+        res.bases && res.bases.map((menu: any) => {
+          if(menu.colName === column.key){
+            menuData = {
+              id: menu.id,
+              name: menu.title,
+              width: menu.width,
+              tab:menu.tab,
+              unit:menu.unit
+            }
+          } else if(menu.colName === 'id' && column.key === 'tmpId'){
+            menuData = {
+              id: menu.id,
+              name: menu.title,
+              width: menu.width,
+              tab:menu.tab,
+              unit:menu.unit
+            }
+          }
+        })
+
+        if(menuData){
+          return {
+            ...column,
+            ...menuData,
+          }
+        }
+      }).filter((v:any) => v)
+
+      setColumn([...tmpColumn])
+    }
+  }
 
   const SaveBasic = async () => {
     let res: any
@@ -88,7 +133,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
-            input_bom: row.input_bom ?? [],
+            input_bom: row.input ?? [],
             status: 1,
             additional: [
               ...additional.map(v => {
@@ -210,6 +255,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   }
 
   useEffect(() => {
+    getMenus()
     Notiflix.Loading.remove()
   }, [])
 

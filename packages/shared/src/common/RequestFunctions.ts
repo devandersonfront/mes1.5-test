@@ -2,6 +2,7 @@ import Axios, {AxiosError} from 'axios'
 import cookie from 'react-cookies'
 import {SF_ENDPOINT, SF_ENDPOINT_EXCEL} from './configset'
 import Notiflix from 'notiflix'
+import Router from 'next/router'
 
 type RequestType = 'get' | 'post' | 'delete' | 'put'
 
@@ -43,9 +44,13 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         })
         .catch((error) => {
           console.log(error)
-          if(error.response.status === 406 || error.response.status === 401) {
+          if(error.response.status === 406 || error.response.status === 403) {
             Notiflix.Loading.remove(300)
-            Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인')
+            Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
+            return false
+          }else if (error.response.status === 401){
+            Notiflix.Loading.remove(300)
+            Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
             return false
           }else if(error.response.status === 500){
             Notiflix.Loading.remove(300)

@@ -216,7 +216,7 @@ export const SearchModalResult = (selectData, type: string) => {
         name: selectData.product.name,
         type: TransferCodeToValue(selectData.product.type, 'material'),
         unit: selectData.product.unit,
-        process: selectData.product.process.name,
+        process: selectData.product.process?.name,
         contract_id: selectData.identification
       }
     }
