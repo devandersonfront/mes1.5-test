@@ -60,6 +60,8 @@ export const searchModalList: any = {
   ]
   ,process: [
     {key: 'name', name: '공정명', formatter: LineBorderContainer},
+  ],processSearch: [
+    {key: 'name', name: '공정명', formatter: LineBorderContainer},
   ],
   model: [
     {key: 'customer_name', name: '고객사명', formatter: LineBorderContainer},
@@ -372,7 +374,7 @@ export const searchModalList: any = {
     {key: 'name', name: '성명'},
     {key: 'appointment', name: '직책'},
     {key: 'ca_name', name: '권한'},
-    {key: 'id', name: '아이디'},
+    {key: 'email', name: '이메일'},
   ],
   customerSearch: [
     {key: 'name', name: '거래처'},

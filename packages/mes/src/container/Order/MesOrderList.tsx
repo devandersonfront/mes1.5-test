@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
+import styled from "styled-components";
 import {
   ExcelTable,
   Header as PageHeader,
@@ -10,7 +11,7 @@ import {
   excelDownload,
   PaginationComponent,
   ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType, setModifyInitData
+  IExcelHeaderType, IItemMenuType, setModifyInitData, searchModalList
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -54,19 +55,47 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
+  const [ref, setRef] = useState<any>();
+  const loadingBar = useRef(null);
+
   useEffect(() => {
     setOptionIndex(option)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, option, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
 
+  }, [pageInfo.page, keyword, option])
+
+  useEffect(()=>{
+    const scroll = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.intersectionRatio > 0){
+          console.log(pageInfo)
+          if(pageInfo.total > pageInfo.page){
+            // Notiflix.Loading.circle()
+            setTimeout(()=>{
+              setPageInfo({...pageInfo, page:pageInfo.page+1})
+              document.querySelector(".ScrollBox").scrollTop = 0;
+            },2000)
+            Notiflix.Loading.remove(300);
+          // }
+          }else{
+          }
+        }
+      })
+    })
+    console.log("loadingBar : ", loadingBar, ref)
+    if(loadingBar.current !== null && ref != undefined){
+      console.log("??", ref)
+      scroll.observe(ref);
+    }
+  },[ref, pageInfo.page])
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
@@ -123,19 +152,19 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `contractList`,{
       path: {
-        page: (page || page !== 0) ? page : 1,
-        renderItem: 18,
+        page: pageInfo.page ?? 1,
+        renderItem: 22,
       }
     })
-
     if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
         total: res.totalPages
       })
+      setRef(document.querySelector(".Next"));
       cleanUpData(res)
-    }else if (res.state === 401) {
+    }else if (res === 401) {
       Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
         router.back()
       })
@@ -166,6 +195,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
+      setRef(document.querySelector(".Next"));
     }
   }
 
@@ -216,9 +246,13 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       }
     }).filter((v: any) => v) : []
 
+    if(pageInfo.page > 1){
+      tmpRow = [...basicRow,...res.info_list]
+    }else{
+      tmpRow = res.info_list
+    }
 
-    tmpRow = res.info_list
-
+    // tmpRow.push({id:"next"})
 
     loadAllSelectItems( [
       ...tmpColumn,
@@ -274,7 +308,6 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         id: `mold_${random_id}`,
       }
     })
-
     setBasicRow([...tmpBasicRow])
   }
 
@@ -403,28 +436,31 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
           // onClickHeaderButton
         }
       />
-      <ExcelTable
-        editable
-        resizable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList
-          e.map(v => {
-            if(v.isChange) tmp.add(v.id)
-          })
-          setSelectList(tmp)
-          setBasicRow(e)
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
+      <ExcelTableBox className={"ScrollBox"}>
+        <ExcelTable
+          editable
+          resizable
+          headerList={[
+            SelectColumn,
+            ...column
+          ]}
+          row={basicRow}
+          // setRow={setBasicRow}
+          setRow={(e) => {
+            let tmp: Set<any> = selectList
+            e.map(v => {
+              if(v.isChange) tmp.add(v.id)
+            })
+            setSelectList(tmp)
+            setBasicRow(e)
+          }}
+          selectList={selectList}
+          //@ts-ignore
+          setSelectList={setSelectList}
+          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        />
+        <div className={"Next"} ref={loadingBar} style={{border:"1px solid", width:"100%", background:"white", height:"50px",}} />
+      </ExcelTableBox>
       <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
@@ -448,5 +484,27 @@ export const getServerSideProps = (ctx: NextPageContext) => {
     }
   }
 }
+
+const ExcelTableBox = styled.div`
+  height:720px;
+  overflow:scroll;
+::-webkit-scrollbar{
+    display:none;
+    width:${(props:any)=> props.theme};
+    height:8px;
+  }
+
+  ::-webkit-scrollbar-thumb{
+    background:#484848;
+  }
+
+  ::-webkit-scrollbar-track{
+    background:none;
+  }
+
+  ::-webkit-scrollbar-corner{
+    display:none;
+  }
+`;
 
 export {MesOrderList};

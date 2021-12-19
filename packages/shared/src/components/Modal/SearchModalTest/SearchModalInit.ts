@@ -6,9 +6,14 @@ interface SearchInitType {
 }
 
 export const SearchInit: Record<string, SearchInitType> = {
+  authority:{
+    title: "권한 검색",
+    searchFilter: ["권한명"],
+    excelColumnType: "auth"
+  },
   user: {
     title: '유저 검색',
-    searchFilter: ['성명', '직책', '권한'],
+    searchFilter: ['성명', '이메일', '직책명'],
     excelColumnType: 'user'
   },
   customer: {
@@ -79,4 +84,10 @@ export const SearchInit: Record<string, SearchInitType> = {
     excelColumnType: 'contract',
     placeholder: '수주번호입력'
   },
+  process:{
+    title:"공정 검색",
+    searchFilter:["공정명"],
+    excelColumnType:"process",
+
+  }
 }

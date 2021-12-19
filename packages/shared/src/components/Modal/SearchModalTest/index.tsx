@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {IExcelHeaderType} from '../../../common/@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
@@ -35,28 +35,15 @@ const optionList = {
 
 const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('')
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{}])
   const [tab, setTab] = useState<number>(0)
   const [searchModalInit, setSearchModalInit] = useState<any>()
-
-  // const io = new IntersectionObserver( entries => {
-  //   entries.forEach(entry => {
-  //     // 관찰 대상이 viewport 안에 들어온 경우 'tada' 클래스를 추가
-  //     if (entry.intersectionRatio > 0) {
-  //       console.log("???");
-  //       // entry.target.classList.add('tada');
-  //     }
-  //     // 그 외의 경우 'tada' 클래스 제거
-  //     else {
-  //       // entry.target.classList.remove('tada');
-  //       console.log("!!!");
-  //     }
-  //   })
-  // })
+  const [page, setPage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(0);
+  const loadingBar = useRef(null);
 
   useEffect(() => {
     if(column.type){
@@ -85,9 +72,48 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen){
       LoadBasic();
-    }
-  }, [isOpen, searchModalInit, optionIndex])
 
+    }
+  }, [isOpen, searchModalInit, optionIndex, page])
+
+  const [ref, setRef] = useState<any>();
+
+  const LoadBasic = async () => {
+    Notiflix.Loading.circle();
+    const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`,{
+      path: column.type === "customerModel" ?
+          {
+            page:  page,
+            renderItem: 22,
+            customer_id: row.customer?.customer_id ?? null
+          }
+          :
+          {
+            page: page,
+            renderItem: 22,
+          }
+      ,
+      params:{
+        keyword:keyword,
+        opt:optionIndex
+      }
+    })
+
+    if(res){
+        if(res.page !== 1){
+          setSearchList([...searchList,...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
+          setTotalPage(res.totalPages);
+          Notiflix.Loading.remove()
+        }else{
+          setSearchList([...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
+          setTotalPage(res.totalPages);
+          Notiflix.Loading.remove()
+        }
+    }
+    if(document.querySelector(".LoadingBar") !== null){
+      setRef(document.querySelector(".LoadingBar"));
+    }
+  }
   const getContents = () => {
     if(row[`${column.key}`]){
       if( typeof row[`${column.key}`] === "string"){
@@ -103,36 +129,30 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }
     }
   }
-
-  const LoadBasic = async (page?: number) => {
-    Notiflix.Loading.circle()
-    console.log("keyword : ", keyword)
-    const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`,{
-      path: column.type === "customerModel" ?
-          {
-            page: 1,
-            renderItem: 18,
-            customer_id: row.customer?.customer_id ?? null
+  useEffect(()=> {
+    if(isOpen){
+      const scroll = new IntersectionObserver(entries => {
+        console.log("entries : ", entries)
+        entries.forEach(entry => {
+          if(entry.intersectionRatio > 0){
+            console.log(entry)
+            if(totalPage > page){
+              // Notiflix.Loading.circle()
+              setTimeout(()=>{
+                  setPage(page+1)
+                  document.querySelector(".ScrollBox").scrollTop = 0;
+              },2000)
+                Notiflix.Loading.remove(300);
+            }
+          }else{
           }
-          :
-          {
-            page: 1,
-            renderItem: 18,
-          }
-      ,
-      params:{
-        keyword:keyword,
-        opt:optionIndex
+        })
+      })
+      if(loadingBar.current !== null){
+        scroll.observe(ref);
       }
-    })
-
-    if(res){
-      setSearchList([...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
-      console.log('data')
-      Notiflix.Loading.remove()
     }
-
-  }
+  },[ref, page])
 
   return (
     <SearchModalWrapper >
@@ -164,7 +184,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           bottom: 'auto',
           marginRight: '-50%',
           transform: 'translate(-50%, -50%)',
-          padding: 0
+          padding: 0,
         },
         overlay: {
           background: 'rgba(0,0,0,.6)',
@@ -254,7 +274,10 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 value={keyword ?? ""}
                 type={"text"}
                 placeholder="검색어를 입력해주세요."
-                onChange={(e) => {setKeyword(e.target.value)}}
+                onChange={(e) => {
+                  setKeyword(e.target.value)
+                  setPage(1);
+                }}
                 onKeyDown={(e) => {
                   if(e.key === 'Enter'){
                     LoadBasic();
@@ -277,14 +300,14 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 <img src={Search_icon} style={{width:"16px",height:"16px"}} />
               </div>
             </div>
-            <div style={{padding: '0 16px 0 16px', width: 856}}>
+            <div className={"ScrollBox"} style={{padding: '0 16px 0 16px', height:"615px", overflow:"scroll", }}>
               <ExcelTable
                 headerList={searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
                 row={searchList ?? []}
                 setRow={() => {}}
                 width={1744}
                 rowHeight={32}
-                height={632}
+                // height={802}
                 setSelectRow={(e) => {
                   if(!searchList[e].border){
                     searchList.map((v,i)=>{
@@ -297,9 +320,10 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 }}
                 type={'searchModal'}
               />
+              <LoadingBar className={"LoadingBar"} ref={loadingBar} />
             </div>
           </div>
-          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end',}}>
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
@@ -310,9 +334,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             </FooterButton>
             <FooterButton
               onClick={() => {
-                console.log("modal Result Button : ", row)
                 setIsOpen(false)
-                console.log(searchList[selectRow])
                 onRowChange({
                   ...row,
                   ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
@@ -333,6 +355,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       </Modal>
     </SearchModalWrapper>
   )
+
+
 }
 
 const SearchModalWrapper = styled.div`
@@ -351,5 +375,14 @@ const FooterButton = styled.div`
     font-weight: bold;
   }
 `
+
+const LoadingBar = styled.div`
+  width:100%;
+  height:50px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  
+`;
 
 export {SearchModalTest}

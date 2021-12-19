@@ -147,6 +147,14 @@ export const SearchModalResult = (selectData, type: string) => {
         modelData: selectData.model
       }
     }
+    case "process": {
+      console.log("selectData : ", selectData)
+      return {
+         process:selectData,
+         process_id: selectData.name,
+         version: selectData.version
+      }
+    }
     case 'rawmaterial': {
       return {
         ...selectData,
