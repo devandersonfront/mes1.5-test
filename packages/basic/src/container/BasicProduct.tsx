@@ -214,20 +214,20 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.circle();
     let res: any
     let data:any[] = [];
-    const check = basicRow.map((row) => {
-      if(selectList.has(row.id) && !row.code && !row.name){
-        Notiflix.Loading.remove(300)
-        Notiflix.Report.failure("CODE를 입력해주세요.","","확인", )
-        return false
-      }
-    })
-    if(check.includes(false)){
-      return
-    }
+    // const check = basicRow.map((row) => {
+    //   if(selectList.has(row.id) && !row.code && !row.name){
+    //     Notiflix.Loading.remove(300)
+    //     Notiflix.Report.failure("CODE를 입력해주세요.","","확인", )
+    //     return false
+    //   }
+    // })
+    // if(check.includes(false)){
+    //   return
+    // }
 
 
     basicRow.map((value,index)=>{
-      if(selectList.has(value.id)){
+      if(selectList.has(value.id) && value.product_id !== undefined && value.product_id !== null){
         let tmpRow = {...value};
         tmpRow.type = value.type_id;
         data.push(tmpRow);

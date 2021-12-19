@@ -23,9 +23,9 @@ interface IProps {
 }
 
 const machineType = [
-        {mfrName:"기계 제조사", name:"기계 이름",},
-        {type: "기계 종류", weldingType: "용접 종류", mfrCode: "제조번호", manager: "담당자",},
-        {interwork:"오버홀"}
+        {name:"금형명",},
+        // {type: "기계 종류", weldingType: "용접 종류", mfrCode: "제조번호", manager: "담당자",},
+        // {interwork:"오버홀"}
     ]
 
 const moldType = [
@@ -50,11 +50,11 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
-    if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
-    }
+    // if(isOpen) {
+    //   SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+    //     Notiflix.Loading.remove()
+    //   })
+    // }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
   //   if(pageInfo.total > 1){
@@ -90,15 +90,15 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
+    if(res){
+      let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
 
       setPageInfo({
         ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
+        page: res.page,
+        total: res.totalPages,
       })
 
       setSearchList([...searchList])
@@ -294,7 +294,7 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
               setRow={(e) => setSearchList([...e])}
               width={1746}
               rowHeight={32}
-              height={576}
+              height={591}
               // setSelectRow={(e) => {
               //   setSelectRow(e)
               // }}
