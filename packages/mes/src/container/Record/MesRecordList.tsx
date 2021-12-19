@@ -74,6 +74,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
       entries.forEach(entry => {
         if(entry.intersectionRatio > 0){
           if(pageInfo.total > pageInfo.page){
+            console.log("???", pageInfo.total, pageInfo.page)
             Notiflix.Loading.circle()
             setTimeout(()=>{
               setPageInfo({...pageInfo, page:pageInfo.page+1})
@@ -146,7 +147,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
     const res = await RequestMethod('get', `recordSearch`,{
       path: {
         page: (page || page !== 0) ? page : 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params: {
         keyword: keyword,
@@ -171,7 +172,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
     const res = await RequestMethod('get', `recordList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params: {
         status: 2
@@ -308,7 +309,11 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
     }).filter((v: any) => v) : []
 
 
-    tmpRow = res.info_list
+    if(pageInfo.page > 1){
+      tmpRow = [...basicRow,...res.info_list]
+    }else{
+      tmpRow = res.info_list
+    }
 
 
     loadAllSelectItems( [

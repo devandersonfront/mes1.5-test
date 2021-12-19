@@ -43,7 +43,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["finishListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['지시고유번호', '수주번호', '거래퍼', '모델', 'code',  '품명'])
+  const [optionList, setOptionList] = useState<string[]>(['지시고유번호', '거래처', '모델', 'code',  '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
@@ -60,7 +60,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
   const loadingBar = useRef(null);
 
   useEffect(() => {
-    setOptionIndex(option)
+    // setOptionIndex(option)
     if(getMenus()){
       if(searchKeyword){
         SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
@@ -77,7 +77,6 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
   useEffect(()=>{
     const scroll = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        console.log("확인")
         if(entry.intersectionRatio > 0){
           if(pageInfo.total > pageInfo.page){
             Notiflix.Loading.circle()
@@ -162,7 +161,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
     const res = await RequestMethod('get', `sheetList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params: {
         status: 2
@@ -186,14 +185,14 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `operationSearch`,{
       path: {
         page: isPaging ?? 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params: {
         keyword: keyword ?? '',
-        opt: option ?? 0
+        opt: optionIndex ?? 0
       }
     })
 
@@ -256,7 +255,11 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
     }).filter((v: any) => v) : []
 
 
-    tmpRow = res.info_list
+    if(pageInfo.page > 1){
+      tmpRow = [...basicRow,...res.info_list]
+    }else{
+      tmpRow = res.info_list
+    }
 
 
     loadAllSelectItems( [
@@ -313,8 +316,6 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       }
     })
 
-    console.log(tmpBasicRow)
-
     setBasicRow([...tmpBasicRow])
   }
 
@@ -327,6 +328,10 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) => {
           setSearchKeyword(keyword)
+        }}
+        onChangeSearchOption={(option) => {
+          console.log(option)
+          setOptionIndex(option)
         }}
         calendarTitle={'작업 기한'}
         calendarType={'period'}
@@ -354,16 +359,15 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
           // setRow={setBasicRow}
           setRow={(e) => {
             let tmp: Set<any> = selectList
-            console.log('e', e)
             let tmpRes = e.map(v => {
               if(v.isChange) tmp.add(v.id)
               if(v.update || v.finish){
                 if(keyword){
-                  SearchBasic(keyword, option, page).then(() => {
+                  SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
                     Notiflix.Loading.remove()
                   })
                 }else{
-                  LoadBasic(page).then(() => {
+                  LoadBasic(pageInfo.page).then(() => {
                     Notiflix.Loading.remove()
                   })
                 }

@@ -153,7 +153,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `sheetList`,{
       path: {
-        page: (page || page !== 0) ? page : 1,
+        page: page ?? 1,
         renderItem: 22,
       },
       params: {
@@ -181,7 +181,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `operationSearch`,{
       path: {
         page: isPaging ?? 1,
         renderItem: 22,
@@ -459,11 +459,11 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
             if(v.update || v.finish){
               if(keyword){
-                SearchBasic(keyword, optionIndex, page).then(() => {
+                SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
                   Notiflix.Loading.remove()
                 })
               }else{
-                LoadBasic(page).then(() => {
+                LoadBasic(pageInfo.page).then(() => {
                   Notiflix.Loading.remove()
                 })
               }
