@@ -32,7 +32,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", type: 'COIL'
+    name: "", id: "", type: '0'
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())

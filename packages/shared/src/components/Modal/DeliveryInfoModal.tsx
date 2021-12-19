@@ -24,8 +24,6 @@ interface IProps {
 
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
-const amount=50;
-
 const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
@@ -34,15 +32,14 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
+  const [total, setTotal] = useState<number>(0)
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
 
   useEffect(() => {
-    if(isOpen) {
-      SearchBasic()
-    }
+    SearchBasic()
   }, [isOpen, searchKeyword])
   // useEffect(() => {
   //   if(pageInfo.total > 1){
@@ -52,7 +49,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   //   }
   // }, [pageInfo.page])
 
-  const changeRow = (row: any, key?: string) => {
+  const changeRow = (row: any, index: number) => {
     let total = 0
 
     row.lots.map(v => {
@@ -61,17 +58,20 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
     let tmpData = {
       ...row,
+      seq: index+1,
       identification: row.identification,
       date: row.date,
       total
     }
+
+    setTotal(total)
 
     return tmpData
   }
 
   const SearchBasic = async () => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `shipmentList`,{
+    const res = await RequestMethod('get', `shipmentSearch`,{
       path: {
         page: 1,
         renderItem: 100000,
@@ -83,7 +83,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
     if(res){
       let searchList = res.info_list.map((row: any, index: number) => {
-        return changeRow(row)
+        return changeRow(row, index)
       })
 
       setSearchList([...searchList])
@@ -98,7 +98,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         <div onClick={() => {
           setIsOpen(true)
         }}>
-          <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{amount}</p>
+          <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{total}</p>
         </div>
       </div>
     </>
@@ -208,7 +208,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>수주량</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>50</HeaderTableText>
+              <HeaderTableText>{total}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
