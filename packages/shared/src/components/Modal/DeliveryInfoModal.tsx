@@ -15,6 +15,7 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
+import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {
   column: IExcelHeaderType
@@ -40,7 +41,8 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     SearchBasic()
-  }, [isOpen, searchKeyword])
+    console.log(row)
+  }, [row])
   // useEffect(() => {
   //   if(pageInfo.total > 1){
   //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -150,19 +152,19 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>수주번호</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>20210401-001</HeaderTableText>
+              <HeaderTableText>{row.identification ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>수주 날짜</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>2021.04.01</HeaderTableText>
+              <HeaderTableText>{row.date ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>납품 기한</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>2021.05.18</HeaderTableText>
+              <HeaderTableText>{row.deadline ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -170,31 +172,31 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>거래처</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>진주상사</HeaderTableText>
+              <HeaderTableText>{row.product?.customer?.name ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>한국차</HeaderTableText>
+              <HeaderTableText>{row.product?.model?.model ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>SU-20210701-1</HeaderTableText>
+              <HeaderTableText>{row.product?.code ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>SU900</HeaderTableText>
+              <HeaderTableText>{row.product?.name ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>완제품</HeaderTableText>
+              <HeaderTableText>{(row.product?.type || row.product?.type === 0) ? TransferCodeToValue(row.product.type, 'productType') : '-' }</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -202,13 +204,13 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>EA</HeaderTableText>
+              <HeaderTableText>{row.product?.unit ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>수주량</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{total}</HeaderTableText>
+              <HeaderTableText>{row.amount ?? 0}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
