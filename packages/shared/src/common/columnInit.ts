@@ -714,7 +714,7 @@ export const columnlist: any = {
     {key:"deadline", name:"작업 기한", formatter: CalendarBox,},
     {key:"customer_id", name:"거래처", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
     {key:"cm_id", name:"모델", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput' },
-    {key:"code", name:"CODE", formatter: SearchModalTest, type: 'product', placeholder: '검색'},
+    {key:"product_id", name:"CODE", formatter: SearchModalTest, type: 'product', placeholder: '검색'},
     {key:"name", name:"품명", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
     {key:"type", name:"품목 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
     {key:"unit", name:"단위", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
