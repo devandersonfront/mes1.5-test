@@ -79,7 +79,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                       }
                   })
                       .then((res) => {
-                          console.log(res);
                           setImgUrl(res.url)
                           setOnImage(true)
                       })
@@ -119,7 +118,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
               // Buffer.from(e.target.files[0]);
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
 
-              console.log("uploadImg : ", uploadImg)
               if(uploadImg !== undefined){
                 onRowChange({
                   ...row,

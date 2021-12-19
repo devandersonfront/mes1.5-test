@@ -351,7 +351,6 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
               }
             }
           })
-          console.log(row)
             return {
               ...row,
               ...selectData,
@@ -412,7 +411,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         setSelectDate={(date) => setSelectDate(date)}
         title={"수주 현황"}
         buttons={
-          ['엑셀로 받기', '수정하기', '삭제']
+          ['', '수정하기', '삭제']
         }
         buttonsOnclick={
           (e) => {

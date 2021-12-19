@@ -195,10 +195,6 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
     }).then(() => Notiflix.Loading.remove(1000))
   }
 
-  useEffect(() => {
-    console.log(row)
-  }, [row])
-
   return (
     <div>
       <PageHeader

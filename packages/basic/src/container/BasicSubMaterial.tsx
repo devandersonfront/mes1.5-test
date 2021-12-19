@@ -429,7 +429,6 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
         id: `mold_${random_id}`,
       }
     })
-    console.log("result ?? : ",tmpBasicRow);
     setBasicRow([...tmpBasicRow])
   }
 
@@ -514,7 +513,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
           optionIndex={optionIndex}
           title={"부자재 기준정보"}
           buttons={
-            ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
+            ['', '', '항목관리', '행추가', '저장하기', '삭제']
           }
           buttonsOnclick={
             // () => {}
@@ -537,14 +536,11 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
             })
 
             setSelectList(tmp)
-            console.log("기존 데이터 : ", basicRow)
-            console.log("e : ", e);
             e.map((value, index)=>{
               if(value.customerArray){
                 basicRow[index].customer = value;
               }
             })
-            console.log("changeData : ", basicRow);
 
             // setBasicRow([...basicRow])
             setBasicRow(e)

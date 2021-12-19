@@ -21,7 +21,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   const selector = useSelector((state:RootState) => state.infoModal)
 
   const loadMaterialLot = async (type) => {
-    console.log(type)
     let res
 
     switch(type){
@@ -84,8 +83,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
               }
             }
 
-            console.log(lot)
-
             onRowChange({
               ...row,
               lotList: [...lot.map(v => {
@@ -114,7 +111,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           }
         }else {
           if (row.bom_root_id) {
-            console.log(row.bom_root_id, row);
             dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1}))
           } else {
             Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {

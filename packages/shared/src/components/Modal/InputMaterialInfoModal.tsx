@@ -62,7 +62,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log(row.operation_sheet?.product?.product_id)
       // loadRecordGroup(1, row.operation_sheet?.product?.product_id)
       changeRow(row.input_bom)
     }
@@ -78,7 +77,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
       },
     })
 
-    console.log(res)
 
     if(res && res.status === 200){
       let searchList = res.results.info_list.map((row: any, index: number) => {
@@ -92,8 +90,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpData = []
     let tmpRows = tmpRow;
-
-    console.log(tmpRow)
 
     setSummaryData({
       // ...res.parent
@@ -163,9 +159,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const deleteTab = (index: number) => {
-    console.log(bomDummy.length, focusIndex)
     if(bomDummy.length - 1 === focusIndex){
-      console.log('last')
       setFocusIndex(focusIndex-1)
     }
     if(bomDummy.length === 1) {

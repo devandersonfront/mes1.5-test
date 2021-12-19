@@ -375,8 +375,6 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
       }
     })
 
-    console.log(tmpBasicRow)
-
     setBasicRow([...tmpBasicRow])
   }
 
@@ -398,7 +396,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         setSelectDate={(date) => setSelectDate(date)}
         title={"작업 일보 리스트"}
         buttons={
-          ['엑셀로 받기', '수정하기', '삭제']
+          ['', '수정하기', '삭제']
         }
         buttonsOnclick={
           (e) => {
@@ -446,7 +444,6 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
       <WorkModifyModal
         row={[...basicRow.map(v =>{
           if(selectList.has(v.id)){
-            console.log(v)
             return {
               ...v,
               worker: v.user,

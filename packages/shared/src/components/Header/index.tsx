@@ -379,7 +379,9 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
 
               {
                 buttons && buttons.map((buttonTitle, buttonIndex) => {
-                  return <HeaderButton onClick={() => buttonsOnclick && buttonsOnclick(buttonIndex)} key={`btn${buttonIndex}`}>{buttonTitle}</HeaderButton>
+                  if(buttonTitle){
+                    return <HeaderButton onClick={() => buttonsOnclick && buttonsOnclick(buttonIndex)} key={`btn${buttonIndex}`}>{buttonTitle}</HeaderButton>
+                  }
                 })
               }
             </ButtonWrapper>

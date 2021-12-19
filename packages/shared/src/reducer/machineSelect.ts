@@ -70,7 +70,6 @@ type DefaultAction = ReturnType<typeof insert_machine_list> | ReturnType<typeof 
 const MachineSelectReducer = (state = initalState, {type, payload}:DefaultAction) => {
     switch (type){
         case INSERT_MACHINE_LIST :
-            console.log(payload)
             let tmp_state = {...state};
             tmp_state = {...payload as MachineSelectType}
             return tmp_state
@@ -78,7 +77,6 @@ const MachineSelectReducer = (state = initalState, {type, payload}:DefaultAction
         case INSERT_MACHINE_LIST_INDEX:
             let temp_state =  {...state};
             temp_state.selectRow = payload as number;
-            console.log(temp_state);
             return temp_state
 
         case DELETE_MACHINE_LIST :
@@ -96,7 +94,6 @@ const MachineSelectReducer = (state = initalState, {type, payload}:DefaultAction
 
             temp_delete_state.machineList.splice(0, 1);
 
-            console.log(temp_delete_state);
             return temp_delete_state;
 
         case DELETE_ALL_MACHINE_LIST:

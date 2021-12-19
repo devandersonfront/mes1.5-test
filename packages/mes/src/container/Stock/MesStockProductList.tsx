@@ -109,8 +109,6 @@ const MesStockProductList = ({page, keyword, option}) => {
         summaries: tmpRow
       }
 
-      console.log(tmpRes)
-
       cleanUpData(tmpRes, "model")
       cleanUpData(tmpRes, "date");
       Notiflix.Loading.remove(300);
@@ -193,7 +191,6 @@ const MesStockProductList = ({page, keyword, option}) => {
 
     let tmpBasicRow_model = tmpRow.map((row: any, index: number) => {
       let random_id = Math.random()*1000;
-      console.log(row)
       return {
         ...row,
         customer_id: row.product?.model?.customer?.name ?? "-",
@@ -299,7 +296,7 @@ const MesStockProductList = ({page, keyword, option}) => {
     <ProfileHeader/>
     <PageHeader
       title={"생산/납품 현황"}
-      buttons={["엑셀로 받기"]}
+      buttons={[""]}
       buttonsOnclick={buttonClickEvents}
       isSearch={true}
       searchOptionList={["거래처", "모델", "CODE", "품명"]}

@@ -22,7 +22,6 @@ const autoFocusAndSelect = (input: HTMLInputElement | null) => {
 
 const CalendarBox = ({ row, column, onRowChange, onClose }: IProps) => {
   const ref = useOnclickOutside(() => onClose(true))
-  console.log(row)
   return (
     <Modal
       isOpen={true}
@@ -49,7 +48,6 @@ const CalendarBox = ({ row, column, onRowChange, onClose }: IProps) => {
             <Calendar
               maxDate={column.maxDate ? new Date() : moment('2999-12-31').subtract(1, 'days').toDate() }
               onChange={(date) => {
-                console.log({[column.key]: moment(date).format('YYYY-MM-DD')});
                 onRowChange({
                   ...row,
                   [column.key]: moment(date).format('YYYY-MM-DD'),

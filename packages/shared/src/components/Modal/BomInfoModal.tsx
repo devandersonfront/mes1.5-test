@@ -303,9 +303,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               margin: 0,
             }}>BOM 정보 (해당 제품을 만드는데 필요한 BOM을 등록해주세요)</p>
             <div style={{display: 'flex'}}>
-              <Button>
-                <p>엑셀로 받기</p>
-              </Button>
+              {/*<Button>*/}
+              {/*  <p>엑셀로 받기</p>*/}
+              {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>

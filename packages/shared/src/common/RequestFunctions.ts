@@ -43,7 +43,6 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return result.data
         })
         .catch((error) => {
-          console.log(error)
           if(error.response.status === 406 || error.response.status === 403) {
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
@@ -91,6 +90,8 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
             Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
           }else if(error.response.status === 500){
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+          }else if(error.response.status === 404){
+            Notiflix.Report.failure('에러', error.response.data.message, '확인')
           }
           throw error.response
         })

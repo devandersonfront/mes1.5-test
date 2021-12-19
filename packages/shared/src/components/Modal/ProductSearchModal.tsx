@@ -109,7 +109,6 @@ const ProductSearchModal = ({column, row, onRowChange}: IProps) => {
       let searchList = res.results.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
-      console.log(searchList);
 
       setPageInfo({
         ...pageInfo,
@@ -135,11 +134,9 @@ const ProductSearchModal = ({column, row, onRowChange}: IProps) => {
     //   }
     // })
     //
-    // console.log(res2);
 
     if(res && res.status === 200){
       // dispatch(insert_machine_list({process_length:res.results.processes.length, machineList:[]}))
-      // console.log(res.results.processes)
     }
   }
 

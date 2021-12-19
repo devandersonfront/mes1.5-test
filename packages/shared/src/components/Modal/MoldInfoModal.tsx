@@ -279,7 +279,6 @@ const MoldInfoModal = ({column, row, onRowChange}: IProps) => {
               let tmpRow = [...searchList]
 
               tmpRow.splice(selectRow, 1)
-              console.log(selectRow, tmpRow)
 
               setSearchList([...tmpRow])
             }}>

@@ -23,7 +23,6 @@ import {IMenu} from '../../../main/common/@types/type'
 import {AUTHORITY_LIST} from '../../../main/common/configset'
 import {AxiosResponse} from 'axios'
 import styled from 'styled-components'
-import ButtonGroup from '../../../main/component/ButtonGroup'
 
 export interface IProps {
   children?: any
@@ -211,7 +210,6 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.standard();
         let savePauseBasicRow:any[] = [];
         pauseBasicRow.map((value, i)=>{
-          console.log(value);
           if(value.reason === "" || value.reason === undefined){
             // validation = false;
           }else{
@@ -268,8 +266,6 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
                 idList.push(v)
               }
             })
-              console.log(idList)
-
           }
         );
 
@@ -328,7 +324,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
                         <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
                             {processBasicRow[selectRow] && processBasicRow[selectRow].name}
                         </span>
-        <ButtonGroup buttons={[ "엑셀로 등록", "엑셀로 받기", "행 추가", "저장하기", "삭제"]} buttonsOnclick={buttonEvents}/>
+        <PageHeader buttons={[ "", "", "행 추가", "저장하기", "삭제"]} buttonsOnclick={buttonEvents}/>
       </div>
       <ExcelTable
         editable

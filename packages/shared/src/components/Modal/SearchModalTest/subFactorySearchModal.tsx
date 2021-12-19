@@ -53,7 +53,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
 
     const getContents = () => {
         // if(row[`${column.key}`]){
-        //     console.log(row[column.key])
         //     if( typeof row[`${column.key}`] === "string"){
         //         return row[column.key];
         //     }else{
@@ -99,7 +98,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
             setSearchList(tempData);
             Notiflix.Loading.remove()
         }).catch((err) => {
-            console.log(err)
             Notiflix.Report.failure("경고","공장을 선택해주시기 바랍니다.","확인",() => {setIsOpen(false)})
         })
 
@@ -255,9 +253,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                             <ExcelTable
                                 headerList={searchModalList[`subFactorySearch`]}
                                 row={searchList ?? []}
-                                setRow={(e) => {
-                                    console.log(e)
-                                }}
                                 width={1744}
                                 rowHeight={32}
                                 height={632}

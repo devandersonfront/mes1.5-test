@@ -57,7 +57,6 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
     })
 
     if(res){
-      console.log(res)
       let tmpColumn = columnlist["orderRegister"]
 
       tmpColumn = tmpColumn.map((column: any) => {

@@ -81,7 +81,6 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
     }
 
     if(isOpen) {
-      console.log(row)
       setSearchList([...row.product.molds.map((v, index) => {
         return {
           ...v.mold,

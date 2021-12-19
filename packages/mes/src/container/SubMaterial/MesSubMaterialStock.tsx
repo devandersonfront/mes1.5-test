@@ -349,7 +349,6 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch(index){
       case 1:
-        console.log(selectList.size)
         if(selectList.size <= 0){
           Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
           return

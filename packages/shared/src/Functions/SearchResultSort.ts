@@ -1,7 +1,6 @@
 import {TransferCodeToValue} from '../common/TransferFunction'
 
 export const SearchResultSort = (infoList, type: string) => {
-  console.log('infolist', infoList, type)
   switch(type) {
     case 'user': {
       return infoList.map((v) => {
@@ -127,7 +126,6 @@ export const SearchModalResult = (selectData, type: string) => {
       }
     }
     case 'product': {
-      console.log(selectData)
       return {
         code: selectData.code,
         name: selectData.name,
@@ -151,7 +149,6 @@ export const SearchModalResult = (selectData, type: string) => {
       }
     }
     case "process": {
-      console.log("selectData : ", selectData)
       return {
          process:selectData,
          process_id: selectData.name,

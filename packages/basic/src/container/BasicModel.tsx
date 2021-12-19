@@ -123,7 +123,6 @@ const BasicModel = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
-    console.log(basicRow)
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -169,7 +168,6 @@ const BasicModel = ({page, keyword, option}: IProps) => {
                 }
               }
             })
-            console.log("row : ", row)
             return {
               ...row,
               ...selectData,
@@ -177,8 +175,6 @@ const BasicModel = ({page, keyword, option}: IProps) => {
               additional: [
                 ...additional.map((v, index)=>{
                   if(!row[v.colName]) return undefined;
-                  console.log(row.additional, " || v : ",v)
-                  console.log("i : index ||| ", i, index, v.version)
                   // result.push(
                   return {
                     mi_id: v.id,
@@ -588,7 +584,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         optionIndex={optionIndex}
         title={"모델 관리"}
         buttons={
-          ['엑셀로 등록','엑셀로 받기', '항목관리', '행 추가', '저장하기', '삭제']
+          ['','', '항목관리', '행 추가', '저장하기', '삭제']
         }
         buttonsOnclick={onClickHeaderButton}
       />

@@ -59,9 +59,6 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(column.type){
       setInfoModalInit(InfoInit[column.type])
-      if(isOpen){
-        console.log(row, column.key)
-      }
     }
   }, [column.type, isOpen])
 
@@ -100,7 +97,6 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
 
   const saveSubFactory = async() => {
     //여기서 factoryRegister / deviceRegister / bomRegister를 가지고 저장을 나눈다.
-    console.log("row : ", row, "searchList : ", searchList)
     const result = [];
     searchList.map((e, index)=>{
       let sub:any = {};
@@ -112,25 +108,16 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
       result.push(sub);
     })
 
-    console.log("result : ", result);
     await RequestMethod("post", "subFactorySave",result)
-        .then((res) => {
-          console.log(res)
-        })
-        .catch((err)=>{
-          console.log(err)
-        })
 
   }
 
   const loadData = (value:string) => {
     //여기서 무슨 정보의 모달인지 구분 후 데이터를 가져온다. || summaryType이 아닐수도 있음
-    console.log(value)
   }
 
   const getSummaryInfo = (info) => {
     // selector.data[selector.index][info.key]
-    console.log(selector.datas)
     return '-'
   }
 
@@ -322,7 +309,7 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
               }}>{infoModalInit && infoModalInit.title}</p>
               <div style={{display: 'flex'}}>
                 <Button>
-                  <p>엑셀로 받기</p>
+                  <p></p>
                 </Button>
                 <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                   setIsOpen(false)
@@ -433,7 +420,6 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
                   (e) => {
                     let tmp = e.map((v, index) => {
                       v.name = v.user_id;
-                      console.log("v : ", v)
                       if(v.newTab === true){
                         const newTabIndex = bomDummy.length+1
                         addNewTab(newTabIndex)
@@ -445,8 +431,6 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
                         newTab: false
                       }
                     })
-                    console.log("!!!!!!!!!!!e : ", e)
-                    console.log("!!!!!!!!!!!tmp : ", tmp)
                     // setSearchList([...tmp])
                     setSearchList([...e])
                   }
@@ -485,17 +469,7 @@ const InfoModal = ({column, row, onRowChange}: IProps) => {
             </FooterButton>
             { infoModalInit && !infoModalInit.readonly && <FooterButton
               onClick={() => {
-                // if (selectRow !== undefined && selectRow !== null) {
-                //   console.log("row : ",row, "searchList : ", searchList, "selectRow : ",selectRow)
-                //   onRowChange({
-                //     ...row,
-                //     devices:searchList,
-                //     name: row.name,
-                //     isChange: true
-                //   })
-                // }
                 saveSubFactory();
-                // setIsOpen(false)
               }}
               style={{
                 backgroundColor: POINT_COLOR,

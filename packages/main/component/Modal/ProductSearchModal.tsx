@@ -107,7 +107,6 @@ const ProductSearchModal = ({column, row, onRowChange}: IProps) => {
       let searchList = res.results.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
-      console.log(searchList);
 
       setPageInfo({
         ...pageInfo,
@@ -116,28 +115,6 @@ const ProductSearchModal = ({column, row, onRowChange}: IProps) => {
       })
 
       setSearchList([...searchList])
-    }
-  }
-
-  const ProductProcessSearch = async (pp_id: number) => {
-    Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `productprocessList`,{
-      path: {
-        pp_id
-      }
-    })
-
-    // const res2 = await RequestMethod("get", "operationRecent", {
-    //   path:{
-    //     product_id:pp_id
-    //   }
-    // })
-    //
-    // console.log(res2);
-
-    if(res && res.status === 200){
-      // dispatch(insert_machine_list({process_length:res.results.processes.length, machineList:[]}))
-      // console.log(res.results.processes)
     }
   }
 

@@ -71,8 +71,6 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
   useEffect(() => {
 
     if(isOpen) {
-      console.log(row)
-
       let total_count = 0
       let good_quantity = 0
       let poor_quantity = 0
@@ -270,7 +268,6 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
             headerList={searchModalList.workRegister}
             row={searchList ?? [{}]}
             setRow={(e) => {
-              console.log(e)
               let tmp = e.map((v, index) => {
                 if(v.newTab === true){
                   const newTabIndex = bomDummy.length+1
@@ -283,9 +280,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
                   newTab: false
                 }
               })
-              console.log(tmp)
               setSearchList([...tmp.map(v => {
-                console.log('v', v)
                 return v
               })])
             }}

@@ -69,7 +69,6 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
   }, [page, keyword, option])
 
   useEffect(() => {
-    console.log(basicRow[0].pp_id)
     if(basicRow[0].pp_id && basicRow[0].pp_id !== isLoad){
       ProductProcessSearch(basicRow[0].pp_id)
 
@@ -516,13 +515,11 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
                       }
                     }
                   })
-                  console.log(tmpRow)
 
                   setSelectList(tmpSelect)
                 }
 
                 setSelectList(tmp)
-                console.log(tmpRow)
                 setBasicRow([...tmpRow])
                 // dispatch(insert_machine_list({...selector, machineList:[...tmpRow]}))
               }}

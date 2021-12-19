@@ -85,7 +85,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       tmpRes = tmpRowArray.map((v, index) => {
         if(v !== ""){
           let tmp = JSON.parse(v)
-          console.log(tmp.good_quantity)
           totalGood += tmp.good_quantity
           totalPoor += tmp.poor_quantity
 
@@ -155,9 +154,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const deleteTab = (index: number) => {
-    console.log(bomDummy.length, focusIndex)
     if(bomDummy.length - 1 === focusIndex){
-      console.log('last')
       setFocusIndex(focusIndex-1)
     }
     if(bomDummy.length === 1) {

@@ -39,10 +39,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
-  useEffect(() => {
-    console.log('basicRow', basicRow)
-  }, [basicRow])
-
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
       path: {
@@ -51,7 +47,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     })
 
     if(res){
-      console.log(res)
       let tmpColumn = columnlist["operationRegisterV2"]
 
       tmpColumn = tmpColumn.map((column: any) => {
@@ -168,7 +163,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     })
 
     if(res){
-      console.log(res)
       setBasicRow([{
         bom_root_id: res.product.bom_root_id,
         contract: res.contract,
@@ -226,7 +220,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch(index){
       case 0:
-        // console.log(basicRow)
         if(basicRow[0].product.product_id){
           loadGraphSheet(basicRow[0].product.product_id)
         }

@@ -20,7 +20,6 @@ import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import PeriodSelectCalendar from '../../../../main/component/Header/PeriodSelectCalendar'
-import ButtonGroup from '../../../../main/component/ButtonGroup'
 
 interface SelectParameter {
   from:string
@@ -77,7 +76,6 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
   }
 
   useEffect(() => {
-    console.log(processBasicRow)
     if(processBasicRow[0].product_id){
       LoadBasic().then(() => {
         Notiflix.Loading.remove()
@@ -139,7 +137,6 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
         to: selectDate.to,
       }
     })
-    console.log(res)
 
     let row = [];
     if(typeof res === 'string'){
@@ -245,9 +242,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
         ]}
         row={processBasicRow}
         setRow={(e) => {
-          console.log("e : ", e)
           const tmpBasicRow = [...e];
-          console.log("tmpBasicRow : ", tmpBasicRow)
           tmpBasicRow[0] = {
             ...tmpBasicRow[0],
             // customer: tmpBasicRow[0].customer.name,
@@ -256,7 +251,6 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
             // modelData: tmpBasicRow[0].model,
             product_id: tmpBasicRow[0].product.product_id
           }
-          console.log("tmpBasicRow : ", tmpBasicRow)
           setProcessBasicRow(tmpBasicRow)
         }}
         selectList={selectList}
@@ -276,7 +270,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
         }
         <div style={{display: 'flex', }}>
           <PeriodSelectCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={false} />
-          <ButtonGroup buttons={['엑셀로 받기']} buttonsOnclick={buttonEvents}/>
+          <PageHeader buttons={['']} buttonsOnclick={buttonEvents}/>
         </div>
       </div>
       <ExcelTable

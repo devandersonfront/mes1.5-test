@@ -211,9 +211,6 @@ const MesStockList = ({page, keyword, option}: IProps) => {
       }
     }).filter((v: any) => v) : []
 
-    console.log(res)
-
-
     tmpRow = res.info_list
 
 
@@ -270,8 +267,6 @@ const MesStockList = ({page, keyword, option}: IProps) => {
       }
     })
 
-    console.log(tmpBasicRow)
-
     setBasicRow([...tmpBasicRow])
   }
 
@@ -293,7 +288,7 @@ const MesStockList = ({page, keyword, option}: IProps) => {
         }}
         title={"재고 현황"}
         buttons={
-          ['엑셀로 받기']
+          ['']
         }
         buttonsOnclick={
           () => {}

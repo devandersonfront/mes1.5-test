@@ -14,20 +14,6 @@ interface IProps {
 }
 
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
-
-  // const selectType = () => {
-  //   let result = "";
-  //   column.selectList.map((value)=>{
-  //     if(value.pk == row.type){
-  //        result = value.name;
-  //     }
-  //   })
-  //   return result
-  // }
-
-  useEffect(() => {
-    // console.log(row[column.key])
-  }, [row[column.key]])
   return (
     <select
       className={'editDropdown'}

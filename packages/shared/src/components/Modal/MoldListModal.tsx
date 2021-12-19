@@ -62,7 +62,6 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log(row)
       if(!!row.molds && row.molds.length){
         setSearchList([...row.molds.map(v => {
           return {

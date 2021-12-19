@@ -70,7 +70,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log(row)
       if(row.bom_root_id){
         SearchBasic().then(() => {
           Notiflix.Loading.remove()
@@ -84,17 +83,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     }
   }, [isOpen, row])
 
-  // useEffect(() => {
-  //   console.log(selector)
-  //   if(selector.datas[selector.index]){
-  //     SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [selector])
-
   const setInfoModal = async (product: any, index: number) => {
-    console.log('product', product)
     if(selector){
       await dispatch(insert_summary_info({
         code: product.code,
@@ -205,7 +194,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
         if(res){
           let searchList = changeRow(res)
-          console.log("no selectKey : ", searchList)
           dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
           setSearchList([...searchList])
         }else{
@@ -222,7 +210,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   const deleteTab = (index: number) => {
     if(bomDummy.length - 1 === focusIndex){
-      console.log('last')
       setFocusIndex(focusIndex-1)
     }
     if(bomDummy.length === 1) {
@@ -411,12 +398,10 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-                console.log(row)
                 onRowChange({
                   ...row,
                   input_bom: [
                     ...searchList.map((v, i) => {
-                      console.log(v.spare === '여')
                       if(v.spare === '여'){
                         return {
                           bom: {

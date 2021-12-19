@@ -42,7 +42,6 @@ const MachineSearchModal = ({column, row, onRowChange}: IProps) => {
       Notiflix.Loading.remove()
     })
   }, [isOpen, searchKeyword])
-  console.log(row)
   useEffect(() => {
     if(pageInfo.total > 1){
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {

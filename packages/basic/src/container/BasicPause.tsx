@@ -10,7 +10,7 @@ import {
   excelDownload,
   PaginationComponent,
   ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
+  IExcelHeaderType, IItemMenuType,
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -18,7 +18,6 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
-import ButtonGroup from '../../../main/component/ButtonGroup'
 
 export interface IProps {
   children?: any
@@ -72,7 +71,6 @@ const BasicPause = ({page, keyword, option}: IProps) => {
   }
 
   const LoadPauseList = async (value:string) => {
-    console.log("RES", value)
     // const res =
     await RequestMethod("get", `pauseReasonList`, {
       path: {
@@ -108,14 +106,10 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           setPauseBasicRow([...tmpRow]);
 
         })
-        .catch((err) => {
-          console.log(err)
-        })
   }
 
   const LoadBasic = async () => {
     Notiflix.Loading.standard();
-    console.log("LoadBasic")
     // const res = await
     RequestMethod('get', `processList`,{
       path: {
@@ -123,7 +117,6 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         renderItem:51,
       }
     }).then((res) => {
-          console.log(res);
             let tmpColumn = columnlist[`pause`];
             if(res.info_list.length > 0){
               setProcessId(res.info_list[selectRow].process_id);
@@ -324,7 +317,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
                         <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
                             {processBasicRow[selectRow] && processBasicRow[selectRow].name}
                         </span>
-          <ButtonGroup buttons={["엑셀로 등록", "엑셀로 받기", "행 추가", "저장하기", "삭제"]} buttonsOnclick={buttonEvents}/>
+          <PageHeader buttons={['', '', "행 추가", "저장하기", "삭제"]} buttonsOnclick={buttonEvents}/>
         </div>
         <ExcelTable
           editable

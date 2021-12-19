@@ -15,7 +15,6 @@ import Notiflix from "notiflix";
 export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, ) => {
   // const res = await requestApi('post',`${SF_ENDPOINT}/anonymous/upload`, data, )
     let result:any;
-    console.log(data)
     const type = data.type.split("/")[0];
       await Axios.post(`${SF_ENDPOINT}/anonymous/upload`, data,
           {
@@ -30,10 +29,8 @@ export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, 
           }).
           catch((err)=>{
               Notiflix.Report.failure("실패", "파일 업로드에 실패했습니다.", "확인",  );
-              console.log("err : ", err)
           })
 
-    console.log("result : ", result);
 
       return result
 

@@ -473,7 +473,10 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         }}
         optionIndex={optionIndex}
         title={title}
-        buttons={["엑셀로 등록",'엑셀로 받기', '항목관리', '행 추가', '저장하기', '삭제']}
+        buttons={
+          ["",'', '항목관리', '행 추가', '저장하기', '삭제']
+          // ["",'', '항목관리', '행 추가', '저장하기', '삭제']
+        }
         buttonsOnclick={onClickHeaderButton}
       />
       <ExcelTable
@@ -490,7 +493,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
           })
-          console.log(e)
           setSelectList(tmp)
           setBasicRow(e)
         }}

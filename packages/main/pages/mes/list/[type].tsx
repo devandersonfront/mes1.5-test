@@ -630,8 +630,8 @@ const BasicContainer = ({title, type, optList}: IProps) => {
           title={title}
           buttons={
             type === 'rawstock'
-              ? ['엑셀로 받기', '저장하기']
-              : ['엑셀로 받기', '항목관리', '행 추가', '저장하기', '삭제']
+              ? ['', '저장하기']
+              : ['', '항목관리', '행 추가', '저장하기', '삭제']
           }
           buttonsOnclick={onClickHeaderButton}
         />

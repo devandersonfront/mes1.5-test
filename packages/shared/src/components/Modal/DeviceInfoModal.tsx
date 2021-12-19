@@ -24,7 +24,6 @@ interface IProps {
 
 
 const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
-  console.log("row : ", row)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -36,21 +35,17 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
-  // console.log(row, column)
   useEffect(() => {
     if(isOpen) {
       // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
       //   Notiflix.Loading.remove()
       // })
       if(row.devices !== undefined && row.devices !== null && row.devices.length > 0){
-        console.log("row : ", row)
         const rowDevices = [];
         row.devices.map((device, index)=>{
-          console.log("device : ", device)
           rowDevices.push({...device, seq:index+1, manager:device.manager?.name ?? "", manager_data:device.manager});
 
         })
-        console.log("rowDevices : ", rowDevices)
         setSearchList(rowDevices);
       }
     }
@@ -190,9 +185,9 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               margin: 0,
             }}>주변장치 정보</p>
             <div style={{display: 'flex'}}>
-              <Button>
-                <p>엑셀로 받기</p>
-              </Button>
+              {/*<Button>*/}
+              {/*  <p>엑셀로 받기</p>*/}
+              {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>
@@ -307,7 +302,6 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               headerList={searchModalList.deviceInfo}
               row={searchList ?? [{}]}
               setRow={(e) => {
-                console.log(e)
                 searchList[selectRow].device =
                 setSearchList([...e])
               }}
@@ -342,9 +336,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-                console.log(row)
                 if(selectRow !== undefined && selectRow !== null){
-                  // console.log(row, searchList[selectRow], )
                   onRowChange({
                     ...row,
                     // ...searchList[selectRow],

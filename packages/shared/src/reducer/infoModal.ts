@@ -131,7 +131,6 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
     case INSERT_SUMMARY_INFO :
       const insertState = {...state};
       const insertPayload = payload as {code:string, title:string, data:any[], headerData:any};
-      console.log("First insertState : ", insertState)
 
       insertState.datas.push({
         title: insertPayload.title,
@@ -143,14 +142,11 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
       // insertState.datas[0].data = insertPayload.data;
       // insertState.datas[0].headerData = insertPayload.headerData;
 
-      console.log("insertState : ", insertState)
-
       return insertState;
 
     case ADD_SUMMARY_INFO:
       const addState = {...state};
       const addPayload = payload as {code:string, title:string, index:number};
-      console.log("addPayload : ", addPayload)
       const addDataObject:any = {};
       // addState.datas[addPayload.index].title = addPayload.title;
       // addState.datas[addPayload.index].code = addPayload.code;
@@ -161,7 +157,6 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
       addState.index = addPayload.index;
 
       addState.datas.push(addDataObject);
-      console.log("addState : ", addState )
 
       return addState;
 
@@ -180,7 +175,6 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
 
     case DELETE_SUMMARY_INFO:
       const deleteState = {...state};
-      console.log("DELETE_SUMMARY_INFO : ", payload)
       const deletePayload = payload as number;
       // deleteState.code.splice(payload, 1);
       // deleteState.title.splice(payload, 1);
@@ -196,7 +190,6 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
 
     case ADD_SUMMARY_INFO_DATA:
       const addDataState = {...state};
-      console.log("ADD_SUMMARY_INFO_DATA : ", payload);
       const addDataPayload = payload as {code:string, title:string, index:number};
 
       // addDataState.data.push(addDataPayload)

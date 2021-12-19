@@ -416,7 +416,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
                     optionIndex={optionIndex}
                     title={"원자재 기본정보"}
                     buttons={
-                             ['엑셀로 받기', '항목관리', '저장하기']
+                             ['', '항목관리', '저장하기']
                     }
                     buttonsOnclick={onClickHeaderButton}
                 />

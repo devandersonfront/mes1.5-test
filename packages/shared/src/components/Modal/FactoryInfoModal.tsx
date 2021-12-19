@@ -27,7 +27,6 @@ interface IProps {
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
-  // console.log(row, column)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -138,7 +137,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             Notiflix.Report.success("확인","저장되었습니다.","확인",() => setIsOpen(false))
           })
           .catch((err) => {
-            console.log(err);
             Notiflix.Loading.remove(300);
             Notiflix.Report.failure("경고","예상치 못한 에러가 발생했습니다.","확인",() => setIsOpen(false))
           })
@@ -244,9 +242,9 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               margin: 0,
             }}>공장 정보</p>
             <div style={{display: 'flex'}}>
-              <Button>
-                <p>엑셀로 받기</p>
-              </Button>
+              {/*<Button>*/}
+              {/*  <p>엑셀로 받기</p>*/}
+              {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>
@@ -384,7 +382,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
                   v.telephone = v.manager?.telephone;
                 })
 
-                console.log(e);
                 setSearchList([...e])
               }}
               width={1746}
@@ -411,7 +408,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
                 //   selectList.add(searchList[e].id)
                 // }
                 // setSelectList(selectList);
-                console.log(e)
                 setSelectRow(e)
               }}
 
@@ -430,17 +426,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-                // console.log(selectRow, searchList,  row);
                 saveSubFactory();
-                // if(selectRow !== undefined && selectRow !== null){
-                //   onRowChange({
-                //     ...row,
-                //     ...searchList[selectRow],
-                //     name: row.name,
-                //     isChange: true
-                //   })
-                // }
-                // setIsOpen(false)
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >

@@ -244,7 +244,7 @@ const Stock = ({page, keyword, option}: IProps) => {
                 <ProfileHeader/>
                     <PageHeader
                         title={"재고 현황"}
-                        buttons={["항목관리","엑셀로 받기"]}
+                        buttons={["항목관리",""]}
                         buttonsOnclick={buttonClickEvents}
                         isSearch={true}
                         searchKeyword={keyword}

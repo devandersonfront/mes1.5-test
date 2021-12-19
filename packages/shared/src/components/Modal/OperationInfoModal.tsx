@@ -82,7 +82,6 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
     })
 
     if(res){
-      console.log('res', res)
       let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
