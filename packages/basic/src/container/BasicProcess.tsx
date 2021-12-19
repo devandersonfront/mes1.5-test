@@ -243,7 +243,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     const res = await RequestMethod('get', `processList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
-        renderItem: 3,
+        renderItem: 18,
       }
     })
 

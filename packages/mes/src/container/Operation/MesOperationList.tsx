@@ -58,9 +58,9 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
   const loadingBar = useRef(null);
 
   useEffect(() => {
-    setOptionIndex(option)
+    // setOptionIndex(option)
     if(searchKeyword){
-      SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
+      SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -397,6 +397,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         onChangeSearchKeyword={(keyword) => {
           // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)
           setSearchKeyword(keyword);
+          setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
           // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)

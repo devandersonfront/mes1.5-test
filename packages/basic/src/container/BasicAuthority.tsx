@@ -148,9 +148,10 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
 
   const deleteAuth = async () => {
     if(selectIndex !== -1 && row[selectIndex].ca_id){
-      const res = await RequestMethod('delete', 'authorityDelete', row[selectIndex])
+      console.log(row[selectIndex])
+      const res = await RequestMethod('delete', 'authorityDelete', [row[selectIndex]])
 
-      if (res.status === 200){
+      if (res){
         Notiflix.Report.success('삭제 성공!', '권한이 성공적으로 삭제됐습니다.', '확인', () => {
           loadAuthorityList().then(() => {
             Notiflix.Loading.remove()
