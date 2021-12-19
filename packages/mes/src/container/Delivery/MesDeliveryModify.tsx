@@ -116,7 +116,6 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch(index){
       case 0:
-        // console.log(basicRow)
         SaveBasic()
         break;
       case 1:

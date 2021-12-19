@@ -783,10 +783,10 @@ const BasicContainer = ({title, type, optList}: IProps) => {
           title={title}
           buttons={
             type === 'productprocess'
-              ? ['엑셀로 받기', '저장하기', '행추가']
+              ? ['', '저장하기', '행추가']
               : type === 'mold' || type === 'rawmaterial'
-                ? ['엑셀로 받기', '항목관리', '저장하기']
-                : ['엑셀로 받기', '항목관리', '행 추가', '저장하기', '삭제']
+                ? ['', '항목관리', '저장하기']
+                : ['', '항목관리', '행 추가', '저장하기', '삭제']
           }
           buttonsOnclick={onClickHeaderButton}
         />

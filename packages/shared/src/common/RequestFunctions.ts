@@ -43,7 +43,6 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return result.data
         })
         .catch((error) => {
-          console.log(error)
           if(error.response.status === 406 || error.response.status === 403) {
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())

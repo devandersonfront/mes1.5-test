@@ -76,7 +76,6 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
     const scroll = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if(entry.intersectionRatio > 0){
-          console.log(pageInfo)
           if(pageInfo.total > pageInfo.page){
             // Notiflix.Loading.circle()
             setTimeout(()=>{
@@ -90,9 +89,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         }
       })
     })
-    console.log("loadingBar : ", loadingBar, ref)
     if(loadingBar.current !== null && ref != undefined){
-      console.log("??", ref)
       scroll.observe(ref);
     }
   },[ref, pageInfo.page])
@@ -351,7 +348,6 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
               }
             }
           })
-          console.log(row)
             return {
               ...row,
               ...selectData,
@@ -406,7 +402,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         setSelectDate={(date) => setSelectDate(date)}
         title={"수주 현황"}
         buttons={
-          ['엑셀로 받기', '수정하기', '삭제']
+          ['', '수정하기', '삭제']
         }
         buttonsOnclick={
           (e) => {

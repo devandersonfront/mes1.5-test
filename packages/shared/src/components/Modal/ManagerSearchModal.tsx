@@ -266,15 +266,11 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
               <ExcelTable
                 headerList={searchModalList.member}
                 row={searchList ?? []}
-                setRow={(e) => {
-                  console.log("cccncncncncn : ", e)
-                }}
                 width={1750}
                 rowHeight={32}
                 height={576}
                 setSelectRow={(e) => {
                   setSelectRow(e)
-                  console.log(e)
                   if(!searchList[e].border){
                     searchList.map((v,i)=>{
                       v.border = false;
@@ -307,25 +303,7 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
               </div>
               <div
                 onClick={() => {
-                  console.log(row, column)
-                  console.log(searchList[selectRow])
                   if(selectRow !== undefined && selectRow !== null){
-                      console.log({
-                        ...row,
-                        // ...searchList[selectRow],
-                        // user_id: searchList[selectRow].user_idPK,
-                        manager_info: searchList[selectRow],
-                        // name: "",
-                        isChange: true
-                      })
-                      // onRowChange({
-                      //   ...row,
-                      //   // ...searchList[selectRow],
-                      //   // user_id: searchList[selectRow].user_idPK,
-                      //   manager: searchList[selectRow],
-                      //   // name: "",
-                      //   isChange: true
-                      // })
                     onRowChange({...row, manager_info: searchList[selectRow], isChange: true})
                   }
                   setIsOpen(false)

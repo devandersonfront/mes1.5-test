@@ -111,38 +111,38 @@ export const AUTHORITY_LIST = [
       //   ] },
     ]
   },
-  { title: "PMS", show: false, checkable: false,
-    child: [
-      { title: "프레스 모니터링", show: false, checkable: true, check: false, child: [
-          { title: "프레스 상태 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_MON_01" },
-          { title: "프레스 로드 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_MON_02" },
-          { title: "프레스 전력 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_MON_03" },
-        ] },
-      { title: "프레스 보전 관리", show: false, checkable: true, check: false, child: [
-          { title: "금형수명주기", show: false, checkable: true, check: false, child: [], value: "ROLE_PRSVN_01" },
-          { title: "클러치&브레이크", show: false, checkable: true, check: false, child: [], value: "ROLE_PRSVN_02" },
-          { title: "오일 교환 및 보충", show: false, checkable: true, check: false, child: [], value: "ROLE_PRSVN_03" },
-          { title: "오버통", show: false, checkable: true, check: false, child: [], value: "ROLE_PRSVN_04" },
-        ] },
-      { title: "프레스 데이터 분석", show: false, checkable: true, check: false, child: [
-          { title: "생산량", show: false, checkable: true, check: false, child: [], value: "ROLE_ANSYS_01" },
-          { title: "능력", show: false, checkable: true, check: false, child: [], value: "ROLE_ANSYS_02" },
-          { title: "비가동시간", show: false, checkable: true, check: false, child: [], value: "ROLE_ANSYS_03" },
-          { title: "불량공정", show: false, checkable: true, check: false, child: [], value: "ROLE_ANSYS_04" },
-        ] },
-      { title: "프레스 데이터 통계", show: false, checkable: true, check: false, child: [
-          { title: "오일공급", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_01" },
-          { title: "비가동시간", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_02" },
-          { title: "전력", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_03" },
-          { title: "로드톤", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_04" },
-          { title: "능력", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_05" },
-          { title: "에러", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_06" },
-          { title: "불량률", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_07" },
-          { title: "제품별 톤", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_08" },
-          { title: "금형 타발 수", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_09" },
-        ] },
-    ]
-  },
+  // { title: "PMS", show: false, checkable: false,
+  //   child: [
+  //     { title: "프레스 모니터링", show: false, checkable: true, check: false, child: [
+  //         { title: "프레스 상태 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_MON_01" },
+  //         { title: "프레스 로드 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_MON_02" },
+  //         { title: "프레스 전력 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_MON_03" },
+  //       ] },
+  //     { title: "프레스 보전 관리", show: false, checkable: true, check: false, child: [
+  //         { title: "금형수명주기", show: false, checkable: true, check: false, child: [], value: "ROLE_PRSVN_01" },
+  //         { title: "클러치&브레이크", show: false, checkable: true, check: false, child: [], value: "ROLE_PRSVN_02" },
+  //         { title: "오일 교환 및 보충", show: false, checkable: true, check: false, child: [], value: "ROLE_PRSVN_03" },
+  //         { title: "오버통", show: false, checkable: true, check: false, child: [], value: "ROLE_PRSVN_04" },
+  //       ] },
+  //     { title: "프레스 데이터 분석", show: false, checkable: true, check: false, child: [
+  //         { title: "생산량", show: false, checkable: true, check: false, child: [], value: "ROLE_ANSYS_01" },
+  //         { title: "능력", show: false, checkable: true, check: false, child: [], value: "ROLE_ANSYS_02" },
+  //         { title: "비가동시간", show: false, checkable: true, check: false, child: [], value: "ROLE_ANSYS_03" },
+  //         { title: "불량공정", show: false, checkable: true, check: false, child: [], value: "ROLE_ANSYS_04" },
+  //       ] },
+  //     { title: "프레스 데이터 통계", show: false, checkable: true, check: false, child: [
+  //         { title: "오일공급", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_01" },
+  //         { title: "비가동시간", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_02" },
+  //         { title: "전력", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_03" },
+  //         { title: "로드톤", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_04" },
+  //         { title: "능력", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_05" },
+  //         { title: "에러", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_06" },
+  //         { title: "불량률", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_07" },
+  //         { title: "제품별 톤", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_08" },
+  //         { title: "금형 타발 수", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_09" },
+  //       ] },
+  //   ]
+  // },
   // {
   //   title: "Setting", show: false, checkable: false,
   //   child: [

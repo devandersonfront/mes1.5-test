@@ -38,19 +38,16 @@ type DefaultAction = ReturnType<typeof insert_productList> | ReturnType<typeof i
 const ProductSelectReducer = (state = initialState, {type,payload}:DefaultAction) => {
     switch (type) {
         case INSERT_PRODUCTLIST :
-            console.log(payload)
             let tmp_state = {...state};
             let tmp_payload = [...payload as any[]];
             tmp_state.products = tmp_payload;
             tmp_state.total_length = tmp_payload.length;
 
-            console.log(tmp_state);
             return tmp_state
 
         case INSERT_SELECT_PRODUCTLIST :
             let temp_state = {...state};
             temp_state.selectRow = payload as number;
-            console.log(temp_state);
             return temp_state
 
         case INSERT_SELECT_PRODUCTDATA:
@@ -59,8 +56,6 @@ const ProductSelectReducer = (state = initialState, {type,payload}:DefaultAction
             // if(temp_state2.total_length > temp_state2.products.length){
                 temp_state2.products[temp_state2.selectRow] = temp_payload2;
             // }
-            console.log(temp_state2.selectRow);
-            console.log(temp_state2)
             return temp_state2
 
         case DELETE_PRODUCTLIST:

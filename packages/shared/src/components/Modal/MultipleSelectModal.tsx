@@ -53,29 +53,20 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
         selector.products.map((v, i) => {
         // saveList.map((v, i) => {
         //     searchList.map((value) => {
-        //         console.log(value.code, v.code)
         //         if (value.code === v.code ) {
-        //             console.log("value", value)
         //             tmp_data.push({...value,index:i+1})
         //         }
         //     })
-        //     console.log(v)
             // if(v.code === ""){
-            //     console.log(v)
                 tmp_data.push({...v,index:i+1})
             // }
         })
         if(searchList.length < 0){
             return
         }
-        console.log(tmp_data);
         setSaveList([...tmp_data])
         return tmp_data;
     }
-
-    console.log(saveList);
-    console.log(row)
-    console.log(selector)
 
     useEffect(() => {
         if(isOpen) SearchBasic(searchKeyword, optionIndex, 1).then(() => {
@@ -144,7 +135,6 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
             let searchList = res.results.info_list.map((row: any, index: number) => {
                 return changeRow(row)
             })
-            console.log(searchList);
 
             setPageInfo({
                 ...pageInfo,
@@ -170,11 +160,9 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
         //   }
         // })
         //
-        // console.log(res2);
 
         if(res && res.status === 200){
             // dispatch(insert_machine_list({process_length:res.results.processes.length, machineList:[]}))
-            // console.log(res.results.processes)
         }
     }
 
@@ -350,7 +338,6 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
                                         // if(selector.total_length > saveList.length){
                                             saveList[selector.selectRow] = {...searchList[e], date:row.date, amount:row.amount, id:Math.random()+"product", index:selector.selectRow+1};
                                             setSaveList([...saveList])
-                                        // console.log(saveList)
                                         // }
                                     }}
                                     type={'searchModal'}

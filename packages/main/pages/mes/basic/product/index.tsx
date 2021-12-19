@@ -434,7 +434,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
           }}
           optionIndex={optionIndex}
           title={title}
-          buttons={['엑셀로 받기', '항목관리', '행 추가', '저장하기', '삭제']}
+          buttons={['', '항목관리', '행 추가', '저장하기', '삭제']}
           buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable

@@ -38,22 +38,7 @@ const FactorySearchModal = ({column, row, onRowChange}: IProps) => {
     total: 1
   })
 
-  // useEffect(() => {
-  //   if(isOpen) SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-  //     Notiflix.Loading.remove()
-  //   })
-  // }, [isOpen, searchKeyword])
-  // console.log(row)
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
-
   const changeRow = (row: any, key?: string) => {
-    console.log('factory row', row)
     let tmpData = {
       ...row,
       machine_id: row.name,

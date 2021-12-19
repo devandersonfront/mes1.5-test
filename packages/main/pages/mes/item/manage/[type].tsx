@@ -134,15 +134,12 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   const [addiItem, setAddiItem] = useState<IItemMenuType[]>([])
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set())
 
-
-
   const listItem = async (code: string) => {
     const res =  await RequestMethod('get', 'itemList', {
       path: {
         tab: code
       }
     })
-    console.log("res : ", res)
     if(res){
       const results = res
 
@@ -191,7 +188,6 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   const deleteItem = async (code: string, items: IItemMenuType[]) => {
     let idList:IItemMenuType[] = [];
     const spliceArray:number[] = [];
-    console.log(items)
     items.map((v,i)=> {
       if(selectList.has(v.id as number)){
         spliceArray.push(i);
@@ -264,14 +260,12 @@ const ItemManagePage = ({title, type, code}: IProps) => {
                 <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
                   <HeaderButton onClick={() => {
                     const resultArray = [];
-                    console.log("addiItem : ", addiItem)
                     baseItem.map((value)=>{
                       resultArray.push({...value})
                     })
                     addiItem.map((value)=>{
                       resultArray.push({...value, unit:value.unit_id ?? value.unit, moddable: value.moddablePK === "1" ? false : true})
                     })
-                    console.log("resultArray : ", resultArray)
                     saveItem(code, resultArray, 'additional')
                   }} key={`btnCreate`}>추가항목 저장</HeaderButton>
                   <HeaderButton onClick={() => {

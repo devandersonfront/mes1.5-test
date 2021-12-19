@@ -57,7 +57,6 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
     })
 
     if(res){
-      console.log(res)
       let tmpColumn = columnlist["rawinV1u"]
 
       tmpColumn = tmpColumn.map((column: any) => {
@@ -158,7 +157,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         }).filter((v) => v))
       .catch((error) => {
         if(error.status === 409){
-         Notiflix.Notify.warning('lot 번호가 충돌된 데이터는 저장되지 않았습니다.')
+         Notiflix.Notify.warning(error.data.message)
           return true
         }
         return false
@@ -217,7 +216,6 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
-          console.log("e : ", e);
           setBasicRow(e)
         }}
         selectList={selectList}

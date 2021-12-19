@@ -63,7 +63,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log('lotInput', row)
       if(row.input_bom && row.input_bom.length){
         changeRow(row.input_bom)
       }else{
@@ -83,8 +82,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       },
     })
 
-    console.log(res)
-
     if(res && res.status === 200){
       let searchList = res.results.info_list.map((row: any, index: number) => {
         return changeRow(row)
@@ -97,8 +94,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpData = []
     let tmpRows = tmpRow;
-
-    console.log(tmpRow)
 
     tmpData = tmpRows.map((v, i) => {
       let childData: any = {}
@@ -171,9 +166,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const deleteTab = (index: number) => {
-    console.log(bomDummy.length, focusIndex)
     if(bomDummy.length - 1 === focusIndex){
-      console.log('last')
       setFocusIndex(focusIndex-1)
     }
     if(bomDummy.length === 1) {

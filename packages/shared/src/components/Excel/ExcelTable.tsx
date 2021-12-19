@@ -91,7 +91,6 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
                   }
                   else if(value.type === "additional"){
                     tmpOneLine = {...value, mi_id:value.id, colName:value.key, title:value.name, hide:value.hide, tab:headerList[1].tab, version:headerList[1].version  };
-                    console.log("tmpOneLine : ", tmpOneLine,)
                   }
                   else{
                     tmpOneLine = {...value, mi_id:value.id, colName:value.key, title:value.name.split("(필수)")[0], hide:value.hide };
@@ -120,9 +119,6 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
       }}
       onRowsChange={setRow}
       emptyRowsView={() => <div>empty</div>}
-      onSelectedRows={(e:any)=>{
-        console.log(e)
-      }}
       onSelectedRowsChange={setSelectedRows}
       selectedRows={selectedRows}
       onRowChange={(e:any)=>{

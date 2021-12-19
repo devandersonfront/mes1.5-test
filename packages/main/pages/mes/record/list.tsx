@@ -445,7 +445,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
           //@ts-ignore
           setSelectDate={setSelectDate}
           title={title}
-          buttons={['엑셀로 받기', '수정 하기', '삭제']}
+          buttons={['', '수정 하기', '삭제']}
           buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable

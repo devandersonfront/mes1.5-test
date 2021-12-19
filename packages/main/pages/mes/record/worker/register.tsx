@@ -355,7 +355,7 @@ const BasicContainer = () => {
         <ProfileHeader/>
         <PageHeader
           title={title}
-          buttons={['엑셀로 받기', '행 추가', '저장하기', '삭제']}
+          buttons={['', '행 추가', '저장하기', '삭제']}
           buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable

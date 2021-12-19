@@ -121,8 +121,6 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
               additional: [
                 ...additional.map((v, index)=>{
                   if(!row[v.colName]) return undefined;
-                  console.log(row.additional, " || v : ",v)
-                  console.log("i : index ||| ", i, index, v.version)
                   // result.push(
                   return {
                     mi_id: v.id,
@@ -520,7 +518,8 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
         optionIndex={optionIndex}
         title={"거래처 정보 관리"}
         buttons={
-          ["엑셀로 등록",'엑셀로 받기', '항목관리', '행 추가', '저장하기', '삭제']
+          ["",'', '항목관리', '행 추가', '저장하기', '삭제']
+          // ["",'엑셀로 받기', '항목관리', '행 추가', '저장하기', '삭제']
         }
         buttonsOnclick={onClickHeaderButton}
       />

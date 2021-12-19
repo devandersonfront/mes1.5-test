@@ -71,7 +71,6 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
 
     if(res){
       let searchList = res.map((row: any, index: number) => {
-        console.log(row)
         return changeRow(row)
       })
 
@@ -249,7 +248,6 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
               <div
                 onClick={() => {
                   setOptionIndex(0)
-                  console.log(searchList[selectRow])
                   if(selectRow !== undefined && selectRow !== null){
                       onRowChange({
                         ...row,

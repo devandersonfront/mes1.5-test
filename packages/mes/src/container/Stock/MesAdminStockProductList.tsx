@@ -57,10 +57,6 @@ const MesAdminStockProductList = () => {
 
   const [onHide, setOnHide] = useState<boolean>(false);
 
-  useEffect(() => {
-    console.log(rowData)
-  }, [rowData])
-
   const LoadMenu = async() => {
     Notiflix.Loading.standard();
     const res = await RequestMethod('get', 'loadMenu', {
@@ -99,14 +95,10 @@ const MesAdminStockProductList = () => {
         tmpRow = [{...res}]
       }
 
-      console.log(tmpRow)
-
       tmpRes = {
         menus: menus,
         summaries: tmpRow
       }
-
-      console.log(tmpRes)
 
       cleanUpData(tmpRes, "model")
       cleanUpData(tmpRes, "date");
@@ -242,8 +234,6 @@ const MesAdminStockProductList = () => {
     let tmpBasicRow_model = tmpRow.map((row: any, index: number) => {
       let random_id = Math.random()*1000;
       const summary_id = res.summary_id ?? undefined;
-
-      console.log(row)
 
       return {
         ...row,

@@ -167,9 +167,9 @@ const MachineInfoModal = ({column, row, onRowChange}: IProps) => {
               margin: 0,
             }}>기계 정보 (제품 생산되는 데 사용되는 모든 기계를 입력해주세요)</p>
             <div style={{display: 'flex'}}>
-              <Button>
-                <p>엑셀로 받기</p>
-              </Button>
+              {/*<Button>*/}
+              {/*  <p>엑셀로 받기</p>*/}
+              {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>

@@ -132,10 +132,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   useEffect(()=> {
     if(isOpen){
       const scroll = new IntersectionObserver(entries => {
-        console.log("entries : ", entries)
         entries.forEach(entry => {
           if(entry.intersectionRatio > 0){
-            console.log(entry)
             if(totalPage > page){
               // Notiflix.Loading.circle()
               setTimeout(()=>{

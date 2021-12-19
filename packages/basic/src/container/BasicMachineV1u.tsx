@@ -146,8 +146,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           .then((res) => {
             Notiflix.Report.success("저장되었습니다.","","확인");
             LoadBasic(page);
-          }).catch((err) =>{
-            console.log(err)
           })
 
   }
@@ -242,9 +240,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
               Notiflix.Loading.remove()
             })
           }
-        })
-        .catch((err) => {
-          console.log(err)
         })
 
   }
@@ -361,7 +356,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         id: `mold_${random_id}`,
       }
     })
-    console.log("tmpBasicRow : ", tmpBasicRow)
     setBasicRow([...tmpBasicRow])
     // setBasicRow([{ id: "", name: "400톤 2호기", weldingType: '선택없음', type: '프레스', mfrCode: '125-77-123', interwork: '유', user_id: '차지훈', manufacturer:'Aidas'}])
   }
@@ -383,7 +377,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         additional.push(v)
       }
     })
-    console.log("value : ", value)
     let weldingPK = 0;
     weldingType.map((welding)=>{
       if(welding.name === value.weldingType){
@@ -412,7 +405,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         }).filter((v) => v)
     ]
 
-    console.log(tempData)
     // tempData.device.manager
     return tempData
 
@@ -500,7 +492,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           optionIndex={optionIndex}
           title={"기계 기준정보"}
           buttons={
-            ['엑셀로 등록', '엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
+            ['', '', '항목관리', '행추가', '저장하기', '삭제']
           }
           buttonsOnclick={onClickHeaderButton}
         />
@@ -514,7 +506,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           row={basicRow}
           // setRow={setBasicRow}
           setRow={(e) => {
-            console.log(e)
             let tmp: Set<any> = selectList
             e.map(v => {
               if(v.isChange) tmp.add(v.id)

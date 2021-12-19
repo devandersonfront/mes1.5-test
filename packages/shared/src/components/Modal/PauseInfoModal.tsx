@@ -55,11 +55,9 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    console.log('row', row)
     if(row['pause_reasons'] && row['pause_reasons'].length){
       let total = 0
       setSearchList([...row.pause_reasons.map(v => {
-        console.log(v)
 
         let sec = v.amount
         let hour = Math.floor(sec / 3600)
@@ -87,7 +85,6 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }, [isOpen, row, searchKeyword])
 
   const changeRow = (row: any, key?: string) => {
-    console.log(row)
     let tmpData = {
       ...row,
       machine_id: row.name,
@@ -194,9 +191,9 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   <p style={{margin:0, padding: '0 0 0 8px'}}>{totalTime}</p>
                 </div>
               </div>
-              <Button>
-                <p>엑셀로 받기</p>
-              </Button>
+              {/*<Button>*/}
+              {/*  <p>엑셀로 받기</p>*/}
+              {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>
@@ -280,7 +277,6 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                       ...row,
                       pause_reasons: [
                         ...searchList.map(v => {
-                          console.log(v)
                           return ({
                             amount: v.time_sec,
                             pause_reason: v

@@ -51,7 +51,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log(row)
       // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
       //   Notiflix.Loading.remove()
       // })
@@ -150,10 +149,8 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
   const cleanUp = (row:any, value:any) => {
 
     if(typeof row[value] === "object" && row[value] !== null){
-      console.log("object : ", row[value])
       return row[value].name
     }else{
-      console.log("else : ", row[value])
       return row[value] === null ? "-" : row[value];
     }
 
@@ -193,9 +190,9 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
               margin: 0,
             }}>생산 품목 정보</p>
             <div style={{display: 'flex'}}>
-              <Button>
-                <p>엑셀로 받기</p>
-              </Button>
+              {/*<Button>*/}
+              {/*  <p>엑셀로 받기</p>*/}
+              {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>
@@ -334,8 +331,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
                     isChange: true
                   })
                 }
-                console.log("searchList: ", searchList)
-                console.log("row: ", row)
                 setIsOpen(false)
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}

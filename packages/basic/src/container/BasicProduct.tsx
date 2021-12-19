@@ -242,9 +242,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
           Notiflix.Report.success("삭제되었습니다.","","확인", () =>LoadBasic(1))
         })
         .catch((err) => {
-          console.log(err)
           Notiflix.Loading.remove(300);
-          alert("fuck")
         })
 
 
@@ -500,7 +498,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
           optionIndex={optionIndex}
           title={"제품 등록 관리"}
           buttons={
-            ['엑셀로 받기', '항목관리', '행추가', '저장하기', '삭제']
+            ['', '항목관리', '행추가', '저장하기', '삭제']
           }
           buttonsOnclick={
             // () => {}
@@ -521,7 +519,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
             e.map(v => {
               if(v.isChange) tmp.add(v.id)
             })
-            console.log(e)
             setSelectList(tmp)
             setBasicRow(e)
           }}

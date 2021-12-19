@@ -42,7 +42,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log('row', row)
       if (row.lots && row.lots.length) {
         initData()
       }else if (row.product?.product_id) {
@@ -58,7 +57,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     let searchList = await SearchBasic().then((results) => {
       return results.map((v, i) => {
         let index = row.lots.findIndex((lot) => lot.group.sum.lot_number === v.group.sum.lot_number)
-        console.log(index)
         if (index !== -1) {
           return {
             seq: i + 1,
@@ -94,7 +92,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
     })
 
-    console.log(searchList)
     setSearchList([...searchList])
   }
 
@@ -114,7 +111,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
       row = [{...tmpRow}]
     }
 
-    console.log(row)
     tmpData = row.map((v, i) => {
 
       return {

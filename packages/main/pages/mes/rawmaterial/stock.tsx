@@ -400,7 +400,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
           //@ts-ignore
           setSelectDate={setSelectDate}
           title={title}
-          buttons={['엑셀로 받기','저장하기']}
+          buttons={['','저장하기']}
           buttonsOnclick={onClickHeaderButton}
           dataLimit={true}
 

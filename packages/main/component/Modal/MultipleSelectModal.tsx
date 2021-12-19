@@ -51,31 +51,14 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
     const result = () => {
         let tmp_data = [];
         selector.products.map((v, i) => {
-        // saveList.map((v, i) => {
-        //     searchList.map((value) => {
-        //         console.log(value.code, v.code)
-        //         if (value.code === v.code ) {
-        //             console.log("value", value)
-        //             tmp_data.push({...value,index:i+1})
-        //         }
-        //     })
-        //     console.log(v)
-            // if(v.code === ""){
-            //     console.log(v)
-                tmp_data.push({...v,index:i+1})
-            // }
+            tmp_data.push({...v,index:i+1})
         })
         if(searchList.length < 0){
             return
         }
-        console.log(tmp_data);
         setSaveList([...tmp_data])
         return tmp_data;
     }
-
-    console.log(saveList);
-    console.log(row)
-    console.log(selector)
 
     useEffect(() => {
         if(isOpen) SearchBasic(searchKeyword, optionIndex, 1).then(() => {
@@ -144,7 +127,6 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
             let searchList = res.results.info_list.map((row: any, index: number) => {
                 return changeRow(row)
             })
-            console.log(searchList);
 
             setPageInfo({
                 ...pageInfo,
@@ -153,28 +135,6 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
             })
 
             setSearchList([...searchList])
-        }
-    }
-
-    const ProductProcessSearch = async (pp_id: number) => {
-        Notiflix.Loading.circle()
-        const res = await RequestMethod('get', `productprocessList`,{
-            path: {
-                pp_id
-            }
-        })
-
-        // const res2 = await RequestMethod("get", "operationRecent", {
-        //   path:{
-        //     product_id:pp_id
-        //   }
-        // })
-        //
-        // console.log(res2);
-
-        if(res && res.status === 200){
-            // dispatch(insert_machine_list({process_length:res.results.processes.length, machineList:[]}))
-            // console.log(res.results.processes)
         }
     }
 
@@ -347,11 +307,8 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
                                             // dispatch(insert_select_productData({...searchList[e], date:row.date, amount:row.amount, id:Math.random()+"product"}));
                                         }
 
-                                        // if(selector.total_length > saveList.length){
-                                            saveList[selector.selectRow] = {...searchList[e], date:row.date, amount:row.amount, id:Math.random()+"product", index:selector.selectRow+1};
-                                            setSaveList([...saveList])
-                                        // console.log(saveList)
-                                        // }
+                                        saveList[selector.selectRow] = {...searchList[e], date:row.date, amount:row.amount, id:Math.random()+"product", index:selector.selectRow+1};
+                                        setSaveList([...saveList])
                                     }}
                                     type={'searchModal'}
                                 />

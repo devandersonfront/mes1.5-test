@@ -72,7 +72,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log(row)
       setSearchList([{
         sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
         start: moment().format('YYYY-MM-DD HH:mm:00'), end: moment().format('YYYY-MM-DD HH:mm:00'),
@@ -204,9 +203,9 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
               margin: 0,
             }}>작업 일보 등록 (해당 작업지시의 작업 일보를 등록해주세요)</p>
             <div style={{display: 'flex'}}>
-              <Button>
-                <p>엑셀로 받기</p>
-              </Button>
+              {/*<Button>*/}
+              {/*  <p>엑셀로 받기</p>*/}
+              {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>
@@ -277,9 +276,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                     newTab: false
                   }
                 })
-                console.log(tmp)
                 setSearchList([...tmp.map(v => {
-                  console.log('v', v)
                   return {
                     ...v,
                     sum: Number(v.good_quantity ?? 0)+Number(v.poor_quantity ?? 0)

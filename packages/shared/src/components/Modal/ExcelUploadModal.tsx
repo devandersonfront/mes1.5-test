@@ -89,7 +89,7 @@ const ExcelUploadModal = ({isOpen, setIsOpen, process_id, tab, cleanUpBasicData,
                 <ModalContainer>
                     <div style={{width:"100%", }}>
                         <p  style={{fontSize:"26px", fontWeight:"bold", marginLeft:"16px", height:"0", padding:0, marginBottom:0 }}>
-                            엑셀로 등록
+
                         </p>
                     </div>
                     <div style={{width:"calc(100% - 32px)", margin:"0 16px 0 16px", display:"flex",justifyContent:"space-between", alignItems:"center"}}>

@@ -490,8 +490,8 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
         />
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", margin:"10px 0"}}>
           <p style={{fontSize:22, fontWeight:600, color: 'white', margin: 0}}>자세히 보기</p>
-          <Button onClick={()=>{
-          }}>엑셀로 받기</Button>
+          {/*<Button onClick={()=>{*/}
+          {/*}}>엑셀로 받기</Button>*/}
         </div>
         <ExcelTable
           editable

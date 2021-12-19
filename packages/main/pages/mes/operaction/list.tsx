@@ -197,7 +197,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
             Notiflix.Loading.remove()
           })
         }
-        
+
       }
     }
   }
@@ -431,7 +431,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
           //@ts-ignore
           setSelectDate={setSelectDate}
           title={title}
-          buttons={['엑셀로 받기', '항목관리', '저장하기', '삭제']}
+          buttons={['', '항목관리', '저장하기', '삭제']}
           buttonsOnclick={onClickHeaderButton}
 
         />

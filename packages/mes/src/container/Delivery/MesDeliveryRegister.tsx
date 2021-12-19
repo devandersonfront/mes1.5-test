@@ -63,7 +63,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     })
 
     if(res){
-      console.log(res)
       let tmpColumn = columnlist["deliveryRegister"]
 
       tmpColumn = tmpColumn.map((column: any) => {

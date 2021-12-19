@@ -12,7 +12,6 @@ interface IProps {
 const HeaderFilter = ({row, column, setRow, onChangeOption}: IProps) => {
   return (
     <Select defaultValue={column.options[0].name} onChange={(e)=>{
-      console.log(e.target.value)
       if(Number(e.target.value) === -1){
         column.result("0,1,2,3,4/");
       }else if(e.target.value === column.options[0].name){

@@ -6,7 +6,6 @@ import Notiflix from 'notiflix'
 type RequestType = 'get' | 'post' | 'delete' | 'put'
 
 export const requestApi = async (type: RequestType,url: string, data?: any, token?: any, contentsType?: 'blob', tab?:string) => {
-  console.log("tab : ", tab)
   const ENDPOINT = `${SF_ENDPOINT}`
 
   switch(type){

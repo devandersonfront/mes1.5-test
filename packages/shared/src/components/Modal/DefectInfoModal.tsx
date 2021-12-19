@@ -66,8 +66,6 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         })
       })])
 
-      console.log(total)
-
       setTotalCount(total)
     }else {
 
@@ -128,7 +126,6 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const deleteTab = (index: number) => {
     if(bomDummy.length - 1 === focusIndex){
-      console.log('last')
       setFocusIndex(focusIndex-1)
     }
     if(bomDummy.length === 1) {
@@ -241,9 +238,9 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   <p style={{margin:0, padding: 0}}>{totalCount}</p>
                 </div>
               </div>
-              <Button>
-                <p>엑셀로 받기</p>
-              </Button>
+              {/*<Button>*/}
+              {/*  <p>엑셀로 받기</p>*/}
+              {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>
@@ -260,7 +257,6 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 let ppr_id = ''
                 let reason = ''
                 let total = 0
-                console.log('e',e)
                 let tmpRow = e.map((v, i) => {
                   if(v.add) {
                     addIndex = i+1

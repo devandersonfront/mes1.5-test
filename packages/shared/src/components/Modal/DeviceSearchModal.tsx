@@ -42,7 +42,6 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
       Notiflix.Loading.remove()
     })
   }, [isOpen, searchKeyword])
-  console.log(row)
   useEffect(() => {
     if(pageInfo.total > 1){
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -235,9 +234,6 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
             <ExcelTable
               headerList={searchModalList.device}
               row={searchList ?? []}
-              setRow={(e) => {
-                console.log(e)
-              }}
               width={1746}
               rowHeight={32}
               height={576}
@@ -276,7 +272,6 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 if(selectRow !== undefined && selectRow !== null){
-                  console.log(row, searchList)
                   onRowChange({
                     ...row,
                     ...searchList[selectRow],

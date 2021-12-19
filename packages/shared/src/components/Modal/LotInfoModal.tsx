@@ -55,11 +55,8 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
       }
     }
   }, [isOpen, searchKeyword])
-  console.log(row)
 
   const changeRow = (row: any, i: number) => {
-
-    console.log(row)
 
     return {
       seq: i+1,
@@ -83,8 +80,6 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
         renderItem: 18,
       },
     })
-
-    console.log(res)
 
     if(res){
 

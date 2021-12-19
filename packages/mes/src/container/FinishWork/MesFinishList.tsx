@@ -35,11 +35,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-   id: '', order_num: '-', operation_num: '20210401-03', operation_date: now, limit_date: now,
-    customer: '-', model: '-', code: 'SU-20210701-3', product: 'SU900-1', type: '반제품',
-    unit: 'EA', process: '프레스', goal: '50', total_count: '58', total_good: '55', total_uph: '12'
-  }])
+  const [basicRow, setBasicRow] = useState<Array<any>>([{id: '',}])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["finishListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['지시고유번호', '수주번호', '거래퍼', '모델', 'code',  '품명'])
@@ -287,7 +283,6 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       }
     })
 
-    console.log(tmpBasicRow)
 
     setBasicRow([...tmpBasicRow])
   }
@@ -306,7 +301,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         setSelectDate={(date) => setSelectDate(date)}
         title={"작업 완료 리스트"}
         buttons={
-          ['엑셀로 받기']
+          ['']
         }
         buttonsOnclick={
           () => {}
@@ -324,7 +319,6 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         // setRow={setBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
-          console.log('e', e)
           let tmpRes = e.map(v => {
             if(v.isChange) tmp.add(v.id)
             if(v.update || v.finish){

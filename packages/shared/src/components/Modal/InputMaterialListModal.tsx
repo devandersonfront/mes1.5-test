@@ -86,7 +86,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log(row)
       if(row.operation_sheet){
         changeRow(row.operation_sheet.input_bom)
       }else{
@@ -98,10 +97,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpData = []
     let tmpRows = tmpRow;
-
-    console.log(tmpRow)
-
-    console.log(row)
 
     setSummaryData({
       // ...res.parent
@@ -207,9 +202,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const deleteTab = (index: number) => {
-    console.log(bomDummy.length, focusIndex)
     if(bomDummy.length - 1 === focusIndex){
-      console.log('last')
       setFocusIndex(focusIndex-1)
     }
     if(bomDummy.length === 1) {
@@ -457,7 +450,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                         })
                       }
                     })
-                    console.log('totalAmount', totalAmount, bom.disturbance)
 
                     if(totalAmount !== bom.disturbance){
                       disturbance += 1
@@ -469,7 +461,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                       ...row,
                       bom: bomList
                     })
-                    console.log(bomList)
                     setIsOpen(false)
                   }else{
                     Notiflix.Report.warning(`소요량과 생산량 합계를 일치시켜 주세요`, '', '확인')

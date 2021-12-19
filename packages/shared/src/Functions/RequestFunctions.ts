@@ -36,7 +36,6 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return result
         })
         .catch((error) => {
-          console.log(error)
           if(error.response.status === 406 || error.response.status === 401) {
             return {
               state: 401

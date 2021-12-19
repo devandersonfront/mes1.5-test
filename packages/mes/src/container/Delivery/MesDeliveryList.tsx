@@ -262,7 +262,6 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
       })
 
       const reducer = (accumulator, curr) => {
-        console.log(accumulator,curr)
         return accumulator.amount + curr.amount;
       }
 
@@ -287,8 +286,6 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
       }
     })
 
-    console.log(tmpBasicRow)
-
     Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
   }
@@ -307,7 +304,7 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         setSelectDate={(date) => setSelectDate(date)}
         title={"납품 현황"}
         buttons={
-          ['엑셀로 받기', '수정하기']
+          ['', '수정하기']
         }
         buttonsOnclick={
           (e) => {

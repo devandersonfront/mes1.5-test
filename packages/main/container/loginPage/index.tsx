@@ -64,9 +64,9 @@ const LoginPage: NextPage<IProps> = ({children, data, setData }) => {
                          setData({...data, password: e.target.value})
                      }} hint={'비밀번호를 입력해주세요.'} onKeyDown={onKeyDownEnter}/>
         <DefaultButton title={'로그인'} onClick={() => onClickLogin().then(() => Notiflix.Loading.remove(500) ) } />
-        <p style={{marginTop:"15px", textDecoration:"underline", cursor: 'pointer'}} onClick={()=>{ router.push("/mes/modify/findpassword")}}>
-          비밀번호 찾기
-        </p>
+        {/*<p style={{marginTop:"15px", textDecoration:"underline", cursor: 'pointer'}} onClick={()=>{ router.push("/mes/modify/findpassword")}}>*/}
+        {/*  비밀번호 찾기*/}
+        {/*</p>*/}
       </div>
     </WelcomeContainer>
   )

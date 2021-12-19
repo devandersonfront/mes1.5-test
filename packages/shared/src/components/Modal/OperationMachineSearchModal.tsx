@@ -145,7 +145,6 @@ const OperationMachineSearchModal = ({column, row, onRowChange}: IProps) => {
         // setSelectMachines(tmp_data);
         // selector.machineList.map((v,i)=>{
         //     if(tmp_data.length < selector.machineList.length){
-        //         console.log(i+1, "???")
         //         tmp_data.push({...v,name:"",machine_id:-1,machine_idPK:-1 })
         //     }
         // })
@@ -153,8 +152,6 @@ const OperationMachineSearchModal = ({column, row, onRowChange}: IProps) => {
 
             return tmp_data;
     }
-
-    // console.log(result());
 
     return (
         <SearchModalWrapper >

@@ -37,12 +37,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    status: '시작전', order_num: '-', operation_num: '20210401-01',
-    start_date: now, limit_date: now, customer: '진주상사', model: '한국차',
-    code: 'SU-20210701-1', product: 'SU900', type: '완제품', unit: 'EA', process: '코팅',
-    goal: '50', total: '0', totalCurrent: '0', totalBad: '0',
-  },])
+  const [basicRow, setBasicRow] = useState<Array<any>>([{}])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["operationListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['지시 고유 번호', '고객사명', '모델', 'CODE', '품명'])
@@ -212,7 +207,6 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
               }
             }
           })
-          console.log(row)
           return {
             ...row,
             ...selectData,
@@ -237,7 +231,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     if(res) {
       Notiflix.Report.success('삭제 성공!', '', '확인', () => {
         LoadBasic(1).then(() => {
-          Notiflix.Loading.remove()
+          Notiflix.Loading.remove(3000)
         })
       })
     }
@@ -373,7 +367,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         setSelectDate={(date) => setSelectDate(date)}
         title={"작업지시서 리스트"}
         buttons={
-          ['엑셀로 받기', '수정하기', '삭제']
+          ['', '수정하기', '삭제']
         }
         buttonsOnclick={
           (e) => {
@@ -414,7 +408,6 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         // setRow={setBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
-          console.log(e)
           let tmpRes = e.map(v => {
             if(v.isChange) tmp.add(v.id)
             if(v.update || v.finish){
