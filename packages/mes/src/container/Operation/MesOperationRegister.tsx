@@ -140,10 +140,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         process: res.product.process?.name,
         goal: res.goal
       }])
-    }else if (res.state === 401) {
-      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-        router.back()
-      })
     }
 
     setIsFirst(false)
@@ -177,10 +173,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           }
         }
       }).filter(v => v)])
-    }else if (res.state === 401) {
-      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-        router.back()
-      })
     }
 
     setIsFirst(false)
@@ -195,9 +187,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
         break;
       case 1:
+        const randomId = Math.random()*1000;
         setBasicRow([
-          {date: moment().format('YYYY-MM-DD'),
-            deadline: moment().format('YYYY-MM-DD')},
+          {
+            id:"operation_"+randomId,
+            date: moment().format('YYYY-MM-DD'),
+            deadline: moment().format('YYYY-MM-DD')
+          },
           ...basicRow
         ])
         break;

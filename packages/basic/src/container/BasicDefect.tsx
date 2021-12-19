@@ -165,10 +165,6 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
           ...row,
         }
       })])
-    }else if (res.state === 401) {
-      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-        router.back()
-      })
     }
   }
 

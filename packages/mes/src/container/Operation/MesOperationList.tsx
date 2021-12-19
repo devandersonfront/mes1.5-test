@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {
   ExcelTable,
   Header as PageHeader,
@@ -21,6 +21,7 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from 'react-redux'
+import styled from "styled-components";
 
 interface IProps {
   children?: any
@@ -52,23 +53,50 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
   });
 
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
 
+  const [ref, setRef] = useState<any>();
+  const loadingBar = useRef(null);
+
   useEffect(() => {
     setOptionIndex(option)
-    if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+    if(searchKeyword){
+      SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option, selectDate])
+  }, [pageInfo.page, searchKeyword, option, selectDate])
+
+  useEffect(()=>{
+    const scroll = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        console.log(entry)
+        if(entry.intersectionRatio > 0){
+          if(pageInfo.total > pageInfo.page){
+            Notiflix.Loading.circle()
+            setTimeout(()=>{
+              setPageInfo({...pageInfo, page:pageInfo.page+1})
+              document.querySelector(".ScrollBox").scrollTop = 0;
+            },1000)
+            Notiflix.Loading.remove(300);
+            // }
+          }else{
+          }
+        }
+      })
+    })
+    if(loadingBar.current !== null && ref != undefined){
+      scroll.observe(ref);
+    }
+  },[ref, pageInfo.page])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -126,14 +154,13 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     const res = await RequestMethod('get', `sheetList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params: {
         from: selectDate.from,
         to: selectDate.to,
         status: '0,1'
       }
-
     })
 
     if(res){
@@ -143,6 +170,9 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
+      setRef(document.querySelector(".Next"));
+    }else{
+      console.log(res);
     }
   }
 
@@ -154,7 +184,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     const res = await RequestMethod('get', `moldSearch`,{
       path: {
         page: isPaging ?? 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params: {
         keyword: keyword ?? '',
@@ -169,6 +199,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
+      setRef(document.querySelector(".Next"));
     }
   }
 
@@ -290,9 +321,11 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
       }
     }).filter((v: any) => v) : []
 
-
-    tmpRow = res.info_list
-
+    if(pageInfo.page > 1){
+      tmpRow = [...basicRow,...res.info_list]
+    }else{
+      tmpRow = res.info_list
+    }
 
     loadAllSelectItems( [
       ...tmpColumn,
@@ -367,8 +400,14 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         calendarTitle={'작업 기한'}
         calendarType={'period'}
         selectDate={selectDate}
-        onChangeSearchKeyword={(keyword) => router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)}
-        onChangeSearchOption={(option) =>  router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)}
+        onChangeSearchKeyword={(keyword) => {
+          // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)
+          setSearchKeyword(keyword);
+        }}
+        onChangeSearchOption={(option) => {
+          // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)
+          setOptionIndex(option)
+        }}
         //@ts-ignore
         setSelectDate={(date) => setSelectDate(date)}
         title={"작업지시서 리스트"}
@@ -403,6 +442,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
           // onClickHeaderButton
         }
       />
+    <ExcelTableBox className={"ScrollBox"}>
       <ExcelTable
         editable
         resizable
@@ -419,7 +459,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
             if(v.update || v.finish){
               if(keyword){
-                SearchBasic(keyword, option, page).then(() => {
+                SearchBasic(keyword, optionIndex, page).then(() => {
                   Notiflix.Loading.remove()
                 })
               }else{
@@ -444,6 +484,10 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
+      <div className={"Next"} ref={loadingBar} style={{width:"100%", height:"50px",display:"flex", justifyContent:"center", alignItems:"center"}} >
+        Loading...
+      </div>
+    </ExcelTableBox>
     </div>
   );
 }
@@ -457,5 +501,27 @@ export const getServerSideProps = (ctx: NextPageContext) => {
     }
   }
 }
+
+const ExcelTableBox = styled.div`
+  height:720px;
+  overflow:scroll;
+::-webkit-scrollbar{
+    display:none;
+    width:${(props:any)=> props.theme};
+    height:8px;
+  }
+
+  ::-webkit-scrollbar-thumb{
+    background:#484848;
+  }
+
+  ::-webkit-scrollbar-track{
+    background:none;
+  }
+
+  ::-webkit-scrollbar-corner{
+    display:none;
+  }
+`;
 
 export {MesOperationList};

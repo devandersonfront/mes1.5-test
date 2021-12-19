@@ -76,6 +76,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
   useEffect(()=>{
     const scroll = new IntersectionObserver(entries => {
       entries.forEach(entry => {
+        console.log(entry)
         if(entry.intersectionRatio > 0){
           if(pageInfo.total > pageInfo.page){
             Notiflix.Loading.circle()
@@ -161,8 +162,8 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         page: res.page,
         total: res.totalPages
       })
-      setRef(document.querySelector(".Next"));
       cleanUpData(res)
+      setRef(document.querySelector(".Next"));
     }else if (res === 401) {
       Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
         router.back()
@@ -179,7 +180,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
     const res = await RequestMethod('get', `contractSearch`,{
       path: {
         page: isPaging ?? 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params: {
         keyword: keyword ?? '',

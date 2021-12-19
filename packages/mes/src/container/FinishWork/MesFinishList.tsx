@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {
   ExcelTable,
   Header as PageHeader,
@@ -20,6 +20,7 @@ import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
+import styled from "styled-components";
 
 interface IProps {
   children?: any
@@ -49,25 +50,52 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
     to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
   });
 
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
 
+  const [ref, setRef] = useState<any>();
+  const loadingBar = useRef(null);
+
   useEffect(() => {
     setOptionIndex(option)
     if(getMenus()){
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
+      if(searchKeyword){
+        SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }else{
-        LoadBasic(page).then(() => {
+        LoadBasic(pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, searchKeyword, option])
+
+  useEffect(()=>{
+    const scroll = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        console.log("확인")
+        if(entry.intersectionRatio > 0){
+          if(pageInfo.total > pageInfo.page){
+            Notiflix.Loading.circle()
+            setTimeout(()=>{
+              setPageInfo({...pageInfo, page:pageInfo.page+1})
+              document.querySelector(".ScrollBox").scrollTop = 0;
+            },1000)
+            Notiflix.Loading.remove(300);
+            // }
+          }else{
+          }
+        }
+      })
+    })
+    if(loadingBar.current !== null && ref != undefined){
+      scroll.observe(ref);
+    }
+  },[ref, pageInfo.page])
 
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
@@ -148,10 +176,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
-    }else if (res.state === 401) {
-      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-        router.back()
-      })
+      setRef(document.querySelector(".Next"));
     }
 
   }
@@ -172,13 +197,14 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
         total: res.totalPages
       })
       cleanUpData(res)
+      setRef(document.querySelector(".Next"));
     }
   }
 
@@ -299,6 +325,9 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         isCalendar
         searchKeyword={""}
         searchOptionList={optionList}
+        onChangeSearchKeyword={(keyword) => {
+          setSearchKeyword(keyword)
+        }}
         calendarTitle={'작업 기한'}
         calendarType={'period'}
         selectDate={selectDate}
@@ -313,47 +342,52 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
           // onClickHeaderButton
         }
       />
-      <ExcelTable
-        editable
-        resizable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList
-          console.log('e', e)
-          let tmpRes = e.map(v => {
-            if(v.isChange) tmp.add(v.id)
-            if(v.update || v.finish){
-              if(keyword){
-                SearchBasic(keyword, option, page).then(() => {
-                  Notiflix.Loading.remove()
-                })
-              }else{
-                LoadBasic(page).then(() => {
-                  Notiflix.Loading.remove()
-                })
+      <ExcelTableBox className={"ScrollBox"}>
+        <ExcelTable
+          editable
+          resizable
+          headerList={[
+            SelectColumn,
+            ...column
+          ]}
+          row={basicRow}
+          // setRow={setBasicRow}
+          setRow={(e) => {
+            let tmp: Set<any> = selectList
+            console.log('e', e)
+            let tmpRes = e.map(v => {
+              if(v.isChange) tmp.add(v.id)
+              if(v.update || v.finish){
+                if(keyword){
+                  SearchBasic(keyword, option, page).then(() => {
+                    Notiflix.Loading.remove()
+                  })
+                }else{
+                  LoadBasic(page).then(() => {
+                    Notiflix.Loading.remove()
+                  })
+                }
+                return {
+                  ...v,
+                  update: undefined,
+                  finish: undefined,
+                }
               }
-              return {
-                ...v,
-                update: undefined,
-                finish: undefined,
-              }
-            }
-            return { ...v, }
-          })
+              return { ...v, }
+            })
 
-          setSelectList(tmp)
-          setBasicRow([...tmpRes])
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
+            setSelectList(tmp)
+            setBasicRow([...tmpRes])
+          }}
+          selectList={selectList}
+          //@ts-ignore
+          setSelectList={setSelectList}
+          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        />
+        <div className={"Next"} ref={loadingBar} style={{width:"100%", height:"50px",display:"flex", justifyContent:"center", alignItems:"center"}} >
+          Loading...
+        </div>
+      </ExcelTableBox>
       <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
@@ -377,5 +411,27 @@ export const getServerSideProps = (ctx: NextPageContext) => {
     }
   }
 }
+
+const ExcelTableBox = styled.div`
+  height:720px;
+  overflow:scroll;
+::-webkit-scrollbar{
+    display:none;
+    width:${(props:any)=> props.theme};
+    height:8px;
+  }
+
+  ::-webkit-scrollbar-thumb{
+    background:#484848;
+  }
+
+  ::-webkit-scrollbar-track{
+    background:none;
+  }
+
+  ::-webkit-scrollbar-corner{
+    display:none;
+  }
+`;
 
 export {MesFinishList};

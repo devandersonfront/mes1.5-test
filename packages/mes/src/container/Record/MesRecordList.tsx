@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {
   ExcelTable,
   Header as PageHeader,
@@ -21,6 +21,7 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {WorkModifyModal} from '../../../../shared/src/components/Modal/WorkModifyModal'
+import styled from "styled-components";
 
 interface IProps {
   children?: any
@@ -46,23 +47,49 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
     to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
   });
 
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
 
+  const [ref, setRef] = useState<any>();
+  const loadingBar = useRef(null);
+
   useEffect(() => {
     setOptionIndex(option)
-    if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+    if(searchKeyword){
+      SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, searchKeyword, option])
+
+  useEffect(()=>{
+    const scroll = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.intersectionRatio > 0){
+          if(pageInfo.total > pageInfo.page){
+            Notiflix.Loading.circle()
+            setTimeout(()=>{
+              setPageInfo({...pageInfo, page:pageInfo.page+1})
+              document.querySelector(".ScrollBox").scrollTop = 0;
+            },1000)
+            Notiflix.Loading.remove(300);
+            // }
+          }else{
+          }
+        }
+      })
+    })
+    if(loadingBar.current !== null && ref != undefined){
+      scroll.observe(ref);
+    }
+  },[ref, pageInfo.page])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -134,10 +161,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
-    }else if (res.state === 401) {
-      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-        router.back()
-      })
+      setRef(document.querySelector(".Next"));
     }
 
   }
@@ -161,10 +185,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
-    }else if (res.state === 401) {
-      Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-        router.back()
-      })
+      setRef(document.querySelector(".Next"));
     }
 
   }
@@ -362,7 +383,8 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         searchKeyword={""}
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) =>{
-          SearchBasic(keyword, option, 1)
+          setSearchKeyword(keyword)
+          // SearchBasic(keyword, option, 1)
         }}
         calendarTitle={'종료일'}
         calendarType={'period'}
@@ -389,28 +411,33 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
           // onClickHeaderButton
         }
       />
-      <ExcelTable
-        editable
-        resizable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList
-          e.map(v => {
-            if(v.isChange) tmp.add(v.id)
-          })
-          setSelectList(tmp)
-          setBasicRow(e)
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
+      <ExcelTableBox className={"ScrollBox"}>
+        <ExcelTable
+          editable
+          resizable
+          headerList={[
+            SelectColumn,
+            ...column
+          ]}
+          row={basicRow}
+          // setRow={setBasicRow}
+          setRow={(e) => {
+            let tmp: Set<any> = selectList
+            e.map(v => {
+              if(v.isChange) tmp.add(v.id)
+            })
+            setSelectList(tmp)
+            setBasicRow(e)
+          }}
+          selectList={selectList}
+          //@ts-ignore
+          setSelectList={setSelectList}
+          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        />
+        <div className={"Next"} ref={loadingBar} style={{width:"100%", height:"50px",display:"flex", justifyContent:"center", alignItems:"center"}} >
+          Loading...
+        </div>
+     </ExcelTableBox>
       <WorkModifyModal
         row={[...basicRow.map(v =>{
           if(selectList.has(v.id)){
@@ -451,5 +478,27 @@ export const getServerSideProps = (ctx: NextPageContext) => {
     }
   }
 }
+
+const ExcelTableBox = styled.div`
+   height:720px;
+  overflow:scroll;
+::-webkit-scrollbar{
+    display:none;
+    width:${(props:any)=> props.theme};
+    height:8px;
+  }
+
+  ::-webkit-scrollbar-thumb{
+    background:#484848;
+  }
+
+  ::-webkit-scrollbar-track{
+    background:none;
+  }
+
+  ::-webkit-scrollbar-corner{
+    display:none;
+  }
+`;
 
 export {MesRecordList};
