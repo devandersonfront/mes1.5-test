@@ -279,7 +279,7 @@ export const columnlist: any = {
         {pk: 1, name: 'COIL'},
         {pk: 2, name: 'SHEET'}
       ]},
-    {key: 'stock', name: '원자재 재고량', editor: TextEditor, formatter: UnitContainer, unitData: 'kg', searchType: 'rawin'},
+    {key: 'stock', name: '원자재 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin'},
     {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer' },
     {key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력'},
   ],
@@ -321,7 +321,7 @@ export const columnlist: any = {
     {key: 'slideHeight', name: '슬라이드 위치',editor: TextEditor,formatter: PlaceholderBox, placeholder: '0'},
     {key: 'limit', name: '최대타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
     {key: 'inspect', name: '점검타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
-    {key: 'inspect', name: '점검주기', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
+    // {key: 'inspect', name: '점검주기', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
     {key: 'current', name: '현재타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
     {key: 'product_id', name: '생산품목', formatter: ProductInfoModal, type:"mold"},
     // {key: 'product_id', name: '생산품목', formatter: InfoModal, type: 'productInfo', summaryType: 'mold'},

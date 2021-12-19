@@ -234,7 +234,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
               }
             }
           })
-          // if(row.customerId){
+          if(row.sm_id){
             return {
               ...row,
               ...selectData,
@@ -252,7 +252,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
                 }).filter((v) => v)
               ]
             }
-          // }
+          }
         }
       }).filter((v) => v))
 
