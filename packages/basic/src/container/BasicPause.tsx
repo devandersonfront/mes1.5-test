@@ -18,6 +18,7 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
+import ButtonGroup from '../../../main/component/ButtonGroup'
 
 export interface IProps {
   children?: any
@@ -317,7 +318,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
                         <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
                             {processBasicRow[selectRow] && processBasicRow[selectRow].name}
                         </span>
-          <PageHeader buttons={['', '', "행 추가", "저장하기", "삭제"]} buttonsOnclick={buttonEvents}/>
+          <ButtonGroup buttons={['', '', "행 추가", "저장하기", "삭제"]} buttonsOnclick={buttonEvents}/>
         </div>
         <ExcelTable
           editable
