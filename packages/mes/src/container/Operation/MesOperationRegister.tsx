@@ -197,7 +197,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
       let tmp: Set<any> = selectList
 
-      tmp.add(random_id)
+      tmp.add("operation_"+random_id)
 
       setSelectList(tmp)
 
@@ -208,7 +208,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         if(v.type === 2){
           return {
             ...v,
-            id: random_id,
+            id: "operation_"+random_id,
             product: v.child_product,
             date: moment().format('YYYY-MM-DD'),
             deadline: moment().format('YYYY-MM-DD'),
