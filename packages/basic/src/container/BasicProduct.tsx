@@ -178,7 +178,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
               customer_id: row.customerArray.customer_id,
               model: row.modelArray,
               standard_uph: row.uph,
-              type:row.typePK,
+              type:row.type_id,
               additional: [
                 ...additional.map((v, index)=>{
                   if(!row[v.colName]) return undefined;
