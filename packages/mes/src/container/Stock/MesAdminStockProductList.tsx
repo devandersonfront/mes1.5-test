@@ -421,7 +421,7 @@ const MesAdminStockProductList = () => {
       <ProfileHeader/>
       <PageHeader
         title={"생산/납품 현황(관리자용)"}
-        buttons={["데이터 불러오기", "저장하기", "엑셀로 받기"]}
+        buttons={["데이터 불러오기", "저장하기", ""]}
         buttonsOnclick={buttonClickEvents}
         isSearch={true}
         searchOptionList={["거래처","모델","CODE", "품명"]}
