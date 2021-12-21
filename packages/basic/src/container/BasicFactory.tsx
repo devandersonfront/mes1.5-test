@@ -413,13 +413,10 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         router.push(`/mes/item/manage/factory`)
         break;
       case 3:
-        let items = {}
-
         const random_id = Math.random()*1000
 
         setBasicRow([
           {
-            ...items,
             id: `factory_${random_id}`,
             additional: [],
           },
@@ -479,6 +476,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
           //@ts-ignore
           setSelectList={setSelectList}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+
         />
         <PaginationComponent
           currentPage={pageInfo.page}

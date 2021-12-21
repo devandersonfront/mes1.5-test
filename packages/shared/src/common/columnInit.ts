@@ -295,7 +295,7 @@ export const columnlist: any = {
         {pk: 'L', name: 'L'},
       ]},
     {key: 'stock', name: '부자재 재고량', editor: TextEditor, formatter: UnitContainer, type: 'selectUnit'},
-    {key: 'customer_id', name: '거래처', editor: TextEditor, formatter: SearchModalTest, type: 'customer'},
+    {key: 'customer_id', name: '거래처',  formatter: SearchModalTest, type: 'customer'},
   ],
   mold: [
     {key: 'customer_id', },

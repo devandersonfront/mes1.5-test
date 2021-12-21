@@ -41,9 +41,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [searchList, setSearchList] = useState<any[]>([{}])
   const [tab, setTab] = useState<number>(0)
   const [searchModalInit, setSearchModalInit] = useState<any>()
-  const [page, setPage] = useState<number>(1);
-  const [totalPage, setTotalPage] = useState<number>(0);
-  const loadingBar = useRef(null);
+  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
+    page: 1,
+    total: 1
+  })
+  // const [page, setPage] = useState<number>(1);
+  // const [totalPage, setTotalPage] = useState<number>(0);
 
   useEffect(() => {
     if(column.type){
@@ -74,22 +77,20 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       LoadBasic();
 
     }
-  }, [isOpen, searchModalInit, optionIndex, page])
+  }, [isOpen, searchModalInit, optionIndex, pageInfo.page])
 
-  const [ref, setRef] = useState<any>();
-
-  const LoadBasic = async () => {
+  const LoadBasic = async (page?:number) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`,{
       path: column.type === "customerModel" ?
           {
-            page:  page,
+            page:  page ?? pageInfo.page,
             renderItem: 22,
             customer_id: row.customer?.customer_id ?? null
           }
           :
           {
-            page: page,
+            page: page ?? pageInfo.page,
             renderItem: 22,
           }
       ,
@@ -102,16 +103,15 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     if(res){
         if(res.page !== 1){
           setSearchList([...searchList,...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
-          setTotalPage(res.totalPages);
+          setPageInfo({...pageInfo, total:res.totalPages});
           Notiflix.Loading.remove()
         }else{
           setSearchList([...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
-          setTotalPage(res.totalPages);
+          setPageInfo({...pageInfo, total:res.totalPages});
           Notiflix.Loading.remove()
         }
     }
     if(document.querySelector(".LoadingBar") !== null){
-      setRef(document.querySelector(".LoadingBar"));
     }
   }
   const getContents = () => {
@@ -129,28 +129,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }
     }
   }
-  useEffect(()=> {
-    if(isOpen){
-      const scroll = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if(entry.intersectionRatio > 0){
-            if(totalPage > page){
-              // Notiflix.Loading.circle()
-              setTimeout(()=>{
-                  setPage(page+1)
-                  document.querySelector(".ScrollBox").scrollTop = 0;
-              },2000)
-                Notiflix.Loading.remove(300);
-            }
-          }else{
-          }
-        })
-      })
-      if(loadingBar.current !== null){
-        scroll.observe(ref);
-      }
-    }
-  },[ref, page])
 
   return (
     <SearchModalWrapper >
@@ -238,7 +216,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             </div>
             <div style={{
               width: '100%', height: 32, margin: '16px 0 16px 16px',
-              display: 'flex'
+              display: 'flex',
             }}>
               <div style={{
                 width: 120, display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -274,11 +252,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 placeholder="검색어를 입력해주세요."
                 onChange={(e) => {
                   setKeyword(e.target.value)
-                  setPage(1);
+                  // setPageInfo({...pageInfo, page:1});
                 }}
                 onKeyDown={(e) => {
                   if(e.key === 'Enter'){
-                    LoadBasic();
+                    // setPageInfo({...pageInfo, page:1});
+                    LoadBasic(1);
                   }
                 }}
                 style={{
@@ -298,28 +277,32 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 <img src={Search_icon} style={{width:"16px",height:"16px"}} />
               </div>
             </div>
-            <div className={"ScrollBox"} style={{padding: '0 16px 0 16px', height:"615px", overflow:"scroll", }}>
-              <ExcelTable
-                headerList={searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
-                row={searchList ?? []}
-                setRow={() => {}}
-                width={1744}
-                rowHeight={32}
-                // height={802}
-                setSelectRow={(e) => {
-                  if(!searchList[e].border){
-                    searchList.map((v,i)=>{
-                      v.border = false;
-                    })
-                    searchList[e].border = true
-                    setSearchList([...searchList])
+            <ExcelTable
+              headerList={searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
+              row={searchList ?? []}
+              setRow={() => {}}
+              width={1744}
+              rowHeight={32}
+              height={640}
+              setSelectRow={(e) => {
+                if(!searchList[e].border){
+                  searchList.map((v,i)=>{
+                    v.border = false;
+                  })
+                  searchList[e].border = true
+                  setSearchList([...searchList])
+                }
+                setSelectRow(e)
+              }}
+              type={'searchModal'}
+              scrollEnd={(value) => {
+                if(value){
+                  if(pageInfo.total > pageInfo.page){
+                    setPageInfo({...pageInfo, page:pageInfo.page+1})
                   }
-                  setSelectRow(e)
-                }}
-                type={'searchModal'}
-              />
-              <LoadingBar className={"LoadingBar"} ref={loadingBar} />
-            </div>
+                }
+              }}
+            />
           </div>
           <div style={{ height: 40, display: 'flex', alignItems: 'flex-end',}}>
             <FooterButton

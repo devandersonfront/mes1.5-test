@@ -299,13 +299,13 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
               //   setSelectRow(e)
               // }}
               setSelectRow={(e) => {
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
+                // if(!searchList[e].border){
+                //   searchList.map((v,i)=>{
+                //     v.border = false;
+                //   })
+                //   searchList[e].border = true
+                //   setSearchList([...searchList])
+                // }
                 setSelectRow(e)
               }}
               type={'searchModal'}

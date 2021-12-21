@@ -55,13 +55,11 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
-  const [ref, setRef] = useState<any>();
-  const loadingBar = useRef(null);
 
 
   useEffect(() => {
     // setOptionIndex(option)
-    if(searchKeyword){
+    if(searchKeyword !== ""){
       SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
@@ -72,27 +70,6 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
     }
   }, [pageInfo.page, searchKeyword, option, selectDate])
 
-  useEffect(()=>{
-    const scroll = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if(entry.intersectionRatio > 0){
-          if(pageInfo.total > pageInfo.page){
-            Notiflix.Loading.circle()
-            setTimeout(()=>{
-              setPageInfo({...pageInfo, page:pageInfo.page+1})
-              document.querySelector(".ScrollBox").scrollTop = 0;
-            },1000)
-            Notiflix.Loading.remove(300);
-            // }
-          }else{
-          }
-        }
-      })
-    })
-    if(loadingBar.current !== null && ref != undefined){
-      scroll.observe(ref);
-    }
-  },[ref, pageInfo.page])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -166,7 +143,6 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
-      setRef(document.querySelector(".Next"));
     }else if (res === 401) {
       Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
         router.back()
@@ -198,7 +174,6 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         total: res.totalPages
       })
       cleanUpData(res)
-      setRef(document.querySelector(".Next"));
     }
   }
 
@@ -362,33 +337,35 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
           // onClickHeaderButton
         }
       />
-      <ExcelTableBox className={"ScrollBox"}>
-        <ExcelTable
-          editable
-          resizable
-          headerList={[
-            SelectColumn,
-            ...column
-          ]}
-          row={basicRow}
-          // setRow={setBasicRow}
-          setRow={(e) => {
-            let tmp: Set<any> = selectList
-            e.map(v => {
-              if(v.isChange) tmp.add(v.id)
-            })
-            setSelectList(tmp)
-            setBasicRow(e)
-          }}
-          selectList={selectList}
-          //@ts-ignore
-          setSelectList={setSelectList}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-        />
-        <div className={"Next"} ref={loadingBar} style={{width:"100%", height:"50px",display:"flex", justifyContent:"center", alignItems:"center"}} >
-          Loading...
-        </div>
-      </ExcelTableBox>
+      <ExcelTable
+        editable
+        // resizable
+        headerList={[
+          SelectColumn,
+          ...column
+        ]}
+        row={basicRow}
+        // setRow={setBasicRow}
+        setRow={(e) => {
+          let tmp: Set<any> = selectList
+          e.map(v => {
+            if(v.isChange) tmp.add(v.id)
+          })
+          setSelectList(tmp)
+          setBasicRow(e)
+        }}
+        selectList={selectList}
+        //@ts-ignore
+        setSelectList={setSelectList}
+        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        scrollEnd={(value) => {
+          if(value){
+            if(pageInfo.total > pageInfo.page){
+              setPageInfo({...pageInfo, page:pageInfo.page+1})
+            }
+          }
+        }}
+      />
       {/*<PaginationComponent*/}
       {/*  currentPage={pageInfo.page}*/}
       {/*  totalPage={pageInfo.total}*/}
@@ -414,27 +391,6 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
   );
 }
 
-const ExcelTableBox = styled.div`
-    height:720px;
-  overflow:scroll;
-::-webkit-scrollbar{
-    display:none;
-    width:${(props:any)=> props.theme};
-    height:8px;
-  }
-
-  ::-webkit-scrollbar-thumb{
-    background:#484848;
-  }
-
-  ::-webkit-scrollbar-track{
-    background:none;
-  }
-
-  ::-webkit-scrollbar-corner{
-    display:none;
-  }
-`;
 
 export const getServerSideProps = (ctx: NextPageContext) => {
   return {

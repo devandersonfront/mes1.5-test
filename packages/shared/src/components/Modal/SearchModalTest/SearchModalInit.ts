@@ -23,7 +23,7 @@ export const SearchInit: Record<string, SearchInitType> = {
   },
   factory: {
     title: '공장 검색',
-    searchFilter: ['공장명', '담당자명'],
+    searchFilter: ['공장명',"주소", '담당자명'],
     excelColumnType: 'factory'
   },
   subFactory: {
