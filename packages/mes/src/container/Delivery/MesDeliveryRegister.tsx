@@ -55,6 +55,10 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.remove()
   }, [])
 
+  useEffect(() => {
+    console.log(basicRow)
+  }, [basicRow])
+
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
       path: {
@@ -158,9 +162,10 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch(index){
       case 0:
+        let random_id = Math.random()*1000;
         setBasicRow([
           {
-            name: "", id: "", date: moment().format('YYYY-MM-DD'),
+            name: "", id: `delivery${random_id}`, date: moment().format('YYYY-MM-DD'),
             deadline: moment().format('YYYY-MM-DD')
           },
           ...basicRow
@@ -198,19 +203,21 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {
-          let tmp: Set<any> = selectList
-          e.map(v => {
-            if(v.isChange) tmp.add(v.id)
-          })
+          let tmp: Set<number> = selectList
           let tmpRow = e.map((v,i) => {
-            let index = e.findIndex((row) => row.product_id == v.product_id)
-            if(index !== -1 && index == i){
-              return true
-            }else{
-              Notiflix.Report.warning("동시에 같은품목을 두개이상 등록할 수 없습니다.", "", "확인")
-              return false
+            if(v.product_id){
+              let index = e.findIndex((row) => row.product_id == v.product_id)
+              if(index !== -1 && index == i){
+                console.log(v.id)
+                tmp.add(v.id)
+                return true
+              }else{
+                Notiflix.Report.warning("동시에 같은품목을 두개이상 등록할 수 없습니다.", "", "확인")
+                return false
+              }
             }
           })
+          console.log(tmp)
           setSelectList(tmp)
           if(tmpRow.indexOf(false) !== -1){
             setBasicRow([...basicRow])

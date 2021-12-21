@@ -374,6 +374,11 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                         return v
                       }
                     }).filter(v=>v)],
+                    lots: [...lot.map(v => {
+                      if(Number(v.amount)){
+                        return v
+                      }
+                    }).filter(v=>v)],
                     amount: totalDelivery,
                     name: row.name,
                     isChange: true
