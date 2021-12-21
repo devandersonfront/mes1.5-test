@@ -18,6 +18,7 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
+import moment from 'moment'
 
 export interface IProps {
   children?: any
@@ -43,7 +44,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: ""
+    name: "", id: "", madeAt: moment().format("YYYY-MM-DD")
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["device"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -521,6 +522,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
             id: `process_${random_id}`,
             name: null,
             additional: [],
+            madeAt: moment().format("YYYY-MM-DD")
           },
           ...basicRow
         ])

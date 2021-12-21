@@ -215,6 +215,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
             ...row,
             ...selectData,
             type: row.type_id,
+            status: row.status_no,
             additional: [
               ...additional.map(v => {
                 if(row[v.name]) {

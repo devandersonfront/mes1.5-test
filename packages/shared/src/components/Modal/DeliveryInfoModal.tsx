@@ -15,6 +15,7 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
+import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {
   column: IExcelHeaderType
@@ -24,8 +25,6 @@ interface IProps {
 
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
-const amount=50;
-
 const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
@@ -34,16 +33,16 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
+  const [total, setTotal] = useState<number>(0)
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
 
   useEffect(() => {
-    if(isOpen) {
-      SearchBasic()
-    }
-  }, [isOpen, searchKeyword])
+    SearchBasic()
+    console.log(row)
+  }, [row])
   // useEffect(() => {
   //   if(pageInfo.total > 1){
   //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -52,7 +51,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   //   }
   // }, [pageInfo.page])
 
-  const changeRow = (row: any, key?: string) => {
+  const changeRow = (row: any, index: number) => {
     let total = 0
 
     row.lots.map(v => {
@@ -61,17 +60,20 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
     let tmpData = {
       ...row,
+      seq: index+1,
       identification: row.identification,
       date: row.date,
       total
     }
+
+    setTotal(total)
 
     return tmpData
   }
 
   const SearchBasic = async () => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `shipmentList`,{
+    const res = await RequestMethod('get', `shipmentSearch`,{
       path: {
         page: 1,
         renderItem: 100000,
@@ -83,7 +85,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
     if(res){
       let searchList = res.info_list.map((row: any, index: number) => {
-        return changeRow(row)
+        return changeRow(row, index)
       })
 
       setSearchList([...searchList])
@@ -98,7 +100,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         <div onClick={() => {
           setIsOpen(true)
         }}>
-          <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{amount}</p>
+          <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{total}</p>
         </div>
       </div>
     </>
@@ -150,19 +152,19 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>수주번호</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>20210401-001</HeaderTableText>
+              <HeaderTableText>{row.identification ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>수주 날짜</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>2021.04.01</HeaderTableText>
+              <HeaderTableText>{row.date ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>납품 기한</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>2021.05.18</HeaderTableText>
+              <HeaderTableText>{row.deadline ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -170,31 +172,31 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>거래처</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>진주상사</HeaderTableText>
+              <HeaderTableText>{row.product?.customer?.name ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>한국차</HeaderTableText>
+              <HeaderTableText>{row.product?.model?.model ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>SU-20210701-1</HeaderTableText>
+              <HeaderTableText>{row.product?.code ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>SU900</HeaderTableText>
+              <HeaderTableText>{row.product?.name ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>완제품</HeaderTableText>
+              <HeaderTableText>{(row.product?.type || row.product?.type === 0) ? TransferCodeToValue(row.product.type, 'productType') : '-' }</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -202,13 +204,13 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>EA</HeaderTableText>
+              <HeaderTableText>{row.product?.unit ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>수주량</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>50</HeaderTableText>
+              <HeaderTableText>{row.amount ?? 0}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
