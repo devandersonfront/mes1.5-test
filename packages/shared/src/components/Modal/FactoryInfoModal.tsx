@@ -103,17 +103,31 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
       setSearchList([...searchList])
   }
   const saveSubFactory = async () => {
-    // Notiflix.Loading.standard();
+    Notiflix.Loading.standard();
     let result = [];
 
+    //row.factory_id
+    //seq
+    //name
+    //manager:{
+    // user_id : searchList.userId
+    // name : searchList.name
+    // appointment : searchList.appointment
+    // telephone: searchList.telephone
+    // email : searchList.email
+    // id : searchList..id
+    // additional : searchList.additional
+    //}
+    //description :
+
+
     searchList.map((value) => {
-      const oneSubFactory:any = {...value};
-      if(value.manager.user_idPK){
-        oneSubFactory.manager.user_id = value.manager.user_idPK;
+      let oneSubFactory:any = {...value, manager:value.manager_info};
+
+      if(value.manager_info.user_idPK && value.manager_info.user_id){
+        oneSubFactory.manager.user_id = value.manager_info.user_idPK;
       }
-      oneSubFactory.manager.authority = value.manager.authorityPK;
-      // oneSubFactory.user_id = value.manager.user_idPK;
-      // value.name = value.segmentName;
+      oneSubFactory.manager.authority = value.manager_info.authorityPK;
       oneSubFactory.factory_id = row.factory_id;
 
       result.push(oneSubFactory);
@@ -129,6 +143,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
           .then((res) => {
             Notiflix.Loading.remove(300);
             Notiflix.Report.success("확인","저장되었습니다.","확인",() => setIsOpen(false))
+
           })
           .catch((err) => {
             Notiflix.Loading.remove(300);
