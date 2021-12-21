@@ -179,23 +179,23 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         process: res.product.process?.name,
         goal: res.goal
       }])
-    }else{
-      loadGraphSheet(product_id)
     }
-
 
     setIsFirst(false)
   }
 
-  const loadGraphSheet = async (product_id: string) => {
+  const loadGraphSheet = async (product_id: string, object?: any) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `sheetGraphList`,{
       path: { product_id }
     })
 
+    console.log(res)
+    console.log(basicRow[0])
+
     if(res){
       setBasicRow([{
-        ...basicRow[0],
+        ...object,
         goal: 0,
       }, ...res.map(v => {
         if(v.type === 2){
@@ -207,6 +207,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             customer: v.child_product.customer?.name,
             model: v.child_product.model?.model,
             product_name: v.child_product.name,
+            product_id: v.child_product.code,
             code: v.child_product.code,
             type: TransferCodeToValue(v.type, 'material'),
             unit: v.child_product.unit,
