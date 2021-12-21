@@ -44,9 +44,9 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     page: 1,
     total: 1
   })
-
+  console.log("basicRow : ", basicRow)
   useEffect(() => {
-    setOptionIndex(option)
+    // setOptionIndex(option)
     if(keyword){
       SearchBasic(keyword, option, page).then(() => {
         Notiflix.Loading.remove()
