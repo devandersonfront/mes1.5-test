@@ -41,6 +41,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     name: "", id: ""
   }])
+
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["model"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처명','사업자 번호', '모델명'])
@@ -433,36 +434,12 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       }
     }).filter((v: any) => v) : []
 
-
     tmpRow = res.info_list
 
     loadAllSelectItems( [
       ...tmpColumn,
       ...additionalMenus
     ] )
-
-
-    // let selectKey = ""
-    // let additionalData: any[] = []
-    // tmpColumn.map((v: any) => {
-    //   if(v.selectList){
-    //     selectKey = v.key
-    //   }
-    // })
-
-    // additionalMenus.map((v: any) => {
-    //   if(v.type === 'additional'){
-    //     additionalData.push(v.key)
-    //   }
-    // })
-
-    // let pk = "";
-    // Object.keys(tmpRow).map((v) => {
-    //   if(v.indexOf('_id') !== -1){
-    //     pk = v
-    //   }
-    // })
-
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
       let appendAdditional: any = {}
@@ -471,9 +448,9 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         appendAdditional = {
           ...appendAdditional,
           [v.mi_id]: v.value
-
         }
       })
+
       let random_id = Math.random()*1000;
       return {
         ...row,
@@ -486,7 +463,6 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         crn:row.customer.crn,
         ...appendAdditional,
         id: `model_${random_id}`,
-
       }
     })
 

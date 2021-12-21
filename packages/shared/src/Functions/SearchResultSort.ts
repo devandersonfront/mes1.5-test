@@ -135,7 +135,7 @@ export const SearchModalResult = (selectData, type: string) => {
         cm_id: selectData.model?.model,
         product_id: selectData.code,
         model: selectData.model ? selectData.model.model : '',
-        type_name: TransferCodeToValue(selectData.type, 'material'),
+        type_name: selectData.type_name ?? TransferCodeToValue(selectData.type, 'material'),
         unit: selectData.unit,
         usage: selectData.usage,
         process: selectData.process?.name ?? "-",
@@ -191,7 +191,9 @@ export const SearchModalResult = (selectData, type: string) => {
     case 'customer': {
       return {
         customer_id:selectData.name,
-        customer:selectData.customerArray
+        customer:selectData.customerArray,
+        customerArray:selectData.customerArray,
+        crn:selectData.crn,
       }
     }
     case 'contract': {
