@@ -40,8 +40,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
-    SearchBasic()
-    console.log(row)
+    if(isOpen) SearchBasic()
   }, [row])
   // useEffect(() => {
   //   if(pageInfo.total > 1){

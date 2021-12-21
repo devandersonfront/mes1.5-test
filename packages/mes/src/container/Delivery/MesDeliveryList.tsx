@@ -303,7 +303,6 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         searchKeyword={""}
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) => {
-          console.log("keyword : ", keyword);
           setSearchKeyword(keyword);
           setPageInfo({page:1, total:1})
         }}

@@ -190,8 +190,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       path: { product_id }
     })
 
-    console.log(res)
-    console.log(basicRow[0])
 
     if(res){
       setBasicRow([{
