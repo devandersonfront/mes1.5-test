@@ -58,22 +58,13 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
     total: 1
   })
   useEffect(() => {
-    // setOptionIndex(option)
-    // if(keyword){
-    //   SearchBasic(keyword, option, page)
-    // }else{
-    //   LoadBasic(page).then(() => {})
-    // }
-    // loadAllSelectItems(column).then((column) => {})
     LoadMenu()
   }, [page, keyword, option])
 
   useEffect(() => {
     if(basicRow[0].pp_id && basicRow[0].pp_id !== isLoad){
       ProductProcessSearch(basicRow[0].pp_id)
-
     }
-
   }, [basicRow])
 
 
@@ -93,7 +84,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200 && recentRes && recentRes.status === 200) {
+    if(res && recentRes) {
       Notiflix.Report.info("",recentRes.message,"확인");
       let tmpRow = [basicRow[0]]
 

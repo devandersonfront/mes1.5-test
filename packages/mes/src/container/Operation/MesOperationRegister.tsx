@@ -179,7 +179,10 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         process: res.product.process?.name,
         goal: res.goal
       }])
+    }else{
+      loadGraphSheet(product_id)
     }
+
 
     setIsFirst(false)
   }
@@ -277,7 +280,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           let tmp: Set<any> = selectList
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
-            // if(v.product?.product_id && isFirst) loadLatestSheet(v.product.product_id)
+            if(v.product?.product_id && isFirst) loadLatestSheet(v.product.product_id)
           })
           setSelectList(tmp)
           setBasicRow([...e])
