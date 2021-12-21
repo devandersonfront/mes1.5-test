@@ -141,7 +141,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     }).length > 0){
       await RequestMethod("post", "subFactorySave", result)
           .then((res) => {
-            onRowChange({...row, subFactorys:result})
+            onRowChange({...row, subFactories:result})
             Notiflix.Loading.remove(300);
             Notiflix.Report.success("확인","저장되었습니다.","확인",() => setIsOpen(false))
 
