@@ -153,9 +153,10 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch(index){
       case 0:
+        let random_id = Math.random()*1000;
         setBasicRow([
           {
-            name: "", id: "", date: moment().format('YYYY-MM-DD'),
+            name: "", id: "order"+random_id, date: moment().format('YYYY-MM-DD'),
             deadline: moment().format('YYYY-MM-DD')
           },
           ...basicRow
