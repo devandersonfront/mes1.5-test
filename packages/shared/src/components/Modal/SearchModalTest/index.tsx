@@ -316,6 +316,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
+                console.log(searchList, searchList[selectRow], searchModalInit.excelColumnType, tab)
                 onRowChange({
                   ...row,
                   ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
