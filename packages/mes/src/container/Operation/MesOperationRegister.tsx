@@ -156,7 +156,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const loadLatestSheet = async (product_id: string) => {
+  const loadLatestSheet = async (product_id: string, object?: any) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `sheetLatestList`,{
       path: { product_id }
@@ -179,6 +179,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         process: res.product.process?.name,
         goal: res.goal
       }])
+    }else{
+      loadGraphSheet(product_id, object)
     }
 
     setIsFirst(false)
@@ -190,10 +192,15 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       path: { product_id }
     })
 
-    console.log(res)
-    console.log(basicRow[0])
-
     if(res){
+      let random_id = Math.random()*1000;
+
+      let tmp: Set<any> = selectList
+
+      tmp.add(random_id)
+
+      setSelectList(tmp)
+
       setBasicRow([{
         ...object,
         goal: 0,
@@ -201,12 +208,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         if(v.type === 2){
           return {
             ...v,
+            id: random_id,
             product: v.child_product,
             date: moment().format('YYYY-MM-DD'),
             deadline: moment().format('YYYY-MM-DD'),
-            customer: v.child_product.customer?.name,
-            model: v.child_product.model?.model,
-            product_name: v.child_product.name,
+            customer_id: v.child_product.customer?.name,
+            cm_id: v.child_product.model?.model,
+            name: v.child_product.name,
             product_id: v.child_product.code,
             code: v.child_product.code,
             type: TransferCodeToValue(v.type, 'material'),
@@ -225,7 +233,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     switch(index){
       case 0:
         if(basicRow[0].product.product_id){
-          loadGraphSheet(basicRow[0].product.product_id)
+          loadGraphSheet(basicRow[0].product.product_id, basicRow[0])
         }
         break;
       case 1:
@@ -281,7 +289,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           let tmp: Set<any> = selectList
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
-            if(v.product?.product_id && isFirst) loadLatestSheet(v.product.product_id)
+            if(v.product?.product_id && isFirst) loadLatestSheet(v.product.product_id,e[0])
           })
           setSelectList(tmp)
           setBasicRow([...e])
