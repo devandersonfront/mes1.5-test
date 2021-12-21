@@ -4,24 +4,15 @@ import {
   Header as PageHeader,
   RequestMethod,
   columnlist,
-  MAX_VALUE,
-  DropDownEditor,
   TextEditor,
   excelDownload,
   PaginationComponent,
-  ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
+  IExcelHeaderType,
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
-import {NextPageContext} from 'next'
-import TreeViewTable from '../../../main/component/TreeView/TreeView'
-import {IMenu} from '../../../main/common/@types/type'
-import {AUTHORITY_LIST} from '../../../main/common/configset'
-import {AxiosResponse} from 'axios'
 import styled from 'styled-components'
 
 export interface IProps {
@@ -30,8 +21,6 @@ export interface IProps {
   keyword?: string
   option?: number
 }
-
-const title = '권한 관리'
 
 const BasicCustomer = ({page, keyword, option}: IProps) => {
   const router = useRouter()
@@ -221,12 +210,6 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
           LoadBasic(1).then(() => {
             Notiflix.Loading.remove()
           })
-        }else{
-          // if(keyword){
-          //   router.push(`/mes/basic/customer?page=1&keyword=${keyword}&opt=${option}`)
-          // }else{
-          //   router.push(`/mes/basic/customer?page=1`)
-          // }
         }
       })
     }
@@ -321,29 +304,31 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
       res.menus && res.menus.map((menu: any) => {
-        if(menu.colName === column.key){
-          menuData = {
-            id: menu.mi_id,
-            name: menu.title,
-            width: menu.width,
-            tab:menu.tab,
-            unit:menu.unit,
-            moddable: !menu.moddable,
-            version: menu.version,
-            sequence: menu.sequence,
-            hide: menu.hide
-          }
-        } else if(menu.colName === 'id' && column.key === 'tmpId'){
-          menuData = {
-            id: menu.mi_id,
-            name: menu.title,
-            width: menu.width,
-            tab:menu.tab,
-            unit:menu.unit,
-            moddable: !menu.moddable,
-            version: menu.version,
-            sequence: menu.sequence,
-            hide: menu.hide
+        if(!menu.hide){
+          if(menu.colName === column.key){
+            menuData = {
+              id: menu.mi_id,
+              name: menu.title,
+              width: menu.width,
+              tab:menu.tab,
+              unit:menu.unit,
+              moddable: !menu.moddable,
+              version: menu.version,
+              sequence: menu.sequence,
+              hide: menu.hide
+            }
+          } else if(menu.colName === 'id' && column.key === 'tmpId'){
+            menuData = {
+              id: menu.mi_id,
+              name: menu.title,
+              width: menu.width,
+              tab:menu.tab,
+              unit:menu.unit,
+              moddable: !menu.moddable,
+              version: menu.version,
+              sequence: menu.sequence,
+              hide: menu.hide
+            }
           }
         }
       })
@@ -357,7 +342,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     }).filter((v:any) => v)
 
     let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-      if(menu.colName === null){
+      if(menu.colName === null && !menu.hide){
         return {
           id: menu.mi_id,
           name: menu.title,
