@@ -6,6 +6,8 @@ import {IExcelHeaderType} from '../../@types/type'
 import {ExcelDataStyle, SearchModalStyle} from '../../styles/styledComponents'
 import {RequestMethod} from "../../common/RequestFunctions";
 import {NextComponentType, NextPage} from 'next'
+//@ts-ignore
+import ScrollState from "AdazzleReactDataGrid.ScrollState";
 
 interface IProps {
   headerList: Array<IExcelHeaderType>
@@ -30,11 +32,11 @@ interface IProps {
   overflow?:"hidden"
   headerAlign?: string
   clickable?:boolean
+  scrollEnd?:(value:boolean) => void
 }
 
-const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable}: IProps) => {
+const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd}: IProps) => {
   const [selectedRows, setSelectedRows] = useState<ReadonlySet<number>>(selectList ?? new Set());
-  // const [selectPage, setSelectPage] = useState<number>(1);
   const onePageHeight = 600;
   const rowKeyGetter = (row: any) => {
     return row.id;
@@ -62,6 +64,9 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
     })
   }, [headerList])
 
+  function isAtBottom({ currentTarget }: React.UIEvent<HTMLDivElement>): boolean {
+    return currentTarget.scrollTop >= currentTarget.scrollHeight - currentTarget.clientHeight;
+  }
 
 
   const showDataGrid = () => {
@@ -140,10 +145,18 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
       theme={scrollState}
       state={type}
       enableVirtualization={!disableVirtualization}
-      onScroll={(e:any)=>{
-        if(e.target.scrollTop > onePageHeight * (selectPage-1)){
-          setSelectPage(selectPage+1);
-        }
+      // onScroll={(e:any)=>{
+      //   console.log("scroll : ", e)
+      //   if(e.target.scrollTop > onePageHeight * (selectPage-1)){
+      //     setSelectPage(selectPage+1);
+      //   }
+      // }}
+      //@ts-ignore
+      onScroll={(e:ScrollState) => {
+        // console.log(e)
+        // console.log(isAtBottom(e))
+
+        scrollEnd && scrollEnd(isAtBottom(e))
       }}
       clickable={clickable}
     />

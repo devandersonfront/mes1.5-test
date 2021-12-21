@@ -42,19 +42,15 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      if(!row.factory_id){
+        Notiflix.Report.warning("경고","공장을 먼저 등록해주시기 바랍니다.","확인", () => setIsOpen(false));
+      }
       SearchBasic(searchKeyword, optionIndex, 1).then(() => {
         Notiflix.Loading.remove()
       })
     }
   }, [isOpen, searchKeyword])
 
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
 
   const changeRow = (row: any, key?: string) => {
 
@@ -94,7 +90,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
         sorts:"name"
       }
     })
-    // if(res && res.status === 200){
 
       let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
@@ -106,7 +101,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
       })
 
       setSearchList([...searchList])
-    // }
   }
   const saveSubFactory = async () => {
     // Notiflix.Loading.standard();

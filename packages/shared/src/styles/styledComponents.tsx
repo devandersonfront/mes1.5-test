@@ -298,7 +298,10 @@ export const ExcelDataStyle = styled.div`
 `
 
 export const SearchModalStyle = styled.div`
-
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
     .rdg{
         border:none;
     }
