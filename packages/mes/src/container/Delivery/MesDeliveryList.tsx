@@ -271,6 +271,10 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
       }
 
       let random_id = Math.random()*1000;
+      let tmpAmount = 0
+      if(row.lots && row.lots.length){
+        tmpAmount = row.lots.length > 1 ? row.lots.reduce(reducer) : row.lots[0].amount
+      }
       return {
         ...row,
         ...appendAdditional,
@@ -286,7 +290,7 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         type: TransferCodeToValue(row.product.type, 'material'),
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? '-',
-        amount: row.lots.length > 1 ? row.lots.reduce(reducer) : row.lots[0].amount,
+        amount: tmpAmount,
         id: `sheet_${random_id}`,
       }
     })
