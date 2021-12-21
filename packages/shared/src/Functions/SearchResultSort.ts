@@ -191,7 +191,9 @@ export const SearchModalResult = (selectData, type: string) => {
     case 'customer': {
       return {
         customer_id:selectData.name,
-        customer:selectData.customerArray
+        customer:selectData.customerArray,
+        customerArray:selectData.customerArray,
+        crn:selectData.crn,
       }
     }
     case 'contract': {
