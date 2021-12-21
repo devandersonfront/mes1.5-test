@@ -358,7 +358,6 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) => {
           // SearchBasic(keyword, option, 1)
-          console.log("keyword : ", keyword);
           setSearchKeyword(keyword);
           setPageInfo({page:1, total:1})
 

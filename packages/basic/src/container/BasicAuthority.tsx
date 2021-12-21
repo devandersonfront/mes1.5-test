@@ -148,7 +148,6 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
 
   const deleteAuth = async () => {
     if(selectIndex !== -1 && row[selectIndex].ca_id){
-      console.log(row[selectIndex])
       const res = await RequestMethod('delete', 'authorityDelete', [row[selectIndex]])
 
       if (res){

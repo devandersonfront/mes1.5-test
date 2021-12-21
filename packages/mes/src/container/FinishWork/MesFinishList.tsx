@@ -300,7 +300,6 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
           setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
-          console.log(option)
           setOptionIndex(option)
         }}
         calendarTitle={'작업 기한'}
@@ -363,6 +362,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
             }
           }
         }}
+
       />
       <ExcelDownloadModal
         isOpen={excelOpen}

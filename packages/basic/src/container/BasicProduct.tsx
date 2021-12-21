@@ -169,7 +169,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
               }
             })
 
-            console.log(row)
 
             return {
               ...row,
@@ -302,29 +301,31 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
       res.menus && res.menus.map((menu: any) => {
-        if(menu.colName === column.key){
-          menuData = {
-            id: menu.mi_id,
-            name: menu.title,
-            width: menu.width,
-            tab:menu.tab,
-            unit:menu.unit,
-            moddable: !menu.moddable,
-            version: menu.version,
-            sequence: menu.sequence,
-            hide: menu.hide
-          }
-        } else if(menu.colName === 'id' && column.key === 'tmpId'){
-          menuData = {
-            id: menu.mi_id,
-            name: menu.title,
-            width: menu.width,
-            tab:menu.tab,
-            unit:menu.unit,
-            moddable: !menu.moddable,
-            version: menu.version,
-            sequence: menu.sequence,
-            hide: menu.hide
+        if(!menu.hide){
+          if(menu.colName === column.key){
+            menuData = {
+              id: menu.mi_id,
+              name: menu.title,
+              width: menu.width,
+              tab:menu.tab,
+              unit:menu.unit,
+              moddable: !menu.moddable,
+              version: menu.version,
+              sequence: menu.sequence,
+              hide: menu.hide
+            }
+          } else if(menu.colName === 'id' && column.key === 'tmpId'){
+            menuData = {
+              id: menu.mi_id,
+              name: menu.title,
+              width: menu.width,
+              tab:menu.tab,
+              unit:menu.unit,
+              moddable: !menu.moddable,
+              version: menu.version,
+              sequence: menu.sequence,
+              hide: menu.hide
+            }
           }
         }
       })
@@ -338,7 +339,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     }).filter((v:any) => v)
 
     let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-      if(menu.colName === null){
+      if(menu.colName === null && !menu.hide){
         return {
           id: menu.mi_id,
           name: menu.title,
