@@ -213,9 +213,8 @@ export const columnlist: any = {
     {key: 'qualify', name: '스펙 명판 사진', formatter: FileEditer, type:"image"},
     {key: 'capacity', name: '능력 명판 사진', formatter: FileEditer, type:"image"},
     {key: 'guideline', name: '사용 설명서', formatter: FileEditer, type:"image"},
-    {key: 'factory', name: '공장명', formatter: FactorySearchModal},
-    {key: 'segFactory',name: '공장 세분화명', formatter: SegmentFactorySearchModal},
-
+    {key: 'factory_id', name: '공장명', formatter: SearchModalTest, type:"factory"},
+    {key: 'affiliated_id',name: '공장 세분화명', formatter: subFactorySearchModal, type:"subFactory" /*FactoryInfoModal*/},
   ],
   product: [
     {key: 'customer_id', formatter: CustomerSearchModal, searchType: 'product'},

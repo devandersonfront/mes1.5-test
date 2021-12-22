@@ -49,6 +49,8 @@ export const SearchResultSort = (infoList, type: string) => {
           customerArray: v.customer,
           customer: v.customer?.name ?? "",
           rawName: v.name,
+          type: v.type === 2 ? "SHEET" : "COLE",
+          type_id:v.type
         }
       })
     }
@@ -67,7 +69,7 @@ export const SearchResultSort = (infoList, type: string) => {
         return {
           ...v,
           managerArray: v.manager,
-          manager: v.manager.name,
+          manager: v.manager?.name,
         }
       }) : []
     }

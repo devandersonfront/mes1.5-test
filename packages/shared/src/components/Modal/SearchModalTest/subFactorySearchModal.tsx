@@ -249,7 +249,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 <img src={Search_icon} style={{width:"16px",height:"16px"}} />
                             </div>
                         </div>
-                        <div style={{padding: '0 16px 0 16px', width: 856}}>
+                        <div style={{padding: '0 16px 0 16px',}}>b
                             <ExcelTable
                                 headerList={searchModalList[`subFactorySearch`]}
                                 row={searchList ?? []}

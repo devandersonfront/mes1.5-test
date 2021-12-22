@@ -56,7 +56,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   }, [])
 
   useEffect(() => {
-    console.log(basicRow)
   }, [basicRow])
 
   const getMenus = async () => {
@@ -208,7 +207,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
             if(v.product_id){
               let index = e.findIndex((row) => row.product_id == v.product_id)
               if(index !== -1 && index == i){
-                console.log(v.id)
                 tmp.add(v.id)
                 return true
               }else{
@@ -217,7 +215,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
               }
             }
           })
-          console.log(tmp)
           setSelectList(tmp)
           if(tmpRow.indexOf(false) !== -1){
             setBasicRow([...basicRow])
