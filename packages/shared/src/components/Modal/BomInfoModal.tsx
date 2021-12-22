@@ -109,6 +109,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }else{
       row = [{...tmpRow}]
     }
+
     tmpData = row.map((v, i) => {
       let childData: any = {}
       switch(v.type){
@@ -131,7 +132,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         code: childData.code,
         type: v.type,
         tab: v.type,
-        type_name: TransferCodeToValue(v.type, 'material'),
+        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? null : "product"),
         unit: childData.unit,
         usage: v.usage,
         version: v.version,
@@ -184,7 +185,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           ...v.product
         } : null,
         child_rm: v.tab === 0 ? {
-          ...v.raw_material
+          ...v.raw_material,
+          type:v.raw_material.type_id
         } : null,
         child_sm: v.tab === 1 ? {
           ...v.sub_material
@@ -485,9 +487,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
                 let tmpRow = [...searchList]
-
                 tmpRow.splice(selectRow, 1)
-
                 setSearchList([...tmpRow])
               }}>
                 <p>삭제</p>

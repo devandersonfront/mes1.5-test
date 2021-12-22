@@ -395,6 +395,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
         ...appendAdditional,
         type_id: row.type,
         type: deviceList[row.type].name,
+        user: row.manager,
         id: `mold_${random_id}`,
       }
     })

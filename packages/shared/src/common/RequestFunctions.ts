@@ -132,7 +132,8 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
 }
 
 export const RequestMethod = async (MethodType: RequestType, apiType: string, data?: any, token?: string, responseType?: 'blob', params?: any, path?:any) => {
-  const tokenData = token ?? cookie.load('userInfo').token
+  const tokenData = token ?? cookie.load('userInfo')?.token;
+
   if(apiType === 'excelDownload'){
     return Axios.post(ApiList[apiType], data, tokenData && {'headers': {'Authorization': tokenData}, responseType: responseType})
       .then((result) => {
