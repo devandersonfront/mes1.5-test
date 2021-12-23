@@ -320,7 +320,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                   ...row,
                   ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
                   manager: column.type === "factory" ? row.manager : SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                  name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
+                  name:  SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
                   tab: column.type === 'bom' ? tab : undefined,
                   type_name: column.type === 'bom' ? TransferCodeToValue(searchList[selectRow].type_id, searchModalInit.excelColumnType) : undefined,
                   version: row.version,
