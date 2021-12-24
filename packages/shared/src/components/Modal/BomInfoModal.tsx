@@ -418,6 +418,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               })}
               </div>
             </div>
+            {column.type !== "readonly" &&
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
               <Button onClick={() => {
                 let tmp = searchList
@@ -493,12 +494,12 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>삭제</p>
               </Button>
             </div>
+            }
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={searchModalList.bomInfo}
+              headerList={column.type === "readonly" ?  searchModalList.readOnlyBomInfo : searchModalList.bomInfo}
               row={searchList ?? [{}]}
-              // row={tabStore.datas[tabStore.index]?.data ?? searchList ?? [{}]}
               setRow={(e) => {
                 let tmp = e.map((v, index) => {
                   return {

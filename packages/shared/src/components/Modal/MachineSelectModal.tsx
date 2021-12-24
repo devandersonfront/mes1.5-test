@@ -254,8 +254,6 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
               setRow={(e) => {
                 const count = e.reduce((cnt, element) => cnt + (element.spare === '여'), 0)
 
-                console.log(count)
-
                 if(count > 1) {
                   const findIndex = searchList.findIndex((v) => v.spare === '여')
 

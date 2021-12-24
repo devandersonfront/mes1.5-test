@@ -293,7 +293,7 @@ export const columnlist: any = {
         {pk: 'ml', name: 'ml'},
         {pk: 'L', name: 'L'},
       ]},
-    {key: 'stock', name: '부자재 재고량', editor: TextEditor, formatter: UnitContainer, type: 'selectUnit'},
+    {key: 'stock', name: '부자재 재고량', formatter: UnitContainer, type: 'selectUnit'},
     {key: 'customer_id', name: '거래처',  formatter: SearchModalTest, type: 'customer'},
   ],
   mold: [
@@ -741,7 +741,7 @@ export const columnlist: any = {
     {key: 'total_counter', name: '총 카운터', width: 118 },
     {key: 'total_good_quantity', name: '총 양품 수량', width: 118 },
     {key: 'total_poor_quantity', name: '총 불량 수량', width: 118, formatter: DefectInfoModal, type: 'readonly'},
-    {key: 'related_record_list', name: '연관 작업', formatter: RelationWork, width: 118},
+    // {key: 'related_record_list', name: '연관 작업', formatter: RelationWork, width: 118},
     {key: 'force_kill', name: '작업완료 처리', formatter: FinishButton, width: 118},
   ],
   operationModifyV2: [
