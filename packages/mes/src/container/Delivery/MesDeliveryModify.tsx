@@ -141,7 +141,7 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
         setSelectDate={(date) => setSelectDate(date)}
         title={"납품 정보 (수정)"}
         buttons={
-          ['저장하기', '삭제']
+          ['저장하기']
         }
         buttonsOnclick={onClickHeaderButton}
       />
