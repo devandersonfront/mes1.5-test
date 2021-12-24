@@ -62,7 +62,7 @@ const LotNumberRegister = ({ row, column, onRowChange }: IProps) => {
   return (
     <div style={{display: 'flex', justifyContent: 'space-between', height: '100%'}}>
       <div style={{
-        width: 130,
+        width: 200,
         paddingLeft: 8,
         opacity: row[`${column.key}`] ? 1 : .3,
         textOverflow:'ellipsis',
@@ -71,14 +71,18 @@ const LotNumberRegister = ({ row, column, onRowChange }: IProps) => {
         whiteSpace: 'nowrap',
       }}>{row[column.key] ?? 'LOT번호 입력'}</div>
       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-        <CreateBtn onClick={() => {
+        {/*<CreateBtn onClick={() => {*/}
 
-        }}>
-          생성
-        </CreateBtn>
-        <div style={{width: 4}}/>
+        {/*}}>*/}
+        {/*  생성*/}
+        {/*</CreateBtn>*/}
+        {/*<div style={{width: 4}}/>*/}
         <CreateBtn onClick={() => {
-          CheckDuplication()
+          if(row[column.key]){
+            CheckDuplication()
+          }else{
+            Notiflix.Report.warning("Lot번호를 입력해주세요", "", '확인')
+          }
         }}>
           중복 확인
         </CreateBtn>
