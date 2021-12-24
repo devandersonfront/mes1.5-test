@@ -143,7 +143,7 @@ const MesStockList = ({page, keyword, option}: IProps) => {
     if(!isPaging){
       setOptionIndex(option)
     }
-    const res = await RequestMethod('get', `moldSearch`,{
+    const res = await RequestMethod('get', `stockSearch`,{
       path: {
         page: isPaging ?? 1,
         renderItem: 18,
@@ -154,7 +154,7 @@ const MesStockList = ({page, keyword, option}: IProps) => {
       }
     })
 
-    if(res && res.status === 200){
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -277,9 +277,9 @@ const MesStockList = ({page, keyword, option}: IProps) => {
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
           if(keyword){
-            router.push(`/mes/rawmaterial/input?page=1&keyword=${keyword}&opt=${optionIndex}`)
+            router.push(`/mes/stockV2/list?page=1&keyword=${keyword}&opt=${optionIndex}`)
           }else{
-            router.push(`/mes/rawmaterial/input?page=1&keyword=`)
+            router.push(`/mes/stockV2/list?page=1&keyword=`)
           }
         }}
         searchOptionList={optionList}

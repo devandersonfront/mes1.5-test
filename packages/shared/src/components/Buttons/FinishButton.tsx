@@ -22,7 +22,9 @@ const FinishButton = ({ row, column, onRowChange}: IProps) => {
       [{
         ...row,
         status: 2
-      }])
+      }]).catch((err) => {
+        Notiflix.Report.failure("에러",err.data.message,"확인")
+    })
 
 
     if(res){

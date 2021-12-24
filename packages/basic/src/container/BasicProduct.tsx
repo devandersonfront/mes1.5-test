@@ -403,7 +403,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
-        customer_id: row.customer.name,
+        customer_id: row.customer?.name,
         customerArray: row.customer,
         cm_id: row.model?.model ?? "-",
         modelArray: row.model,
