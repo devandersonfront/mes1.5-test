@@ -39,6 +39,10 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
+  useEffect(() => {
+    console.log(basicRow)
+  }, [basicRow])
+
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
       path: {
@@ -169,14 +173,15 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         contract_id: res.contract?.identification ?? "-",
         date: res.date,
         deadline: res.deadline,
-        customer: res.product.customer?.name,
-        model: res.product.model?.model,
-        code: res.product.code,
+        customer_id: res.product.customer?.name,
+        cm_id: res.product.model?.model,
+        product_id: res.product.code,
+        name: res.product.name ?? '-',
         product: res.product,
         product_name: res.product.name,
         type: res.product.type ? TransferCodeToValue(res.product.type, 'material') : '',
         unit: res.product.unit,
-        process: res.product.process?.name,
+        process_id: res.product.process?.name ?? '-',
         goal: res.goal
       }])
     }else{
