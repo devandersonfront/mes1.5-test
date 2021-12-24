@@ -39,6 +39,7 @@ export const SearchResultSort = (infoList, type: string) => {
           customer_name: v.customer ? v.customer.name : "",
           model_name: v.model ? v.model.model : "",
           type_name: TransferCodeToValue(v.type, 'productType'),
+          type_id:v.type
         }
       })
     }
