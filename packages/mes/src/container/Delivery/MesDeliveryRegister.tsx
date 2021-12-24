@@ -56,6 +56,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   }, [])
 
   useEffect(() => {
+    console.log('basicRow', basicRow)
   }, [basicRow])
 
   const getMenus = async () => {
@@ -103,58 +104,65 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
-    let res: any
-    res = await RequestMethod('post', `shipmentSave`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
-
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
-
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
-              }
-            }
-          })
-
-          return {
-            ...row,
-            lots: row.lot_number,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
-                  }
-                }
-              }).filter((v) => v)
-            ]
+    let data = basicRow.map((row, i) => {
+      if(selectList.has(row.id)){
+        let selectKey: string[] = []
+        let additional:any[] = []
+        column.map((v) => {
+          if(v.selectList){
+            selectKey.push(v.key)
           }
 
+          if(v.type === 'additional'){
+            additional.push(v)
+          }
+        })
+
+        let selectData: any = {}
+
+        Object.keys(row).map(v => {
+          if(v.indexOf('PK') !== -1) {
+            selectData = {
+              ...selectData,
+              [v.split('PK')[0]]: row[v]
+            }
+          }
+        })
+
+        return {
+          ...row,
+          lots: row.lot_number,
+          additional: [
+            ...additional.map(v => {
+              if(row[v.name]) {
+                return {
+                  id: v.id,
+                  title: v.name,
+                  value: row[v.name],
+                  unit: v.unit
+                }
+              }
+            }).filter((v) => v)
+          ]
         }
-      }).filter((v) => v))
 
+      }
+    }).filter((v) => v)
 
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인', () => {
-        router.push('/mes/delivery/list')
-      });
+    let truthyAmount = data.findIndex((v) => !v.amount) === -1
+
+    console.log('truthAmount', truthyAmount)
+
+    if(truthyAmount){
+      let res = await RequestMethod('post', `shipmentSave`,data)
+
+      if(res){
+        Notiflix.Report.success('저장되었습니다.','','확인', () => {
+          router.push('/mes/delivery/list')
+        });
+      }
+    }else{
+      Notiflix.Report.warning('납품 수량을 선택해 주세요.', '', '확인')
     }
   }
 

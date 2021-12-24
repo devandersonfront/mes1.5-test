@@ -119,12 +119,12 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
         SaveBasic()
 
         break;
-      case 1:
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{},
-          ()=>{}
-        )
-        break;
+      // case 1:
+      //   Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+      //     ()=>{},
+      //     ()=>{}
+      //   )
+      //   break;
     }
   }
 
@@ -133,7 +133,7 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
       <PageHeader
         title={"수주 정보 (수정)"}
         buttons={
-          ['저장하기', '삭제']
+          ['저장하기']
         }
         buttonsOnclick={onClickHeaderButton}
       />

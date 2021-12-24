@@ -28,8 +28,8 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
-    {title: '지시 고유 번호', infoWidth: 144, key: 'model'},
-    {title: 'LOT 번호', infoWidth: 144, key: 'customer'},
+    {title: '지시 고유 번호', infoWidth: 144, key: 'identification'},
+    {title: 'LOT 번호', infoWidth: 144, key: 'lot_number'},
     {title: '거래처', infoWidth: 144, key: 'customer'},
     {title: '모델', infoWidth: 144, key: 'model'},
   ],
@@ -42,9 +42,9 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
   [
     {title: '단위', infoWidth: 144, key: 'unit'},
     {title: '목표 생산량', infoWidth: 144, key: 'goal'},
-    {title: '작업자', infoWidth: 144, key: 'unit'},
-    {title: '양품 수량', infoWidth: 144, key: 'goal'},
-    {title: '불량 수량', infoWidth: 144, key: 'goal'},
+    {title: '작업자', infoWidth: 144, key: 'worker_name'},
+    {title: '양품 수량', infoWidth: 144, key: 'good_quantity'},
+    {title: '불량 수량', infoWidth: 144, key: 'poor_quantity'},
   ],
 ]
 
@@ -86,7 +86,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
         return {
           ...v.machine,
           sequence: index+1,
-          spare: '부'
+          spare: index === 0 ? '여' : '부'
         }
       })])
     }
@@ -163,6 +163,10 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
     </>
   }
 
+  const getSummaryInfo = (info) => {
+    return row[info.key] ?? '-'
+  }
+
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -195,7 +199,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>기계 정보 (해당 제품 생산하는데 사용한 모든 기계를 입력해주세요. 선택 가능 기계가 없으면 기계 수정 버튼을 눌러 기계 정보를 수정해주세요)</p>
+            }}>기계 정보 (해당 제품 생산하는데 사용한 모든 기계를 입력해주세요. {/*선택 가능 기계가 없으면 기계 수정 버튼을 눌러 기계 정보를 수정해주세요*/})</p>
             <div style={{display: 'flex'}}>
               {/*<Button>*/}
               {/*  <p>엑셀로 받기</p>*/}
@@ -220,8 +224,8 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
                             <HeaderTableText>
-                              {/*{getSummaryInfo(info)}*/}
-                              -
+                              {getSummaryInfo(info)}
+                              {/*-*/}
                             </HeaderTableText>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>
@@ -247,7 +251,19 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
             <ExcelTable
               headerList={searchModalList.machineUse}
               row={searchList ?? [{}]}
-              setRow={(e) => setSearchList([...e])}
+              setRow={(e) => {
+                const count = e.reduce((cnt, element) => cnt + (element.spare === '여'), 0)
+
+                console.log(count)
+
+                if(count > 1) {
+                  const findIndex = searchList.findIndex((v) => v.spare === '여')
+
+                  e[findIndex].spare = '부'
+                }
+
+                setSearchList([...e])
+              }}
               width={1746}
               rowHeight={32}
               height={552}

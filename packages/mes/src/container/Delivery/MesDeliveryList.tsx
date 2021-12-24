@@ -179,6 +179,76 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const DeleteBasic = async () => {
+    const res = await RequestMethod('delete', 'shipmentDelete',
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
+
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          let selectData: any = {}
+
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
+              }
+            }
+
+            if(v === 'unitWeight') {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(row['unitWeight'])
+              }
+            }
+
+            if(v === 'tmpId') {
+              selectData = {
+                ...selectData,
+                id: row['tmpId']
+              }
+            }
+          })
+          return {
+            ...row,
+            ...selectData,
+            type: row.type_id,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
+          }
+
+        }
+      }).filter((v) => v))
+
+    if(res) {
+      Notiflix.Report.success('삭제 성공!', '', '확인', () => {
+        LoadBasic(1).then(() => {
+          Notiflix.Loading.remove()
+        })
+      })
+    }
+  }
+
   const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["deliveryList"];
     let tmpRow = []
@@ -322,7 +392,7 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         setSelectDate={(date) => setSelectDate(date)}
         title={"납품 현황"}
         buttons={
-          ['', '수정하기']
+          ['', '수정하기', '삭제']
         }
         buttonsOnclick={
           (e) => {
@@ -337,6 +407,12 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
                   type: 'delivery'
                 }))
                 router.push('/mes/delivery/modify')
+              case 2:
+                Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+                  ()=> DeleteBasic(),
+                  ()=>{}
+                )
+                break;
             }
           }
           // onClickHeaderButton
