@@ -348,7 +348,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
 
   const onClickHeaderButton = (index: number) => {
     switch(index){
-      case 1:
+      case 0:
         if(selectList.size <= 0){
           Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
           return
@@ -369,7 +369,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
       case 2:
         router.push(`/mes/item/manage/mold`)
         break;
-      case 3:
+      case 1:
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소", () => {
           DeleteBasic()
         }, () =>{})
@@ -405,7 +405,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         setSelectDate={setSelectDate}
         title={"부자재 재고 현황"}
         buttons={
-          ['수정하기', '저장하기', '삭제']
+          ['수정하기', '삭제']
         }
         buttonsOnclick={onClickHeaderButton}
       />

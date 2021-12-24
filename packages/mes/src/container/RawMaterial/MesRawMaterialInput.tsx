@@ -134,11 +134,12 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
                 }
               }
             })
-
             return {
               ...row,
               ...selectData,
               warehousing: row.amount,
+              type: row.type_id,
+              raw_material: {...row.raw_material, type:row.raw_material.type_id},
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
