@@ -163,7 +163,9 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
       },
       params: {
         keyword: keyword ?? '',
-        opt: option ?? 0
+        opt: option ?? 0,
+        from: selectDate.from,
+        to: selectDate.to,
       }
     })
 

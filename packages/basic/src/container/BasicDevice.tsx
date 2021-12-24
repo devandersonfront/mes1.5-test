@@ -62,7 +62,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     setTypesState(value);
   }
 
-
+console.log(basicRow)
   useEffect(() => {
     setOptionIndex(option)
     if(keyword){
@@ -189,11 +189,13 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
                   }
                 }
               })
+              console.log(row, selectData)
               return {
                 ...row,
                 ...selectData,
                 type:row.type_id,
                 manager: row.user,
+                subFactory: {...row.subFactory, manager:row.subFactory.manager_info},
                 additional: [
                   ...additional.map((v, index)=>{
                     if(!row[v.colName]) return undefined;
@@ -270,11 +272,17 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 18,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0,
-        types:typesState
-      }
+      params: typesState ?
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+            types:typesState
+          }
+          :
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+          }
     })
 
     if(res){
@@ -393,6 +401,10 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
+        factory_id: row.factory.name,
+        factory_info:row.factory,
+        affiliated_id: row.subFactory.name,
+        subFactory_info:row.subFactory,
         type_id: row.type,
         type: deviceList[row.type].name,
         user: row.manager,
