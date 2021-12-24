@@ -56,7 +56,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   }, [])
 
   useEffect(() => {
-    console.log('basicRow', basicRow)
   }, [basicRow])
 
   const getMenus = async () => {
@@ -150,8 +149,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     }).filter((v) => v)
 
     let truthyAmount = data.findIndex((v) => !v.amount) === -1
-
-    console.log('truthAmount', truthyAmount)
 
     if(truthyAmount){
       let res = await RequestMethod('post', `shipmentSave`,data)

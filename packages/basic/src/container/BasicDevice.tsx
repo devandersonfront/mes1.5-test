@@ -62,7 +62,6 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     setTypesState(value);
   }
 
-console.log(basicRow)
   useEffect(() => {
     setOptionIndex(option)
     if(keyword){
@@ -189,7 +188,6 @@ console.log(basicRow)
                   }
                 }
               })
-              console.log(row, selectData)
               return {
                 ...row,
                 ...selectData,
