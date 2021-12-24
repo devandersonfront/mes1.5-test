@@ -68,7 +68,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       })
     }
 
-  }, [pageInfo.page, searchKeyword, option])
+  }, [pageInfo.page, searchKeyword, option, selectDate])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -126,6 +126,10 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       path: {
         page: pageInfo.page ?? 1,
         renderItem: 22,
+      },
+      params: {
+        from: selectDate.from,
+        to: selectDate.to,
       }
     })
     if(res){
@@ -155,7 +159,9 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       },
       params: {
         keyword: keyword ?? '',
-        opt: option ?? 0
+        opt: option ?? 0,
+        from: selectDate.from,
+        to: selectDate.to,
       }
     })
 
@@ -360,7 +366,6 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
           // SearchBasic(keyword, option, 1)
           setSearchKeyword(keyword);
           setPageInfo({page:1, total:1})
-
         }}
         onChangeSearchOption={(option) => {
           // SearchBasic(keyword, option, 1)

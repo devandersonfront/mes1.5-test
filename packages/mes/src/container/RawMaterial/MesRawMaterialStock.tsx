@@ -330,16 +330,18 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
       }).filter((v) => v))
 
     if(res) {
-      Notiflix.Report.success('삭제되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }
+      Notiflix.Report.success('삭제되었습니다.','','확인', () => {
+        if(keyword){
+          SearchBasic(keyword, option, page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }else{
+          LoadBasic(page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+
+      });
     }
 
   }
