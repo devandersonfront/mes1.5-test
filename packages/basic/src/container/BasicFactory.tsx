@@ -329,7 +329,6 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
           tab: menu.tab,
           version: menu.version,
           colName: menu.mi_id,
-
         }
       }
     }).filter((v: any) => v) : []
