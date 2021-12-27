@@ -329,7 +329,6 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
           tab: menu.tab,
           version: menu.version,
           colName: menu.mi_id,
-
         }
       }
     }).filter((v: any) => v) : []
@@ -470,6 +469,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
             e.map(v => {
               if(v.isChange) tmp.add(v.id)
             })
+            console.log(e)
             setSelectList(tmp)
             setBasicRow([...e])
           }}

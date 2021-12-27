@@ -398,15 +398,26 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
           (e) => {
             switch(e){
               case 1:
-                dispatch(setModifyInitData({
-                  modifyInfo: basicRow.map(v => {
-                    if (selectList.has(v.id)) {
-                      return v
-                    }
-                  }).filter(v => v),
-                  type: 'delivery'
-                }))
-                router.push('/mes/delivery/modify')
+                let check = false;
+                basicRow.map((v) => {
+                  if(selectList.has(v.id)){
+                    check = true;
+                  }
+                })
+                if(check) {
+                  dispatch(setModifyInitData({
+                    modifyInfo: basicRow.map(v => {
+                      if (selectList.has(v.id)) {
+                        return v
+                      }
+                    }).filter(v => v),
+                    type: 'delivery'
+                  }))
+                  router.push('/mes/delivery/modify')
+                }else{
+                  Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
+                }
+                break;
               case 2:
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
                   ()=> DeleteBasic(),

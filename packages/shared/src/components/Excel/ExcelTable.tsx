@@ -108,7 +108,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
               // {
               //         mi_id:headerList[v].id, width:i <= 80 ? 80 : i,title:tmpHeader, hide:false, unit:headerList[v].unitData, moddable: headerList[v].moddable
               //       }
-              , undefined, undefined, headerList[v].tab )
+              , undefined, undefined, undefined,headerList[v].tab )
                   .then((res)=> {
                     headerList[v].width = i <= 80 ? 80 : i;
 
