@@ -316,8 +316,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
-                console.log(row, searchList)
-                console.log(column)
                 onRowChange(
                     {
                         ...row,

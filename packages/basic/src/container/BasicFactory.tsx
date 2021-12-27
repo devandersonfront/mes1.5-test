@@ -469,7 +469,6 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
             e.map(v => {
               if(v.isChange) tmp.add(v.id)
             })
-            console.log(e)
             setSelectList(tmp)
             setBasicRow([...e])
           }}
