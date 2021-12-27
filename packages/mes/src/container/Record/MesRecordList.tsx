@@ -54,7 +54,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
-    setOptionIndex(option)
+    // setOptionIndex(option)
     if(searchKeyword){
       SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
@@ -64,7 +64,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, option])
+  }, [pageInfo.page, searchKeyword, option, selectDate])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -125,7 +125,9 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
       },
       params: {
         keyword: keyword,
-        opt: 4
+        opt: optionIndex,
+        from: selectDate.from,
+        to: selectDate.to,
       }
     })
 
@@ -148,7 +150,9 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         renderItem: 22,
       },
       params: {
-        status: 2
+        // status: 2,
+        from: selectDate.from,
+        to: selectDate.to,
       }
     })
 

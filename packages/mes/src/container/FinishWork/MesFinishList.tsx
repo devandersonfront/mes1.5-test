@@ -64,7 +64,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         })
       }
     }
-  }, [pageInfo.page, searchKeyword, option])
+  }, [pageInfo.page, searchKeyword, selectDate])
 
 
   const getMenus = async () => {
@@ -135,7 +135,9 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         renderItem: 22,
       },
       params: {
-        status: 2
+        status: 2,
+        from: selectDate.from,
+        to: selectDate.to,
       }
     })
 
@@ -152,9 +154,9 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
     Notiflix.Loading.circle()
-    if(!isPaging){
-      setOptionIndex(option)
-    }
+    // if(!isPaging){
+    //   setOptionIndex(option)
+    // }
     const res = await RequestMethod('get', `operationSearch`,{
       path: {
         page: isPaging ?? 1,

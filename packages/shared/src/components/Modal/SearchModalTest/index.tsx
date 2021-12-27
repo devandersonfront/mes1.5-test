@@ -316,12 +316,15 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
+                console.log(row, searchList)
+                console.log(column)
                 onRowChange(
                     {
                         ...row,
                         ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
                         manager: column.type === "factory" ? row.manager : SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                        name:  SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
+                        // name:  row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
+                        name:  column.type === "bom" || column.type === "rawmaterial" ? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name : row.name ,
                         tab: column.type === 'bom' ? tab : undefined,
                         type_name: column.type === 'bom' ? TransferCodeToValue(searchList[selectRow].type_id, searchModalInit.excelColumnType) : undefined,
                         version: row.version,
