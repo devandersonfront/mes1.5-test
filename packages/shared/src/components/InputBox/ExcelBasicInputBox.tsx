@@ -21,6 +21,10 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   const dispatch = useDispatch();
   const selector = useSelector((state:RootState) => state.MachineSelectReducer);
 
+  useEffect(() => {
+    console.log(row, column)
+  }, [row])
+
   return (
     <input
       style={{textAlign: 'center', color: column.textType ? 'black' : 'white' }}
@@ -31,6 +35,9 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
         if(column.searchType === 'record' && row.osd_id){
           onClose(true)
           Notiflix.Report.warning('수정할 수 없습니다.', '작업지시 고유 번호가 있으면 수정할 수 없습니다.', '확인', )
+        }else if(column.key === 'tmpId' && row[column.key]){
+          onClose(true)
+          Notiflix.Report.warning('수정할 수 없습니다.', '아이디는 수정할 수 없습니다.', '확인', )
         }
       }}
       onChange={(event) => {
