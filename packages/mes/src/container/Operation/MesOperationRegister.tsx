@@ -166,8 +166,11 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       path: { product_id }
     })
 
+    let random_id = Math.random()*1000;
+
     if(res){
       setBasicRow([{
+        id: "operation_"+random_id,
         bom_root_id: res.product.bom_root_id,
         contract: res.contract,
         contract_id: res.contract?.identification ?? "-",
@@ -198,22 +201,23 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     })
 
     if(res){
-      let random_id = Math.random()*1000;
-
       let tmp: Set<any> = selectList
-
-      tmp.add("operation_"+random_id)
-
-      setSelectList(tmp)
 
       setBasicRow([{
         ...object,
         goal: 0,
       }, ...res.map(v => {
         if(v.type === 2){
+          let random_id = Math.random()*1000;
+
+          tmp.add("operation_"+random_id)
+
+          console.log(v.child_product)
+
           return {
             ...v,
             id: "operation_"+random_id,
+            bom_root_id: v.child_product.bom_root_id,
             product: v.child_product,
             date: moment().format('YYYY-MM-DD'),
             deadline: moment().format('YYYY-MM-DD'),
@@ -222,13 +226,14 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             name: v.child_product.name,
             product_id: v.child_product.code,
             code: v.child_product.code,
-            type: TransferCodeToValue(v.type, 'material'),
+            type: TransferCodeToValue(v.type, 'product'),
             unit: v.child_product.unit,
-            process: v.child_product.process?.name,
+            process_id: v.child_product.process?.name ?? '-',
             readonly: true,
           }
         }
       }).filter(v => v)])
+      setSelectList(tmp)
     }
 
     setIsFirst(false)
