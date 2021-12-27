@@ -67,7 +67,7 @@ export const AUTHORITY_LIST = [
       { title: "기계 기준 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_04" },
       { title: "금형 기준 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_07" },
       { title: "원자재 기준 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_06" },
-      { title: "원자재 기준 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_13" },
+      { title: "부자재 기준 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_13" },
       { title: "제품 등록 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_05" },
     ] },
   {
