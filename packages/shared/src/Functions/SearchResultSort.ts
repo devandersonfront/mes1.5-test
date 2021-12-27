@@ -106,7 +106,7 @@ export const SearchModalResult = (selectData, type: string) => {
   switch(type) {
     case 'user': {
       return {
-        // ...selectData,
+        ...selectData,
         appointment: selectData.appointment,
         telephone: selectData.telephone,
         description: selectData.description,
@@ -115,6 +115,7 @@ export const SearchModalResult = (selectData, type: string) => {
         managerPk: selectData.user_id,
         user: selectData,
         worker: selectData,
+        // name: selectData.name
       }
     }
     case 'model': {

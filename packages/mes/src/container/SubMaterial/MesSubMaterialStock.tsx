@@ -74,7 +74,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option, nzState])
+  }, [page, keyword, option, nzState, selectDate])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -138,7 +138,9 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         renderItem: 18,
       },
       params:{
-        nz:nzState
+        nz:nzState,
+        from: selectDate.from,
+        to: selectDate.to,
       }
     })
 
@@ -166,7 +168,9 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
       params: {
         keyword: keyword ?? '',
         opt: option ?? 0,
-        nz:nzState
+        nz:nzState,
+        from: selectDate.from,
+        to: selectDate.to,
       }
     })
 

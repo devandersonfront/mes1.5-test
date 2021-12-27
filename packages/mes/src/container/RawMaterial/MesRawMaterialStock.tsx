@@ -67,9 +67,9 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
   }
 
   useEffect(() => {
-    setOptionIndex(option)
+    // setOptionIndex(option)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -77,7 +77,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option, nzState])
+  }, [page, keyword, nzState, selectDate])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -159,9 +159,9 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
     Notiflix.Loading.circle()
-    if(!isPaging){
-      setOptionIndex(option)
-    }
+    // if(!isPaging){
+    //   setOptionIndex(option)
+    // }
     const res = await RequestMethod('get', `rawInListSearch`,{
       path: {
         page: isPaging ?? 1,
