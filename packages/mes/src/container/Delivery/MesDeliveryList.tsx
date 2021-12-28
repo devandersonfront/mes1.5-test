@@ -398,6 +398,7 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
           (e) => {
             switch(e){
               case 1:
+                Notiflix.Loading.standard();
                 let check = false;
                 basicRow.map((v) => {
                   if(selectList.has(v.id)){
@@ -413,8 +414,10 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
                     }).filter(v => v),
                     type: 'delivery'
                   }))
+                  Notiflix.Loading.remove(300);
                   router.push('/mes/delivery/modify')
                 }else{
+                  Notiflix.Loading.remove(300);
                   Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
                 }
                 break;

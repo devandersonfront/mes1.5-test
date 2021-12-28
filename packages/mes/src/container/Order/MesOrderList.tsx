@@ -384,6 +384,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
           (e) => {
             switch(e) {
               case 1:
+                Notiflix.Loading.standard();
                 let check = false;
                 basicRow.map((v) => {
                   if(selectList.has(v.id)){
@@ -399,8 +400,10 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
                       }).filter(v => v),
                       type: 'order'
                     }))
+                    Notiflix.Loading.remove(300);
                     router.push('/mes/order/modify')
                   }else{
+                    Notiflix.Loading.remove(300);
                     Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
                   }
                 break;

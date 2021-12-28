@@ -40,7 +40,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
-    console.log(basicRow)
+    // console.log(basicRow)
   }, [basicRow])
 
   const getMenus = async () => {
@@ -211,8 +211,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           let random_id = Math.random()*1000;
 
           tmp.add("operation_"+random_id)
-
-          console.log(v.child_product)
 
           return {
             ...v,

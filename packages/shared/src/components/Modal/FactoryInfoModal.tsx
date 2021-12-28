@@ -53,9 +53,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
 
   const changeRow = (row: any, key?: string) => {
-
     let random_id = Math.random()*1000;
-
     let tmpData = {
       ...row,
       machine_id: row.name,
@@ -94,6 +92,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
       let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
+    console.log(searchList)
       setPageInfo({
         ...pageInfo,
         page: res.page,
