@@ -492,7 +492,8 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         // setRow={setBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
-          e.map(v => {
+
+          e.map((v, i) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
