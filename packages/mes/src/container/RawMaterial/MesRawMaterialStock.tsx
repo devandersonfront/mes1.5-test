@@ -142,7 +142,9 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         renderItem: 18,
       },
       params:{
-        nz:nzState
+        nz:nzState,
+        from:selectDate.from,
+        to:selectDate.to
       }
     })
 
@@ -170,7 +172,9 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
       params: {
         keyword: keyword ?? '',
         opt: option ?? 0,
-        nz:nzState
+        nz:nzState,
+        from:selectDate.from,
+        to:selectDate.to
       }
     })
 

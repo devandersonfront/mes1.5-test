@@ -132,13 +132,11 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
             </>
         )
       case "modal":
-
         return (
             <>
               <div style={{width: '100%', height: 30, background:row.border ? "#19B9DF80" :  row.color ? row.color :"white"}} onClick={() => {}}>
                 {/*{ row[`${column.key}`]}*/}
-                {/*dldl*/}
-                {searchList[selectRow]?.name ?? ""}
+                {searchList[selectRow]?.name ?? row?.manager_name}
                 {/*<LineBorderContainer row={row} column={column} setRow={() => {}}/>*/}
               </div>
               <div style={{
@@ -305,7 +303,7 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
               <div
                 onClick={() => {
                   if(selectRow !== undefined && selectRow !== null){
-                    onRowChange({...row, manager_info: searchList[selectRow], isChange: true})
+                    onRowChange({...row, manager_info: searchList[selectRow], appointment: searchList[selectRow].appointment, isChange: true})
                   }
                   setIsOpen(false)
                 }}
