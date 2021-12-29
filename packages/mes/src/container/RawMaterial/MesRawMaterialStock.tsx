@@ -289,12 +289,102 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         type: TransferCodeToValue(row.raw_material.type, 'rawMaterialType'),
         customer_id: row.raw_material?.customer?.name ?? "-",
         expiration: row.raw_material.expiration,
+        exhaustion: row.current ? '-' : '사용완료',
         ...appendAdditional,
         id: `rawin_${random_id}`,
       }
     })
 
     setBasicRow([...tmpBasicRow])
+  }
+
+  const SaveBasic = async () => {
+    let res: any
+    res = await RequestMethod('post', `lotRmSave`,
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          console.log(row)
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
+
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          let selectData: any = {}
+
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
+              }
+            }
+
+            if(v === 'unitWeight') {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(row['unitWeight'])
+              }
+            }
+
+            if(v === 'tmpId') {
+              selectData = {
+                ...selectData,
+                id: row['tmpId']
+              }
+            }
+          })
+          return {
+            ...row,
+            ...selectData,
+            current: row.exhaustion === '사용완료' ? 0 : row.amount,
+            warehousing: 100,
+            type: row.type_id,
+            raw_material: {...row.raw_material, type:row.raw_material.type_id},
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
+          }
+
+        }
+      }).filter((v) => v))
+      .catch((error) => {
+        if(error.status === 409){
+          Notiflix.Notify.warning(error.data.message)
+          return true
+        }
+        return false
+      })
+
+
+    if(res){
+      Notiflix.Report.success('저장되었습니다.','','확인', () => {
+        if(keyword){
+          SearchBasic(keyword, optionIndex, page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }else{
+          LoadBasic(page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+      });
+    }
   }
 
   const DeleteBasic = async () => {
@@ -379,7 +469,8 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         router.push('/mes/rawmaterialV1u/modify')
         break;
       case 1:
-        router.push(`/mes/item/manage/mold`)
+        // router.push(`/mes/item/manage/mold`)
+        SaveBasic()
         break;
       case 2:
         DeleteBasic()

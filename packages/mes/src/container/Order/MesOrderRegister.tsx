@@ -49,6 +49,10 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.remove()
   }, [])
 
+  useEffect(() => {
+    console.log(basicRow)
+  }, [basicRow])
+
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
       path: {
@@ -200,9 +204,10 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
           let tmp: Set<any> = selectList
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
+
           })
           setSelectList(tmp)
-          setBasicRow(e)
+          setBasicRow(e.map(v => ({...v, name: v.product_name})))
         }}
         selectList={selectList}
         //@ts-ignore
