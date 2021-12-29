@@ -160,11 +160,30 @@ export const SearchModalResult = (selectData, type: string) => {
       }
     }
     case 'rawmaterial': {
+      console.log(selectData)
+      const unitResult = () => {
+        let result = "-";
+        switch (selectData.type){
+          case "반재품" :
+            result = "EA";
+            break;
+          case "COIL" :
+            result = "kg";
+            break;
+          case "SHEET" :
+            result = "장";
+            break;
+          default :
+            break;
+        }
+        return result;
+      }
       return {
         ...selectData,
         rm_id: selectData.code,
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
         customer_id: selectData.customerArray?.name,
+        unit:unitResult(),
         raw_material: {
           ...selectData,
           customer: selectData.customerArray
@@ -176,6 +195,8 @@ export const SearchModalResult = (selectData, type: string) => {
         ...selectData,
         wip_id: selectData.code,
         customer_id: selectData.customerArray?.name,
+        // type:"부자재",
+        type_name:"부자재",
         sub_material: {
           ...selectData,
           customer: selectData.customerArray

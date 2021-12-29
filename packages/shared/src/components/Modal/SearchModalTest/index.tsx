@@ -316,13 +316,28 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
+                console.log(searchList[selectRow], searchModalInit.excelColumnType, column.type)
+                console.log(row, row.name, column.type)
+                const selectNameFunction = (type:string) => {
+                  switch(type){
+                    case "bom":
+                      return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
+                    case "rawmaterial" :
+                      return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
+                    case "machine" :
+                      return searchList[selectRow].name;
+                    case "mold":
+                      return searchList[selectRow].name;
+                    default:
+                      return row.name;
+                  }
+                }
                 onRowChange(
                     {
                         ...row,
                         ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
                         manager: column.type === "factory" ? row.manager : SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                        // name:  row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
-                        name:  column.type === "bom" || column.type === "rawmaterial" ? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name : row.name ,
+                        name:  selectNameFunction(column.type),
                         tab: column.type === 'bom' ? tab : undefined,
                         type_name: column.type === 'bom' ? TransferCodeToValue(searchList[selectRow].type_id, searchModalInit.excelColumnType) : undefined,
                         version: row.version,

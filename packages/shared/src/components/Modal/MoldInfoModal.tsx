@@ -52,13 +52,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       }
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
 
   const changeRow = (row: any, key?: string) => {
     let tmpData = {
@@ -71,35 +64,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     return tmpData
   }
 
-  // const SearchBasic = async (keyword: any, option: number, page: number) => {
-  //   Notiflix.Loading.circle()
-  //   setKeyword(keyword)
-  //   setOptionIndex(option)
-  //   const res = await RequestMethod('get', `machineSearch`,{
-  //     path: {
-  //       page: page,
-  //       renderItem: 18,
-  //     },
-  //     params: {
-  //       keyword: keyword ?? '',
-  //       opt: option ?? 0
-  //     }
-  //   })
-  //
-  //   if(res && res.status === 200){
-  //     let searchList = res.results.info_list.map((row: any, index: number) => {
-  //       return changeRow(row)
-  //     })
-  //
-  //     setPageInfo({
-  //       ...pageInfo,
-  //       page: res.results.page,
-  //       total: res.results.totalPages,
-  //     })
-  //
-  //     setSearchList([...searchList])
-  //   }
-  // }
 
   const ModalContents = () => {
     if(row?.molds){
