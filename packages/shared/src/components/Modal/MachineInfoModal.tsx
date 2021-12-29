@@ -290,7 +290,10 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             <ExcelTable
               headerList={searchModalList.machineInfo}
               row={searchList }
-              setRow={(e) => setSearchList([...e])}
+              setRow={(e) => {
+                console.log(e)
+                setSearchList([...e])
+              }}
               width={1746}
               rowHeight={32}
               height={552}

@@ -111,7 +111,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
-
+    console.log("basicRow : ", basicRow)
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -169,14 +169,13 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
               }
             })
 
-
             return {
               ...row,
               ...selectData,
               customer: row.customerArray,
               customer_id: row.customerArray.customer_id,
               model: row.modelArray,
-              standard_uph: row.uph,
+              // standard_uph: row.uph,
               type:row.type_id,
               additional: [
                 ...additional.map((v, index)=>{
