@@ -683,6 +683,17 @@ export const columnlist: any = {
     {key: 'uph', name: 'UPH', width:118, formatter: UnitContainer, unitData: 'EA'},
     {key: 'worker', name: '작업자', width:118,},
   ],
+  workStandardList: [
+    {key: 'customer', name: '거래처',width: 130},
+    {key: 'model', name: '모델', width: 130},
+    {key: 'code', name: 'CODE',width: 500},
+    {key: 'material_name', name: '품명',width: 380},
+    {key: 'material_id', name: '품목 종류', width: 160},
+    {key: 'photo', name: '작업 표준서', formatter: FileEditer},
+  ],
+  midrange: [
+    {key: 'amount', name: '시료 개수 선택'}
+  ],
   qualityDefectTop: [
     {key: 'customer', name: '거래처명', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
     {key: 'model', name: '모델', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
