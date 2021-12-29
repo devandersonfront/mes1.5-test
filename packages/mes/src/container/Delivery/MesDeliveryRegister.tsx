@@ -210,7 +210,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
           let tmp: Set<number> = selectList
           let tmpRow = e.map((v,i) => {
             if(v.product_id){
-         ,     let index = e.findIndex((row) => row.product_id == v.product_id)
+              let index = e.findIndex((row) => row.product_id == v.product_id)
               if(index !== -1 && index == i){
                 tmp.add(v.id)
                 return true
