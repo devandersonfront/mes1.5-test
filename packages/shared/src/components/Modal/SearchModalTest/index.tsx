@@ -75,7 +75,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen){
       LoadBasic();
-
     }
   }, [isOpen, searchModalInit, optionIndex, pageInfo.page])
 
@@ -115,6 +114,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }
   const getContents = () => {
+    console.log(row[column.key], row);
     if(row[`${column.key}`]){
       if( typeof row[`${column.key}`] === "string"){
         return row[column.key];
