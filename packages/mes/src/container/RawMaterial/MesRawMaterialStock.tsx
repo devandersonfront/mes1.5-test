@@ -55,6 +55,9 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
+  const [first, setFirst] = useState<boolean>(true);
+
+
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment().startOf('isoWeek').format('YYYY-MM-DD'),
     to: moment().endOf('isoWeek').format('YYYY-MM-DD')
@@ -141,14 +144,21 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       },
-      params:{
-        nz:nzState,
-        from:selectDate.from,
-        to:selectDate.to
-      }
+      params:first ?
+          {
+            nz:nzState,
+            from:"2000-01-01",
+            to:moment().format("yyyy-MM-DD")
+          }
+          :{
+            nz:nzState,
+            from:selectDate.from,
+            to:selectDate.to
+          }
     })
 
     if(res){
+      setFirst(false);
       setPageInfo({
         ...pageInfo,
         page: res.page,
