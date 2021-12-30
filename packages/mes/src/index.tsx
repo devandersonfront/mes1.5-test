@@ -32,3 +32,4 @@ export {MesWorkStandardList} from './container/Work/MesWorkStandardList'
 //제품 변경점 리스트
 export {MesProductChangeRegister} from './container/Product/MesProductChangeRegister'
 export {MesProductChangeList} from './container/Product/MesProductChangeList'
+export {MesProductChangeModify} from './container/Product/MesProductChangeModify'

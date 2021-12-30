@@ -11,12 +11,12 @@ import {
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 
-const MesProductChangeRegister = () => {
+const MesProductChangeModify = () => {
 
     const [basicRow, setBasicRow] = useState<Array<any>>([{
         order_num: '-', operation_num: '20210401-013'
     }])
-    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productChangeRegister"])
+    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productChangeModify"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionList, setOptionList] = useState<string[]>([ '거래처', '모델', 'CODE', '품명', '제목', '작성자'])
     const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -30,9 +30,9 @@ const MesProductChangeRegister = () => {
     return (
         <div>
             <PageHeader
-                title={"변경점 정보 등록"}
+                title={"변경점 정보 (수정)"}
                 buttons={
-                    ['', '저장하기']
+                    ['', '저장하기', '삭제']
                 }
             />
             <ExcelTable
@@ -74,4 +74,4 @@ const MesProductChangeRegister = () => {
     );
 };
 
-export {MesProductChangeRegister}
+export {MesProductChangeModify}

@@ -911,6 +911,12 @@ export const columnlist: any = {
     {key: 'register',name: '등록 날짜'},
     {key: 'writer', name: '작성자'}
   ],
+  productChangeModify: [
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
+    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력'},
+    {key: "code", name: 'CODE',},
+    {key: "material_name", name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력'}
+  ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},
     {key: 'customerSearchModal', name: '거래처 검색', formatter: SearchModalTest, type: 'customer', width: 118,},

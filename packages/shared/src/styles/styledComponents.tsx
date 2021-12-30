@@ -600,3 +600,28 @@ export const UnitBox = styled.div`
   width: 40px;
   height: 40px;
 `
+
+export const TitleBox = styled.div`
+    background-color: black;
+    width: 120px;
+    height: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+
+export const SelectButton = styled.div`
+    margin: 8px;
+    width: 72px;
+    height: 32px;
+    background-color: #19B9DF;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+`
