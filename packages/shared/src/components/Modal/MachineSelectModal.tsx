@@ -59,31 +59,43 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
+    let tmpMachines
     if(!row.machines || !row.machines.length){
+      tmpMachines = row.product?.machines.map((v, index) => {
+        return {
+          machine: {
+            sequence: index+1,
+            machine: {
+              ...v.machine
+            },
+            setting: v.spare === '여' ? 0 : 1
+          }
+        }
+      }) ?? []
+
       onRowChange({
         ...row,
         name: row.name,
-        molds: row.product.machines.map((v, index) => {
-          return {
-            machine: {
-              sequence: index+1,
-              machine: {
-                ...v.machine
-              },
-              setting: v.spare === '여' ? 0 : 1
-            }
-          }
-        }),
+        machines: tmpMachines,
         isChange: true
+      })
+    }else{
+      tmpMachines = row.machines.map(v => {
+        return {
+          ...v,
+          ...v.machine
+        }
       })
     }
 
     if(isOpen) {
-      setSearchList([...row.product.machines.map((v, index) => {
+      setSearchList([...tmpMachines.map((v, index) => {
+        console.log(v)
         return {
           ...v.machine,
+          ...v.machine.machine,
           sequence: index+1,
-          spare: index === 0 ? '여' : '부'
+          spare: v.setting === 0 ? '여' : '부',
         }
       })])
     }
