@@ -23,6 +23,7 @@ const TitleInput = ({title, value, placeholder, onChange}:IProps) => {
 
 
 
+
 const ValueBox = styled.div`
     background-color: #353B48;
     width: 100%;
