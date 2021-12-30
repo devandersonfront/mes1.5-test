@@ -38,68 +38,53 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     total: 1
   })
 
+  const selectMachineType = (value:number) => {
+    let result = "";
+    switch(value) {
+      case 0 :
+        result = "선택없음";
+        break ;
+      case 1 :
+        result = "프레스";
+          break ;
+      case 2 :
+        result = "로봇";
+          break ;
+      case 3 :
+        result = "용접기";
+          break ;
+      case 4 :
+        result = "밀링";
+          break ;
+      case 5 :
+        result = "선반";
+          break ;
+      case 5 :
+        result = "탭핑기";
+        break ;
+      default:
+        result = value.toString();
+        break;
+    }
+    return result;
+  }
+
   useEffect(() => {
     if(isOpen) {
       if(row?.machines && row?.machines.length > 0){
+
         setSearchList(row.machines.map((v,i) => {
           return {
             ...v,
             ...v.machine,
+            type_id:v.machine.type,
+            type:selectMachineType(v.machine.type),
             seq: i+1
           }
         }))
       }
-
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
-
-  // const changeRow = (row: any, key?: string) => {
-  //   let tmpData = {
-  //     ...row,
-  //     machine_id: row.name,
-  //     machine_idPK: row.machine_id,
-  //     manager: row.manager ? row.manager.name : null
-  //   }
-  //
-  //   return tmpData
-  // }
-
-  // const SearchBasic = async (keyword: any, option: number, page: number) => {
-  //   Notiflix.Loading.circle()
-  //   setKeyword(keyword)
-  //   setOptionIndex(option)
-  //   const res = await RequestMethod('get', `machineSearch`,{
-  //     path: {
-  //       page: page,
-  //       renderItem: 18,
-  //     },
-  //     params: {
-  //       keyword: keyword ?? '',
-  //       opt: option ?? 0
-  //     }
-  //   })
-  //
-  //   if(res ){
-  //     let searchList = res.results.info_list.map((row: any, index: number) => {
-  //       return changeRow(row)
-  //     })
-  //
-  //     setPageInfo({
-  //       ...pageInfo,
-  //       page: res.page,
-  //       total: res.totalPages,
-  //     })
-  //
-  //     setSearchList([...searchList])
-  //   }
-  // }
 
   const ModalContents = () => {
     if(row?.machines){
@@ -291,8 +276,14 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               headerList={searchModalList.machineInfo}
               row={searchList }
               setRow={(e) => {
-                console.log(e)
-                setSearchList([...e])
+                setSearchList([...e.map((machine) => {
+                  if(typeof machine.type !== "string"){
+                    return {...machine, type_id:machine.type, type:selectMachineType(machine.type)}
+                  }else{
+                    return {...machine}
+
+                  }
+                })])
               }}
               width={1746}
               rowHeight={32}
