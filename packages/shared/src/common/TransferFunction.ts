@@ -1,4 +1,4 @@
-type TransferType = "productType" | "material" | "rawmaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" | null
+type TransferType = "productType" | "material" | "rawmaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "submaterial" | null
 
 interface CodeType {
   code: number
@@ -79,6 +79,10 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
           value = v.value;
         }
       })
+      break;
+    }
+    case "submaterial" :{
+      value = "부자재"
       break;
     }
     case 'workStatus': {

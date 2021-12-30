@@ -109,7 +109,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
-
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -167,14 +166,25 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
               }
             })
 
-
             return {
               ...row,
               ...selectData,
               customer: row.customerArray,
               customer_id: row.customerArray.customer_id,
               model: row.modelArray,
-              standard_uph: row.uph,
+              // standard_uph: row.uph,
+              molds:[...row.molds.map((mold)=>{
+                return {...mold, setting:mold.mold.setting}
+              })],
+              machines:[
+                  ...row.machines.map((machine)=>{
+                    return {
+                      ...machine,
+                      setting:machine.machine.setting,
+                      machine:{...machine.machine, type:machine.machine.type_id}
+                    }
+                  })
+              ],
               type:row.type_id,
               additional: [
                 ...additional.map((v, index)=>{
@@ -213,24 +223,12 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.circle();
     let res: any
     let data:any[] = [];
-    // const check = basicRow.map((row) => {
-    //   if(selectList.has(row.id) && !row.code && !row.name){
-    //     Notiflix.Loading.remove(300)
-    //     Notiflix.Report.failure("CODE를 입력해주세요.","","확인", )
-    //     return false
-    //   }
-    // })
-    // if(check.includes(false)){
-    //   return
-    // }
-
 
     basicRow.map((value,index)=>{
       if(selectList.has(value.id) && value.product_id !== undefined && value.product_id !== null){
         let tmpRow = {...value};
         tmpRow.type = value.type_id;
         data.push(tmpRow);
-
       }
     })
 
@@ -408,7 +406,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         process_id: row.process?.name,
         processArray: row.process,
         type_id: row.type,
-        type: column[4].selectList[row.type].name ,
+        type: column[4].selectList[row.type].name,
         id: `mold_${random_id}`,
       }
     })

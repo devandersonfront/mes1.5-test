@@ -66,7 +66,18 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
               crn: tmpCrn
             }
           }
-
+          if(column.key === "spare"){
+            switch (event.target.value){
+              case "스페어":
+                row.setting = 1;
+                break ;
+              case "기본" :
+                row.setting = 0;
+                break ;
+              default :
+                break;
+            }
+          }
           return onRowChange({
             //@ts-ignore
             ...row, [column.key]: event.target.value, [column.key+"PK"]: pkValue ?? undefined,

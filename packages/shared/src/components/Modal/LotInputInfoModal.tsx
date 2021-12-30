@@ -78,9 +78,32 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       },
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
+    if(res){
+      let row = [];
+      if(typeof res === 'string'){
+        let tmpRowArray = res.split('\n')
+
+        row = tmpRowArray.map(v => {
+          if(v !== ""){
+            let tmp = JSON.parse(v)
+            return tmp
+          }
+        }).filter(v=>v)
+      }else{
+        row = [{...res}]
+      }
+
+      console.log(row)
+      let searchList = row.map((row: any, index: number) => {
+        console.log(row.sum)
+
+        return {
+          code: row.operation_sheet.product.code,
+          name: row.operation_sheet.product.name,
+          type: TransferCodeToValue(row.operation_sheet.product.type, 'productType'),
+          unit: row.operation_sheet.product.unit,
+
+        }
       })
 
       setSearchList([...searchList])

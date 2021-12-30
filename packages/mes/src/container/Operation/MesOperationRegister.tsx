@@ -34,14 +34,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationRegisterV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
-
-  useEffect(() => {
-    // console.log(basicRow)
-  }, [basicRow])
 
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
@@ -167,7 +159,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     })
 
     let random_id = Math.random()*1000;
-
+    console.log(res)
     if(res){
       setBasicRow([{
         id: "operation_"+random_id,

@@ -25,8 +25,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["deliveryRegister"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
-  const [optionIndex, setOptionIndex] = useState<number>(0)
+  // const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
+  // const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
     to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
@@ -211,7 +211,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
           if(tmpRow.indexOf(false) !== -1){
             setBasicRow([...basicRow])
           }else{
-            setBasicRow([...e])
+            setBasicRow([...e.map(v => ({...v, name: v.product_name}))])
           }
         }}
         selectList={selectList}

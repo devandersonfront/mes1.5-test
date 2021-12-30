@@ -56,7 +56,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   });
 
   const [nzState, setNzState] = useState<boolean>(false);
-
+  const [first, setFirst] = useState<boolean>(true);
   const changeNzState = (value:boolean) => {
     setNzState(value);
   }
@@ -135,14 +135,21 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       },
-      params:{
-        nz:nzState,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params:first ?
+          {
+            nz:nzState,
+            from:"2000-01-01",
+            to:moment().format("yyyy-MM-DD")
+          }
+          :{
+              nz:nzState,
+                  from:selectDate.from,
+                  to:selectDate.to
+            }
     })
 
     if(res){
+      setFirst(false);
       setPageInfo({
         ...pageInfo,
         page: res.page,

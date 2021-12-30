@@ -46,6 +46,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   const [headerData, setHeaderData] = useState<any>();
+
   useEffect(() => {
     if(isOpen) {
       if(row.bom_root_id){
@@ -80,7 +81,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       await RequestMethod("get", "bomLoad", {path: { key: tabStore.datas[tabStore.index].code }})
           .then((res) => {
             const result = changeRow(res);
-
+            console.log("result : ", result)
             setSearchList([...result])
 
             result.map((value, i) => {
@@ -110,29 +111,37 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
 
     tmpData = row.map((v, i) => {
+      console.log(v)
       let childData: any = {}
+      let type = "";
       switch(v.type){
         case 0:{
           childData = v.child_rm
+          type = v.child_rm.type == "1" ? "Kg" : v.child_rm.type == "2" ? "장" : "-";
           break;
         }
         case 1:{
           childData = v.child_sm
+          type = "1";
           break;
         }
         case 2:{
           childData = v.child_product
+          type = "2";
           break;
         }
       }
+
+      console.log("childData : ", childData)
+
       return {
         ...childData,
         seq: i+1,
         code: childData.code,
         type: v.type,
         tab: v.type,
-        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? null : "product"),
-        unit: childData.unit,
+        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? "submaterial" : "product"),
+        unit: childData.unit ?? type,
         usage: v.usage,
         version: v.version,
         processArray: childData.process ?? null,
@@ -148,7 +157,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         sub_material: v.type === 1 ?{
           ...childData,
         }: null,
-        parent:v.parent
+        parent:v.parent,
+        setting:v.setting === 1 ? "기본" : "스페어"
       }
     })
     return tmpData
@@ -161,11 +171,13 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
+      console.log(searchList)
       setSearchList([...searchList])
 
     }else{
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
       let searchList = changeRow(res)
+      console.log("??? : ", searchList)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       setSearchList(searchList.length > 0 ? searchList : [{seq:1}])
     }
@@ -205,25 +217,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
 
   }
-
-  // const addNewTab = (index: number) => {
-  //   let tmp = bomMark
-  //   tmp.push({code: 'SU-20210701-'+index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
-  //   setBomMark([...tmp])
-  // }
-  //
-  // const deleteTab = (index: number) => {
-  //   if(bomMark.length - 1 === focusIndex){
-  //     setFocusIndex(focusIndex-1)
-  //   }
-  //   if(bomMark.length === 1) {
-  //     return setIsOpen(false)
-  //   }
-  //
-  //   let tmp = bomMark
-  //   tmp.splice(index, 1)
-  //   setBomMark([...tmp])
-  // }
 
   const ModalContents = () => {
     if(modify){
@@ -304,9 +297,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               margin: 0,
             }}>BOM 정보 (해당 제품을 만드는데 필요한 BOM을 등록해주세요)</p>
             <div style={{display: 'flex'}}>
-              {/*<Button>*/}
-              {/*  <p>엑셀로 받기</p>*/}
-              {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
               }}>
@@ -346,7 +336,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              {/*<HeaderTableText>{headerData ? TransferCodeToValue(headerData.type, 'productType') :row.type || row.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"}</HeaderTableText>*/}
               <HeaderTableText>{headerData ? TransferCodeToValue(headerData.type, 'productType') :row.type || row.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
@@ -354,7 +343,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
               <HeaderTableText>{headerData ? headerData.process?.name : row.processArray ? row.processArray.name : "-"}</HeaderTableText>
-              {/*<HeaderTableText>{row.processArray ? row.processArray.name : "-"}</HeaderTableText>*/}
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -403,7 +391,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                                 setFocusIndex(i)
                                 dispatch(change_summary_info_index(i));
                               }}
-                                 // style={{color: focusIndex === i ? "white" : '#353B48'}}
                                  style={{color: tabStore.index === i ? "white" : '#353B48'}}
                               >{tabStore.datas[i].title}</p>
                               <div style={{cursor: 'pointer', width: 20, height: 20}} onClick={() => {
@@ -506,6 +493,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     newTab: false
                   }
                 })
+                console.log(e)
                 setSearchList([...tmp])
               }}
               width={1746}

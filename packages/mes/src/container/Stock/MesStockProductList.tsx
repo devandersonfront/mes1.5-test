@@ -81,8 +81,8 @@ const MesStockProductList = ({page, keyword, option}) => {
     Notiflix.Loading.standard();
     const res = await RequestMethod('get', 'stockProductList', {
       params:{
-        // keyword:keyword,
-        // opt:option,
+        keyword:keyword,
+        opt:option,
         from:selectDate.from,
         to:selectDate.to
       }
@@ -101,7 +101,7 @@ const MesStockProductList = ({page, keyword, option}) => {
           }
         }).filter(v=>v)
       }else{
-        tmpRow = [{...tmpRow}]
+        tmpRow = [{...res}]
       }
 
       tmpRes = {

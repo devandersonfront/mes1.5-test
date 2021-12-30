@@ -128,7 +128,7 @@ export const searchModalList: any = {
       ], type: 'Modal'},
     {key: 'cavity', name: '캐비티', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'spm', name: 'SPM', width: 160, formatter: LineBorderContainer, placeholder: '0'},
-    {key: 'dieheigth', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
+    {key: 'slideHeight', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
   ],
   machineInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
@@ -149,7 +149,7 @@ export const searchModalList: any = {
         {pk: 1, name: '스페어'},
       ], type: 'Modal'},
     {key: 'type_name', name: '품목 종류', width: 160, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'unit', name: '단위', width: 160, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'unit', name: '단위', width: 160, formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
     {key: 'usage', name: '사용량', width: 160, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '-'},
     {key: 'process', name: '생산 공정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-'},
@@ -446,7 +446,7 @@ export const searchModalList: any = {
     {key: 'spm', name: 'SPM'},
     {key: 'slideHeight', name: '슬라이드 위치'},
     {key: 'limit', name: '최대 타수'},
-    {key: 'check', name: '점검 타수'},
+    {key: 'inspect', name: '점검 타수'},
     {key: 'current', name: '현재 타수'},
   ],
   machineSearch: [
