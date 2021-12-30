@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'
@@ -16,7 +15,6 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import Calendar_icon from "../../public/images/calendar_icon_black.png";
 import Calendar from "react-calendar";
 import moment from "moment";
-import MonthSelectCalendar from "../Header/MonthSelectCalendar";
 
 //@ts-ignore
 import Notiflix from "notiflix";

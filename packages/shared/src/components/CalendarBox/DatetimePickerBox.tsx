@@ -1,19 +1,10 @@
 import React, {useEffect, useState} from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
-import {BoxWrap, DropBoxContainer, InnerBoxWrap} from '../../styles/styledComponents'
-import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import moment, {Moment} from 'moment'
-import useOnclickOutside from 'react-cool-onclickoutside'
-import Modal from 'react-modal'
-import Notiflix from 'notiflix'
-import TextField from '@material-ui/core/TextField';
-import {createStyles, MuiThemeProvider, Theme} from '@material-ui/core/styles'
+import {createStyles, Theme} from '@material-ui/core/styles'
 import {createMuiTheme, makeStyles} from '@material-ui/core'
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker, DateTimePicker
-} from '@material-ui/pickers'
+import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers'
 import MomentUtils from "@date-io/moment";
 import {ThemeProvider} from 'styled-components'
 // @ts-ignore

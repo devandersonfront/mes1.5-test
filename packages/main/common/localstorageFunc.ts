@@ -1,4 +1,5 @@
 import Cookies from 'react-cookies'
+
 type localStorageKeyType = "userToken" | "userInfo"
 
 export const setLocalstorage = async (key: localStorageKeyType, value: string) => {

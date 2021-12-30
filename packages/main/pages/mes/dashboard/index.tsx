@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import MenuNavigation from '../../../component/MenuNav/MenuNavigation'
 import ProfileHeader from '../../../component/Profile/ProfileHeader'
 import PageHeader from '../../../component/Header/Header'
 import {IExcelHeaderType} from '../../../common/@types/type'
-import cookies from 'next-cookies'
 
 interface IProps {
   children?: any,

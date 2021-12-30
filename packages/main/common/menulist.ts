@@ -110,6 +110,19 @@ const MES_MENUS: IMenuType[] = [
       {title: '생산/납품 현황(관리자용)', url: '/mes/stock/admin'},
     ]
   },
+  {
+    title: '제품 변경점 관리', url: '',
+    subMenu: [
+      {title: '변경점 정보 등록', url: '/mes/product/change/register'},
+      {title: '변경점 정보 리스트', url: '/mes/product/change/list'},
+    ]
+  },
+  {
+    title: '작업 표준서 관리', url: '',
+    subMenu: [
+      {title: '작업 표준서 리스트', url: '/mes/work/standardlist'},
+    ]
+  },
 ]
 
 const PMS_MENUS: IMenuType[] = [

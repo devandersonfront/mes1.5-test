@@ -1,5 +1,5 @@
-import {Item, ItemListTableHeader, ItemListTableWrapper, ItemWrapper} from '../../styles/styledComponents'
-import React, {useEffect, useState} from 'react'
+import {Item} from '../../styles/styledComponents'
+import React from 'react'
 import {IItemMenuType} from '../../common/@types/type'
 import {POINT_COLOR} from '../../common/configset'
 

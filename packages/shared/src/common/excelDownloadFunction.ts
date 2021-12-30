@@ -1,4 +1,3 @@
-import {SF_ENDPOINT_EXCEL, TOKEN_NAME} from './configset'
 import {RequestMethod} from './RequestFunctions'
 
 interface ExcelCellTextType {

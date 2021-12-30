@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {IExcelHeaderType} from '../../../common/@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'

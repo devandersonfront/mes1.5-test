@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { Profile } from '../../styles/styledComponents'
-import { removeLocalstorage } from '../../common/localstorageFunc'
-import { useRouter } from 'next/router'
+import React, {useEffect} from 'react'
+import {Profile} from '../../styles/styledComponents'
+import {removeLocalstorage} from '../../common/localstorageFunc'
+import {useRouter} from 'next/router'
 import cookie from 'react-cookies'
 import Notiflix from 'notiflix'
 //@ts-ignore
@@ -9,6 +9,7 @@ import ic_profile from '../../../public/images/ic_profile.png'
 import {useDispatch, useSelector} from 'react-redux'
 import {setUserInfoAction} from '../../reducer/userInfo'
 import {SF_ENDPOINT_RESOURCE} from '../../common/configset'
+
 //웰컴, 로그인 페이지 네비게이션 컴포넌트
 
 interface IProps {

@@ -1,4 +1,3 @@
-import {RequestMethod} from "../common/RequestFunctions";
 import {TransferCodeToValue} from "../common/TransferFunction";
 
 interface ModalType {

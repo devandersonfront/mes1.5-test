@@ -8,14 +8,13 @@
 import React from 'react';
 import Head from 'next/head';
 // MUI Core
-import { ThemeProvider as MaterialUiThemeProvider } from '@material-ui/core/styles';
-import { ThemeProvider as StyledThemeProvider } from 'styled-components';
+import {ThemeProvider as MaterialUiThemeProvider} from '@material-ui/core/styles';
+import {ThemeProvider as StyledThemeProvider} from 'styled-components';
 // Utils
-import { theme } from '../common/theme';
-import { global as GlobalStyles } from '../common/global';
+import {theme} from '../common/theme';
+import {global as GlobalStyles} from '../common/global';
 import withRedux from 'next-redux-wrapper'
-import { Provider} from 'react-redux'
-import { createStore, compose, applyMiddleware } from 'redux';
+import {applyMiddleware, compose, createStore} from 'redux';
 import reducer from '../reducer';
 
 // Redux
@@ -25,7 +24,6 @@ import reducer from '../reducer';
 // import reducer from "../src/modules";
 // import Cookies from 'js-cookie';
 // import ThemeToggleBtn from "../src/components/ThemeToggleBtn";
-
 // const store = createStore(reducer, composeWithDevTools(applyMiddleware()))
 import '../styles/globals.css'
 import {composeWithDevTools} from 'redux-devtools-extension'

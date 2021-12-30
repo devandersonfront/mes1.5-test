@@ -1,5 +1,6 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {WelcomeInputCompo} from '../../styles/styledComponents'
+
 //웰컴, 로그인 페이지 네비게이션 컴포넌트
 
 interface IProps {

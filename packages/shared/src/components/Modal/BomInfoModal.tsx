@@ -12,15 +12,14 @@ import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
-import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import {
-  change_summary_info_index,
-  delete_summary_info,
-  insert_summary_info,
-  reset_summary_info
+    change_summary_info_index,
+    delete_summary_info,
+    insert_summary_info,
+    reset_summary_info
 } from "../../reducer/infoModal";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../reducer";

@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react'
 import {
+  columnlist,
+  ExcelDownloadModal,
   ExcelTable,
   Header as PageHeader,
-  columnlist,
-  PaginationComponent,
-  ExcelDownloadModal,
-  IExcelHeaderType, RequestMethod,
+  IExcelHeaderType,
+  RequestMethod,
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'

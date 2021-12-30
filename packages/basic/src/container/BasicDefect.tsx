@@ -1,28 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import {
-  ExcelTable,
-  Header as PageHeader,
-  RequestMethod,
-  columnlist,
-  MAX_VALUE,
-  DropDownEditor,
-  TextEditor,
-  excelDownload,
-  PaginationComponent,
-  ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
-} from 'shared'
+import {columnlist, excelDownload, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
-import {NextPageContext} from 'next'
-import TreeViewTable from '../../../main/component/TreeView/TreeView'
-import {IMenu} from '../../../main/common/@types/type'
-import {AUTHORITY_LIST} from '../../../main/common/configset'
-import {AxiosResponse} from 'axios'
-import styled from 'styled-components'
 import ButtonGroup from '../../../main/component/ButtonGroup'
 
 export interface IProps {

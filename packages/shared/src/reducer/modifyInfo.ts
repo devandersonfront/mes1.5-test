@@ -1,5 +1,3 @@
-import {IMenuType} from '../common/@types/type'
-
 export const SET_MENU_STATE = 'SET_MODIFY_INFO'
 
 interface IModifyInfoType {

@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React from "react";
 import Modal from 'react-modal'
 
 interface IProps {

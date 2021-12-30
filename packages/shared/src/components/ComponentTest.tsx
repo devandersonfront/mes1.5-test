@@ -1,5 +1,4 @@
 import React from 'react'
-import {IExcelHeaderType} from '../@types/type'
 import DataGrid from 'react-data-grid'
 
 // interface IProps {

@@ -1,4 +1,4 @@
-import {SF_ENDPOINT, SF_ENDPOINT_RESOURCE, TOKEN_NAME} from './configset'
+import {SF_ENDPOINT} from './configset'
 import {requestApi} from './RequestFunctions'
 
 
