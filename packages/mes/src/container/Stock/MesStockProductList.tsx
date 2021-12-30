@@ -5,13 +5,13 @@ import {columnlist} from '../../../../main/common/columnInit'
 import moment from 'moment'
 import Notiflix from 'notiflix'
 import {
-  RequestMethod,
-  UnitContainer,
-  ProductTitleFomatter,
-  excelDownload,
-  ProfileHeader,
-  Header as PageHeader,
-  ExcelTable
+    excelDownload,
+    ExcelTable,
+    Header as PageHeader,
+    ProductTitleFomatter,
+    ProfileHeader,
+    RequestMethod,
+    UnitContainer
 } from 'shared'
 import {ScrollSyncPane} from 'react-scroll-sync'
 // @ts-ignore

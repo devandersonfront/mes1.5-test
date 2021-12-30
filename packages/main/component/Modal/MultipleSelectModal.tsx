@@ -17,9 +17,8 @@ import Notiflix from 'notiflix'
 import Switch from '@material-ui/core/Switch'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import {useDispatch, useSelector} from "react-redux";
-import {insert_machine_list} from "../../reducer/machineSelect";
 import {RootState} from "../../reducer";
-import {insert_productList, insert_select_productData, insert_select_productList} from "../../reducer/ProductSelect";
+import {insert_productList, insert_select_productList} from "../../reducer/ProductSelect";
 
 interface IProps {
     column: IExcelHeaderType

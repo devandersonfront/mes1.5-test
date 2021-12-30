@@ -2,8 +2,6 @@ import React, {useState} from 'react';
 import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
-import moment from "moment";
-
 
 
 export interface IProps {

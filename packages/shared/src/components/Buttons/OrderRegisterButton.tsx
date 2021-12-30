@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 import {CellButton} from '../../styles/styledComponents'
 import {useRouter} from 'next/router'
-import Notiflix from 'notiflix'
 
 interface IProps {
   row: any

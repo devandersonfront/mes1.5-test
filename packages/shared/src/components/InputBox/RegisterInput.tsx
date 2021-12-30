@@ -1,9 +1,4 @@
-import React, {ChangeEvent, useEffect} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
-import Notiflix from 'notiflix'
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../reducer";
-import {insert_machine_list} from "../../reducer/machineSelect";
+import React, {ChangeEvent} from 'react'
 import styled from 'styled-components'
 
 interface IProps {

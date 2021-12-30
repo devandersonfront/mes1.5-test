@@ -1,5 +1,4 @@
 import React from 'react'
-import WelcomePage from '../../container/welcomePage'
 import {ExcelTable} from 'shared'
 import styled from 'styled-components'
 

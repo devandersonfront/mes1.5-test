@@ -2,7 +2,6 @@ import TextEditor from '../component/InputBox/ExcelBasicInputBox'
 import UnitContainer from '../component/Unit/UnitContainer'
 import AddlButtom from '../component/ButtonComponent/AddlButtom'
 import DatetimePickerBox from '../component/CalendarBox/DatetimePickerBox'
-import NumberingBox from "../component/Formatter/NumberingBox";
 
 export const searchModalList: any = {
   member: [

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";

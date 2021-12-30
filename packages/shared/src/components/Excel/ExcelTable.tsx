@@ -3,9 +3,8 @@ import styled from "styled-components";
 // @ts-ignore
 import DataGrid, {TextEditor} from 'react-data-grid'
 import {IExcelHeaderType} from '../../@types/type'
-import {ExcelDataStyle, SearchModalStyle} from '../../styles/styledComponents'
+import {SearchModalStyle} from '../../styles/styledComponents'
 import {RequestMethod} from "../../common/RequestFunctions";
-import {NextComponentType, NextPage} from 'next'
 //@ts-ignore
 import ScrollState from "AdazzleReactDataGrid.ScrollState";
 

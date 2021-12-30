@@ -5,16 +5,14 @@ import ProfileHeader from '../../../../component/Profile/ProfileHeader'
 import PageHeader from '../../../../component/Header/Header'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
-import {IExcelHeaderType, IItemMenuType} from '../../../../common/@types/type'
+import {IExcelHeaderType} from '../../../../common/@types/type'
 import {RequestMethod} from '../../../../common/RequestFunctions'
 import {columnlist} from "../../../../common/columnInit";
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {changeCodeInfo, MAX_VALUE} from '../../../../common/configset'
-import DropDownEditor from '../../../../component/Dropdown/ExcelBasicDropdown'
+import {MAX_VALUE} from '../../../../common/configset'
 import TextEditor from '../../../../component/InputBox/ExcelBasicInputBox'
 import {excelDownload} from '../../../../common/excelDownloadFunction'
-import {loadAll} from 'react-cookies'
 
 interface IProps {
   children?: any

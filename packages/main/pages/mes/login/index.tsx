@@ -1,8 +1,6 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import LoginPage from '../../../container/loginPage'
-import { NextPageContext } from 'next'
-import { useDispatch, useSelector } from 'react-redux';
-import {setUserInfoAction} from '../../../reducer/userInfo'
+import {NextPageContext} from 'next'
 import styled from 'styled-components'
 
 interface IProps {

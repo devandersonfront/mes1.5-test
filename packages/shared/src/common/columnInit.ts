@@ -4,9 +4,7 @@ import {CalendarBox} from '../components/CalendarBox/CalendarBox'
 import {CellButtonComponent} from '../components/Buttons/CellButtom'
 import {UnitContainer} from '../components/Unit/UnitContainer'
 import {MoveButtons} from "../components/MoveButtons";
-import {SearchModal} from '../components/Modal/SearchModal'
 import {FileEditer} from '../components/FileUpload/ExcelBasicFileUpload'
-import {ProductTitleFomatter} from "../components/Formatter/ProductTitleFomatter";
 import {MemberSearchModal} from '../components/Modal/MemeberSearchModal'
 import {ProductSearchModal} from '../components/Modal/ProductSearchModal'
 import {CustomerSearchModal} from '../components/Modal/CustomerSearchModal'
@@ -17,7 +15,6 @@ import {OperationSearchModal} from '../components/Modal/OperationSearchModal'
 import {PoorQuantityModal} from '../components/Modal/PoorQuantityModal'
 import {DatetimePickerBox} from '../components/CalendarBox/DatetimePickerBox'
 import {ProcessSearchModal} from '../components/Modal/ProcessSearchModal'
-import {DefectSearchModal} from '../components/Modal/DefectSearchModal'
 import {ProcessSeqModal} from '../components/Modal/ProcessSeqModal'
 import {HeaderFilter} from "../components/HeaderFilter/HeaderFilter";
 import {PauseModal} from '../components/Modal/PauseModal'
@@ -29,8 +26,6 @@ import {StatusComponent} from '../components/Formatter/StatusComponent'
 import {MultipleSelectModal} from "../components/Modal/MultipleSelectModal";
 import {FactoryInfoModal} from '../components/Modal/FactoryInfoModal'
 import {DeviceInfoModal} from '../components/Modal/DeviceInfoModal'
-import {FactorySearchModal} from '../components/Modal/FactorySearchModal'
-import {SegmentFactorySearchModal} from '../components/Modal/SegmentFactorySearchModal'
 import {PlaceholderBox} from '../components/Formatter/PlaceholderBox'
 import {ProductInfoModal} from '../components/Modal/ProductInfoModal'
 import {MoldInfoModal} from '../components/Modal/MoldInfoModal'
@@ -38,13 +33,7 @@ import {MachineInfoModal} from '../components/Modal/MachineInfoModal'
 import {BomInfoModal} from '../components/Modal/BomInfoModal'
 import {UseDateCell} from '../components/Cell/UseDateCell'
 import {InfoModal} from '../components/Modal/InfoModal'
-import {
-  BomInfoInit,
-  BomRegisterInit,
-  deviceInfoInit,
-  factoryInfoInit,
-  productInfoInit
-} from '../components/Modal/InfoModal/InfoModalInit'
+import {BomRegisterInit} from '../components/Modal/InfoModal/InfoModalInit'
 import {BomRegisterModal} from '../components/Modal/BomRegisterModal'
 import {InputMaterialInfoModal} from '../components/Modal/InputMaterialInfoModal'
 import {WorkRegisterModal} from '../components/Modal/WorkRegisterModal'
@@ -64,7 +53,6 @@ import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
 import DaumAddressModal from "../components/InputBox/DaumAddressModal";
 import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFactorySearchModal";
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
-import {LineBorderContainer} from "../components/Formatter/LineBorderContainer";
 
 export const columnlist: any = {
   member: [
@@ -689,7 +677,7 @@ export const columnlist: any = {
     {key: 'model', name: '모델', width: 130},
     {key: 'code', name: 'CODE',width: 500},
     {key: 'material_name', name: '품명',width: 380},
-    {key: 'material_id', name: '품목 종류', width: 160},
+    {key: 'type', name: '품목 종류', width: 160},
     {key: 'photo', name: '작업 표준서', formatter: FileEditer},
   ],
   midrange: [
@@ -699,7 +687,7 @@ export const columnlist: any = {
     {key: 'osd_id', name: '지시 고유 번호', formatter: OperationSearchModal},
     {key: 'code', name: 'CODE', formatter: SearchModalTest},
     {key: 'material_name', name: '품명'},
-    {key: 'material_id', name: '품목 종류'},
+    {key: 'type', name: '품목 종류'},
     {key: 'process_id', name: '생산 공정'},
     {key: 'worker', name: '작업자', width:118, formatter:MemberSearchModal, searchType: 'list'},
     {key: 'name', name: '기계 이름', formatter: SearchModalTest, placeholder: '-', type: 'Modal' },
@@ -907,7 +895,22 @@ export const columnlist: any = {
     {key:"lots", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base'  },
     {key:"amount", name:"총 납품 수량", width: 118   },
   ],
-
+  productChangeRegister: [
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
+    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력'},
+    {key: "code", name: 'CODE', formatter: ProductSearchModal, disableType: 'record'},
+    {key: "material_name", name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력'}
+  ],
+  productChangeList: [
+    {key: "customer_id", name: '거래처'},
+    {key: "cm_id", name: '모델'},
+    {key: "code", name: 'CODE'},
+    {key: "material_name", name: '품명'},
+    {key: 'type', name: '품목 종류'},
+    {key: 'title', name: '제목'},
+    {key: 'register',name: '등록 날짜'},
+    {key: 'writer', name: '작성자'}
+  ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},
     {key: 'customerSearchModal', name: '거래처 검색', formatter: SearchModalTest, type: 'customer', width: 118,},

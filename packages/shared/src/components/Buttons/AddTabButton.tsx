@@ -1,12 +1,9 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
-import {CellButton} from '../../styles/styledComponents'
-import {useRouter} from 'next/router'
 import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";
 import {add_summary_info} from "../../reducer/infoModal";
 import {RequestMethod, RootState} from '../../index'
-import {insert_summary_info} from '../../reducer/infoModal'
 
 interface IProps {
   row: any

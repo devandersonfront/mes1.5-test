@@ -4,9 +4,7 @@ import CalendarBox from '../component/CalendarBox/CalendarBox'
 import CellButton from '../component/ButtonComponent/CellButtom'
 import UnitContainer from '../component/Unit/UnitContainer'
 import MoveButtons from "../component/MoveButtons";
-import SearchModal from '../component/Modal/SearchModal'
 import FileEditer from '../component/FileUpload/ExcelBasicFileUpload'
-import ProductTitleFomatter from "../component/Formatter/ProductTitleFomatter";
 import MemberSearchModal from '../component/Modal/MemeberSearchModal'
 import ProductSearchModal from '../component/Modal/ProductSearchModal'
 import CustomerSearchModal from '../component/Modal/CustomerSearchModal'
@@ -17,7 +15,6 @@ import OperationSearchModal from '../component/Modal/OperationSearchModal'
 import PoorQuantityModal from '../component/Modal/PoorQuantityModal'
 import DatetimePickerBox from '../component/CalendarBox/DatetimePickerBox'
 import ProcessSearchModal from '../component/Modal/ProcessSearchModal'
-import DefectSearchModal from '../component/Modal/DefectSearchModal'
 import ProcessSeqModal from '../component/Modal/ProcessSeqModal'
 import HeaderFilter from "../component/HeaderFilter/HeaderFilter";
 import PauseModal from '../component/Modal/PauseModal'
@@ -29,7 +26,6 @@ import StatusComponent from '../component/Formatter/StatusComponent'
 import MultipleSelectModal from "../component/Modal/MultipleSelectModal";
 import {PlaceholderBox} from 'shared/src/components/Formatter/PlaceholderBox'
 import {SearchModalTest} from 'shared/src/components/Modal/SearchModalTest'
-
 
 
 export const columnlist: any = {

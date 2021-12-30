@@ -1,12 +1,14 @@
 import React from 'react'
 import {
-  ArrowImageWrapper, SecendMenuView,
-  TopMenuTitle,
-  TopMenuView,
-  TreeViewContainer,
-  TreeViewHeader, TreeViewWrapper
+    ArrowImageWrapper,
+    SecendMenuView,
+    TopMenuTitle,
+    TopMenuView,
+    TreeViewContainer,
+    TreeViewHeader,
+    TreeViewWrapper
 } from '../../styles/styledComponents'
-import { IMenu } from '../../common/@types/type'
+import {IMenu} from '../../common/@types/type'
 //@ts-ignore
 import menuOpen from "../../public/images/ic_monitoring_open.png"
 //@ts-ignore

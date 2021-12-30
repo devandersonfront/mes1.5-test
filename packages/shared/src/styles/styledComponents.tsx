@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import {BG_COLOR, BG_COLOR_SUB, BG_COLOR_SUB2, BG_COLOR_SUB3, POINT_COLOR} from '../common/configset'
+import {BG_COLOR_SUB3, POINT_COLOR} from '../common/configset'
 
 export const Body = styled.div`
   p, span{

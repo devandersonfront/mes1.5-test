@@ -5,22 +5,18 @@ import ProfileHeader from '../../../component/Profile/ProfileHeader'
 import PageHeader from '../../../component/Header/Header'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
-import {IExcelHeaderType, IItemMenuType} from '../../../common/@types/type'
+import {IExcelHeaderType} from '../../../common/@types/type'
 import {RequestMethod} from '../../../common/RequestFunctions'
 import {columnlist} from "../../../common/columnInit";
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {MAX_VALUE} from '../../../common/configset'
-import DropDownEditor from '../../../component/Dropdown/ExcelBasicDropdown'
 import TextEditor from '../../../component/InputBox/ExcelBasicInputBox'
 import {excelDownload} from '../../../common/excelDownloadFunction'
-import {loadAll} from 'react-cookies'
 import PaginationComponent from '../../../component/Pagination/PaginationComponent'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import ExcelDownloadModal from '../../../component/Modal/ExcelDownloadMoadal'
-import {useDispatch, useSelector} from 'react-redux'
-import {setMenuStateChange} from '../../../reducer/menuState'
 
 const title = '원자재 입고 관리'
 const optList = ['고객사명', '모델명', 'CODE', '품명', 'Lot번호']

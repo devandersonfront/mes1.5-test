@@ -5,8 +5,6 @@ import Notiflix from "notiflix";
 import WelcomeContainer from "../../../component/Welcome/WelcomeContainer";
 import {requestApi} from "../../../common/RequestFunctions";
 import {useRouter} from "next/router";
-import Axios, {AxiosError} from "axios";
-import {SF_ENDPOINT} from "../../../common/configset";
 
 const Password = () => {
     const router = useRouter();
