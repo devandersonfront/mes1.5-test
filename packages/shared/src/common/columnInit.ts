@@ -64,6 +64,7 @@ import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
 import DaumAddressModal from "../components/InputBox/DaumAddressModal";
 import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFactorySearchModal";
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
+import {LineBorderContainer} from "../components/Formatter/LineBorderContainer";
 
 export const columnlist: any = {
   member: [
@@ -692,7 +693,16 @@ export const columnlist: any = {
     {key: 'photo', name: '작업 표준서', formatter: FileEditer},
   ],
   midrange: [
-    {key: 'amount', name: '시료 개수 선택'}
+    {key: 'amount', name: '시료 개수 선택', editor: TextEditor}
+  ],
+  midrangeExam: [
+    {key: 'osd_id', name: '지시 고유 번호', formatter: OperationSearchModal},
+    {key: 'code', name: 'CODE', formatter: SearchModalTest},
+    {key: 'material_name', name: '품명'},
+    {key: 'material_id', name: '품목 종류'},
+    {key: 'process_id', name: '생산 공정'},
+    {key: 'worker', name: '작업자', width:118, formatter:MemberSearchModal, searchType: 'list'},
+    {key: 'name', name: '기계 이름', formatter: SearchModalTest, placeholder: '-', type: 'Modal' },
   ],
   qualityDefectTop: [
     {key: 'customer', name: '거래처명', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},

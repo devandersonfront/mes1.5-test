@@ -29,3 +29,6 @@ export {MesSubMaterialStockModify} from './container/SubMaterial/MesSubMaterialS
 export {MesQualityDefect} from './container/Quality/MesQualityDefect'
 //작업 표준서 리스트
 export {MesWorkStandardList} from './container/Work/MesWorkStandardList'
+//제품 변경점 리스트
+export {MesProductChangeRegister} from './container/Product/MesProductChangeRegister'
+export {MesProductChangeList} from './container/Product/MesProductChangeList'
