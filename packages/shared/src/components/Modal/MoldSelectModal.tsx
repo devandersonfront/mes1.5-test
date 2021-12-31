@@ -59,31 +59,43 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
+    let tmpMolds
     if(!row.molds || !row.molds.length){
+      tmpMolds = row.product?.molds.map((v, index) => {
+        return {
+          mold: {
+            sequence: index+1,
+            mold: {
+              ...v.mold
+            },
+            setting: v.spare === '여' ? 0 : 1
+          }
+        }
+      }) ?? []
+
       onRowChange({
         ...row,
         name: row.name,
-        molds: row.product.molds.map((v, index) => {
-          return {
-            mold: {
-              sequence: index+1,
-              mold: {
-                ...v.mold
-              },
-              setting: v.spare === '여' ? 0 : 1
-            }
-          }
-        }),
+        molds: tmpMolds,
         isChange: true
+      })
+    } else {
+      tmpMolds = row.molds.map(v => {
+        return {
+          ...v,
+          ...v.mold
+        }
       })
     }
 
     if(isOpen) {
-      setSearchList([...row.product.molds.map((v, index) => {
+      console.log('row', row)
+      setSearchList([...tmpMolds.map((v, index) => {
         return {
           ...v.mold,
+          ...v.mold.mold,
           sequence: index+1,
-          spare: '부',
+          spare: v.setting === 0 ? '여' : '부',
         }
       })])
     }
