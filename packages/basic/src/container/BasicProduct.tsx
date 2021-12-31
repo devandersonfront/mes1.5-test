@@ -42,18 +42,18 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
-  // useEffect(() => {
-  //   setOptionIndex(option)
-  //   if(keyword){
-  //     SearchBasic(keyword, option, page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }else{
-  //     LoadBasic(page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [page, keyword, option])
+  useEffect(() => {
+    setOptionIndex(option)
+    if(keyword){
+      SearchBasic(keyword, option, page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }else{
+      LoadBasic(page).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }
+  }, [page, keyword, option])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {

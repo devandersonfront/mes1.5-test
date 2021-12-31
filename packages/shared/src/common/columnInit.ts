@@ -687,13 +687,23 @@ export const columnlist: any = {
     {key: 'amount', name: '시료 개수 선택', editor: TextEditor}
   ],
   midrangeExam: [
-    {key: 'osd_id', name: '지시 고유 번호', formatter: OperationSearchModal},
-    {key: 'code', name: 'CODE', formatter: SearchModalTest},
-    {key: 'material_name', name: '품명'},
-    {key: 'type', name: '품목 종류'},
-    {key: 'process_id', name: '생산 공정'},
-    {key: 'worker', name: '작업자', width:118, formatter:MemberSearchModal, searchType: 'list'},
-    {key: 'name', name: '기계 이름', formatter: SearchModalTest, placeholder: '-', type: 'Modal' },
+    {key: 'customer', name: '거래처',width: 240},
+    {key: 'model', name: '모델', width: 424},
+    {key: 'code', name: 'CODE', width: 432},
+    {key: 'material_name', name: '품명', width: 360},
+    {key: 'type', name: '품목 종류',width: 120},
+  ],
+  midrangeLegendary: [
+    {key: 'customer', name: '범례',width: 968},
+    {key: 'model', name: '범례 설명', width: 608},
+  ],
+  midrangeInspectionItem: [
+    {key: 'customer', name: '검사 항목',width: 480},
+    {key: 'model', name: '단위', width: 120},
+    {key: 'code', name: '점검 기준', width: 424},
+    {key: 'material_name', name: '최소값(오차범위 최소)', width: 216},
+    {key: 'type', name: '최대값(오차범위 최대)', width: 216},
+    {key: 'type', name: '기록 방법', width: 120},
   ],
   midrangeList: [
     {key: 'contract_id', name: '수주 번호', width: 120},
