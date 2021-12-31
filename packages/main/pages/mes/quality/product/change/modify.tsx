@@ -1,11 +1,11 @@
 import React from "react";
-import MenuNavigation from "../../../../component/MenuNav/MenuNavigation";
-import ProfileHeader from "../../../../component/Profile/ProfileHeader";
+import MenuNavigation from "../../../../../component/MenuNav/MenuNavigation";
+import ProfileHeader from "../../../../../component/Profile/ProfileHeader";
 //@ts-ignore
 import {SelectColumn} from "react-data-grid";
 //@ts-ignore
 import Notiflix from "notiflix";
-import {MesProductChangeModify} from '../../../../../mes'
+import {MesProductChangeModify} from 'mes'
 
 
 const RegisterBasicContainer = () => {
