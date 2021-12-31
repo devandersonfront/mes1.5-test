@@ -100,6 +100,10 @@ const MES_MENUS: IMenuType[] = [
     title: '품질 관리', url: '',
     subMenu: [
       {title: '불량 통계 (자주검사 관리)', url: '/mes/quality/defect'},
+      {title: '초ㆍ중ㆍ종 검사 리스트', url: '/mes/'},
+      {title: '작업 표준서 관리', url: '/mes/work/standardlist'},
+      {title: '변경점 정보 등록', url: '/mes/product/change/register'},
+      {title: '변경점 정보 리스트', url: '/mes/product/change/list'},
     ]
   },
   {
@@ -108,19 +112,6 @@ const MES_MENUS: IMenuType[] = [
       {title: '재고 현황', url: '/mes/stockV2/list'},
       {title: '생산/납품 현황', url: '/mes/stock/productlist'},
       {title: '생산/납품 현황(관리자용)', url: '/mes/stock/admin'},
-    ]
-  },
-  {
-    title: '제품 변경점 관리', url: '',
-    subMenu: [
-      {title: '변경점 정보 등록', url: '/mes/product/change/register'},
-      {title: '변경점 정보 리스트', url: '/mes/product/change/list'},
-    ]
-  },
-  {
-    title: '작업 표준서 관리', url: '',
-    subMenu: [
-      {title: '작업 표준서 리스트', url: '/mes/work/standardlist'},
     ]
   },
 ]
