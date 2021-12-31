@@ -1,6 +1,6 @@
 import React from 'react';
-import MenuNavigation from "../../../component/MenuNav/MenuNavigation";
-import ProfileHeader from "../../../component/Profile/ProfileHeader";
+import MenuNavigation from "../../../../component/MenuNav/MenuNavigation";
+import ProfileHeader from "../../../../component/Profile/ProfileHeader";
 import {MesWorkStandardList} from "mes";
 import {NextPageContext} from "next";
 

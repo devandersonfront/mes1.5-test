@@ -290,7 +290,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
   },[pauseBasicRow])
   return (
     <div>
-      <PageHeader title={"공정별 불량유형 등록"} />
+      <PageHeader title={"공정별 자주검사 항목 등록"} />
       <ExcelTable
         editable
         headerList={[

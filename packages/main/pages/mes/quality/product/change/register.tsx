@@ -1,11 +1,11 @@
 import React from "react";
-import MenuNavigation from "../../../../component/MenuNav/MenuNavigation";
-import ProfileHeader from "../../../../component/Profile/ProfileHeader";
+import MenuNavigation from "../../../../../component/MenuNav/MenuNavigation";
+import ProfileHeader from "../../../../../component/Profile/ProfileHeader";
 //@ts-ignore
 import {SelectColumn} from "react-data-grid";
 //@ts-ignore
 import Notiflix from "notiflix";
-import {MesProductChangeList} from '../../../../../mes'
+import {MesProductChangeRegister} from 'mes'
 
 
 const RegisterBasicContainer = () => {
@@ -16,7 +16,7 @@ const RegisterBasicContainer = () => {
             <MenuNavigation pageType={'MES'} subType={2}/>
             <div>
                 <ProfileHeader/>
-                <MesProductChangeList/>
+                <MesProductChangeRegister/>
             </div>
         </div>
     )

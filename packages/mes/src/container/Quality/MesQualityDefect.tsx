@@ -220,7 +220,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
 
   return (
     <div>
-      <PageHeader title={"불량 통계"} />
+      <PageHeader title={"불량 통계 (자주검사 관리)"} />
       <ExcelTable
         editable
         resizable

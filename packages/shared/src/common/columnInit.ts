@@ -53,6 +53,7 @@ import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
 import DaumAddressModal from "../components/InputBox/DaumAddressModal";
 import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFactorySearchModal";
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
+import {MidRangeButton} from "../components/Buttons/MidRangeButton";
 
 export const columnlist: any = {
   member: [
@@ -242,6 +243,8 @@ export const columnlist: any = {
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
     {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, formatter: PlaceholderBox, placeholder: 0},
+    {key: 'work_standard', name: '작업 표준서', formatter: FileEditer},
+    {key: 'midrange', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록', url: '/mes/basic/midrange/register' }
   ],
   // rawmaterial: [
   //   {key: 'customer_id',},
@@ -673,24 +676,48 @@ export const columnlist: any = {
     {key: 'worker', name: '작업자', width:118,},
   ],
   workStandardList: [
-    {key: 'customer', name: '거래처',width: 130},
-    {key: 'model', name: '모델', width: 130},
-    {key: 'code', name: 'CODE',width: 500},
-    {key: 'material_name', name: '품명',width: 380},
-    {key: 'type', name: '품목 종류', width: 160},
-    {key: 'photo', name: '작업 표준서', formatter: FileEditer},
+    {key: 'customer', name: '거래처',width: 120},
+    {key: 'model', name: '모델', width: 120},
+    {key: 'code', name: 'CODE',width: 464},
+    {key: 'material_name', name: '품명',width: 464},
+    {key: 'type', name: '품목 종류', width: 120},
+    {key: 'photo', name: '작업 표준서', formatter: FileEditer, width: 240},
   ],
   midrange: [
     {key: 'amount', name: '시료 개수 선택', editor: TextEditor}
   ],
   midrangeExam: [
-    {key: 'osd_id', name: '지시 고유 번호', formatter: OperationSearchModal},
-    {key: 'code', name: 'CODE', formatter: SearchModalTest},
-    {key: 'material_name', name: '품명'},
-    {key: 'type', name: '품목 종류'},
-    {key: 'process_id', name: '생산 공정'},
-    {key: 'worker', name: '작업자', width:118, formatter:MemberSearchModal, searchType: 'list'},
-    {key: 'name', name: '기계 이름', formatter: SearchModalTest, placeholder: '-', type: 'Modal' },
+    {key: 'customer', name: '거래처',width: 240},
+    {key: 'model', name: '모델', width: 424},
+    {key: 'code', name: 'CODE', width: 432},
+    {key: 'material_name', name: '품명', width: 360},
+    {key: 'type', name: '품목 종류',width: 120},
+  ],
+  midrangeLegendary: [
+    {key: 'customer', name: '범례',width: 968},
+    {key: 'model', name: '범례 설명', width: 608},
+  ],
+  midrangeInspectionItem: [
+    {key: 'customer', name: '검사 항목',width: 480},
+    {key: 'model', name: '단위', width: 120},
+    {key: 'code', name: '점검 기준', width: 424},
+    {key: 'material_name', name: '최소값(오차범위 최소)', width: 216},
+    {key: 'type', name: '최대값(오차범위 최대)', width: 216},
+    {key: 'type', name: '기록 방법', width: 120},
+  ],
+  midrangeList: [
+    {key: 'contract_id', name: '수주 번호', width: 120},
+    {key: 'osd_id', name: '지시 고유 번호', width: 120},
+    {key: 'code', name: 'CODE', width: 120},
+    {key: 'material_name', name: '품명', width: 120},
+    {key: 'type', name: '품목 종류', width: 120},
+    {key: 'unit', name: '단위', width: 120},
+    {key: 'process_id', name: '생산 공정', width: 120},
+    {key: 'ln_id', name: 'LOT 번호', width: 120},
+    {key: 'worker', name: '작업자', width: 120 },
+    {key: 'start', name: '작업 시작 일시', width: 164},
+    {key: 'end', name: '작업 종료 일시', width: 164},
+    {key: 'midrange', name: '초ㆍ중ㆍ종 검사', width: 120}
   ],
   qualityDefectTop: [
     {key: 'customer', name: '거래처명', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
@@ -842,7 +869,7 @@ export const columnlist: any = {
     {key:"amount", name:"수주량", width: 118 },
     {key:"route_operation_register", name:"지시 고유 번호", width: 118, formatter: OperationInfoModal},
     {key:"shipment_id", name:"납품 수량", width: 118, formatter: DeliveryInfoModal },
-    {key:"route_shipment_register", name:"납품 등록", width: 118, formatter: OrderRegisterButton   },
+    {key:"route_shipment_register", name:"납품 등록", width: 118, formatter: OrderRegisterButton, title: '납품 등록', url: '/mes/delivery/register'   },
   ],
   orderModify: [
     {key:"identification", name:"수주 번호", width: 118},
@@ -896,18 +923,19 @@ export const columnlist: any = {
     {key:"amount", name:"총 납품 수량", width: 118   },
   ],
   productChangeRegister: [
-    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: "code", name: 'CODE', formatter: ProductSearchModal, disableType: 'record'},
-    {key: "material_name", name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력'}
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168},
+    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480},
+    {key: "code", name: 'CODE', formatter: ProductSearchModal, disableType: 'record', width: 480},
+    {key: "material_name", name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력', width: 413}
   ],
   productChangeList: [
-    {key: "customer_id", name: '거래처'},
-    {key: "cm_id", name: '모델'},
-    {key: "code", name: 'CODE'},
-    {key: "material_name", name: '품명'},
-    {key: 'type', name: '품목 종류'},
-    {key: 'title', name: '제목'},
+    {key: "customer_id", name: '거래처', width: 120},
+    {key: "cm_id", name: '모델', width: 120},
+    {key: "code", name: 'CODE', width: 208},
+    {key: "material_name", name: '품명', width: 240},
+    {key: 'type', name: '품목 종류', width: 120},
+    {key: 'process_id', name: '생산 공정', width: 120},
+    {key: 'title', name: '제목', width: 360},
     {key: 'register',name: '등록 날짜'},
     {key: 'writer', name: '작성자'}
   ],
