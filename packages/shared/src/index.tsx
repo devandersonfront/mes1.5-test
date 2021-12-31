@@ -83,6 +83,7 @@ export {CellButtonComponent} from "./components/Buttons/CellButtom"
 export {FinishButton} from "./components/Buttons/FinishButton"
 export {FinishCancelButton} from "./components/Buttons/FinishCancelButton"
 export {OrderRegisterButton} from "./components/Buttons/OrderRegisterButton"
+export {MidRangeButton} from "./components/Buttons/MidRangeButton"
 
 export {UseDateCell} from "./components/Cell/UseDateCell"
 export {RelationWork} from "./components/Cell/RelationWork"
