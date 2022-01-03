@@ -114,7 +114,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }
   const getContents = () => {
-    console.log(row[column.key], row);
     if(row[`${column.key}`]){
       if( typeof row[`${column.key}`] === "string"){
         return row[column.key];
@@ -140,18 +139,20 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }}>
         {getContents()}
       </div>
-      <div style={{
-        display: 'flex',
-        backgroundColor: POINT_COLOR,
-        width: column.modalType ? 30 : 38,
-        height: column.modalType ? 30 : 38,
-        justifyContent: 'center',
-        alignItems: 'center'
-      }} onClick={() => {
-        setIsOpen(true)
-      }}>
-        <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
-      </div>
+      {(row.first || !column.disableType) &&
+        <div style={{
+          display: 'flex',
+          backgroundColor: POINT_COLOR,
+          width: column.modalType ? 30 : 38,
+          height: column.modalType ? 30 : 38,
+          justifyContent: 'center',
+          alignItems: 'center'
+        }} onClick={() => {
+          setIsOpen(true)
+        }}>
+          <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
+        </div>
+        }
       <Modal isOpen={isOpen} style={{
         content: {
           top: '50%',
@@ -336,12 +337,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     {
                         ...row,
                         ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
-                        manager: column.type === "factory" ? row.manager : SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                        manager:  SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                         name:  selectNameFunction(column.type),
-                        tab: column.type === 'bom' ? tab : undefined,
-                        type_name: column.type === 'bom' ? TransferCodeToValue(searchList[selectRow].type_id, searchModalInit.excelColumnType) : undefined,
+                        tab: undefined,
+                        type_name:  undefined,
                         version: row.version,
-                        isChange:true
+                        isChange:true,
                       }
                 )
               }}
