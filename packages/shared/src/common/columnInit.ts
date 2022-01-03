@@ -54,6 +54,7 @@ import DaumAddressModal from "../components/InputBox/DaumAddressModal";
 import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFactorySearchModal";
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
 import {MidRangeButton} from "../components/Buttons/MidRangeButton";
+import placeholder from "lodash/fp/placeholder";
 
 export const columnlist: any = {
   member: [
@@ -684,7 +685,21 @@ export const columnlist: any = {
     {key: 'photo', name: '작업 표준서', formatter: FileEditer, width: 240},
   ],
   midrange: [
-    {key: 'amount', name: '시료 개수 선택', editor: TextEditor}
+    {key: 'amount', name: '시료 개수 선택 (최소 1 ~ 최대 10개)', formatter: DropDownEditor, selectList: [
+        {pk: 'one', name: '1'},
+        {pk: 'two', name: '2'},
+        {pk: 'three', name: '3'},
+        {pk: 'four', name: '4'},
+        {pk: 'five', name: '5'},
+        {pk: 'six', name: '6'},
+        {pk: 'seven', name: '7'},
+        {pk: 'eight', name: '8'},
+        {pk: 'nine', name: '9'},
+        {pk: 'ten', name: '10'},
+      ]}
+  ],
+  midrangeDetail: [
+    {key: 'amount', name: '시료 개수 선택 (최소 1 ~ 최대 10개)'}
   ],
   midrangeExam: [
     {key: 'customer', name: '거래처',width: 240},
@@ -693,16 +708,48 @@ export const columnlist: any = {
     {key: 'material_name', name: '품명', width: 360},
     {key: 'type', name: '품목 종류',width: 120},
   ],
+  midrangeExamDetail: [
+    {key: 'customer', name: '거래처',width: 240},
+    {key: 'model', name: '모델', width: 424},
+    {key: 'code', name: 'CODE', width: 432},
+    {key: 'material_name', name: '품명', width: 360},
+    {key: 'type', name: '품목 종류',width: 120},
+  ],
   midrangeLegendary: [
-    {key: 'customer', name: '범례',width: 968},
+    {key: 'customer', name: '범례',width: 968, formatter: PlaceholderBox, placeholder: '범례 입력'},
+    {key: 'model', name: '범례 설명', width: 608, formatter: PlaceholderBox, placeholder: '범례 설명 입력'},
+  ],
+  midrangeLegendaryDetail: [
+    {key: 'customer', name: '범례',width: 968,},
     {key: 'model', name: '범례 설명', width: 608},
   ],
   midrangeInspectionItem: [
-    {key: 'customer', name: '검사 항목',width: 480},
-    {key: 'model', name: '단위', width: 120},
-    {key: 'code', name: '점검 기준', width: 424},
+    {key: 'customer', name: '검사 항목',width: 480, formatter: PlaceholderBox, placeholder: '검사 항목 입력'},
+    {key: 'model', name: '단위', width: 120, formatter: DropDownEditor, selectList: [
+        {pk: 'mm', name: 'mm'},
+        {pk: 'cm', name: 'cm'},
+        {pk: 'm', name: 'm'},
+        {pk: 'EA', name: 'EA'},
+        {pk: 'g', name: 'g'},
+        {pk: 'kg', name: 'kg'},
+        {pk: 'Ton', name: 'Ton'},
+        {pk: 'ml', name: 'ml'},
+        {pk: 'L', name: 'L'},
+      ]},
+    {key: 'code', name: '점검 기준', width: 424, formatter: PlaceholderBox, placeholder: '점검 기준 입력'},
+    {key: 'material_name', name: '최소값(오차범위 최소)', width: 216, formatter: PlaceholderBox, placeholder: '최소값 입력'},
+    {key: 'type', name: '최대값(오차범위 최대)', width: 216, formatter: PlaceholderBox, placeholder: '최대값 입력'},
+    {key: 'type', name: '기록 방법', width: 120, formatter: DropDownEditor, selectList: [
+        {pk: 'EA', name: '수치 입력'},
+        {pk: 'g', name: '범례 적용'},
+      ] },
+  ],
+  midrangeInspectionItemDetail: [
+    {key: 'customer', name: '검사 항목',width: 480, },
+    {key: 'model', name: '단위', width: 120,},
+    {key: 'code', name: '점검 기준', width: 424, },
     {key: 'material_name', name: '최소값(오차범위 최소)', width: 216},
-    {key: 'type', name: '최대값(오차범위 최대)', width: 216},
+    {key: 'type', name: '최대값(오차범위 최대)', width: 216, },
     {key: 'type', name: '기록 방법', width: 120},
   ],
   midrangeList: [
