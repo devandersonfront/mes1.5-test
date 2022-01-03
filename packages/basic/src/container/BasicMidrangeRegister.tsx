@@ -1,6 +1,14 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import {
+    columnlist,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType,
+    MidrangeFormReviewModal,
+    RequestMethod
+} from "shared";
 import {MidrangeButton} from "shared/src/styles/styledComponents";
+import Notiflix from "notiflix";
 
 const BasicMidrangeRegister = () => {
 
@@ -24,10 +32,20 @@ const BasicMidrangeRegister = () => {
     const [sampleSelectList, setSampleSelectList] = useState<Set<number>>(new Set())
     const [legendarySelectList, setLegendarySelectList] = useState<Set<number>>(new Set())
     const [ItemSelectList, setItemSelectList] = useState<Set<number>>(new Set())
+    const buttonEvents = async(index:number) => {
+        switch (index) {
+            case 0 :
+                // setExcelUploadOpen(true)
+                return
+            case 1 :
 
+                return
+        }
+    }
     return (
         <div>
-            <PageHeader title={"초ㆍ중ㆍ종 검사항목"} buttons={['검사 양식 검토', '저장하기']} />
+            <MidrangeFormReviewModal/>
+            <PageHeader title={"초ㆍ중ㆍ종 검사항목"} buttons={['검사 양식 검토', '저장하기']} buttonsOnclick={buttonEvents}/>
             <ExcelTable
                 editable
                 resizable
