@@ -1,11 +1,11 @@
 import React from 'react';
 // Modules
-import Document, { Html, Head, Main, NextScript } from 'next/document';
+import Document, {Head, Html, Main, NextScript} from 'next/document';
 // MUI Core
-import { ServerStyleSheets } from '@material-ui/core/styles';
-import { ServerStyleSheet as StyledServerStyleSheets } from 'styled-components';
+import {ServerStyleSheets} from '@material-ui/core/styles';
+import {ServerStyleSheet as StyledServerStyleSheets} from 'styled-components';
 // Utils
-import { theme } from '../common/theme';
+import {theme} from '../common/theme';
 
 class MyDocument extends Document {
   render() {

@@ -3,6 +3,9 @@
 //
 // //EXCEL
 import {menuSelect} from './common/menulist'
+//캘린더
+import {rootReducer} from './reducer'
+import exp from "constants";
 
 export {
   getMachineTypeList,
@@ -80,11 +83,7 @@ export {CellButtonComponent} from "./components/Buttons/CellButtom"
 export {FinishButton} from "./components/Buttons/FinishButton"
 export {FinishCancelButton} from "./components/Buttons/FinishCancelButton"
 export {OrderRegisterButton} from "./components/Buttons/OrderRegisterButton"
-
-//캘린더
-import {CalendarBox} from "./components/CalendarBox/CalendarBox"
-import {DatetimePickerBox} from "./components/CalendarBox/DatetimePickerBox"
-import {rootReducer} from './reducer'
+export {MidRangeButton} from "./components/Buttons/MidRangeButton"
 
 export {UseDateCell} from "./components/Cell/UseDateCell"
 export {RelationWork} from "./components/Cell/RelationWork"
@@ -96,6 +95,10 @@ export {DropDownEditor} from "./components/Dropdown/ExcelBasicDropdown"
 export {ExcelTable} from "./components/Excel/ExcelTable"
 
 export {FileEditer} from "./components/FileUpload/ExcelBasicFileUpload"
+export {TitleFileUpload} from './components/FileUpload/TitleFileUpload'
+
+//textArea
+export {TitleTextArea} from './components/TextAreaBox/TitleTextArea'
 
 //formatter
 export {NumberingBox} from "./components/Formatter/NumberingBox"
@@ -108,6 +111,7 @@ export {LineBorderContainer} from "./components/Formatter/LineBorderContainer"
 export {Header} from "./components/Header"
 export {MonthSelectCalendar} from "./components/Header/MonthSelectCalendar"
 export {PeriodSelectCalendar} from "./components/Header/PeriodSelectCalendar"
+export {TitleCalendarBox} from './components/CalendarBox/TitleCalendarBox'
 
 //헤더 필터
 export {HeaderFilter} from './components/HeaderFilter/HeaderFilter'
@@ -115,6 +119,7 @@ export {HeaderFilter} from './components/HeaderFilter/HeaderFilter'
 //인풋박스
 export {TextEditor} from './components/InputBox/ExcelBasicInputBox'
 export {WelcomeInput} from './components/InputBox/WelcomeInput'
+export {TitleInput} from './components/InputBox/TitleInput'
 
 //모달
 export {AuthoritySearchModal} from './components/Modal/AuthoritySearchModal'

@@ -15,7 +15,6 @@ import {useRouter} from "next/router";
 //@ts-ignore
 import Notiflix from "notiflix";
 import ExcelDownloadModal from '../../../component/Modal/ExcelDownloadMoadal'
-import BasicContainer from '../basic/customer'
 import TextEditor from "../../../component/InputBox/ExcelBasicInputBox";
 
 interface IProps {

@@ -1,11 +1,7 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
-import {BoxWrap, DropBoxContainer, InnerBoxWrap, UnitBox, UnitValue, UnitWrapper} from '../../styles/styledComponents'
-import Calendar from 'react-calendar'
+import {UnitValue, UnitWrapper} from '../../styles/styledComponents'
 import 'react-calendar/dist/Calendar.css'
-import moment from 'moment'
-import useOnclickOutside from 'react-cool-onclickoutside'
-import Modal from 'react-modal'
 import styled from 'styled-components'
 //@ts-ignore
 import calendarWhite from '../../../public/images/calendar_icon_white.png'

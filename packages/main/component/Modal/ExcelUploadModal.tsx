@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import Modal from "react-modal";
-import {RequestMethod} from "../../common/RequestFunctions";
 import axios from "axios";
 import {SF_ENDPOINT_EXCEL} from "../../common/configset";
 import cookie from "react-cookies";

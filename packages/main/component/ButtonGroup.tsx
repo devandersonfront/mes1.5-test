@@ -7,7 +7,6 @@ import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles'
 import {POINT_COLOR} from "../common/configset";
 
 
-
 //웰컴, 로그인 페이지 네비게이션 컴포넌트
 interface IProps {
     buttons?: string[]

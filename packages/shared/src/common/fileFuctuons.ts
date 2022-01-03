@@ -1,6 +1,4 @@
-import {SF_ENDPOINT, SF_ENDPOINT_RESOURCE, TOKEN_NAME} from './configset'
-import {requestApi} from './RequestFunctions'
-import * as buffer from "buffer";
+import {SF_ENDPOINT} from './configset'
 import Axios from "axios";
 
 //@ts-ignore

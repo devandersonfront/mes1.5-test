@@ -1,6 +1,5 @@
 import React from 'react'
-import { NextPage } from 'next'
-import styled from 'styled-components'
+import {NextPage} from 'next'
 import DefaultButton from '../../component/DefaultButton'
 import {useRouter} from 'next/router'
 

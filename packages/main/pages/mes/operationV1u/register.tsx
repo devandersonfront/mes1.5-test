@@ -1,26 +1,10 @@
-import React, {useEffect, useState} from 'react'
-import ExcelTable from '../../../component/Excel/ExcelTable'
+import React from 'react'
 import MenuNavigation from '../../../component/MenuNav/MenuNavigation'
 import ProfileHeader from '../../../component/Profile/ProfileHeader'
-import PageHeader from '../../../component/Header/Header'
-import {BasicMold} from 'basic'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
-import {IExcelHeaderType, IItemMenuType} from '../../../common/@types/type'
-import {RequestMethod} from '../../../common/RequestFunctions'
-import {columnlist} from "../../../common/columnInit";
-import Notiflix from "notiflix";
-import {useRouter} from 'next/router'
-import {MAX_VALUE} from '../../../common/configset'
-import DropDownEditor from '../../../component/Dropdown/ExcelBasicDropdown'
-import TextEditor from '../../../component/InputBox/ExcelBasicInputBox'
-import {excelDownload} from '../../../common/excelDownloadFunction'
-import {loadAll} from 'react-cookies'
-import PaginationComponent from '../../../component/Pagination/PaginationComponent'
 import {NextPageContext} from 'next'
-import ExcelDownloadModal from '../../../component/Modal/ExcelDownloadMoadal'
 import {MesOperationRegister} from 'mes'
-import moment from 'moment'
 
 interface IProps {
   children?: any

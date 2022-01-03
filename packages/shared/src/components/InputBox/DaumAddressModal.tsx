@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import DaumPostcode from "react-daum-postcode";
 import Modal from "react-modal";
 import {IExcelHeaderType} from "../../common/@types/type";
-import {POINT_COLOR} from "../../common/configset";
 //@ts-ignore
 import IcSearchButton from "../../../public/images/ic_search.png";
 //@ts-ignore

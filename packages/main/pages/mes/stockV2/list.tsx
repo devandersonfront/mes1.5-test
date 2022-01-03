@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import MenuNavigation from '../../../component/MenuNav/MenuNavigation'
 import ProfileHeader from '../../../component/Profile/ProfileHeader'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {NextPageContext} from 'next'
-import {MesOperationList, MesRecordList, MesStockList} from 'mes'
+import {MesStockList} from 'mes'
 
 interface IProps {
   children?: any

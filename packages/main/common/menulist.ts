@@ -52,7 +52,7 @@ const BASIC_MENUS: IMenuType[] = [
   {
     title: '품질 기준정보', url: '',
     subMenu: [
-      {title: '공정별 불량 유형 등록', url: '/mes/basic/register/defect'},
+      {title: '공정별 자주검사 항목 등록', url: '/mes/basic/register/defect'},
     ]
   },
   {title: '주변장치 기준정보', url: '/mes/basic/device'},
@@ -99,7 +99,11 @@ const MES_MENUS: IMenuType[] = [
   {
     title: '품질 관리', url: '',
     subMenu: [
-      {title: '불량 통계', url: '/mes/quality/defect'},
+      {title: '불량 통계 (자주검사 관리)', url: '/mes/quality/defect'},
+      {title: '초ㆍ중ㆍ종 검사 리스트', url: '/mes/quality/midrange/list'},
+      {title: '작업 표준서 관리', url: '/mes/quality/work/standardlist'},
+      {title: '변경점 정보 등록', url: '/mes/quality/product/change/register'},
+      {title: '변경점 정보 리스트', url: '/mes/quality/product/change/list'},
     ]
   },
   {

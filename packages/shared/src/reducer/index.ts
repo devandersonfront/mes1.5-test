@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux'
+import {combineReducers} from 'redux'
 import userInfo from './userInfo'
 import menuState from './menuState'
 import MachineSelectReducer from "./machineSelect";

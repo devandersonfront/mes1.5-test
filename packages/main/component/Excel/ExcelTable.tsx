@@ -3,7 +3,7 @@ import styled from "styled-components";
 // @ts-ignore
 import DataGrid, {TextEditor} from 'react-data-grid'
 import {IExcelHeaderType} from '../../common/@types/type'
-import {ExcelDataStyle, SearchModalStyle} from '../../styles/styledComponents'
+import {SearchModalStyle} from '../../styles/styledComponents'
 import {RequestMethod} from "../../common/RequestFunctions";
 
 interface IProps {

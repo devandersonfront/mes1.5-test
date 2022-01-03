@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 import Notiflix from 'notiflix'
 //@ts-ignore
 import filterOpenB from '../../../public/images/filter_open_b.png'
 //@ts-ignore
 import filterOpenW from '../../../public/images/filter_open_w.png'
-import {styled} from '@material-ui/core'
 
 interface IProps {
   column: IExcelHeaderType

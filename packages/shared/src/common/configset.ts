@@ -56,7 +56,7 @@ export const AUTHORITY_LIST = [
           { title: "일시정지 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_09" },
         ]},
       { title: "품질 기본 정보", show: false, checkable: true, check: false, child: [
-          { title: "공정별 불량 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_03" },
+          { title: "공정별 자주검사 항목 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_03" },
         ]},
       { title: "기계 기본 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_04" },
       { title: "제품 등록 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_05" },
@@ -80,7 +80,7 @@ export const AUTHORITY_LIST = [
           { title: "원자재 재고 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_RMAT_02" },
         ] },
       { title: "품질 관리", show: false, checkable: true, check: false, child: [
-          { title: "불량 통계", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_01" },
+          { title: "불량 통계 (자주검사 관리)", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_01" },
         ] },
       { title: "재고 관리", show: false, checkable: true, check: false, child: [
           { title: "재고 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_STK_01" },
