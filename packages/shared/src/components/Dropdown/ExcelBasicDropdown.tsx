@@ -13,7 +13,6 @@ interface IProps {
 }
 
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
-  console.log(row, column,row[column.key])
 
   const cleanValue = (type?:string) => {
     switch(type){

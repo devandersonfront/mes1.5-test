@@ -945,6 +945,22 @@ export const columnlist: any = {
     {key: "code", name: 'CODE',},
     {key: "material_name", name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력'}
   ],
+  toolRegister: [
+    {key: "code", name: '공구 CODE', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "name", name: '공구 품명', editor:TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
+    {key: "unit", name: '단위', formatter: DropDownEditor,
+      selectList:[
+        {pk: 0, name: "EA"},
+        {pk: 1, name: "g"},
+        {pk: 2, name: "kg"},
+        {pk: 3, name: "Ton"},
+        {pk: 4, name: "ml"},
+        {pk: 5, name: "L"},
+      ]},
+    {key: "customer", name: '거래처', formatter: SearchModalTest, placeholder: '거래처 입력', type:"customer"},
+    {key: "com", name: '공구 재고량', formatter: UnitContainer, unitData:"EA", },
+    {key: "product", name: '생산 품목', formatter:ProductInfoModal },
+  ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},
     {key: 'customerSearchModal', name: '거래처 검색', formatter: SearchModalTest, type: 'customer', width: 118,},

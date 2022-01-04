@@ -8,7 +8,7 @@ import {useOpenState} from "@material-ui/pickers/_shared/hooks/useOpenState";
 
 const MesToolRegister = () => {
 
-    const [basicRow, setBasicRow] = useState<Array<any>>([{name:"품명", code:"CODE"}]);
+    const [basicRow, setBasicRow] = useState<Array<any>>([{name:"품명", code:"CODE", }]);
 
 
     return (
@@ -27,7 +27,10 @@ const MesToolRegister = () => {
                     ...columnlist.toolRegister
                 ]}
                 row={basicRow}
-                setRow={() => {}}
+                setRow={(e) => {
+                    console.log(e)
+                    setBasicRow(e)
+                }}
             />
 
         </div>

@@ -58,6 +58,7 @@ const BASIC_MENUS: IMenuType[] = [
   {title: '주변장치 기준정보', url: '/mes/basic/device'},
   {title: '기계 기준정보', url: '/mes/basic/machine'},
   {title: '금형 기준정보', url: '/mes/basic/moldV1u'},
+  {title: '공구 기준정보', url: '/mes/basic/tool'},
   {title: '원자재 기준정보', url: '/mes/basic/rawmaterialV1u'},
   {title: '부자재 기준정보', url: '/mes/basic/submaterial'},
   {title: '제품 등록 관리', url: '/mes/basic/productV1u'},

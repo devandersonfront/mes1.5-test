@@ -16,3 +16,4 @@ export {BasicUser} from './container/BasicUser'
 // export {BasicMidrangeDetail} from './container/BasicMidrangeDetail'
 // export {BasicMidrangeModify} from './container/BasicMidrangeModify'
 export {BasicMidrangeRegister} from './container/BasicMidrangeRegister'
+export {BasicTool} from "./container/BasicTool"
