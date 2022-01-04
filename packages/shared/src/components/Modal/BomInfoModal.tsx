@@ -184,13 +184,18 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    console.log("searchList : ", searchList);
+    console.log("row : ", row);
+
     let body = searchList.map((v, i) => {
       return {
         seq: i+1,
         parent: {
           ...row,
           process: row.processArray,
-          type: row.type_id ?? row.type
+          type: row.type_id ?? row.type,
+          product_id:row.productId,
+          code: row.cmId,
         },
         child_product: v.tab === 2 ? {
           ...v.product
@@ -316,7 +321,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData ? headerData.model.model : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
+              <HeaderTableText>{headerData ? headerData.model?.model : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>

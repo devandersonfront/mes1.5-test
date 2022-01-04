@@ -124,7 +124,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
       params: {
         from: selectDate.from,
         to: selectDate.to,
-        status: '0,1'
+        status: '0, 1'
       }
     })
 
@@ -152,7 +152,10 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         renderItem: 22,
       },
       params: {
+        from: selectDate.from,
+        to: selectDate.to,
         keyword: keyword ?? '',
+        status: '0, 1',
         opt: option ?? 0
       }
     })
