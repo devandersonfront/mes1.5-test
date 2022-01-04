@@ -135,7 +135,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         ? {width: 'calc(100% - 32px)', height: 32, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
         : {width: 'calc(100% - 40px)', height: 40, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
       } onClick={() => {
-        setIsOpen(true)
+        if(row.first || !column.disableType){
+          setIsOpen(true)
+        }
       }}>
         {getContents()}
       </div>
