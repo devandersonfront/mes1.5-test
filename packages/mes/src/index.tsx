@@ -35,3 +35,5 @@ export {MesProductChangeList} from './container/Quality/MesProductChangeList'
 export {MesProductChangeModify} from './container/Quality/MesProductChangeModify'
 //초ㆍ중ㆍ종 리스트
 export {MesMidrangeList} from './container/Quality/MesMidrangeList'
+//kpi
+export {MesLeadtimeManufacture} from './container/kpi/MesLeadtimeManufacture'

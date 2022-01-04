@@ -992,6 +992,27 @@ export const columnlist: any = {
     {key: "code", name: 'CODE',},
     {key: "material_name", name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력'}
   ],
+  kpiLeadtimeManufacture: [
+    {key: "customer_id", name: '거래처', width: 120},
+    {key: "cm_id", name: '모델', width: 480},
+    {key: "code", name: 'CODE', width: 472},
+    {key: "material_name", name: '품명', width: 296},
+    {key: "manufacturing_leadtime_average", name: '평균 제조리드타임 (초)', width: 208}
+  ],
+  kpiLeadtimeManufactureContent: [
+    {key: 'osd_id', name: '지시 고유 번호', formatter: OperationSearchModal, width:128},
+    {key: 'code', name: 'CODE', formatter: ProductSearchModal, width:120, disableType: 'record'},
+    {key: 'name', name: '품명', width:120},
+    {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process",width: 120},
+    {key: 'lot_number', name: 'LOT 번호', width: 120,},
+    {key: 'user_id', name: '작업자', width:120, formatter: MemberSearchModal},
+    {key: 'start', name: '작업 시작 일시', width:120, formatter: DatetimePickerBox},
+    {key: 'end', name: '작업 종료 일시', width:120, formatter: DatetimePickerBox},
+    {key: 'paused_time', name: '일시 정지 시간', width:120, formatter:PauseModal},
+    {key: 'good_quantity', name: '양품 수량', width:120, editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
+    {key: 'poor_quantity', name: '불량 수량', width:120, editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
+    {key: "manufacturing_leadtime", name: '제조리드타임 (초)', width: 208},
+  ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},
     {key: 'customerSearchModal', name: '거래처 검색', formatter: SearchModalTest, type: 'customer', width: 118,},
