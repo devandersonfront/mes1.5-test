@@ -1,15 +1,39 @@
 import React, {useState} from "react";
 import styled from "styled-components";
 import {ExcelTable, Header as PageHeader} from "shared";
-import {columnlist} from "../../../../main/common/columnInit";
+import {columnlist} from "shared";
 //@ts-ignore
 import {SelectColumn} from "react-data-grid";
-import {useOpenState} from "@material-ui/pickers/_shared/hooks/useOpenState";
+import moment from "moment";
+
 
 const MesToolRegister = () => {
+    console.log(moment().format("YYYY.MM.DD"))
+    const [basicRow, setBasicRow] = useState<Array<any>>([{
+        code:"",
+        name:"",
+        unit:"",
+        customer:"",
+        warehousing:"0",
+        date:moment().format("YYYY.MM.DD"),
+    }]);
+    const [column, setColumn] = useState<any>(columnlist.toolWarehousingRegister);
 
-    const [basicRow, setBasicRow] = useState<Array<any>>([{name:"품명", code:"CODE", }]);
+    const buttonEvents = (number:number) => {
+        switch(number) {
+            case 0:
+                setBasicRow([...basicRow, {warehousing:"0", date:moment().format("YYYY.MM.DD")}])
+                return
+            case 1:
+                console.log(basicRow)
+                return
+            case 2:
 
+                return
+            default :
+                return
+        }
+    }
 
     return (
         <div>
@@ -18,13 +42,14 @@ const MesToolRegister = () => {
                 buttons={
                     ['행추가', '저장하기', '삭제']
                 }
-                buttonsOnclick={() => {}}
+                buttonsOnclick={buttonEvents}
+
             />
 
             <ExcelTable
                 headerList={[
                     SelectColumn,
-                    ...columnlist.toolRegister
+                    ...column
                 ]}
                 row={basicRow}
                 setRow={(e) => {
@@ -32,7 +57,6 @@ const MesToolRegister = () => {
                     setBasicRow(e)
                 }}
             />
-
         </div>
     )
 }

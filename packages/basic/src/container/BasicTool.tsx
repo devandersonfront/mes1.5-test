@@ -20,23 +20,148 @@ export interface IProps {
     option?: number
 }
 
+const dummyList = {
+        info_list: [
+            {
+                tool_id: 1,
+                code: "공구 code",
+                name: "공구명",
+                customer: {
+                    customer_id: 1,
+                    name: "고객사명",
+                    rep: "대표자명",
+                    manager: "담당자명",
+                    telephone: "전화번호",
+                        cellphone: "휴대폰",
+                        fax: "팩스",
+                        address: "주소",
+                        crn: "사업자 번호",
+                        photo: "사업자 등록증",
+                        additional: [ ],
+                },
+                additional: [],
+                version: 1,
+            },
+        ],
+        menus: [
+            {
+                id: 1 ,
+                title: "공구 CODE",
+                colName:"code"
+            },
+            {
+                id: 2 ,
+                title: "공구 품명",
+                colName:"name"
+            },
+            {
+                id: 3 ,
+                title: "단위",
+                unit: "EA",
+                colName:"unit"
+            },
+            {
+                id: 4 ,
+                title: "거래처",
+                colName:"customer"
+            },
+            {
+                id: 5 ,
+                title: "공구 재고량",
+                unit: "EA",
+                colName:"product"
+            },
+            {
+                id: 6 ,
+                title: "생산 품목",
+                colName:""
+            },
+        ],
+            page: 1,
+            renderItem: 22,
+            totalPages: 1
+}
+
+const dummySearch = {
+    info_list: [
+        {
+            tool_id: 1,
+            code: "공구 code Search",
+            name: "공구명 Search",
+            customer: {
+                customer_id: 1,
+                name: "고객사명 Search",
+                rep: "대표자명 Search",
+                manager: "담당자명 Search",
+                telephone: "전화번호 Search",
+                cellphone: "휴대폰 Search",
+                fax: "팩스 Search",
+                address: "주소 Search",
+                crn: "사업자 번호 Search",
+                photo: "사업자 등록증 Search",
+                additional: [],
+            },
+            additional: [],
+            version: 1,
+        },
+    ],
+    menus: [
+        {
+            id: 1 ,
+            title: "공구 CODE",
+            colName:"code"
+        },
+        {
+            id: 2 ,
+            title: "공구 품명",
+            colName:"name"
+        },
+        {
+            id: 3 ,
+            title: "단위",
+            unit: "EA",
+            colName:"unit"
+        },
+        {
+            id: 4 ,
+            title: "거래처",
+            colName:"customer"
+        },
+        {
+            id: 5 ,
+            title: "공구 재고량",
+            unit: "EA",
+            colName:"product"
+        },
+        {
+            id: 6 ,
+            title: "생산 품목",
+            colName:""
+        },
+    ],
+    page: 1,
+    renderItem: 22,
+    totalPages: 10
+}
+
 
 const BasicTool = ({page, keyword, option}: IProps) => {
+    console.log(page, keyword, option)
     const router = useRouter();
     const [column, setColumn] = useState<any>(columnlist.toolRegister)
-    const [basicRow, setBasicRow] = useState<Array<any>>([
-        {
-         code:"CODE",
-         com:0
-        }]);
+    const [basicRow, setBasicRow] = useState<Array<any>>([]);
 
     const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:0, total:0});
     // const [keyword, setKeyword] = useState<string>("");
     const [optionIndex, setOptionIndex] = useState<number>(0);
+    const [selectList, setSelectList] = useState<Set<number>>(new Set())
+
+
+
 
     const cleanUpData = (info_list:any) => {
         let tmpColumn = columnlist["toolRegister"];
-        let tmpRow = []
+        let tmpRow:Array<any> = []
         tmpColumn = tmpColumn.map((column: any) => {
             let menuData: object | undefined;
             info_list.menus && info_list.menus.map((menu: any) => {
@@ -118,13 +243,13 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             }
         })
 
-        let pk = "";
-        Object.keys(tmpRow).map((v) => {
-            if(v.indexOf('_id') !== -1){
-                pk = v
-            }
-        })
-
+        // let pk = "";
+        // Object.keys(tmpRow).map((v) => {
+        //     if(v.indexOf('_id') !== -1){
+        //         pk = v
+        //     }
+        // })
+        console.log("tmpRow : ", tmpRow)
         let tmpBasicRow = tmpRow.map((row: any, index: number) => {
 
             let appendAdditional: any = {}
@@ -137,17 +262,14 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             })
 
             let random_id = Math.random()*1000;
+            console.log(row,  appendAdditional)
             return {
                 ...row,
                 ...appendAdditional,
-                user: row.manager ?? undefined,
-                managerPk: row.manager ? row.manager.user_id : '',
-                manager: row.manager ? row.manager.name : '',
-                appointment: row.manager ? row.manager.appointment : '',
-                telephone: row.manager ? row.manager.telephone : '',
-                id: `factory_${random_id}`,
+                id: `tool_${random_id}`,
             }
         })
+        console.log("tmpBasicRow : ", tmpBasicRow);
         setBasicRow([...tmpBasicRow])
     }
 
@@ -203,56 +325,59 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     }
 
     const LoadBasic = async() => {
-        const res = await RequestMethod("get", "toolList", {
-            path:{
-                page:page,
-                renderItem:18
-            },
-            params:{
+        // const res = await RequestMethod("get", "toolList", {
+        //     path:{
+        //         page:page,
+        //         renderItem:18
+        //     },
+        //     params:{
+        //
+        //     }
+        // })
 
-            }
-        })
-
-        if(res){
-            setPageInfo({...pageInfo, total:res.totalPages});
-            const resultData = cleanUpData(res.info_list);
-
+        // if(res){
+        console.log(dummyList)
+            setPageInfo({...pageInfo, total:dummyList.totalPages});
+            cleanUpData(dummyList);
+            // console.log(resultData);
+        if(dummyList){
             // setBasicRow(resultData);
         }
     }
 
     const SearchBasic = async() => {
-        const res = await RequestMethod("get", "toolSearch",{
-            path:{
-                page:page,
-                renderItem:18
-            },
-            params:{
-                opt:optionIndex,
-                keyword:keyword,
+        // const res = await RequestMethod("get", "toolSearch",{
+        //     path:{
+        //         page:page,
+        //         renderItem:18
+        //     },
+        //     params:{
+        //         opt:optionIndex,
+        //         keyword:keyword,
+        //
+        //     }
+        // })
 
-            }
-        })
-
-        if(res){
-            setPageInfo({...pageInfo, total:res.totalPages});
-            const resultData = cleanUpData(res.info_list);
-
-            // setBasicRow(resultData);
-        }
+            setPageInfo({...pageInfo, total:dummySearch.totalPages});
+             cleanUpData(dummySearch);
+        // if(res){
+        //
+        //     // setBasicRow(resultData);
+        // }
     }
 
     const buttonsEvent = (index:number) => {
         switch (index){
             case 0:
-                alert("항목관리")
+                router.push(`/mes/item/manage/tool`)
                 return
             case 1:
-                setBasicRow([...basicRow, {}])
+                const randomId = Math.random()*1000;
+                setBasicRow([...basicRow, {id:`tool_${randomId}`}])
                 return
             case 2:
                 alert("저장하기")
-
+                console.log("basicRow : ", basicRow)
                 return
             case 3:
                 alert("삭제")
@@ -264,26 +389,33 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     }
 
     useEffect(() => {
+        // setOptionIndex(option)
+        console.log(keyword)
         if(keyword){
-            // LoadBasic();
+            SearchBasic();
         }else{
-            // SearchBasic();
+            LoadBasic();
         }
-    }, [])
+    }, [keyword])
 
     return (
         <div>
             <PageHeader
                 title={"공구 기본정보"}
                 isSearch
+                searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
-                    router.push(`/mes/basic/tool?page=1&keyword=${keyword}&opt=${optionIndex}`);
+                    if(keyword){
+                        router.push(`/mes/basic/tool?page=1&keyword=${keyword}&opt=${optionIndex}`);
+                    }else{
+                        router.push(`/mes/basic/tool?page=1&keyword=`);
+                    }
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(option) => {
                     setOptionIndex(option);
                 }}
-                optionIndex={0}
+                optionIndex={optionIndex}
                 buttons={["항목관리","행 추가","저장하기","삭제"]}
                 buttonsOnclick={buttonsEvent}
             />
@@ -292,24 +424,21 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                 headerList={[SelectColumn, ...column]}
                 row={basicRow}
                 setRow={(e) => {
-                    console.log(e)
+                    let tmp: Set<any> = selectList
+                    e.map(v => {
+                        if(v.isChange) tmp.add(v.id)
+                    })
+                    setSelectList(tmp)
                     setBasicRow(e)
                 }}
+                selectList={selectList}
+                //@ts-ignore
+                setSelectList={setSelectList}
             />
             {/*<PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => setPageInfo({...pageInfo, page:page})} />*/}
             <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => setPageInfo({...pageInfo, page:page})} />
         </div>
     )
-}
-
-export const getServerSideProps = (ctx: NextPageContext) => {
-    return {
-        props: {
-            page: ctx.query.page ?? 1,
-            keyword: ctx.query.keyword ?? "",
-            option: ctx.query.opt ?? 0,
-        }
-    }
 }
 
 export {BasicTool}

@@ -30,6 +30,7 @@ export interface IExcelHeaderType {
   readonly?: boolean
   title?: string
   url?: string
+  headerType?:any[]
 }
 
 export interface IResponseType {

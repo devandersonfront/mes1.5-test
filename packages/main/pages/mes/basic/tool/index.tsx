@@ -17,8 +17,8 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
         <div style={{display: 'flex', }}>
             <MenuNavigation pageType={'BASIC'}/>
             <div style={{paddingBottom: 40}}>
-                <ProfileHeader/>
-                <BasicTool />
+                <ProfileHeader />
+                <BasicTool page={page} option={option} keyword={keyword}/>
             </div>
         </div>
     );
