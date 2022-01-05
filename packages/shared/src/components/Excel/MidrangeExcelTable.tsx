@@ -1,7 +1,10 @@
 import React from 'react';
 import styled from "styled-components";
+import {MidrangeExcelDropdown} from "../Dropdown/MidrangeExcelDropdown";
 
-const MidRangeExcelTable = () => {
+
+const MidrangeExcelTable = () => {
+
     const sampleCount = () => {
         return (
             ['01','02','01','02','01','02','01','02','01','02',].map((v,i)=>
@@ -36,7 +39,7 @@ const MidRangeExcelTable = () => {
                 <div style={{display: "flex"}}>
                     {['01','02','01','02','01','02','01','02','01','02',].map((v,i)=>
                         <ExampleNumber style={{borderBottom: 0}}>
-                            {i+1 > 9 ? 10 : '0'+(i+1)}
+                            {/*{i+1 > 9 ? 10 : '0'+(i+1)}*/}
                         </ExampleNumber>
                     )}
                 </div>
@@ -48,7 +51,7 @@ const MidRangeExcelTable = () => {
         return(
             ['01','02','01','02','01','02','01','02','01','02',].map((v,i)=>
                 <ExampleNumber>
-
+                    <MidrangeExcelDropdown/>
                 </ExampleNumber>
             )
         )
@@ -105,7 +108,7 @@ const MidRangeExcelTable = () => {
                     </div>
                 </div>
             </div>
-            {/*초품 */}
+            {/*중품 */}
             <div style={{display: "flex"}}>
                 <CellDefault style={{width: '112px', minHeight: '80px', fontWeight: 'bold', borderRight: 0}}>
                     중품
@@ -204,4 +207,4 @@ const CellDefault = styled.div`
     align-items: center; 
 `
 
-export {MidRangeExcelTable};
+export {MidrangeExcelTable};

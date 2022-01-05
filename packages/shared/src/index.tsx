@@ -91,8 +91,9 @@ export {LotNumberRegister} from "./components/Cell/LotNumberRegister"
 
 //드롭다운
 export {DropDownEditor} from "./components/Dropdown/ExcelBasicDropdown"
+export {MidrangeExcelDropdown} from './components/Dropdown/MidrangeExcelDropdown'
 
-export {MidRangeExcelTable} from "./components/Excel/MidRangeExcelTable"
+export {MidrangeExcelTable} from "./components/Excel/MidrangeExcelTable"
 export {ExcelTable} from "./components/Excel/ExcelTable"
 
 export {FileEditer} from "./components/FileUpload/ExcelBasicFileUpload"

@@ -9,85 +9,22 @@ import {ExcelTable} from "../Excel/ExcelTable";
 import {searchModalList} from "../../common/modalInit";
 import {POINT_COLOR} from "../../common/configset";
 import styled from "styled-components";
-import {MidRangeExcelTable} from "../Excel/MidRangeExcelTable";
+import {MidrangeExcelTable} from "../Excel/MidrangeExcelTable";
 
 
 interface IProps {
-    column?: IExcelHeaderType
     row?: any
-    onRowChange?: (e: any) => void
-    modify?: boolean
+    isOpen: boolean
+    setIsOpen?: (isOpen: boolean) => void
 }
 
 
-const MidrangeFormReviewModal = ({column, row, onRowChange, modify}: IProps) => {
-    const [isOpen, setIsOpen] = useState<boolean>(true)
+const MidrangeFormReviewModal = ({row, isOpen, setIsOpen}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
-    const [searchKeyword, setSearchKeyword] = useState<string>('')
-
-    useEffect(() => {
-        if(isOpen) {
-            if(row?.molds && row?.molds.length > 0){
-                setSearchList(row.molds.map((v,i) => {
-                    console.log("v : ", v)
-                    return {
-                        ...v,
-                        ...v.mold,
-                        seq: i+1
-                    }
-                }))
-            }
-        }
-    }, [isOpen, searchKeyword])
-
-    const changeRow = (row: any, key?: string) => {
-        let tmpData = {
-            ...row,
-            machine_id: row.name,
-            machine_idPK: row.machine_id,
-            manager: row.manager ? row.manager.name : null
-        }
-
-        return tmpData
-    }
-
-
-    const ModalContents = () => {
-        if(row?.molds){
-            if(row.molds.length){
-                return <>
-                    <div style={{
-                        padding: '3.5px 0px 0px 3.5px',
-                        width: 112
-                    }}>
-                        <Button onClick={() => {
-                            setIsOpen(true)
-                        }}>
-                            <p>금형 수정</p>
-                        </Button>
-                    </div>
-                </>
-            }else{
-                return <>
-                    <div style={{
-                        padding: '3.5px 0px 0px 3.5px',
-                        width: '100%'
-                    }}>
-                        <UploadButton onClick={() => {
-                            setIsOpen(true)
-                        }}>
-                            <p>금형 등록</p>
-                        </UploadButton>
-                    </div>
-                </>
-            }
-        }
-    }
 
     return (
         <SearchModalWrapper >
-            { ModalContents() }
             <Modal isOpen={isOpen} style={{
                 content: {
                     top: '50%',
@@ -137,9 +74,6 @@ const MidrangeFormReviewModal = ({column, row, onRowChange, modify}: IProps) => 
                             width={1746}
                             rowHeight={32}
                             height={552}
-                            // setSelectRow={(e) => {
-                            //   setSelectRow(e)
-                            // }}
                             setSelectRow={(e) => {
                                 if(!searchList[e].border){
                                     searchList.map((v,i)=>{
@@ -155,7 +89,7 @@ const MidrangeFormReviewModal = ({column, row, onRowChange, modify}: IProps) => 
                         />
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
-                        <MidRangeExcelTable/>
+                        <MidrangeExcelTable/>
                     </div>
                 </div>
             </Modal>

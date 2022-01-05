@@ -534,7 +534,7 @@ export const searchModalList: any = {
   ],
   midrangeInfo: [
     {key: 'osd_id', name: '지시 고유 번호', width: 152},
-    {key: 'lot_number', name: 'LOT 번호', width: 152},
+    {key: 'lot_number', name: 'LOT 번호 (생산로트)', width: 152},
     {key: 'code', name: 'CODE', width: 480},
     {key: 'material_name', name: '품명', width: 360},
     {key: 'type', name: '품목 종류', width: 120},
