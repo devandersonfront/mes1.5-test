@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ChangeEvent} from 'react';
 //@ts-ignore
 import filterOpenB from "../../../public/images/filter_open_b.png";
 //@ts-ignore
@@ -6,10 +6,13 @@ import filterOpenW from "../../../public/images/filter_open_w.png";
 import Notiflix from "notiflix";
 
 interface IProps {
-
+    contents: string[]
+    value: string
+    onChange: (e: ChangeEvent<HTMLSelectElement>) => void
 }
 
-const MidrangeExcelDropdown = () => {
+const MidrangeExcelDropdown = ({contents,value,onChange}: IProps) => {
+    {console.log(value)}
     return (
         <select
             className={'editDropdown'}
@@ -22,12 +25,12 @@ const MidrangeExcelDropdown = () => {
                 background: `url(${filterOpenB}) no-repeat right 9px center`,
                 backgroundSize: '24px',
             }}
-            value={/*column.key === "type" ? selectType() :*/  "무"}
-            onChange={(event) => {}}
+            value={/*column.key === "type" ? selectType() :*/  value}
+            onChange={onChange}
         >
-            {[{pk: '11', name: '합격'},{pk: '131', name: '불합격'}, ].map((title) => {
-                return (<option key={title.pk} value={title.name}>
-                    {title.name}
+            {contents.map((title,index) => {
+                return (<option key={title+'Midrange'+index} value={title} >
+                    {title}
                 </option>)
             })}
         </select>

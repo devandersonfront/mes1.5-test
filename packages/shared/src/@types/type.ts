@@ -88,3 +88,21 @@ type ProductType = {
   code:string
 }
 
+
+export type InspectionInfo = {
+    title: string
+    unit: string
+    type: number
+    error_minimum: number
+    error_maximum: number
+    samples: number
+    data_result: InspectionDataResult[]
+  }
+
+
+
+type InspectionDataResult = {
+  sequence: string
+  value: string
+  pass: boolean
+}

@@ -28,8 +28,6 @@ const BasicMidrangeModify = () => {
         <div>
             <PageHeader title={"초ㆍ중ㆍ종 검사항목 정보 (수정)"} buttons={['검사 양식 검토', '저장하기']} />
             <ExcelTable
-                editable
-                resizable
                 headerList={[
                     ...column
                 ]}
@@ -48,8 +46,6 @@ const BasicMidrangeModify = () => {
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
             />
             <ExcelTable
-                editable
-                resizable
                 headerList={[
                     ...sampleColumn
                 ]}
@@ -68,8 +64,6 @@ const BasicMidrangeModify = () => {
                 height={sampleBasicRow.length * 40 >= 40*18+56 ? 40*19 : sampleBasicRow.length * 40 + 56}
             />
             <ExcelTable
-                editable
-                resizable
                 headerList={[
                     ...legendaryColumn
                 ]}
@@ -113,8 +107,6 @@ const BasicMidrangeModify = () => {
                 +범례 추가
             </MidrangeButton>
             <ExcelTable
-                editable
-                resizable
                 headerList={[
                     ...ItemColumn
                 ]}

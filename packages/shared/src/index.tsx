@@ -183,6 +183,7 @@ export type {
   IItemMenuType,
   MachineType,
   ProductListType,
+  InspectionInfo,
 } from './@types/type'
 
 

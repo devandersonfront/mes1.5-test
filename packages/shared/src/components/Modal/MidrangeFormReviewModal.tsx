@@ -23,6 +23,7 @@ const MidrangeFormReviewModal = ({row, isOpen, setIsOpen}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
 
+
     return (
         <SearchModalWrapper >
             <Modal isOpen={isOpen} style={{
