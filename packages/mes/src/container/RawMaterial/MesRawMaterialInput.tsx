@@ -173,6 +173,11 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         SaveBasic()
         break;
       case 2:
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인", "취소", () => {
+          // const tmpRow = [...basicRow].reverse();
+          const tmpRow = basicRow.filter(({id}, index) => !selectList.has(id))
+          setBasicRow(tmpRow);
+        })
         break;
     }
   }

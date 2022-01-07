@@ -83,10 +83,12 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      if(row.operation_sheet){
+      if(row.operation_sheet && row.operation_sheet?.input_bom?.length > 0){
         changeRow(row.operation_sheet.input_bom)
-      }else{
+      }else if(row.input_bom.length > 0){
         changeRow(row.input_bom)
+      }else{
+        Notiflix.Report.warning("경고","투입 자재가 없습니다.","확인", () => setIsOpen(false))
       }
     }
   }, [isOpen, searchKeyword])
@@ -111,53 +113,54 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       good_quantity: row.good_quantity ?? 0,
       poor_quantity: row.qoor_quantity ?? 0,
     })
+    // if(tmpRows){
+      tmpData = tmpRows?.map((v, i) => {
+        let childData: any = {}
+        switch(v.bom.type){
+          case 0:{
+            childData = v.bom.child_rm
+            break;
+          }
+          case 1:{
+            childData = v.bom.child_sm
+            break;
+          }
+          case 2:{
+            childData = v.bom.child_product
+            break;
+          }
+        }
 
-    tmpData = tmpRows.map((v, i) => {
-      let childData: any = {}
-      switch(v.bom.type){
-        case 0:{
-          childData = v.bom.child_rm
-          break;
-        }
-        case 1:{
-          childData = v.bom.child_sm
-          break;
-        }
-        case 2:{
-          childData = v.bom.child_product
-          break;
-        }
-      }
-
-      return {
-        ...childData,
-        seq: i+1,
-        code: childData.code,
-        type: TransferCodeToValue(v.bom.type, 'material'),
-        tab: v.bom.type,
-        type_name: TransferCodeToValue(v.bom.type, 'material'),
-        unit: childData.unit ?? "-",
-        parent: v.bom.parent,
-        usage: v.bom.usage,
-        version: v.bom.version,
-        setting: v.bom.setting,
-        stock: childData.stock,
-        bom_lot_list: tmpRow,
-        disturbance: (Number(row.good_quantity ?? 0)+Number(row.poor_quantity ?? 0)) * Number(v.bom.usage),
-        processArray: childData.process ?? null,
-        process: childData.process ? childData.process.name : '-',
-        bom: row.bom,
-        product: v.bom.type === 2 ?{
+        return {
           ...childData,
-        }: null,
-        raw_material: v.bom.type === 0 ?{
-          ...childData,
-        }: null,
-        sub_material: v.bom.type === 1 ?{
-          ...childData,
-        }: null
-      }
-    })
+          seq: i+1,
+          code: childData.code,
+          type: TransferCodeToValue(v.bom.type, 'material'),
+          tab: v.bom.type,
+          type_name: TransferCodeToValue(v.bom.type, 'material'),
+          unit: childData.unit ?? "-",
+          parent: v.bom.parent,
+          usage: v.bom.usage,
+          version: v.bom.version,
+          setting: v.bom.setting,
+          stock: childData.stock,
+          bom_lot_list: tmpRow,
+          disturbance: (Number(row.good_quantity ?? 0)+Number(row.poor_quantity ?? 0)) * Number(v.bom.usage),
+          processArray: childData.process ?? null,
+          process: childData.process ? childData.process.name : '-',
+          bom: row.bom,
+          product: v.bom.type === 2 ?{
+            ...childData,
+          }: null,
+          raw_material: v.bom.type === 0 ?{
+            ...childData,
+          }: null,
+          sub_material: v.bom.type === 1 ?{
+            ...childData,
+          }: null
+        }
+      })
+    // }
 
     setSearchList([...tmpData])
   }

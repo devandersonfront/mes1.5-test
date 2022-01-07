@@ -93,19 +93,16 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         row = [{...res}]
       }
 
-      console.log(row)
       let searchList = row.map((row: any, index: number) => {
-        console.log(row.sum)
 
         return {
-          code: row.operation_sheet.product.code,
-          name: row.operation_sheet.product.name,
-          type: TransferCodeToValue(row.operation_sheet.product.type, 'productType'),
-          unit: row.operation_sheet.product.unit,
-
+          seq: row.sum.sequence,
+          code: row.sum.operation_sheet?.product?.code,
+          name: row.sum.operation_sheet?.product?.name,
+          type: TransferCodeToValue(row.sum.operation_sheet?.product?.type, 'productType'),
+          unit: row.sum.operation_sheet?.product?.unit,
         }
       })
-
       setSearchList([...searchList])
     }
   }

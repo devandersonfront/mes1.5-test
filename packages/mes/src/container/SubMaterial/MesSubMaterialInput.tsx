@@ -173,8 +173,9 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
         SaveBasic()
         break;
       case 2:
-        selectList.forEach((value) => {
-
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인", "취소", () => {
+          const tmpRow = basicRow.filter(({id}, index) => !selectList.has(id))
+          setBasicRow(tmpRow);
         })
 
         break;

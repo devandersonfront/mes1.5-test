@@ -13,6 +13,16 @@ interface IProps {
 }
 
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
+
+  const cleanValue = (type?:string) => {
+    switch(type){
+      case "spare":
+        return row.setting == 1 ? "스페어" : "기본"
+      default:
+        return row[column.key] ? row[column.key] : "무"
+    }
+  }
+
   return (
     <select
       className={'editDropdown'}
@@ -26,7 +36,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         backgroundSize: '24px',
         backgroundColor: column.type === 'Modal' ? row.border ? '#19B9DF80' : 'white' : '#00000000'
       }}
-      value={/*column.key === "type" ? selectType() :*/ row[column.key] ? row[column.key] : "무"}
+      value={cleanValue(column.key)}
       // value={selectType()}
       onChange={(event) => {
         let pk = "";
