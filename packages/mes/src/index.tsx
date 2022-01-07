@@ -36,6 +36,17 @@ export {MesProductChangeList} from './container/Quality/MesProductChangeList'
 export {MesProductChangeModify} from './container/Quality/MesProductChangeModify'
 //초ㆍ중ㆍ종 리스트
 export {MesMidrangeList} from './container/Quality/MesMidrangeList'
+
+//kpi
+export {MesKpiDefect} from './container/kpi/MesKpiDefect'
+export {MesKpiManHour} from './container/kpi/MesKpiManHour'
+export {MesKpiOperation} from './container/kpi/MesKpiOperation'
+export {MesKpiPowerUsage} from './container/kpi/MesKpiPowerUsage'
+export {MesKpiUph} from './container/kpi/MesKpiUph'
+export {MesLeadtimeManufacture} from './container/kpi/MesLeadtimeManufacture'
+export {MesLeadtimeOrder} from './container/kpi/MesLeadtimeOrder'
+
 //공구 입고 등록
 export {MesToolRegister} from "./container/Tool/MesToolRegister"
 export {MesToolList} from "./container/Tool/MesToolList"
+
