@@ -5,10 +5,10 @@ import moment from "moment";
 import {InspectionFinalDataResult, InspectionInfo} from "../../@types/type";
 
 const dump = {
-    operation_inspection_id: "61d55d578aa961291d3f40ae",
-    work_id: 2,
-    worker: {
-        user_id: 99,
+    operation_inspection_id: "61d6be6088dd3319c8e919f9",
+    work_id: 150,
+    writer: {
+        user_id: null,
         company: null,
         name: "eomjihwan",
         appointment: null,
@@ -16,7 +16,7 @@ const dump = {
         email: null,
         authority: 5,
         ca_id: null,
-        id: "",
+        id: "s-#414",
         password: null,
         profile: null,
         sync: null,
@@ -26,34 +26,33 @@ const dump = {
         serviceAddress: null
     },
     sic_id: "sic-2323",
-    inspection_result: {
-      beginning: [{sequence: 1, pass: true}, {sequence: 2, pass: false}],
-      middle: [{sequence: 1, pass: true}, {sequence: 2, pass: false}],
-      end: [{sequence: 1, pass: true}, {sequence: 2, pass: false}]
-    },
+    legendary_list: [
+        "test1",
+        "t2"
+    ],
     inspection_info: {
         middle: [
             {
-                title: "차종환 유격대18182838238",
+                title: "차종환 돌격대(생존)",
                 unit: "mm",
                 type: 0,
-                error_minimum: 30,
-                error_maximum: 150,
+                error_minimum: 30.0,
+                error_maximum: 150.0,
                 samples: 5,
                 data_result: [
                     {
-                        sequence: "1",
-                        value: '345.7',
+                        sequence: 1,
+                        value: "345.7",
                         pass: true
                     },
                     {
-                        sequence: "2",
-                        value: '2345.7',
+                        sequence: 2,
+                        value: "2345.7",
                         pass: true
                     },
                     {
-                        sequence: "3",
-                        value: '3345.7',
+                        sequence: 3,
+                        value: "3345.7",
                         pass: true
                     }
                 ]
@@ -61,24 +60,49 @@ const dump = {
             {
                 title: "백찬 척후병대장",
                 unit: "mm",
-                type: 1,
-                error_minimum: 30,
-                error_maximum: 150,
+                type: 0,
+                error_minimum: 30.0,
+                error_maximum: 150.0,
                 samples: 5,
                 data_result: [
                     {
-                        sequence: "1",
-                        value: '345.7',
+                        sequence: 1,
+                        value: "345.7",
                         pass: true
                     },
                     {
-                        sequence: "2",
-                        value: '2345.7',
+                        sequence: 2,
+                        value: "2345.7",
                         pass: true
                     },
                     {
-                        sequence: "3",
-                        value: '3345.7',
+                        sequence: 3,
+                        value: "3345.7",
+                        pass: true
+                    }
+                ]
+            },
+            {
+                title: "차종환 노예사장",
+                unit: "mm",
+                type: 0,
+                error_minimum: 30.0,
+                error_maximum: 150.0,
+                samples: 5,
+                data_result: [
+                    {
+                        sequence: 1,
+                        value: "345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 2,
+                        value: "2345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 3,
+                        value: "3345.7",
                         pass: true
                     }
                 ]
@@ -86,51 +110,153 @@ const dump = {
         ],
         beginning: [
             {
-                title: "차종환 유격대38",
-                unit: "cm",
+                title: "차종환 돌격대(생존)",
+                unit: "mm",
                 type: 0,
-                error_minimum: 50,
-                error_maximum: 180,
+                error_minimum: 30.0,
+                error_maximum: 150.0,
                 samples: 5,
                 data_result: [
                     {
-                        sequence: "1",
-                        value: '345123.7',
+                        sequence: 1,
+                        value: "345.7",
                         pass: true
                     },
                     {
-                        sequence: "2",
-                        value: '2345123.7',
+                        sequence: 2,
+                        value: "2345.7",
                         pass: true
                     },
                     {
-                        sequence: "3",
-                        value: '3341235.7',
+                        sequence: 3,
+                        value: "3345.7",
                         pass: true
                     }
                 ]
             },
             {
-                title: "백찬 척후병대장123",
-                unit: "cm",
-                type: 1,
-                error_minimum: 50,
-                error_maximum: 180,
+                title: "백찬 척후병대장",
+                unit: "mm",
+                type: 0,
+                error_minimum: 30.0,
+                error_maximum: 150.0,
                 samples: 5,
                 data_result: [
                     {
-                        sequence: "1",
-                        value: '3454.7',
+                        sequence: 1,
+                        value: "345.7",
                         pass: true
                     },
                     {
-                        sequence: "2",
-                        value: '234555.7',
+                        sequence: 2,
+                        value: "2345.7",
                         pass: true
                     },
                     {
-                        sequence: "3",
-                        value: "334566.7",
+                        sequence: 3,
+                        value: "3345.7",
+                        pass: true
+                    }
+                ]
+            },
+            {
+                title: "차종환 노예사장",
+                unit: "mm",
+                type: 0,
+                error_minimum: 30.0,
+                error_maximum: 150.0,
+                samples: 5,
+                data_result: [
+                    {
+                        sequence: 1,
+                        value: "345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 2,
+                        value: "2345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 3,
+                        value: "3345.7",
+                        pass: true
+                    }
+                ]
+            }
+        ],
+        end: [
+            {
+                title: "차종환 돌격대(생존)",
+                unit: "mm",
+                type: 0,
+                error_minimum: 30.0,
+                error_maximum: 150.0,
+                samples: 5,
+                data_result: [
+                    {
+                        sequence: 1,
+                        value: "345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 2,
+                        value: "2345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 3,
+                        value: "3345.7",
+                        pass: true
+                    }
+                ]
+            },
+            {
+                title: "백찬 척후병대장",
+                unit: "mm",
+                type: 0,
+                error_minimum: 30.0,
+                error_maximum: 150.0,
+                samples: 5,
+                data_result: [
+                    {
+                        sequence: 1,
+                        value: "345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 2,
+                        value: "2345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 3,
+                        value: "3345.7",
+                        pass: true
+                    }
+                ]
+            },
+            {
+                title: "차종환 노예사장",
+                unit: "mm",
+                type: 0,
+                error_minimum: 30.0,
+                error_maximum: 150.0,
+                samples: 5,
+                data_result: [
+                    {
+                        sequence: 1,
+                        value: "345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 2,
+                        value: "2345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 3,
+                        value: "3345.7",
                         pass: true
                     }
                 ]
@@ -138,11 +264,43 @@ const dump = {
         ]
     },
     inspection_time: {
-        middle: "2022-01-04T08:03:58.43",
-        beginning: "2022-01-04T08:03:58.43",
-        end: "2022-01-04T08:03:58.43"
+        middle: "2022-01-06T19:08:58.02",
+        beginning: "2022-01-06T19:08:58.02",
+        end: "2022-01-06T19:08:58.02"
     },
-    version: 0
+    inspection_result: {
+        middle: [
+            {
+                sequence: 1,
+                pass: true
+            },
+            {
+                sequence: 2,
+                pass: false
+            }
+        ],
+        beginning: [
+            {
+                sequence: 1,
+                pass: true
+            },
+            {
+                sequence: 2,
+                pass: false
+            }
+        ],
+        end: [
+            {
+                sequence: 1,
+                pass: true
+            },
+            {
+                sequence: 2,
+                pass: false
+            }
+        ]
+    },
+    version: 1
 }
 
 const MidrangeExcelTable = () => {
@@ -157,7 +315,7 @@ const MidrangeExcelTable = () => {
                 temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex].value = e.target.value
             } else {
                 temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex] = {
-                    sequence: String(dataResultIndex),
+                    sequence: dataResultIndex,
                     value: e.target.value,
                     pass: true
                 }
@@ -167,13 +325,21 @@ const MidrangeExcelTable = () => {
                 temp.inspection_info.middle[itemIndex].data_result[dataResultIndex].value = e.target.value
             } else {
                 temp.inspection_info.middle[itemIndex].data_result[dataResultIndex] = {
-                    sequence: String(dataResultIndex),
+                    sequence: dataResultIndex,
                     value: e.target.value,
                     pass: true
                 }
             }
         }else {
-
+            if (temp.inspection_info.end[itemIndex].data_result[dataResultIndex] !== undefined) {
+                temp.inspection_info.end[itemIndex].data_result[dataResultIndex].value = e.target.value
+            } else {
+                temp.inspection_info.end[itemIndex].data_result[dataResultIndex] = {
+                    sequence: dataResultIndex,
+                    value: e.target.value,
+                    pass: true
+                }
+            }
         }
 
         // @ts-ignore
@@ -188,7 +354,7 @@ const MidrangeExcelTable = () => {
                 temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex].value = e.target.value
             } else {
                 temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex] = {
-                    sequence: String(dataResultIndex),
+                    sequence: dataResultIndex,
                     value: e.target.value,
                     pass: true
                 }
@@ -198,13 +364,21 @@ const MidrangeExcelTable = () => {
                 temp.inspection_info.middle[itemIndex].data_result[dataResultIndex].value = e.target.value
             } else {
                 temp.inspection_info.middle[itemIndex].data_result[dataResultIndex] = {
-                    sequence: String(dataResultIndex),
+                    sequence: dataResultIndex,
                     value: e.target.value,
                     pass: true
                 }
             }
         }else {
-
+            if (temp.inspection_info.end[itemIndex].data_result[dataResultIndex] !== undefined) {
+                temp.inspection_info.end[itemIndex].data_result[dataResultIndex].value = e.target.value
+            } else {
+                temp.inspection_info.end[itemIndex].data_result[dataResultIndex] = {
+                    sequence: dataResultIndex,
+                    value: e.target.value,
+                    pass: true
+                }
+            }
         }
 
         // @ts-ignore
@@ -234,7 +408,14 @@ const MidrangeExcelTable = () => {
                 }
             }
         }else {
-
+            if (temp.inspection_result.end[resultIndex] !== undefined) {
+                temp.inspection_result.end[resultIndex].pass = e.target.value === '합격'
+            } else {
+                temp.inspection_result.end[resultIndex] = {
+                    sequence: resultIndex+1,
+                    pass: e.target.value === '합격'
+                }
+            }
         }
 
         // @ts-ignore
@@ -399,7 +580,7 @@ const MidrangeExcelTable = () => {
                             {moment(testData.inspection_time.end).format("YYYY.MM.DD HH:mm")}
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
-                            {formItemHeader(testData.inspection_info.middle)}
+                            {formItemHeader(testData.inspection_info.end)}
                         </div>
                     </div>
                     <CellDefault style={{width: '432px', height: '40px' }}>
@@ -407,9 +588,9 @@ const MidrangeExcelTable = () => {
                     </CellDefault>
                 </div>
                 <div>
-                    {formItemResult(testData.inspection_info.beginning, 'end')}
+                    {formItemResult(testData.inspection_info.end, 'end')}
                     <div style={{display: "flex"}}>
-                        {resultRow(testData.inspection_info.beginning, testData.inspection_result.end, 'end')}
+                        {resultRow(testData.inspection_info.end, testData.inspection_result.end, 'end')}
                     </div>
                 </div>
             </div>

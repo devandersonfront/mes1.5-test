@@ -107,7 +107,7 @@ export type InspectionInfo = {
 
 
 type InspectionDataResult = {
-  sequence: string
+  sequence: number
   value: string
   pass: boolean
 }
