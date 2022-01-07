@@ -81,127 +81,127 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
     let res: any
-    // res = await RequestMethod('post', `sheetSave`,
-    //   basicRow.map((row, i) => {
-    //     if(selectList.has(row.id)){
-    //       let selectKey: string[] = []
-    //       let additional:any[] = []
-    //       column.map((v) => {
-    //         if(v.selectList){
-    //           selectKey.push(v.key)
-    //         }
-    //
-    //         if(v.type === 'additional'){
-    //           additional.push(v)
-    //         }
-    //       })
-    //
-    //       let selectData: any = {}
-    //
-    //       Object.keys(row).map(v => {
-    //         if(v.indexOf('PK') !== -1) {
-    //           selectData = {
-    //             ...selectData,
-    //             [v.split('PK')[0]]: row[v]
-    //           }
-    //         }
-    //
-    //         if(v === 'unitWeight') {
-    //           selectData = {
-    //             ...selectData,
-    //             unitWeight: Number(row['unitWeight'])
-    //           }
-    //         }
-    //
-    //         if(v === 'tmpId') {
-    //           selectData = {
-    //             ...selectData,
-    //             id: row['tmpId']
-    //           }
-    //         }
-    //       })
-    //
-    //       return {
-    //         ...row,
-    //         ...selectData,
-    //         input_bom: row.input ?? [],
-    //         status: 1,
-    //         additional: [
-    //           ...additional.map(v => {
-    //             if(row[v.name]) {
-    //               return {
-    //                 id: v.id,
-    //                 title: v.name,
-    //                 value: row[v.name],
-    //                 unit: v.unit
-    //               }
-    //             }
-    //           }).filter((v) => v)
-    //         ]
-    //       }
-    //
-    //     }
-    //   }).filter((v) => v))
-  console.log(basicRow.map((row, i) => {
-    if(selectList.has(row.id)){
-      let selectKey: string[] = []
-      let additional:any[] = []
-      column.map((v) => {
-        if(v.selectList){
-          selectKey.push(v.key)
-        }
+    res = await RequestMethod('post', `sheetSave`,
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
+            }
 
-        if(v.type === 'additional'){
-          additional.push(v)
-        }
-      })
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
 
-      let selectData: any = {}
+          let selectData: any = {}
 
-      Object.keys(row).map(v => {
-        if(v.indexOf('PK') !== -1) {
-          selectData = {
-            ...selectData,
-            [v.split('PK')[0]]: row[v]
-          }
-        }
-
-        if(v === 'unitWeight') {
-          selectData = {
-            ...selectData,
-            unitWeight: Number(row['unitWeight'])
-          }
-        }
-
-        if(v === 'tmpId') {
-          selectData = {
-            ...selectData,
-            id: row['tmpId']
-          }
-        }
-      })
-
-      return {
-        ...row,
-        ...selectData,
-        input_bom: row.input ?? [],
-        status: 1,
-        additional: [
-          ...additional.map(v => {
-            if(row[v.name]) {
-              return {
-                id: v.id,
-                title: v.name,
-                value: row[v.name],
-                unit: v.unit
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
               }
             }
-          }).filter((v) => v)
-        ]
-      }
 
-    }
-  }).filter((v) => v))
+            if(v === 'unitWeight') {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(row['unitWeight'])
+              }
+            }
+
+            if(v === 'tmpId') {
+              selectData = {
+                ...selectData,
+                id: row['tmpId']
+              }
+            }
+          })
+
+          return {
+            ...row,
+            ...selectData,
+            input_bom: row.input ?? [],
+            status: 1,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
+          }
+
+        }
+      }).filter((v) => v))
+  // console.log(basicRow.map((row, i) => {
+  //   if(selectList.has(row.id)){
+  //     let selectKey: string[] = []
+  //     let additional:any[] = []
+  //     column.map((v) => {
+  //       if(v.selectList){
+  //         selectKey.push(v.key)
+  //       }
+  //
+  //       if(v.type === 'additional'){
+  //         additional.push(v)
+  //       }
+  //     })
+  //
+  //     let selectData: any = {}
+  //
+  //     Object.keys(row).map(v => {
+  //       if(v.indexOf('PK') !== -1) {
+  //         selectData = {
+  //           ...selectData,
+  //           [v.split('PK')[0]]: row[v]
+  //         }
+  //       }
+  //
+  //       if(v === 'unitWeight') {
+  //         selectData = {
+  //           ...selectData,
+  //           unitWeight: Number(row['unitWeight'])
+  //         }
+  //       }
+  //
+  //       if(v === 'tmpId') {
+  //         selectData = {
+  //           ...selectData,
+  //           id: row['tmpId']
+  //         }
+  //       }
+  //     })
+  //
+  //     return {
+  //       ...row,
+  //       ...selectData,
+  //       input_bom: row.input ?? [],
+  //       status: 1,
+  //       additional: [
+  //         ...additional.map(v => {
+  //           if(row[v.name]) {
+  //             return {
+  //               id: v.id,
+  //               title: v.name,
+  //               value: row[v.name],
+  //               unit: v.unit
+  //             }
+  //           }
+  //         }).filter((v) => v)
+  //       ]
+  //     }
+  //
+  //   }
+  // }).filter((v) => v))
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
