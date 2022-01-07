@@ -2,7 +2,7 @@ import React, {ChangeEvent} from 'react';
 import styled from "styled-components";
 import {MidrangeExcelDropdown} from "../Dropdown/MidrangeExcelDropdown";
 import moment from "moment";
-import {InspectionInfo} from "../../@types/type";
+import {InspectionFinalDataResult, InspectionInfo} from "../../@types/type";
 
 const dump = {
     operation_inspection_id: "61d55d578aa961291d3f40ae",
@@ -26,6 +26,11 @@ const dump = {
         serviceAddress: null
     },
     sic_id: "sic-2323",
+    inspection_result: {
+      beginning: [{sequence: 1, pass: true}, {sequence: 2, pass: false}],
+      middle: [{sequence: 1, pass: true}, {sequence: 2, pass: false}],
+      end: [{sequence: 1, pass: true}, {sequence: 2, pass: false}]
+    },
     inspection_info: {
         middle: [
             {
@@ -177,7 +182,6 @@ const MidrangeExcelTable = () => {
 
     const itemDataResultDropdownChange = (inspection_info: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLSelectElement>, itemIndex, dataResultIndex) => {
 
-        console.log(inspection_info, e.target.value, itemIndex, dataResultIndex)
         const temp = testData
         if(inspection_info === 'beginning') {
             if (temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex] !== undefined) {
@@ -202,7 +206,37 @@ const MidrangeExcelTable = () => {
         }else {
 
         }
-        console.log(temp)
+
+        // @ts-ignore
+        setTestData({...testData, temp})
+    }
+
+
+    const dataResultDropdownChange = (inspection_info: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLSelectElement>, resultIndex) => {
+
+        const temp = testData
+        if(inspection_info === 'beginning') {
+            if (temp.inspection_result.beginning[resultIndex] !== undefined) {
+                temp.inspection_result.beginning[resultIndex].pass = e.target.value === '합격'
+            } else {
+                temp.inspection_result.beginning[resultIndex] = {
+                    sequence: resultIndex+1,
+                    pass: e.target.value === '합격'
+                }
+            }
+        }else if(inspection_info === 'middle'){
+            if (temp.inspection_result.middle[resultIndex] !== undefined) {
+                temp.inspection_result.middle[resultIndex].pass = e.target.value === '합격'
+            } else {
+                temp.inspection_result.middle[resultIndex] = {
+                    sequence: resultIndex+1,
+                    pass: e.target.value === '합격'
+                }
+            }
+        }else {
+
+        }
+
         // @ts-ignore
         setTestData({...testData, temp})
     }
@@ -222,7 +256,7 @@ const MidrangeExcelTable = () => {
         return (
             inspection_info && inspection_info.map((v,i)=>
             <div style={{display: "flex"}} key={v.samples+'~'+i}>
-                <CellDefault style={{width: '144px', height: '40px', borderBottom: 0, borderRight: 0 }}>
+                <CellDefault style={{width: '144px', height: '40px', borderBottom: 0, borderRight: 0, textAlign: "center" }}>
                     {v.title}
                 </CellDefault>
                 <CellDefault style={{width: '120px', height: '40px', flexDirection: "column", borderBottom: 0  }}>
@@ -251,8 +285,8 @@ const MidrangeExcelTable = () => {
                                 :
                                 inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ?
                                     //contents 를 legendary 로 변경 해야함
-                                    <MidrangeExcelDropdown contents={['12','3454.7','1234']} value={value.data_result[i].value } onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> :
-                                    <MidrangeExcelDropdown contents={['12','3454.7','1234']} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> : '-'
+                                    <MidrangeExcelDropdown contents={['O','X']} value={value.data_result[i].value } onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> :
+                                    <MidrangeExcelDropdown contents={['O','X']} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> : '-'
                             }
                         </ExampleNumber>
                     )}
@@ -261,15 +295,18 @@ const MidrangeExcelTable = () => {
         )
     }
 
-    const resultRow = (inspection_info: InspectionInfo[]) => {
+    const resultRow = (inspection_info: InspectionInfo[], inspection_result: InspectionFinalDataResult[], type: 'beginning' | 'middle' | 'end') => {
         return(
             ['01','02','01','02','01','02','01','02','01','02',].map((v,i)=>
                 <ExampleNumber>
-                    {/*{inspection_info[0].samples > i ?*/}
-                    {/*    <MidrangeExcelDropdown contents={['합격', '불합격']} onChange={()=>{}}/>*/}
-                    {/*    :*/}
-                    {/*    '-'*/}
-                    {/*}*/}
+                    {inspection_info[0].samples > i ?
+                        inspection_result[i] !== undefined ?
+                            <MidrangeExcelDropdown contents={['합격', '불합격']} onChange={(e)=>dataResultDropdownChange(type,e,i)} value={inspection_result[i].pass ? '합격' : '불합격'}/>
+                            :
+                            <MidrangeExcelDropdown contents={['합격', '불합격']} onChange={(e)=>dataResultDropdownChange(type,e,i)} value={''}/>
+                        :
+                        '-'
+                    }
                 </ExampleNumber>
             )
         )
@@ -322,7 +359,7 @@ const MidrangeExcelTable = () => {
                 <div>
                     {formItemResult(testData.inspection_info.beginning, 'beginning')}
                     <div style={{display: "flex"}}>
-                        {resultRow(testData.inspection_info.beginning)}
+                        {resultRow(testData.inspection_info.beginning, testData.inspection_result.beginning, 'beginning')}
                     </div>
                 </div>
             </div>
@@ -347,7 +384,7 @@ const MidrangeExcelTable = () => {
                 <div>
                     {formItemResult(testData.inspection_info.middle, 'middle')}
                     <div style={{display: "flex"}}>
-                        {resultRow(testData.inspection_info.middle)}
+                        {resultRow(testData.inspection_info.middle, testData.inspection_result.middle, 'middle')}
                     </div>
                 </div>
             </div>
@@ -372,7 +409,7 @@ const MidrangeExcelTable = () => {
                 <div>
                     {formItemResult(testData.inspection_info.beginning, 'end')}
                     <div style={{display: "flex"}}>
-                        {resultRow(testData.inspection_info.beginning)}
+                        {resultRow(testData.inspection_info.beginning, testData.inspection_result.end, 'end')}
                     </div>
                 </div>
             </div>

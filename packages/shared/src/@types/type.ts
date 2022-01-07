@@ -89,6 +89,11 @@ type ProductType = {
 }
 
 
+export type InspectionFinalDataResult = {
+  sequence: number
+  pass: boolean
+}
+
 export type InspectionInfo = {
     title: string
     unit: string

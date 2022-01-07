@@ -12,7 +12,7 @@ interface IProps {
 }
 
 const MidrangeExcelDropdown = ({contents,value,onChange}: IProps) => {
-    {console.log(value)}
+
     return (
         <select
             className={'editDropdown'}

@@ -184,6 +184,7 @@ export type {
   MachineType,
   ProductListType,
   InspectionInfo,
+  InspectionFinalDataResult,
 } from './@types/type'
 
 
