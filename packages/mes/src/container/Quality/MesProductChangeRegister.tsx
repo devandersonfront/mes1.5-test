@@ -49,8 +49,9 @@ const MesProductChangeRegister = () => {
                     e.map(v => {
                         if(v.isChange) tmp.add(v.id)
                     })
+                    console.log(e)
                     setSelectList(tmp)
-                    setBasicRow(e)
+                    setBasicRow(e.map(v => ({...v, name: v.product_name})))
                 }}
                 selectList={selectList}
                 //@ts-ignore

@@ -974,10 +974,10 @@ export const columnlist: any = {
     {key:"amount", name:"총 납품 수량", width: 118   },
   ],
   productChangeRegister: [
-    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168},
-    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480},
-    {key: "code", name: 'CODE', formatter: ProductSearchModal, disableType: 'record', width: 480},
-    {key: "material_name", name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력', width: 413}
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168, type: 'autoInput'},
+    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput'},
+    {key: "code", name: 'CODE',  formatter: SearchModalTest, type: 'product', width: 480},
+    {key: "name", name:"품명", formatter: PlaceholderBox, placeholder: '자동입력',type: 'autoInput'},
   ],
   productChangeList: [
     {key: "customer_id", name: '거래처', width: 120},
@@ -991,10 +991,10 @@ export const columnlist: any = {
     {key: 'writer', name: '작성자'}
   ],
   productChangeModify: [
-    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: "code", name: 'CODE',},
-    {key: "material_name", name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력'}
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168, type: 'autoInput'},
+    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput'},
+    {key: "code", name: 'CODE',  formatter: SearchModalTest, type: 'product', width: 480},
+    {key: "name", name:"품명", formatter: PlaceholderBox, placeholder: '자동입력',type: 'autoInput'},
   ],
   kpiLeadtimeManufacture: [
     {key: "customer_id", name: '거래처', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
