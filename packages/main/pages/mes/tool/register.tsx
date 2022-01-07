@@ -16,13 +16,4 @@ const ToolRegister = () => {
     );
 }
 
-export const getServerSideProps = (ctx: NextPageContext) => {
-    return {
-        props: {
-            page: ctx.query.page ?? 1,
-            keyword: ctx.query.keyword ?? "",
-            option: ctx.query.opt ?? 0,
-        }
-    }
-}
 export default ToolRegister;

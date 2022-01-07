@@ -93,10 +93,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         row = [{...res}]
       }
 
-      console.log(row)
       let searchList = row.map((row: any, index: number) => {
-        console.log(row.sum)
-        console.log("row.operation_sheet : ", row.operation_sheet)
 
         return {
           seq: row.sum.sequence,
@@ -106,7 +103,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
           unit: row.sum.operation_sheet?.product?.unit,
         }
       })
-      console.log("searchList : ", searchList);
       setSearchList([...searchList])
     }
   }

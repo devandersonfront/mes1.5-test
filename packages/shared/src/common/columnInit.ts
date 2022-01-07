@@ -167,7 +167,7 @@ export const columnlist: any = {
     {key: 'volt', name: '사용 전압',editor: TextEditor, formatter: UnitContainer, unitData: 'V', width: 118},
     {key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory',},
     {key: 'affiliated_id',name: '공장 세분화명', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory',},
-    {key: 'product_id',name: '생산 품목', width: 118, formatter: ProductInfoModal, type:"machine"},
+    {key: 'product_id',name: '생산 품목', width: 118, formatter: ProductInfoModal, type:"machine", headerType:[{name: "금형명"}]},
   ],
   device: [
     {key: 'mfrName', name: '장치 제조사', editor: TextEditor},
@@ -944,6 +944,39 @@ export const columnlist: any = {
     {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "code", name: 'CODE',},
     {key: "material_name", name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력'}
+  ],
+  toolRegister: [
+    {key: "code", name: '공구 CODE', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "name", name: '공구 품명', editor:TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
+    {key: "unit", name: '단위', formatter: DropDownEditor,
+      selectList:[
+        {pk: 0, name: "EA"},
+        {pk: 1, name: "g"},
+        {pk: 2, name: "kg"},
+        {pk: 3, name: "Ton"},
+        {pk: 4, name: "ml"},
+        {pk: 5, name: "L"},
+      ]},
+    {key: "customer", name: '거래처', formatter: SearchModalTest, placeholder: '거래처 입력', type:"customer"},
+    {key: "com", name: '공구 재고량', formatter: UnitContainer, unitData:"EA", },
+    {key: "product", name: '생산 품목', formatter:ProductInfoModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
+  ],
+  toolWarehousingRegister:[
+    {key: "code", name: '공구 CODE', formatter: SearchModalTest, type:"", placeholder: 'CODE 입력'},
+    {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '자동 입력'},
+    {key: "unit", name: '단위', formatter: PlaceholderBox, placeholder: '자동 입력'},
+    {key: "customer", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
+    {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "date", name: '입고일', formatter: CalendarBox},
+  ],
+  toolWarehousingList:[
+    {key: "elapsed", name: '경과일', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "code", name: '공구 CODE', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "name", name: '공구 품명', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "unit", name: '단위', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "customer", name: '거래처', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "date", name: '입고일', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
   ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},

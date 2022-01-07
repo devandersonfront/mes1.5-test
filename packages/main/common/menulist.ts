@@ -58,6 +58,7 @@ const BASIC_MENUS: IMenuType[] = [
   {title: '주변장치 기준정보', url: '/mes/basic/device'},
   {title: '기계 기준정보', url: '/mes/basic/machine'},
   {title: '금형 기준정보', url: '/mes/basic/moldV1u'},
+  // {title: '공구 기준정보', url: '/mes/basic/tool'},
   {title: '원자재 기준정보', url: '/mes/basic/rawmaterialV1u'},
   {title: '부자재 기준정보', url: '/mes/basic/submaterial'},
   {title: '제품 등록 관리', url: '/mes/basic/productV1u'},
@@ -99,20 +100,21 @@ const MES_MENUS: IMenuType[] = [
   {
     title: '품질 관리', url: '',
     subMenu: [
-      {title: '불량 통계 (자주검사 관리)', url: '/mes/quality/defect'},
-      {title: '초ㆍ중ㆍ종 검사 리스트', url: '/mes/quality/midrange/list'},
-      {title: '작업 표준서 관리', url: '/mes/quality/work/standardlist'},
-      {title: '변경점 정보 등록', url: '/mes/quality/product/change/register'},
-      {title: '변경점 정보 리스트', url: '/mes/quality/product/change/list'},
+      {title: '불량 통계', url: '/mes/quality/defect'},
+      // {title: '불량 통계 (자주검사 관리)', url: '/mes/quality/defect'},
+      // {title: '초ㆍ중ㆍ종 검사 리스트', url: '/mes/quality/midrange/list'},
+      // {title: '작업 표준서 관리', url: '/mes/quality/work/standardlist'},
+      // {title: '변경점 정보 등록', url: '/mes/quality/product/change/register'},
+      // {title: '변경점 정보 리스트', url: '/mes/quality/product/change/list'},
     ]
   },
-  {
-    title: '공구 관리', url: '',
-    subMenu: [
-      {title: '공구 입고 등록', url: '/mes/tool/register'},
-      {title: '공구 재고 현황', url: '/mes/tool/list'},
-    ]
-  },
+  // {
+  //   title: '공구 관리', url: '',
+  //   subMenu: [
+  //     {title: '공구 입고 등록', url: '/mes/tool/register'},
+  //     {title: '공구 재고 현황', url: '/mes/tool/list'},
+  //   ]
+  // },
   {
     title: '재고 관리', url: '',
     subMenu: [
@@ -131,6 +133,42 @@ const PMS_MENUS: IMenuType[] = [
     subMenu: [
       { title: '프레스 분석 모니터링', url: '/pms/v2/factoryMonitoring' },
       // { title: '프레스 현황 모니터링', url: '/pms/new/monitoring/press' }
+    ]
+  },
+  {
+    title: '프레스 통계 및 분석', url: '',
+    subMenu: [
+      { title : '생산량' , url : '/pms/v2/analysis/output'},
+      { title : '능력' , url : '/pms/v2/analysis/ability'},
+      { title : '에러' , url : '/pms/v2/analysis/error'},
+      { title : '전력' , url : '/pms/v2/analysis/power'},
+      { title : '기계 비가동 시간' , url: '/pms/v2/analysis/idleTime'},
+      { title : '작업시간' , url : '/pms/v2/analysis/workTime'},
+    ]
+  },
+  {
+    title: '프레스 관리', url: '',
+    subMenu: [
+      { title : '에러 보기' , url : '/pms/v2/press/maintenance/errorview'},
+      { title : '파라미터 보기' , url : '/pms/v2/press/maintenance/parameterview'},
+      { title : '캠 보기' , url : '/pms/v2/press/maintenance/camview'},
+      { title : '클러치&브레이크' , url : '/pms/v2/press/maintenance/clutchandbrake'},
+      { title : '설비 수리 요청 등록' , url : '/pms/v2/press/maintenance/facilities'},
+      { title : '설비 수리 요청 리스트' , url : '/pms/v2/press/maintenance/list'},
+      { title : '설비 수리 완료 리스트' , url : '/pms/v2/press/maintenance/complete'},
+      { title : '설비 수리 완료 리스트(관리자용)' , url : '/pms/v2/press/maintenance/complete/admin'},
+      { title : '설비 문제 유형 등록' , url : '/pms/v2/press/maintenance/problem'},
+    ]
+  },
+  {
+    title: '금형 관리', url: '',
+    subMenu: [
+      { title : '금형 타수 관리' , url : '/pms/v2/mold/maintenance'},
+      { title : '금형 수리 요청 등록' , url : '/pms/v2/mold/maintenance/repairs'},
+      { title : '금형 수리 요청 리스트' , url : '/pms/v2/mold/maintenance/list'},
+      { title : '금형 수리 완료 리스트' , url : '/pms/v2/mold/maintenance/complete'},
+      { title : '금형 수리 완료 리스트(관리자용)' , url : '/pms/v2/mold/maintenance/complete/admin'},
+      { title : '금형 문제 유형 등록' , url : '/pms/v2/mold/maintenance/problem'},
     ]
   },
   // {

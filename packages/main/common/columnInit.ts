@@ -420,13 +420,5 @@ export const columnlist: any = {
     {key:"date", name:"납품 날짜", editor: CalendarBox, maxDate:true},
     {key:"amount", name:"납품 개수", editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
   ],
-  toolRegister: [
-    {key:"code", name:"공구 CODE", formatter: SearchModalTest , type:"tool"  },
-    {key:"name", name:"공구 품명",},
-    {key:"customer_id", name:"단위",},
-    {key:"customer", name:"거래처",},
-    {key:"customer_id", name:"입고량", editor: TextEditor },
-    {key:"customer_id", name:"입고일", editor: CalendarBox},
-  ]
 }
 
