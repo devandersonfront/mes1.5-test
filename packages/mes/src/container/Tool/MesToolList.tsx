@@ -19,6 +19,8 @@ const MesToolList = () => {
         }
     ]);
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingList)
+    const [selectList, setSelectList] = useState<Set<number>>(new Set())
+
     return (
         <div>
             <PageHeader
@@ -34,7 +36,14 @@ const MesToolList = () => {
             <ExcelTable
                 headerList={[SelectColumn,...column]}
                 row={basicRow}
-                setRow={() => {}} />
+                setRow={(e) => {
+                    let tmp: Set<any> = selectList
+                    e.map(v => {
+                        if(v.isChange) tmp.add(v.id)
+                    })
+                    setSelectList(tmp)
+                    setBasicRow(e);
+                }} />
 
         </div>
     )

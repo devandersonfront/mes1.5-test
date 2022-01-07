@@ -146,7 +146,6 @@ const dummySearch = {
 
 
 const BasicTool = ({page, keyword, option}: IProps) => {
-    console.log(page, keyword, option)
     const router = useRouter();
     const [column, setColumn] = useState<any>(columnlist.toolRegister)
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
@@ -249,7 +248,6 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         //         pk = v
         //     }
         // })
-        console.log("tmpRow : ", tmpRow)
         let tmpBasicRow = tmpRow.map((row: any, index: number) => {
 
             let appendAdditional: any = {}
@@ -262,14 +260,12 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             })
 
             let random_id = Math.random()*1000;
-            console.log(row,  appendAdditional)
             return {
                 ...row,
                 ...appendAdditional,
                 id: `tool_${random_id}`,
             }
         })
-        console.log("tmpBasicRow : ", tmpBasicRow);
         setBasicRow([...tmpBasicRow])
     }
 

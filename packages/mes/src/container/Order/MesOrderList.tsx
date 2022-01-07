@@ -273,7 +273,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         process_id: row.product.process?.name,
         product_id: row.product.code,
         name: row.product.name,
-        type: TransferCodeToValue(row.product.type, 'material'),
+        type: TransferCodeToValue(row.product.type, 'product'),
         unit: row.product.unit,
         processArray: row.process,
         id: `mold_${random_id}`,
