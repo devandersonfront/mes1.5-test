@@ -111,3 +111,9 @@ type InspectionDataResult = {
   value: string
   pass: boolean
 }
+
+export type ChangeProductFileInfo = {
+  name: string
+  uuid: string
+  sequence: number
+}
