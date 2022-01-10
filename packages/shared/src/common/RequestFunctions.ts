@@ -224,6 +224,7 @@ const ApiList = {
   sheetSave: `/api/v1/sheet/save`,
   shipmentSave: `/api/v1/shipment/save`,
   toolSave: `/cnc/api/v1/tool/save`,
+  lotToolSave: `/cnc/api/v1/lot-tool/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -263,6 +264,7 @@ const ApiList = {
   sheetDelete: `/api/v1/sheet/delete`,
   recodeDelete: `/api/v1/record/delete`,
   toolDelete: `/cnc/api/v1/tool/delete`,
+  lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,
@@ -302,6 +304,7 @@ const ApiList = {
   recordGroupList: `/api/v1/record/groups`,
   stockAdminList: '/api/v1/stock/admin/summary',
   toolList: `/cnc/api/v1/tool/list`,
+  lotToolList: `/cnc/api/v1/lot-tool/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -338,6 +341,7 @@ const ApiList = {
   itemDelete: `/menu/delete`,
   deviceSearch: `/api/v1/device/search`,
   toolSearch: `/cnc/api/v1/tool/search`,
+  toolLotSearch: `/cnc/api/v1/lot-tool/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,

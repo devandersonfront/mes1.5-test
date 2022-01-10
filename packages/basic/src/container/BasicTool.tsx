@@ -10,7 +10,6 @@ import {
 //@ts-ignore
 import {SelectColumn} from "react-data-grid";
 import {columnlist} from "shared";
-import {NextPageContext} from "next";
 import {useRouter} from "next/router";
 
 export interface IProps {
@@ -321,21 +320,20 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     }
 
     const LoadBasic = async() => {
-        // const res = await RequestMethod("get", "toolList", {
-        //     path:{
-        //         page:page,
-        //         renderItem:18
-        //     },
-        //     params:{
-        //
-        //     }
-        // })
+        const res = await RequestMethod("get", "toolList", {
+            path:{
+                page:page,
+                renderItem:18
+            },
+            params:{
+
+            }
+        })
 
         // if(res){
-        console.log(dummyList)
-            setPageInfo({...pageInfo, total:dummyList.totalPages});
-            cleanUpData(dummyList);
-            // console.log(resultData);
+            const resultData = cleanUpData(dummyList);
+            setPageInfo({...pageInfo, total:res.totalPages});
+            // setPageInfo({...pageInfo, total:dummyList.totalPages});
         if(dummyList){
             // setBasicRow(resultData);
         }
@@ -388,7 +386,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         // setOptionIndex(option)
         console.log(keyword)
         if(keyword){
-            SearchBasic();
+            // SearchBasic();
         }else{
             LoadBasic();
         }

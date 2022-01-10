@@ -105,7 +105,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     }
 
     tmpData = row.map((v, i) => {
-
+      console.log("v : ", v)
       return {
         seq: i+1,
         lot_number: v.sum.lot_number,
@@ -131,7 +131,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         renderItem: 18,
       },
     })
-
+    console.log("res : ", res)
     if(res){
       const searchList = changeRow(res)
 
