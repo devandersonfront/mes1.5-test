@@ -244,8 +244,8 @@ export const columnlist: any = {
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
     {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, formatter: PlaceholderBox, placeholder: 0},
-    {key: 'work_standard', name: '작업 표준서', formatter: FileEditer},
-    {key: 'midrange', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록', url: '/mes/basic/midrange/register' }
+    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer},
+    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' }
   ],
   // rawmaterial: [
   //   {key: 'customer_id',},
@@ -690,16 +690,16 @@ export const columnlist: any = {
   ],
   midrange: [
     {key: 'samples', name: '시료 개수 선택 (최소 1 ~ 최대 10개)', formatter: DropDownEditor, selectList: [
-        {pk: 'one', name: '1'},
-        {pk: 'two', name: '2'},
-        {pk: 'three', name: '3'},
-        {pk: 'four', name: '4'},
-        {pk: 'five', name: '5'},
-        {pk: 'six', name: '6'},
-        {pk: 'seven', name: '7'},
-        {pk: 'eight', name: '8'},
-        {pk: 'nine', name: '9'},
-        {pk: 'ten', name: '10'},
+        {pk: 'one', name: 1},
+        {pk: 'two', name: 2},
+        {pk: 'three', name: 3},
+        {pk: 'four', name: 4},
+        {pk: 'five', name: 5},
+        {pk: 'six', name: 6},
+        {pk: 'seven', name: 7},
+        {pk: 'eight', name: 8},
+        {pk: 'nine', name: 9},
+        {pk: 'ten', name: 10},
       ]}
   ],
   midrangeDetail: [
@@ -740,12 +740,12 @@ export const columnlist: any = {
         {pk: 'ml', name: 'ml'},
         {pk: 'L', name: 'L'},
       ]},
-    {key: 'standard', name: '점검 기준', width: 424, formatter: PlaceholderBox, placeholder: '점검 기준 입력', editor: TextEditor},
-    {key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216, formatter: PlaceholderBox, placeholder: '최소값 입력',editor: TextEditor},
-    {key: 'error_maximum', name: '최대값(오차범위 최대)', width: 216, formatter: PlaceholderBox, placeholder: '최대값 입력',editor: TextEditor},
+    {key: 'standard', name: '점검 기준', width: 424, placeholder: '점검 기준 입력', editor: TextEditor, formatter: UnitContainer,},
+    {key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216, formatter: UnitContainer, placeholder: '최소값 입력',editor: TextEditor},
+    {key: 'error_maximum', name: '최대값(오차범위 최대)', width: 216, formatter: UnitContainer, placeholder: '최대값 입력',editor: TextEditor},
     {key: 'type', name: '기록 방법', width: 120, formatter: DropDownEditor, selectList: [
-        {pk: '1', name: '수치 입력'},
-        {pk: '0', name: '범례 적용'},
+        {pk: 0, name: '수치 입력'},
+        {pk: 1, name: '범례 적용'},
       ] },
   ],
   midrangeInspectionItemDetail: [
