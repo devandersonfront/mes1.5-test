@@ -8,4 +8,4 @@ const MidrangeRegisterModal = () => {
     );
 };
 
-export default MidrangeRegisterModal;
+export {MidrangeRegisterModal};

@@ -123,6 +123,18 @@ const MES_MENUS: IMenuType[] = [
       {title: '생산/납품 현황(관리자용)', url: '/mes/stock/admin'},
     ]
   },
+  {
+    title: 'KPI', url: '',
+    subMenu: [
+      {title: '제조리드타임(P)', url: '/mes/kpi/leadtime/manufacture'},
+      {title: '작업공수(C)', url: '/mes/kpi/manhour'},
+      {title: '품질 불량률(Q)', url: '/mes/kpi/defect'},
+      {title: '수주/납품 리드타임(D)', url: '/mes/kpi/leadtime/order'},
+      {title: '전력사용량(E)', url: '/mes/kpi/powerusage'},
+      {title: 'UPH(P)', url: '/mes/kpi/uph'},
+      {title: '설비가동률(P)', url: '/mes/kpi/operation'}
+    ]
+  }
 ]
 
 const PMS_MENUS: IMenuType[] = [

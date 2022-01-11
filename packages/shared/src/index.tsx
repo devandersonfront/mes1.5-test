@@ -91,7 +91,9 @@ export {LotNumberRegister} from "./components/Cell/LotNumberRegister"
 
 //드롭다운
 export {DropDownEditor} from "./components/Dropdown/ExcelBasicDropdown"
+export {MidrangeExcelDropdown} from './components/Dropdown/MidrangeExcelDropdown'
 
+export {MidrangeExcelTable} from "./components/Excel/MidrangeExcelTable"
 export {ExcelTable} from "./components/Excel/ExcelTable"
 
 export {FileEditer} from "./components/FileUpload/ExcelBasicFileUpload"
@@ -154,6 +156,8 @@ export {WorkRegisterModal} from './components/Modal/WorkRegisterModal'
 export {OperationInfoModal} from './components/Modal/OperationInfoModal'
 export {InfoModal} from './components/Modal/InfoModal'
 export {LotInputInfoModal} from './components/Modal/LotInputInfoModal'
+export {MidrangeFormReviewModal} from './components/Modal/MidrangeFormReviewModal'
+export {MidrangeRegisterModal} from './components/Modal/MidrangeRegisterModal'
 
 export {TestModule} from "./components/ComponentTest"
 
@@ -179,6 +183,8 @@ export type {
   IItemMenuType,
   MachineType,
   ProductListType,
+  InspectionInfo,
+  InspectionFinalDataResult,
 } from './@types/type'
 
 

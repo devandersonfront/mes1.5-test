@@ -1,6 +1,7 @@
 import React from 'react';
 import MenuNavigation from "../../../../../../component/MenuNav/MenuNavigation";
 import ProfileHeader from "../../../../../../component/Profile/ProfileHeader";
+import {BasicMidrangeDetail} from "../../../../../../../basic";
 
 const BasicContainer = () => {
     return (
@@ -8,6 +9,7 @@ const BasicContainer = () => {
             <MenuNavigation pageType={'BASIC'}/>
             <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
+                <BasicMidrangeDetail/>
             </div>
         </div>
     );
