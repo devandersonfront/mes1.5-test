@@ -23,7 +23,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     date: moment().format('YYYY-MM-DD'),
     limit_date: moment().format('YYYY-MM-DD')
   }])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["deliveryRegister"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["deliveryRegister"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   // const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
   // const [optionIndex, setOptionIndex] = useState<number>(0)

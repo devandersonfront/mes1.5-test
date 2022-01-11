@@ -900,7 +900,7 @@ export const columnlist: any = {
     {key:"unit", name:"단위", width: 118 , formatter: PlaceholderBox, placeholder: '자동입력'  },
     {key:"date", name:"납품 날짜", width: 118, formatter: CalendarBox   },
     {key:"lot_number", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base'   },
-    {key:"amount", name:"총 납품 수량", width: 118, formatter: PlaceholderBox, placeholder: '0'   },
+    {key:"amount", name:"총 납품 수량", width: 118, formatter:  /*PlaceholderBox*/ LotDeliveryInfoModal, placeholder: '0', type:"placeholder" },
   ],
   deliveryList: [
     {key:"identification", name:"납품 번호", width: 118},

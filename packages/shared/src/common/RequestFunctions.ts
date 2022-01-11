@@ -346,6 +346,7 @@ const ApiList = {
   //all
   authorityAll: `/api/v1/auth/all`,
   recordAll: `/api/v1/record/all`,
+  shipmentAll:`/api/v1/shipment/all`,
 
   //fetch
   summaryFetch: `/api/v1/stock/summary/fetch`,
