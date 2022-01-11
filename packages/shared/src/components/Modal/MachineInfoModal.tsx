@@ -84,8 +84,8 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }, [isOpen, searchKeyword])
 
   const ModalContents = () => {
-    if(row?.machines){
-      if(row.machines.length > 0){
+    // if(row?.machines){
+      if(row?.machines?.length > 0){
         return <>
           <div style={{
             padding: '3.5px 0px 0px 3.5px',
@@ -112,7 +112,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           </div>
         </>
       }
-      }
+      // }
     }
 
   return (

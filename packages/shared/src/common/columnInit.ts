@@ -242,6 +242,7 @@ export const columnlist: any = {
     {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister"},
     {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process"},
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
+    // {key: 'tool_id', name: '공구', formatter: MoldInfoModal},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
     {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, formatter: PlaceholderBox, placeholder: 0},
     {key: 'work_standard', name: '작업 표준서', formatter: FileEditer},
@@ -946,7 +947,7 @@ export const columnlist: any = {
     {key:"unit", name:"단위", width: 118 , formatter: PlaceholderBox, placeholder: '자동입력'  },
     {key:"date", name:"납품 날짜", width: 118, formatter: CalendarBox   },
     {key:"lot_number", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base'   },
-    {key:"amount", name:"총 납품 수량", width: 118, formatter: PlaceholderBox, placeholder: '0'   },
+    {key:"amount", name:"총 납품 수량", width: 118, formatter:  /*PlaceholderBox*/ LotDeliveryInfoModal, placeholder: '0', type:"placeholder" },
   ],
   deliveryList: [
     {key:"identification", name:"납품 번호", width: 118},

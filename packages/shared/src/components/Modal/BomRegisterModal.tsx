@@ -47,7 +47,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const selector = useSelector((state:RootState) => state.infoModal)
 
   const [bomDummy, setBomDummy] = useState<any[]>([
-    {customer: '-', model: '-', code: 'SU-20210701-3', name:'SU900-1', type: 'type', unit: 'EA'},
+    // {customer: '-', model: '-', code: 'SU-20210701-3', name:'SU900-1', type: 'type', unit: 'EA'},
   ])
   const [summaryData, setSummaryData] = useState<any>({})
 
@@ -68,6 +68,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      console.log("searchList : ", searchList);
       if(row.bom_root_id){
         SearchBasic().then(() => {
           Notiflix.Loading.remove()
@@ -109,6 +110,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     }else{
       tmpRows = [{...tmpRow}]
     }
+    console.log("tmpRows : ", tmpRows)
 
 
     tmpData = tmpRows.map((v, i) => {
@@ -158,7 +160,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         disturbance: Number(row.goal) * Number(v.usage),
         processArray: childData.process ?? null,
         process: childData.process ? childData.process.name : '-',
-        spare:'부',
+        // spare:'부',
         bom_root_id: childData.bom_root_id,
         product: v.type === 2 ?{
           ...childData,
@@ -182,6 +184,8 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
         if(res){
           let searchList = changeRow(res)
+          console.log("searchList : ", searchList);
+
           dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
           setSearchList([...searchList])
         }else{
@@ -192,6 +196,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
         if(res){
           let searchList = changeRow(res)
+          console.log("! searchList : ", searchList)
           dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
           setSearchList([...searchList])
         }else{
