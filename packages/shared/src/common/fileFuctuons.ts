@@ -10,7 +10,7 @@ import Notiflix from "notiflix";
  * @param {string} data BLOB 객체
  * @returns X
  */
-export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, ) => {
+export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, fileType?: string) => {
   // const res = await requestApi('post',`${SF_ENDPOINT}/anonymous/upload`, data, )
     let result:any;
     const type = data.type.split("/")[0];
@@ -20,7 +20,12 @@ export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, 
                       {
                           "Content-Type": data.type,
                           "Content-Length": length
-                      } : {}
+                      } : fileType !== undefined ?
+                          {
+                              "Content-Type": fileType,
+                          }
+                          :
+                          {}
                 })
           .then((res) => {
               result = res.data;

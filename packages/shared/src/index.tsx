@@ -185,6 +185,7 @@ export type {
   ProductListType,
   InspectionInfo,
   InspectionFinalDataResult,
+  ChangeProductFileInfo,
 } from './@types/type'
 
 

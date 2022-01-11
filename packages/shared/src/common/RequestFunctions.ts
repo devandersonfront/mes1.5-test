@@ -224,6 +224,7 @@ const ApiList = {
   sheetSave: `/api/v1/sheet/save`,
   shipmentSave: `/api/v1/shipment/save`,
   toolSave: `/cnc/api/v1/tool/save`,
+  inspecCategorySave: '/cnc/api/v1/inspec/category/save',
   lotToolSave: `/cnc/api/v1/lot-tool/save`,
 
   //modify
@@ -234,6 +235,7 @@ const ApiList = {
   productLoad: `/api/v1/product/load`,
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
+  inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -266,6 +268,7 @@ const ApiList = {
   toolDelete: `/cnc/api/v1/tool/delete`,
   lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
 
+
   //list
   authorityList: `/api/v1/member/auth/list`,
   memberList: `/api/v1/member/list`,
@@ -273,7 +276,8 @@ const ApiList = {
   modelList: `/api/v1/model/list`,
   processList: `/api/v1/process/list`,
   machineList: `/api/v1/machine/list`,
-  productList: `/api/v1/product/list`,
+  // productList: `/api/v1/product/list`,
+  productList: `/cnc/api/v1/product/list`,
   rawmaterialList: `/api/v1/rawmaterial/list`,
   moldList: `/api/v1/mold/list`,
   pauseReasonList: '/api/v1/process/reason/pause/list',
