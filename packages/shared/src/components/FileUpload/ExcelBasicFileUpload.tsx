@@ -29,6 +29,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
   const changeSetOnImage = (value:boolean) => {
       setOnImage(value)
   }
+
   return (
     // <input
     //   className={'editCell'}

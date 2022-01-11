@@ -58,7 +58,7 @@ const BASIC_MENUS: IMenuType[] = [
   {title: '주변장치 기준정보', url: '/mes/basic/device'},
   {title: '기계 기준정보', url: '/mes/basic/machine'},
   {title: '금형 기준정보', url: '/mes/basic/moldV1u'},
-  // {title: '공구 기준정보', url: '/mes/basic/tool'},
+  {title: '공구 기준정보', url: '/mes/basic/tool'},
   {title: '원자재 기준정보', url: '/mes/basic/rawmaterialV1u'},
   {title: '부자재 기준정보', url: '/mes/basic/submaterial'},
   {title: '제품 등록 관리', url: '/mes/basic/productV1u'},
@@ -101,20 +101,20 @@ const MES_MENUS: IMenuType[] = [
     title: '품질 관리', url: '',
     subMenu: [
       {title: '불량 통계', url: '/mes/quality/defect'},
-      // {title: '불량 통계 (자주검사 관리)', url: '/mes/quality/defect'},
-      // {title: '초ㆍ중ㆍ종 검사 리스트', url: '/mes/quality/midrange/list'},
-      // {title: '작업 표준서 관리', url: '/mes/quality/work/standardlist'},
-      // {title: '변경점 정보 등록', url: '/mes/quality/product/change/register'},
-      // {title: '변경점 정보 리스트', url: '/mes/quality/product/change/list'},
+      {title: '불량 통계 (자주검사 관리)', url: '/mes/quality/defect'},
+      {title: '초ㆍ중ㆍ종 검사 리스트', url: '/mes/quality/midrange/list'},
+      {title: '작업 표준서 관리', url: '/mes/quality/work/standardlist'},
+      {title: '변경점 정보 등록', url: '/mes/quality/product/change/register'},
+      {title: '변경점 정보 리스트', url: '/mes/quality/product/change/list'},
     ]
   },
-  // {
-  //   title: '공구 관리', url: '',
-  //   subMenu: [
-  //     {title: '공구 입고 등록', url: '/mes/tool/register'},
-  //     {title: '공구 재고 현황', url: '/mes/tool/list'},
-  //   ]
-  // },
+  {
+    title: '공구 관리', url: '',
+    subMenu: [
+      {title: '공구 입고 등록', url: '/mes/tool/register'},
+      {title: '공구 재고 현황', url: '/mes/tool/list'},
+    ]
+  },
   {
     title: '재고 관리', url: '',
     subMenu: [

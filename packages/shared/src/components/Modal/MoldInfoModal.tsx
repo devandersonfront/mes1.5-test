@@ -64,8 +64,8 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
 
   const ModalContents = () => {
-    if(row?.molds){
-      if(row.molds.length){
+    // if(row?.molds){
+      if(row?.molds?.length){
         return <>
           <div style={{
             padding: '3.5px 0px 0px 3.5px',
@@ -92,7 +92,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           </div>
         </>
       }
-    }
+    // }
   }
 
   return (

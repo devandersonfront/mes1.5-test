@@ -319,8 +319,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
-                console.log(searchList[selectRow], searchModalInit.excelColumnType, column.type)
-                console.log(row, row.name, column.type)
                 const selectNameFunction = (type:string) => {
                   switch(type){
                     case "bom":
