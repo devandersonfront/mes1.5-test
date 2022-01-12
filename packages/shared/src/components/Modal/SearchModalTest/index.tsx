@@ -329,6 +329,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                       return searchList[selectRow].name;
                     case "mold":
                       return searchList[selectRow].name;
+                    case "tool":
+                      return searchList[selectRow].name;
                     default:
                       return row.name;
                   }

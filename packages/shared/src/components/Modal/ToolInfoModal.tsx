@@ -21,7 +21,6 @@ interface IProps {
     modify: boolean
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
     [{title: '거래처', infoWidth: 144, key: 'customer'}, {title: '모델', infoWidth: 144, key: 'model'},],
@@ -69,7 +68,6 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             machine_idPK: row.machine_id,
             manager: row.manager ? row.manager.name : null
         }
-
 
         return tmpData
     }
@@ -240,7 +238,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
                         <ExcelTable
-                            headerList={searchModalList.moldInfo}
+                            headerList={searchModalList.toolInfo}
                             row={searchList ?? [{}]}
                             setRow={(e) => setSearchList([...e])}
                             width={1746}

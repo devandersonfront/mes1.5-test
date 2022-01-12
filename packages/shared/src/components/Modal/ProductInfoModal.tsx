@@ -50,11 +50,12 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
-    // if(isOpen) {
-    //   SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }
+    if(isOpen) {
+      cleanUpData();
+      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+      //   Notiflix.Loading.remove()
+      // })
+    }
   }, [isOpen, searchKeyword])
   // useEffect(() => {
   //   if(pageInfo.total > 1){
@@ -74,35 +75,119 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res){
-      let searchList = res.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      })
-
-      setSearchList([...searchList])
+  const cleanType = (type:number) => {
+    switch(type) {
+      case 0:
+        return "반제품"
+      case 1:
+        return "재공품"
+      case 2:
+        return "완제품"
+      default:
+        break;
     }
   }
+
+
+  const cleanUpData = () => {
+    switch(column.type){
+      case "mold" :
+        console.log("mold : ", row.product_id)
+        let moldArray = [];
+        row?.product_id.map((data)=>{
+          let result:any = {...data};
+          result.customerData = data?.customer;
+          result.customer = data?.customer?.name;
+          result.modelData = data?.model;
+          result.model = data?.model?.model;
+          result.type_id = data.type;
+          result.product_type = cleanType(data.type);
+          result.unit = data.unit;
+          result.stock = data.stock;
+
+
+          moldArray.push(result);
+        })
+        console.log("moldArray : ", moldArray)
+        setSearchList(moldArray);
+
+        return
+      case "machine" :
+        console.log("machine : ", row.product_id)
+        let machineArray = [];
+        row?.product_id?.map((data)=>{
+          let result:any = {...data};
+          result.customerData = data?.customer;
+          result.customer = data?.customer?.name;
+          result.modelData = data?.model;
+          result.model = data?.model?.model;
+          result.type_id = data?.type;
+          result.product_type = cleanType(data?.type);
+          result.unit = data?.unit;
+          result.stock = data?.stock;
+
+
+          machineArray.push(result);
+        })
+        console.log("machineArray : ", machineArray)
+        setSearchList(machineArray);
+        return
+
+      case "tool" :
+        console.log("tool : ", row?.product_id)
+        let toolArray = [];
+        row?.product_id?.map((data)=>{
+          let result:any = {...data};
+          result.customerData = data?.customer;
+          result.customer = data?.customer?.name;
+          result.modelData = data?.model;
+          result.model = data?.model?.model;
+          result.type_id = data?.type;
+          result.product_type = cleanType(data?.type);
+          result.unit = data?.unit;
+          result.stock = data?.stock;
+
+
+          toolArray.push(result);
+        })
+        console.log("toolArray : ", toolArray)
+        setSearchList(toolArray);
+
+        return
+      default :
+        break;
+    }
+  }
+
+  // const SearchBasic = async (keyword: any, option: number, page: number) => {
+  //   Notiflix.Loading.circle()
+  //   setKeyword(keyword)
+  //   setOptionIndex(option)
+  //   const res = await RequestMethod('get', `machineSearch`,{
+  //     path: {
+  //       page: page,
+  //       renderItem: 18,
+  //     },
+  //     params: {
+  //       keyword: keyword ?? '',
+  //       opt: option ?? 0
+  //     }
+  //   })
+  //
+  //   if(res){
+  //     let searchList = res.info_list.map((row: any, index: number) => {
+  //       return changeRow(row)
+  //     })
+  //
+  //     setPageInfo({
+  //       ...pageInfo,
+  //       page: res.page,
+  //       total: res.totalPages,
+  //     })
+  //
+  //     setSearchList([...searchList])
+  //   }
+  // }
 
   const settingTitle = (index:number, inindex?:number) => {
     if(column.type === "mold" && index === 0 ? 450 : 144)
@@ -242,7 +327,8 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
                 headerList={searchModalList.productInfo}
-                row={row.products ?? row.product_id ?? [{}]}
+                // row={row.products ?? row.product_id ?? [{}]}
+                row={searchList}
                 setRow={(e) => setSearchList([...e])}
                 width={1746}
                 rowHeight={32}

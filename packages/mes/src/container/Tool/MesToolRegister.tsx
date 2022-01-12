@@ -20,6 +20,26 @@ const MesToolRegister = () => {
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
 
+    const SaveCleanUpData = (data:any[]) => {
+        let resultData = [];
+        console.log("data : ", data)
+        data.map((rowData, index) => {
+            let tmpRow:any = {};
+            tmpRow.tool_id = rowData?.tool_id;
+            tmpRow.code = rowData.code;
+            tmpRow.name = rowData.name;
+            tmpRow.unit = rowData.unitPK;
+            tmpRow.stock = rowData?.stock;
+            tmpRow.customer = rowData.customer;
+            tmpRow.additional = rowData?.additional ?? [];
+            tmpRow.version = rowData?.version ?? undefined;
+
+            resultData.push(tmpRow);
+        })
+        console.log(resultData)
+        return resultData;
+    }
+
     const SaveBasic = async(data:any) => {
         const res = await RequestMethod("post", "toolLotSave", data)
 
@@ -46,8 +66,9 @@ const MesToolRegister = () => {
                 })
                 console.log(basicRow)
                 //result 값 가지고 save
+                SaveCleanUpData(result)
                 console.log(result)
-                // SaveBasic(result);
+                SaveBasic(SaveCleanUpData(result));
 
                 return
             case 2:
