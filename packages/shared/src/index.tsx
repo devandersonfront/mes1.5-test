@@ -30,6 +30,8 @@ export {
 
 export {columnlist} from "./common/columnInit"
 
+export {V_columnlist} from "./common/columnInit1.5v"
+
 export {
   //스타일 커스텀 변수
   TOKEN_NAME,
@@ -149,6 +151,7 @@ export {WorkRegisterModal} from './components/Modal/WorkRegisterModal'
 export {OperationInfoModal} from './components/Modal/OperationInfoModal'
 export {InfoModal} from './components/Modal/InfoModal'
 export {LotInputInfoModal} from './components/Modal/LotInputInfoModal'
+export {BarcodeModal} from './components/Modal/BarcodeModal'
 
 export {TestModule} from "./components/ComponentTest"
 
