@@ -27,10 +27,7 @@ const MesProductChangeRegister = () => {
             {name: '', uuid: '', sequence: 3},
         ]
     )
-    const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-        page: 1,
-        total: 1
-    })
+
 
     const fileChange = (fileInfo: ChangeProductFileInfo, index: number) => {
         const temp = files
@@ -59,7 +56,7 @@ const MesProductChangeRegister = () => {
                     e.map(v => {
                         if(v.isChange) tmp.add(v.id)
                     })
-                    console.log(e)
+
                     setSelectList(tmp)
                     setBasicRow(e.map(v => ({...v, name: v.product_name})))
                 }}
@@ -67,13 +64,6 @@ const MesProductChangeRegister = () => {
                 //@ts-ignore
                 setSelectList={setSelectList}
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-                scrollEnd={(value) => {
-                    if(value){
-                        if(pageInfo.total > pageInfo.page){
-                            setPageInfo({...pageInfo, page:pageInfo.page+1})
-                        }
-                    }
-                }}
             />
             <TitleInput title={'제목'} value={changeInfo.title} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, title: e.target.value})}/>
             <TitleTextArea title={'설명'} value={changeInfo.content} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, content: e.target.value})}/>

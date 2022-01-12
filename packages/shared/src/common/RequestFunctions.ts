@@ -236,6 +236,7 @@ const ApiList = {
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
+  productChangeLoad: `/cnc/api/v1/product-changes/load`,
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
