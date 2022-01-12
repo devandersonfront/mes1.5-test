@@ -33,6 +33,8 @@ export {
 
 export {columnlist} from "./common/columnInit"
 
+export {V_columnlist} from "./common/columnInit1.5v"
+
 export {
   //스타일 커스텀 변수
   TOKEN_NAME,
@@ -166,6 +168,8 @@ export {PaginationComponent} from "./components/Pagination/PaginationComponent"
 export {UnitContainer} from "./components/Unit/UnitContainer"
 
 export {ProfileHeader} from "./components/Profile/ProfileHeader"
+
+export {BarcodeModal} from "./components/Modal/BarcodeModal"
 
 export {rootReducer} from "./reducer"
 
