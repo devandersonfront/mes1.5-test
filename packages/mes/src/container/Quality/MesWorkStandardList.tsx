@@ -4,7 +4,7 @@ import {
     ExcelTable,
     Header as PageHeader,
     IExcelHeaderType,
-    MAX_VALUE,
+    MAX_VALUE, PaginationComponent,
     RequestMethod,
     TextEditor
 } from "shared";
@@ -133,7 +133,6 @@ const MesWorkStandardList = ({page, keyword, option}: IProps)=> {
                 title={"작업 표준서 리스트"}
             />
             <ExcelTable
-                editable
                 headerList={[
                     SelectColumn,
                     ...column
@@ -152,6 +151,17 @@ const MesWorkStandardList = ({page, keyword, option}: IProps)=> {
                 // //@ts-ignore
                 // setSelectList={setSelectList}
                 // height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+            />
+            <PaginationComponent
+                currentPage={pageInfo.page}
+                totalPage={pageInfo.total}
+                setPage={(page) => {
+                    if(keyword){
+                        router.push(`/mes/quality/work/standardlist?page=${page}&keyword=${keyword}&opt=${option}`)
+                    }else{
+                        router.push(`/mes/quality/work/standardlist?page=${page}`)
+                    }
+                }}
             />
         </div>
     );

@@ -749,8 +749,8 @@ export const columnlist: any = {
     {key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216, formatter: UnitContainer, placeholder: '최소값 입력',editor: TextEditor},
     {key: 'error_maximum', name: '최대값(오차범위 최대)', width: 216, formatter: UnitContainer, placeholder: '최대값 입력',editor: TextEditor},
     {key: 'type', name: '기록 방법', width: 120, formatter: DropDownEditor, selectList: [
-        {pk: 0, name: '수치 입력'},
-        {pk: 1, name: '범례 적용'},
+        {pk: '0', name: '수치 입력'},
+        {pk: '1', name: '범례 적용'},
       ] },
   ],
   midrangeInspectionItemDetail: [
