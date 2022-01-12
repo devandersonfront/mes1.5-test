@@ -30,6 +30,19 @@ const BasicMidrangeRegister = () => {
     const [ isOpen, setIsOpen ] = useState<boolean>(false)
     const [legendarySelectList, setLegendarySelectList] = useState<Set<number>>(new Set())
     const [ItemSelectList, setItemSelectList] = useState<Set<number>>(new Set())
+    const [productId, setProductId] = useState<number>()
+
+    React.useEffect(()=>{
+        const data = {
+            customer: router.query.customer_id,
+            model: router.query.cm_id,
+            code: router.query.code,
+            material_name: router.query.name,
+            type: router.query.type,
+        }
+        setBasicRow([data])
+        setProductId(Number(router.query.product_id))
+    },[router.query])
 
     const MidrangeSave = async () => {
         const legendaryKeyValue = {}
@@ -38,7 +51,7 @@ const BasicMidrangeRegister = () => {
         })
 
         const midrangeData = {
-            product_id: 28,
+            product_id: productId,
             samples: Number(sampleBasicRow[0].samples),
             legendary_list: legendaryKeyValue,
             category_info: itemBasicRow
@@ -91,8 +104,7 @@ const BasicMidrangeRegister = () => {
                 if (value.selectList && value.selectList.length) {
                     if(value.key === 'type'){
                         items = {
-                            [value.key]: value.selectList[0].pk,
-                            [value.key + 'PK']: value.selectList[0].pk,//여기 봐야됨!
+                            [value.key]: Number(value.selectList[0].pk),
                             ...items,
                         }
                     }else {
@@ -118,7 +130,6 @@ const BasicMidrangeRegister = () => {
 
     return (
         <div>
-            <MidrangeFormReviewModal isOpen={isOpen} setIsOpen={setIsOpen}/>
             <PageHeader title={"초ㆍ중ㆍ종 검사항목"} buttons={['검사 양식 검토', '저장하기']} buttonsOnclick={buttonEvents}/>
             <ExcelTable
                 editable
@@ -180,6 +191,7 @@ const BasicMidrangeRegister = () => {
                 setRow={(e) => {
                     let tmp: Set<any> = ItemSelectList
                     setItemSelectList(tmp)
+
                     setItemBasicRow(e)
                 }}
                 selectList={ItemSelectList}
@@ -190,6 +202,7 @@ const BasicMidrangeRegister = () => {
             <MidrangeButton onClick={()=>addRowButton('item')}>
                 +검사 항목 추가
             </MidrangeButton>
+            <MidrangeFormReviewModal formReviewData={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
         </div>
     );
 };

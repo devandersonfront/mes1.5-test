@@ -13,16 +13,19 @@ import {MidrangeExcelTable} from "../Excel/MidrangeExcelTable";
 
 
 interface IProps {
-    row?: any
+    formReviewData: any
     isOpen: boolean
     setIsOpen?: (isOpen: boolean) => void
 }
 
 
-const MidrangeFormReviewModal = ({row, isOpen, setIsOpen}: IProps) => {
+const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>()
-    const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+    const [searchList, setSearchList] = useState<Array<any>>()
 
+    React.useEffect(()=>{
+        setSearchList([...formReviewData.basic])
+    },[formReviewData])
 
     return (
         <SearchModalWrapper >
@@ -90,7 +93,7 @@ const MidrangeFormReviewModal = ({row, isOpen, setIsOpen}: IProps) => {
                         />
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
-                        <MidrangeExcelTable/>
+                        <MidrangeExcelTable formReviewData={formReviewData} />
                     </div>
                 </div>
             </Modal>
