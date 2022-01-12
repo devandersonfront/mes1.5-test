@@ -686,8 +686,12 @@ export const columnlist: any = {
     {key: 'model', name: '모델', width: 120},
     {key: 'code', name: 'CODE',width: 464},
     {key: 'material_name', name: '품명',width: 464},
-    {key: 'type', name: '품목 종류', width: 120},
-    {key: 'photo', name: '작업 표준서', formatter: FileEditer, width: 240},
+    {key: 'type', name: '품목 종류', width: 120, selectList: [
+        {pk: '0', name: '반제품'},
+        {pk: '1', name: '재공품'},
+        {pk: '2', name: '완제품'},
+      ]},
+    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer, type:"image"},
   ],
   midrange: [
     {key: 'samples', name: '시료 개수 선택 (최소 1 ~ 최대 10개)', formatter: DropDownEditor, selectList: [
@@ -750,11 +754,11 @@ export const columnlist: any = {
       ] },
   ],
   midrangeInspectionItemDetail: [
-    {key: 'customer', name: '검사 항목',width: 480, },
-    {key: 'model', name: '단위', width: 120,},
-    {key: 'code', name: '점검 기준', width: 424, },
-    {key: 'material_name', name: '최소값(오차범위 최소)', width: 216},
-    {key: 'type', name: '최대값(오차범위 최대)', width: 216, },
+    {key: 'name', name: '검사 항목',width: 480, },
+    {key: 'unit', name: '단위', width: 120,},
+    {key: 'standard', name: '점검 기준', width: 424, },
+    {key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216},
+    {key: 'error_maximum', name: '최대값(오차범위 최대)', width: 216, },
     {key: 'type', name: '기록 방법', width: 120},
   ],
   midrangeList: [

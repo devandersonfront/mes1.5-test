@@ -100,7 +100,7 @@ const MES_MENUS: IMenuType[] = [
   {
     title: '품질 관리', url: '',
     subMenu: [
-      {title: '불량 통계', url: '/mes/quality/defect'},
+      // {title: '불량 통계', url: '/mes/quality/defect'},
       {title: '불량 통계 (자주검사 관리)', url: '/mes/quality/defect'},
       {title: '초ㆍ중ㆍ종 검사 리스트', url: '/mes/quality/midrange/list'},
       {title: '작업 표준서 관리', url: '/mes/quality/work/standardlist'},

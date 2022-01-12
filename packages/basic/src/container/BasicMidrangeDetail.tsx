@@ -34,13 +34,22 @@ const BasicMidrangeDetail = () => {
             }
         })
 
-        if(res && res.status === 200){
+        if(res){
+            const legendaryKey = Object.keys(res.legendary_list)
+            const legendaryValue = Object.values(res.legendary_list)
 
+            const legendaryArray = legendaryKey.map((v,i)=>{
+                return {legendary: v, LegendaryExplain: legendaryValue[i]}
+            })
+
+            setSampleBasicRow([{samples: res.samples}])
+            setLegendaryBasicRow(legendaryArray)
+            setItemBasicRow(res.category_info)
         }
     }
 
     //product_id
-    console.log(28)
+    // console.log(28)
     React.useEffect(()=>{
         console.log(router)
         LoadMidrange()
@@ -48,7 +57,7 @@ const BasicMidrangeDetail = () => {
 
     return (
         <div>
-            <PageHeader title={"초ㆍ중ㆍ종 검사항목 정보"} buttons={[ '목록 보기', '검사 양식 검토', '수정하기']} />
+            <PageHeader title={"초ㆍ중ㆍ종 검사항목 정보"} buttons={[ '목록 보기', '검사 양식 검토', '수정하기']} buttonsOnclick={()=>{}} />
             <ExcelTable
                 headerList={[
                     ...column
