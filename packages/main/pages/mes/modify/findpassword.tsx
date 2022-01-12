@@ -1,17 +1,10 @@
 import React, {useState} from 'react'
-import { NextPage } from 'next'
-import { useRouter } from 'next/router'
 import Notiflix from 'notiflix'
-import {useDispatch, useSelector} from 'react-redux'
-import {IResponseType} from "../../../common/@types/type";
 import {requestApi} from "../../../common/RequestFunctions";
-import {setToken} from "../../../common/tokenManager";
-import {setUserInfoAction} from "../../../reducer/userInfo";
 import WelcomeContainer from "../../../component/Welcome/WelcomeContainer";
 import WelcomeInput from "../../../component/InputBox/WelcomeInput";
 import DefaultButton from "../../../component/DefaultButton";
 import {SF_ADDRESS, SF_PORT} from "../../../common/configset";
-
 
 
 const LoginPage = () => {

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
-import { UnitBox, UnitValue, UnitWrapper} from '../../styles/styledComponents'
+import {UnitBox, UnitValue, UnitWrapper} from '../../styles/styledComponents'
 
 interface IProps {
   row: any

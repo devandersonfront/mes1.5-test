@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'
@@ -12,10 +11,7 @@ import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
-import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
-import {UploadButton} from '../../styles/styledComponents'
-import {BomInfoModal} from './BomInfoModal'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {

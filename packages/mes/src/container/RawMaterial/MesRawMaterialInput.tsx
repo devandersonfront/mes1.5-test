@@ -1,22 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import {
-  ExcelTable,
-  Header as PageHeader,
-  RequestMethod,
-  columnlist,
-  MAX_VALUE,
-  DropDownEditor,
-  TextEditor,
-  excelDownload,
-  PaginationComponent,
-  ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
-} from 'shared'
+import {columnlist, ExcelDownloadModal, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 
@@ -186,6 +173,10 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         SaveBasic()
         break;
       case 2:
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인", "취소", () => {
+          const tmpRow = basicRow.filter(({id}, index) => !selectList.has(id))
+          setBasicRow(tmpRow);
+        })
         break;
     }
   }

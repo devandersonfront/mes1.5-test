@@ -28,6 +28,9 @@ export interface IExcelHeaderType {
   summaryType?: any
   modalType?: boolean
   readonly?: boolean
+  title?: string
+  url?: string
+  headerType?:any[]
 }
 
 export interface IResponseType {

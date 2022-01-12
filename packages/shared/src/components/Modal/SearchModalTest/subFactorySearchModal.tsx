@@ -12,12 +12,9 @@ import {searchModalList} from '../../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../../public/images/btn_search.png'
 import {RequestMethod} from '../../../common/RequestFunctions'
-import {SearchInit} from './SearchModalInit'
 import {MoldRegisterModal} from '../MoldRegisterModal'
 import Notiflix from 'notiflix'
-import {SearchModalResult, SearchResultSort} from '../../../Functions/SearchResultSort'
 import {Select} from '@material-ui/core'
-import {TransferCodeToValue} from '../../../common/TransferFunction'
 
 
 interface IProps {

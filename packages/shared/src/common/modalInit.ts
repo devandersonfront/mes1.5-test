@@ -2,22 +2,14 @@ import {TextEditor} from '../components/InputBox/ExcelBasicInputBox'
 import {UnitContainer} from '../components/Unit/UnitContainer'
 import {AddlButton} from '../components/Buttons/AddlButton'
 import {DatetimePickerBox} from '../components/CalendarBox/DatetimePickerBox'
-import {ProcessSearchModal} from '../components/Modal/ProcessSearchModal'
-import {MemberSearchModal} from '../components/Modal/MemeberSearchModal'
 import {ManagerSearchModal} from '../components/Modal/ManagerSearchModal'
 import {DeviceSearchModal} from '../components/Modal/DeviceSearchModal'
 import {LineBorderContainer} from '../components/Formatter/LineBorderContainer'
-import {MoldSearchModal} from '../components/Modal/MoldSearchModal'
-import ExcelBasicDropdown from '../../../main/component/Dropdown/ExcelBasicDropdown'
 import {DropDownEditor} from '../components/Dropdown/ExcelBasicDropdown'
-import {MachineSearchModal} from '../components/Modal/MachineSearchModal'
-import {ProductSearchModal} from '../components/Modal/ProductSearchModal'
 import {AddTabButton} from '../components/Buttons/AddTabButton'
-import {InputMaterialInfoModal} from '../components/Modal/InputMaterialInfoModal'
 import {PauseInfoModal} from '../components/Modal/PauseInfoModal'
 import {TimeFormatter} from '../components/Formatter/TimeFormmater'
 import {DefectInfoModal} from '../components/Modal/DefectInfoModal'
-import {MoldInfoModal} from '../components/Modal/MoldInfoModal'
 import {MoldSelectModal} from '../components/Modal/MoldSelectModal'
 import {MachineSelectModal} from '../components/Modal/MachineSelectModal'
 import {InputMaterialListModal} from '../components/Modal/InputMaterialListModal'
@@ -26,7 +18,7 @@ import {MachineListModal} from '../components/Modal/MachineListModal'
 import {SearchModalTest} from '../components/Modal/SearchModalTest'
 import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
 import {LotNumberRegister} from '../components/Cell/LotNumberRegister'
-import {CalendarBox} from '../components/CalendarBox/CalendarBox'
+import OperationSearchModal from "../../../main/component/Modal/OperationSearchModal";
 
 export const searchModalList: any = {
   member: [
@@ -292,7 +284,6 @@ export const searchModalList: any = {
     {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-', },
-
   ],
   InputInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
@@ -365,7 +356,7 @@ export const searchModalList: any = {
     {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200},
     {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true},
     {key: 'good_quantity', name: '양품 수량', editor: TextEditor, textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'poor_quantity', name: '불량 수량 (유형별 수량은 숫자 클릭)', formatter: DefectInfoModal, textAlign: 'center', width: 250},
+    {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 250},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center'},
     {key: 'molds', name: '금형', formatter: MoldSelectModal, textAlign: 'center'},
@@ -379,7 +370,7 @@ export const searchModalList: any = {
     {key: 'end', name: '작업 종료 일시', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', type: 'readonly', modalType: true},
     {key: 'good_quantity', name: '양품 수량', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'poor_quantity', name: '불량 수량 (유형별 수량은 숫자 클릭)', formatter: DefectInfoModal, textAlign: 'center', width: 250, type: 'readonly'},
+    {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 250, type: 'readonly'},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'input', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center', type: 'readonly'},
     {key: 'mold', name: '금형', formatter: MoldListModal, textAlign: 'center', type: 'Modal'},
@@ -539,6 +530,16 @@ export const searchModalList: any = {
     {key: 'worker_name', name: '작업자'},
     {key: 'current', name: '재고량'},
     {key: 'amount', name: '납품 수량', textType: 'Modal',},
+  ],
+  midrangeInfo: [
+    {key: 'osd_id', name: '지시 고유 번호', width: 152},
+    {key: 'lot_number', name: 'LOT 번호 (생산로트)', width: 152},
+    {key: 'code', name: 'CODE', width: 480},
+    {key: 'material_name', name: '품명', width: 360},
+    {key: 'type', name: '품목 종류', width: 120},
+    {key: 'process_id', name: '생산 공정', width: 120},
+    {key: 'worker_name', name: '작업자', width: 120},
+    {key: 'name', name: '기계 이름 (CODE)', width: 240}
   ]
 }
 

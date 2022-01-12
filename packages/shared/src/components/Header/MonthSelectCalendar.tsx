@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 //@ts-ignore
 import Calendar_icon from "../../../public/images/calendar_icon_black.png";

@@ -8,12 +8,10 @@ import {SelectColumn} from 'react-data-grid'
 import {IExcelHeaderType, IItemMenuType} from '../../../../common/@types/type'
 
 import {columnlist} from '../../../../common/columnInit'
-import {HeaderButton, ItemListTableHeader, ItemListTableWrapper, ItemWrapper} from '../../../../styles/styledComponents'
+import {HeaderButton} from '../../../../styles/styledComponents'
 import ItemManageBox from '../../../../component/ItemManage/ItemManageBox'
 //@ts-ignore
 import Notiflix from "notiflix";
-import {useSelector} from "react-redux";
-import {RootState} from "../../../../reducer";
 import {RequestMethod} from "shared";
 
 interface IProps {

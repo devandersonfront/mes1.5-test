@@ -12,7 +12,6 @@ import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
-import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 
@@ -22,6 +21,7 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
+//column에다가 header type을 넣어서 자유롭게 커스텀 할 수 있게 만들자
 const machineType = [
         {name:"금형명",},
         // {type: "기계 종류", weldingType: "용접 종류", mfrCode: "제조번호", manager: "담당자",},
@@ -71,7 +71,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
       machine_idPK: row.machine_id,
       manager: row.manager ? row.manager.name : null
     }
-
     return tmpData
   }
 
@@ -118,7 +117,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
           return 144;
         }
 
-
       case "machine":
         if(index === 0 && inindex === 1){
           return 755;
@@ -126,7 +124,8 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
           return 144;
         }
         return
-
+      case "tool" :
+        return 450
     }
   }
 
@@ -176,142 +175,97 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
       }}>
         <div style={{
           width: 1776,
-          height: 816
+          height: 816,
+          display:'flex', flexDirection:"column", justifyContent:"space-between"
         }}>
-          <div style={{
-            margin: '24px 16px 16px',
-            display: 'flex',
-            justifyContent: 'space-between'
-          }}>
-            <p style={{
-              color: 'black',
-              fontSize: 22,
-              fontWeight: 'bold',
-              margin: 0,
-            }}>생산 품목 정보</p>
-            <div style={{display: 'flex'}}>
-              {/*<Button>*/}
-              {/*  <p>엑셀로 받기</p>*/}
-              {/*</Button>*/}
-              <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
-                setIsOpen(false)
-              }}>
-                <img style={{width: 20, height: 20}} src={IcX}/>
+          <div style={{}}>
+
+            <div style={{
+              margin: '24px 16px 16px',
+              display: 'flex',
+              justifyContent: 'space-between'
+            }}>
+              <p style={{
+                color: 'black',
+                fontSize: 22,
+                fontWeight: 'bold',
+                margin: 0,
+              }}>생산 품목 정보</p>
+              <div style={{display: 'flex'}}>
+                {/*<Button>*/}
+                {/*  <p>엑셀로 받기</p>*/}
+                {/*</Button>*/}
+                <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
+                  setIsOpen(false)
+                }}>
+                  <img style={{width: 20, height: 20}} src={IcX}/>
+                </div>
               </div>
             </div>
-          </div>
-          {machineType.map((header,index)=>{
-            return (
-                <HeaderTable>
-                  {Object.keys(header).map((value,i)=> {
-                    cleanUp(row,  value)
-                    return (
-                        <>
-                          <HeaderTableTitle>
-                            <HeaderTableText style={{fontWeight: 'bold'}}>{header[value]}</HeaderTableText>
-                          </HeaderTableTitle>
-                          <HeaderTableTextInput style={{width: settingTitle(index, i)}}>
-                            {/*<HeaderTableText>{typeof row[value] === "boolean" ? row[value] ? "유" : "무" : row[value]}</HeaderTableText>*/}
-                            <HeaderTableText>{cleanUp(row, value)}</HeaderTableText>
-                          </HeaderTableTextInput>
-                        </>
+            {column.headerType.map((header,index)=>{
+            // {machineType.map((header,index)=>{
+              return (
+                  <HeaderTable>
+                    {Object.keys(header).map((value,i)=> {
+                      cleanUp(row,  value)
+                      return (
+                          <>
+                            <HeaderTableTitle>
+                              <HeaderTableText style={{fontWeight: 'bold'}}>{header[value]}</HeaderTableText>
+                            </HeaderTableTitle>
+                            <HeaderTableTextInput style={{width: settingTitle(index, i)}}>
+                              {/*<HeaderTableText>{typeof row[value] === "boolean" ? row[value] ? "유" : "무" : row[value]}</HeaderTableText>*/}
+                              <HeaderTableText>{cleanUp(row, value)}</HeaderTableText>
+                            </HeaderTableTextInput>
+                          </>
+                      )}
                     )}
-                  )}
-                </HeaderTable>
-            )
-          })}
-          {/*<HeaderTable>*/}
-          {/*  <HeaderTableTitle>*/}
-          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>*/}
-          {/*  </HeaderTableTitle>*/}
-          {/*  <HeaderTableTextInput style={{width: 450}}>*/}
-          {/*    <HeaderTableText>SU-M-3</HeaderTableText>*/}
-          {/*  </HeaderTableTextInput>*/}
-          {/*  <HeaderTableTitle>*/}
-          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>금형명</HeaderTableText>*/}
-          {/*  </HeaderTableTitle>*/}
-          {/*  <HeaderTableTextInput style={{width: 450}}>*/}
-          {/*    <HeaderTableText>OP10</HeaderTableText>*/}
-          {/*  </HeaderTableTextInput>*/}
-          {/*</HeaderTable>*/}
-          {/*<HeaderTable>*/}
-          {/*  <HeaderTableTitle>*/}
-          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>캐비티</HeaderTableText>*/}
-          {/*  </HeaderTableTitle>*/}
-          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
-          {/*    <HeaderTableText>1</HeaderTableText>*/}
-          {/*  </HeaderTableTextInput>*/}
-          {/*  <HeaderTableTitle>*/}
-          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>SPM</HeaderTableText>*/}
-          {/*  </HeaderTableTitle>*/}
-          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
-          {/*    <HeaderTableText>24</HeaderTableText>*/}
-          {/*  </HeaderTableTextInput>*/}
-          {/*  <HeaderTableTitle>*/}
-          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>슬라이드 위치</HeaderTableText>*/}
-          {/*  </HeaderTableTitle>*/}
-          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
-          {/*    <HeaderTableText>10</HeaderTableText>*/}
-          {/*  </HeaderTableTextInput>*/}
-          {/*</HeaderTable>*/}
-          {/*<HeaderTable>*/}
-          {/*  <HeaderTableTitle>*/}
-          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>최대 타수</HeaderTableText>*/}
-          {/*  </HeaderTableTitle>*/}
-          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
-          {/*    <HeaderTableText>0</HeaderTableText>*/}
-          {/*  </HeaderTableTextInput>*/}
-          {/*  <HeaderTableTitle>*/}
-          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>점검 타수</HeaderTableText>*/}
-          {/*  </HeaderTableTitle>*/}
-          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
-          {/*    <HeaderTableText>0</HeaderTableText>*/}
-          {/*  </HeaderTableTextInput>*/}
-          {/*  <HeaderTableTitle>*/}
-          {/*    <HeaderTableText style={{fontWeight: 'bold'}}>현재 타수</HeaderTableText>*/}
-          {/*  </HeaderTableTitle>*/}
-          {/*  <HeaderTableTextInput style={{width: 144}}>*/}
-          {/*    <HeaderTableText>0</HeaderTableText>*/}
-          {/*  </HeaderTableTextInput>*/}
-          {/*</HeaderTable>*/}
-          <div style={{display: 'flex', justifyContent: 'flex-start', margin: '24px 0 8px 16px'}}>
-            <Button style={{backgroundColor: '#19B9DF'}} onClick={() => {
-              let tmp = searchList
-              setSearchList([
-                ...searchList,
-                {
-                  seq: searchList.length+1
-                }
-              ])
-            }}>
-              <p style={{fontWeight: 'bold'}}>반·완제품</p>
-            </Button>
+                  </HeaderTable>
+              )
+            })}
+            {column.type !== "tool" &&
+              <div style={{display: 'flex', justifyContent: 'flex-start', margin: '24px 0 8px 16px'}}>
+                <Button style={{backgroundColor: '#19B9DF'}} onClick={() => {
+                  let tmp = searchList
+                  setSearchList([
+                    ...searchList,
+                    {
+                      seq: searchList.length+1
+                    }
+                  ])
+                }}>
+                  <p style={{fontWeight: 'bold'}}>반·완제품</p>
+                </Button>
+              </div>
+            }
+
+            <div style={{padding: '0 16px', width: 1776}}>
+              <ExcelTable
+                headerList={searchModalList.productInfo}
+                row={row.products ?? row.product_id ?? [{}]}
+                setRow={(e) => setSearchList([...e])}
+                width={1746}
+                rowHeight={32}
+                height={591}
+                // setSelectRow={(e) => {
+                //   setSelectRow(e)
+                // }}
+                setSelectRow={(e) => {
+                  // if(!searchList[e].border){
+                  //   searchList.map((v,i)=>{
+                  //     v.border = false;
+                  //   })
+                  //   searchList[e].border = true
+                  //   setSearchList([...searchList])
+                  // }
+                  setSelectRow(e)
+                }}
+                type={'searchModal'}
+                headerAlign={'center'}
+              />
+            </div>
           </div>
-          <div style={{padding: '0 16px', width: 1776}}>
-            <ExcelTable
-              headerList={searchModalList.productInfo}
-              row={row.products ?? row.product_id ?? [{}]}
-              setRow={(e) => setSearchList([...e])}
-              width={1746}
-              rowHeight={32}
-              height={591}
-              // setSelectRow={(e) => {
-              //   setSelectRow(e)
-              // }}
-              setSelectRow={(e) => {
-                // if(!searchList[e].border){
-                //   searchList.map((v,i)=>{
-                //     v.border = false;
-                //   })
-                //   searchList[e].border = true
-                //   setSearchList([...searchList])
-                // }
-                setSelectRow(e)
-              }}
-              type={'searchModal'}
-              headerAlign={'center'}
-            />
-          </div>
+
           <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
             <div
               onClick={() => {

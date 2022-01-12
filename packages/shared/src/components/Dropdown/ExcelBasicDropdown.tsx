@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 import Notiflix from 'notiflix'
 //@ts-ignore
 import filterOpenB from '../../../public/images/filter_open_b.png'
 //@ts-ignore
 import filterOpenW from '../../../public/images/filter_open_w.png'
-import {styled} from '@material-ui/core'
 
 interface IProps {
   column: IExcelHeaderType
@@ -14,6 +13,16 @@ interface IProps {
 }
 
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
+
+  const cleanValue = (type?:string) => {
+    switch(type){
+      case "spare":
+        return row.setting == 1 ? "스페어" : "기본"
+      default:
+        return row[column.key] ? row[column.key] : "무"
+    }
+  }
+
   return (
     <select
       className={'editDropdown'}
@@ -27,7 +36,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         backgroundSize: '24px',
         backgroundColor: column.type === 'Modal' ? row.border ? '#19B9DF80' : 'white' : '#00000000'
       }}
-      value={/*column.key === "type" ? selectType() :*/ row[column.key] ? row[column.key] : "무"}
+      value={cleanValue(column.key)}
       // value={selectType()}
       onChange={(event) => {
         let pk = "";
@@ -67,6 +76,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
               crn: tmpCrn
             }
           }
+          console.log(event.target.value)
           if(column.key === "spare"){
             switch (event.target.value){
               case "스페어":
@@ -75,10 +85,17 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
               case "기본" :
                 row.setting = 0;
                 break ;
+              case "여":
+                row.setting = 1;
+                break ;
+              case "부" :
+                row.setting = 0;
+                break ;
               default :
                 break;
             }
           }
+
           return onRowChange({
             //@ts-ignore
             ...row, [column.key]: event.target.value, [column.key+"PK"]: pkValue ?? undefined,

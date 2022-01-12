@@ -12,15 +12,14 @@ import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
-import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import {
-  change_summary_info_index,
-  delete_summary_info,
-  insert_summary_info,
-  reset_summary_info
+    change_summary_info_index,
+    delete_summary_info,
+    insert_summary_info,
+    reset_summary_info
 } from "../../reducer/infoModal";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../reducer";
@@ -185,13 +184,18 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    console.log("searchList : ", searchList);
+    console.log("row : ", row);
+
     let body = searchList.map((v, i) => {
       return {
         seq: i+1,
         parent: {
           ...row,
           process: row.processArray,
-          type: row.type_id ?? row.type
+          type: row.type_id ?? row.type,
+          product_id:row.productId,
+          code: row.cmId,
         },
         child_product: v.tab === 2 ? {
           ...v.product
@@ -317,7 +321,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData ? headerData.model.model : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
+              <HeaderTableText>{headerData ? headerData.model?.model : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>

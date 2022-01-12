@@ -1,22 +1,20 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {
+  columnlist,
+  excelDownload,
+  ExcelDownloadModal,
   ExcelTable,
   Header as PageHeader,
-  RequestMethod,
-  columnlist,
+  IExcelHeaderType,
   MAX_VALUE,
-  DropDownEditor,
-  TextEditor,
-  excelDownload,
   PaginationComponent,
-  ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
+  RequestMethod,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 
 export interface IProps {

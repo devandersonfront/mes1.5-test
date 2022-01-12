@@ -1,22 +1,20 @@
 import React, {useEffect, useState} from 'react'
 import {
-  ExcelTable,
-  Header as PageHeader,
-  RequestMethod,
-  columnlist,
-  MAX_VALUE,
-  DropDownEditor,
-  TextEditor,
-  excelDownload,
-  PaginationComponent,
-  ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
+    columnlist,
+    excelDownload,
+    ExcelDownloadModal,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType,
+    MAX_VALUE,
+    PaginationComponent,
+    RequestMethod,
+    TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 
 export interface IProps {
@@ -72,7 +70,7 @@ const BasicMold = ({page, keyword, option}: IProps) => {
 
         let pk = "";
 
-        res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
+        res.info_list && res.info_list.length && Object.keys(res.info_list[0])?.map((v) => {
           if(v.indexOf('_id') !== -1){
             pk = v
           }

@@ -1,5 +1,4 @@
 import React from 'react'
-import { useRouter } from 'next/router'
 //@ts-ignore
 import {PointColorButton} from '../styles/styledComponents'
 

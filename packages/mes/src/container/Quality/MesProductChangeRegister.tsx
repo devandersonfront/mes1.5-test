@@ -1,0 +1,88 @@
+import React, {useState} from 'react';
+import {
+    columnlist,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType, TitleCalendarBox,
+    ChangeProductFileInfo,
+    TitleFileUpload,
+    TitleInput,
+    TitleTextArea
+} from "shared";
+// @ts-ignore
+import {SelectColumn} from "react-data-grid";
+import moment from "moment";
+
+const MesProductChangeRegister = () => {
+
+    const [basicRow, setBasicRow] = useState<Array<any>>([{
+        order_num: '-', operation_num: '20210401-013'
+    }])
+    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productChangeRegister"])
+    const [selectList, setSelectList] = useState<Set<number>>(new Set())
+    const [ changeInfo, setChangeInfo] = useState({title: '', content: '', registered: moment().format('YYYY.MM.DD')})
+    const [ files, setFiles ] = useState<ChangeProductFileInfo[]>([
+            {name: '', uuid: '', sequence: 1},
+            {name: '', uuid: '', sequence: 2},
+            {name: '', uuid: '', sequence: 3},
+        ]
+    )
+    const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
+        page: 1,
+        total: 1
+    })
+
+    const fileChange = (fileInfo: ChangeProductFileInfo, index: number) => {
+        const temp = files
+        temp[index] = fileInfo
+        setFiles([...temp])
+    }
+
+    return (
+        <div>
+            <PageHeader
+                title={"변경점 정보 등록"}
+                buttons={
+                    ['', '저장하기']
+                }
+            />
+            <ExcelTable
+                editable
+                headerList={[
+                    SelectColumn,
+                    ...column
+                ]}
+                row={basicRow}
+                // setRow={setBasicRow}
+                setRow={(e) => {
+                    let tmp: Set<any> = selectList
+                    e.map(v => {
+                        if(v.isChange) tmp.add(v.id)
+                    })
+                    console.log(e)
+                    setSelectList(tmp)
+                    setBasicRow(e.map(v => ({...v, name: v.product_name})))
+                }}
+                selectList={selectList}
+                //@ts-ignore
+                setSelectList={setSelectList}
+                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+                scrollEnd={(value) => {
+                    if(value){
+                        if(pageInfo.total > pageInfo.page){
+                            setPageInfo({...pageInfo, page:pageInfo.page+1})
+                        }
+                    }
+                }}
+            />
+            <TitleInput title={'제목'} value={changeInfo.title} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, title: e.target.value})}/>
+            <TitleTextArea title={'설명'} value={changeInfo.content} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, content: e.target.value})}/>
+            {files.map((v,i) =>
+                <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} value={v.name} placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={(fileInfo: ChangeProductFileInfo)=>fileChange(fileInfo,i)}/>
+            )}
+            <TitleCalendarBox value={changeInfo.registered} onChange={(date)=>setChangeInfo({...changeInfo, registered: moment(date).format('YYYY.MM.DD')})}/>
+        </div>
+    );
+};
+
+export {MesProductChangeRegister}

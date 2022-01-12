@@ -1,22 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import {
-  ExcelTable,
-  Header as PageHeader,
-  RequestMethod,
-  columnlist,
-  MAX_VALUE,
-  DropDownEditor,
-  TextEditor,
-  excelDownload,
-  PaginationComponent,
-  ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
-} from 'shared'
+import {columnlist, excelDownload, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import PeriodSelectCalendar from '../../../../main/component/Header/PeriodSelectCalendar'
@@ -233,7 +220,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
 
   return (
     <div>
-      <PageHeader title={"불량 통계"} />
+      <PageHeader title={"불량 통계 (자주검사 관리)"} />
       <ExcelTable
         editable
         resizable
@@ -246,10 +233,6 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
           const tmpBasicRow = [...e];
           tmpBasicRow[0] = {
             ...tmpBasicRow[0],
-            // customer: tmpBasicRow[0].customer.name,
-            // customerData: tmpBasicRow[0].customer,
-            // model: tmpBasicRow[0].model.model,
-            // modelData: tmpBasicRow[0].model,
             product_id: tmpBasicRow[0].product.product_id
           }
           setProcessBasicRow(tmpBasicRow)

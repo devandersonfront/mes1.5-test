@@ -1,23 +1,20 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import styled from "styled-components";
 import {
+  columnlist,
+  ExcelDownloadModal,
   ExcelTable,
   Header as PageHeader,
-  RequestMethod,
-  columnlist,
+  IExcelHeaderType,
   MAX_VALUE,
-  DropDownEditor,
-  TextEditor,
-  excelDownload,
-  PaginationComponent,
-  ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType, setModifyInitData, searchModalList
+  RequestMethod,
+  setModifyInitData,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {useDispatch} from 'react-redux'
@@ -276,7 +273,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         process_id: row.product.process?.name,
         product_id: row.product.code,
         name: row.product.name,
-        type: TransferCodeToValue(row.product.type, 'material'),
+        type: TransferCodeToValue(row.product.type, 'product'),
         unit: row.product.unit,
         processArray: row.process,
         id: `mold_${random_id}`,

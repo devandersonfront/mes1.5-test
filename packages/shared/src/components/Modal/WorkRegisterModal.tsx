@@ -12,10 +12,8 @@ import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
-import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
-import {BomInfoModal} from './BomInfoModal'
 import moment from 'moment'
 
 interface IProps {
@@ -250,7 +248,9 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 setSearchList([
                   ...searchList,
                   {
-                    seq: searchList.length+1
+                    sequence: searchList.length+1,
+                    start: moment().format('YYYY-MM-DD'),
+                    end: moment().format('YYYY-MM-DD'),
                   }
                 ])
               }}>
@@ -275,6 +275,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                     newTab: false
                   }
                 })
+                console.log('tmp', tmp)
                 setSearchList([...tmp.map(v => {
                   return {
                     ...v,

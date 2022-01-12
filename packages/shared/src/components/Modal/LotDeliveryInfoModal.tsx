@@ -12,10 +12,7 @@ import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
-import {PaginationComponent}from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
-import {UploadButton} from '../../styles/styledComponents'
-import {TransferCodeToValue} from '../../common/TransferFunction'
 
 interface IProps {
   column: IExcelHeaderType
@@ -50,10 +47,13 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   }, [isOpen, searchKeyword])
 
   const initData = async() => {
+    let totalAmount = 0;
     let searchList = await SearchBasic().then((results) => {
       return results.map((v, i) => {
         let index = row.lots.findIndex((lot) => lot.group.sum.lot_number === v.group.sum.lot_number)
         if (index !== -1) {
+          totalAmount += row.lots[index].amount
+          console.log("row.lots[index].amount : ",row.lots[index].amount)
           return {
             seq: i + 1,
             lot_number: v.group.sum.lot_number,
@@ -70,6 +70,8 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           }
         }
 
+        // totalAmount += row.amount
+        console.log("totalAmount : ", totalAmount)
         return {
           seq: i + 1,
           lot_number: v.group.sum.lot_number,
@@ -78,7 +80,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           worker_name: v.group.sum.worker.name,
           good_quantity: v.group.sum.good_quantity,
           current: v.group.sum.current,
-          amount: v.amount,
+          amount: v.amount ?? 0,
           group: {
             ...v,
           },
@@ -87,28 +89,27 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
       })
 
     })
-
+    setTotalDelivery(totalAmount)
     setSearchList([...searchList])
   }
 
   const changeRow = (tmpRow: any) => {
     let tmpData = []
     let row = [];
-    if(typeof tmpRow === 'string'){
-      let tmpRowArray = tmpRow.split('\n')
-
-      row = tmpRowArray.map(v => {
-        if(v !== ""){
-          let tmp = JSON.parse(v)
-          return tmp
-        }
-      }).filter(v=>v)
-    }else{
-      row = [{...tmpRow}]
-    }
+    // if(typeof tmpRow === 'string'){
+    //   let tmpRowArray = tmpRow.split('\n')
+    //
+    //   row = tmpRowArray.map(v => {
+    //     if(v !== ""){
+    //       let tmp = JSON.parse(v)
+    //       return tmp
+    //     }
+    //   }).filter(v=>v)
+    // }else{
+      row = [...tmpRow]
+    // }
 
     tmpData = row.map((v, i) => {
-
       return {
         seq: i+1,
         lot_number: v.sum.lot_number,
@@ -134,9 +135,8 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         renderItem: 18,
       },
     })
-
     if(res){
-      const searchList = changeRow(res)
+      const searchList = changeRow(res.info_list)
 
       setPageInfo({
         ...pageInfo,
@@ -153,12 +153,14 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     return <>
       <div style={{
         width: '100%',
-        backgroundColor: column.type === 'base' || column.type === 'baseReadonly' ? '#00000000' : 'white'
+        backgroundColor: column.type === 'base' || column.type === 'baseReadonly' || column.type === "placeholder" ? '#00000000' : 'white'
       }}>
         <div onClick={() => {
           setIsOpen(true)
         }}>
-          <p style={{textDecoration: 'underline', padding: 0, margin: 0, color: column.type === 'base' || column.type === 'baseReadonly' ? 'white' : 'black', textAlign: 'center'}}>LOT 보기</p>
+          <p style={{textDecoration: column.type !== "placeholder" && 'underline', padding: 0, margin: 0, color: column.type === 'base' || column.type === 'baseReadonly' || column.type === "placeholder" ? 'white' : 'black', textAlign: 'center'}}>
+            {column.type === "placeholder" ? totalDelivery : "LOT 보기"}
+          </p>
         </div>
       </div>
     </>
@@ -280,7 +282,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={column.key === 'baseReadonly' ? searchModalList.lotDeliveryInfoReadonly : searchModalList.lotDeliveryInfo}
+              headerList={column.type === 'baseReadonly'  || column.type === "placeholder" ? searchModalList.lotDeliveryInfoReadonly : searchModalList.lotDeliveryInfo}
               row={searchList ?? [{}]}
               setRow={(e) => {
                 let total = 0

@@ -1,22 +1,20 @@
 import React, {useEffect, useState} from 'react'
 import {
-  ExcelTable,
-  Header as PageHeader,
-  RequestMethod,
-  columnlist,
-  MAX_VALUE,
-  DropDownEditor,
-  TextEditor,
-  excelDownload,
-  PaginationComponent,
-  ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
+    columnlist,
+    excelDownload,
+    ExcelDownloadModal,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType,
+    MAX_VALUE,
+    PaginationComponent,
+    RequestMethod,
+    TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 
 export interface IProps {
@@ -123,6 +121,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
 
     Notiflix.Loading.standard();
     let res: any
+
     const check = basicRow.map((row) => {
       if(selectList.has(row.id) && !row.code && !row.name){
           Notiflix.Loading.remove(300)
@@ -175,19 +174,19 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
               customer_id: row.customerArray.customer_id,
               model: row.modelArray,
               // standard_uph: row.uph,
-              molds:[...row.molds.map((mold)=>{
+              molds:[...row?.molds?.map((mold)=>{
                 return {...mold, setting:mold.mold.setting}
-              })],
+              }) ?? []],
               machines:[
-                  ...row.machines.map((machine)=>{
+                  ...row?.machines?.map((machine)=>{
                     return {
                       ...machine,
                       setting:machine.machine.setting,
                       machine:{...machine.machine, type:machine.machine.type_id}
                     }
-                  })
+                  }) ?? []
               ],
-              type:row.type_id,
+              type:row.type_id ?? row.typeId ?? row.typePK,
               additional: [
                 ...additional.map((v, index)=>{
                   if(!row[v.colName]) return undefined;

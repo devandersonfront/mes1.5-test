@@ -1,5 +1,6 @@
 import styled from 'styled-components'
-import {BG_COLOR, BG_COLOR_SUB, BG_COLOR_SUB2, BG_COLOR_SUB3, POINT_COLOR} from '../common/configset'
+import {BG_COLOR_SUB3, POINT_COLOR} from '../common/configset'
+import exp from "constants";
 
 export const Body = styled.div`
   p, span{
@@ -599,4 +600,42 @@ export const UnitBox = styled.div`
   
   width: 40px;
   height: 40px;
+`
+
+export const TitleBox = styled.div`
+    background-color: black;
+    width: 120px;
+    height: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+
+export const SelectButton = styled.div`
+    margin: 8px;
+    width: 72px;
+    height: 32px;
+    background-color: #19B9DF;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+`
+
+
+export const MidrangeButton = styled.div`
+    width: 100%;
+    background-color: #111319;
+    height: 40px;
+    margin-bottom: 16px; 
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 `

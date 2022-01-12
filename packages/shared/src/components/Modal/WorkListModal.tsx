@@ -12,10 +12,6 @@ import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
-import {PaginationComponent}from '../Pagination/PaginationComponent'
-import Notiflix from 'notiflix'
-import {UploadButton} from '../../styles/styledComponents'
-import {BomInfoModal} from './BomInfoModal'
 
 interface IProps {
   column: IExcelHeaderType
@@ -51,7 +47,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
 
   const [bomDummy, setBomDummy] = useState<any[]>([
-    {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
+    // {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
   ])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -68,15 +64,15 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    if(row.os_id) {
+    if(isOpen && row.os_id) {
       SearchBasic(searchKeyword, optionIndex, 1)
     }
   }, [isOpen, searchKeyword])
 
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpRes = []
-    let totalGood = 0
-    let totalPoor = 0
+    let totalGood:number = 0
+    let totalPoor:number = 0
     let defectReasons = []
     let tmpRowArray = []
     if(typeof tmpRow === 'string'){
@@ -102,24 +98,39 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
         }
       }).filter(v=>v)
     }else{
-      totalGood += tmpRow.good_quantity
-      totalPoor += tmpRow.poor_quantity
+
+      tmpRes = tmpRow.info_list.map((row) => {
+        let resultRow:any = {...row};
+        resultRow.seq = row.sequence;
+        resultRow.lot_number = row.lot_number;
+        resultRow.worker_name = row.worker.name;
+        resultRow.start = row.start;
+        resultRow.end = row.end;
+        resultRow.pause = row.pause_reasons;
+        resultRow.good_quantity = row.good_quantity;
+        resultRow.poor_quantity = row.poor_quantity;
+        resultRow.sum = row.good_quantity + row.poor_quantity;
+
+        return resultRow;
+      })
+      console.log("result : ", tmpRes);
+      totalGood += Number(tmpRow.good_quantity)
+      totalPoor += Number(tmpRow.poor_quantity)
       defectReasons = tmpRow.defect_reasons
-      tmpRes = [{...tmpRow}]
+      // tmpRes = [{...tmpRow}]
     }
 
     onRowChange({
       ...row,
       defect_reasons: defectReasons,
-      total_good_quantity: totalGood,
-      total_poor_quantity: totalPoor,
+      total_good_quantity: Number(totalGood),
+      total_poor_quantity: Number(totalPoor),
       total_counter: totalGood + totalPoor,
     })
-
     return tmpRes.map((v, i) => {
       return {
         ...v,
-        worker_name: v.worker.name,
+        worker_name: v.worker?.name,
         sum: v.good_quantity+v.poor_quantity,
         seq: i+1
       }
@@ -129,12 +140,16 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const SearchBasic = async (keyword: any, option: number, page: number) => {
     setKeyword(keyword)
     setOptionIndex(option)
-    const res = await RequestMethod('get', `recordAll`,{
+    const res = await RequestMethod('get', `recordSearch`,{
+      path:{
+        page:1,
+        item:19
+      },
       params: {
-        sheetIds: row.os_id
+        identification:row.os_id
+        // sheetIds: row.os_id
       }
     })
-
     if(!!res){
       let tmpList = changeRow(res, )
 

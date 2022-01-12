@@ -1,19 +1,13 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
-import styled from 'styled-components'
 import Modal from 'react-modal'
-import {POINT_COLOR} from '../../common/configset'
 //@ts-ignore
 import IcSearchButton from '../../public/images/ic_search.png'
 //@ts-ignore
 import IcX from '../../public/images/ic_x.png'
-import ExcelTable from '../Excel/ExcelTable'
-import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
-import PaginationComponent from '../Pagination/PaginationComponent'
-import Notiflix from 'notiflix'
 import {CellButton} from '../../styles/styledComponents'
 import {excelDownload} from '../../common/excelDownloadFunction'
 import cookie from 'react-cookies'

@@ -1,26 +1,21 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {
-  ExcelTable,
-  Header as PageHeader,
-  RequestMethod,
-  columnlist,
-  MAX_VALUE,
-  DropDownEditor,
-  TextEditor,
-  excelDownload,
-  PaginationComponent,
-  ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType
+    columnlist,
+    ExcelDownloadModal,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType,
+    MAX_VALUE,
+    RequestMethod,
+    TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
-import styled from "styled-components";
 
 interface IProps {
   children?: any
@@ -42,7 +37,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(['지시고유번호', '거래처', '모델', 'code',  '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
+    from: moment(new Date()).startOf("month").format('YYYY-MM-DD'),
     to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
   });
 
