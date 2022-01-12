@@ -8,39 +8,16 @@ import domtoimage from 'dom-to-image';
 interface Props {
 
     title : string,
+    handleBarcode : (url : string) => void
+    handleModal : (isOpen : boolean) => void
     isOpen : boolean
-    setIsOpen: (ioOpen: boolean) => void
-    barcodeData : any,
+    data : any
     type : 'rawMaterial' | 'product'
 
 }
 
-// const rawMaterialType = ['CODE' , '모델']
-// const productType = ['CODE' , '모델' , 'CODE' , '품명' , '품류종류']
+const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props) => { 
 
-
-const BarcodeModal = ({title,isOpen,setIsOpen,barcodeData,type} : Props) => { 
-
-    const barcodePrintApi = async (dataurl) => {
-
-        await axios.post('http://192.168.0.49:18080/WebPrintSDK/Printer1', 
-        {
-          "id":1,
-          "functions":
-          {"func0":{"checkLabelStatus":[]},
-            "func1":{"clearBuffer":[]},
-            "func2":{"drawBitmap":[dataurl,20,0,800,0]},
-            "func3":{"printBuffer":[]}
-          }
-        },
-        {
-          headers : {
-            'Content-Type' : 'application/x-www-form-urlencoded'
-          }
-        }
-        )
-      }
-    
     const numberOfType = (type : 'rawMaterial' | 'product') => {
 
         switch(type){
@@ -53,13 +30,17 @@ const BarcodeModal = ({title,isOpen,setIsOpen,barcodeData,type} : Props) => {
         }
     }
 
-    const makeBarcode = (barcodeId : string) => {
+    const makeBarcode = (barcodeId : string | number) => {
 
-        const id = barcodeId?.padStart(20, '0')
-        const delimit = "-"
-        const key = "78423304"
-        const typeCode = numberOfType(type)
-        return  typeCode + delimit + id
+        if(barcodeId){
+            
+            const id = String(barcodeId).padStart(20, '0')
+            const delimit = "-"
+            const key = "78423304"
+            const typeCode = numberOfType(type)
+
+            return  typeCode + delimit + id
+        }
 
     }
 
@@ -67,48 +48,68 @@ const BarcodeModal = ({title,isOpen,setIsOpen,barcodeData,type} : Props) => {
 
         const dom  = document.getElementById('capture_dom')
         const dataurl = await domtoimage.toPng(dom, {quality: 1})
-        barcodePrintApi(dataurl)
-    }
-
-    // product냐 또는 rawMaterial 이냐에 따라 달라짐
-    const printBarcode = () => {
-
-        const encrypt = makeBarcode(barcodeData?.id)
-
-        return (
-            <>
-                <BarcodeBox id={'capture_dom'}>
-                    <BarcodeItem>
-                        <Label htmlFor='Code'>CODE</Label>
-                        <LabelValue id='Code'>SUS-111</LabelValue>
-                    </BarcodeItem>
-                    <BarcodeItem>
-                        <Label htmlFor='Code'>품명</Label>
-                        <LabelValue id='Code'>SUS360</LabelValue>
-                    </BarcodeItem>
-                    <BarcodeItem>
-                        <Label htmlFor='Code'>거래처</Label>
-                        <LabelValue id='Code'>한국상사</LabelValue>
-                    </BarcodeItem>
-                    <BarcodeItem>
-                        <Label htmlFor='Code'>사용기준일(일)</Label>
-                        <LabelValue id='Code'>10</LabelValue>
-                    </BarcodeItem>
-                    <Wrap>
-                        <Barcode value ={encrypt} displayValue={false} renderer={'canvas'} />
-                    </Wrap>
-                </BarcodeBox>
-            </>
-        )
+        handleBarcode(dataurl)
 
     }
 
-    console.log(isOpen,'isOpenisOpenisOpen')
+    const onClose = () => {
+
+        handleModal(isOpen)
+
+    }
+
+    const convertDataToArray = (data : any) => {
+
+        if(type === 'rawMaterial'){
+            return [
+                {id : '1' , title : 'CODE' , value :data?.code ?? '-'},
+                {id : '2', title :'품명' , value : data?.name ?? '-'},
+                {id : '3' , title :'거래처', value : data?.customer_id ?? '-'},
+                {id : '4' ,title :'사용기준일(일)', value :data?.expiration ?? '-'}
+            ]
+
+        }else if(type === 'product'){
+
+            return [
+                {id : '1', title : '거래처' , value : data?.customer_id ?? '-'},
+                {id : '2' , title : '모델', value : data?.model.model ?? '-'},
+                {id : '3' , title : 'CODE', value :data?.code ?? '-'},
+                {id : '4' , title : '품명', value : data?.name ?? '-'},
+                {id : '5' , title : '품목종류', value : data?.type ?? '-'}
+            ]
+        }
+        
+    }
+
+    const printBarcode = (type : 'rawMaterial' | 'product' , data : any) => {
+
+        if(data){
+
+            const convertData = convertDataToArray(data)
+            const encrypt = makeBarcode(type === 'rawMaterial' ? data.rm_id : '2' )
+
+            return (
+                    <BarcodeBox id={'capture_dom'}>
+                        {convertData.map((data)=>(
+                            <BarcodeItem key={data.id}>
+                                <Label htmlFor={data.title}>{data.title}</Label>
+                                <LabelValue id={data.title}>{data.value}</LabelValue>
+                            </BarcodeItem>
+                                ))
+                            }   
+                        <Wrap>
+                            <Barcode value ={encrypt} displayValue={false} renderer={'canvas'} />
+                        </Wrap>       
+                    </BarcodeBox>
+            )
+        }
+
+    }
 
     return(
         <BasicModal 
             isOpen={isOpen} 
-            onClose={()=>setIsOpen(false)}
+            onClose={onClose}
             >
             <TitleContainer>
                 <TitleSpan>{title}</TitleSpan>
@@ -117,7 +118,7 @@ const BarcodeModal = ({title,isOpen,setIsOpen,barcodeData,type} : Props) => {
                 </Button>
             </TitleContainer>
             <div style={{display : 'flex' , justifyContent : 'center' , alignItems : 'center' , height : '100%'}}>
-                {printBarcode()}
+                {printBarcode(type , data)}
             </div>
         </BasicModal>
 
@@ -132,6 +133,7 @@ const TitleContainer = Styled.div`
 
     display : flex;
     justify-content : space-between;
+    align-items : center;
 
 `
 
@@ -150,8 +152,8 @@ const Button = Styled.button`
     justify-content : center;
     align-items : center;
     font-size : 13px;
-    width : 108px;
-    height: 20px;
+    width : 50px;
+    height: 30px;
     padding: 0;
     border: none;
 `

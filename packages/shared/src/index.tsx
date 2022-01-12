@@ -169,6 +169,8 @@ export {UnitContainer} from "./components/Unit/UnitContainer"
 
 export {ProfileHeader} from "./components/Profile/ProfileHeader"
 
+export {BarcodeModal} from "./components/Modal/BarcodeModal"
+
 export {rootReducer} from "./reducer"
 
 type RootState = ReturnType<typeof rootReducer>

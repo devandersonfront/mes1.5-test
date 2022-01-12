@@ -38,6 +38,8 @@ export const SF_ENDPOINT_FILE = `http://${isLocalhost()}:8099`
 export const SF_ENDPOINT_RESOURCE = `http://${isLocalhost()}:8285`
 export const SF_PORT = ``
 
+export const SF_ENDPOINT_BARCODE = 'http://192.168.0.49:18080'
+
 export const AUTHORITY_LIST = [
   { title: "HOME", show: false, checkable: true, check: false, child: [
       { title: "HOME", show: false, checkable: true, check: false, child: [], value: "ROLE_HOME" },
