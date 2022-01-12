@@ -989,7 +989,11 @@ export const columnlist: any = {
     {key: "cm_id", name: '모델', width: 120},
     {key: "code", name: 'CODE', width: 208},
     {key: "material_name", name: '품명', width: 240},
-    {key: 'type', name: '품목 종류', width: 120},
+    {key: 'type', name: '품목 종류', width: 120,  selectList: [
+        {pk: '0', name: '반제품'},
+        {pk: '1', name: '재공품'},
+        {pk: '2', name: '완제품'},
+      ]},
     {key: 'process_id', name: '생산 공정', width: 120},
     {key: 'title', name: '제목', width: 360},
     {key: 'register',name: '등록 날짜'},

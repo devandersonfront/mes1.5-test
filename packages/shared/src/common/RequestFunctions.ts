@@ -276,7 +276,7 @@ const ApiList = {
   modelList: `/api/v1/model/list`,
   processList: `/api/v1/process/list`,
   machineList: `/api/v1/machine/list`,
-  // productList: `/api/v1/product/list`,
+  // productList: `/api/v1/product/list`
   productList: `/cnc/api/v1/product/list`,
   rawmaterialList: `/api/v1/rawmaterial/list`,
   moldList: `/api/v1/mold/list`,
@@ -289,6 +289,7 @@ const ApiList = {
   stockSummaryList: '/api/v1/stock/summary/list',
   operactionList: `/api/v1/operation/list`,
   defectList: `/api/v1/quality/statistics/defect`,
+  productChangeList: `/cnc/api/v1/product-changes/list`,
   recordList: `/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
   factoryList: `/api/v1/factory/list`,

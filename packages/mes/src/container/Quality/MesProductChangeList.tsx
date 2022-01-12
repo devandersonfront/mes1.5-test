@@ -1,11 +1,21 @@
-import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import React, {useEffect, useState} from 'react';
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
+import {useRouter} from "next/router";
+import Notiflix from "notiflix";
 
-const MesProductChangeList = () => {
+interface IProps {
+    children?: any
+    page?: number
+    keyword?: string
+    option?: number
+}
 
+
+const MesProductChangeList = ({page, keyword, option}: IProps) => {
+    const router = useRouter()
     const [basicRow, setBasicRow] = useState<Array<any>>([{
         order_num: '-', operation_num: '20210401-013'
     }])
@@ -24,6 +34,97 @@ const MesProductChangeList = () => {
         total: 1
     })
 
+    useEffect(() => {
+        // setOptionIndex(option)
+        if(searchKeyword !== ""){
+            SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
+        }else{
+            LoadBasic(pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
+        }
+    }, [pageInfo.page, searchKeyword, option, selectDate])
+
+    const LoadBasic = async (page?: number) => {
+        Notiflix.Loading.circle()
+        const res = await RequestMethod('get', `productChangeList`,{
+            path: {
+                page: pageInfo.page ?? 1,
+                renderItem: 18,
+            },
+            params: {
+                from: selectDate.from,
+                to: selectDate.to,
+            }
+
+        })
+
+        if(res){
+            setPageInfo({
+                ...pageInfo,
+                page: res.page,
+                total: res.totalPages
+            })
+            cleanUpData(res)
+        }else if (res === 401) {
+            Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
+                router.back()
+            })
+        }
+
+    }
+
+
+    const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
+        Notiflix.Loading.circle()
+        if(!isPaging){
+            setOptionIndex(option)
+        }
+        const res = await RequestMethod('get', `shipmentSearch`,{
+            path: {
+                page: isPaging ?? 1,
+                renderItem: 22,
+            },
+            params: {
+                keyword: keyword ?? '',
+                opt: option ?? 0,
+                from: selectDate.from,
+                to: selectDate.to,
+            }
+        })
+
+        if(res){
+            setPageInfo({
+                ...pageInfo,
+                page: res.page,
+                total: res.totalPages
+            })
+            cleanUpData(res)
+        }
+    }
+
+
+    const cleanUpData = (res: any) => {
+        let tmpRow = []
+        tmpRow = res.map((v,i)=>{
+            return {
+                customer_id: v.product.customerId  === null ? '-' : v.product.customerId,
+                cm_id: v.product.model === null ? '-' : v.product.model,
+                code: v.product.code,
+                material_name: v.product.name === null ? '-' : v.product.name,
+                type: column[4].selectList[v.product.type].name,
+                process_id: v.product.processId === null ? '-' : v.product.processId,
+                title: v.title,
+                register: moment(v.created).format('YYYY.MM.DD'),
+                writer: v.writer.name
+            }
+        })
+        setBasicRow([...tmpRow])
+    }
+
+
     return (
         <div>
             <PageHeader
@@ -32,9 +133,11 @@ const MesProductChangeList = () => {
                 searchKeyword={""}
                 searchOptionList={optionList}
                 onChangeSearchKeyword={(keyword) => {
-                    // SearchBasic(keyword, option, 1)
-                    setSearchKeyword(keyword);
-                    setPageInfo({page:1, total:1})
+                    if(keyword){
+                        router.push(`/mes/quality/product/change/list?page=1&keyword=${keyword}&opt=${optionIndex}`)
+                    }else{
+                        router.push(`/mes/quality/product/change/list?page=1&keyword=`)
+                    }
                 }}
                 onChangeSearchOption={(option) => {
                     // SearchBasic(keyword, option, 1)
