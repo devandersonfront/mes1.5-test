@@ -28,22 +28,13 @@ interface SelectParameter {
 
 const MesToolList = ({page, keyword, option}: IProps) => {
     const router = useRouter();
-    const [basicRow, setBasicRow] = useState<Array<any>>([
-        {
-            elapsed:"test!",
-            code:"test!",
-            name:"test!",
-            unit:"test!",
-            customer:"test!",
-            warehousing:"test!",
-            date:moment().format("YYYY.MM.DD"),
-        }
-    ]);
+    const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingList)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [pageInfo, setPageInfo] = useState<{page:number, totalPage:number}>({page:page, totalPage:1});
+    const [isFirst, setIsFirst] = useState<boolean>(true);
 
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {
@@ -189,9 +180,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
         //     }
         // })
         let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-
             let appendAdditional: any = {}
-
             row.additional && row.additional.map((v: any) => {
                 appendAdditional = {
                     ...appendAdditional,
@@ -204,33 +193,78 @@ const MesToolList = ({page, keyword, option}: IProps) => {
                 ...row,
                 ...appendAdditional,
                 id: `tool_${random_id}`,
+                tool_id:row.tool.code,
+                elapsed: row.elapsed  === 0 ? "0" : row.elapsed,
+                name: row.tool.name,
+                unit:row.tool.unit,
+                customer_id:row.tool.customer.name,
             }
         })
         setBasicRow([...tmpBasicRow])
 
     }
 
-    const LoadData = async() => {
+    const LoadBasic = async() => {
         const res = await RequestMethod("get", "lotToolList",{
             path:{
                 page:page,
                 renderItem:22
             },
             params:{
-                from:"2000-01-12",
-                to:moment().format("YYYY-MM-DD")
+                from:isFirst ? "2000-01-12" : selectDate.from,
+                to: selectDate.to
             }
         })
 
         if(res){
             setPageInfo({...pageInfo, totalPage: res.totalPages })
-            const result = cleanUpData(res);
+            cleanUpData(res);
+            setIsFirst(false);
+        }
+    }
 
+    const SearchBasic = async() => {
+        const res = await RequestMethod("get", "lotToolSearch", {
+            path:{
+                page:page,
+                renderItem:22
+            },
+            params:{
+                from:isFirst ? "2000-01-01" : selectDate.from,
+                to: selectDate.to,
+                keyword:keyword,
+                opt:optionIndex
+            }
+        })
+        if(res){
+            setPageInfo({...pageInfo, totalPage: res.totalPages })
+            cleanUpData(res);
+            setIsFirst(false);
+        }
+    }
+
+    const ButtonEvents = (index:number) => {
+        switch(index) {
+            case 0:
+                console.log(0)
+                return
+            case 1:
+                console.log(1)
+                return
+            case 2:
+                console.log(2)
+                return
+            default:
+                return
         }
     }
 
     useEffect(()=>{
-        //LoadData
+        if(keyword){
+            SearchBasic()
+        }else{
+            LoadBasic()
+        }
         console.log(selectDate);
 
     },[selectDate, keyword])
@@ -242,10 +276,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
                 buttons={
                     ["수정 하기", '행추가', '저장하기', '삭제']
                 }
-                buttonsOnclick={() => {}
-                    // () => {}
-                    // onClickHeaderButton
-                }
+                buttonsOnclick={ButtonEvents}
                 isCalendar
                 calendarTitle={"입고일"}
                 calendarType={"period"}

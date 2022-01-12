@@ -125,7 +125,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             console.log("row :" , row)
             let appendAdditional: any = {}
 
-            row.customer_id = row.customer.name;
+            row.customer_id = row.customer?.name;
             row.additional && row.additional.map((v: any) => {
                 appendAdditional = {
                     ...appendAdditional,

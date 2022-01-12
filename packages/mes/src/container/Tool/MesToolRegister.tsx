@@ -25,15 +25,19 @@ const MesToolRegister = () => {
         console.log("data : ", data)
         data.map((rowData, index) => {
             let tmpRow:any = {};
-            tmpRow.tool_id = rowData?.tool_id;
-            tmpRow.code = rowData.code;
-            tmpRow.name = rowData.name;
-            tmpRow.unit = rowData.unitPK;
-            tmpRow.stock = rowData?.stock;
-            tmpRow.customer = rowData.customer;
-            tmpRow.additional = rowData?.additional ?? [];
-            tmpRow.version = rowData?.version ?? undefined;
+            let toolObject:any = {};
+            toolObject.tool_id = rowData?.tool_id;
+            toolObject.code = rowData.code;
+            toolObject.name = rowData.name;
+            toolObject.unit = rowData.unitPK;
+            toolObject.stock = rowData?.stock;
+            toolObject.customer = rowData.customerData;
+            toolObject.additional = rowData?.additional ?? [];
+            toolObject.version = rowData?.version ?? undefined;
 
+            tmpRow.tool = toolObject;
+            tmpRow.date = rowData.date;
+            tmpRow.warehousing = rowData.warehousing;
             resultData.push(tmpRow);
         })
         console.log(resultData)
@@ -41,7 +45,7 @@ const MesToolRegister = () => {
     }
 
     const SaveBasic = async(data:any) => {
-        const res = await RequestMethod("post", "toolLotSave", data)
+        const res = await RequestMethod("post", "lotToolSave", data)
 
         if(res){
             Notiflix.Report.success("저장되었습니다.","","확인", () => router.push("/mes/tool/list"))
