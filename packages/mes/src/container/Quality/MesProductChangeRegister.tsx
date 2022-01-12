@@ -4,12 +4,14 @@ import {
     ExcelTable,
     Header as PageHeader,
     IExcelHeaderType, TitleCalendarBox,
+    ChangeProductFileInfo,
     TitleFileUpload,
     TitleInput,
     TitleTextArea
 } from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
+import moment from "moment";
 
 const MesProductChangeRegister = () => {
 
@@ -18,14 +20,23 @@ const MesProductChangeRegister = () => {
     }])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productChangeRegister"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [optionList, setOptionList] = useState<string[]>([ '거래처', '모델', 'CODE', '품명', '제목', '작성자'])
-    const [optionIndex, setOptionIndex] = useState<number>(0)
-
-    const [searchKeyword, setSearchKeyword] = useState<string>("");
+    const [ changeInfo, setChangeInfo] = useState({title: '', content: '', registered: moment().format('YYYY.MM.DD')})
+    const [ files, setFiles ] = useState<ChangeProductFileInfo[]>([
+            {name: '', uuid: '', sequence: 1},
+            {name: '', uuid: '', sequence: 2},
+            {name: '', uuid: '', sequence: 3},
+        ]
+    )
     const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
         page: 1,
         total: 1
     })
+
+    const fileChange = (fileInfo: ChangeProductFileInfo, index: number) => {
+        const temp = files
+        temp[index] = fileInfo
+        setFiles([...temp])
+    }
 
     return (
         <div>
@@ -37,7 +48,6 @@ const MesProductChangeRegister = () => {
             />
             <ExcelTable
                 editable
-                // resizable
                 headerList={[
                     SelectColumn,
                     ...column
@@ -49,8 +59,9 @@ const MesProductChangeRegister = () => {
                     e.map(v => {
                         if(v.isChange) tmp.add(v.id)
                     })
+                    console.log(e)
                     setSelectList(tmp)
-                    setBasicRow(e)
+                    setBasicRow(e.map(v => ({...v, name: v.product_name})))
                 }}
                 selectList={selectList}
                 //@ts-ignore
@@ -64,12 +75,12 @@ const MesProductChangeRegister = () => {
                     }
                 }}
             />
-            <TitleInput title={'제목'} value={'공차 수정'} placeholder={''} onChange={(e)=>{}}/>
-            <TitleTextArea title={'설명'} value={''} placeholder={''} onChange={(e)=>{}}/>
-            <TitleFileUpload title={'첨부파일 01'} value={''} placeholder={'파일을 선택해주세요 ( 크기 : 00MB 이하, 확장자 : .hwp .xlsx .doc .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>
-            <TitleFileUpload title={'첨부파일 02'} value={'스마트제조혁신추진단_스마트공장표준지도.pdf'} placeholder={'파일을 선택해주세요 ( 크기 : 00MB 이하, 확장자 : .hwp .xlsx .doc .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>
-            <TitleFileUpload title={'첨부파일 03'} value={''} placeholder={'파일을 선택해주세요 ( 크기 : 00MB 이하, 확장자 : .hwp .xlsx .doc .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>
-            <TitleCalendarBox value={'2021.06.17'} onChange={()=>{}}/>
+            <TitleInput title={'제목'} value={changeInfo.title} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, title: e.target.value})}/>
+            <TitleTextArea title={'설명'} value={changeInfo.content} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, content: e.target.value})}/>
+            {files.map((v,i) =>
+                <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} value={v.name} placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={(fileInfo: ChangeProductFileInfo)=>fileChange(fileInfo,i)}/>
+            )}
+            <TitleCalendarBox value={changeInfo.registered} onChange={(date)=>setChangeInfo({...changeInfo, registered: moment(date).format('YYYY.MM.DD')})}/>
         </div>
     );
 };

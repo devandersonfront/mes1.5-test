@@ -95,11 +95,12 @@ export type InspectionFinalDataResult = {
 }
 
 export type InspectionInfo = {
-    title: string
+    name: string
     unit: string
     type: number
-    error_minimum: number
-    error_maximum: number
+    error_minimum: string
+    error_maximum: string
+    standard: string
     samples: number
     data_result: InspectionDataResult[]
   }
@@ -110,4 +111,10 @@ type InspectionDataResult = {
   sequence: number
   value: string
   pass: boolean
+}
+
+export type ChangeProductFileInfo = {
+  name: string
+  uuid: string
+  sequence: number
 }

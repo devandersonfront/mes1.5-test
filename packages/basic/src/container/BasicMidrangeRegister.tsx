@@ -5,25 +5,22 @@ import {
     Header as PageHeader,
     IExcelHeaderType,
     MidrangeFormReviewModal,
-    RequestMethod
+    RequestMethod, TextEditor
 } from "shared";
 import {MidrangeButton} from "shared/src/styles/styledComponents";
 import Notiflix from "notiflix";
+import {useRouter} from "next/router";
 
 const BasicMidrangeRegister = () => {
-
+    const router = useRouter()
     const [basicRow, setBasicRow] = useState<Array<any>>([{
-        amount: ''
+
     }])
-    const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([{
-        amount: ''
-    }])
+    const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([{samples: 1}])
     const [legendaryBasicRow, setLegendaryBasicRow] = useState<Array<any>>([{
-        amount: ''
+
     }])
-    const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{
-        amount: ''
-    }])
+    const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{unit: 'mm', type: 0}])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["midrangeExam"])
     const [sampleColumn, setSampleColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrange'])
     const [legendaryColumn, setLegendaryColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeLegendary'])
@@ -33,13 +30,48 @@ const BasicMidrangeRegister = () => {
     const [ isOpen, setIsOpen ] = useState<boolean>(false)
     const [legendarySelectList, setLegendarySelectList] = useState<Set<number>>(new Set())
     const [ItemSelectList, setItemSelectList] = useState<Set<number>>(new Set())
+    const [productId, setProductId] = useState<number>()
+
+    React.useEffect(()=>{
+        const data = {
+            customer: router.query.customer_id,
+            model: router.query.cm_id,
+            code: router.query.code,
+            material_name: router.query.name,
+            type: router.query.type,
+        }
+        setBasicRow([data])
+        setProductId(Number(router.query.product_id))
+    },[router.query])
+
+    const MidrangeSave = async () => {
+        const legendaryKeyValue = {}
+        legendaryBasicRow.map((v,i)=>{
+            legendaryKeyValue[v.legendary] = v.LegendaryExplain
+        })
+
+        const midrangeData = {
+            product_id: productId,
+            samples: Number(sampleBasicRow[0].samples),
+            legendary_list: legendaryKeyValue,
+            category_info: itemBasicRow
+        }
+        let res: any
+        res = await RequestMethod('post', `inspecCategorySave`,[midrangeData])
+
+        if(res){
+            Notiflix.Report.success('저장되었습니다.','','확인');
+            router.push('/mes/basic/productV1u')
+        }
+    }
+
     const buttonEvents = async(index:number) => {
         switch (index) {
             case 0 :
                 setIsOpen(!isOpen)
                 return
             case 1 :
-
+                MidrangeSave()
                 return
         }
     }
@@ -51,7 +83,6 @@ const BasicMidrangeRegister = () => {
             legendaryColumn.map((value) => {
                 if (value.selectList && value.selectList.length) {
                     items = {
-                        ...value.selectList[0],
                         [value.key]: value.selectList[0].name,
                         [value.key + 'PK']: value.selectList[0].pk,//여기 봐야됨!
                         ...items,
@@ -63,9 +94,7 @@ const BasicMidrangeRegister = () => {
                 ...legendaryBasicRow,
                 {
                     ...items,
-                    id: `customer_${random_id}`,
-                    name: null,
-                    additional: [],
+                    id: `legendary_${random_id}`,
                 }
             ])
         }else if(type === 'item' && itemBasicRow.length < 51) {
@@ -73,11 +102,17 @@ const BasicMidrangeRegister = () => {
             let random_id = Math.random()*1000;
             itemColumn.map((value) => {
                 if (value.selectList && value.selectList.length) {
-                    items = {
-                        ...value.selectList[0],
-                        [value.key]: value.selectList[0].name,
-                        [value.key + 'PK']: value.selectList[0].pk,//여기 봐야됨!
-                        ...items,
+                    if(value.key === 'type'){
+                        items = {
+                            [value.key]: Number(value.selectList[0].pk),
+                            ...items,
+                        }
+                    }else {
+                        items = {
+                            [value.key]: value.selectList[0].name,
+                            [value.key + 'PK']: value.selectList[0].pk,//여기 봐야됨!
+                            ...items,
+                        }
                     }
                 }
             })
@@ -86,9 +121,7 @@ const BasicMidrangeRegister = () => {
                 ...itemBasicRow,
                 {
                     ...items,
-                    id: `customer_${random_id}`,
-                    name: null,
-                    additional: [],
+                    id: `item_${random_id}`,
                 }
             ])
 
@@ -97,7 +130,6 @@ const BasicMidrangeRegister = () => {
 
     return (
         <div>
-            <MidrangeFormReviewModal isOpen={isOpen} setIsOpen={setIsOpen}/>
             <PageHeader title={"초ㆍ중ㆍ종 검사항목"} buttons={['검사 양식 검토', '저장하기']} buttonsOnclick={buttonEvents}/>
             <ExcelTable
                 editable
@@ -107,9 +139,6 @@ const BasicMidrangeRegister = () => {
                 row={basicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
-                    e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
-                    })
                     setSelectList(tmp)
                     setBasicRow(e)
                 }}
@@ -126,9 +155,6 @@ const BasicMidrangeRegister = () => {
                 row={sampleBasicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = sampleSelectList
-                    e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
-                    })
                     setSampleSelectList(tmp)
                     setSampleBasicRow(e)
                 }}
@@ -145,9 +171,6 @@ const BasicMidrangeRegister = () => {
                 row={legendaryBasicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = legendarySelectList
-                    e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
-                    })
                     setLegendarySelectList(tmp)
                     setLegendaryBasicRow(e)
                 }}
@@ -167,10 +190,8 @@ const BasicMidrangeRegister = () => {
                 row={itemBasicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = ItemSelectList
-                    e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
-                    })
                     setItemSelectList(tmp)
+
                     setItemBasicRow(e)
                 }}
                 selectList={ItemSelectList}
@@ -181,6 +202,7 @@ const BasicMidrangeRegister = () => {
             <MidrangeButton onClick={()=>addRowButton('item')}>
                 +검사 항목 추가
             </MidrangeButton>
+            <MidrangeFormReviewModal formReviewData={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
         </div>
     );
 };

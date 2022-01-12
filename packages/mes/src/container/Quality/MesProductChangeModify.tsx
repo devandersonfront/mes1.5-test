@@ -66,9 +66,9 @@ const MesProductChangeModify = () => {
             />
             <TitleInput title={'제목'} value={'공차 수정'} placeholder={''} onChange={(e)=>{}}/>
             <TitleTextArea title={'설명'} value={''} placeholder={''} onChange={(e)=>{}}/>
-            <TitleFileUpload title={'첨부파일 01'} value={''} placeholder={'파일을 선택해주세요 ( 크기 : 00MB 이하, 확장자 : .hwp .xlsx .doc .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>
-            <TitleFileUpload title={'첨부파일 02'} value={'스마트제조혁신추진단_스마트공장표준지도.pdf'} placeholder={'파일을 선택해주세요 ( 크기 : 00MB 이하, 확장자 : .hwp .xlsx .doc .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>
-            <TitleFileUpload title={'첨부파일 03'} value={''} placeholder={'파일을 선택해주세요 ( 크기 : 00MB 이하, 확장자 : .hwp .xlsx .doc .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>
+            {/*<TitleFileUpload title={'첨부파일 01'} value={''} placeholder={'파일을 선택해주세요 ( 크기 : 00MB 이하, 확장자 : .hwp .xlsx .doc .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>*/}
+            {/*<TitleFileUpload title={'첨부파일 02'} value={'스마트제조혁신추진단_스마트공장표준지도.pdf'} placeholder={'파일을 선택해주세요 ( 크기 : 00MB 이하, 확장자 : .hwp .xlsx .doc .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>*/}
+            {/*<TitleFileUpload title={'첨부파일 03'} value={''} placeholder={'파일을 선택해주세요 ( 크기 : 00MB 이하, 확장자 : .hwp .xlsx .doc .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>*/}
             <TitleCalendarBox value={'2021.06.17'} onChange={()=>{}}/>
         </div>
     );

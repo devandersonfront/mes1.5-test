@@ -33,11 +33,38 @@ const dump = {
     inspection_info: {
         middle: [
             {
-                title: "차종환 돌격대(생존)",
+                name: "차종환 돌격대(생존)",
                 unit: "mm",
                 type: 0,
-                error_minimum: 30.0,
-                error_maximum: 150.0,
+                error_minimum: "30.0",
+                error_maximum: "150.0",
+                samples: 5,
+                standard: '20',
+                data_result: [
+                    {
+                        sequence: 1,
+                        value: "345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 2,
+                        value: "2345.7",
+                        pass: true
+                    },
+                    {
+                        sequence: 3,
+                        value: "3345.7",
+                        pass: true
+                    }
+                ]
+            },
+            {
+                name: "백찬 척후병대장",
+                unit: "mm",
+                type: 0,
+                error_minimum: "30.0",
+                error_maximum: "150.0",
+                standard: '20',
                 samples: 5,
                 data_result: [
                     {
@@ -58,36 +85,12 @@ const dump = {
                 ]
             },
             {
-                title: "백찬 척후병대장",
+                name: "차종환 노예사장",
                 unit: "mm",
                 type: 0,
-                error_minimum: 30.0,
-                error_maximum: 150.0,
-                samples: 5,
-                data_result: [
-                    {
-                        sequence: 1,
-                        value: "345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 2,
-                        value: "2345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 3,
-                        value: "3345.7",
-                        pass: true
-                    }
-                ]
-            },
-            {
-                title: "차종환 노예사장",
-                unit: "mm",
-                type: 0,
-                error_minimum: 30.0,
-                error_maximum: 150.0,
+                error_minimum: "30.0",
+                error_maximum: "150.0",
+                standard: '20',
                 samples: 5,
                 data_result: [
                     {
@@ -110,11 +113,12 @@ const dump = {
         ],
         beginning: [
             {
-                title: "차종환 돌격대(생존)",
+                name: "차종환 돌격대(생존)",
                 unit: "mm",
                 type: 0,
-                error_minimum: 30.0,
-                error_maximum: 150.0,
+                error_minimum: "30.0",
+                error_maximum: "150.0",
+                standard: '20',
                 samples: 5,
                 data_result: [
                     {
@@ -135,11 +139,12 @@ const dump = {
                 ]
             },
             {
-                title: "백찬 척후병대장",
+                name: "백찬 척후병대장",
                 unit: "mm",
                 type: 0,
-                error_minimum: 30.0,
-                error_maximum: 150.0,
+                error_minimum: "30.0",
+                error_maximum: "150.0",
+                standard: '20',
                 samples: 5,
                 data_result: [
                     {
@@ -160,11 +165,12 @@ const dump = {
                 ]
             },
             {
-                title: "차종환 노예사장",
+                name: "차종환 노예사장",
                 unit: "mm",
                 type: 0,
-                error_minimum: 30.0,
-                error_maximum: 150.0,
+                error_minimum: "30.0",
+                error_maximum: "150.0",
+                standard: '20',
                 samples: 5,
                 data_result: [
                     {
@@ -187,11 +193,12 @@ const dump = {
         ],
         end: [
             {
-                title: "차종환 돌격대(생존)",
+                name: "차종환 돌격대(생존)",
                 unit: "mm",
                 type: 0,
-                error_minimum: 30.0,
-                error_maximum: 150.0,
+                error_minimum: "30.0",
+                error_maximum: "150.0",
+                standard: '20',
                 samples: 5,
                 data_result: [
                     {
@@ -212,11 +219,12 @@ const dump = {
                 ]
             },
             {
-                title: "백찬 척후병대장",
+                name: "백찬 척후병대장",
                 unit: "mm",
                 type: 0,
-                error_minimum: 30.0,
-                error_maximum: 150.0,
+                error_minimum: "30.0",
+                error_maximum: "150.0",
+                standard: '20',
                 samples: 5,
                 data_result: [
                     {
@@ -237,11 +245,12 @@ const dump = {
                 ]
             },
             {
-                title: "차종환 노예사장",
+                name: "차종환 노예사장",
                 unit: "mm",
                 type: 0,
-                error_minimum: 30.0,
-                error_maximum: 150.0,
+                error_minimum: "30.0",
+                error_maximum: "150.0",
+                standard: '20',
                 samples: 5,
                 data_result: [
                     {
@@ -269,43 +278,50 @@ const dump = {
         end: "2022-01-06T19:08:58.02"
     },
     inspection_result: {
-        middle: [
-            {
-                sequence: 1,
-                pass: true
-            },
-            {
-                sequence: 2,
-                pass: false
-            }
-        ],
-        beginning: [
-            {
-                sequence: 1,
-                pass: true
-            },
-            {
-                sequence: 2,
-                pass: false
-            }
-        ],
-        end: [
-            {
-                sequence: 1,
-                pass: true
-            },
-            {
-                sequence: 2,
-                pass: false
-            }
-        ]
+        middle: [],
+        beginning: [],
+        end: []
     },
     version: 1
 }
 
-const MidrangeExcelTable = () => {
+interface IProps {
+    formReviewData: any
+}
 
+const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
     const [testData, setTestData] = React.useState(dump)
+
+    React.useEffect(()=>{
+
+        if(formReviewData !== undefined ) {
+            const inspection_info = formReviewData.item.map((v) => {
+                return {...v, samples: formReviewData.samples[0].samples, type: v.type === '범례 적용' ? 1 : 0, data_result: []}
+            })
+
+            const legendary_list = formReviewData.legendary.map((v) => {
+                    return v.legendary ?? ''
+            })
+
+            const reviewData = {
+                legendary_list: legendary_list,
+                inspection_info: {middle: inspection_info, beginning: inspection_info, end: inspection_info},
+                inspection_result: {
+                    middle: [],
+                    beginning: [],
+                    end: []
+                },
+                inspection_time: {
+                    middle: "2022-01-06T19:08:58.02",
+                    beginning: "2022-01-06T19:08:58.02",
+                    end: "2022-01-06T19:08:58.02"
+                },
+            }
+            //@ts-ignore
+            setTestData(reviewData)
+        }
+    },[formReviewData])
+
     let arr = new Array(10).fill(undefined).map((val,idx) => idx);
 
     const itemDataResultTextChange = (inspection_info: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLInputElement>, itemIndex, dataResultIndex) => {
@@ -438,11 +454,11 @@ const MidrangeExcelTable = () => {
             inspection_info && inspection_info.map((v,i)=>
             <div style={{display: "flex"}} key={v.samples+'~'+i}>
                 <CellDefault style={{width: '144px', height: '40px', borderBottom: 0, borderRight: 0, textAlign: "center" }}>
-                    {v.title}
+                    {(v.name !== undefined ? v.name : '')+`(${v.unit})`}
                 </CellDefault>
                 <CellDefault style={{width: '120px', height: '40px', flexDirection: "column", borderBottom: 0  }}>
                     <div>
-                        {v.samples}{/*starndard*/}
+                        {v.standard}
                     </div>
                     <div style={{fontSize: '11px'}}>
                         ({v.error_minimum}~{v.error_maximum})

@@ -1,19 +1,20 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 import {MidrangeButton} from "shared/src/styles/styledComponents";
+import {useRouter} from "next/router";
+import Notiflix from "notiflix";
 
 const BasicMidrangeDetail = () => {
     const [basicRow, setBasicRow] = useState<Array<any>>([{
-        amount: ''
     }])
     const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([{
-        amount: ''
+
     }])
     const [legendaryBasicRow, setLegendaryBasicRow] = useState<Array<any>>([{
-        amount: ''
+
     }])
     const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{
-        amount: ''
+
     }])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["midrangeExamDetail"])
     const [sampleColumn, setSampleColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeDetail'])
@@ -23,13 +24,41 @@ const BasicMidrangeDetail = () => {
     const [sampleSelectList, setSampleSelectList] = useState<Set<number>>(new Set())
     const [legendarySelectList, setLegendarySelectList] = useState<Set<number>>(new Set())
     const [ItemSelectList, setItemSelectList] = useState<Set<number>>(new Set())
+    const router = useRouter()
+
+    const LoadMidrange = async () => {
+        Notiflix.Loading.circle()
+        const res = await RequestMethod('get', `inspectCategoryLoad`,{
+            path: {
+                product_id: 28
+            }
+        })
+
+        if(res){
+            const legendaryKey = Object.keys(res.legendary_list)
+            const legendaryValue = Object.values(res.legendary_list)
+
+            const legendaryArray = legendaryKey.map((v,i)=>{
+                return {legendary: v, LegendaryExplain: legendaryValue[i]}
+            })
+
+            setSampleBasicRow([{samples: res.samples}])
+            setLegendaryBasicRow(legendaryArray)
+            setItemBasicRow(res.category_info)
+        }
+    }
+
+    //product_id
+    // console.log(28)
+    React.useEffect(()=>{
+        console.log(router)
+        LoadMidrange()
+    },[])
 
     return (
         <div>
-            <PageHeader title={"초ㆍ중ㆍ종 검사항목 정보"} buttons={[ '목록 보기', '검사 양식 검토', '수정하기']} />
+            <PageHeader title={"초ㆍ중ㆍ종 검사항목 정보"} buttons={[ '목록 보기', '검사 양식 검토', '수정하기']} buttonsOnclick={()=>{}} />
             <ExcelTable
-                editable
-                resizable
                 headerList={[
                     ...column
                 ]}
@@ -48,8 +77,6 @@ const BasicMidrangeDetail = () => {
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
             />
             <ExcelTable
-                editable
-                resizable
                 headerList={[
                     ...sampleColumn
                 ]}
@@ -68,8 +95,6 @@ const BasicMidrangeDetail = () => {
                 height={sampleBasicRow.length * 40 >= 40*18+56 ? 40*19 : sampleBasicRow.length * 40 + 56}
             />
             <ExcelTable
-                editable
-                resizable
                 headerList={[
                     ...legendaryColumn
                 ]}
@@ -88,8 +113,6 @@ const BasicMidrangeDetail = () => {
                 height={legendaryBasicRow.length * 40 >= 40*18+56 ? 40*19 : legendaryBasicRow.length * 40 + 56}
             />
             <ExcelTable
-                editable
-                resizable
                 headerList={[
                     ...ItemColumn
                 ]}

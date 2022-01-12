@@ -245,8 +245,8 @@ export const columnlist: any = {
     // {key: 'tool_id', name: '공구', formatter: MoldInfoModal},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
     {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, formatter: PlaceholderBox, placeholder: 0},
-    {key: 'work_standard', name: '작업 표준서', formatter: FileEditer},
-    {key: 'midrange', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록', url: '/mes/basic/midrange/register' }
+    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer},
+    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' }
   ],
   // rawmaterial: [
   //   {key: 'customer_id',},
@@ -686,21 +686,25 @@ export const columnlist: any = {
     {key: 'model', name: '모델', width: 120},
     {key: 'code', name: 'CODE',width: 464},
     {key: 'material_name', name: '품명',width: 464},
-    {key: 'type', name: '품목 종류', width: 120},
-    {key: 'photo', name: '작업 표준서', formatter: FileEditer, width: 240},
+    {key: 'type', name: '품목 종류', width: 120, selectList: [
+        {pk: '0', name: '반제품'},
+        {pk: '1', name: '재공품'},
+        {pk: '2', name: '완제품'},
+      ]},
+    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer, type:"image"},
   ],
   midrange: [
     {key: 'samples', name: '시료 개수 선택 (최소 1 ~ 최대 10개)', formatter: DropDownEditor, selectList: [
-        {pk: 'one', name: '1'},
-        {pk: 'two', name: '2'},
-        {pk: 'three', name: '3'},
-        {pk: 'four', name: '4'},
-        {pk: 'five', name: '5'},
-        {pk: 'six', name: '6'},
-        {pk: 'seven', name: '7'},
-        {pk: 'eight', name: '8'},
-        {pk: 'nine', name: '9'},
-        {pk: 'ten', name: '10'},
+        {pk: 'one', name: 1},
+        {pk: 'two', name: 2},
+        {pk: 'three', name: 3},
+        {pk: 'four', name: 4},
+        {pk: 'five', name: 5},
+        {pk: 'six', name: 6},
+        {pk: 'seven', name: 7},
+        {pk: 'eight', name: 8},
+        {pk: 'nine', name: 9},
+        {pk: 'ten', name: 10},
       ]}
   ],
   midrangeDetail: [
@@ -741,20 +745,20 @@ export const columnlist: any = {
         {pk: 'ml', name: 'ml'},
         {pk: 'L', name: 'L'},
       ]},
-    {key: 'standard', name: '점검 기준', width: 424, formatter: PlaceholderBox, placeholder: '점검 기준 입력', editor: TextEditor},
-    {key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216, formatter: PlaceholderBox, placeholder: '최소값 입력',editor: TextEditor},
-    {key: 'error_maximum', name: '최대값(오차범위 최대)', width: 216, formatter: PlaceholderBox, placeholder: '최대값 입력',editor: TextEditor},
+    {key: 'standard', name: '점검 기준', width: 424, placeholder: '점검 기준 입력', editor: TextEditor, formatter: UnitContainer,},
+    {key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216, formatter: UnitContainer, placeholder: '최소값 입력',editor: TextEditor},
+    {key: 'error_maximum', name: '최대값(오차범위 최대)', width: 216, formatter: UnitContainer, placeholder: '최대값 입력',editor: TextEditor},
     {key: 'type', name: '기록 방법', width: 120, formatter: DropDownEditor, selectList: [
-        {pk: '1', name: '수치 입력'},
-        {pk: '0', name: '범례 적용'},
+        {pk: '0', name: '수치 입력'},
+        {pk: '1', name: '범례 적용'},
       ] },
   ],
   midrangeInspectionItemDetail: [
-    {key: 'customer', name: '검사 항목',width: 480, },
-    {key: 'model', name: '단위', width: 120,},
-    {key: 'code', name: '점검 기준', width: 424, },
-    {key: 'material_name', name: '최소값(오차범위 최소)', width: 216},
-    {key: 'type', name: '최대값(오차범위 최대)', width: 216, },
+    {key: 'name', name: '검사 항목',width: 480, },
+    {key: 'unit', name: '단위', width: 120,},
+    {key: 'standard', name: '점검 기준', width: 424, },
+    {key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216},
+    {key: 'error_maximum', name: '최대값(오차범위 최대)', width: 216, },
     {key: 'type', name: '기록 방법', width: 120},
   ],
   midrangeList: [
@@ -975,10 +979,10 @@ export const columnlist: any = {
     {key:"amount", name:"총 납품 수량", width: 118   },
   ],
   productChangeRegister: [
-    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168},
-    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480},
-    {key: "code", name: 'CODE', formatter: ProductSearchModal, disableType: 'record', width: 480},
-    {key: "material_name", name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력', width: 413}
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168, type: 'autoInput'},
+    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput'},
+    {key: "code", name: 'CODE',  formatter: SearchModalTest, type: 'product', width: 480},
+    {key: "name", name:"품명", formatter: PlaceholderBox, placeholder: '자동입력',type: 'autoInput'},
   ],
   productChangeList: [
     {key: "customer_id", name: '거래처', width: 120},
@@ -992,10 +996,10 @@ export const columnlist: any = {
     {key: 'writer', name: '작성자'}
   ],
   productChangeModify: [
-    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: "code", name: 'CODE',},
-    {key: "material_name", name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력'}
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168, type: 'autoInput'},
+    {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput'},
+    {key: "code", name: 'CODE',  formatter: SearchModalTest, type: 'product', width: 480},
+    {key: "name", name:"품명", formatter: PlaceholderBox, placeholder: '자동입력',type: 'autoInput'},
   ],
   kpiLeadtimeManufacture: [
     {key: "customer_id", name: '거래처', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
