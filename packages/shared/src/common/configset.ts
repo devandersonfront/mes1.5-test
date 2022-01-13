@@ -36,6 +36,7 @@ export const SF_ENDPOINT_EXCEL = `http://${isLocalhost()}:8399`
 export const SF_ENDPOINT_ADMIN = `http://${isLocalhost()}:8286/api`
 export const SF_ENDPOINT_FILE = `http://${isLocalhost()}:8099`
 export const SF_ENDPOINT_RESOURCE = `http://${isLocalhost()}:8285`
+export const SF_ENDPOINT_S3 = "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"
 export const SF_PORT = ``
 
 export const AUTHORITY_LIST = [

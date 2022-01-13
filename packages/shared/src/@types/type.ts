@@ -115,6 +115,6 @@ type InspectionDataResult = {
 
 export type ChangeProductFileInfo = {
   name: string
-  uuid: string
+  UUID: string
   sequence: number
 }

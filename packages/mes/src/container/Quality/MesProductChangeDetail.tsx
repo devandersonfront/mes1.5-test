@@ -16,7 +16,7 @@ import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
 import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
 import {useRouter} from "next/router";
 
-const MesProductChangeModify = () => {
+const MesProductChangeDetail = () => {
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<Array<any>>([{
         order_num: '-', operation_num: '20210401-013'
@@ -26,9 +26,9 @@ const MesProductChangeModify = () => {
     const [ changeInfo, setChangeInfo] = useState({title: '', content: '', registered: moment().format('YYYY.MM.DD'), product: {}, writer: {}})
     const [ version, setVersion ] = useState<number>()
     const [ files, setFiles ] = useState<ChangeProductFileInfo[]>([
-            {name: '', uuid: '', sequence: 1},
-            {name: '', uuid: '', sequence: 2},
-            {name: '', uuid: '', sequence: 3},
+            {name: '', UUID: '', sequence: 1},
+            {name: '', UUID: '', sequence: 2},
+            {name: '', UUID: '', sequence: 3},
         ]
     )
 
@@ -59,22 +59,6 @@ const MesProductChangeModify = () => {
         }
     }
 
-    const productChangeSave = async () => {
-        const res = await RequestMethod('post', `productChangeSave`,{
-            pcr_id: '61de9640d4c95c0e8bafef0d',
-            title: changeInfo.title,
-            content: changeInfo.content,
-            files: files,
-            created: changeInfo.registered,
-            version: version,
-            product: changeInfo.product,
-            writer: changeInfo.writer
-        })
-
-        if(res){
-            router.push('/mes/quality/product/change/list')
-        }
-    }
 
     const fileChange = (fileInfo: ChangeProductFileInfo, index: number) => {
         const temp = files
@@ -84,13 +68,8 @@ const MesProductChangeModify = () => {
     const buttonEvents = async(index:number) => {
         switch (index) {
             case 0 :
-
                 return
             case 1 :
-                productChangeSave()
-                return
-            case 2 :
-
                 return
         }
     }
@@ -98,42 +77,32 @@ const MesProductChangeModify = () => {
     return (
         <div>
             <PageHeader
-                title={"변경점 정보 (수정)"}
+                title={"변경점 정보"}
                 buttons={
-                    ['', '저장하기', '삭제']
+                    ['', '수정 하기']
                 }
                 buttonsOnclick={buttonEvents}
             />
             <ExcelTable
                 editable
                 headerList={[
-                    SelectColumn,
                     ...column
                 ]}
                 row={basicRow}
                 // setRow={setBasicRow}
                 setRow={(e) => {
-                    let tmp: Set<any> = selectList
-                    e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
-                    })
-
-                    setSelectList(tmp)
                     setBasicRow(e.map(v => ({...v, name: v.product_name})))
                 }}
-                selectList={selectList}
-                //@ts-ignore
-                setSelectList={setSelectList}
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
             />
-            <TitleInput title={'제목'} value={changeInfo.title} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, title: e.target.value})}/>
-            <TitleTextArea title={'설명'} value={changeInfo.content} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, content: e.target.value})}/>
+            <TitleInput title={'제목'} value={changeInfo.title} placeholder={''} onChange={()=>{}}/>
+            <TitleTextArea title={'설명'} value={changeInfo.content} placeholder={''} onChange={()=>{}}/>
             {files.map((v,i) =>
-                <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} value={v.name} placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={(fileInfo: ChangeProductFileInfo)=>fileChange(fileInfo,i)}/>
+                <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} uuid={v.UUID} value={v.name} detail={true} placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>
             )}
             <TitleCalendarBox value={'2021.06.17'} onChange={()=>{}}/>
         </div>
     );
 };
 
-export {MesProductChangeModify}
+export {MesProductChangeDetail}

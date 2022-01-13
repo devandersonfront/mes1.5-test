@@ -226,6 +226,7 @@ const ApiList = {
   toolSave: `/cnc/api/v1/tool/save`,
   inspecCategorySave: '/cnc/api/v1/inspec/category/save',
   lotToolSave: `/cnc/api/v1/lot-tool/save`,
+  productChangeSave: `/cnc/api/v1/product-changes/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
