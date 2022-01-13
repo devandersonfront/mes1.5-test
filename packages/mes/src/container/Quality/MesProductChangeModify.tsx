@@ -65,7 +65,7 @@ const MesProductChangeModify = () => {
             title: changeInfo.title,
             content: changeInfo.content,
             files: files,
-            created: changeInfo.registered,
+            created: moment(changeInfo.registered).format("YYYY-MM-DD"),
             version: version,
             product: changeInfo.product,
             writer: changeInfo.writer
@@ -81,6 +81,7 @@ const MesProductChangeModify = () => {
         temp[index] = fileInfo
         setFiles([...temp])
     }
+
     const buttonEvents = async(index:number) => {
         switch (index) {
             case 0 :

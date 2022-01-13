@@ -312,6 +312,12 @@ const ApiList = {
   stockAdminList: '/api/v1/stock/admin/summary',
   toolList: `/cnc/api/v1/tool/list`,
   lotToolList: `/cnc/api/v1/lot-tool/list`,
+  productLoadTimeList: `/cnc/api/v1/kpi/product/lead-time/list`,
+  costManDayCostList: `/cnc/api/v1/kpi/cost/man-day-cost/list`,
+  qualityDefectRateList: `/cnc/api/v1/kpi/quality/defect-rate/list`,
+  deliveryLoadTimeList: `/cnc/api/v1/kpi/delivery/lead-time/list`,
+  productUphList: `/cnc/api/v1/kpi/product/uph/list`,
+  productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -368,4 +374,7 @@ const ApiList = {
   bomSave: `/api/v1/bom/save`,
 
   anonymousLoad: `/anonymous/load`,
+
+  //전력사용량 list
+  statisticsPressElectricPower: `/api/v2/statistics/press/electric-power`,
 }

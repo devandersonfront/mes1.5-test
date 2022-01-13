@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
+import {
+    columnlist,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType,
+    MidrangeFormReviewModal,
+    RequestMethod
+} from "shared";
 import {MidrangeButton} from "shared/src/styles/styledComponents";
 import {useRouter} from "next/router";
 import Notiflix from "notiflix";
@@ -16,6 +23,8 @@ const BasicMidrangeDetail = () => {
     const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{
 
     }])
+    const [productId, setProductId] = useState<number>()
+    const [ isOpen, setIsOpen ] = useState<boolean>(false)
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["midrangeExamDetail"])
     const [sampleColumn, setSampleColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeDetail'])
     const [legendaryColumn, setLegendaryColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeLegendaryDetail'])
@@ -48,6 +57,32 @@ const BasicMidrangeDetail = () => {
         }
     }
 
+    const buttonEvents = async(index:number) => {
+        switch (index) {
+            case 0 :
+                router.push('/mes/basic/productV1u')
+                return
+            case 1 :
+                setIsOpen(!isOpen)
+                return
+            case 2 :
+                router.push(({pathname: '/mes/basic/productV1u/midrange/form/register',
+                    query: { customer_id: router.query.customer_id, cm_id: router.query.cm_id, code: router.query.code, name: router.query.name, product_id: router.query.product_id, type: router.query.type} }))
+                return
+        }
+    }
+    React.useEffect(()=>{
+        const data = {
+            customer: router.query.customer_id,
+            model: router.query.cm_id,
+            code: router.query.code,
+            material_name: router.query.name,
+            type: router.query.type,
+        }
+        setBasicRow([data])
+        setProductId(Number(router.query.product_id))
+    },[router.query])
+
     //product_id
     // console.log(28)
     React.useEffect(()=>{
@@ -57,7 +92,7 @@ const BasicMidrangeDetail = () => {
 
     return (
         <div>
-            <PageHeader title={"초ㆍ중ㆍ종 검사항목 정보"} buttons={[ '목록 보기', '검사 양식 검토', '수정하기']} buttonsOnclick={()=>{}} />
+            <PageHeader title={"초ㆍ중ㆍ종 검사항목 정보"} buttons={[ '목록 보기', '검사 양식 검토', '수정하기']} buttonsOnclick={buttonEvents} />
             <ExcelTable
                 headerList={[
                     ...column
@@ -130,6 +165,7 @@ const BasicMidrangeDetail = () => {
                 setSelectList={setItemSelectList}
                 height={itemBasicRow.length * 40 >= 40*18+56 ? 40*19 : itemBasicRow.length * 40 + 56}
             />
+            <MidrangeFormReviewModal formReviewData={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
         </div>
     );
 };

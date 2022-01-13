@@ -7,14 +7,16 @@ import {
     ChangeProductFileInfo,
     TitleFileUpload,
     TitleInput,
-    TitleTextArea
+    TitleTextArea, RequestMethod
 } from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
+import {useRouter} from "next/router";
 
 const MesProductChangeRegister = () => {
 
+    const router = useRouter()
     const [basicRow, setBasicRow] = useState<Array<any>>([{
         order_num: '-', operation_num: '20210401-013'
     }])
@@ -33,6 +35,33 @@ const MesProductChangeRegister = () => {
         const temp = files
         temp[index] = fileInfo
         setFiles([...temp])
+    }
+
+
+    const productChangeSave = async () => {
+        const res = await RequestMethod('post', `productChangeSave`,{
+            title: changeInfo.title,
+            content: changeInfo.content,
+            files: files,
+            created: changeInfo.registered,
+            // product: changeInfo.product,
+            // writer: changeInfo.writer
+        })
+
+        if(res){
+            router.push('/mes/quality/product/change/list')
+        }
+    }
+
+    const buttonEvents = async(index:number) => {
+        switch (index) {
+            case 0 :
+
+                return
+            case 1 :
+                productChangeSave()
+                return
+        }
     }
 
     return (
