@@ -22,9 +22,9 @@ const MesProductChangeRegister = () => {
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [ changeInfo, setChangeInfo] = useState({title: '', content: '', registered: moment().format('YYYY.MM.DD')})
     const [ files, setFiles ] = useState<ChangeProductFileInfo[]>([
-            {name: '', uuid: '', sequence: 1},
-            {name: '', uuid: '', sequence: 2},
-            {name: '', uuid: '', sequence: 3},
+            {name: '', UUID: '', sequence: 1},
+            {name: '', UUID: '', sequence: 2},
+            {name: '', UUID: '', sequence: 3},
         ]
     )
 

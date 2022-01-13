@@ -53,7 +53,7 @@ const MesProductChangeDetail = () => {
                 name: res.product.name === null ? '-' : res.product.name,
             }
             setBasicRow([basicTmp])
-            setChangeInfo({title: res.title, content: res.content, registered: res.created, product: res.product, writer: res.writer})
+            setChangeInfo({title: res.title, content: res.content, registered: moment(res.created).format("YYYY.MM.DD"), product: res.product, writer: res.writer})
             setFiles(res.files)
             setVersion(res.version)
         }
@@ -100,7 +100,7 @@ const MesProductChangeDetail = () => {
             {files.map((v,i) =>
                 <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} uuid={v.UUID} value={v.name} detail={true} placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>
             )}
-            <TitleCalendarBox value={'2021.06.17'} onChange={()=>{}}/>
+            <TitleCalendarBox value={changeInfo.registered} detail={true} onChange={(date)=>{}}/>
         </div>
     );
 };

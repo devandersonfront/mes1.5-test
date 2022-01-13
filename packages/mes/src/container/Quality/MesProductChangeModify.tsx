@@ -26,9 +26,9 @@ const MesProductChangeModify = () => {
     const [ changeInfo, setChangeInfo] = useState({title: '', content: '', registered: moment().format('YYYY.MM.DD'), product: {}, writer: {}})
     const [ version, setVersion ] = useState<number>()
     const [ files, setFiles ] = useState<ChangeProductFileInfo[]>([
-            {name: '', uuid: '', sequence: 1},
-            {name: '', uuid: '', sequence: 2},
-            {name: '', uuid: '', sequence: 3},
+            {name: '', UUID: '', sequence: 1},
+            {name: '', UUID: '', sequence: 2},
+            {name: '', UUID: '', sequence: 3},
         ]
     )
 
@@ -53,7 +53,7 @@ const MesProductChangeModify = () => {
                 name: res.product.name === null ? '-' : res.product.name,
             }
             setBasicRow([basicTmp])
-            setChangeInfo({title: res.title, content: res.content, registered: res.created, product: res.product, writer: res.writer})
+            setChangeInfo({title: res.title, content: res.content, registered: moment(res.created).format("YYYY.MM.DD"), product: res.product, writer: res.writer})
             setFiles(res.files)
             setVersion(res.version)
         }
@@ -131,7 +131,7 @@ const MesProductChangeModify = () => {
             {files.map((v,i) =>
                 <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} value={v.name} placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={(fileInfo: ChangeProductFileInfo)=>fileChange(fileInfo,i)}/>
             )}
-            <TitleCalendarBox value={'2021.06.17'} onChange={()=>{}}/>
+            <TitleCalendarBox value={changeInfo.registered} onChange={(date)=>setChangeInfo({...changeInfo, registered: moment(date).format('YYYY.MM.DD')})}/>
         </div>
     );
 };
