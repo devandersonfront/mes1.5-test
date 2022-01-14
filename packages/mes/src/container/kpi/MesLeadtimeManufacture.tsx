@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
@@ -39,6 +39,21 @@ const MesLeadtimeManufacture = () => {
         to: moment(new Date()).endOf('isoWeek').format('YYYY-MM-DD')
     });
 
+    const productLeadTimeListLoad = async (productId: number) => {
+        const res = await RequestMethod('get', `productLeadTimeList`,{
+            params: {
+                productIds: productId,
+                from: selectDate.from,
+                to: selectDate.to
+            },
+        })
+
+        console.log(res)
+        if(res){
+
+        }
+    }
+
     const buttonEvents = async(index:number) => {
         switch (index) {
             case 1 :
@@ -74,13 +89,10 @@ const MesLeadtimeManufacture = () => {
                     const tmpBasicRow = [...e];
                     tmpBasicRow[0] = {
                         ...tmpBasicRow[0],
-                        // customer: tmpBasicRow[0].customer.name,
-                        // customerData: tmpBasicRow[0].customer,
-                        // model: tmpBasicRow[0].model.model,
-                        // modelData: tmpBasicRow[0].model,
                         product_id: tmpBasicRow[0].product.product_id
                     }
-                    setProcessBasicRow(tmpBasicRow)
+                    productLeadTimeListLoad(tmpBasicRow[0].product.product_id)
+                    setProcessBasicRow(  tmpBasicRow.map(v => ({...v, name: v.product_name})))
                 }}
                 selectList={selectList}
                 //@ts-ignore
@@ -91,7 +103,7 @@ const MesLeadtimeManufacture = () => {
                 {
                     processBasicRow[0].product_id
                         ? <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            공정별 불량 통계
+                            작업이력별 제조리드타임
                         </span>
                         : <span style={{color:"#ffffff58", fontSize:22, fontWeight:"bold"}}>
                             제품을 선택해주세요

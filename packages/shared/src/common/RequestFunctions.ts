@@ -312,7 +312,7 @@ const ApiList = {
   stockAdminList: '/api/v1/stock/admin/summary',
   toolList: `/cnc/api/v1/tool/list`,
   lotToolList: `/cnc/api/v1/lot-tool/list`,
-  productLoadTimeList: `/cnc/api/v1/kpi/product/lead-time/list`,
+  productLeadTimeList: `/cnc/api/v1/kpi/product/lead-time/list`,
   costManDayCostList: `/cnc/api/v1/kpi/cost/man-day-cost/list`,
   qualityDefectRateList: `/cnc/api/v1/kpi/quality/defect-rate/list`,
   deliveryLoadTimeList: `/cnc/api/v1/kpi/delivery/lead-time/list`,

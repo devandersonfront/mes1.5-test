@@ -11,7 +11,7 @@ interface SelectParameter {
     to:string
 }
 
-
+//192.168.0.35:8299, id
 const MesKpiPowerUsage = () => {
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
     const [processBasicRow, setProcessBasicRow] = useState<any[]>([{

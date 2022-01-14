@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 import moment from "moment";
 import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
 import ButtonGroup from "../../../../main/component/ButtonGroup";
@@ -39,6 +39,22 @@ const MesKpiManHour = () => {
         to: moment(new Date()).endOf('isoWeek').format('YYYY-MM-DD')
     });
 
+    const costManDayCostLoad = async (productId: number) => {
+        const res = await RequestMethod('get', `costManDayCostList`,{
+            params: {
+                productIds: productId,
+                from: selectDate.from,
+                to: selectDate.to
+            },
+        })
+
+        console.log(res)
+        if(res){
+
+        }
+    }
+
+
     const buttonEvents = async(index:number) => {
         switch (index) {
             case 1 :
@@ -74,13 +90,10 @@ const MesKpiManHour = () => {
                     const tmpBasicRow = [...e];
                     tmpBasicRow[0] = {
                         ...tmpBasicRow[0],
-                        // customer: tmpBasicRow[0].customer.name,
-                        // customerData: tmpBasicRow[0].customer,
-                        // model: tmpBasicRow[0].model.model,
-                        // modelData: tmpBasicRow[0].model,
                         product_id: tmpBasicRow[0].product.product_id
                     }
-                    setProcessBasicRow(tmpBasicRow)
+                    costManDayCostLoad(tmpBasicRow[0].product.product_id)
+                    setProcessBasicRow(  tmpBasicRow.map(v => ({...v, name: v.product_name})))
                 }}
                 selectList={selectList}
                 //@ts-ignore

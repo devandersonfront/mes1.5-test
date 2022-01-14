@@ -1002,14 +1002,14 @@ export const columnlist: any = {
   productChangeModify: [
     {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168, type: 'autoInput'},
     {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput'},
-    {key: "code", name: 'CODE',  formatter: SearchModalTest, type: 'product', width: 480},
+    {key: "code", name: 'CODE', formatter: SearchModalTest, type: 'product', width: 480},
     {key: "name", name:"품명", formatter: PlaceholderBox, placeholder: '자동입력',type: 'autoInput'},
   ],
   kpiLeadtimeManufacture: [
     {key: "customer_id", name: '거래처', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "cm_id", name: '모델', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "code", name: 'CODE', width: 472},
-    {key: "material_name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
+    {key: "code", name: 'CODE', width: 472, formatter: SearchModalTest,  type: 'product',},
+    {key: "name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "manufacturing_leadtime_average", name: '평균 제조리드타임 (초)', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiLeadtimeManufactureContent: [
@@ -1029,8 +1029,8 @@ export const columnlist: any = {
   kpiManHour: [
     {key: "customer_id", name: '거래처', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "cm_id", name: '모델', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "code", name: 'CODE', width: 320},
-    {key: "material_name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
+    {key: "code", name: 'CODE', width: 320, formatter: SearchModalTest,  type: 'product',},
+    {key: "name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "manufacturing_leadtime_average", name: '기준 생산량', width: 208, formatter: PlaceholderBox ,placeholder: '숫자 입력'},
     {key: "manufacturing_leadtime_average", name: '평균 작업공수 (일)', width: 150, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
@@ -1046,17 +1046,17 @@ export const columnlist: any = {
     {key: 'paused_time', name: '일시 정지 시간', width:120, formatter:PauseModal},
     {key: 'good_quantity', name: '양품 수량', width:120, editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
     {key: 'poor_quantity', name: '불량 수량', width:120, editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
-    {key: "manufacturing_leadtime", name: '제조리드타임 (초)', width: 208},
-    {key: "manufacturing_leadtime", name: '작업공수 (초)', width: 208},
+    {key: "manufacturing_leadtime", name: '제조리드타임 (초)', width: 120},
+    {key: "manufacturing_leadtime", name: '작업공수 (초)', width: 120},
   ],
   kpiDefect: [
     {key: "customer_id", name: '거래처', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "cm_id", name: '모델', width: 240, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "code", name: 'CODE', width: 248},
-    {key: "material_name", name: '품명', width: 248, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "material_name", name: '단위', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "material_name", name: '총 생산 수량', width: 240, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "material_name", name: '총 불량 수량', width: 240, formatter: PlaceholderBox ,placeholder: '자동 입력'},
+    {key: "name", name: '품명', width: 248, formatter: PlaceholderBox ,placeholder: '자동 입력'},
+    {key: "unit", name: '단위', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
+    {key: "", name: '총 생산 수량', width: 240, formatter: PlaceholderBox ,placeholder: '자동 입력'},
+    {key: "", name: '총 불량 수량', width: 240, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "manufacturing_leadtime_average", name: '평균 불량률(%)', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiDefectContent: [

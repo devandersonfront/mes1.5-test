@@ -40,12 +40,11 @@ const MesProductChangeRegister = () => {
 
     const productChangeSave = async () => {
         const res = await RequestMethod('post', `productChangeSave`,{
+            product: basicRow[0].product,
             title: changeInfo.title,
             content: changeInfo.content,
-            files: files,
-            created: changeInfo.registered,
-            // product: changeInfo.product,
-            // writer: changeInfo.writer
+            files: [],
+            created: moment(changeInfo.registered).format('YYYY-MM-DD'),
         })
 
         if(res){
@@ -71,6 +70,7 @@ const MesProductChangeRegister = () => {
                 buttons={
                     ['', '저장하기']
                 }
+                buttonsOnclick={buttonEvents}
             />
             <ExcelTable
                 editable
@@ -86,7 +86,6 @@ const MesProductChangeRegister = () => {
                         if(v.isChange) tmp.add(v.id)
                     })
 
-                    setSelectList(tmp)
                     setBasicRow(e.map(v => ({...v, name: v.product_name})))
                 }}
                 selectList={selectList}

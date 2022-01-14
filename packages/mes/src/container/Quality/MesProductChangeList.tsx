@@ -111,7 +111,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
         tmpRow = res.map((v,i)=>{
             return {
                 customer_id: v.product.customerId  === null ? '-' : v.product.customerId,
-                cm_id: v.product.model === null ? '-' : v.product.model,
+                cm_id: v.product.model === null ? '-' : v.product.model.model,
                 code: v.product.code,
                 material_name: v.product.name === null ? '-' : v.product.name,
                 type: column[4].selectList[v.product.type].name,
