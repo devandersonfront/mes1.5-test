@@ -13,6 +13,11 @@ import {
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
 import {useRouter} from "next/router";
+//@ts-ignore
+import Notiflix from "notiflix"
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "shared";
+import {setToolDataAdd, ToolUploadInterface} from "../../../../shared/src/reducer/toolInfo";
 
 interface IProps {
     children?: any
@@ -28,22 +33,14 @@ interface SelectParameter {
 
 const MesToolList = ({page, keyword, option}: IProps) => {
     const router = useRouter();
-    const [basicRow, setBasicRow] = useState<Array<any>>([
-        {
-            elapsed:"test!",
-            code:"test!",
-            name:"test!",
-            unit:"test!",
-            customer:"test!",
-            warehousing:"test!",
-            date:moment().format("YYYY.MM.DD"),
-        }
-    ]);
+    const dispatch = useDispatch();
+    const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingList)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [pageInfo, setPageInfo] = useState<{page:number, totalPage:number}>({page:page, totalPage:1});
+    const [isFirst, setIsFirst] = useState<boolean>(true);
 
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {
@@ -189,9 +186,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
         //     }
         // })
         let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-
             let appendAdditional: any = {}
-
             row.additional && row.additional.map((v: any) => {
                 appendAdditional = {
                     ...appendAdditional,
@@ -204,33 +199,100 @@ const MesToolList = ({page, keyword, option}: IProps) => {
                 ...row,
                 ...appendAdditional,
                 id: `tool_${random_id}`,
+                tool_id:row.tool.code,
+                elapsed: row.elapsed  === 0 ? "0" : row.elapsed,
+                name: row.tool.name,
+                unit:row.tool.unit,
+                customer_id:row.tool.customer.name,
             }
         })
         setBasicRow([...tmpBasicRow])
 
     }
 
-    const LoadData = async() => {
+    const LoadBasic = async() => {
         const res = await RequestMethod("get", "lotToolList",{
             path:{
                 page:page,
                 renderItem:22
             },
             params:{
-                from:"2000-01-12",
-                to:moment().format("YYYY-MM-DD")
+                from:isFirst ? "2000-01-12" : selectDate.from,
+                to: selectDate.to
             }
         })
 
         if(res){
             setPageInfo({...pageInfo, totalPage: res.totalPages })
-            const result = cleanUpData(res);
+            cleanUpData(res);
+            setIsFirst(false);
+        }
+    }
 
+    const SearchBasic = async() => {
+        const res = await RequestMethod("get", "lotToolSearch", {
+            path:{
+                page:page,
+                renderItem:22
+            },
+            params:{
+                from:isFirst ? "2000-01-01" : selectDate.from,
+                to: selectDate.to,
+                keyword:keyword,
+                opt:optionIndex
+            }
+        })
+        if(res){
+            setPageInfo({...pageInfo, totalPage: res.totalPages })
+            cleanUpData(res);
+            setIsFirst(false);
+        }
+    }
+
+    const DeleteBasic = async() => {
+        console.log(basicRow.filter((row)=>selectList.has(row.id)));
+
+        const res = await RequestMethod("delete", "lotToolDelete", basicRow.filter((row)=>selectList.has(row.id)))
+
+        console.log(res);
+        if(res){
+            Notiflix.Report.success("삭제되었습니다.","","확인",() => {
+                LoadBasic()
+            });
+        }
+    }
+
+    const ButtonEvents = (index:number) => {
+        switch(index) {
+            case 0:
+                console.log(selectList)
+                if(selectList.size > 0){
+                    console.log(basicRow.filter((row)=>selectList.has(row.id)))
+                    // @ts-ignore
+                    dispatch(setToolDataAdd(basicRow.filter((row)=>selectList.has(row.id))));
+                    router.push("/mes/tool/update")
+                }else{
+                    Notiflix.Report.warning("데이터를 선택해주시기 바랍니다.","","확인")
+                }
+                return
+            case 1:
+                DeleteBasic()
+
+                return
+            // case 2:
+            //     console.log(2)
+            //     return
+            default:
+                return
         }
     }
 
     useEffect(()=>{
-        //LoadData
+        if(keyword){
+            SearchBasic()
+        }else{
+            LoadBasic()
+        }
         console.log(selectDate);
 
     },[selectDate, keyword])
@@ -240,12 +302,9 @@ const MesToolList = ({page, keyword, option}: IProps) => {
             <PageHeader
                 title={"공구 재고 현황"}
                 buttons={
-                    ["수정 하기", '행추가', '저장하기', '삭제']
+                    ["수정 하기", '삭제']
                 }
-                buttonsOnclick={() => {}
-                    // () => {}
-                    // onClickHeaderButton
-                }
+                buttonsOnclick={ButtonEvents}
                 isCalendar
                 calendarTitle={"입고일"}
                 calendarType={"period"}
@@ -274,7 +333,12 @@ const MesToolList = ({page, keyword, option}: IProps) => {
                     })
                     setSelectList(tmp)
                     setBasicRow(e);
-                }} />
+                }}
+                setSelectList={(selectedRows) => {
+                    //@ts-ignore
+                    setSelectList(selectedRows)
+                }}
+            />
                 {/*<PaginationComponent totalPage={} currentPage={} setPage={} />*/}
         </div>
     )

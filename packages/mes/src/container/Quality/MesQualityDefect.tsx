@@ -54,7 +54,6 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
     from: moment(new Date()).startOf('isoWeek').format('YYYY-MM-DD'),
     to: moment(new Date()).endOf('isoWeek').format('YYYY-MM-DD')
   });
-
   const changeSelectDate = (from:string, to:string) => {
 
     setSelectDate({
@@ -137,7 +136,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
         }
       }).filter(v=>v)
     }else{
-      row = [{...res}]
+      row = [...res]
     }
     if(row){
       let tmpColumn = columnlist[`defectReason`];
@@ -155,8 +154,8 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
           return {
             ...v,
             id: `processDefect_${random_id}`,
-            reason: v.pdr.reason,
-            process_id: v.process.name
+            reason: v.pdr?.reason,
+            process_id: v.process?.name
           }
 
         }))
@@ -233,7 +232,8 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
           const tmpBasicRow = [...e];
           tmpBasicRow[0] = {
             ...tmpBasicRow[0],
-            product_id: tmpBasicRow[0].product.product_id
+            product_id: tmpBasicRow[0].product.product_id,
+            name: tmpBasicRow[0].product_name
           }
           setProcessBasicRow(tmpBasicRow)
         }}

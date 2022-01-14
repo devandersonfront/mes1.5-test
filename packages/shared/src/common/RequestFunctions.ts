@@ -345,7 +345,7 @@ const ApiList = {
   itemDelete: `/menu/delete`,
   deviceSearch: `/api/v1/device/search`,
   toolSearch: `/cnc/api/v1/tool/search`,
-  toolLotSearch: `/cnc/api/v1/lot-tool/search`,
+  lotToolSearch: `/cnc/api/v1/lot-tool/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,

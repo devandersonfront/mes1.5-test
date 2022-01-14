@@ -1,8 +1,10 @@
 import React from 'react'
 import Styled from 'styled-components'
 import BasicModal from "./BasicModal"
+//@ts-ignore
 import Barcode from 'react-barcode';
 import axios from 'axios';
+//@ts-ignore
 import domtoimage from 'dom-to-image';
 
 interface Props {
@@ -16,16 +18,16 @@ interface Props {
 
 }
 
-const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props) => { 
+const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props) => {
 
     const numberOfType = (type : 'rawMaterial' | 'product') => {
 
         switch(type){
             case 'rawMaterial' :
                 return '001'
-            case 'product' : 
+            case 'product' :
                 return '002'
-            default : 
+            default :
                 return undefined
         }
     }
@@ -33,7 +35,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
     const makeBarcode = (barcodeId : string | number) => {
 
         if(barcodeId){
-            
+
             const id = String(barcodeId).padStart(20, '0')
             const delimit = "-"
             const key = "78423304"
@@ -78,7 +80,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
                 {id : '5' , title : '품목종류', value : data?.type ?? '-'}
             ]
         }
-        
+
     }
 
     const printBarcode = (type : 'rawMaterial' | 'product' , data : any) => {
@@ -96,10 +98,10 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
                                 <LabelValue id={data.title}>{data.value}</LabelValue>
                             </BarcodeItem>
                                 ))
-                            }   
+                            }
                         <Wrap>
                             <Barcode value ={encrypt} displayValue={false} renderer={'canvas'} />
-                        </Wrap>       
+                        </Wrap>
                     </BarcodeBox>
             )
         }
@@ -107,8 +109,8 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
     }
 
     return(
-        <BasicModal 
-            isOpen={isOpen} 
+        <BasicModal
+            isOpen={isOpen}
             onClose={onClose}
             >
             <TitleContainer>
