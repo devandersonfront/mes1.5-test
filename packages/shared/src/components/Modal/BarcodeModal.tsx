@@ -4,7 +4,6 @@ import BasicModal from "./BasicModal"
 //@ts-ignore
 import Barcode from 'react-barcode';
 import axios from 'axios';
-//@ts-ignore
 import domtoimage from 'dom-to-image';
 
 interface Props {
