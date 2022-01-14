@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import {ExcelTable, Header as PageHeader, PaginationComponent, RequestMethod} from "shared";
+import {ExcelTable, Header as PageHeader, PaginationComponent, RequestMethod, RootState} from "shared";
 import {columnlist} from "shared";
 //@ts-ignore
 import {SelectColumn} from "react-data-grid";
@@ -8,17 +8,29 @@ import moment from "moment";
 //@ts-ignore
 import Notiflix from "notiflix";
 import {useRouter} from "next/router";
+import {useSelector} from "react-redux";
 
-const MesToolRegister = () => {
+const MesToolUpdate = () => {
     const router = useRouter();
-    const [basicRow, setBasicRow] = useState<Array<any>>([{
-        id:`toolWarehousingRegister_${Math.random()*1000}`,
-        warehousing:"0",
-        date:moment().format("YYYY.MM.DD"),
-    }]);
-    const [column, setColumn] = useState<any>(columnlist.toolWarehousingRegister);
+    const toolStore = useSelector((router:RootState) => router.toolInfo);
+    const [basicRow, setBasicRow] = useState<Array<any>>([]);
+    const [column, setColumn] = useState<any>(columnlist.toolWarehousingUpdate);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
+    const cleanUpData = () => {
+        let cleanData = [...toolStore];
+
+        cleanData.map((value) => {
+            value.code = value.tool_id;
+            // rowData.name = value.name;
+            // rowData.unit = value.unit;
+            value.customer = value.customer_id;
+
+            return value
+        })
+        console.log(cleanData)
+        setBasicRow([...cleanData]);
+    }
 
     const SaveCleanUpData = (data:any[]) => {
         let resultData = [];
@@ -26,7 +38,7 @@ const MesToolRegister = () => {
         data.map((rowData, index) => {
             let tmpRow:any = {};
             let toolObject:any = {};
-            toolObject.tool_id = rowData?.tool_id;
+            toolObject.tool_id = rowData?.tool.tool_id;
             toolObject.code = rowData.code;
             toolObject.name = rowData.name;
             toolObject.unit = rowData.unitPK;
@@ -38,6 +50,8 @@ const MesToolRegister = () => {
             tmpRow.tool = toolObject;
             tmpRow.date = rowData.date;
             tmpRow.warehousing = rowData.warehousing;
+            tmpRow.lot_tool_id = rowData.lot_tool_id;
+
             resultData.push(tmpRow);
         })
         console.log(resultData)
@@ -53,18 +67,10 @@ const MesToolRegister = () => {
             Notiflix.Report.failure("에러가 발생했습니다. 관리자에게 문의해주시기 바랍니다.","","확인")
         }
     }
-
+    console.log("toolStore : ", toolStore)
     const buttonEvents = (number:number) => {
         switch(number) {
             case 0:
-                const randomId = Math.random()*1000;
-                setBasicRow([...basicRow, {
-                    id:`toolWarehousingRegister_${randomId}`,
-                    warehousing:"0",
-                    date:moment().format("YYYY.MM.DD")
-                }])
-                return
-            case 1:
                 const result = basicRow.filter((row) => {
                     if (selectList.has(row.id)) return row
                 })
@@ -73,9 +79,10 @@ const MesToolRegister = () => {
                 SaveCleanUpData(result)
                 console.log(result)
                 SaveBasic(SaveCleanUpData(result));
+                router.push("/mes/tool/list");
 
                 return
-            case 2:
+            case 1:
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인", "취소", () => {
                     const tmpRow = basicRow.filter(({id}, index) => !selectList.has(id))
                     setBasicRow(tmpRow);
@@ -86,12 +93,22 @@ const MesToolRegister = () => {
         }
     }
 
+    useEffect(() => {
+        console.log(toolStore)
+        if(toolStore?.data === ''){
+            // Notiflix.Report.warning("수정할 데이터가 없습니다.","","확인",() =>
+                router.back()
+            // )
+        }
+        cleanUpData();
+    },[])
+
     return (
         <div>
             <PageHeader
-                title={"공구 입고 등록"}
+                title={"공구 입고 (수정)"}
                 buttons={
-                    ['행추가', '저장하기', '삭제']
+                    ['저장하기', '삭제']
                 }
                 buttonsOnclick={buttonEvents}
 
@@ -120,4 +137,4 @@ const MesToolRegister = () => {
     )
 }
 
-export {MesToolRegister};
+export {MesToolUpdate};

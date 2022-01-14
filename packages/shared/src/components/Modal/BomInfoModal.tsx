@@ -166,9 +166,11 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const SearchBasic = async (selectKey?:string) => {
     Notiflix.Loading.circle()
+    console.log("여기 아니야??!?!?!?!?!?!?!?!?!?!!?!?!?!?", selectKey)
     let res;
     if(selectKey){
       res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
+      console.log("res : ", res)
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       console.log(searchList)
@@ -177,7 +179,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }else{
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
       let searchList = changeRow(res)
-      console.log("??? : ", searchList)
+      console.log("??? : ", searchList, " || ", res, " || ", row)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       setSearchList(searchList.length > 0 ? searchList : [{seq:1}])
     }
@@ -194,7 +196,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           ...row,
           process: row.processArray,
           type: row.type_id ?? row.type,
-          product_id:row.productId,
+          product_id:row.product_id ?? row.productId,
           code: row.cmId,
         },
         child_product: v.tab === 2 ? {
@@ -499,6 +501,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   }
                 })
                 console.log(e)
+
                 setSearchList([...tmp])
               }}
               width={1746}

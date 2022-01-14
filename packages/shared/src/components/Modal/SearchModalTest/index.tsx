@@ -329,6 +329,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                       return searchList[selectRow].name;
                     case "mold":
                       return searchList[selectRow].name;
+                    case "tool":
+                      return searchList[selectRow].name;
                     default:
                       return row.name;
                   }
@@ -339,7 +341,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
                         manager:  SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                         name:  selectNameFunction(column.type),
-                        tab: undefined,
+                        tab: tab,
                         type_name:  undefined,
                         version: row.version,
                         isChange:true,
