@@ -1181,6 +1181,14 @@ export const columnlist: any = {
     {key: "warehousing", name: '입고량', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
     {key: "date", name: '입고일', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
   ],
+  toolWarehousingUpdate:[
+    {key: "code", name: '공구 CODE', },
+    {key: "name", name: '공구 품명', },
+    {key: "unit", name: '단위', },
+    {key: "customer", name: '거래처', },
+    {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
+  ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},
     {key: 'customerSearchModal', name: '거래처 검색', formatter: SearchModalTest, type: 'customer', width: 118,},

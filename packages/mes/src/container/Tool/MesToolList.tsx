@@ -13,6 +13,11 @@ import {
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
 import {useRouter} from "next/router";
+//@ts-ignore
+import Notiflix from "notiflix"
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "shared";
+import {setToolDataAdd, ToolUploadInterface} from "../../../../shared/src/reducer/toolInfo";
 
 interface IProps {
     children?: any
@@ -28,6 +33,7 @@ interface SelectParameter {
 
 const MesToolList = ({page, keyword, option}: IProps) => {
     const router = useRouter();
+    const dispatch = useDispatch();
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingList)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -243,17 +249,39 @@ const MesToolList = ({page, keyword, option}: IProps) => {
         }
     }
 
+    const DeleteBasic = async() => {
+        console.log(basicRow.filter((row)=>selectList.has(row.id)));
+
+        const res = await RequestMethod("delete", "lotToolDelete", basicRow.filter((row)=>selectList.has(row.id)))
+
+        console.log(res);
+        if(res){
+            Notiflix.Report.success("삭제되었습니다.","","확인",() => {
+                LoadBasic()
+            });
+        }
+    }
+
     const ButtonEvents = (index:number) => {
         switch(index) {
             case 0:
-                console.log(0)
+                console.log(selectList)
+                if(selectList.size > 0){
+                    console.log(basicRow.filter((row)=>selectList.has(row.id)))
+                    // @ts-ignore
+                    dispatch(setToolDataAdd(basicRow.filter((row)=>selectList.has(row.id))));
+                    router.push("/mes/tool/update")
+                }else{
+                    Notiflix.Report.warning("데이터를 선택해주시기 바랍니다.","","확인")
+                }
                 return
             case 1:
-                console.log(1)
+                DeleteBasic()
+
                 return
-            case 2:
-                console.log(2)
-                return
+            // case 2:
+            //     console.log(2)
+            //     return
             default:
                 return
         }
@@ -274,7 +302,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
             <PageHeader
                 title={"공구 재고 현황"}
                 buttons={
-                    ["수정 하기", '행추가', '저장하기', '삭제']
+                    ["수정 하기", '삭제']
                 }
                 buttonsOnclick={ButtonEvents}
                 isCalendar
@@ -305,7 +333,12 @@ const MesToolList = ({page, keyword, option}: IProps) => {
                     })
                     setSelectList(tmp)
                     setBasicRow(e);
-                }} />
+                }}
+                setSelectList={(selectedRows) => {
+                    //@ts-ignore
+                    setSelectList(selectedRows)
+                }}
+            />
                 {/*<PaginationComponent totalPage={} currentPage={} setPage={} />*/}
         </div>
     )
