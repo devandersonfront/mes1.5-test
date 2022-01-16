@@ -110,7 +110,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
         let tmpRow = []
         tmpRow = res.map((v,i)=>{
             return {
-                customer_id: v.product.customerId  === null ? '-' : v.product.customerId,
+                customer_id: v.product.customer  === null ? '-' :  v.product.customer.name ,
                 cm_id: v.product.model === null ? '-' : v.product.model.model,
                 code: v.product.code,
                 material_name: v.product.name === null ? '-' : v.product.name,
@@ -130,7 +130,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
             <PageHeader
                 isSearch
                 isCalendar
-                searchKeyword={""}
+                searchKeyword={keyword}
                 searchOptionList={optionList}
                 onChangeSearchKeyword={(keyword) => {
                     if(keyword){

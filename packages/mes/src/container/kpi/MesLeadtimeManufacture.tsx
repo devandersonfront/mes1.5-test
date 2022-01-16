@@ -1,10 +1,19 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
+import {
+    columnlist,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType, MemberSearchModal,
+    OperationSearchModal, PauseModal, ProductSearchModal,
+    RequestMethod, TextEditor, UnitContainer
+} from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
 import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
 import ButtonGroup from "../../../../main/component/ButtonGroup";
+import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
+import {DatetimePickerBox} from "shared/src/components/CalendarBox/DatetimePickerBox";
 
 interface SelectParameter {
     from:string
@@ -22,15 +31,7 @@ const MesLeadtimeManufacture = () => {
     }
 
     const [processColumn, setProcessColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeManufacture`] );
-    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeManufactureContent`].map(v => {
-        if(v.key === 'amount'){
-            return {
-                ...v,
-                result: changeHeaderStatus
-            }
-        }
-        return v
-    }));
+    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeManufactureContent`]);
     const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set());
     const [headerStatus, setHeaderStatus] = useState<number | string>("");
 
@@ -48,9 +49,24 @@ const MesLeadtimeManufacture = () => {
             },
         })
 
-        console.log(res)
         if(res){
-
+            const filterResponse = res.map((v)=>{
+                return {
+                    osd_id: v.operation_sheet.os_id,
+                    code: v.operation_sheet.product.code,
+                    name: v.operation_sheet.product.name,
+                    process_id: v.operation_sheet.product.process.name,
+                    lot_number: v.lot_number,
+                    user_id: v.worker.name,
+                    start: v.start,
+                    end: v.end,
+                    pause_time: 0,
+                    good_quantity: v.good_quantity,
+                    poor_quantity: v.poor_quantity,
+                    manufacturing_leadtime: 0
+                }
+            })
+            setPauseBasicRow(filterResponse)
         }
     }
 

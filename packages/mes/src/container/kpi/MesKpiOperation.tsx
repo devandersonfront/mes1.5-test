@@ -73,14 +73,7 @@ const MesKpiOperation = () => {
                 row={processBasicRow}
                 setRow={(e) => {
                     const tmpBasicRow = [...e];
-                    tmpBasicRow[0] = {
-                        ...tmpBasicRow[0],
-                        // customer: tmpBasicRow[0].customer.name,
-                        // customerData: tmpBasicRow[0].customer,
-                        // model: tmpBasicRow[0].model.model,
-                        // modelData: tmpBasicRow[0].model,
-                        product_id: tmpBasicRow[0].product.product_id
-                    }
+
                     setProcessBasicRow(tmpBasicRow)
                 }}
                 selectList={selectList}
