@@ -9,7 +9,7 @@ import DomToImage from "dom-to-image";
 interface Props {
 
     title : string,
-    handleBarcode : (url : string) => void
+    handleBarcode : (url : string , id : string) => void
     handleModal : (isOpen : boolean) => void
     isOpen : boolean
     data : any
@@ -45,11 +45,12 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
 
     }
 
-    const onCaptureDOM = async () => {
+    const onCaptureDOM = async (type,data) => {
 
+        const id = (type === 'rawMaterial' ? String(data.rm_id) : String(data.cmId))
         const dom  = document.getElementById('capture_dom')
         const dataurl = await DomToImage.toPng(dom, {quality: 1})
-        handleBarcode(dataurl)
+        handleBarcode(dataurl,id)
 
     }
 
@@ -84,10 +85,13 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
 
     const printBarcode = (type : 'rawMaterial' | 'product' , data : any) => {
 
+
+        console.log(data,'datadatadatadata')
+
         if(data){
 
             const convertData = convertDataToArray(data)
-            const encrypt = makeBarcode(type === 'rawMaterial' ? data.rm_id : '2' )
+            const encrypt = makeBarcode(type === 'rawMaterial' ? data.rm_id : data.cmId )
 
             return (
                     <BarcodeBox id={'capture_dom'}>
@@ -114,7 +118,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
             >
             <TitleContainer>
                 <TitleSpan>{title}</TitleSpan>
-                <Button onClick={onCaptureDOM}>
+                <Button onClick={() => onCaptureDOM(type,data)}>
                     {'인쇄'}
                 </Button>
             </TitleContainer>
@@ -157,6 +161,7 @@ const Button = Styled.button`
     height: 30px;
     padding: 0;
     border: none;
+    cursor : pointer;
 `
 
 const BarcodeBox = Styled.div`
@@ -177,7 +182,7 @@ const BarcodeItem = Styled.div`
 
 const Label = Styled.label`
 
-    font-size : 40px;
+    font-size : 30px;
     font-weight: bold;
     width : 300px;
     height : 50px;
@@ -189,7 +194,7 @@ const Label = Styled.label`
 
 const LabelValue = Styled.span`
 
-    font-size : 40px;
+    font-size : 25px;
     width : 400px;
     height : 50px;
     text-align : right;
