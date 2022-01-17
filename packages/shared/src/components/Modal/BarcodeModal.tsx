@@ -4,7 +4,7 @@ import BasicModal from "./BasicModal"
 //@ts-ignore
 import Barcode from 'react-barcode';
 import axios from 'axios';
-import DomToImage from "dom-to-image";
+// import DomToImage from "dom-to-image";
 
 interface Props {
 
@@ -47,9 +47,9 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
 
     const onCaptureDOM = async () => {
 
-        const dom  = document.getElementById('capture_dom')
-        const dataurl = await DomToImage.toPng(dom, {quality: 1})
-        handleBarcode(dataurl)
+        // const dom  = document.getElementById('capture_dom')
+        // const dataurl = await DomToImage.toPng(dom, {quality: 1})
+        // handleBarcode(dataurl)
 
     }
 

@@ -69,7 +69,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         tmpSelectList.push(row)
       }
     })
-    
+
     setSelectRow(tmpSelectList[0])
 
   }
@@ -499,7 +499,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
 
   const handleBarcode = async (dataurl : string) => {
 
-    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`, 
+    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
                 {
                   "id":1,
                   "functions":
@@ -536,7 +536,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     if(selectList.size > 1){
 
       return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
-      
+
     }
 
     return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
@@ -600,15 +600,15 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
             }
           }}
         />
-      
-      <BarcodeModal 
-        title={'바코드 미리보기'} 
-        handleBarcode={handleBarcode}
-        handleModal={handleModal}
-        isOpen={barcodeOpen}
-        type={'product'}
-        data={selectRow}
-      />
+
+      {/*<BarcodeModal */}
+      {/*  title={'바코드 미리보기'} */}
+      {/*  handleBarcode={handleBarcode}*/}
+      {/*  handleModal={handleModal}*/}
+      {/*  isOpen={barcodeOpen}*/}
+      {/*  type={'product'}*/}
+      {/*  data={selectRow}*/}
+      {/*/>*/}
       {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
