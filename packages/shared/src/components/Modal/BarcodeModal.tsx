@@ -46,11 +46,10 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
 
     }
 
-    const onCaptureDOM = async () => {
+    const onCaptureDOM = async (type,data) => {
 
         
-        const id = (type === 'rawMaterial' ? data?.rm_id : data?.cm_id)
-        console.log(id,'ididididid')
+        const id = (type === 'rawMaterial' ? data?.rm_id : data?.product_id)
         const dom  = document.getElementById('capture_dom')
         const dataurl = await DomToImage.toPng(dom, {quality: 1})
         handleBarcode(dataurl,id)
@@ -88,6 +87,9 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
 
     const printBarcode = (type : 'rawMaterial' | 'product' , data : any) => {
 
+
+        console.log(data,'datadatadatadata')
+
         if(data){
 
             const convertData = convertDataToArray(data)
@@ -118,7 +120,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
             >
             <TitleContainer>
                 <TitleSpan>{title}</TitleSpan>
-                <Button onClick={onCaptureDOM}>
+                <Button onClick={() => onCaptureDOM(type,data)}>
                     {'인쇄'}
                 </Button>
             </TitleContainer>
@@ -163,6 +165,7 @@ const Button = Styled.button`
     height: 30px;
     padding: 0;
     border: none;
+    cursor : pointer;
 `
 
 const BarcodeBox = Styled.div`
