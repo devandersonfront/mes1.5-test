@@ -70,7 +70,7 @@ const BasicMold = ({page, keyword, option}: IProps) => {
 
         let pk = "";
 
-        res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
+        res.info_list && res.info_list.length && Object.keys(res.info_list[0])?.map((v) => {
           if(v.indexOf('_id') !== -1){
             pk = v
           }

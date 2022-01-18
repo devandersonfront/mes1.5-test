@@ -186,12 +186,13 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
                   }
                 }
               })
+              console.log("row : ", row)
               return {
                 ...row,
                 ...selectData,
                 type:row.type_id,
                 manager: row.user,
-                subFactory: {...row.subFactory, manager:row.subFactory.manager_info},
+                subFactory: row?.subFactory ? {...row?.subFactory, manager:row?.subFactory?.manager_info} : undefined,
                 additional: [
                   ...additional.map((v, index)=>{
                     if(!row[v.colName]) return undefined;
@@ -397,13 +398,13 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
-        factory_id: row.factory.name,
-        factory_info:row.factory,
-        affiliated_id: row.subFactory.name,
-        subFactory_info:row.subFactory,
-        type_id: row.type,
-        type: deviceList[row.type].name,
-        user: row.manager,
+        factory_id: row?.factory?.name,
+        factory_info:row?.factory,
+        affiliated_id: row?.subFactory?.name,
+        subFactory_info:row?.subFactory,
+        type_id: row?.type,
+        type: deviceList[row.type]?.name,
+        user: row?.manager,
         id: `mold_${random_id}`,
       }
     })

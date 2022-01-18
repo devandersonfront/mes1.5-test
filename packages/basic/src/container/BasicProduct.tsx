@@ -16,6 +16,8 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
+import axios from 'axios';
+import { SF_ENDPOINT_BARCODE } from 'shared/src/common/configset';
 
 export interface IProps {
   children?: any
@@ -36,11 +38,13 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처', '모델', '코드', '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-
+  const [barcodeOpen , setBarcodeOpen] = useState<boolean>(false)
+  const [selectRow , setSelectRow ] = useState<any>(undefined)
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+  const [buttonList , setButtonList ] = useState<string[]>([])
 
   useEffect(() => {
     setOptionIndex(option)
@@ -56,6 +60,18 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
   }, [page, keyword, option])
 
 
+  const selectedData = () => {
+
+    let tmpSelectList : any[] = []
+    basicRow.map(row => {
+      if(selectList.has(row.id)){
+        tmpSelectList.push(row)
+      }
+    })
+
+    setSelectRow(tmpSelectList[0])
+
+  }
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
@@ -121,6 +137,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
 
     Notiflix.Loading.standard();
     let res: any
+
     const check = basicRow.map((row) => {
       if(selectList.has(row.id) && !row.code && !row.name){
           Notiflix.Loading.remove(300)
@@ -173,19 +190,19 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
               customer_id: row.customerArray.customer_id,
               model: row.modelArray,
               // standard_uph: row.uph,
-              molds:[...row.molds.map((mold)=>{
+              molds:[...row?.molds?.map((mold)=>{
                 return {...mold, setting:mold.mold.setting}
-              })],
+              }) ?? []],
               machines:[
-                  ...row.machines.map((machine)=>{
+                  ...row?.machines?.map((machine)=>{
                     return {
                       ...machine,
                       setting:machine.machine.setting,
                       machine:{...machine.machine, type:machine.machine.type_id}
                     }
-                  })
+                  }) ?? []
               ],
-              type:row.type_id,
+              type:row.type_id ?? row.typeId ?? row.typePK,
               additional: [
                 ...additional.map((v, index)=>{
                   if(!row[v.colName]) return undefined;
@@ -423,14 +440,20 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
   }
 
   const onClickHeaderButton = (index: number) => {
-    switch(index){
-      case 0:
-        setExcelOpen(true)
+    switch(buttonList[index]){
+      case '바코드 미리보기':
+        if(selectList.size === 0){
+          return Notiflix.Report.failure('선택을 하셔야 합니다.',
+          '선택을 하셔야지 바코드를 보실수 있습니다.',
+          'Okay',)
+        }
+        setBarcodeOpen(true)
+        selectedData()
         break;
-      case 1:
+      case '항목관리':
         router.push(`/mes/item/manage/product`)
         break;
-      case 2:
+      case '행추가':
         let items = {}
 
         column.map((value) => {
@@ -457,11 +480,10 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         ])
         break;
 
-      case 3:
+      case '저장하기':
         SaveBasic()
-
         break;
-      case 4:
+      case '삭제':
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{
             DeleteBasic()
@@ -473,6 +495,52 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
 
     }
   }
+
+  const handleBarcode = async (dataurl : string) => {
+
+    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
+                {
+                  "id":1,
+                  "functions":
+                  {"func0":{"checkLabelStatus":[]},
+                    "func1":{"clearBuffer":[]},
+                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+                    "func3":{"printBuffer":[]}
+                  }
+                },
+                {
+                  headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                  }
+                }
+    ).catch((error) => {
+
+      if(error){
+        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        return false
+      }
+
+    })
+  }
+
+
+  const handleModal = (open:boolean) => {
+
+    setBarcodeOpen(!open)
+
+  }
+
+  React.useEffect(()=>{
+
+    if(selectList.size > 1){
+
+      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
+
+    }
+
+    return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
+
+  },[selectList.size])
 
   return (
     <div>
@@ -492,9 +560,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
           }}
           optionIndex={optionIndex}
           title={"제품 등록 관리"}
-          buttons={
-            ['', '항목관리', '행추가', '저장하기', '삭제']
-          }
+          buttons={buttonList}
           buttonsOnclick={
             // () => {}
             onClickHeaderButton
@@ -533,7 +599,8 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
             }
           }}
         />
-      <ExcelDownloadModal
+
+      {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
@@ -542,7 +609,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}
-      />
+      /> */}
     </div>
   );
 }

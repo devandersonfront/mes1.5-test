@@ -88,3 +88,33 @@ type ProductType = {
   code:string
 }
 
+
+export type InspectionFinalDataResult = {
+  sequence: number
+  pass: boolean
+}
+
+export type InspectionInfo = {
+    name: string
+    unit: string
+    type: number
+    error_minimum: string
+    error_maximum: string
+    standard: string
+    samples: number
+    data_result: InspectionDataResult[]
+  }
+
+
+
+type InspectionDataResult = {
+  sequence: number
+  value: string
+  pass: boolean
+}
+
+export type ChangeProductFileInfo = {
+  name: string
+  uuid: string
+  sequence: number
+}

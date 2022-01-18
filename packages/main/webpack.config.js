@@ -21,4 +21,4 @@ module.exports = {
         contentBase: './dist'
     },
     mode: 'development'
-};
+}; 

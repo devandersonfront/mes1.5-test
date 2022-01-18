@@ -1,18 +1,19 @@
 import React from 'react';
 import MenuNavigation from "../../../../component/MenuNav/MenuNavigation";
 import ProfileHeader from "../../../../component/Profile/ProfileHeader";
-import {MesMidrangeList} from "mes";
+import {MesLeadtimeManufacture} from "mes";
 
 const BasicContainer = () => {
+
     return (
-        <div style={{display: 'flex', }}>
-            <MenuNavigation pageType={'MES'}/>
-            <div style={{paddingBottom: 40}}>
+        <div style={{display:"flex"}}>
+            <MenuNavigation pageType={'MES'} subType={2}/>
+            <div>
                 <ProfileHeader/>
-                <MesMidrangeList/>
+                <MesLeadtimeManufacture/>
             </div>
         </div>
-    );
+    )
 };
 
 export default BasicContainer;

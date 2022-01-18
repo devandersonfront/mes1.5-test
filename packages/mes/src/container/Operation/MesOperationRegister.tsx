@@ -74,7 +74,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           }
         }
       }).filter((v:any) => v)
-
       setColumn([...tmpColumn])
     }
   }
@@ -143,6 +142,66 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
       }).filter((v) => v))
 
+  console.log(basicRow.map((row, i) => {
+    if(selectList.has(row.id)){
+      let selectKey: string[] = []
+      let additional:any[] = []
+      column.map((v) => {
+        if(v.selectList){
+          selectKey.push(v.key)
+        }
+
+        if(v.type === 'additional'){
+          additional.push(v)
+        }
+      })
+
+      let selectData: any = {}
+
+      Object.keys(row).map(v => {
+        if(v.indexOf('PK') !== -1) {
+          selectData = {
+            ...selectData,
+            [v.split('PK')[0]]: row[v]
+          }
+        }
+
+        if(v === 'unitWeight') {
+          selectData = {
+            ...selectData,
+            unitWeight: Number(row['unitWeight'])
+          }
+        }
+
+        if(v === 'tmpId') {
+          selectData = {
+            ...selectData,
+            id: row['tmpId']
+          }
+        }
+      })
+
+      return {
+        ...row,
+        ...selectData,
+        input_bom: row.input ?? [],
+        status: 1,
+        additional: [
+          ...additional.map(v => {
+            if(row[v.name]) {
+              return {
+                id: v.id,
+                title: v.name,
+                value: row[v.name],
+                unit: v.unit
+              }
+            }
+          }).filter((v) => v)
+        ]
+      }
+
+    }
+  }).filter((v) => v))
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
@@ -160,6 +219,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     let resultData = [];
 
     if(res){
+      console.log("NONONONO!")
       let row:any = [];
       if(typeof res === 'string'){
         let tmpRowArray = res.split('\n')
@@ -170,6 +230,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             return tmp
           }
         }).filter(v=>v)
+        console.log(row)
         resultData = [...row.map((data, index) => {
           let random_id = Math.random()*1000;
           return index === 0 ?
@@ -259,7 +320,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       // ])
       // return resultData;
     }else{
-      loadGraphSheet(product_id, object)
+      console.log("HERE?????")
+      return loadGraphSheet(product_id, object)
     }
     // setIsFirst(false)
   }
@@ -270,6 +332,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       path: { product_id }
     })
     if(res){
+      console.log(res)
       let tmp: Set<any> = selectList
       // setBasicRow([{
       //   ...object,
@@ -302,10 +365,11 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       return [{
         ...object,
         goal: 0,
+        name: object.product_name
       }, ...res.map(v => {
         if(v.type === 2){
           let random_id = Math.random()*1000;
-
+          console.log(v)
           tmp.add("operation_"+random_id)
 
           return {
@@ -317,7 +381,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             deadline: moment().format('YYYY-MM-DD'),
             customer_id: v.child_product.customer?.name,
             cm_id: v.child_product.model?.model,
-            name: v.child_product.name,
+            name: v.child_product.name ?? v.product_name,
             product_id: v.child_product.code,
             code: v.child_product.code,
             type: TransferCodeToValue(v.type, 'product'),
@@ -329,9 +393,9 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       }).filter(v => v)]
       // setSelectList(tmp)
       setSelectList(new Set())
-    }
+      setIsFirst(false)
 
-    setIsFirst(false)
+    }
   }
 
   const onClickHeaderButton = async(index: number) => {
@@ -411,6 +475,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         ]}
         row={basicRow}
         setRow={async(e) => {
+          console.log("e : ", e)
           const eData = e.filter((eValue) => {
             let equal = false;
             basicRow.map((bValue)=>{
@@ -421,12 +486,17 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             if(basicRow[0].product == undefined) return "first"
             if(!equal) return eValue
           })
+          console.log("eData : ", eData);
           if(eData.length <= 0){
+            console.log("??E??", e)
             setSelectList(new Set());
             setBasicRow([...e])
           }else{
+            console.log("??AAA??", e)
             setSelectList(new Set());
             const resultData = await loadLatestSheet(e[0].product.product_id, e[0]).then((value) => value)
+            console.log("resultData : ", resultData)
+
             // const resultData = await loadGraphSheet(e[0].product.product_id, e[0]).then((value) => value)
             setBasicRow([...resultData])
           }

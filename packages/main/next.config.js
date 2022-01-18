@@ -1,9 +1,23 @@
 const withImages = require('next-images')
 
-const withCSS = require('@zeit/next-css')
+const path = require('path')
 
-const withTM = require("next-transpile-modules")(["shared", "basic", "mes"]);
+const withPlugins = require('next-compose-plugins')
 
-module.exports = withCSS(withImages(withTM({
-    webpack5: false,
-})));
+const withTM = require("next-transpile-modules")(["shared", "basic", "mes" , 'react-data-grid']);
+
+module.exports = withPlugins(
+    [
+        [withImages],
+        [withTM]
+    ],
+    {
+        sassOptions: {
+            includePaths: [path.join(__dirname, 'styles')],
+        },
+        images: {
+            disableStaticImages: true
+        },
+
+    },
+)

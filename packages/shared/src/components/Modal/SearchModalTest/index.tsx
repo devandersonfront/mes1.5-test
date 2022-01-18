@@ -319,8 +319,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
-                console.log(searchList[selectRow], searchModalInit.excelColumnType, column.type)
-                console.log(row, row.name, column.type)
                 const selectNameFunction = (type:string) => {
                   switch(type){
                     case "bom":
@@ -330,6 +328,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     case "machine" :
                       return searchList[selectRow].name;
                     case "mold":
+                      return searchList[selectRow].name;
+                    case "tool":
                       return searchList[selectRow].name;
                     default:
                       return row.name;
@@ -341,7 +341,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
                         manager:  SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                         name:  selectNameFunction(column.type),
-                        tab: undefined,
+                        tab: tab,
                         type_name:  undefined,
                         version: row.version,
                         isChange:true,

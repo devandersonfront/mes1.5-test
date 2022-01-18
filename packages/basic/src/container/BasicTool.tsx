@@ -10,8 +10,10 @@ import {
 //@ts-ignore
 import {SelectColumn} from "react-data-grid";
 import {columnlist} from "shared";
-import {NextPageContext} from "next";
 import {useRouter} from "next/router";
+//@ts-ignore
+import Notiflix from "notiflix";
+import moment from "moment";
 
 export interface IProps {
     children?: any
@@ -20,143 +22,14 @@ export interface IProps {
     option?: number
 }
 
-const dummyList = {
-        info_list: [
-            {
-                tool_id: 1,
-                code: "공구 code",
-                name: "공구명",
-                customer: {
-                    customer_id: 1,
-                    name: "고객사명",
-                    rep: "대표자명",
-                    manager: "담당자명",
-                    telephone: "전화번호",
-                        cellphone: "휴대폰",
-                        fax: "팩스",
-                        address: "주소",
-                        crn: "사업자 번호",
-                        photo: "사업자 등록증",
-                        additional: [ ],
-                },
-                additional: [],
-                version: 1,
-            },
-        ],
-        menus: [
-            {
-                id: 1 ,
-                title: "공구 CODE",
-                colName:"code"
-            },
-            {
-                id: 2 ,
-                title: "공구 품명",
-                colName:"name"
-            },
-            {
-                id: 3 ,
-                title: "단위",
-                unit: "EA",
-                colName:"unit"
-            },
-            {
-                id: 4 ,
-                title: "거래처",
-                colName:"customer"
-            },
-            {
-                id: 5 ,
-                title: "공구 재고량",
-                unit: "EA",
-                colName:"product"
-            },
-            {
-                id: 6 ,
-                title: "생산 품목",
-                colName:""
-            },
-        ],
-            page: 1,
-            renderItem: 22,
-            totalPages: 1
-}
-
-const dummySearch = {
-    info_list: [
-        {
-            tool_id: 1,
-            code: "공구 code Search",
-            name: "공구명 Search",
-            customer: {
-                customer_id: 1,
-                name: "고객사명 Search",
-                rep: "대표자명 Search",
-                manager: "담당자명 Search",
-                telephone: "전화번호 Search",
-                cellphone: "휴대폰 Search",
-                fax: "팩스 Search",
-                address: "주소 Search",
-                crn: "사업자 번호 Search",
-                photo: "사업자 등록증 Search",
-                additional: [],
-            },
-            additional: [],
-            version: 1,
-        },
-    ],
-    menus: [
-        {
-            id: 1 ,
-            title: "공구 CODE",
-            colName:"code"
-        },
-        {
-            id: 2 ,
-            title: "공구 품명",
-            colName:"name"
-        },
-        {
-            id: 3 ,
-            title: "단위",
-            unit: "EA",
-            colName:"unit"
-        },
-        {
-            id: 4 ,
-            title: "거래처",
-            colName:"customer"
-        },
-        {
-            id: 5 ,
-            title: "공구 재고량",
-            unit: "EA",
-            colName:"product"
-        },
-        {
-            id: 6 ,
-            title: "생산 품목",
-            colName:""
-        },
-    ],
-    page: 1,
-    renderItem: 22,
-    totalPages: 10
-}
-
-
 const BasicTool = ({page, keyword, option}: IProps) => {
     const router = useRouter();
     const [column, setColumn] = useState<any>(columnlist.toolRegister)
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
-
     const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:0, total:0});
     // const [keyword, setKeyword] = useState<string>("");
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-
-
-
 
     const cleanUpData = (info_list:any) => {
         let tmpColumn = columnlist["toolRegister"];
@@ -249,9 +122,10 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         //     }
         // })
         let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-
+            console.log("row :" , row)
             let appendAdditional: any = {}
 
+            row.customer_id = row.customer?.name;
             row.additional && row.additional.map((v: any) => {
                 appendAdditional = {
                     ...appendAdditional,
@@ -260,6 +134,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             })
 
             let random_id = Math.random()*1000;
+
             return {
                 ...row,
                 ...appendAdditional,
@@ -270,6 +145,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     }
 
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+        console.log("column :" , column)
         let tmpColumn = column.map(async (v: any) => {
             if(v.selectList && v.selectList.length === 0){
                 let tmpKey = v.key
@@ -321,45 +197,99 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     }
 
     const LoadBasic = async() => {
-        // const res = await RequestMethod("get", "toolList", {
-        //     path:{
-        //         page:page,
-        //         renderItem:18
-        //     },
-        //     params:{
-        //
-        //     }
-        // })
+        const res = await RequestMethod("get", "toolList", {
+            path:{
+                page:page,
+                renderItem:18
+            },
+            params:{
 
-        // if(res){
-        console.log(dummyList)
-            setPageInfo({...pageInfo, total:dummyList.totalPages});
-            cleanUpData(dummyList);
-            // console.log(resultData);
-        if(dummyList){
-            // setBasicRow(resultData);
+            }
+        })
+
+        if(res){
+            const resultData = cleanUpData(res);
+            setPageInfo({...pageInfo, total:res.totalPages});
+            // setPageInfo({...pageInfo, total:dummyList.totalPages});
+        // if(dummyList){
+        //     setBasicRow(resultData);
         }
     }
 
     const SearchBasic = async() => {
-        // const res = await RequestMethod("get", "toolSearch",{
-        //     path:{
-        //         page:page,
-        //         renderItem:18
-        //     },
-        //     params:{
-        //         opt:optionIndex,
-        //         keyword:keyword,
-        //
-        //     }
-        // })
+        const res = await RequestMethod("get", "toolSearch",{
+            path:{
+                page:page,
+                renderItem:18
+            },
+            params:{
+                opt:optionIndex,
+                keyword:keyword,
 
-            setPageInfo({...pageInfo, total:dummySearch.totalPages});
-             cleanUpData(dummySearch);
-        // if(res){
-        //
-        //     // setBasicRow(resultData);
-        // }
+            }
+        })
+
+        if(res){
+            const resultData = cleanUpData(res);
+            setPageInfo({...pageInfo, total:res.totalPages});
+            // setBasicRow(resultData);
+        }
+    }
+
+    const SelectData = () => {
+        return basicRow.filter((row) =>selectList.has(row.id));
+    }
+
+    const SaveCleanUpData = (data:any[]) => {
+        let resultData = [];
+
+        data.map((rowData, index) => {
+            let tmpRow:any = {};
+            tmpRow.unit = rowData.unitPK;
+            tmpRow.tool_id = rowData?.tool_id;
+            tmpRow.code = rowData.code;
+            tmpRow.name = rowData.name;
+            tmpRow.stock = rowData?.stock;
+            tmpRow.customer = rowData.customer;
+            tmpRow.additional = rowData?.additional ?? [];
+            tmpRow.version = rowData?.version ?? undefined;
+
+            resultData.push(tmpRow);
+        })
+        console.log(resultData)
+        return resultData;
+    }
+
+    const SaveBasic = async() => {
+
+        console.log(SaveCleanUpData(SelectData()));
+        const res = await RequestMethod("post", "toolSave",SaveCleanUpData(SelectData()))
+
+        if(res){
+            Notiflix.Loading.remove(300)
+            Notiflix.Report.success("저장되었습니다.","","확인",() => {
+                LoadBasic();
+            })
+        }else{
+            Notiflix.Loading.remove(300)
+            Notiflix.Report.failure("에러입니다.","","확인",)
+        }
+    }
+
+    const DeleteBasic = async() => {
+
+        console.log(SaveCleanUpData(SelectData()));
+        const res = await RequestMethod("delete", "toolDelete",SaveCleanUpData(SelectData()))
+
+        if(res){
+            Notiflix.Loading.remove(300)
+            Notiflix.Report.success("삭제되었습니다.","","확인",() => {
+                LoadBasic();
+            })
+        }else{
+            Notiflix.Loading.remove(300)
+            Notiflix.Report.failure("에러입니다.","","확인",)
+        }
     }
 
     const buttonsEvent = (index:number) => {
@@ -368,15 +298,26 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                 router.push(`/mes/item/manage/tool`)
                 return
             case 1:
+                let items = {}
+
+                column.map((value) => {
+                    if(value.selectList && value.selectList.length){
+                        items = {
+                            [value.key+'PK'] : value.selectList[0].pk, //여기 봐야됨!
+                            ...items,
+                        }
+                    }
+                })
                 const randomId = Math.random()*1000;
-                setBasicRow([...basicRow, {id:`tool_${randomId}`}])
+                setBasicRow([...basicRow, {...items,id:`tool_${randomId}`, stock:0, additional:[], warehousing:0, date:moment().format("YYYY-MM-DD")}])
                 return
             case 2:
-                alert("저장하기")
+                Notiflix.Loading.standard()
                 console.log("basicRow : ", basicRow)
+                SaveBasic()
                 return
             case 3:
-                alert("삭제")
+                DeleteBasic();
 
                 return
             default:

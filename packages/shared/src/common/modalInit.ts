@@ -18,6 +18,7 @@ import {MachineListModal} from '../components/Modal/MachineListModal'
 import {SearchModalTest} from '../components/Modal/SearchModalTest'
 import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
 import {LotNumberRegister} from '../components/Cell/LotNumberRegister'
+import OperationSearchModal from "../../../main/component/Modal/OperationSearchModal";
 
 export const searchModalList: any = {
   member: [
@@ -129,6 +130,13 @@ export const searchModalList: any = {
     {key: 'cavity', name: '캐비티', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'spm', name: 'SPM', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'slideHeight', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
+  ],
+  toolSearch: [
+    {key: 'seq', name: '번호', textAlign: 'center', width:30, formatter: LineBorderContainer},
+    {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
+    {key: 'name', name: '공구 품명', /*formatter: SearchModalTest,*/ type: 'mold', modalType: true },
+    {key: 'unit', name: '단위', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
+    {key: 'customer', name: '거래처'},
   ],
   machineInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
@@ -283,7 +291,6 @@ export const searchModalList: any = {
     {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-', },
-
   ],
   InputInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
@@ -530,6 +537,16 @@ export const searchModalList: any = {
     {key: 'worker_name', name: '작업자'},
     {key: 'current', name: '재고량'},
     {key: 'amount', name: '납품 수량', textType: 'Modal',},
+  ],
+  midrangeInfo: [
+    {key: 'osd_id', name: '지시 고유 번호', width: 152},
+    {key: 'lot_number', name: 'LOT 번호 (생산로트)', width: 152},
+    {key: 'code', name: 'CODE', width: 480},
+    {key: 'material_name', name: '품명', width: 360},
+    {key: 'type', name: '품목 종류', width: 120},
+    {key: 'process_id', name: '생산 공정', width: 120},
+    {key: 'worker_name', name: '작업자', width: 120},
+    {key: 'name', name: '기계 이름 (CODE)', width: 240}
   ]
 }
 

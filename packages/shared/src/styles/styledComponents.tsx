@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import {BG_COLOR_SUB3, POINT_COLOR} from '../common/configset'
+import exp from "constants";
 
 export const Body = styled.div`
   p, span{
@@ -624,4 +625,17 @@ export const SelectButton = styled.div`
     justify-content: center;
     align-items: center;
     font-size: 15px;
+`
+
+
+export const MidrangeButton = styled.div`
+    width: 100%;
+    background-color: #111319;
+    height: 40px;
+    margin-bottom: 16px; 
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 `

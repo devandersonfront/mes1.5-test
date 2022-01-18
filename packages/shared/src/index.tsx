@@ -33,6 +33,8 @@ export {
 
 export {columnlist} from "./common/columnInit"
 
+export {V_columnlist} from "./common/columnInit1.5v"
+
 export {
   //스타일 커스텀 변수
   TOKEN_NAME,
@@ -91,7 +93,9 @@ export {LotNumberRegister} from "./components/Cell/LotNumberRegister"
 
 //드롭다운
 export {DropDownEditor} from "./components/Dropdown/ExcelBasicDropdown"
+export {MidrangeExcelDropdown} from './components/Dropdown/MidrangeExcelDropdown'
 
+export {MidrangeExcelTable} from "./components/Excel/MidrangeExcelTable"
 export {ExcelTable} from "./components/Excel/ExcelTable"
 
 export {FileEditer} from "./components/FileUpload/ExcelBasicFileUpload"
@@ -154,6 +158,8 @@ export {WorkRegisterModal} from './components/Modal/WorkRegisterModal'
 export {OperationInfoModal} from './components/Modal/OperationInfoModal'
 export {InfoModal} from './components/Modal/InfoModal'
 export {LotInputInfoModal} from './components/Modal/LotInputInfoModal'
+export {MidrangeFormReviewModal} from './components/Modal/MidrangeFormReviewModal'
+export {MidrangeRegisterModal} from './components/Modal/MidrangeRegisterModal'
 
 export {TestModule} from "./components/ComponentTest"
 
@@ -179,6 +185,9 @@ export type {
   IItemMenuType,
   MachineType,
   ProductListType,
+  InspectionInfo,
+  InspectionFinalDataResult,
+  ChangeProductFileInfo,
 } from './@types/type'
 
 
