@@ -639,14 +639,14 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
           }}
         />
 
-      {/*<BarcodeModal */}
-      {/*  title={'바코드 미리보기'} */}
-      {/*  handleBarcode={handleBarcode}*/}
-      {/*  handleModal={handleModal}*/}
-      {/*  isOpen={barcodeOpen}*/}
-      {/*  type={'rawMaterial'}*/}
-      {/*  data={selectRow}*/}
-      {/*/>*/}
+      <BarcodeModal
+       title={'바코드 미리보기'}
+       handleBarcode={handleBarcode}
+       handleModal={handleModal}
+       isOpen={barcodeOpen}
+       type={'rawMaterial'}
+       data={selectRow}
+      />
       {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}

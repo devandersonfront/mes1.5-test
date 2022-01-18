@@ -70,6 +70,8 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       }
     })
 
+    console.log(tmpSelectList,'tmpSelectListtmpSelectListtmpSelectList')
+
     setSelectRow(tmpSelectList[0])
 
   }
@@ -497,11 +499,11 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const handleBarcode = async (dataurl : string) => {
+  const handleBarcode = async (dataurl : string , id : string) => {
 
     await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
                 {
-                  "id":1,
+                  "id":id,
                   "functions":
                   {"func0":{"checkLabelStatus":[]},
                     "func1":{"clearBuffer":[]},
@@ -601,14 +603,14 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
           }}
         />
 
-      {/*<BarcodeModal */}
-      {/*  title={'바코드 미리보기'} */}
-      {/*  handleBarcode={handleBarcode}*/}
-      {/*  handleModal={handleModal}*/}
-      {/*  isOpen={barcodeOpen}*/}
-      {/*  type={'product'}*/}
-      {/*  data={selectRow}*/}
-      {/*/>*/}
+      <BarcodeModal
+       title={'바코드 미리보기'}
+       handleBarcode={handleBarcode}
+       handleModal={handleModal}
+       isOpen={barcodeOpen}
+       type={'product'}
+       data={selectRow}
+      />
       {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
