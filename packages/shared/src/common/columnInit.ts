@@ -55,6 +55,7 @@ import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFact
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
 import {MidRangeButton} from "../components/Buttons/MidRangeButton";
 import placeholder from "lodash/fp/placeholder";
+import {ToolInfoModal} from "../components/Modal/ToolInfoModal";
 
 export const columnlist: any = {
   member: [
@@ -242,7 +243,7 @@ export const columnlist: any = {
     {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister"},
     {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process"},
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
-    // {key: 'tool_id', name: '공구', formatter: MoldInfoModal},
+    {key: 'tool_id', name: '공구', formatter: ToolInfoModal},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
     {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, formatter: PlaceholderBox, placeholder: 0},
     {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer},
@@ -1188,6 +1189,11 @@ export const columnlist: any = {
     {key: "customer", name: '거래처', },
     {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
+  ],
+  documentManage:[
+    {key:"name", name:"이름" },
+    {key:"type", name:"종류" },
+    {key:"date", name:"날짜" },
   ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},

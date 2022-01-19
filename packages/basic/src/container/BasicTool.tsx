@@ -242,7 +242,10 @@ const BasicTool = ({page, keyword, option}: IProps) => {
 
     const SaveCleanUpData = (data:any[]) => {
         let resultData = [];
-
+        let additional = [];
+        column.map((col)=>{
+            if(col.type === "additional") additional.push(col)
+        })
         data.map((rowData, index) => {
             let tmpRow:any = {};
             tmpRow.unit = rowData.unitPK;
@@ -251,18 +254,26 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             tmpRow.name = rowData.name;
             tmpRow.stock = rowData?.stock;
             tmpRow.customer = rowData.customer;
-            tmpRow.additional = rowData?.additional ?? [];
+            tmpRow.additional = [
+                ...additional.map((v, index)=>{
+                if(!rowData[v.colName]) return undefined;
+                return {
+                    mi_id: v.id,
+                    title: v.name,
+                    value: rowData[v.colName] ?? "",
+                    unit: v.unit,
+                    version:rowData.additional[index]?.version ?? undefined
+                }
+            }).filter((v) => v)
+            ];
             tmpRow.version = rowData?.version ?? undefined;
 
             resultData.push(tmpRow);
         })
-        console.log(resultData)
         return resultData;
     }
 
     const SaveBasic = async() => {
-
-        console.log(SaveCleanUpData(SelectData()));
         const res = await RequestMethod("post", "toolSave",SaveCleanUpData(SelectData()))
 
         if(res){
@@ -277,8 +288,6 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     }
 
     const DeleteBasic = async() => {
-
-        console.log(SaveCleanUpData(SelectData()));
         const res = await RequestMethod("delete", "toolDelete",SaveCleanUpData(SelectData()))
 
         if(res){
@@ -313,7 +322,6 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                 return
             case 2:
                 Notiflix.Loading.standard()
-                console.log("basicRow : ", basicRow)
                 SaveBasic()
                 return
             case 3:
@@ -327,7 +335,6 @@ const BasicTool = ({page, keyword, option}: IProps) => {
 
     useEffect(() => {
         // setOptionIndex(option)
-        console.log(keyword)
         if(keyword){
             SearchBasic();
         }else{
@@ -372,7 +379,6 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                 //@ts-ignore
                 setSelectList={setSelectList}
             />
-            {/*<PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => setPageInfo({...pageInfo, page:page})} />*/}
             <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => setPageInfo({...pageInfo, page:page})} />
         </div>
     )
