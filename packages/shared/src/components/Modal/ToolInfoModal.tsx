@@ -21,17 +21,16 @@ interface IProps {
     modify: boolean
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
-    [{title: '거래처', infoWidth: 144, key: 'customer'}, {title: '모델', infoWidth: 144, key: 'model'},],
-    [
-        {title: 'CODE', infoWidth: 144, key: 'code'},
-        {title: '품명', infoWidth: 144, key: 'name'},
-        {title: '품목 종류', infoWidth: 144, key: 'type'},
-        {title: '생산 공정', infoWidth: 144, key: 'process'},
-    ],
-    [{title: '단위', infoWidth: 144, key: 'unit'},{title: '목표 생산량', infoWidth: 144, key: 'goal'},],
+    [{title: '거래처', infoWidth: 144, key: 'customer_id'}, {title: '모델', infoWidth: 144, key: 'model'},],
+    // [
+    //     {title: 'CODE', infoWidth: 144, key: 'code'},
+    //     {title: '품명', infoWidth: 144, key: 'name'},
+    //     {title: '품목 종류', infoWidth: 144, key: 'type'},
+    //     {title: '생산 공정', infoWidth: 144, key: 'process_id'},
+    // ],
+    // [{title: '단위', infoWidth: 144, key: 'unit'},{title: '목표 생산량', infoWidth: 144, key: 'goal'},],
 ]
 
 const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
@@ -50,11 +49,11 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
     useEffect(() => {
         if(isOpen) {
-            if(row?.molds && row?.molds.length > 0){
-                setSearchList(row.molds.map((v,i) => {
+            if(row?.tools && row?.tools.length > 0){
+                setSearchList(row.tools.map((v,i) => {
                     return {
                         ...v,
-                        ...v.mold,
+                        ...v.tool,
                         seq: i+1
                     }
                 }))
@@ -62,22 +61,10 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         }
     }, [isOpen, searchKeyword])
 
-    const changeRow = (row: any, key?: string) => {
-        let tmpData = {
-            ...row,
-            machine_id: row.name,
-            machine_idPK: row.machine_id,
-            manager: row.manager ? row.manager.name : null
-        }
-
-
-        return tmpData
-    }
-
 
     const ModalContents = () => {
-        if(row?.molds){
-            if(row.molds.length){
+        if(row?.tools){
+            if(row.tools.length){
                 return <>
                     <div style={{
                         padding: '3.5px 0px 0px 3.5px',
@@ -106,7 +93,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             }
         }
     }
-
+    console.log("row : " , row)
     return (
         <SearchModalWrapper >
             { ModalContents() }
@@ -151,32 +138,81 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                             </div>
                         </div>
                     </div>
-                    {
-                        headerItems && headerItems.map((infos, index) => {
-                            return (
-                                <HeaderTable>
-                                    {
-                                        infos.map(info => {
-                                            return (
-                                                <>
-                                                    <HeaderTableTitle>
-                                                        <HeaderTableText style={{fontWeight: 'bold'}}>{info.title ?? "-"}</HeaderTableText>
-                                                    </HeaderTableTitle>
-                                                    <HeaderTableTextInput style={{width: info.infoWidth}}>
-                                                        <HeaderTableText>
-                                                            {summaryData[info.key]}
-                                                            {/*-*/}
-                                                        </HeaderTableText>
-                                                        {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
-                                                    </HeaderTableTextInput>
-                                                </>
-                                            )
-                                        })
-                                    }
-                                </HeaderTable>
-                            )
-                        })
-                    }
+                    {/*{*/}
+                    {/*    headerItems && headerItems.map((infos, index) => {*/}
+                    {/*        console.log("infos : ", infos)*/}
+                    {/*        return (*/}
+                    {/*            <HeaderTable>*/}
+                    {/*                {*/}
+                    {/*                    infos.map(info => {*/}
+                    {/*                        return (*/}
+                    {/*                            <>*/}
+                    {/*                                <HeaderTableTitle>*/}
+                    {/*                                    <HeaderTableText style={{fontWeight: 'bold'}}>{info.title ?? "-"}</HeaderTableText>*/}
+                    {/*                                </HeaderTableTitle>*/}
+                    {/*                                <HeaderTableTextInput style={{width: info.infoWidth}}>*/}
+                    {/*                                    <HeaderTableText>*/}
+                    {/*                                        {row[info.key] ?? "-"}*/}
+                    {/*                                        /!*-*!/*/}
+                    {/*                                    </HeaderTableText>*/}
+                    {/*                                    {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}*/}
+                    {/*                                </HeaderTableTextInput>*/}
+                    {/*                            </>*/}
+                    {/*                        )*/}
+                    {/*                    })*/}
+                    {/*                }*/}
+                    {/*            </HeaderTable>*/}
+                    {/*        )*/}
+                    {/*    })*/}
+                    {/*}*/}
+                    <HeaderTable>
+                        <HeaderTableTitle>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>고객사명</HeaderTableText>
+                        </HeaderTableTitle>
+                        <HeaderTableTextInput style={{width: 144}}>
+                            <HeaderTableText>{row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
+                        </HeaderTableTextInput>
+                        <HeaderTableTitle>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
+                        </HeaderTableTitle>
+                        <HeaderTableTextInput style={{width: 144}}>
+                            <HeaderTableText>{row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
+                        </HeaderTableTextInput>
+                    </HeaderTable>
+                    <HeaderTable>
+                        <HeaderTableTitle>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
+                        </HeaderTableTitle>
+                        <HeaderTableTextInput style={{width: 144}}>
+                            <HeaderTableText>{row.code ?? "-"}</HeaderTableText>
+                        </HeaderTableTextInput>
+                        <HeaderTableTitle>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
+                        </HeaderTableTitle>
+                        <HeaderTableTextInput style={{width: 144}}>
+                            <HeaderTableText>{row.name ?? "-"}</HeaderTableText>
+                        </HeaderTableTextInput>
+                        <HeaderTableTitle>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
+                        </HeaderTableTitle>
+                        <HeaderTableTextInput style={{width: 144}}>
+                            <HeaderTableText>{row.type ? TransferCodeToValue(row.type, 'material') : "-"}</HeaderTableText>
+                        </HeaderTableTextInput>
+                        <HeaderTableTitle>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
+                        </HeaderTableTitle>
+                        <HeaderTableTextInput style={{width: 144}}>
+                            <HeaderTableText>{row.process ? row.process.name : "-"}</HeaderTableText>
+                        </HeaderTableTextInput>
+                    </HeaderTable>
+                    <HeaderTable>
+                        <HeaderTableTitle>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
+                        </HeaderTableTitle>
+                        <HeaderTableTextInput style={{width: 144}}>
+                            <HeaderTableText>{row.unit ?? "-"}</HeaderTableText>
+                        </HeaderTableTextInput>
+                    </HeaderTable>
                     <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
                         <Button onClick={() => {
                             let tmp = searchList
@@ -240,7 +276,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
                         <ExcelTable
-                            headerList={searchModalList.moldInfo}
+                            headerList={searchModalList.toolInfo}
                             row={searchList ?? [{}]}
                             setRow={(e) => setSearchList([...e])}
                             width={1746}
@@ -277,10 +313,10 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                                 if(selectRow !== undefined && selectRow !== null){
                                     onRowChange({
                                         ...row,
-                                        molds: searchList.map((v, i) => {
+                                        tools: searchList.map((v, i) => {
                                             return {
                                                 sequence: i+1,
-                                                mold: v
+                                                tool: v
                                             }
                                         }),
                                         name: row.name,

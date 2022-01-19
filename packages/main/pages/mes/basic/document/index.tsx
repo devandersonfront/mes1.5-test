@@ -1,10 +1,8 @@
 import React from "react";
-import MenuNavigation from "../../../../main/component/MenuNav/MenuNavigation";
+import MenuNavigation from "../../../../component/MenuNav/MenuNavigation";
+import ProfileHeader from "../../../../component/Profile/ProfileHeader";
+import {BasicDevice, BasicDocument} from "basic";
 import {NextPageContext} from "next";
-import {MesToolList} from "mes";
-import ProfileHeader from "../../../component/Profile/ProfileHeader";
-// import {MesFinishList} from "../../../../mes";
-
 
 interface IProps {
     children?: any
@@ -13,14 +11,14 @@ interface IProps {
     option?: number
 }
 
+const BasicContainer = ({page, keyword, option}: IProps) => {
 
-const ToolList = ({page, keyword, option}: IProps) => {
     return (
         <div style={{display: 'flex', }}>
-            <MenuNavigation pageType={'MES'}/>
+            <MenuNavigation pageType={'BASIC'}/>
             <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
-                <MesToolList page={page} keyword={keyword} option={option} />
+                <BasicDocument page={page} keyword={keyword} option={option}/>
             </div>
         </div>
     );
@@ -36,4 +34,4 @@ export const getServerSideProps = (ctx: NextPageContext) => {
     }
 }
 
-export default ToolList;
+export default BasicContainer

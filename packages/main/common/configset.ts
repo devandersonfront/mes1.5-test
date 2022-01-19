@@ -19,10 +19,9 @@ export const BUTTON_TEXT_COLOR: string = '#ffffff' as const
 export const BG_COLOR_SUB3: string = '#353b48' as const
 export const POINT_COLOR_3: string = '#e7e9eb' as const
 
-// export const SF_ADDRESS = "3.35.51.217"
 // export const SF_ADDRESS = "15.164.129.67"
-export const SF_ADDRESS = "3.37.196.98"
-// export const SF_ADDRESS = "211.208.115.66"
+// export const SF_ADDRESS = "3.37.196.98"
+export const SF_ADDRESS = "54.180.117.4"
 
 export const isLocalhost = () => {
   //@ts-ignore

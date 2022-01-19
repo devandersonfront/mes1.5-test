@@ -17,6 +17,7 @@ const FinishButton = ({ row, column, onRowChange}: IProps) => {
   const router = useRouter()
 
   const SaveBasic = async () => {
+    console.log(row)
     let res: any
     res = await RequestMethod('post', `sheetSave`,
       [{

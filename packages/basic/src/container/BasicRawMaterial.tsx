@@ -1,21 +1,25 @@
 import React, {useEffect, useState} from 'react'
 import {
-    columnlist,
-    excelDownload,
-    ExcelDownloadModal,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    PaginationComponent,
-    RequestMethod,
-    TextEditor
+  ExcelTable,
+  Header as PageHeader,
+  RequestMethod,
+  V_columnlist,
+  MAX_VALUE,
+  DropDownEditor,
+  TextEditor,
+  excelDownload,
+  PaginationComponent,
+  ExcelDownloadModal,
+  IExcelHeaderType, IItemMenuType, BarcodeModal
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
+import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
+import axios from 'axios';
+import { SF_ENDPOINT_BARCODE } from 'shared/src/common/configset';
 
 export interface IProps {
   children?: any
@@ -24,23 +28,28 @@ export interface IProps {
   option?: number
 }
 
+
+
 const BasicRawMaterial = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
+  const [barcodeOpen , setBarcodeOpen] = useState<boolean>(false)
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     name: "", id: "", type: 'COIL'
   }])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawmaterial"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>( V_columnlist["rawmaterial"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [selectRow , setSelectRow ] = useState<any>(undefined)
+  const [buttonList , setButtonList ] = useState<string[]>([])
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+
 
   useEffect(() => {
     setOptionIndex(option)
@@ -247,7 +256,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
   }
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["rawmaterial"];
+    let tmpColumn = V_columnlist["rawmaterial"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
@@ -451,18 +460,43 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
 
   }
 
+  const handleModal = (open:boolean) => {
+
+    setBarcodeOpen(!open)
+
+  }
+
+  const selectedData = () => {
+
+    let tmpSelectList : any[] = []
+    basicRow.map(row => {
+      if(selectList.has(row.id)){
+        tmpSelectList.push(row)
+      }
+    })
+
+    setSelectRow(tmpSelectList[0])
+
+  }
+
   const onClickHeaderButton = (index: number) => {
-    switch(index){
-      case 0:
-        // setExcelUploadOpen(true)
-        break;
-      case 1:
-        setExcelOpen(true)
-        break;
-      case 2:
+
+    switch(buttonList[index]){
+      case '바코드 미리보기':
+
+      if(selectList.size === 0){
+        return Notiflix.Report.failure('선택을 하셔야 합니다.',
+        '선택을 하셔야지 바코드를 보실수 있습니다.',
+        'Okay')
+      }
+      setBarcodeOpen(true)
+      selectedData()
+      break;
+
+      case '항목관리':
         router.push(`/mes/item/manage/rawmaterial`)
         break;
-      case 3:
+      case '행추가':
         let items = {}
 
         column.map((value) => {
@@ -488,12 +522,11 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
           ...basicRow
         ])
         break;
-
-      case 4:
+      case '저장하기':
         SaveBasic()
 
         break;
-      case 5:
+      case '삭제':
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{
             DeleteBasic()
@@ -505,6 +538,49 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
 
     }
   }
+
+  // 바코드
+
+  const handleBarcode = async (dataurl) => {
+
+    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
+                {
+                  "id":1,
+                  "functions":
+                  {"func0":{"checkLabelStatus":[]},
+                    "func1":{"clearBuffer":[]},
+                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+                    "func3":{"printBuffer":[]}
+                  }
+                },
+                {
+                  headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                  }
+                }
+    ).catch((error) => {
+
+      if(error){
+        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        return false
+      }
+
+    })
+  }
+
+  React.useEffect(()=>{
+
+    if(selectList.size > 1){
+
+      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
+
+    }
+
+    return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
+
+  },[selectList.size])
+
+
 
   return (
     <div>
@@ -523,12 +599,9 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"원자재 기준정보"}
-          buttons={
-            ['', '', '항목관리', '행추가', '저장하기', '삭제']
-          }
+          title={"원자재 기본정보"}
+          buttons={buttonList}
           buttonsOnclick={
-            // () => {}
             onClickHeaderButton
           }
         />
@@ -565,7 +638,16 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
             }
           }}
         />
-      <ExcelDownloadModal
+
+      <BarcodeModal
+        title={'바코드 미리보기'}
+        handleBarcode={handleBarcode}
+        handleModal={handleModal}
+        isOpen={barcodeOpen}
+        type={'rawMaterial'}
+        data={selectRow}
+      />
+      {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
@@ -574,7 +656,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}
-      />
+      /> */}
     </div>
   );
 }

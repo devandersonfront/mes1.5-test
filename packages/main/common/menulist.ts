@@ -62,6 +62,7 @@ const BASIC_MENUS: IMenuType[] = [
   {title: '원자재 기준정보', url: '/mes/basic/rawmaterialV1u'},
   {title: '부자재 기준정보', url: '/mes/basic/submaterial'},
   {title: '제품 등록 관리', url: '/mes/basic/productV1u'},
+  {title: '문서 관리', url: '/mes/basic/document'},
 ]
 
 const MES_MENUS: IMenuType[] = [

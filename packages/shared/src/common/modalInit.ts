@@ -131,6 +131,25 @@ export const searchModalList: any = {
     {key: 'spm', name: 'SPM', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'slideHeight', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
   ],
+  toolInfo: [
+    {key: 'seq', name: '번호', textAlign: 'center', width: 64, formatter: LineBorderContainer},
+    {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
+    {key: 'name', name: '공구명', width: 472, formatter: SearchModalTest, type: 'tool', modalType: true },
+    {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
+        {pk: 'basic', name: '기본'},
+        {pk: 'spare', name: '스페어'},
+      ], type: 'Modal'},
+    // {key: 'cavity', name: '재고량', width: 160, formatter: LineBorderContainer, placeholder: '0'},
+    // {key: 'spm', name: 'SPM', width: 160, formatter: LineBorderContainer, placeholder: '0'},
+    // {key: 'slideHeight', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
+  ],
+  toolSearch: [
+    {key: 'seq', name: '번호', textAlign: 'center', width:30, formatter: LineBorderContainer},
+    {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
+    {key: 'name', name: '공구 품명', /*formatter: SearchModalTest,*/ type: 'mold', modalType: true },
+    {key: 'unit', name: '단위', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
+    {key: 'customer', name: '거래처'},
+  ],
   machineInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'name', name: '기계 이름', width: 560, formatter: SearchModalTest, type: 'machine', modalType: true},

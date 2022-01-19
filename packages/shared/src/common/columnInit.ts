@@ -55,6 +55,7 @@ import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFact
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
 import {MidRangeButton} from "../components/Buttons/MidRangeButton";
 import placeholder from "lodash/fp/placeholder";
+import {ToolInfoModal} from "../components/Modal/ToolInfoModal";
 
 export const columnlist: any = {
   member: [
@@ -242,7 +243,7 @@ export const columnlist: any = {
     {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister"},
     {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process"},
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
-    // {key: 'tool_id', name: '공구', formatter: MoldInfoModal},
+    {key: 'tool_id', name: '공구', formatter: ToolInfoModal},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
     {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, formatter: PlaceholderBox, placeholder: 0},
     {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer},
@@ -1164,26 +1165,39 @@ export const columnlist: any = {
         {pk: 4, name: "ml"},
         {pk: 5, name: "L"},
       ]},
-    {key: "customer", name: '거래처', formatter: SearchModalTest, placeholder: '거래처 입력', type:"customer"},
-    {key: "com", name: '공구 재고량', formatter: UnitContainer, unitData:"EA", },
-    {key: "product", name: '생산 품목', formatter:ProductInfoModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
+    {key: "customer_id", name: '거래처', formatter: SearchModalTest, placeholder: '거래처 입력', type:"customer"},
+    {key: "stock", name: '공구 재고량', formatter: UnitContainer, unitData:"EA", },
+    {key: "product_id", name: '생산 품목', formatter:ProductInfoModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
   ],
   toolWarehousingRegister:[
-    {key: "code", name: '공구 CODE', formatter: SearchModalTest, type:"", placeholder: 'CODE 입력'},
+    {key: "code", name: '공구 CODE', formatter: SearchModalTest, type:"tool", placeholder: 'CODE 입력'},
     {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "customer", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "date", name: '입고일', formatter: CalendarBox},
+    {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   toolWarehousingList:[
-    {key: "elapsed", name: '경과일', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "code", name: '공구 CODE', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "name", name: '공구 품명', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "unit", name: '단위', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "customer", name: '거래처', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "elapsed", name: '경과일', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "tool_id", name: '공구 CODE', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "unit", name: '단위', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "warehousing", name: '입고량', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "date", name: '입고일', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+  ],
+  toolWarehousingUpdate:[
+    {key: "code", name: '공구 CODE', },
+    {key: "name", name: '공구 품명', },
+    {key: "unit", name: '단위', },
+    {key: "customer", name: '거래처', },
     {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "date", name: '입고일', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
+  ],
+  documentManage:[
+    {key:"name", name:"이름" },
+    {key:"type", name:"종류" },
+    {key:"date", name:"날짜" },
   ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},

@@ -51,17 +51,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
   }, [isOpen, searchKeyword])
 
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
-    }
-
-    return tmpData
-  }
-
 
   const ModalContents = () => {
     // if(row?.molds){
