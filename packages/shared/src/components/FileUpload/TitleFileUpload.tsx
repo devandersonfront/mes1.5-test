@@ -2,17 +2,20 @@ import React, {useRef} from 'react';
 import {SelectButton, TitleBox} from "../../styles/styledComponents";
 import styled from "styled-components";
 import {uploadTempFile} from "../../common/fileFuctuons";
+import {SF_ENDPOINT_S3} from "../../common/configset";
 
 interface IProps {
     title: string
     value: string
+    uuid?: string
     index: number
+    detail?: boolean
     placeholder: string
     fileOnClick: (fileObject: object)=> void
     deleteOnClick: ()=> void
 }
 
-const TitleFileUpload = ({title,index,value,placeholder,fileOnClick,deleteOnClick}: IProps) => {
+const TitleFileUpload = ({title,index,uuid, detail,value,placeholder,fileOnClick,deleteOnClick}: IProps) => {
     const fileRef = useRef(null)
 
     const onClickImageUpload = (index: string) => {// input[type='file']
@@ -24,12 +27,17 @@ const TitleFileUpload = ({title,index,value,placeholder,fileOnClick,deleteOnClic
     return (
         <div style={{display: "flex", marginBottom: '8px', alignItems: "center"}}>
             <TitleBox>{title}</TitleBox>
-            <ValueBox style={{color: value === '' ? 'rgba(255,255,255,0.3)' : 'white'}}>
+            <ValueBox onClick={()=> uuid !== '' && detail && window.open(SF_ENDPOINT_S3+uuid)} style={{color: value === '' ? 'rgba(255,255,255,0.3)' : 'white', width: detail && '100%', textDecoration:  detail && "underline", textUnderlinePosition: 'under', cursor: detail && "pointer"}}>
                 {value === '' ? placeholder : value}
+                <div style={{width: '20px', height: '20px'}}>
+                    X
+                </div>
             </ValueBox>
-            <SelectButton onClick={()=>onClickImageUpload('1')}>
-                파일선택
-            </SelectButton>
+            {!detail &&
+                <SelectButton onClick={() => onClickImageUpload('1')}>
+                    파일선택
+                </SelectButton>
+            }
             <input ref={fileRef} type={"file"} hidden key={`${title}+${index}`}
                    onChange={async (e) => {
                        if(e.target.files && e.target.files.length !== 0) {

@@ -11,7 +11,7 @@ interface SelectParameter {
     to:string
 }
 
-
+//192.168.0.35:8299, id
 const MesKpiPowerUsage = () => {
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
     const [processBasicRow, setProcessBasicRow] = useState<any[]>([{
@@ -22,15 +22,7 @@ const MesKpiPowerUsage = () => {
     }
 
     const [processColumn, setProcessColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiPowerUsage`] );
-    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiPowerUsageContent`].map(v => {
-        if(v.key === 'amount'){
-            return {
-                ...v,
-                result: changeHeaderStatus
-            }
-        }
-        return v
-    }));
+    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiPowerUsageContent`]);
     const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set());
     const [headerStatus, setHeaderStatus] = useState<number | string>("");
 
@@ -74,10 +66,7 @@ const MesKpiPowerUsage = () => {
                     const tmpBasicRow = [...e];
                     tmpBasicRow[0] = {
                         ...tmpBasicRow[0],
-                        // customer: tmpBasicRow[0].customer.name,
-                        // customerData: tmpBasicRow[0].customer,
-                        // model: tmpBasicRow[0].model.model,
-                        // modelData: tmpBasicRow[0].model,
+                        name: tmpBasicRow[0].product.name,
                         product_id: tmpBasicRow[0].product.product_id
                     }
                     setProcessBasicRow(tmpBasicRow)

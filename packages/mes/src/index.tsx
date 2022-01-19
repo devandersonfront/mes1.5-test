@@ -33,6 +33,7 @@ export {MesWorkStandardList} from './container/Quality/MesWorkStandardList'
 //제품 변경점 리스트
 export {MesProductChangeRegister} from './container/Quality/MesProductChangeRegister'
 export {MesProductChangeList} from './container/Quality/MesProductChangeList'
+export {MesProductChangeDetail} from './container/Quality/MesProductChangeDetail'
 export {MesProductChangeModify} from './container/Quality/MesProductChangeModify'
 //초ㆍ중ㆍ종 리스트
 export {MesMidrangeList} from './container/Quality/MesMidrangeList'
