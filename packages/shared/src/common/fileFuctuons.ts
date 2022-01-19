@@ -31,10 +31,11 @@ export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, 
               result = res.data;
           }).
           catch((err)=>{
+              console.log(err)
               Notiflix.Report.failure("실패", "파일 업로드에 실패했습니다.", "확인",  );
           })
 
-
+        console.log("result : ", result)
       return result
 
   // if (res === false) {

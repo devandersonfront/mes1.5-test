@@ -202,7 +202,8 @@ const ApiList = {
   modelSave: `/api/v1/model/save`,
   processSave: `/api/v1/process/save`,
   machineSave: `/api/v1/machine/save`,
-  productSave: `/api/v1/product/save`,
+  // productSave: `/api/v1/product/save`,
+  productSave: `/cnc/api/v1/product/save`,
   rawmaterialSave: `/api/v1/rawmaterial/save`,
   moldSave: `/api/v1/mold/save`,
   pauseSave: `/api/v1/process/reason/pause/save`,
@@ -226,7 +227,7 @@ const ApiList = {
   toolSave: `/cnc/api/v1/tool/save`,
   inspecCategorySave: '/cnc/api/v1/inspec/category/save',
   lotToolSave: `/cnc/api/v1/lot-tool/save`,
-
+  documentSave: `/cnc/api/v1/document/save`,
   //modify
   operationModify: `/api/v1/operation/modify`,
 
