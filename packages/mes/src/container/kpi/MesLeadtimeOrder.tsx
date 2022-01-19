@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 import moment from "moment";
 import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
 import ButtonGroup from "../../../../main/component/ButtonGroup";
@@ -22,15 +22,7 @@ const MesLeadtimeOrder = () => {
     }
 
     const [processColumn, setProcessColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeOrder`] );
-    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeOrderContent`].map(v => {
-        if(v.key === 'amount'){
-            return {
-                ...v,
-                result: changeHeaderStatus
-            }
-        }
-        return v
-    }));
+    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeOrderContent`]);
     const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set());
     const [headerStatus, setHeaderStatus] = useState<number | string>("");
 
@@ -61,6 +53,37 @@ const MesLeadtimeOrder = () => {
     }
 
 
+    const defectRateLoad = async (productId: number) => {
+        const res = await RequestMethod('get', `qualityDefectRateList`,{
+            params: {
+                productIds: productId,
+                from: selectDate.from,
+                to: selectDate.to
+            },
+        })
+
+        if(res){
+            const filterResponse = res.map((v)=>{
+                return {
+                    osd_id: v.operation_sheet.os_id,
+                    code: v.operation_sheet.product.code,
+                    name: v.operation_sheet.product.name,
+                    process_id: v.operation_sheet.product.process.name,
+                    lot_number: v.lot_number,
+                    user_id: v.worker.name,
+                    start: v.start,
+                    end: v.end,
+                    pause_time: 0,
+                    good_quantity: v.good_quantity,
+                    poor_quantity: v.poor_quantity,
+                    manufacturing_leadtime: 0
+                }
+            })
+            setPauseBasicRow(filterResponse)
+        }
+    }
+
+
     return (
         <div>
             <PageHeader title={"수주/납품 리드타임(D)"} />
@@ -74,12 +97,10 @@ const MesLeadtimeOrder = () => {
                     const tmpBasicRow = [...e];
                     tmpBasicRow[0] = {
                         ...tmpBasicRow[0],
-                        // customer: tmpBasicRow[0].customer.name,
-                        // customerData: tmpBasicRow[0].customer,
-                        // model: tmpBasicRow[0].model.model,
-                        // modelData: tmpBasicRow[0].model,
+                        name: tmpBasicRow[0].product.name,
                         product_id: tmpBasicRow[0].product.product_id
                     }
+                    defectRateLoad(tmpBasicRow[0].product.product_id)
                     setProcessBasicRow(tmpBasicRow)
                 }}
                 selectList={selectList}

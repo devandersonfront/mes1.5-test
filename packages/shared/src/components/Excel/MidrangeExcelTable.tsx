@@ -4,298 +4,32 @@ import {MidrangeExcelDropdown} from "../Dropdown/MidrangeExcelDropdown";
 import moment from "moment";
 import {InspectionFinalDataResult, InspectionInfo} from "../../@types/type";
 
-const dump = {
-    operation_inspection_id: "61d6be6088dd3319c8e919f9",
-    work_id: 150,
-    writer: {
-        user_id: null,
-        company: null,
-        name: "eomjihwan",
-        appointment: null,
-        telephone: null,
-        email: null,
-        authority: 5,
-        ca_id: null,
-        id: "s-#414",
-        password: null,
-        profile: null,
-        sync: null,
-        additional: [],
-        token: null,
-        version: null,
-        serviceAddress: null
-    },
-    sic_id: "sic-2323",
-    legendary_list: [
-        "test1",
-        "t2"
-    ],
-    inspection_info: {
-        middle: [
-            {
-                name: "차종환 돌격대(생존)",
-                unit: "mm",
-                type: 0,
-                error_minimum: "30.0",
-                error_maximum: "150.0",
-                samples: 5,
-                standard: '20',
-                data_result: [
-                    {
-                        sequence: 1,
-                        value: "345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 2,
-                        value: "2345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 3,
-                        value: "3345.7",
-                        pass: true
-                    }
-                ]
-            },
-            {
-                name: "백찬 척후병대장",
-                unit: "mm",
-                type: 0,
-                error_minimum: "30.0",
-                error_maximum: "150.0",
-                standard: '20',
-                samples: 5,
-                data_result: [
-                    {
-                        sequence: 1,
-                        value: "345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 2,
-                        value: "2345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 3,
-                        value: "3345.7",
-                        pass: true
-                    }
-                ]
-            },
-            {
-                name: "차종환 노예사장",
-                unit: "mm",
-                type: 0,
-                error_minimum: "30.0",
-                error_maximum: "150.0",
-                standard: '20',
-                samples: 5,
-                data_result: [
-                    {
-                        sequence: 1,
-                        value: "345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 2,
-                        value: "2345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 3,
-                        value: "3345.7",
-                        pass: true
-                    }
-                ]
-            }
-        ],
-        beginning: [
-            {
-                name: "차종환 돌격대(생존)",
-                unit: "mm",
-                type: 0,
-                error_minimum: "30.0",
-                error_maximum: "150.0",
-                standard: '20',
-                samples: 5,
-                data_result: [
-                    {
-                        sequence: 1,
-                        value: "345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 2,
-                        value: "2345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 3,
-                        value: "3345.7",
-                        pass: true
-                    }
-                ]
-            },
-            {
-                name: "백찬 척후병대장",
-                unit: "mm",
-                type: 0,
-                error_minimum: "30.0",
-                error_maximum: "150.0",
-                standard: '20',
-                samples: 5,
-                data_result: [
-                    {
-                        sequence: 1,
-                        value: "345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 2,
-                        value: "2345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 3,
-                        value: "3345.7",
-                        pass: true
-                    }
-                ]
-            },
-            {
-                name: "차종환 노예사장",
-                unit: "mm",
-                type: 0,
-                error_minimum: "30.0",
-                error_maximum: "150.0",
-                standard: '20',
-                samples: 5,
-                data_result: [
-                    {
-                        sequence: 1,
-                        value: "345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 2,
-                        value: "2345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 3,
-                        value: "3345.7",
-                        pass: true
-                    }
-                ]
-            }
-        ],
-        end: [
-            {
-                name: "차종환 돌격대(생존)",
-                unit: "mm",
-                type: 0,
-                error_minimum: "30.0",
-                error_maximum: "150.0",
-                standard: '20',
-                samples: 5,
-                data_result: [
-                    {
-                        sequence: 1,
-                        value: "345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 2,
-                        value: "2345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 3,
-                        value: "3345.7",
-                        pass: true
-                    }
-                ]
-            },
-            {
-                name: "백찬 척후병대장",
-                unit: "mm",
-                type: 0,
-                error_minimum: "30.0",
-                error_maximum: "150.0",
-                standard: '20',
-                samples: 5,
-                data_result: [
-                    {
-                        sequence: 1,
-                        value: "345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 2,
-                        value: "2345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 3,
-                        value: "3345.7",
-                        pass: true
-                    }
-                ]
-            },
-            {
-                name: "차종환 노예사장",
-                unit: "mm",
-                type: 0,
-                error_minimum: "30.0",
-                error_maximum: "150.0",
-                standard: '20',
-                samples: 5,
-                data_result: [
-                    {
-                        sequence: 1,
-                        value: "345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 2,
-                        value: "2345.7",
-                        pass: true
-                    },
-                    {
-                        sequence: 3,
-                        value: "3345.7",
-                        pass: true
-                    }
-                ]
-            }
-        ]
-    },
-    inspection_time: {
-        middle: "2022-01-06T19:08:58.02",
-        beginning: "2022-01-06T19:08:58.02",
-        end: "2022-01-06T19:08:58.02"
-    },
-    inspection_result: {
-        middle: [],
-        beginning: [],
-        end: []
-    },
-    version: 1
-}
-
 interface IProps {
     formReviewData: any
 }
 
 const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
-    const [testData, setTestData] = React.useState(dump)
+    const [testData, setTestData] = React.useState({
+        legendary: [],
+        inspection_info: {beginning: [{samples: 1, data_result: []}], middle: [{samples: 1, data_result: [] }], end: [{samples: 1, data_result: [] }]},
+        inspection_result: { beginning: [], middle: [], end: [] },
+        inspection_time: {
+            beginning: moment().toDate(),
+            middle: moment().toDate(),
+            end: moment().toDate(),
+        },
+    })
 
     React.useEffect(()=>{
 
-        if(formReviewData !== undefined ) {
-            const inspection_info = formReviewData.item.map((v) => {
+        if(formReviewData !== undefined) {
+            const inspection_beginning = formReviewData.item.map((v) => {
+                return {...v, samples: formReviewData.samples[0].samples, type: v.type === '범례 적용' ? 1 : 0, data_result: []}
+            })
+            const inspection_middle = formReviewData.item.map((v) => {
+                return {...v, samples: formReviewData.samples[0].samples, type: v.type === '범례 적용' ? 1 : 0, data_result: []}
+            })
+            const inspection_end = formReviewData.item.map((v) => {
                 return {...v, samples: formReviewData.samples[0].samples, type: v.type === '범례 적용' ? 1 : 0, data_result: []}
             })
 
@@ -305,7 +39,7 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
 
             const reviewData = {
                 legendary_list: legendary_list,
-                inspection_info: {middle: inspection_info, beginning: inspection_info, end: inspection_info},
+                inspection_info: { beginning: inspection_beginning, middle: inspection_middle, end: inspection_end},
                 inspection_result: {
                     middle: [],
                     beginning: [],
@@ -324,9 +58,10 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
 
     let arr = new Array(10).fill(undefined).map((val,idx) => idx);
 
-    const itemDataResultTextChange = (inspection_info: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLInputElement>, itemIndex, dataResultIndex) => {
+    const itemDataResultTextChange = (inspection_type: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLInputElement>, itemIndex, dataResultIndex) => {
         const temp = testData
-        if(inspection_info === 'beginning') {
+
+        if(inspection_type === 'beginning') {
             if (temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex] !== undefined) {
                 temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex].value = e.target.value
             } else {
@@ -336,7 +71,47 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                     pass: true
                 }
             }
-        }else if(inspection_info === 'middle'){
+
+        }else if(inspection_type === 'middle'){
+            if (temp.inspection_info.middle[itemIndex].data_result[dataResultIndex] !== undefined) {
+                temp.inspection_info.middle[itemIndex].data_result[dataResultIndex].value = e.target.value
+            } else {
+                temp.inspection_info.middle[itemIndex].data_result[dataResultIndex] = {
+                    sequence: dataResultIndex,
+                    value: e.target.value,
+                    pass: true
+                }
+            }
+        }else {
+            if (temp.inspection_info.end[itemIndex].data_result[dataResultIndex] !== undefined) {
+                temp.inspection_info.end[itemIndex].data_result[dataResultIndex].value = e.target.value
+            } else {
+                temp.inspection_info.end[itemIndex].data_result[dataResultIndex] = {
+                    sequence: dataResultIndex,
+                    value: e.target.value,
+                    pass: true
+                }
+            }
+        }
+
+        //@ts-ignore
+        setTestData({...testData,temp})
+    }
+
+    const itemDataResultDropdownChange = (inspection_type: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLSelectElement>, itemIndex, dataResultIndex) => {
+
+        const temp = testData
+        if(inspection_type === 'beginning') {
+            if (temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex] !== undefined) {
+                temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex].value = e.target.value
+            } else {
+                temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex] = {
+                    sequence: dataResultIndex,
+                    value: e.target.value,
+                    pass: true
+                }
+            }
+        }else if(inspection_type === 'middle'){
             if (temp.inspection_info.middle[itemIndex].data_result[dataResultIndex] !== undefined) {
                 temp.inspection_info.middle[itemIndex].data_result[dataResultIndex].value = e.target.value
             } else {
@@ -362,50 +137,11 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
         setTestData({...testData, temp})
     }
 
-    const itemDataResultDropdownChange = (inspection_info: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLSelectElement>, itemIndex, dataResultIndex) => {
+
+    const dataResultDropdownChange = (inspection_type: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLSelectElement>, resultIndex) => {
 
         const temp = testData
-        if(inspection_info === 'beginning') {
-            if (temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex] !== undefined) {
-                temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex].value = e.target.value
-            } else {
-                temp.inspection_info.beginning[itemIndex].data_result[dataResultIndex] = {
-                    sequence: dataResultIndex,
-                    value: e.target.value,
-                    pass: true
-                }
-            }
-        }else if(inspection_info === 'middle'){
-            if (temp.inspection_info.middle[itemIndex].data_result[dataResultIndex] !== undefined) {
-                temp.inspection_info.middle[itemIndex].data_result[dataResultIndex].value = e.target.value
-            } else {
-                temp.inspection_info.middle[itemIndex].data_result[dataResultIndex] = {
-                    sequence: dataResultIndex,
-                    value: e.target.value,
-                    pass: true
-                }
-            }
-        }else {
-            if (temp.inspection_info.end[itemIndex].data_result[dataResultIndex] !== undefined) {
-                temp.inspection_info.end[itemIndex].data_result[dataResultIndex].value = e.target.value
-            } else {
-                temp.inspection_info.end[itemIndex].data_result[dataResultIndex] = {
-                    sequence: dataResultIndex,
-                    value: e.target.value,
-                    pass: true
-                }
-            }
-        }
-
-        // @ts-ignore
-        setTestData({...testData, temp})
-    }
-
-
-    const dataResultDropdownChange = (inspection_info: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLSelectElement>, resultIndex) => {
-
-        const temp = testData
-        if(inspection_info === 'beginning') {
+        if(inspection_type === 'beginning') {
             if (temp.inspection_result.beginning[resultIndex] !== undefined) {
                 temp.inspection_result.beginning[resultIndex].pass = e.target.value === '합격'
             } else {
@@ -414,7 +150,7 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                     pass: e.target.value === '합격'
                 }
             }
-        }else if(inspection_info === 'middle'){
+        }else if(inspection_type === 'middle'){
             if (temp.inspection_result.middle[resultIndex] !== undefined) {
                 temp.inspection_result.middle[resultIndex].pass = e.target.value === '합격'
             } else {
@@ -469,6 +205,7 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
     }
 
     const formItemResult = (inspection_infoType: InspectionInfo[], type: 'beginning' | 'middle' | 'end') => {
+
         return (
             inspection_infoType.map((value,index)=>
                 <div style={{display: "flex"}}>
@@ -477,13 +214,14 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                             {value.type === 0 ?
                                 <input style={{ width: '100%', height: '100%', border: "none", zIndex: 10, display: "flex", alignItems: "center", textAlign: "center"}} type={"number"}
                                        value={inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ? value.data_result[i].value : '' : '-'}
+                                       key={type+'input'+index+'static'+i}
                                        placeholder={inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ? value.data_result[i].value : '0' : '-'}
                                        onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } onChange={(e)=>itemDataResultTextChange(type,e,index,i)}/>
                                 :
                                 inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ?
                                     //contents 를 legendary 로 변경 해야함
-                                    <MidrangeExcelDropdown contents={['O','X']} value={value.data_result[i].value } onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> :
-                                    <MidrangeExcelDropdown contents={['O','X']} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> : '-'
+                                    <MidrangeExcelDropdown contents={testData.legendary} value={value.data_result[i].value} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> :
+                                    <MidrangeExcelDropdown contents={testData.legendary} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> : '-'
                             }
                         </ExampleNumber>
                     )}
@@ -494,7 +232,7 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
 
     const resultRow = (inspection_info: InspectionInfo[], inspection_result: InspectionFinalDataResult[], type: 'beginning' | 'middle' | 'end') => {
         return(
-            ['01','02','01','02','01','02','01','02','01','02',].map((v,i)=>
+            arr.map((v,i)=>
                 <ExampleNumber>
                     {inspection_info[0].samples > i ?
                         inspection_result[i] !== undefined ?

@@ -1,10 +1,19 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import {
+    columnlist,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType, MemberSearchModal,
+    OperationSearchModal, PauseModal, ProductSearchModal,
+    RequestMethod, TextEditor, UnitContainer
+} from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
 import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
 import ButtonGroup from "../../../../main/component/ButtonGroup";
+import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
+import {DatetimePickerBox} from "shared/src/components/CalendarBox/DatetimePickerBox";
 
 interface SelectParameter {
     from:string
@@ -22,15 +31,7 @@ const MesLeadtimeManufacture = () => {
     }
 
     const [processColumn, setProcessColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeManufacture`] );
-    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeManufactureContent`].map(v => {
-        if(v.key === 'amount'){
-            return {
-                ...v,
-                result: changeHeaderStatus
-            }
-        }
-        return v
-    }));
+    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeManufactureContent`]);
     const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set());
     const [headerStatus, setHeaderStatus] = useState<number | string>("");
 
@@ -38,6 +39,36 @@ const MesLeadtimeManufacture = () => {
         from: moment(new Date()).startOf('isoWeek').format('YYYY-MM-DD'),
         to: moment(new Date()).endOf('isoWeek').format('YYYY-MM-DD')
     });
+
+    const productLeadTimeListLoad = async (productId: number) => {
+        const res = await RequestMethod('get', `productLeadTimeList`,{
+            params: {
+                productIds: productId,
+                from: selectDate.from,
+                to: selectDate.to
+            },
+        })
+
+        if(res){
+            const filterResponse = res.map((v)=>{
+                return {
+                    osd_id: v.operation_sheet.os_id,
+                    code: v.operation_sheet.product.code,
+                    name: v.operation_sheet.product.name,
+                    process_id: v.operation_sheet.product.process.name,
+                    lot_number: v.lot_number,
+                    user_id: v.worker.name,
+                    start: v.start,
+                    end: v.end,
+                    pause_time: 0,
+                    good_quantity: v.good_quantity,
+                    poor_quantity: v.poor_quantity,
+                    manufacturing_leadtime: 0
+                }
+            })
+            setPauseBasicRow(filterResponse)
+        }
+    }
 
     const buttonEvents = async(index:number) => {
         switch (index) {
@@ -74,13 +105,10 @@ const MesLeadtimeManufacture = () => {
                     const tmpBasicRow = [...e];
                     tmpBasicRow[0] = {
                         ...tmpBasicRow[0],
-                        // customer: tmpBasicRow[0].customer.name,
-                        // customerData: tmpBasicRow[0].customer,
-                        // model: tmpBasicRow[0].model.model,
-                        // modelData: tmpBasicRow[0].model,
                         product_id: tmpBasicRow[0].product.product_id
                     }
-                    setProcessBasicRow(tmpBasicRow)
+                    productLeadTimeListLoad(tmpBasicRow[0].product.product_id)
+                    setProcessBasicRow(  tmpBasicRow.map(v => ({...v, name: v.product_name})))
                 }}
                 selectList={selectList}
                 //@ts-ignore
@@ -91,7 +119,7 @@ const MesLeadtimeManufacture = () => {
                 {
                     processBasicRow[0].product_id
                         ? <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            공정별 불량 통계
+                            작업이력별 제조리드타임
                         </span>
                         : <span style={{color:"#ffffff58", fontSize:22, fontWeight:"bold"}}>
                             제품을 선택해주세요

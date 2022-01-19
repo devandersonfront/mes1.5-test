@@ -227,7 +227,9 @@ const ApiList = {
   toolSave: `/cnc/api/v1/tool/save`,
   inspecCategorySave: '/cnc/api/v1/inspec/category/save',
   lotToolSave: `/cnc/api/v1/lot-tool/save`,
+  productChangeSave: `/cnc/api/v1/product-changes/save`,
   documentSave: `/cnc/api/v1/document/save`,
+
   //modify
   operationModify: `/api/v1/operation/modify`,
 
@@ -237,6 +239,7 @@ const ApiList = {
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
+  productChangeLoad: `/cnc/api/v1/product-changes/load`,
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -277,7 +280,7 @@ const ApiList = {
   modelList: `/api/v1/model/list`,
   processList: `/api/v1/process/list`,
   machineList: `/api/v1/machine/list`,
-  // productList: `/api/v1/product/list`,
+  // productList: `/api/v1/product/list`
   productList: `/cnc/api/v1/product/list`,
   rawmaterialList: `/api/v1/rawmaterial/list`,
   moldList: `/api/v1/mold/list`,
@@ -290,6 +293,7 @@ const ApiList = {
   stockSummaryList: '/api/v1/stock/summary/list',
   operactionList: `/api/v1/operation/list`,
   defectList: `/api/v1/quality/statistics/defect`,
+  productChangeList: `/cnc/api/v1/product-changes/list`,
   recordList: `/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
   factoryList: `/api/v1/factory/list`,
@@ -310,6 +314,12 @@ const ApiList = {
   stockAdminList: '/api/v1/stock/admin/summary',
   toolList: `/cnc/api/v1/tool/list`,
   lotToolList: `/cnc/api/v1/lot-tool/list`,
+  productLeadTimeList: `/cnc/api/v1/kpi/product/lead-time/list`,
+  costManDayCostList: `/cnc/api/v1/kpi/cost/man-day-cost/list`,
+  qualityDefectRateList: `/cnc/api/v1/kpi/quality/defect-rate/list`,
+  deliveryLoadTimeList: `/cnc/api/v1/kpi/delivery/lead-time/list`,
+  productUphList: `/cnc/api/v1/kpi/product/uph/list`,
+  productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -366,4 +376,7 @@ const ApiList = {
   bomSave: `/api/v1/bom/save`,
 
   anonymousLoad: `/anonymous/load`,
+
+  //전력사용량 list
+  statisticsPressElectricPower: `/api/v2/statistics/press/electric-power`,
 }
