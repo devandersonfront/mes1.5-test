@@ -43,15 +43,15 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return result.data
         })
         .catch((error) => {
-          if(error.response.status === 406 || error.response.status === 403) {
+          if(error.response?.status === 406 || error.response?.status === 403) {
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
             return false
-          }else if (error.response.status === 401){
+          }else if (error.response?.status === 401){
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
             return false
-          }else if(error.response.status === 500){
+          }else if(error.response?.status === 500){
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
             return false
@@ -161,7 +161,7 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
       if(data.params){
         Object.keys(data.params).map((v, i) => {
           if(i === 0) {
-            tmpUrl += `?${v}=${data.params[v]}`
+          tmpUrl += `?${v}=${data.params[v]}`
           }else{
             tmpUrl += `&${v}=${data.params[v]}`
           }
@@ -318,6 +318,7 @@ const ApiList = {
   costManDayCostList: `/cnc/api/v1/kpi/cost/man-day-cost/list`,
   qualityDefectRateList: `/cnc/api/v1/kpi/quality/defect-rate/list`,
   deliveryLoadTimeList: `/cnc/api/v1/kpi/delivery/lead-time/list`,
+  electicPowerList : `/api/v2/statistics/press/electric-power`,
   productUphList: `/cnc/api/v1/kpi/product/uph/list`,
   productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
 

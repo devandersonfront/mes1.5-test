@@ -23,9 +23,12 @@ interface SelectParameter {
 
 const MesKpiManHour = () => {
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
-    const [processBasicRow, setProcessBasicRow] = useState<any[]>([{
+    const [processBasicRow, setProcessBasicRow] = useState<any>({
         id: '', customer_id: ''
-    }]);
+    });
+
+    console.log(processBasicRow,'processBasicRowprocessBasicRow')
+
     const changeHeaderStatus = (value:number) => {
         setHeaderStatus(value);
     }
@@ -55,7 +58,7 @@ const MesKpiManHour = () => {
                     osd_id: v.operation_sheet.os_id,
                     code: v.operation_sheet.product.code,
                     name: v.operation_sheet.product.name,
-                    process_id: v.operation_sheet.product.process.name,
+                    process_id: v.operation_sheet.product.process?.name,
                     lot_number: v.lot_number,
                     user_id: v.worker.name,
                     start: v.start,
@@ -63,7 +66,8 @@ const MesKpiManHour = () => {
                     pause_time: 0,
                     good_quantity: v.good_quantity,
                     poor_quantity: v.poor_quantity,
-                    manufacturing_leadtime: 0
+                    manufacturing_leadtime: v.lead_time,
+                    manDays : `${((v.lead_time * processBasicRow.standardUph)/86400).toFixed(1)}`
                 }
             })
             setPauseBasicRow(filterResponse)
@@ -92,6 +96,37 @@ const MesKpiManHour = () => {
         }
     }
 
+    React.useEffect(()=>{
+
+        if(processBasicRow.id){
+            manDayCostLoad(processBasicRow.id)
+        }
+
+    },[processBasicRow.id,selectDate])
+
+
+    React.useEffect(()=>{
+
+        if(pauseBasicRow.length){
+            
+            const rowLenth = pauseBasicRow.length;
+            let sum = 0;
+            if(rowLenth){
+                pauseBasicRow.map((row)=> {
+                    sum += Number(row.manDays)
+                })
+
+                setProcessBasicRow({...processBasicRow , manDays_average : `${Math.round(sum/rowLenth)}`})
+            }
+        }else{
+
+            setProcessBasicRow({...processBasicRow , manDays_average : '-'})
+        }
+
+
+    },[pauseBasicRow])
+
+
 
     return (
         <div>
@@ -101,15 +136,17 @@ const MesKpiManHour = () => {
                 headerList={[
                     ...processColumn
                 ]}
-                row={processBasicRow}
-                setRow={(e) => {
-                    const tmpBasicRow = [...e];
-                    tmpBasicRow[0] = {
-                        ...tmpBasicRow[0],
-                        product_id: tmpBasicRow[0].product.product_id
-                    }
-                    manDayCostLoad(tmpBasicRow[0].product.product_id)
-                    setProcessBasicRow(  tmpBasicRow.map(v => ({...v, name: v.product_name})))
+                row={[processBasicRow]}
+                setRow={(row) => {
+                    console.log(row,'rowrowrowrow')
+                    setProcessBasicRow({...processBasicRow, 
+                        id : row[0].product.product_id,
+                        customer_id : row[0].customer_id,
+                        cm_id : row[0].cm_id,
+                        code : row[0].code,
+                        name: row[0].product_name,
+                        standardUph : String(row[0].standard_uph)
+                    })
                 }}
                 selectList={selectList}
                 //@ts-ignore
@@ -118,9 +155,9 @@ const MesKpiManHour = () => {
             />
             <div style={{display:"flex", justifyContent:"space-between", margin:"15px 0"}}>
                 {
-                    processBasicRow[0].product_id
+                    processBasicRow.id
                         ? <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            공정별 불량 통계
+                            작업이력별 작업공수
                         </span>
                         : <span style={{color:"#ffffff58", fontSize:22, fontWeight:"bold"}}>
                             제품을 선택해주세요
