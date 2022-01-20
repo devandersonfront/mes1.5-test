@@ -1,10 +1,18 @@
-import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import React, {useEffect, useState} from 'react';
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 import moment from "moment";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
+import Notiflix from "notiflix";
 
-const MesMidrangeList = () => {
+interface IProps {
+    children?: any
+    page?: number
+    keyword?: string
+    option?: number
+}
+
+const MesMidrangeList = ({option}:IProps) => {
 
     const [basicRow, setBasicRow] = useState<Array<any>>([{
         order_num: '-', operation_num: '20210401-013'
@@ -24,6 +32,104 @@ const MesMidrangeList = () => {
         total: 1
     })
 
+    useEffect(() => {
+        // setOptionIndex(option)
+        if(searchKeyword){
+            searchQualityRecordInspect(searchKeyword, option, pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
+        }else{
+            qualityRecordInspectList(pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
+        }
+    }, [pageInfo.page, searchKeyword, option, selectDate])
+
+    const searchQualityRecordInspect = async (keyword, opt, page?: number) => {
+        Notiflix.Loading.circle()
+        const res = await RequestMethod('get', `cncRecordSearch`,{
+            path: {
+                page: (page || page !== 0) ? page : 1,
+                renderItem: 22,
+            },
+            params: {
+                keyword: keyword,
+                opt: optionIndex,
+                from: selectDate.from,
+                to: selectDate.to,
+            }
+        })
+
+        if(res){
+            setPageInfo({
+                ...pageInfo,
+                page: res.page,
+                total: res.totalPages
+            })
+            const data = res.info_list.map((v)=>{
+                return {
+                    contract_id: v.operation_sheet.contractId ?? '-',
+                    osId: v.osId,
+                    code: v.operation_sheet.product.code ?? '-',
+                    name: v.operation_sheet.product.name ?? '-',
+                    type: column[4].selectList[v.operation_sheet.product.type].name,
+                    unit: v.operation_sheet.product.unit ?? '-',
+                    process_id: v.operation_sheet.product.process === null ? '-' : v.operation_sheet.product.process.name ,
+                    ln_id: v.lot_number ?? '-',
+                    worker: v.worker.name,
+                    start: v.start,
+                    end: v.end,
+                    inspection_category: v.inspection_category,
+                }
+            })
+
+            setBasicRow([...data])
+        }
+
+    }
+
+    const qualityRecordInspectList =  async  (page?: number) => {
+        Notiflix.Loading.circle()
+        const res = await RequestMethod('get', `qualityRecordInspectSearch`,{
+            path: {
+                page: (page || page !== 0) ? page : 1,
+                renderItem: 22,
+            },
+            params: {
+                from: selectDate.from,
+                to: selectDate.to,
+            }
+        })
+
+        if(res){
+            setPageInfo({
+                ...pageInfo,
+                page: res.page,
+                total: res.totalPages
+            })
+
+            const data = res.info_list.map((v)=>{
+                return {
+                    contract_id: v.operation_sheet.contractId ?? '-',
+                    osId: v.osId,
+                    code: v.operation_sheet.product.code ?? '-',
+                    name: v.operation_sheet.product.name ?? '-',
+                    type: column[4].selectList[v.operation_sheet.product.type].name,
+                    unit: v.operation_sheet.product.unit ?? '-',
+                    process_id: v.operation_sheet.product.process === null ? '-' : v.operation_sheet.product.process.name ,
+                    ln_id: v.lot_number ?? '-',
+                    worker: v.worker.name,
+                    start: v.start,
+                    end: v.end,
+                    inspection_category: v.inspection_category,
+                }
+            })
+
+            setBasicRow([...data])
+
+        }
+
+    }
 
 
     return (

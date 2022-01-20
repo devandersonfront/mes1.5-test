@@ -225,7 +225,7 @@ const ApiList = {
   sheetSave: `/api/v1/sheet/save`,
   shipmentSave: `/api/v1/shipment/save`,
   toolSave: `/cnc/api/v1/tool/save`,
-  inspecCategorySave: '/cnc/api/v1/inspec/category/save',
+  inspectCategorySave: '/cnc/api/v1/product/inspect/category/save',
   lotToolSave: `/cnc/api/v1/lot-tool/save`,
   productChangeSave: `/cnc/api/v1/product-changes/save`,
   documentSave: `/cnc/api/v1/document/save`,
@@ -238,7 +238,7 @@ const ApiList = {
   productLoad: `/api/v1/product/load`,
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
-  inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
+  inspectCategoryLoad: `/cnc/api/v1/product/inspect/category/load`,
   productChangeLoad: `/cnc/api/v1/product-changes/load`,
 
   //recent
@@ -295,6 +295,7 @@ const ApiList = {
   defectList: `/api/v1/quality/statistics/defect`,
   productChangeList: `/cnc/api/v1/product-changes/list`,
   recordList: `/api/v1/record/list`,
+  cncRecordList: `/cnc/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
   factoryList: `/api/v1/factory/list`,
   deviceList: `/api/v1/device/list`,
@@ -338,6 +339,7 @@ const ApiList = {
   stockSearch: '/api/v1/stock/search',
   operationSearch: `/api/v1/sheet/search`,
   recordSearch: `/api/v1/record/search`,
+  cncRecordSearch: `/cnc/api/v1/record/search`,
   shipmentSearch: `/api/v1/shipment/search`,
   recordSumSearch: `/api/v1/record/summation/search`,
   submaterialSearch: `/api/v1/sub-material/search`,
@@ -357,6 +359,7 @@ const ApiList = {
   deviceSearch: `/api/v1/device/search`,
   toolSearch: `/cnc/api/v1/tool/search`,
   lotToolSearch: `/cnc/api/v1/lot-tool/search`,
+  qualityRecordInspectSearch: '/cnc/api/v1/quality/record/inspect/search',
 
   //all
   authorityAll: `/api/v1/auth/all`,
