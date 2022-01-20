@@ -161,7 +161,7 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
       if(data.params){
         Object.keys(data.params).map((v, i) => {
           if(i === 0) {
-            tmpUrl += `?${v}=${data.params[v]}`
+          tmpUrl += `?${v}=${data.params[v]}`
           }else{
             tmpUrl += `&${v}=${data.params[v]}`
           }
@@ -318,6 +318,7 @@ const ApiList = {
   costManDayCostList: `/cnc/api/v1/kpi/cost/man-day-cost/list`,
   qualityDefectRateList: `/cnc/api/v1/kpi/quality/defect-rate/list`,
   deliveryLoadTimeList: `/cnc/api/v1/kpi/delivery/lead-time/list`,
+  electicPowerList : `/api/v2/statistics/press/electric-power`,
   productUphList: `/cnc/api/v1/kpi/product/uph/list`,
   productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
 

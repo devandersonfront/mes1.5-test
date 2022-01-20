@@ -25,6 +25,11 @@ export const SF_ADDRESS = "3.36.78.194"
 //1.5v 주소
 // export const SF_ADDRESS = "3.37.196.98"
 
+let hostname
+if (typeof window !== 'undefined') {
+    hostname = window.location.hostname;
+}
+
 export const isLocalhost = () => {
   //@ts-ignore
   if (SF_ADDRESS === 'localhost') {
@@ -34,7 +39,7 @@ export const isLocalhost = () => {
   }
 }
 
-// export const SF_ENDPOINT = `http://${isLocalhost()}:9910`
+// export const SF_ENDPOINT = `http://${isLocalhost()}:9910`z
 export const SF_ENDPOINT = `http://${isLocalhost()}:8443`
 export const SF_ENDPOINT_EXCEL = `http://${isLocalhost()}:8399`
 export const SF_ENDPOINT_ADMIN = `http://${isLocalhost()}:8286/api`
@@ -44,6 +49,8 @@ export const SF_ENDPOINT_S3 = "https://sizl-resource2.s3.ap-northeast-2.amazonaw
 export const SF_PORT = ``
 
 export const SF_ENDPOINT_BARCODE = 'http://192.168.0.49:18080'
+
+export const SF_ENDPOINT_PMS = `http://${hostname}:8999`
 
 export const AUTHORITY_LIST = [
   { title: "HOME", show: false, checkable: true, check: false, child: [

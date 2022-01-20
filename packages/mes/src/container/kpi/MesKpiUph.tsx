@@ -14,9 +14,7 @@ interface SelectParameter {
 
 const MesKpiUph = () => {
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
-    const [processBasicRow, setProcessBasicRow] = useState<any[]>([{
-        id: '', customer_id: ''
-    }]);
+    const [processBasicRow, setProcessBasicRow] = useState<any>({id: ''});
     const changeHeaderStatus = (value:number) => {
         setHeaderStatus(value);
     }
@@ -31,11 +29,12 @@ const MesKpiUph = () => {
         to: moment(new Date()).endOf('isoWeek').format('YYYY-MM-DD')
     });
 
-    const productLeadTimeListLoad = async (productId: number) => {
+    const productUphListLoad = async (productId: number) => {
         const res = await RequestMethod('get', `productUphList`,{
             params: {
                 productIds: productId,
                 from: selectDate.from,
+                sorts : 'date',
                 to: selectDate.to
             },
         })
@@ -46,15 +45,17 @@ const MesKpiUph = () => {
                     osd_id: v.operation_sheet.os_id,
                     code: v.operation_sheet.product.code,
                     name: v.operation_sheet.product.name,
-                    process_id: v.operation_sheet.product.process.name,
+                    process_id: v.operation_sheet.product.process?.name,
                     lot_number: v.lot_number,
                     user_id: v.worker.name,
                     start: v.start,
                     end: v.end,
-                    pause_time: 0,
+                    paused_time: 0,
                     good_quantity: v.good_quantity,
                     poor_quantity: v.poor_quantity,
-                    manufacturing_leadtime: 0
+                    // UPH 시간당 생산량 필요
+                    uph : v.uph,
+                    // manufacturing_leadtime: 0
                 }
             })
             setPauseBasicRow(filterResponse)
@@ -83,6 +84,34 @@ const MesKpiUph = () => {
         }
     }
 
+    React.useEffect(()=>{
+
+        if(processBasicRow.id){
+            productUphListLoad(processBasicRow.id)
+        }
+
+    },[processBasicRow.id,selectDate])
+
+    React.useEffect(()=>{
+
+        if(pauseBasicRow.length){
+            
+            const rowLenth = pauseBasicRow.length;
+            let sum = 0;
+            if(rowLenth){
+                pauseBasicRow.map((row)=> {
+                    sum += row.uph
+                })
+                setProcessBasicRow({...processBasicRow , uph_average : `${Math.round(sum/rowLenth)}`})
+            }
+        }else{
+
+            setProcessBasicRow({...processBasicRow , manufacturing_leadtime_average : '-'})
+        }
+
+
+    },[pauseBasicRow])
+
 
     return (
         <div>
@@ -92,16 +121,15 @@ const MesKpiUph = () => {
                 headerList={[
                     ...processColumn
                 ]}
-                row={processBasicRow}
-                setRow={(e) => {
-                    const tmpBasicRow = [...e];
-                    tmpBasicRow[0] = {
-                        ...tmpBasicRow[0],
-                        name: tmpBasicRow[0].product.name,
-                        product_id: tmpBasicRow[0].product.product_id
-                    }
-                    productLeadTimeListLoad(tmpBasicRow[0].product.product_id)
-                    setProcessBasicRow(tmpBasicRow)
+                row={[processBasicRow]}
+                setRow={(row) => {
+                    setProcessBasicRow({...processBasicRow, 
+                        id : row[0].product.product_id,
+                        customer_id : row[0].customer_id,
+                        cm_id : row[0].cm_id,
+                        code : row[0].code,
+                        name: row[0].product_name,
+                    })
                 }}
                 selectList={selectList}
                 //@ts-ignore
@@ -110,9 +138,9 @@ const MesKpiUph = () => {
             />
             <div style={{display:"flex", justifyContent:"space-between", margin:"15px 0"}}>
                 {
-                    processBasicRow[0].product_id
+                    processBasicRow?.id
                         ? <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            공정별 불량 통계
+                            작업이력별 UPH
                         </span>
                         : <span style={{color:"#ffffff58", fontSize:22, fontWeight:"bold"}}>
                             제품을 선택해주세요

@@ -1022,7 +1022,7 @@ export const columnlist: any = {
     {key: 'user_id', name: '작업자', width:120},
     {key: 'start', name: '작업 시작 일시', width:120},
     {key: 'end', name: '작업 종료 일시', width:120},
-    {key: 'paused_time', name: '일시 정지 시간', width:120},
+    {key: 'paused_time', name: '일시 정지 시간', width:120 ,formatter: PauseInfoModal, type: 'readonly', modalType: false},
     {key: 'good_quantity', name: '양품 수량', width:120,formatter: UnitContainer, unitData: 'EA'},
     {key: 'poor_quantity', name: '불량 수량', width:120, formatter: UnitContainer, unitData: 'EA'},
     {key: "manufacturing_leadtime", name: '제조리드타임 (초)', width: 208},
@@ -1032,8 +1032,8 @@ export const columnlist: any = {
     {key: "cm_id", name: '모델', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "code", name: 'CODE', width: 320, formatter: SearchModalTest,  type: 'product',},
     {key: "name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "manufacturing_leadtime_average", name: '기준 생산량', width: 208, formatter: PlaceholderBox ,placeholder: '숫자 입력'},
-    {key: "manufacturing_leadtime_average", name: '평균 작업공수 (일)', width: 150, formatter: PlaceholderBox ,placeholder: '자동 입력'}
+    {key: "standardUph", name: '기준 생산량', width: 208, formatter: PlaceholderBox ,placeholder: '숫자 입력'},
+    {key: "manDays_average", name: '평균 작업공수 (일)', width: 150, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiManHourContent: [
     {key: 'osd_id', name: '지시 고유 번호', width:126},
@@ -1044,11 +1044,11 @@ export const columnlist: any = {
     {key: 'user_id', name: '작업자', width:120, },
     {key: 'start', name: '작업 시작 일시', width:120,},
     {key: 'end', name: '작업 종료 일시', width:120},
-    {key: 'paused_time', name: '일시 정지 시간', width:120,},
+    {key: 'paused_time', name: '일시 정지 시간', width:120,formatter: PauseInfoModal, type: 'readonly', modalType: false},
     {key: 'good_quantity', name: '양품 수량', width:120, formatter: UnitContainer, unitData: 'EA'},
     {key: 'poor_quantity', name: '불량 수량', width:120, formatter: UnitContainer, unitData: 'EA'},
     {key: "manufacturing_leadtime", name: '제조리드타임 (초)', width: 120},
-    {key: "manHour", name: '작업공수 (초)', width: 120},
+    {key: "manDays", name: '작업공수 (일)', width: 120},
   ],
   kpiDefect: [
     {key: "customer_id", name: '거래처', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
@@ -1056,9 +1056,9 @@ export const columnlist: any = {
     {key: "code", name: 'CODE', width: 248, formatter: SearchModalTest,  type: 'product',},
     {key: "name", name: '품명', width: 248, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "unit", name: '단위', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "", name: '총 생산 수량', width: 240, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "", name: '총 불량 수량', width: 240, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "manufacturing_leadtime_average", name: '평균 불량률(%)', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'}
+    {key: "total_number", name: '총 생산 수량', width: 240, formatter: PlaceholderBox ,placeholder: '자동 입력'},
+    {key: "total_defectNumber", name: '총 불량 수량', width: 240, formatter: PlaceholderBox ,placeholder: '자동 입력'},
+    {key: "defectiveRate_average", name: '평균 불량률(%)', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiDefectContent: [
     {key: 'osd_id', name: '지시 고유 번호', width:126},
@@ -1069,35 +1069,34 @@ export const columnlist: any = {
     {key: 'user_id', name: '작업자', width:120, },
     {key: 'start', name: '작업 시작 일시', width:120, },
     {key: 'end', name: '작업 종료 일시', width:120, },
-    {key: 'paused_time', name: '일시 정지 시간', width:120},
+    {key: 'paused_time', name: '일시 정지 시간', width:120 ,formatter: PauseInfoModal, type: 'readonly', modalType: false},
     {key: 'total_quantity', name: '생산 수량', width:120, formatter: UnitContainer, unitData: 'EA'},
     {key: 'good_quantity', name: '양품 수량', width:120, formatter: UnitContainer, unitData: 'EA'},
     {key: 'poor_quantity', name: '불량 수량', width:120, formatter: UnitContainer, unitData: 'EA'},
-    {key: "manufacturing_time", name: '제조리드타임 (초)', width: 120},
-    {key: "manufacturing_lead", name: '불량률(%)', width: 120},
+    {key: "defective_rate", name: '불량률(%)', width: 120},
   ],
   kpiLeadtimeOrder: [
     {key: "customer_id", name: '거래처', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "cm_id", name: '모델', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "code", name: 'CODE', width: 472,formatter: SearchModalTest,  type: 'product',},
     {key: "name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "manufacturing_leadtime_average", name: '평균 수주/납품 리드타임(일)', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
+    {key: "leadTime_average", name: '평균 수주/납품 리드타임(일)', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiLeadtimeOrderContent: [
-    {key: '', name: '수주 번호', width: 688},
+    {key: 'identification', name: '수주 번호', width: 688},
     {key: 'date', name: '수주 날짜',  width:120,},
     {key: 'deadline', name: '납품 기한', width:120},
-    {key: 'goal', name: '수주량',width: 120},
-    {key: '', name: '납품 수량', width: 120,},
-    {key: '', name: '납품 완료 날짜', width: 120},
-    {key: '', name: '수주/납품 리드타임(일)', width: 240},
+    {key: 'amount', name: '수주량',width: 120},
+    {key: 'shipment_amount', name: '납품 수량', width: 120,},
+    {key: 'shipment_date', name: '납품 완료 날짜', width: 120},
+    {key: 'leadTime', name: '수주/납품 리드타임(일)', width: 240},
   ],
   kpiPowerUsage: [
     {key: "customer_id", name: '거래처', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "cm_id", name: '모델', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "code", name: 'CODE', width: 472,formatter: SearchModalTest,  type: 'product',},
     {key: "name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "manufacturing_leadtime_average", name: '개당 평균 전력 사용량 (kW)', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
+    {key: "powerUsage_average", name: '개당 평균 전력 사용량 (kW)', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiPowerUsageContent: [
     {key: 'osd_id', name: '지시 고유 번호', formatter: OperationSearchModal, width:126},
@@ -1108,17 +1107,17 @@ export const columnlist: any = {
     {key: 'user_id', name: '작업자', width:120, formatter: MemberSearchModal},
     {key: 'start', name: '작업 시작 일시', width:120, formatter: DatetimePickerBox},
     {key: 'end', name: '작업 종료 일시', width:120, formatter: DatetimePickerBox},
-    {key: 'paused_time', name: '일시 정지 시간', width:120, formatter:PauseModal},
+    {key: 'paused_time', name: '일시 정지 시간', width:120, formatter: PauseInfoModal, type: 'readonly', modalType: false},
     {key: 'good_quantity', name: '양품 수량', width:120, editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
     {key: 'poor_quantity', name: '불량 수량', width:120, editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
-    {key: "manufacturing_leadtime", name: '개당 전력 사용량 (kW)', width: 208},
+    {key: "power_usage", name: '개당 전력 사용량 (kW)', width: 208},
   ],
   kpiUph: [
     {key: "customer_id", name: '거래처', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "cm_id", name: '모델', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "code", name: 'CODE', width: 472, formatter: SearchModalTest,  type: 'product',},
     {key: "name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "manufacturing_leadtime_average", name: '평균 UPH(시간당 샌산량)', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
+    {key: "uph_average", name: '평균 UPH(시간당 샌산량)', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiUphContent: [
     {key: 'osd_id', name: '지시 고유 번호', width:126},
@@ -1129,17 +1128,17 @@ export const columnlist: any = {
     {key: 'user_id', name: '작업자', width:120,},
     {key: 'start', name: '작업 시작 일시', width:120},
     {key: 'end', name: '작업 종료 일시', width:120},
-    {key: 'paused_time', name: '일시 정지 시간', width:120},
+    {key: 'paused_time', name: '일시 정지 시간', width:120 , formatter: PauseInfoModal, type: 'readonly', modalType: false},
     {key: 'good_quantity', name: '양품 수량', width:120, formatter: UnitContainer, unitData: 'EA'},
     {key: 'poor_quantity', name: '불량 수량', width:120, formatter: UnitContainer, unitData: 'EA'},
-    {key: "manufacturing_leadtime", name: 'UPH(시간당 샌산량)', width: 208},
+    {key: "uph", name: 'UPH(시간당 생산량)', width: 208},
   ],
   kpiOperation: [
-    {key: "customer_id", name: '기계 제조사', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "cm_id", name: '기계 이름', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "code", name: '제조 번호', width: 472,  formatter: SearchModalTest,type: 'machine'},
-    {key: "material_name", name: '기계 종류', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "manufacturing_leadtime_average", name: '평균 설비가동률', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
+    {key: "mfrName", name: '기계 제조사', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
+    {key: "name", name: '기계 이름', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
+    {key: "mfrCode", name: '제조 번호', width: 472,  formatter: SearchModalTest,type: 'machine'},
+    {key: "machine_type", name: '기계 종류', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
+    {key: "operation_average", name: '평균 설비가동률', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiOperationContent: [
     {key: 'osd_id', name: '지시 고유 번호', width:126},
@@ -1150,8 +1149,10 @@ export const columnlist: any = {
     {key: 'user_id', name: '작업자', width:120, },
     {key: 'start', name: '작업 시작 일시', width:200,},
     {key: 'end', name: '작업 종료 일시', width:200,},
-    {key: 'paused_time', name: '일시 정지 시간', width:200},
-    {key: "manufacturing_leadtime", name: '설비가동률', width: 208},
+    {key: 'paused_time', name: '일시 정지 시간', width:200 , formatter: PauseInfoModal, type: 'readonly', modalType: false},
+    {key: 'good_quantity', name: '양품 수량', width:120, formatter: UnitContainer, unitData: 'EA'},
+    {key: 'poor_quantity', name: '불량 수량', width:120, formatter: UnitContainer, unitData: 'EA'},
+    {key: "operation", name: '설비가동률', width: 208},
   ],
   toolRegister: [
     {key: "code", name: '공구 CODE', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
