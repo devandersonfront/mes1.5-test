@@ -29,9 +29,9 @@ const TitleFileUpload = ({title,index,uuid, detail,value,placeholder,fileOnClick
             <TitleBox>{title}</TitleBox>
             <ValueBox onClick={()=> uuid !== '' && detail && window.open(SF_ENDPOINT_S3+uuid)} style={{color: value === '' ? 'rgba(255,255,255,0.3)' : 'white', width: detail && '100%', textDecoration:  detail && "underline", textUnderlinePosition: 'under', cursor: detail && "pointer"}}>
                 {value === '' ? placeholder : value}
-                <div style={{width: '20px', height: '20px'}}>
-                    X
-                </div>
+                {/*<div style={{width: '20px', height: '20px'}}>*/}
+                {/*    X*/}
+                {/*</div>*/}
             </ValueBox>
             {!detail &&
                 <SelectButton onClick={() => onClickImageUpload('1')}>

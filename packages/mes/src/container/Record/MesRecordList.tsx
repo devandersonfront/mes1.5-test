@@ -396,6 +396,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {
+
           let tmp: Set<any> = selectList
           e.map(v => {
             if(v.isChange) tmp.add(v.id)

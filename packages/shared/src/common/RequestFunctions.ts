@@ -113,6 +113,39 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return false
         })
     case 'delete':
+        if(data.path){
+          let tmpUrl = `${ENDPOINT}${url}`
+
+          Object.values(data.path).map(v => {
+            if(v){
+              tmpUrl += `/${v}`
+            }
+          })
+          return Axios.delete(tmpUrl, token && {'headers': {'Authorization': token}, responseType: contentsType})
+              .then((result) => {
+                // if(result.data.status !== 200){
+                //   Notiflix.Report.failure('불러올 수 없습니다.', result.data.message, '확인')
+                //   return false
+                // }
+                Notiflix.Loading.remove(300)
+                return true
+              })
+              .catch((error) => {
+                if(error.response.status === 406 || error.response.status === 403) {
+                  Notiflix.Loading.remove(300)
+                  Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
+                  return false
+                }else if (error.response.status === 401){
+                  Notiflix.Loading.remove(300)
+                  Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
+                  return false
+                }else if(error.response.status === 500){
+                  Notiflix.Loading.remove(300)
+                  Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+                  return false
+                }
+              })
+        }
       return Axios.delete(ENDPOINT+url, token && {
         'headers': {'Authorization': token}, responseType: contentsType,
         data: data
@@ -271,7 +304,7 @@ const ApiList = {
   recodeDelete: `/api/v1/record/delete`,
   toolDelete: `/cnc/api/v1/tool/delete`,
   lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
-
+  productChangeDelete: `/cnc/api/v1/product-changes/remove`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,
