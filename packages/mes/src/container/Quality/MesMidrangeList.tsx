@@ -68,8 +68,8 @@ const MesMidrangeList = ({option}:IProps) => {
             })
             const data = res.info_list.map((v)=>{
                 return {
-                    contract_id: v.operation_sheet.contractId ?? '-',
-                    osId: v.osId,
+                    contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
+                    osId: v.operation_sheet.identification ?? '-',
                     code: v.operation_sheet.product.code ?? '-',
                     name: v.operation_sheet.product.name ?? '-',
                     type: column[4].selectList[v.operation_sheet.product.type].name,
@@ -110,8 +110,8 @@ const MesMidrangeList = ({option}:IProps) => {
 
             const data = res.info_list.map((v)=>{
                 return {
-                    contract_id: v.operation_sheet.contractId ?? '-',
-                    osId: v.osId,
+                    contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
+                    osId: v.operation_sheet.identification ?? '-',
                     code: v.operation_sheet.product.code ?? '-',
                     name: v.operation_sheet.product.name ?? '-',
                     type: column[4].selectList[v.operation_sheet.product.type].name,
