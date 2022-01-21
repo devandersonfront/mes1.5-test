@@ -9,7 +9,7 @@ interface IProps {
 }
 
 const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
-    const [testData, setTestData] = React.useState({
+    const [testData, setTestData] = React.useState<any>({
         legendary: [],
         inspection_info: {beginning: [{samples: 1, data_result: []}], middle: [{samples: 1, data_result: [] }], end: [{samples: 1, data_result: [] }]},
         inspection_result: { beginning: [], middle: [], end: [] },

@@ -4,12 +4,12 @@ import BasicModal from "./BasicModal"
 //@ts-ignore
 import Barcode from 'react-barcode';
 import axios from 'axios';
-// import DomToImage from "dom-to-image";
+import DomToImage from "dom-to-image";
 
 interface Props {
 
     title : string,
-    handleBarcode : (url : string) => void
+    handleBarcode : (url : string , id : string) => void
     handleModal : (isOpen : boolean) => void
     isOpen : boolean
     data : any
@@ -18,6 +18,7 @@ interface Props {
 }
 
 const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props) => {
+
 
     const numberOfType = (type : 'rawMaterial' | 'product') => {
 
@@ -45,11 +46,13 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
 
     }
 
-    const onCaptureDOM = async () => {
+    const onCaptureDOM = async (type,data) => {
 
-        // const dom  = document.getElementById('capture_dom')
-        // const dataurl = await DomToImage.toPng(dom, {quality: 1})
-        // handleBarcode(dataurl)
+        
+        const id = (type === 'rawMaterial' ? data?.rm_id : data?.product_id)
+        const dom  = document.getElementById('capture_dom')
+        const dataurl = await DomToImage.toPng(dom, {quality: 1})
+        handleBarcode(dataurl,id)
 
     }
 
@@ -87,7 +90,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
         if(data){
 
             const convertData = convertDataToArray(data)
-            const encrypt = makeBarcode(type === 'rawMaterial' ? data.rm_id : '2' )
+            const encrypt = makeBarcode(type === 'rawMaterial' ? data?.rm_id : data?.product_id )
 
             return (
                     <BarcodeBox id={'capture_dom'}>
@@ -114,7 +117,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
             >
             <TitleContainer>
                 <TitleSpan>{title}</TitleSpan>
-                <Button onClick={onCaptureDOM}>
+                <Button onClick={() => onCaptureDOM(type,data)}>
                     {'인쇄'}
                 </Button>
             </TitleContainer>
@@ -129,6 +132,8 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
 
 
 export {BarcodeModal}
+
+
 
 const TitleContainer = Styled.div`
 
@@ -157,6 +162,7 @@ const Button = Styled.button`
     height: 30px;
     padding: 0;
     border: none;
+    cursor : pointer;
 `
 
 const BarcodeBox = Styled.div`
@@ -165,6 +171,9 @@ const BarcodeBox = Styled.div`
     height : 474px;
     border : 1px solid #000000;
     padding : 24px 24px 16px 24px;
+    display : flex;
+    flex-direction : column;
+    justify-content : space-between;
 
 `
 
@@ -172,7 +181,6 @@ const BarcodeItem = Styled.div`
 
     display : flex;
     justify-content : space-between;
-    margin-bottom : 10px;
 `
 
 const Label = Styled.label`
@@ -180,8 +188,8 @@ const Label = Styled.label`
     font-size : 40px;
     font-weight: bold;
     width : 300px;
-    height : 50px;
-    text-align : right;
+    height : 60px;
+    text-align : left;
     display : flex;
     align-items : center;
 
@@ -191,16 +199,15 @@ const LabelValue = Styled.span`
 
     font-size : 40px;
     width : 400px;
-    height : 50px;
-    text-align : right;
+    height : 60px;
+    text-align : left;
     display : flex;
     align-items : center;
+    line-height: 36px;
 
 `
 
 const Wrap = Styled.div`
-    
-    margin-top : 50px;
 
     canvas {
         width: 100%;

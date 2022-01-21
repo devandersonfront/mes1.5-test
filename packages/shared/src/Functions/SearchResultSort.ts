@@ -114,6 +114,9 @@ export const SearchResultSort = (infoList, type: string) => {
 }
 
 export const SearchModalResult = (selectData, type: string) => {
+
+  console.log(selectData,'selectDataselectDataselectDataselectData')
+
   switch(type) {
     case 'user': {
       return {
@@ -160,7 +163,18 @@ export const SearchModalResult = (selectData, type: string) => {
         product: {...selectData},
         bom_root_id: selectData.bom_root_id,
         customerData: selectData.customer,
-        modelData: selectData.model
+        modelData: selectData.model,
+        standard_uph : selectData.standard_uph,
+        os_id : selectData.os_id,
+        date : selectData.date,
+        deadline : selectData.deadline,
+        amount: selectData.amount,
+        shipment_amount : selectData.shipment_amount,
+        shipment_date : selectData.shipment_date,
+        lead_time : selectData.lead_time,
+        uph : selectData.uph,
+        identification : selectData.identification
+        
       }
     }
     case "process": {
