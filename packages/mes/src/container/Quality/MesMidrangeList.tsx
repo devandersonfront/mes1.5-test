@@ -66,6 +66,7 @@ const MesMidrangeList = ({option}:IProps) => {
                 page: res.page,
                 total: res.totalPages
             })
+
             const data = res.info_list.map((v)=>{
                 return {
                     contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
@@ -140,12 +141,10 @@ const MesMidrangeList = ({option}:IProps) => {
                 searchKeyword={""}
                 searchOptionList={optionList}
                 onChangeSearchKeyword={(keyword) => {
-                    // SearchBasic(keyword, option, 1)
                     setSearchKeyword(keyword);
                     setPageInfo({page:1, total:1})
                 }}
                 onChangeSearchOption={(option) => {
-                    // SearchBasic(keyword, option, 1)
                     setOptionIndex(option)
                 }}
                 calendarTitle={'등록 날짜'}
@@ -157,13 +156,11 @@ const MesMidrangeList = ({option}:IProps) => {
             />
             <ExcelTable
                 editable
-                // resizable
                 headerList={[
                     SelectColumn,
                     ...column
                 ]}
                 row={basicRow}
-                // setRow={setBasicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
                     e.map(v => {

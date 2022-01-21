@@ -778,7 +778,7 @@ export const columnlist: any = {
     {key: 'worker', name: '작업자', width: 120 },
     {key: 'start', name: '작업 시작 일시', width: 164},
     {key: 'end', name: '작업 종료 일시', width: 164},
-    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', width: 120, formatter: MidRangeButton, title: '검사항목 등록'}
+    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', width: 120, title: '검사항목 등록'}
   ],
   qualityDefectTop: [
     {key: 'customer', name: '거래처명', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
