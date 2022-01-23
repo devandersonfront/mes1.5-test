@@ -56,6 +56,7 @@ import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
 import {MidRangeButton} from "../components/Buttons/MidRangeButton";
 import placeholder from "lodash/fp/placeholder";
 import {ToolInfoModal} from "../components/Modal/ToolInfoModal";
+import {MidrangeFrameButton} from "../components/Buttons/MidrangeFrameButton";
 
 export const columnlist: any = {
   member: [
@@ -778,7 +779,7 @@ export const columnlist: any = {
     {key: 'worker', name: '작업자', width: 120 },
     {key: 'start', name: '작업 시작 일시', width: 164},
     {key: 'end', name: '작업 종료 일시', width: 164},
-    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', width: 120, title: '검사항목 등록'}
+    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', width: 120, formatter: MidrangeFrameButton, title: '검사항목 등록'}
   ],
   qualityDefectTop: [
     {key: 'customer', name: '거래처명', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
@@ -869,7 +870,7 @@ export const columnlist: any = {
     {key:"paused_time", name:"일시 정지 시간", formatter: PauseInfoModal, type: 'readonly', modalType: false, width: 118},
     {key:"good_quantity", name:"양품 수량", width: 118},
     {key:"poor_quantity", name:"불량 수량", formatter: DefectInfoModal, type: 'readonly', width: 118},
-    {key:"sic_id", name: "초ㆍ중ㆍ종 검사", width: 118, formatter: MidRangeButton, title: '검사항목 등록'},
+    {key:"sic_id", name: "초ㆍ중ㆍ종 검사", width: 118, formatter: MidrangeFrameButton ,title: '검사항목 등록'},
     {key:"uph", name:"UPH", width: 118},
     {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, type: 'readonly'},
     {key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit},

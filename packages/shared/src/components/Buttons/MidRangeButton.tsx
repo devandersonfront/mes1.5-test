@@ -12,7 +12,6 @@ interface IProps {
 const MidRangeButton = ({row, column }: IProps) => {
     const router = useRouter()
 
-    //변경 관련 로직 필요함
     const contentCheck = () => {
         if(row.inspection_category !== null){
             return (<>

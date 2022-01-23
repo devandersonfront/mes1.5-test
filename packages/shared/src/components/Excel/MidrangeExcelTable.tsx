@@ -10,7 +10,7 @@ interface IProps {
 
 const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
     const [testData, setTestData] = React.useState<any>({
-        legendary: [],
+        legendary_list: [],
         inspection_info: {beginning: [{samples: 1, data_result: []}], middle: [{samples: 1, data_result: [] }], end: [{samples: 1, data_result: [] }]},
         inspection_result: { beginning: [], middle: [], end: [] },
         inspection_time: {
@@ -219,9 +219,8 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                                        onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } onChange={(e)=>itemDataResultTextChange(type,e,index,i)}/>
                                 :
                                 inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ?
-                                    //contents 를 legendary 로 변경 해야함
-                                    <MidrangeExcelDropdown contents={testData.legendary} value={value.data_result[i].value} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> :
-                                    <MidrangeExcelDropdown contents={testData.legendary} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> : '-'
+                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={value.data_result[i].value} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> :
+                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> : '-'
                             }
                         </ExampleNumber>
                     )}
