@@ -47,7 +47,7 @@ const TitleFileUpload = ({title,index,uuid, detail,value,placeholder,fileOnClick
                            if(uploadImg !== undefined){
                                const fileInfo = {
                                    name: e.target.files[0].name,
-                                   uuid: uploadImg.UUID,
+                                   UUID: uploadImg.UUID,
                                    sequence: index+1
                                }
                                fileOnClick(fileInfo)

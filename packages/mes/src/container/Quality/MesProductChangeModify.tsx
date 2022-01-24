@@ -64,11 +64,13 @@ const MesProductChangeModify = () => {
     },[router.query])
 
     const productChangeSave = async () => {
+        const filesFilter = files.filter((v)=> v.name !== '')
+
         const res = await RequestMethod('post', `productChangeSave`,{
             pcr_id: router.query.pcr_id,
             title: changeInfo.title,
             content: changeInfo.content,
-            files: files,
+            files: filesFilter,
             created: moment(changeInfo.registered).format("YYYY-MM-DD"),
             version: version,
             product: changeInfo.product,
