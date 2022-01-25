@@ -14,9 +14,7 @@ interface IProps {
 
 const MesMidrangeList = ({option}:IProps) => {
 
-    const [basicRow, setBasicRow] = useState<Array<any>>([{
-        order_num: '-', operation_num: '20210401-013'
-    }])
+    const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["midrangeList"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionList, setOptionList] = useState<string[]>([ '수주 번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자' ])
@@ -72,6 +70,7 @@ const MesMidrangeList = ({option}:IProps) => {
                     contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
                     osId: v.operation_sheet.identification ?? '-',
                     code: v.operation_sheet.product.code ?? '-',
+                    product: v.operation_sheet.product,
                     name: v.operation_sheet.product.name ?? '-',
                     type: column[4].selectList[v.operation_sheet.product.type].name,
                     unit: v.operation_sheet.product.unit ?? '-',
@@ -115,6 +114,7 @@ const MesMidrangeList = ({option}:IProps) => {
                     osId: v.operation_sheet.identification ?? '-',
                     code: v.operation_sheet.product.code ?? '-',
                     name: v.operation_sheet.product.name ?? '-',
+                    product: v.operation_sheet.product,
                     type: column[4].selectList[v.operation_sheet.product.type].name,
                     unit: v.operation_sheet.product.unit ?? '-',
                     process_id: v.operation_sheet.product.process === null ? '-' : v.operation_sheet.product.process.name ,

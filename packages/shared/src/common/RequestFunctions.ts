@@ -259,6 +259,7 @@ const ApiList = {
   shipmentSave: `/api/v1/shipment/save`,
   toolSave: `/cnc/api/v1/tool/save`,
   inspectCategorySave: '/cnc/api/v1/product/inspect/category/save',
+  recordInspectSave: `/cnc/api/v1/record/inspect/save`,
   lotToolSave: `/cnc/api/v1/lot-tool/save`,
   productChangeSave: `/cnc/api/v1/product-changes/save`,
   documentSave: `/cnc/api/v1/document/save`,
@@ -272,6 +273,7 @@ const ApiList = {
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/product/inspect/category/load`,
+  recordInspectFrame: `/cnc/api/v1/record/inspect/frame`,
   productChangeLoad: `/cnc/api/v1/product-changes/load`,
 
   //recent

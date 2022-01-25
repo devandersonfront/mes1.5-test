@@ -97,6 +97,7 @@ export {DropDownEditor} from "./components/Dropdown/ExcelBasicDropdown"
 export {MidrangeExcelDropdown} from './components/Dropdown/MidrangeExcelDropdown'
 
 export {MidrangeExcelTable} from "./components/Excel/MidrangeExcelTable"
+export {MidrangeExcelFrameTable} from "./components/Excel/MidrangeExcelFrameTable"
 export {ExcelTable} from "./components/Excel/ExcelTable"
 
 export {FileEditer} from "./components/FileUpload/ExcelBasicFileUpload"

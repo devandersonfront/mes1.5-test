@@ -10,6 +10,8 @@ import {searchModalList} from "../../common/modalInit";
 import {POINT_COLOR} from "../../common/configset";
 import styled from "styled-components";
 import {MidrangeExcelTable} from "../Excel/MidrangeExcelTable";
+import {MidrangeExcelFrameTable} from "../Excel/MidrangeExcelFrameTable";
+import {RequestMethod} from "../../common/RequestFunctions";
 
 
 interface IProps {
@@ -22,6 +24,77 @@ interface IProps {
 const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<Array<any>>()
+    const [ midrangeData, setMidrangeData ] = useState({
+        inspection_time: {},
+        inspection_result: {},
+        legendary_list: [],
+        inspection_info: {},
+        sic_id: '',
+        record_id: ''
+    })
+
+    const recordInspectFrameSave = async () => {
+        // const filter = midrangeData.inspection_result.end
+
+        const inspection_info_beginning = midrangeData.inspection_info.beginning.map((v)=>{
+            const dataResultEnd = v.data_result.filter((v)=>v)
+            return {...v, data_result: dataResultEnd }
+        })
+
+        const inspection_info_middle = midrangeData.inspection_info.middle.map((v)=>{
+            const dataResultEnd = v.data_result.filter((v)=>v)
+            return {...v, data_result: dataResultEnd }
+        })
+
+        const inspection_info_end = midrangeData.inspection_info.end.map((v)=>{
+            const dataResultEnd = v.data_result.filter((v)=>v)
+            return {...v, data_result: dataResultEnd }
+        })
+
+        const inspection_result_beginning = midrangeData.inspection_result.beginning.filter((v)=>v)
+        const inspection_result_middle = midrangeData.inspection_result.middle.filter((v)=>v)
+        const inspection_result_end = midrangeData.inspection_result.end.filter((v)=>v)
+
+
+        midrangeData.inspection_info = {
+            beginning: inspection_info_beginning,
+            middle: inspection_info_middle,
+            end: inspection_info_end
+        }
+        midrangeData.inspection_result = {
+            beginning: inspection_result_beginning,
+            middle: inspection_result_middle,
+            end: inspection_result_end
+        }
+
+
+        const res = await RequestMethod('post', `recordInspectSave`,{
+            sic_id: midrangeData.sic_id,
+            record_id: midrangeData.record_id,
+            worker: {
+                user_id: 60,
+                company: "4HW59P",
+                name:"김연수",
+                appointment:"대리",
+                telephone:"0102412141",
+                email:"youngineng@youngineng.com",
+                authority:20,
+                ca_id:{
+                    ca_id:20,
+                    name:"QC",
+                    factor:0.0,
+                    authorities:[
+
+                    ],
+                    version:0
+                }
+            },
+            inspection_time: midrangeData.inspection_time,
+            inspection_result: midrangeData.inspection_result,
+            legendary_list: midrangeData.legendary_list,
+            inspection_info: midrangeData.inspection_info
+        })
+    }
 
     React.useEffect(()=>{
         setSearchList([...formReviewData.basic])
@@ -58,10 +131,10 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
                             fontSize: 22,
                             fontWeight: 'bold',
                             margin: 0,
-                        }}>초ㆍ중ㆍ종 검사 양식 검토</p>
+                        }}>초ㆍ중ㆍ종 검사 등록</p>
                         <div style={{display: 'flex'}}>
                             {/*<Button>*/}
-                            {/*  <p>엑셀로 받기</p>*/}
+                            {/*  <p>{'수정 하기'}</p>*/}
                             {/*</Button>*/}
                             <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                                 setIsOpen(false)
@@ -93,7 +166,25 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
                         />
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
-                        <MidrangeExcelTable formReviewData={formReviewData} />
+                        <MidrangeExcelFrameTable formReviewData={formReviewData}  inspectFrameData={(e)=>setMidrangeData(e)}/>
+                    </div>
+                </div>
+                <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
+                    <div
+                        onClick={() => {
+                            setIsOpen(false)
+                        }}
+                        style={{width: "50%", height: 40, color: '#717C90', backgroundColor: '#DFDFDF', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                    >
+                        <p>취소</p>
+                    </div>
+                    <div
+                        onClick={() => {
+                            recordInspectFrameSave()
+                        }}
+                        style={{width: "50%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                    >
+                        <p>등록하기</p>
                     </div>
                 </div>
             </Modal>
