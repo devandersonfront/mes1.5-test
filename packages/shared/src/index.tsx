@@ -160,6 +160,7 @@ export {WorkRegisterModal} from './components/Modal/WorkRegisterModal'
 export {OperationInfoModal} from './components/Modal/OperationInfoModal'
 export {InfoModal} from './components/Modal/InfoModal'
 export {LotInputInfoModal} from './components/Modal/LotInputInfoModal'
+export {MidrangeMemberSearchModal} from './components/Modal/MidrangeMemberSearchModal'
 export {MidrangeFormReviewModal} from './components/Modal/MidrangeFormReviewModal'
 export {MidrangeRegisterModal} from './components/Modal/MidrangeRegisterModal'
 

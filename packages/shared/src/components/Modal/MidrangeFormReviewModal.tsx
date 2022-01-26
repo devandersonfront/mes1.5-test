@@ -12,6 +12,7 @@ import styled from "styled-components";
 import {MidrangeExcelTable} from "../Excel/MidrangeExcelTable";
 import {MidrangeExcelFrameTable} from "../Excel/MidrangeExcelFrameTable";
 import {RequestMethod} from "../../common/RequestFunctions";
+import moment from "moment";
 
 
 interface IProps {
@@ -67,29 +68,17 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen, modify}: I
             middle: inspection_result_middle,
             end: inspection_result_end
         }
+        midrangeData.inspection_time = {
+            beginning: moment(midrangeData.inspection_time.beginning).format('YYYY-MM-DD[T]HH:mm:ss'),
+            middle: moment(midrangeData.inspection_time.middle).format('YYYY-MM-DD[T]HH:mm:ss'),
+            end: moment(midrangeData.inspection_time.end).format('YYYY-MM-DD[T]HH:mm:ss')
+        }
 
 
         const res = await RequestMethod('post', `recordInspectSave`,{
             sic_id: midrangeData.sic_id,
             record_id: midrangeData.record_id,
-            writer: {
-                additional: [],
-                appointment: "사원",
-                authority: 6,
-                ca_id: {ca_id: 6, name: "TEST", factor: 0, authorities: [], version: 9},
-                company: "4HW59P",
-                email: "123@naver.com",
-                id: "123",
-                name: "이예서",
-                password: "$2a$10$jb36R0D7Nb.mf5aFHeRgiOmzsPWxRu0JHbDBqXSTmvj4.3t5n78Fi",
-                profile: null,
-                serviceAddress: "33aa5f3dc650/192.168.128.38:8080",
-                sync: "member83",
-                telephone: "010-000-0000",
-                token: null,
-                user_id: 83,
-                version: 1
-            },
+            writer: midrangeData.writer,
             inspection_time: midrangeData.inspection_time,
             inspection_result: midrangeData.inspection_result,
             legendary_list: midrangeData.legendary_list,
@@ -136,24 +125,7 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen, modify}: I
             version: midrangeData.version,
             sic_id: midrangeData.sic_id,
             record_id: midrangeData.record_id,
-            writer: {
-                user_id: 60,
-                company: "4HW59P",
-                name:"김연수",
-                appointment:"대리",
-                telephone:"0102412141",
-                email:"youngineng@youngineng.com",
-                authority:20,
-                ca_id:{
-                    ca_id:20,
-                    name:"QC",
-                    factor:0.0,
-                    authorities:[
-
-                    ],
-                    version:0
-                }
-            },
+            writer: midrangeData.writer,
             inspection_time: midrangeData.inspection_time,
             inspection_result: midrangeData.inspection_result,
             legendary_list: midrangeData.legendary_list,

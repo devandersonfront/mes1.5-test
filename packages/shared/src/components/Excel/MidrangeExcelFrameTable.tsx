@@ -4,6 +4,7 @@ import {MidrangeExcelDropdown} from "../Dropdown/MidrangeExcelDropdown";
 import moment from "moment";
 import {InspectionFinalDataResult, InspectionInfo} from "../../@types/type";
 import {MidrangeDatetimePickerBox} from "../CalendarBox/MidrangeDatetimePickerBox";
+import {MidrangeMemberSearchModal} from "../Modal/MidrangeMemberSearchModal";
 
 interface IProps {
     formReviewData: any
@@ -34,19 +35,12 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 const reviewData = {
                     version: formReviewData.version,
                     sic_id: formReviewData.sic_id,
+                    writer: formReviewData.writer,
                     record_id: formReviewData.record_id,
                     legendary_list: legendary_list,
                     inspection_info: formReviewData.inspection_info,
-                    inspection_result: {
-                        middle: [],
-                        beginning: [],
-                        end: []
-                    },
-                    inspection_time: {
-                        beginning: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
-                        middle: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
-                        end: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
-                    }
+                    inspection_result: formReviewData.inspection_result,
+                    inspection_time: formReviewData.inspection_time
                 }
                 //@ts-ignore
                 setTestData(reviewData)
@@ -273,7 +267,9 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
             <div style={{display: "flex"}}>
                 <div style={{backgroundColor: "#F4F6FA", width: '112px',borderLeft: '0.5px solid #B3B3B3', borderTop: 0, height: '80px'}}>
                     <Worker>작성자</Worker>
-                    <Worker style={{borderTop: '0.5px solid #B3B3B3'}}>1132</Worker>
+                    <Worker style={{borderTop: '0.5px solid #B3B3B3'}}>
+                        <MidrangeMemberSearchModal value={testData.writer ? testData.writer.name : ''} onChangeManger={(writer)=> setTestData({...testData, writer: writer})}/>
+                    </Worker>
                 </div>
                 <HeaderTitle style={{width: '168px'}}>
                     점검시간
@@ -301,7 +297,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            <MidrangeDatetimePickerBox value={testData.inspection_time.beginning} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, beginning: date.format("YYYY.MM.DD[T]HH:mm:ss") }})}/>
+                            <MidrangeDatetimePickerBox value={testData.inspection_time.beginning} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, beginning: date.format("YYYY.MM.DD HH:mm") }})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.beginning)}
@@ -326,7 +322,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            <MidrangeDatetimePickerBox value={testData.inspection_time.middle} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, middle: date.format("YYYY.MM.DD[T]HH:mm:ss") }})}/>
+                            <MidrangeDatetimePickerBox value={testData.inspection_time.middle} onDateChange={(date)=>setTestData({...testData, inspection_time: {middle: date.format("YYYY.MM.DD HH:mm")}})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.middle)}
@@ -351,7 +347,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            <MidrangeDatetimePickerBox value={testData.inspection_time.end} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, end: date.format("YYYY.MM.DD[T]HH:mm:ss") }})}/>
+                            <MidrangeDatetimePickerBox value={testData.inspection_time.end} onDateChange={(date)=>setTestData({...testData, inspection_time: {end: date.format("YYYY.MM.DD HH:mm")}})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.end)}

@@ -60,7 +60,7 @@ const MidrangeDatetimePickerBox = ({ onDateChange, value }: IProps) => {
                         clearable
                         value={value ?? moment().format("YYYY.MM.DD HH:mm")}
                         onChange={onDateChange}
-                        format={'YYYY-MM-DD HH:mm'}
+                        format={'YYYY.MM.DD HH:mm'}
                         InputProps={{ className: classes.input, disableUnderline: true}}
                     />
                 </MuiPickersUtilsProvider>
