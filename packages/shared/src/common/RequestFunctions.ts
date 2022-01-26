@@ -123,6 +123,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         })
         .catch((error) => {
           Notiflix.Loading.remove(300)
+          console.log(error)
           if(error.response.status === 400) {
             Notiflix.Report.failure('삭제할 수 없습니다.', '입력값을 확인해주세요', '확인')
           }
@@ -237,6 +238,7 @@ const ApiList = {
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
+  documentLoad: `/cnc/api/v1/document/load`,
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -268,6 +270,7 @@ const ApiList = {
   recodeDelete: `/api/v1/record/delete`,
   toolDelete: `/cnc/api/v1/tool/delete`,
   lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
+  documentDelete: `/cnc/api/v1/document/delete`,
 
 
   //list
@@ -291,6 +294,7 @@ const ApiList = {
   operactionList: `/api/v1/operation/list`,
   defectList: `/api/v1/quality/statistics/defect`,
   recordList: `/api/v1/record/list`,
+  cncRecordList: `/cnc/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
   factoryList: `/api/v1/factory/list`,
   deviceList: `/api/v1/device/list`,
@@ -310,6 +314,7 @@ const ApiList = {
   stockAdminList: '/api/v1/stock/admin/summary',
   toolList: `/cnc/api/v1/tool/list`,
   lotToolList: `/cnc/api/v1/lot-tool/list`,
+  documentList:`/cnc/api/v1/document/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -328,6 +333,7 @@ const ApiList = {
   stockSearch: '/api/v1/stock/search',
   operationSearch: `/api/v1/sheet/search`,
   recordSearch: `/api/v1/record/search`,
+  cncRecordSearch: `/cnc/api/v1/record/search`,
   shipmentSearch: `/api/v1/shipment/search`,
   recordSumSearch: `/api/v1/record/summation/search`,
   submaterialSearch: `/api/v1/sub-material/search`,
@@ -352,6 +358,7 @@ const ApiList = {
   authorityAll: `/api/v1/auth/all`,
   recordAll: `/api/v1/record/all`,
   shipmentAll:`/api/v1/shipment/all`,
+  documentAll: `/cnc/api/v1/document/all`,
 
   //fetch
   summaryFetch: `/api/v1/stock/summary/fetch`,
@@ -366,4 +373,10 @@ const ApiList = {
   bomSave: `/api/v1/bom/save`,
 
   anonymousLoad: `/anonymous/load`,
+
+  documentDownLoad: `/cnc/api/v1/document/download`,
+  documentLogs: `/cnc/api/v1/document/logs`,
+  documentMove: `/cnc/api/v1/document/move`,
+
+  toolAverage: `/cnc/api/v1/tool/average`,
 }

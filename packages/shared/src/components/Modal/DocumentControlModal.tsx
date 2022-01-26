@@ -3,19 +3,25 @@ import Modal from "react-modal";
 import styled from "styled-components";
 import FileUploader from "../Buttons/FileUploader";
 import {RequestMethod} from "../../common/RequestFunctions";
+import DropdownModal from "../Dropdown/DropdownModal";
 
 interface Props {
     isOpen:boolean
     setIsOpen: (value:boolean) => void
     type:"folderAdd" | "documentUpload" | "fileMove"
-    onFunction?: (file:any) => void
+    reload?:() => void
+    folderList?:any[]
+    selectFile?:any
+    parentData?:any
 }
 
-const DocumentControlModel = ({isOpen, setIsOpen, type, onFunction}:Props) => {
-
+const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, selectFile, parentData}:Props) => {
     const [fileInfo, setFileInfo] = useState<{doc_id?:number, name:string, type:string, parent?:any, file_uuid?:string, version?:string}[]>([])
+    const [selectOption, setSelectOption] = useState<any>("");
 
-
+    const changeSetSelectOption = (value:any) => {
+        setSelectOption(value)
+    }
 
     const contentSet = (type:"folderAdd" | "documentUpload" | "fileMove") => {
         switch (type){
@@ -27,7 +33,6 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, onFunction}:Props) => {
                         </ModalHeader>
                         <FileUploader type={"folder"} onChange={(value) => {
                             setFileInfo([{name:value, type:"dir" }])
-                            console.log("fileInfo : ", fileInfo)
                         }}/>
                         <div style={{display:"flex",}}>
                             <Button onClick={() => {
@@ -36,9 +41,12 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, onFunction}:Props) => {
                             <Button
                                 style={{color:"#111319", background:"#19B9DF"}}
                                 onClick={async()=>{
-                                    // onFunction(fileInfo)
-                                    await RequestMethod("post", "documentSave", fileInfo)
-                                    console.log("fileInfo => ", fileInfo)
+                                    console.log("fileInfo : ", [{...fileInfo[0], parent:parentData}])
+                                    await RequestMethod("post", "documentSave", [{...fileInfo[0], parent:parentData}])
+                                        .then((res) => {
+                                            setIsOpen(false);
+                                            reload()
+                                        })
                                 }}
                             >확인</Button>
                         </div>
@@ -50,15 +58,25 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, onFunction}:Props) => {
                         <ModalHeader>
                             문서 업로드
                         </ModalHeader>
-                        <FileUploader type={"input"} />
+                        <FileUploader type={"input"} onChange={(file) => {
+                            const fileData = {...file};
+                            fileData.file_uuid = file.uuid;
+                            setFileInfo([{file_uuid:file.UUID, type:file.type, name:file.name, parent:parentData}] )
+                        }} />
                         <div style={{display:"flex",}}>
                             <Button onClick={() => {
                                 setIsOpen(false)
                             }}>취소</Button>
                             <Button
                                 style={{color:"#111319", background:"#19B9DF"}}
-                                onClick={() => {
-                                    // onFunction()
+                                onClick={async() => {
+                                    console.log("fileInfo : ", fileInfo)
+                                    await RequestMethod("post", "documentSave", fileInfo)
+                                        .then(() => {
+                                            setIsOpen(false);
+                                            reload()
+                                        })
+
                                 }}
                             >확인</Button>
                         </div>
@@ -70,11 +88,25 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, onFunction}:Props) => {
                         <ModalHeader>
                             파일 이동
                         </ModalHeader>
+                        <FileUploader type={"disabled"} value={selectFile?.name} />
+                        <DropdownModal options={folderList} value={selectOption} onChange={changeSetSelectOption}/>
                         <div style={{display:"flex",}}>
                             <Button onClick={() => {
                                 setIsOpen(false)
                             }}>취소</Button>
-                            <Button style={{color:"#111319", background:"#19B9DF"}}>확인</Button>
+                            <Button
+                                style={{color:"#111319", background:"#19B9DF"}}
+                                onClick={async() => {
+                                    await RequestMethod("post", "documentMove",[{...selectFile, parent:selectOption}])
+                                        .then((res) => {
+                                            console.log(res);
+
+                                        })
+                                    console.log(selectFile, selectOption )
+                                    // setIsOpen(false)
+                                    // reload()
+                                }}
+                            >확인</Button>
                         </div>
                     </ModalBody>
                 )
@@ -110,17 +142,6 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, onFunction}:Props) => {
                 }
             }}>
                 {contentSet(type)}
-                {/*<div style={{display:"flex",}}>*/}
-                {/*    <Button onClick={() => {*/}
-                {/*        setIsOpen(false)*/}
-                {/*    }}>취소</Button>*/}
-                {/*    <Button*/}
-                {/*        style={{color:"#111319", background:"#19B9DF"}}*/}
-                {/*        onClick={() => {*/}
-                {/*            onFunction(fileInfo)*/}
-                {/*        }}*/}
-                {/*    >확인</Button>*/}
-                {/*</div>*/}
             </Modal>
         </div>
     )

@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import styled from "styled-components";
 // @ts-ignore
-import DataGrid, {TextEditor} from 'react-data-grid'
+import DataGrid, {TextEditor, Row, RowRendererProps} from 'react-data-grid'
 import {IExcelHeaderType} from '../../@types/type'
 import {SearchModalStyle} from '../../styles/styledComponents'
 import {RequestMethod} from "../../common/RequestFunctions";
@@ -131,6 +131,9 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
       onRowClick={(i, r) => {
         setSelectRow && setSelectRow(i)
       }}
+      onRowDoubleClick={(e) => {
+        console.log(e)
+      }}
       style={{
         border:"none",
         overflow:"auto",
@@ -157,6 +160,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
 
         scrollEnd && scrollEnd(isAtBottom(e))
       }}
+
       clickable={clickable}
     />
   }

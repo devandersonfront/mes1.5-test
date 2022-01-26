@@ -34,7 +34,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const [isFirst, setIsFirst] = useState<boolean>(true)
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationRegisterV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-
+  console.log("selectList : ", selectList, basicRow)
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
       path: {
@@ -78,11 +78,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const SaveBasic = async () => {
+  const SaveBasic = async (result:any, selectList:Set<any>) => {
+    console.log("result : ", result, selectList)
     let res: any
     res = await RequestMethod('post', `sheetSave`,
-      basicRow.map((row, i) => {
+        result.map((row, i) => {
         if(selectList.has(row.id)){
+          console.log("row : ", row)
           let selectKey: string[] = []
           let additional:any[] = []
           column.map((v) => {
@@ -119,11 +121,19 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               }
             }
           })
-
+          console.log("저장할 데이터 : ", row, selectData)
           return {
             ...row,
             ...selectData,
-            input_bom: row.input ?? [],
+            input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
+              // return {
+              //   ...bom,
+              //   setting:bom.setting === "여" || bom.setting === 1 ? 1 : 0
+              // }
+              bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
+              console.log("?????? bom : ", bom)
+              return {...bom}
+            })] ?? [],
             status: 1,
             additional: [
               ...additional.map(v => {
@@ -142,66 +152,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
       }).filter((v) => v))
 
-  console.log(basicRow.map((row, i) => {
-    if(selectList.has(row.id)){
-      let selectKey: string[] = []
-      let additional:any[] = []
-      column.map((v) => {
-        if(v.selectList){
-          selectKey.push(v.key)
-        }
-
-        if(v.type === 'additional'){
-          additional.push(v)
-        }
-      })
-
-      let selectData: any = {}
-
-      Object.keys(row).map(v => {
-        if(v.indexOf('PK') !== -1) {
-          selectData = {
-            ...selectData,
-            [v.split('PK')[0]]: row[v]
-          }
-        }
-
-        if(v === 'unitWeight') {
-          selectData = {
-            ...selectData,
-            unitWeight: Number(row['unitWeight'])
-          }
-        }
-
-        if(v === 'tmpId') {
-          selectData = {
-            ...selectData,
-            id: row['tmpId']
-          }
-        }
-      })
-
-      return {
-        ...row,
-        ...selectData,
-        input_bom: row.input ?? [],
-        status: 1,
-        additional: [
-          ...additional.map(v => {
-            if(row[v.name]) {
-              return {
-                id: v.id,
-                title: v.name,
-                value: row[v.name],
-                unit: v.unit
-              }
-            }
-          }).filter((v) => v)
-        ]
-      }
-
-    }
-  }).filter((v) => v))
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
@@ -217,9 +167,10 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       path: { product_id }
     })
     let resultData = [];
-
     if(res){
-      console.log("NONONONO!")
+      setSelectList(new Set())
+      setIsFirst(false)
+      Notiflix.Report.success("알림","최근 작업지시서를 불러왔습니다.","확인")
       let row:any = [];
       if(typeof res === 'string'){
         let tmpRowArray = res.split('\n')
@@ -230,7 +181,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             return tmp
           }
         }).filter(v=>v)
-        console.log(row)
         resultData = [...row.map((data, index) => {
           let random_id = Math.random()*1000;
           return index === 0 ?
@@ -266,8 +216,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 goal: data.goal,
               }
         })]
-      // }else if(){
-
       } else{
         let random_id = Math.random()*1000;
         if(!res.contract){
@@ -332,7 +280,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       path: { product_id }
     })
     if(res){
-      console.log(res)
       let tmp: Set<any> = selectList
       // setBasicRow([{
       //   ...object,
@@ -362,6 +309,10 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       //     }
       //   }
       // }).filter(v => v)])
+      setSelectList(new Set())
+      setIsFirst(false)
+      Notiflix.Report.warning("알림","최근 작업지시서가 없어 BOM기준으로 불러왔습니다.","확인")
+
       return [{
         ...object,
         goal: 0,
@@ -392,8 +343,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
       }).filter(v => v)]
       // setSelectList(tmp)
-      setSelectList(new Set())
-      setIsFirst(false)
+
 
     }
   }
@@ -422,7 +372,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       //   ])
       //   break;
       case 2:
-        SaveBasic()
+        console.log("basicRow : ", basicRow, selectList)
+        SaveBasic(basicRow, selectList)
         break;
       case 3:
         if(selectList.size > 0) {
@@ -451,20 +402,15 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     getMenus()
-    Notiflix.Loading.remove()
+    // Notiflix.Loading.remove()
   }, [])
 
   return (
     <div>
       <PageHeader
         title={"작업지시서 등록"}
-        buttons={
-          ['BOM 기준으로 보기', '', '저장하기', '삭제']
-        }
-        buttonsOnclick={
-          // () => {}
-          onClickHeaderButton
-        }
+        buttons={['BOM 기준으로 보기', '', '저장하기', '삭제']}
+        buttonsOnclick={onClickHeaderButton}
       />
       <ExcelTable
         editable
@@ -486,17 +432,14 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             if(basicRow[0].product == undefined) return "first"
             if(!equal) return eValue
           })
-          console.log("eData : ", eData);
+          console.log("eData : ", eData)
           if(eData.length <= 0){
-            console.log("??E??", e)
             setSelectList(new Set());
             setBasicRow([...e])
           }else{
-            console.log("??AAA??", e)
             setSelectList(new Set());
             const resultData = await loadLatestSheet(e[0].product.product_id, e[0]).then((value) => value)
             console.log("resultData : ", resultData)
-
             // const resultData = await loadGraphSheet(e[0].product.product_id, e[0]).then((value) => value)
             setBasicRow([...resultData])
           }
@@ -505,21 +448,22 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }}
         selectList={selectList}
         setSelectList={(select) => {
+          console.log(select)
         //@ts-ignore
           setSelectList(select)
         }}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
-      <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
-      />
+      {/*<ExcelDownloadModal*/}
+      {/*  isOpen={excelOpen}*/}
+      {/*  column={column}*/}
+      {/*  basicRow={basicRow}*/}
+      {/*  filename={`금형기본정보`}*/}
+      {/*  sheetname={`금형기본정보`}*/}
+      {/*  selectList={selectList}*/}
+      {/*  tab={'ROLE_BASE_07'}*/}
+      {/*  setIsOpen={setExcelOpen}*/}
+      {/*/>*/}
     </div>
   );
 }

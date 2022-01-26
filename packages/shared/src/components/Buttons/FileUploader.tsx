@@ -8,9 +8,10 @@ interface Props {
     type:"input" | "disabled" | "folder"
     accept?:string
     onChange?:(value:any) => void
+    value?:string
 }
 
-const FileUploader = ({type, accept, onChange}:Props) => {
+const FileUploader = ({type, accept, onChange, value}:Props) => {
 
     const [fileName, setFileName] = useState<string>();
 
@@ -23,10 +24,11 @@ const FileUploader = ({type, accept, onChange}:Props) => {
                     <div style={{display:"flex", }}>
                         <input type={"file"}
                             onChange={async(e) => {
-                                console.log("e : ", e.target.files[0])
+                                const fileType = e.target.files[0].name.split(".").length -1;
+                                console.log("fileType : ", fileType)
                                 setFileName(e.target.files[0].name)
                                 const result = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true, e.target.files[0].type);
-                                console.log("result : ", result)
+                                onChange({...result, name:e.target.files[0].name, type:e.target.files[0].name.split(".")[fileType]})
 
                             }}
                             accept={accept}
@@ -35,7 +37,6 @@ const FileUploader = ({type, accept, onChange}:Props) => {
                            style={{opacity:0, width:0}}
                         />
                         <FileInfo htmlFor={"file"}>
-                            {/*{fileName ? "abc" : "파일을 선택해주세요."}*/}
                             {fileName ?? <div style={{color:"rgba(0,0,0,0.5)"}}>파일을 선택해주세요</div>}
                         </FileInfo>
                         <FileButton htmlFor={"file"}>
@@ -46,8 +47,8 @@ const FileUploader = ({type, accept, onChange}:Props) => {
             case "disabled" :
                 return (
                     <>
-                        <FileInfo>
-
+                        <FileInfo style={{width:328}}>
+                            {value}
                         </FileInfo>
                     </>
                 )
@@ -85,8 +86,12 @@ const FileInfo = styled.label`
     width: 256px;
     height: 32px;
     padding-left:16px;
-    display:flex;
+    display:block;
     align-items:center;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    white-space:nowrap;
+    line-height:200%;
 `;
 
 const FileInput = styled.div`
