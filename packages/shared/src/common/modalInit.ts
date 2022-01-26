@@ -400,11 +400,12 @@ export const searchModalList: any = {
     {key: 'reason', name: '일시 정지 유형', formatter: LineBorderContainer},
     {key: 'amount', width: 194, name: '시간', editor: TextEditor, formatter: TimeFormatter, textType: 'Modal', searchType: 'pause'},
   ],
-  defectCount: [
-    {key: 'reason', name: '불량 유형', formatter: LineBorderContainer},
-    {key: 'amount', width: 194, name: '불량 개수', editor: TextEditor, formatter: UnitContainer, unitData: 'EA', textType: 'Modal', searchType: 'pause', placeholder: '숫자만 입력'},
-  ],
-
+  defectCount : function({readonly}){
+    return [
+      {key: 'reason', name: '불량 유형', formatter: LineBorderContainer},
+      {key: 'amount', width: 194, name: '불량 개수', editor: readonly !== 'readonly' ? TextEditor : undefined, formatter: UnitContainer, unitData: 'EA', textType: 'Modal', searchType: 'pause', placeholder: '숫자만 입력'},
+    ]
+  },
   //검색 모달 엑셀 헤더
   userSearch: [
     {key: 'name', name: '성명'},
