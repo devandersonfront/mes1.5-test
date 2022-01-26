@@ -5,6 +5,7 @@ import {IExcelHeaderType} from "../../common/@types/type";
 import {MidrangeFormReviewModal} from "../Modal/MidrangeFormReviewModal";
 import Notiflix from "notiflix";
 import {RequestMethod} from "../../common/RequestFunctions";
+import {MidrangeRegisterModal} from "../Modal/MidrangeRegisterModal";
 
 
 interface IProps {
@@ -84,7 +85,7 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
 
     return (
         <>
-            <MidrangeFormReviewModal isOpen={modalOpen} setIsOpen={setModalOpen} formReviewData={execlInfo} modify={modify}/>
+            <MidrangeRegisterModal isOpen={modalOpen} setIsOpen={setModalOpen} formReviewData={execlInfo} modify={modify}/>
             {contentCheck()}
         </>
     );

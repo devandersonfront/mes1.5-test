@@ -67,10 +67,14 @@ const MesMidrangeList = ({option}:IProps) => {
 
             const data = res.info_list.map((v)=>{
                 return {
+                    identification: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
                     contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
                     osId: v.operation_sheet.identification ?? '-',
+                    lot_number:  v.lot_number ?? '-',
                     code: v.operation_sheet.product.code ?? '-',
                     product: v.operation_sheet.product,
+                    machines: v.machines,
+                    user: v.worker,
                     name: v.operation_sheet.product.name ?? '-',
                     type: column[4].selectList[v.operation_sheet.product.type].name,
                     unit: v.operation_sheet.product.unit ?? '-',
@@ -110,11 +114,15 @@ const MesMidrangeList = ({option}:IProps) => {
 
             const data = res.info_list.map((v)=>{
                 return {
+                    identification: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
                     contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
                     osId: v.operation_sheet.identification ?? '-',
+                    lot_number:  v.lot_number ?? '-',
                     code: v.operation_sheet.product.code ?? '-',
                     name: v.operation_sheet.product.name ?? '-',
                     product: v.operation_sheet.product,
+                    machines: v.machines,
+                    user: v.worker,
                     type: column[4].selectList[v.operation_sheet.product.type].name,
                     unit: v.operation_sheet.product.unit ?? '-',
                     process_id: v.operation_sheet.product.process === null ? '-' : v.operation_sheet.product.process.name ,

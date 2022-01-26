@@ -100,7 +100,7 @@ const MidrangeMemberSearchModal = ({onChangeManger,value}: IProps) => {
 
     return (
         <SearchModalWrapper >
-            <div style={{width: 'calc(100% - 40px)', height: 40, display: "flex", justifyContent: "center", alignItems: "center"}} onClick={() => {
+            <div style={{width: 'calc(100% - 40px)', height: 37, display: "flex", justifyContent: "center", alignItems: "center",backgroundColor: "white"}} onClick={() => {
                 setIsOpen(true)
             }}>
                 {value}

@@ -46,9 +46,9 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                     end: []
                 },
                 inspection_time: {
-                    middle: "2022-01-06T19:08:58.02",
-                    beginning: "2022-01-06T19:08:58.02",
-                    end: "2022-01-06T19:08:58.02"
+                    beginning: moment().toDate(),
+                    middle: moment().toDate(),
+                    end: moment().toDate(),
                 },
             }
             //@ts-ignore
@@ -252,7 +252,7 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
             <div style={{display: "flex"}}>
                 <div style={{backgroundColor: "#F4F6FA", width: '112px',borderLeft: '0.5px solid #B3B3B3', borderTop: 0, height: '80px'}}>
                     <Worker>작성자</Worker>
-                    <Worker style={{borderTop: '0.5px solid #B3B3B3'}}>1132</Worker>
+                    <Worker style={{borderTop: '0.5px solid #B3B3B3'}}></Worker>
                 </div>
                 <HeaderTitle style={{width: '168px'}}>
                     점검시간
