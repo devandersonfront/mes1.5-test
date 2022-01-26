@@ -18,11 +18,13 @@ interface IProps {
     formReviewData: any
     isOpen: boolean
     setIsOpen?: (isOpen: boolean) => void
+    modify: boolean
 }
 
 
-const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) => {
+const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen, modify}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>()
+    const [ midrangeUpdate, setMidrangeUpdate] = useState<boolean>(false)
     const [searchList, setSearchList] = useState<Array<any>>()
     const [ midrangeData, setMidrangeData ] = useState({
         inspection_time: {},
@@ -30,11 +32,10 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
         legendary_list: [],
         inspection_info: {},
         sic_id: '',
-        record_id: ''
+        record_id: '',
     })
 
     const recordInspectFrameSave = async () => {
-        // const filter = midrangeData.inspection_result.end
 
         const inspection_info_beginning = midrangeData.inspection_info.beginning.map((v)=>{
             const dataResultEnd = v.data_result.filter((v)=>v)
@@ -71,7 +72,71 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
         const res = await RequestMethod('post', `recordInspectSave`,{
             sic_id: midrangeData.sic_id,
             record_id: midrangeData.record_id,
-            worker: {
+            writer: {
+                additional: [],
+                appointment: "사원",
+                authority: 6,
+                ca_id: {ca_id: 6, name: "TEST", factor: 0, authorities: [], version: 9},
+                company: "4HW59P",
+                email: "123@naver.com",
+                id: "123",
+                name: "이예서",
+                password: "$2a$10$jb36R0D7Nb.mf5aFHeRgiOmzsPWxRu0JHbDBqXSTmvj4.3t5n78Fi",
+                profile: null,
+                serviceAddress: "33aa5f3dc650/192.168.128.38:8080",
+                sync: "member83",
+                telephone: "010-000-0000",
+                token: null,
+                user_id: 83,
+                version: 1
+            },
+            inspection_time: midrangeData.inspection_time,
+            inspection_result: midrangeData.inspection_result,
+            legendary_list: midrangeData.legendary_list,
+            inspection_info: midrangeData.inspection_info
+        })
+    }
+
+
+    const recordInspectFrameUpdate = async () => {
+
+        const inspection_info_beginning = midrangeData.inspection_info.beginning.map((v)=>{
+            const dataResultEnd = v.data_result.filter((v)=>v)
+            return {...v, data_result: dataResultEnd }
+        })
+
+        const inspection_info_middle = midrangeData.inspection_info.middle.map((v)=>{
+            const dataResultEnd = v.data_result.filter((v)=>v)
+            return {...v, data_result: dataResultEnd }
+        })
+
+        const inspection_info_end = midrangeData.inspection_info.end.map((v)=>{
+            const dataResultEnd = v.data_result.filter((v)=>v)
+            return {...v, data_result: dataResultEnd }
+        })
+
+        const inspection_result_beginning = midrangeData.inspection_result.beginning.filter((v)=>v)
+        const inspection_result_middle = midrangeData.inspection_result.middle.filter((v)=>v)
+        const inspection_result_end = midrangeData.inspection_result.end.filter((v)=>v)
+
+
+        midrangeData.inspection_info = {
+            beginning: inspection_info_beginning,
+            middle: inspection_info_middle,
+            end: inspection_info_end
+        }
+        midrangeData.inspection_result = {
+            beginning: inspection_result_beginning,
+            middle: inspection_result_middle,
+            end: inspection_result_end
+        }
+
+
+        const res = await RequestMethod('post', `recordInspectSave`,{
+            version: midrangeData.version,
+            sic_id: midrangeData.sic_id,
+            record_id: midrangeData.record_id,
+            writer: {
                 user_id: 60,
                 company: "4HW59P",
                 name:"김연수",
@@ -133,9 +198,11 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
                             margin: 0,
                         }}>초ㆍ중ㆍ종 검사 등록</p>
                         <div style={{display: 'flex'}}>
-                            {/*<Button>*/}
-                            {/*  <p>{'수정 하기'}</p>*/}
-                            {/*</Button>*/}
+                            {modify &&
+                                <Button onClick={()=>setMidrangeUpdate(true)}>
+                                  <p>수정 하기</p>
+                                </Button>
+                            }
                             <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                                 setIsOpen(false)
                             }}>
@@ -169,24 +236,57 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
                         <MidrangeExcelFrameTable formReviewData={formReviewData}  inspectFrameData={(e)=>setMidrangeData(e)}/>
                     </div>
                 </div>
-                <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
-                    <div
-                        onClick={() => {
-                            setIsOpen(false)
-                        }}
-                        style={{width: "50%", height: 40, color: '#717C90', backgroundColor: '#DFDFDF', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                    >
-                        <p>취소</p>
+                {modify ?
+                    midrangeUpdate ?
+                        <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
+                            <div
+                                onClick={() => {
+                                    setIsOpen(false)
+                                }}
+                                style={{width: "50%", height: 40, color: '#717C90', backgroundColor: '#DFDFDF', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                            >
+                                <p>취소</p>
+                            </div>
+                            <div
+                                onClick={() => {
+                                    recordInspectFrameUpdate()
+                                }}
+                                style={{width: "50%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                            >
+                                <p>등록하기</p>
+                            </div>
+                        </div>
+                        :
+                        <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
+                            <div
+                                onClick={() => {
+                                    setIsOpen(false)
+                                }}
+                                style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                            >
+                                <p>확인</p>
+                            </div>
+                        </div>
+                    :
+                    <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
+                        <div
+                            onClick={() => {
+                                setIsOpen(false)
+                            }}
+                            style={{width: "50%", height: 40, color: '#717C90', backgroundColor: '#DFDFDF', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                        >
+                            <p>취소</p>
+                        </div>
+                        <div
+                            onClick={() => {
+                                    recordInspectFrameSave()
+                            }}
+                            style={{width: "50%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                        >
+                            <p>등록하기</p>
+                        </div>
                     </div>
-                    <div
-                        onClick={() => {
-                            recordInspectFrameSave()
-                        }}
-                        style={{width: "50%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                    >
-                        <p>등록하기</p>
-                    </div>
-                </div>
+                }
             </Modal>
         </SearchModalWrapper>
     )

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {MidrangeExcelDropdown} from "../Dropdown/MidrangeExcelDropdown";
 import moment from "moment";
 import {InspectionFinalDataResult, InspectionInfo} from "../../@types/type";
+import {MidrangeDatetimePickerBox} from "../CalendarBox/MidrangeDatetimePickerBox";
 
 interface IProps {
     formReviewData: any
@@ -28,24 +29,48 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
             const legendary_list = formReviewData.legendary.map((v) => {
                 return v ?? ''
             })
-            const reviewData = {
-                sic_id: formReviewData.sic_id,
-                record_id: formReviewData.record_id,
-                legendary_list: legendary_list[0],
-                inspection_info: formReviewData.inspection_info,
-                inspection_result: {
-                    middle: [],
-                    beginning: [],
-                    end: []
-                },
-                inspection_time: {
-                    beginning: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
-                    middle: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
-                    end: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+
+            if(formReviewData.version !== undefined) {
+                const reviewData = {
+                    version: formReviewData.version,
+                    sic_id: formReviewData.sic_id,
+                    record_id: formReviewData.record_id,
+                    legendary_list: legendary_list,
+                    inspection_info: formReviewData.inspection_info,
+                    inspection_result: {
+                        middle: [],
+                        beginning: [],
+                        end: []
+                    },
+                    inspection_time: {
+                        beginning: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+                        middle: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+                        end: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+                    }
                 }
+                //@ts-ignore
+                setTestData(reviewData)
+            }else {
+                const reviewData = {
+                    sic_id: formReviewData.sic_id,
+                    record_id: formReviewData.record_id,
+                    legendary_list: legendary_list,
+                    inspection_info: formReviewData.inspection_info,
+                    inspection_result: {
+                        middle: [],
+                        beginning: [],
+                        end: []
+                    },
+                    inspection_time: {
+                        beginning: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+                        middle: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+                        end: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+                    }
+                }
+                //@ts-ignore
+                setTestData(reviewData)
             }
-            //@ts-ignore
-            setTestData(reviewData)
+
         }
     },[formReviewData])
 
@@ -276,7 +301,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            {moment(testData.inspection_time.beginning).format("YYYY.MM.DD HH:mm")}
+                            <MidrangeDatetimePickerBox value={testData.inspection_time.beginning} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, beginning: date.format("YYYY.MM.DD[T]HH:mm:ss") }})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.beginning)}
@@ -301,7 +326,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            {moment(testData.inspection_time.middle).format("YYYY.MM.DD HH:mm")}
+                            <MidrangeDatetimePickerBox value={testData.inspection_time.middle} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, middle: date.format("YYYY.MM.DD[T]HH:mm:ss") }})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.middle)}
@@ -326,7 +351,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            {moment(testData.inspection_time.end).format("YYYY.MM.DD HH:mm")}
+                            <MidrangeDatetimePickerBox value={testData.inspection_time.end} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, end: date.format("YYYY.MM.DD[T]HH:mm:ss") }})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.end)}
