@@ -39,11 +39,13 @@ const MesProductChangeRegister = () => {
 
 
     const productChangeSave = async () => {
+        const filesFilter = files.filter((v)=> v.name !== '')
+
         const res = await RequestMethod('post', `productChangeSave`,{
             product: basicRow[0].product,
             title: changeInfo.title,
             content: changeInfo.content,
-            files: [],
+            files: filesFilter,
             created: moment(changeInfo.registered).format('YYYY-MM-DD'),
         })
 

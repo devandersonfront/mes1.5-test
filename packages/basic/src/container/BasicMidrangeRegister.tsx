@@ -57,7 +57,7 @@ const BasicMidrangeRegister = () => {
             category_info: itemBasicRow
         }
         let res: any
-        res = await RequestMethod('post', `inspecCategorySave`,[midrangeData])
+        res = await RequestMethod('post', `inspectCategorySave`,[midrangeData])
 
         if(res){
             Notiflix.Report.success('저장되었습니다.','','확인');

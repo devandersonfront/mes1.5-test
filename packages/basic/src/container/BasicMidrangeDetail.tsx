@@ -35,11 +35,11 @@ const BasicMidrangeDetail = () => {
     const [ItemSelectList, setItemSelectList] = useState<Set<number>>(new Set())
     const router = useRouter()
 
-    const LoadMidrange = async () => {
+    const LoadMidrange = async (product_id: number) => {
         Notiflix.Loading.circle()
         const res = await RequestMethod('get', `inspectCategoryLoad`,{
             path: {
-                product_id: 28
+                product_id: product_id
             }
         })
 
@@ -66,7 +66,7 @@ const BasicMidrangeDetail = () => {
                 setIsOpen(!isOpen)
                 return
             case 2 :
-                router.push(({pathname: '/mes/basic/productV1u/midrange/form/register',
+                router.push(({pathname: '/mes/basic/productV1u/midrange/form/modify',
                     query: { customer_id: router.query.customer_id, cm_id: router.query.cm_id, code: router.query.code, name: router.query.name, product_id: router.query.product_id, type: router.query.type} }))
                 return
         }
@@ -83,11 +83,9 @@ const BasicMidrangeDetail = () => {
         setProductId(Number(router.query.product_id))
     },[router.query])
 
-    //product_id
-    // console.log(28)
+
     React.useEffect(()=>{
-        console.log(router)
-        LoadMidrange()
+        LoadMidrange(Number(router.query.product_id))
     },[])
 
     return (

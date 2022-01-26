@@ -4,7 +4,7 @@ import {
     columnlist,
     ExcelTable,
     Header as PageHeader,
-    IExcelHeaderType, RequestMethod, TitleCalendarBox,
+    IExcelHeaderType, MAX_VALUE, RequestMethod, TitleCalendarBox,
     TitleFileUpload,
     TitleInput,
     TitleTextArea
@@ -32,39 +32,45 @@ const MesProductChangeModify = () => {
         ]
     )
 
-    React.useEffect(()=>{
-        productChangeLoad()
-    },[])
-
-
-    const productChangeLoad = async () => {
+    const productChangeLoad = async (pcr_id: string) => {
         const res = await RequestMethod('get', `productChangeLoad`,{
             path: {
-                pcr_id: '61de9640d4c95c0e8bafef0d'
+                pcr_id: pcr_id
             },
         })
 
         if(res){
 
-            const basicTmp = {
+            const basicTmp = [{
                 customer_id: res.product.customerId  === null ? '-' : res.product.customerId,
-                cm_id: res.product.model === null ? '-' : res.product.model,
+                cm_id: res.product.model === null ? '-' : res.product.model.model,
                 code: res.product.code,
                 name: res.product.name === null ? '-' : res.product.name,
-            }
-            setBasicRow([basicTmp])
+            }]
+            setBasicRow(basicTmp)
             setChangeInfo({title: res.title, content: res.content, registered: moment(res.created).format("YYYY.MM.DD"), product: res.product, writer: res.writer})
-            setFiles(res.files)
+            if(res.files.length !== 0) {
+                setFiles(res.files)
+            }
             setVersion(res.version)
         }
     }
 
+
+    React.useEffect(()=>{
+        if(router.query.pcr_id !== undefined) {
+            productChangeLoad(String(router.query.pcr_id))
+        }
+    },[router.query])
+
     const productChangeSave = async () => {
+        const filesFilter = files.filter((v)=> v.name !== '')
+
         const res = await RequestMethod('post', `productChangeSave`,{
-            pcr_id: '61de9640d4c95c0e8bafef0d',
+            pcr_id: router.query.pcr_id,
             title: changeInfo.title,
             content: changeInfo.content,
-            files: files,
+            files: filesFilter,
             created: moment(changeInfo.registered).format("YYYY-MM-DD"),
             version: version,
             product: changeInfo.product,
@@ -75,6 +81,19 @@ const MesProductChangeModify = () => {
             router.push('/mes/quality/product/change/list')
         }
     }
+
+    const productChangeDelete = async () => {
+        const res = await RequestMethod('delete', `productChangeDelete`,{
+            path: {
+                pcr_id: router.query.pcr_id,
+            }
+        })
+
+        if(res){
+            router.push('/mes/quality/product/change/list')
+        }
+    }
+
 
     const fileChange = (fileInfo: ChangeProductFileInfo, index: number) => {
         const temp = files
@@ -91,7 +110,7 @@ const MesProductChangeModify = () => {
                 productChangeSave()
                 return
             case 2 :
-
+                productChangeDelete()
                 return
         }
     }
