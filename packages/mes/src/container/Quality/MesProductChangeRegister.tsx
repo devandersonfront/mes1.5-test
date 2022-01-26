@@ -7,14 +7,16 @@ import {
     ChangeProductFileInfo,
     TitleFileUpload,
     TitleInput,
-    TitleTextArea
+    TitleTextArea, RequestMethod
 } from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
+import {useRouter} from "next/router";
 
 const MesProductChangeRegister = () => {
 
+    const router = useRouter()
     const [basicRow, setBasicRow] = useState<Array<any>>([{
         order_num: '-', operation_num: '20210401-013'
     }])
@@ -22,20 +24,43 @@ const MesProductChangeRegister = () => {
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [ changeInfo, setChangeInfo] = useState({title: '', content: '', registered: moment().format('YYYY.MM.DD')})
     const [ files, setFiles ] = useState<ChangeProductFileInfo[]>([
-            {name: '', uuid: '', sequence: 1},
-            {name: '', uuid: '', sequence: 2},
-            {name: '', uuid: '', sequence: 3},
+            {name: '', UUID: '', sequence: 1},
+            {name: '', UUID: '', sequence: 2},
+            {name: '', UUID: '', sequence: 3},
         ]
     )
-    const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-        page: 1,
-        total: 1
-    })
+
 
     const fileChange = (fileInfo: ChangeProductFileInfo, index: number) => {
         const temp = files
         temp[index] = fileInfo
         setFiles([...temp])
+    }
+
+
+    const productChangeSave = async () => {
+        const res = await RequestMethod('post', `productChangeSave`,{
+            product: basicRow[0].product,
+            title: changeInfo.title,
+            content: changeInfo.content,
+            files: [],
+            created: moment(changeInfo.registered).format('YYYY-MM-DD'),
+        })
+
+        if(res){
+            router.push('/mes/quality/product/change/list')
+        }
+    }
+
+    const buttonEvents = async(index:number) => {
+        switch (index) {
+            case 0 :
+
+                return
+            case 1 :
+                productChangeSave()
+                return
+        }
     }
 
     return (
@@ -45,6 +70,7 @@ const MesProductChangeRegister = () => {
                 buttons={
                     ['', '저장하기']
                 }
+                buttonsOnclick={buttonEvents}
             />
             <ExcelTable
                 editable
@@ -59,21 +85,13 @@ const MesProductChangeRegister = () => {
                     e.map(v => {
                         if(v.isChange) tmp.add(v.id)
                     })
-                    console.log(e)
-                    setSelectList(tmp)
+
                     setBasicRow(e.map(v => ({...v, name: v.product_name})))
                 }}
                 selectList={selectList}
                 //@ts-ignore
                 setSelectList={setSelectList}
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-                scrollEnd={(value) => {
-                    if(value){
-                        if(pageInfo.total > pageInfo.page){
-                            setPageInfo({...pageInfo, page:pageInfo.page+1})
-                        }
-                    }
-                }}
             />
             <TitleInput title={'제목'} value={changeInfo.title} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, title: e.target.value})}/>
             <TitleTextArea title={'설명'} value={changeInfo.content} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, content: e.target.value})}/>

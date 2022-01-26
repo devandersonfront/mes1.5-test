@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 import moment from "moment";
 import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
 import ButtonGroup from "../../../../main/component/ButtonGroup";
@@ -14,23 +14,15 @@ interface SelectParameter {
 
 const MesLeadtimeOrder = () => {
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
-    const [processBasicRow, setProcessBasicRow] = useState<any[]>([{
-        id: '', customer_id: ''
-    }]);
+    const [processBasicRow, setProcessBasicRow] = useState<any>({
+        id: ''
+    });
     const changeHeaderStatus = (value:number) => {
         setHeaderStatus(value);
     }
 
     const [processColumn, setProcessColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeOrder`] );
-    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeOrderContent`].map(v => {
-        if(v.key === 'amount'){
-            return {
-                ...v,
-                result: changeHeaderStatus
-            }
-        }
-        return v
-    }));
+    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiLeadtimeOrderContent`]);
     const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set());
     const [headerStatus, setHeaderStatus] = useState<number | string>("");
 
@@ -61,6 +53,62 @@ const MesLeadtimeOrder = () => {
     }
 
 
+    const leadtimeOrder = async (productId: number) => {
+        const res = await RequestMethod('get', `deliveryLoadTimeList`,{
+            params: {
+                productIds: productId,
+                sorts : 'date',
+                from: selectDate.from,
+                to: selectDate.to
+            },
+        })
+
+        if(res){
+            const filterResponse = res.map((v)=>{
+
+                return {
+                    identification: v.identification,
+                    date: v.date,
+                    deadline: v.deadline,
+                    amount: v.amount,
+                    shipment_amount :v.shipment_amount,
+                    shipment_date :v.shipment_date,
+                    leadTime : (v.lead_time/86400).toFixed(1),
+                }
+            })
+            setPauseBasicRow(filterResponse)
+        }
+    }
+
+    React.useEffect(()=>{
+
+        if(processBasicRow.id){
+            leadtimeOrder(processBasicRow.id)
+        }
+
+    },[processBasicRow.id,selectDate])
+
+    React.useEffect(()=>{
+
+        if(pauseBasicRow.length){
+            
+            const rowLenth = pauseBasicRow.length;
+            let sum = 0;
+            if(rowLenth){
+                pauseBasicRow.map((row)=> {
+                    sum += row.leadTime
+                })
+                setProcessBasicRow({...processBasicRow , leadTime_average : `${Math.round(sum/rowLenth)}`})
+            }
+        }else{
+
+            setProcessBasicRow({...processBasicRow , leadTime_average : '-'})
+        }
+
+
+    },[pauseBasicRow])
+
+
     return (
         <div>
             <PageHeader title={"수주/납품 리드타임(D)"} />
@@ -69,18 +117,15 @@ const MesLeadtimeOrder = () => {
                 headerList={[
                     ...processColumn
                 ]}
-                row={processBasicRow}
-                setRow={(e) => {
-                    const tmpBasicRow = [...e];
-                    tmpBasicRow[0] = {
-                        ...tmpBasicRow[0],
-                        // customer: tmpBasicRow[0].customer.name,
-                        // customerData: tmpBasicRow[0].customer,
-                        // model: tmpBasicRow[0].model.model,
-                        // modelData: tmpBasicRow[0].model,
-                        product_id: tmpBasicRow[0].product.product_id
-                    }
-                    setProcessBasicRow(tmpBasicRow)
+                row={[processBasicRow]}
+                setRow={(row) => {
+                    setProcessBasicRow({...processBasicRow, 
+                        id : row[0].product.product_id,
+                        customer_id : row[0].customer_id,
+                        cm_id : row[0].cm_id,
+                        code : row[0].code,
+                        name: row[0].product_name,
+                    })
                 }}
                 selectList={selectList}
                 //@ts-ignore
@@ -89,10 +134,9 @@ const MesLeadtimeOrder = () => {
             />
             <div style={{display:"flex", justifyContent:"space-between", margin:"15px 0"}}>
                 {
-                    processBasicRow[0].product_id
+                    processBasicRow?.id
                         ? <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            공정별 불량 통계
-                        </span>
+                            수주 정보별 리드타임                        </span>
                         : <span style={{color:"#ffffff58", fontSize:22, fontWeight:"bold"}}>
                             제품을 선택해주세요
                         </span>

@@ -43,15 +43,15 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return result.data
         })
         .catch((error) => {
-          if(error.response.status === 406 || error.response.status === 403) {
+          if(error.response?.status === 406 || error.response?.status === 403) {
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
             return false
-          }else if (error.response.status === 401){
+          }else if (error.response?.status === 401){
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
             return false
-          }else if(error.response.status === 500){
+          }else if(error.response?.status === 500){
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
             return false
@@ -162,7 +162,7 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
       if(data.params){
         Object.keys(data.params).map((v, i) => {
           if(i === 0) {
-            tmpUrl += `?${v}=${data.params[v]}`
+          tmpUrl += `?${v}=${data.params[v]}`
           }else{
             tmpUrl += `&${v}=${data.params[v]}`
           }
@@ -228,7 +228,9 @@ const ApiList = {
   toolSave: `/cnc/api/v1/tool/save`,
   inspecCategorySave: '/cnc/api/v1/inspec/category/save',
   lotToolSave: `/cnc/api/v1/lot-tool/save`,
+  productChangeSave: `/cnc/api/v1/product-changes/save`,
   documentSave: `/cnc/api/v1/document/save`,
+
   //modify
   operationModify: `/api/v1/operation/modify`,
 
@@ -239,6 +241,7 @@ const ApiList = {
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
   documentLoad: `/cnc/api/v1/document/load`,
+  productChangeLoad: `/cnc/api/v1/product-changes/load`,
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -280,7 +283,7 @@ const ApiList = {
   modelList: `/api/v1/model/list`,
   processList: `/api/v1/process/list`,
   machineList: `/api/v1/machine/list`,
-  // productList: `/api/v1/product/list`,
+  // productList: `/api/v1/product/list`
   productList: `/cnc/api/v1/product/list`,
   rawmaterialList: `/api/v1/rawmaterial/list`,
   moldList: `/api/v1/mold/list`,
@@ -293,6 +296,7 @@ const ApiList = {
   stockSummaryList: '/api/v1/stock/summary/list',
   operactionList: `/api/v1/operation/list`,
   defectList: `/api/v1/quality/statistics/defect`,
+  productChangeList: `/cnc/api/v1/product-changes/list`,
   recordList: `/api/v1/record/list`,
   cncRecordList: `/cnc/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
@@ -315,6 +319,13 @@ const ApiList = {
   toolList: `/cnc/api/v1/tool/list`,
   lotToolList: `/cnc/api/v1/lot-tool/list`,
   documentList:`/cnc/api/v1/document/list`,
+  productLeadTimeList: `/cnc/api/v1/kpi/product/lead-time/list`,
+  costManDayCostList: `/cnc/api/v1/kpi/cost/man-day-cost/list`,
+  qualityDefectRateList: `/cnc/api/v1/kpi/quality/defect-rate/list`,
+  deliveryLoadTimeList: `/cnc/api/v1/kpi/delivery/lead-time/list`,
+  electicPowerList : `/api/v2/statistics/press/electric-power`,
+  productUphList: `/cnc/api/v1/kpi/product/uph/list`,
+  productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -379,4 +390,6 @@ const ApiList = {
   documentMove: `/cnc/api/v1/document/move`,
 
   toolAverage: `/cnc/api/v1/tool/average`,
+  //전력사용량 list
+  statisticsPressElectricPower: `/api/v2/statistics/press/electric-power`,
 }
