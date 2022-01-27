@@ -15,15 +15,18 @@ interface IProps {
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
 
   const cleanValue = (type?:string) => {
-    // switch(type){
-    //   case "spare":
+    console.log("type :" ,type)
+    switch(type){
+      case "spare":
         // 22/01/24 수정
-        // return row.setting == 1 ? "스페어" : "기본"
-      // default:
-        // return row[column.key] ? row[column.key] : "무"
-          console.log(row[column.key])
+        return row.setting == 1 ? "스페어" : "기본"
+      case "setting" :
+        console.log(row[column.key])
         return row[column.key] == 1 || row[column.key] == "여" ? "여" : "부"
-    // }
+      default:
+        // return row[column.key] ? row[column.key] : "무"
+        return ""
+    }
   }
 
   return (

@@ -4,6 +4,7 @@ import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";
 import {add_summary_info} from "../../reducer/infoModal";
 import {RequestMethod, RootState} from '../../index'
+import moment from "moment";
 
 interface IProps {
   row: any
@@ -19,21 +20,32 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
 
   const loadMaterialLot = async (type) => {
     let res
-
+    console.log("!!!!!!!type : ", type)
     switch(type){
       case 0:
         res = await RequestMethod('get', `lotRmList`, {
+          path:{
+            page:1,
+            renderItem:15
+          },
           params: {
-            rm_id: row.rm_id,
-            nz: true
+            from: "2000-01-01",
+            to:moment().format("YYYY-MM-DD"),
+            option:0,
+            keyword:"SPFC590-0120-312",
+            // rm_id: row.rm_id,
+            nz: false
           }
         })
         break;
       case 1:
         res = await RequestMethod('get', `lotSmList`, {
+          path:{
+            page:1,
+          },
           params: {
             sm_id: row.sm_id,
-            nz: true
+            // nz: true
           }
         })
         break;

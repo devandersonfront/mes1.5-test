@@ -80,7 +80,7 @@ const MES_MENUS: IMenuType[] = [
     subMenu: [
       {title: '작업지시서 등록', url: '/mes/operationV1u/register'},
       {title: '작업지시서 리스트', url: '/mes/operationV1u/list'},
-      {title: '', url: '/mes/recordV2/list'},
+      {title: '작업일보 리스트', url: '/mes/recordV2/list'},
       {title: '작업 완료 리스트', url: '/mes/finishV2/list'},
     ]
   },

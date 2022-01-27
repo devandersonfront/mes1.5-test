@@ -67,7 +67,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    console.log("스크롤 무브")
     if(isOpen) {
       setSearchList([{
         sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,

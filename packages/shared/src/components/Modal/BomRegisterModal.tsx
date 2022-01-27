@@ -62,7 +62,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     if(isOpen) {
       if(row.bom_root_id){
         SearchBasic().then(() => {
-          Notiflix.Loading.remove()
+          // Notiflix.Loading.remove()
         })
       } else {
         setIsOpen(false)

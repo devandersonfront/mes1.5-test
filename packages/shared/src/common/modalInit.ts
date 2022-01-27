@@ -366,7 +366,7 @@ export const searchModalList: any = {
     {key: 'disturbance', name: '소요량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'lot', name: '투입 LOT', width: 160, formatter: AddTabButton, placeholder: '-', type: 'readonly' },
+    {key: 'lot', name: '투입 LOT', width: 160, formatter: AddTabButton, placeholder: '-', type: '' },
 
   ],
   InputListReadonly: [
