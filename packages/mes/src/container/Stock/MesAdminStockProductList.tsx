@@ -205,7 +205,7 @@ const MesAdminStockProductList = () => {
       case "date":
 
         if(res.summaries.length > 0){
-          tmpColumn = res.summaries[0].statistics.logs.map((col)=>{
+          tmpColumn = res.summaries[0].statistics?.logs?.map((col)=>{
             result.push(
               {key:col.date, name:col.date, editor: TextEditor, formatter: UnitContainer, unitData: 'EA', width:100},
             );
@@ -250,9 +250,9 @@ const MesAdminStockProductList = () => {
 
     tmpRow.map((row: any, index: number) => {
       let random = Math.random()*1000;
-      let tmp_row_produced = {total: row.statistics.carryforward};
+      let tmp_row_produced = {total: row.statistics?.carryforward};
       let tmp_row_shipped = {total: 0};
-      row.statistics.logs.map((log)=>{
+      row.statistics?.logs.map((log)=>{
         tmp_row_produced[log.date] = log.produced;
         tmp_row_shipped[log.date] = log.shipped;
 
@@ -260,7 +260,7 @@ const MesAdminStockProductList = () => {
         tmp_row_shipped["total"] += log.shipped
       })
 
-      tmp_row_produced["carryforward"] = row.statistics.carryforward;
+      tmp_row_produced["carryforward"] = row.statistics?.carryforward;
 
       tmpRow_date.push({
         title:"생산",
@@ -456,7 +456,7 @@ const MesAdminStockProductList = () => {
                       selectList={selectList}
                       setSelectList={setSelectList}
                       row={rowData} setRow={setRowData} width={excelTableWidths.model} rowHeight={80} overflow={"hidden"}
-                      resizable
+                      // resizable
           />
         </ScrollSyncPane>
         <ScrollSyncPane>

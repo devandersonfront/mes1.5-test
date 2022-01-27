@@ -222,7 +222,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
       <PageHeader title={"불량 통계 (자주검사 관리)"} />
       <ExcelTable
         editable
-        resizable
+        // resizable
         headerList={[
           SelectColumn,
           ...processColumn

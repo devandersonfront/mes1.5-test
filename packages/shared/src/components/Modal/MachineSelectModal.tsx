@@ -21,8 +21,6 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
     {title: '지시 고유 번호', infoWidth: 144, key: 'identification'},
@@ -47,9 +45,6 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 
 const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
@@ -90,7 +85,6 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
 
     if(isOpen) {
       setSearchList([...tmpMachines.map((v, index) => {
-        console.log(v)
         return {
           ...v.machine,
           ...v.machine.machine,
@@ -100,54 +94,6 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
       })])
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
-
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
-    }
-
-    return tmpData
-  }
-
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
-    }
-  }
 
   const ModalContents = () => {
     return <>
@@ -337,21 +283,6 @@ const SearchModalWrapper = styled.div`
   display: flex;
   width: 100%;
 `
-
-const Button = styled.button`
-    width:112px;
-    height:32px;
-    color:white;
-    font-size:15px;
-    border:none;
-    border-radius:6px;
-    background:#717C90;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-    
-`;
 
 const HeaderTable = styled.div`
   width: 1744px;

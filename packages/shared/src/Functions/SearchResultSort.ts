@@ -103,7 +103,7 @@ export const SearchResultSort = (infoList, type: string) => {
           ...v,
           seq:index,
           customerData:v.customer,
-          customer:v.customer.name,
+          customer:v.customer?.name,
         }
       })
     }

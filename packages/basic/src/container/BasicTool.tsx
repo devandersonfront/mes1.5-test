@@ -31,7 +31,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
-    const cleanUpData = (info_list:any) => {
+    const cleanUpData = (info_list:any, toolAverageArray?:number[][]) => {
         let tmpColumn = columnlist["toolRegister"];
         let tmpRow:Array<any> = []
         tmpColumn = tmpColumn.map((column: any) => {
@@ -121,8 +121,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         //         pk = v
         //     }
         // })
-        let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-            console.log("row :" , row)
+        let tmpBasicRow = tmpRow.map((row: any) => {
             let appendAdditional: any = {}
 
             row.customer_id = row.customer?.name;
@@ -139,13 +138,15 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                 ...row,
                 ...appendAdditional,
                 id: `tool_${random_id}`,
+                products:[...row.products.map((product,index)=>{
+                    return ({...product, average:Number(toolAverageArray[index])})
+                })],
             }
         })
         setBasicRow([...tmpBasicRow])
     }
 
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-        console.log("column :" , column)
         let tmpColumn = column.map(async (v: any) => {
             if(v.selectList && v.selectList.length === 0){
                 let tmpKey = v.key
@@ -208,11 +209,25 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         })
 
         if(res){
-            const resultData = cleanUpData(res);
+            const productIdArrayList = [];
+            res.info_list.map((row)=>{
+                const productList = [];
+                row?.products?.map((product) => {
+                    // productList.push(product.product_id)
+                    RequestMethod("get", "toolAverage", {
+                        path:{
+                            product_id: product.product_id,
+                            tool_id: row.tool_id
+                        }
+                    })
+                        .then((res) => {
+                            productList.push(res)
+                        })
+                })
+                productIdArrayList.push(productList);
+            })
+            cleanUpData(res, productIdArrayList);
             setPageInfo({...pageInfo, total:res.totalPages});
-            // setPageInfo({...pageInfo, total:dummyList.totalPages});
-        // if(dummyList){
-        //     setBasicRow(resultData);
         }
     }
 

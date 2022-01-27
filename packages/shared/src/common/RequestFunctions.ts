@@ -156,6 +156,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         })
         .catch((error) => {
           Notiflix.Loading.remove(300)
+          console.log(error)
           if(error.response.status === 400) {
             Notiflix.Report.failure('삭제할 수 없습니다.', '입력값을 확인해주세요', '확인')
           }
@@ -274,6 +275,7 @@ const ApiList = {
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/product/inspect/category/load`,
   recordInspectFrame: `/cnc/api/v1/record/inspect/frame`,
+  documentLoad: `/cnc/api/v1/document/load`,
   productChangeLoad: `/cnc/api/v1/product-changes/load`,
 
   //recent
@@ -306,6 +308,7 @@ const ApiList = {
   recodeDelete: `/api/v1/record/delete`,
   toolDelete: `/cnc/api/v1/tool/delete`,
   lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
+  documentDelete: `/cnc/api/v1/document/delete`,
   productChangeDelete: `/cnc/api/v1/product-changes/remove`,
 
   //list
@@ -350,6 +353,7 @@ const ApiList = {
   stockAdminList: '/api/v1/stock/admin/summary',
   toolList: `/cnc/api/v1/tool/list`,
   lotToolList: `/cnc/api/v1/lot-tool/list`,
+  documentList:`/cnc/api/v1/document/list`,
   productLeadTimeList: `/cnc/api/v1/kpi/product/lead-time/list`,
   costManDayCostList: `/cnc/api/v1/kpi/cost/man-day-cost/list`,
   qualityDefectRateList: `/cnc/api/v1/kpi/quality/defect-rate/list`,
@@ -401,6 +405,7 @@ const ApiList = {
   authorityAll: `/api/v1/auth/all`,
   recordAll: `/api/v1/record/all`,
   shipmentAll:`/api/v1/shipment/all`,
+  documentAll: `/cnc/api/v1/document/all`,
 
   //fetch
   summaryFetch: `/api/v1/stock/summary/fetch`,
@@ -416,6 +421,11 @@ const ApiList = {
 
   anonymousLoad: `/anonymous/load`,
 
+  documentDownLoad: `/cnc/api/v1/document/download`,
+  documentLogs: `/cnc/api/v1/document/logs`,
+  documentMove: `/cnc/api/v1/document/move`,
+
+  toolAverage: `/cnc/api/v1/tool/average`,
   //전력사용량 list
   statisticsPressElectricPower: `/api/v2/statistics/press/electric-power`,
 }
