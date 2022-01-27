@@ -80,13 +80,11 @@ const BasicMidrangeDetail = () => {
             type: router.query.type,
         }
         setBasicRow([data])
-        setProductId(Number(router.query.product_id))
+        if(router.query.product_id){
+            LoadMidrange(Number(router.query.product_id))
+        }
     },[router.query])
 
-
-    React.useEffect(()=>{
-        LoadMidrange(Number(router.query.product_id))
-    },[])
 
     return (
         <div>

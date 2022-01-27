@@ -9,6 +9,7 @@ import {MidrangeExcelTable} from "../Excel/MidrangeExcelTable";
 import {POINT_COLOR} from "../../common/configset";
 import styled from "styled-components";
 import {MidrangeExcelFrameTable} from "../Excel/MidrangeExcelFrameTable";
+import Notiflix from "notiflix";
 
 
 interface IProps {
@@ -34,42 +35,12 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
 
     const recordInspectFrameSave = async () => {
 
-        const inspection_info_beginning = midrangeData.inspection_info.beginning.map((v)=>{
-            const dataResultEnd = v.data_result.filter((v)=>v)
-            return {...v, data_result: dataResultEnd }
-        })
 
-        const inspection_info_middle = midrangeData.inspection_info.middle.map((v)=>{
-            const dataResultEnd = v.data_result.filter((v)=>v)
-            return {...v, data_result: dataResultEnd }
-        })
-
-        const inspection_info_end = midrangeData.inspection_info.end.map((v)=>{
-            const dataResultEnd = v.data_result.filter((v)=>v)
-            return {...v, data_result: dataResultEnd }
-        })
-
-        const inspection_result_beginning = midrangeData.inspection_result.beginning.filter((v)=>v)
-        const inspection_result_middle = midrangeData.inspection_result.middle.filter((v)=>v)
-        const inspection_result_end = midrangeData.inspection_result.end.filter((v)=>v)
-
-
-        midrangeData.inspection_info = {
-            beginning: inspection_info_beginning,
-            middle: inspection_info_middle,
-            end: inspection_info_end
-        }
-        midrangeData.inspection_result = {
-            beginning: inspection_result_beginning,
-            middle: inspection_result_middle,
-            end: inspection_result_end
-        }
         midrangeData.inspection_time = {
             beginning: moment(midrangeData.inspection_time.beginning).format('YYYY-MM-DD[T]HH:mm:ss'),
             middle: moment(midrangeData.inspection_time.middle).format('YYYY-MM-DD[T]HH:mm:ss'),
             end: moment(midrangeData.inspection_time.end).format('YYYY-MM-DD[T]HH:mm:ss')
         }
-
 
         const res = await RequestMethod('post', `recordInspectSave`,{
             sic_id: midrangeData.sic_id,
@@ -80,42 +51,16 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
             legendary_list: midrangeData.legendary_list,
             inspection_info: midrangeData.inspection_info
         })
+
+        if(res){
+            Notiflix.Loading.circle()
+            setIsOpen(false)
+            window.location.reload()
+        }
     }
 
 
     const recordInspectFrameUpdate = async () => {
-
-        const inspection_info_beginning = midrangeData.inspection_info.beginning.map((v)=>{
-            const dataResultEnd = v.data_result.filter((v)=>v)
-            return {...v, data_result: dataResultEnd }
-        })
-
-        const inspection_info_middle = midrangeData.inspection_info.middle.map((v)=>{
-            const dataResultEnd = v.data_result.filter((v)=>v)
-            return {...v, data_result: dataResultEnd }
-        })
-
-        const inspection_info_end = midrangeData.inspection_info.end.map((v)=>{
-            const dataResultEnd = v.data_result.filter((v)=>v)
-            return {...v, data_result: dataResultEnd }
-        })
-
-        const inspection_result_beginning = midrangeData.inspection_result.beginning.filter((v)=>v)
-        const inspection_result_middle = midrangeData.inspection_result.middle.filter((v)=>v)
-        const inspection_result_end = midrangeData.inspection_result.end.filter((v)=>v)
-
-
-        midrangeData.inspection_info = {
-            beginning: inspection_info_beginning,
-            middle: inspection_info_middle,
-            end: inspection_info_end
-        }
-        midrangeData.inspection_result = {
-            beginning: inspection_result_beginning,
-            middle: inspection_result_middle,
-            end: inspection_result_end
-        }
-
 
         const res = await RequestMethod('post', `recordInspectSave`,{
             version: midrangeData.version,
@@ -127,6 +72,12 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
             legendary_list: midrangeData.legendary_list,
             inspection_info: midrangeData.inspection_info
         })
+
+        if(res){
+            Notiflix.Loading.circle()
+            setIsOpen(false)
+            window.location.reload()
+        }
     }
 
     React.useEffect(()=>{
@@ -164,7 +115,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
                             fontSize: 22,
                             fontWeight: 'bold',
                             margin: 0,
-                        }}>초ㆍ중ㆍ종 검사 등록</p>
+                        }}> {modify ? "초ㆍ중ㆍ종 검사 결과보기" : "초ㆍ중ㆍ종 검사 등록"}</p>
                         <div style={{display: 'flex'}}>
                             {modify &&
                             <Button onClick={()=>setMidrangeUpdate(true)}>
