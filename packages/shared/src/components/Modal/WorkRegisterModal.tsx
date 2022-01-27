@@ -98,6 +98,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    console.log("searchList : ", searchList)
     let res = await RequestMethod('post', `recordSave`,
       searchList.map((v, i) => {
         let selectData: any = {}
@@ -132,7 +133,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
             ...row,
             status: row.status_no
           },
-          input_bom: [],
+          // input_bom: [],
           status: 0,
         }
       }).filter((v) => v))
