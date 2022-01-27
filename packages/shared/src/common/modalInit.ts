@@ -340,8 +340,8 @@ export const searchModalList: any = {
     {key: 'warehousing', name: '입고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'current', name: 'LOT 재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'spare', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
-        {pk: 'basic', name: '여'},
-        {pk: 'spare', name: '부'},
+        {pk: 1, name: '여'},
+        {pk: 0, name: '부'},
       ], type: 'Modal'},
     {key: 'amount', name: '생산량', formatter: LineBorderContainer, editor: TextEditor, textAlign: 'center', textType: 'Modal',},
 

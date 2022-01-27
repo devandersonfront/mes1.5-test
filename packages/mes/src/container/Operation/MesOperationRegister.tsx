@@ -408,29 +408,29 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         ]}
         row={basicRow}
         setRow={async(e) => {
-          // const eData = e.filter((eValue) => {
-          //   let equal = false;
-          //   basicRow.map((bValue)=>{
-          //     console.log(eValue, bValue)
-          //     if(eValue.product?.product_id === bValue.product?.product_id){
-          //       equal = true
-          //     }
-          //   })
-          //   if(basicRow[0].product == undefined) return "first"
-          //   if(!equal) return eValue
-          // })
-          // if(eData.length <= 0){
-          //   console.log("e : ", e)
-          //   setSelectList(new Set());
-          //   setBasicRow([...e])
-          // }else{
+          const eData = e.filter((eValue) => {
+            let equal = false;
+            basicRow.map((bValue)=>{
+              console.log(eValue, bValue)
+              if(eValue.product?.product_id === bValue.product?.product_id){
+                equal = true
+              }
+            })
+            if(basicRow[0].product == undefined) return "first"
+            if(!equal) return eValue
+          })
+          if(eData.length <= 0){
+            console.log("e : ", e)
+            setSelectList(new Set());
+            setBasicRow([...e])
+          }else{
             setSelectList(new Set());
             const resultData = await loadLatestSheet(e[0].product.product_id, e[0]).then((value) => value)
             // const resultData = await loadGraphSheet(e[0].product.product_id, e[0]).then((value) => value)
             setBasicRow([...resultData])
-          // }
-          // let tmp: Set<any> = selectList;
-          // setSelectList(tmp)
+          }
+          let tmp: Set<any> = selectList;
+          setSelectList(tmp)
         }}
         selectList={selectList}
         setSelectList={(select) => {

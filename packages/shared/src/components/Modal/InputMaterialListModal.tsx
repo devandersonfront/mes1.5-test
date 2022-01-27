@@ -374,6 +374,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               headerList={column.type === 'readonly' ? searchModalList.InputLotReadonlyInfo : searchModalList.InputLotInfo}
               row={lotList ?? [{}]}
               setRow={(e) => {
+                console.log("e : " , e)
                 let tmp = e.map((v, index) => {
                   if(v.newTab === true){
                     const newTabIndex = bomDummy.length+1
@@ -383,7 +384,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
                   return {
                     ...v,
-                    spare: '여',
+                    // spare: '여',
                     newTab: false
                   }
                 })
