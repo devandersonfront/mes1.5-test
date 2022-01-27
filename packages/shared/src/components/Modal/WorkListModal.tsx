@@ -87,7 +87,8 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           totalGood += tmp.good_quantity
           totalPoor += tmp.poor_quantity
 
-          if(tmp.defect_reasons){ 
+
+          if(tmp.defect_reasons){
             tmp.defect_reasons.map((v)=>{
               defectReasons.push(v)
             })

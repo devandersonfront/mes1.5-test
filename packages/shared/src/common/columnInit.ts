@@ -56,7 +56,9 @@ import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
 import {MidRangeButton} from "../components/Buttons/MidRangeButton";
 import placeholder from "lodash/fp/placeholder";
 import {ToolInfoModal} from "../components/Modal/ToolInfoModal";
+import {ToolListModal} from "../components/Modal/ToolListModal";
 import {MidrangeFrameButton} from "../components/Buttons/MidrangeFrameButton";
+
 
 export const columnlist: any = {
   member: [
@@ -876,6 +878,27 @@ export const columnlist: any = {
     {key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit},
     {key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit},
   ],
+  cncRecordListV2: [
+    {key:"contract_id", name:"수주 번호", width: 118},
+    {key:"identification", name:"지시 고유 번호", width: 118   },
+    {key:"product_id", name:"CODE", width: 118},
+    {key:"name", name:"품명", width: 118},
+    {key:"type", name:"품목 종류", width: 118},
+    {key:"unit", name:"단위", width: 118},
+    {key:"process_id", name:"생산 공정", width: 118},
+    {key:"lot_number", name:"LOT 번호", width: 118},
+    {key:"worker", name:"작업자", width: 118},
+    {key:"start", name:"작업 시작 일시", width: 118},
+    {key:"end", name:"작업 종료 일시", width: 118},
+    {key:"paused_time", name:"일시 정지 시간", formatter: PauseInfoModal, type: 'readonly', modalType: false, width: 118},
+    {key:"good_quantity", name:"양품 수량", width: 118},
+    {key:"poor_quantity", name:"불량 수량", formatter: DefectInfoModal, type: 'readonly', width: 118},
+    {key:"uph", name:"UPH", width: 118},
+    {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, type: 'readonly'},
+    {key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit},
+    {key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit},
+    {key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit},
+  ],
   finishListV2: [
     {key:"status", name:"상태", formatter: FinishCancelButton, width: 118},
     {key:"contract_id", name:"수주 번호", width: 118   },
@@ -1202,9 +1225,14 @@ export const columnlist: any = {
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   documentManage:[
-    {key:"name", name:"이름" },
-    {key:"type", name:"종류" },
-    {key:"date", name:"날짜" },
+    {key:"name", name:"이름", width:1056, formatter: PlaceholderBox },
+    {key:"type", name:"종류", width:247 },
+    {key:"date", name:"날짜", width:224},
+  ],
+  documentLog:[
+    {key:"content", name:"변경 사항", width:1056 },
+    {key:"type", name:"종류", width:247 },
+    {key:"date", name:"날짜", width:224},
   ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},
