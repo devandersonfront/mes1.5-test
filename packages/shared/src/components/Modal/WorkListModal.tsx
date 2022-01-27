@@ -64,9 +64,10 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    if(isOpen && row.os_id) {
-      SearchBasic(searchKeyword, optionIndex, 1)
-    }
+    // if(isOpen && row.os_id) {
+    //   SearchBasic(searchKeyword, optionIndex, 1)
+    // }
+    SearchBasic(searchKeyword, optionIndex, 1)
   }, [isOpen, searchKeyword])
 
   const changeRow = (tmpRow: any, key?: string) => {
@@ -75,7 +76,9 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     let totalPoor:number = 0
     let defectReasons = []
     let tmpRowArray = []
+
     if(typeof tmpRow === 'string'){
+
       tmpRowArray = tmpRow.split('\n')
 
       tmpRes = tmpRowArray.map((v, index) => {
@@ -84,15 +87,18 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           totalGood += tmp.good_quantity
           totalPoor += tmp.poor_quantity
 
+
           if(tmp.defect_reasons){
-            if(defectReasons && defectReasons.length){
-              tmp.defect_reasons.map((defect, index) => {
-                defectReasons[0].amount = defectReasons[0].amount + defect.amount
-                defectReasons[index].amount += defect.amount
-              })
-            } else {
-              defectReasons = tmp.defect_reasons
-            }
+            tmp.defect_reasons.map((v)=>{
+              defectReasons.push(v)
+            })
+            // if(defectReasons && defectReasons.length){
+            //   tmp.defect_reasons.map((defect, index) => {
+            //     defectReasons[index].amount += defect?.amount
+            //   })
+            // } else {
+            //   defectReasons = tmp.defect_reasons
+            // }
           }
 
           return tmp
@@ -128,6 +134,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       total_poor_quantity: Number(totalPoor),
       total_counter: totalGood + totalPoor,
     })
+
     return tmpRes.map((v, i) => {
       return {
         ...v,
@@ -141,17 +148,24 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const SearchBasic = async (keyword: any, option: number, page: number) => {
     setKeyword(keyword)
     setOptionIndex(option)
-    const res = await RequestMethod('get', `recordSearch`,{
-      path:{
-        page:1,
-        item:19
-      },
+    const res = await RequestMethod('get', `recordAll`,{
       params: {
         identification:row.os_id
         // sheetIds: row.os_id
       }
     })
-    if(!!res){
+    // const res = await RequestMethod('get', `recordSearch`,{
+    //   path:{
+    //     page:1,
+    //     item:19
+    //   },
+    //   params: {
+    //     identification:row.os_id
+    //     // sheetIds: row.os_id
+    //   }
+    // })
+    if(res){
+
       let tmpList = changeRow(res, )
 
       setSearchList([...tmpList.map(v => {

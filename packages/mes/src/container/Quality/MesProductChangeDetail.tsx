@@ -32,44 +32,43 @@ const MesProductChangeDetail = () => {
         ]
     )
 
-    React.useEffect(()=>{
-        productChangeLoad()
-    },[])
 
-
-    const productChangeLoad = async () => {
+    const productChangeLoad = async (pcr_id: string) => {
         const res = await RequestMethod('get', `productChangeLoad`,{
             path: {
-                pcr_id: '61de9640d4c95c0e8bafef0d'
+                pcr_id: pcr_id
             },
         })
 
         if(res){
 
-            const basicTmp = {
+            const basicTmp = [{
                 customer_id: res.product.customerId  === null ? '-' : res.product.customerId,
-                cm_id: res.product.model === null ? '-' : res.product.model,
+                cm_id: res.product.model === null ? '-' : res.product.model.model,
                 code: res.product.code,
                 name: res.product.name === null ? '-' : res.product.name,
-            }
-            setBasicRow([basicTmp])
+            }]
+            setBasicRow(basicTmp)
             setChangeInfo({title: res.title, content: res.content, registered: moment(res.created).format("YYYY.MM.DD"), product: res.product, writer: res.writer})
-            setFiles(res.files)
+            if(res.files.length !== 0) {
+                setFiles(res.files)
+            }
             setVersion(res.version)
         }
     }
 
 
-    const fileChange = (fileInfo: ChangeProductFileInfo, index: number) => {
-        const temp = files
-        temp[index] = fileInfo
-        setFiles([...temp])
-    }
+    React.useEffect(()=>{
+        if(router.query.pcr_id !== undefined) {
+            productChangeLoad(String(router.query.pcr_id))
+        }
+    },[router.query])
+
+
     const buttonEvents = async(index:number) => {
         switch (index) {
             case 0 :
-                return
-            case 1 :
+                router.push({pathname: '/mes/quality/product/change/modify', query: { pcr_id: router.query.pcr_id }})
                 return
         }
     }
@@ -79,7 +78,7 @@ const MesProductChangeDetail = () => {
             <PageHeader
                 title={"변경점 정보"}
                 buttons={
-                    ['', '수정 하기']
+                    ['수정 하기']
                 }
                 buttonsOnclick={buttonEvents}
             />
@@ -98,7 +97,7 @@ const MesProductChangeDetail = () => {
             <TitleInput title={'제목'} value={changeInfo.title} placeholder={''} onChange={()=>{}}/>
             <TitleTextArea title={'설명'} value={changeInfo.content} placeholder={''} onChange={()=>{}}/>
             {files.map((v,i) =>
-                <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} uuid={v.UUID} value={v.name} detail={true} placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>
+                <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} uuid={v.UUID} value={v.name} detail={true} placeholder={'파일 없음'} deleteOnClick={()=>{}} fileOnClick={()=>{}}/>
             )}
             <TitleCalendarBox value={changeInfo.registered} detail={true} onChange={(date)=>{}}/>
         </div>

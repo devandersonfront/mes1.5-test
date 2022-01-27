@@ -12,15 +12,14 @@ interface IProps {
 const MidRangeButton = ({row, column }: IProps) => {
     const router = useRouter()
 
-    //변경 관련 로직 필요함
     const contentCheck = () => {
-        if(!row){
+        if(row.inspection_category !== null){
             return (<>
             <div style={{
                 padding: '3.5px 0px 0px 3.5px',
                 width: '100%'
             }}>
-                <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}}  onClick={() => { router.push({pathname: '/mes/basic/productV1u/midrange/form/detail', query: {product_id: row.product_id} }) }}>
+                <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}}  onClick={() => { router.push({pathname: '/mes/basic/productV1u/midrange/form/detail', query: { customer_id: row.customer_id, cm_id: row.cm_id, code: row.code, name: row.name, product_id: row.product_id, type: row.type} }) }}>
                     <p style={{color: 'white', textDecoration: 'underline'}}>검사항목 보기</p>
                 </UploadButton>
             </div>

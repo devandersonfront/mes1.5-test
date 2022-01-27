@@ -388,13 +388,14 @@ export const searchModalList: any = {
     {key: 'worker_name', name: '작업자', formatter: SearchModalTest, type: 'user', width: 118, modalType: true, placeholder: '작업자 선택'},
     {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200},
     {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200},
-    {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true},
+    {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true, width: 120},
     {key: 'good_quantity', name: '양품 수량', editor: TextEditor, textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 250},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center'},
-    {key: 'molds', name: '금형', formatter: MoldSelectModal, textAlign: 'center'},
-    {key: 'machines', name: '기계', formatter: MachineSelectModal, textAlign: 'center'},
+    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사',  width: 120},
+    {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center', width: 104},
+    {key: 'molds', name: '금형', formatter: MoldSelectModal, textAlign: 'center', width: 104},
+    {key: 'machines', name: '기계', formatter: MachineSelectModal, textAlign: 'center', width: 104},
     {key: 'tool', name: '공구', formatter: ToolSelectModal, textAlign: 'center'},
   ],
   workList: [
@@ -415,11 +416,12 @@ export const searchModalList: any = {
     {key: 'reason', name: '일시 정지 유형', formatter: LineBorderContainer},
     {key: 'amount', width: 194, name: '시간', editor: TextEditor, formatter: TimeFormatter, textType: 'Modal', searchType: 'pause'},
   ],
-  defectCount: [
-    {key: 'reason', name: '불량 유형', formatter: LineBorderContainer},
-    {key: 'amount', width: 194, name: '불량 개수', editor: TextEditor, formatter: UnitContainer, unitData: 'EA', textType: 'Modal', searchType: 'pause', placeholder: '숫자만 입력'},
-  ],
-
+  defectCount : function({readonly}){
+    return [
+      {key: 'reason', name: '불량 유형', formatter: LineBorderContainer},
+      {key: 'amount', width: 194, name: '불량 개수', editor: readonly !== 'readonly' ? TextEditor : undefined, formatter: UnitContainer, unitData: 'EA', textType: 'Modal', searchType: 'pause', placeholder: '숫자만 입력'},
+    ]
+  },
   //검색 모달 엑셀 헤더
   userSearch: [
     {key: 'name', name: '성명'},

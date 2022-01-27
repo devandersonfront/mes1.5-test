@@ -3,56 +3,68 @@ import styled from "styled-components";
 import {MidrangeExcelDropdown} from "../Dropdown/MidrangeExcelDropdown";
 import moment from "moment";
 import {InspectionFinalDataResult, InspectionInfo} from "../../@types/type";
+import {MidrangeDatetimePickerBox} from "../CalendarBox/MidrangeDatetimePickerBox";
+import {MidrangeMemberSearchModal} from "../Modal/MidrangeMemberSearchModal";
 
 interface IProps {
     formReviewData: any
+    inspectFrameData: (e) => void
 }
 
-const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
+const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps)  => {
+
     const [testData, setTestData] = React.useState<any>({
         legendary_list: [],
         inspection_info: {beginning: [{samples: 1, data_result: []}], middle: [{samples: 1, data_result: [] }], end: [{samples: 1, data_result: [] }]},
         inspection_result: { beginning: [], middle: [], end: [] },
         inspection_time: {
-            beginning: moment().toDate(),
-            middle: moment().toDate(),
-            end: moment().toDate(),
+            beginning: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+            middle: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+            end: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
         },
     })
 
     React.useEffect(()=>{
-
         if(formReviewData !== undefined) {
-            const inspection_beginning = formReviewData.item.map((v) => {
-                return {...v, samples: formReviewData.samples[0].samples, type: v.type === '범례 적용' ? 1 : 0, data_result: []}
-            })
-            const inspection_middle = formReviewData.item.map((v) => {
-                return {...v, samples: formReviewData.samples[0].samples, type: v.type === '범례 적용' ? 1 : 0, data_result: []}
-            })
-            const inspection_end = formReviewData.item.map((v) => {
-                return {...v, samples: formReviewData.samples[0].samples, type: v.type === '범례 적용' ? 1 : 0, data_result: []}
-            })
 
             const legendary_list = formReviewData.legendary.map((v) => {
-                    return v.legendary ?? ''
+                return v ?? ''
             })
 
-            const reviewData = {
-                legendary_list: legendary_list,
-                inspection_info: { beginning: inspection_beginning, middle: inspection_middle, end: inspection_end},
-                inspection_result: {
-                    middle: [],
-                    beginning: [],
-                    end: []
-                },
-                inspection_time: {
-                    beginning: moment().toDate(),
-                    middle: moment().toDate(),
-                    end: moment().toDate(),
-                },
+            if(formReviewData.version !== undefined) {
+                const reviewData = {
+                    version: formReviewData.version,
+                    sic_id: formReviewData.sic_id,
+                    writer: formReviewData.writer,
+                    record_id: formReviewData.record_id,
+                    legendary_list: legendary_list,
+                    inspection_info: formReviewData.inspection_info,
+                    inspection_result: formReviewData.inspection_result,
+                    inspection_time: formReviewData.inspection_time
+                }
+                //@ts-ignore
+                setTestData(reviewData)
+            }else {
+                const reviewData = {
+                    sic_id: formReviewData.sic_id,
+                    record_id: formReviewData.record_id,
+                    legendary_list: legendary_list,
+                    inspection_info: formReviewData.inspection_info,
+                    inspection_result: {
+                        middle: [],
+                        beginning: [],
+                        end: []
+                    },
+                    inspection_time: {
+                        beginning: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+                        middle: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+                        end: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
+                    }
+                }
+                //@ts-ignore
+                setTestData(reviewData)
             }
-            //@ts-ignore
-            setTestData(reviewData)
+
         }
     },[formReviewData])
 
@@ -174,12 +186,15 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
         setTestData({...testData, temp})
     }
 
+    React.useEffect(()=>{
+        inspectFrameData(testData)
+    },[testData])
 
     const sampleCount = (inspection_info: InspectionInfo[]) => {
         return (
             arr.map((v,i)=>
                 <ExampleNumber style={{borderBottom: 0}}>
-                    {inspection_info[0].samples > i ?  i+1 > 9 ? 10 : '0'+(i+1) : '-'}
+                    {inspection_info[0].samples > i ?  i+1 > 9 ? 10 : '0'+(i+1) : <p>-</p>}
                 </ExampleNumber>
             )
         )
@@ -188,20 +203,20 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
     const formItemHeader = (inspection_info: InspectionInfo[]) => {
         return (
             inspection_info && inspection_info.map((v,i)=>
-            <div style={{display: "flex"}} key={v.samples+'~'+i}>
-                <CellDefault style={{width: '144px', height: '40px', borderBottom: 0, borderRight: 0, textAlign: "center" }}>
-                    {(v.name !== undefined ? v.name : '')+`(${v.unit})`}
-                </CellDefault>
-                <CellDefault style={{width: '120px', height: '40px', flexDirection: "column", borderBottom: 0  }}>
-                    <div>
-                        {v.standard}
-                    </div>
-                    <div style={{fontSize: '11px'}}>
-                        ({v.error_minimum}~{v.error_maximum})
-                    </div>
-                </CellDefault>
-            </div>
-        ))
+                <div style={{display: "flex"}} key={v.samples+'~'+i}>
+                    <CellDefault style={{width: '144px', height: '40px', borderBottom: 0, borderRight: 0, textAlign: "center" }}>
+                        {(v.name !== undefined ? v.name : '')+`(${v.unit})`}
+                    </CellDefault>
+                    <CellDefault style={{width: '120px', height: '40px', flexDirection: "column", borderBottom: 0  }}>
+                        <div>
+                            {v.standard}
+                        </div>
+                        <div style={{fontSize: '11px'}}>
+                            ({v.error_minimum}~{v.error_maximum})
+                        </div>
+                    </CellDefault>
+                </div>
+            ))
     }
 
     const formItemResult = (inspection_infoType: InspectionInfo[], type: 'beginning' | 'middle' | 'end') => {
@@ -220,7 +235,7 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                                 :
                                 inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ?
                                     <MidrangeExcelDropdown contents={testData.legendary_list} value={value.data_result[i].value} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> :
-                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> : '-'
+                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> : <p>-</p>
                             }
                         </ExampleNumber>
                     )}
@@ -252,7 +267,9 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
             <div style={{display: "flex"}}>
                 <div style={{backgroundColor: "#F4F6FA", width: '112px',borderLeft: '0.5px solid #B3B3B3', borderTop: 0, height: '80px'}}>
                     <Worker>작성자</Worker>
-                    <Worker style={{borderTop: '0.5px solid #B3B3B3'}}></Worker>
+                    <Worker style={{borderTop: '0.5px solid #B3B3B3'}}>
+                        <MidrangeMemberSearchModal value={testData.writer ? testData.writer.name : ''} onChangeManger={(writer)=> setTestData({...testData, writer: writer})}/>
+                    </Worker>
                 </div>
                 <HeaderTitle style={{width: '168px'}}>
                     점검시간
@@ -280,7 +297,7 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            {moment(testData.inspection_time.beginning).format("YYYY.MM.DD HH:mm")}
+                            <MidrangeDatetimePickerBox value={testData.inspection_time.beginning} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, beginning: date.format("YYYY.MM.DD HH:mm") }})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.beginning)}
@@ -305,7 +322,7 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            {moment(testData.inspection_time.middle).format("YYYY.MM.DD HH:mm")}
+                            <MidrangeDatetimePickerBox value={testData.inspection_time.middle} onDateChange={(date)=>setTestData({...testData, inspection_time: {middle: date.format("YYYY.MM.DD HH:mm")}})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.middle)}
@@ -330,7 +347,7 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            {moment(testData.inspection_time.end).format("YYYY.MM.DD HH:mm")}
+                            <MidrangeDatetimePickerBox value={testData.inspection_time.end} onDateChange={(date)=>setTestData({...testData, inspection_time: {end: date.format("YYYY.MM.DD HH:mm")}})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.end)}
@@ -397,4 +414,4 @@ const CellDefault = styled.div`
     white-space: pre-line;
 `
 
-export {MidrangeExcelTable};
+export {MidrangeExcelFrameTable};

@@ -10,6 +10,7 @@ import {searchModalList} from "../../common/modalInit";
 import {POINT_COLOR} from "../../common/configset";
 import styled from "styled-components";
 import {MidrangeExcelTable} from "../Excel/MidrangeExcelTable";
+import {MidrangeExcelFrameTable} from "../Excel/MidrangeExcelFrameTable";
 
 
 interface IProps {
@@ -94,6 +95,16 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
                         <MidrangeExcelTable formReviewData={formReviewData} />
+                    </div>
+                </div>
+                <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
+                    <div
+                        onClick={() => {
+                            setIsOpen(false)
+                        }}
+                        style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                    >
+                        <p>확인</p>
                     </div>
                 </div>
             </Modal>

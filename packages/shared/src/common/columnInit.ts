@@ -57,6 +57,8 @@ import {MidRangeButton} from "../components/Buttons/MidRangeButton";
 import placeholder from "lodash/fp/placeholder";
 import {ToolInfoModal} from "../components/Modal/ToolInfoModal";
 import {ToolListModal} from "../components/Modal/ToolListModal";
+import {MidrangeFrameButton} from "../components/Buttons/MidrangeFrameButton";
+
 
 export const columnlist: any = {
   member: [
@@ -765,17 +767,21 @@ export const columnlist: any = {
   ],
   midrangeList: [
     {key: 'contract_id', name: '수주 번호', width: 120},
-    {key: 'osd_id', name: '지시 고유 번호', width: 120},
+    {key: 'osId', name: '지시 고유 번호', width: 120},
     {key: 'code', name: 'CODE', width: 120},
-    {key: 'material_name', name: '품명', width: 120},
-    {key: 'type', name: '품목 종류', width: 120},
+    {key: 'name', name: '품명', width: 120},
+    {key: 'type', name: '품목 종류', width: 120, selectList: [
+        {pk: '0', name: '반제품'},
+        {pk: '1', name: '재공품'},
+        {pk: '2', name: '완제품'},
+      ]},
     {key: 'unit', name: '단위', width: 120},
     {key: 'process_id', name: '생산 공정', width: 120},
     {key: 'ln_id', name: 'LOT 번호', width: 120},
     {key: 'worker', name: '작업자', width: 120 },
     {key: 'start', name: '작업 시작 일시', width: 164},
     {key: 'end', name: '작업 종료 일시', width: 164},
-    {key: 'midrange', name: '초ㆍ중ㆍ종 검사', width: 120}
+    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', width: 120, formatter: MidrangeFrameButton, title: '검사항목 등록'}
   ],
   qualityDefectTop: [
     {key: 'customer', name: '거래처명', searchType: 'rawin', formatter: PlaceholderBox, placeholder: '자동입력'},
@@ -866,6 +872,7 @@ export const columnlist: any = {
     {key:"paused_time", name:"일시 정지 시간", formatter: PauseInfoModal, type: 'readonly', modalType: false, width: 118},
     {key:"good_quantity", name:"양품 수량", width: 118},
     {key:"poor_quantity", name:"불량 수량", formatter: DefectInfoModal, type: 'readonly', width: 118},
+    {key:"sic_id", name: "초ㆍ중ㆍ종 검사", width: 118, formatter: MidrangeFrameButton ,title: '검사항목 등록'},
     {key:"uph", name:"UPH", width: 118},
     {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, type: 'readonly'},
     {key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit},
