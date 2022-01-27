@@ -5,6 +5,7 @@ import moment from "moment";
 import {InspectionFinalDataResult, InspectionInfo} from "../../@types/type";
 import {MidrangeDatetimePickerBox} from "../CalendarBox/MidrangeDatetimePickerBox";
 import {MidrangeMemberSearchModal} from "../Modal/MidrangeMemberSearchModal";
+import cookie from "react-cookies";
 
 interface IProps {
     formReviewData: any
@@ -45,15 +46,50 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 //@ts-ignore
                 setTestData(reviewData)
             }else {
+                const inspection_info_beginning_result = []
+                const inspection_info_middle_result = []
+                const inspection_info_end_result = []
+
+                for(let i = 0; i < formReviewData.inspection_info.beginning[0].samples; i++) {
+                    inspection_info_beginning_result.push({sequence: i+1, pass: true, value: ''})
+                    inspection_info_middle_result.push({sequence: i+1, pass: true, value: ''})
+                    inspection_info_end_result.push({sequence: i+1, pass: true, value: ''})
+                }
+
+                const inspection_info_beginning = formReviewData.inspection_info.beginning.map((v,i)=>{
+                        return {...v, data_result: inspection_info_beginning_result}
+                })
+                const inspection_info_middle = formReviewData.inspection_info.middle.map((v,i)=>{
+                    return {...v, data_result: inspection_info_middle_result}
+                })
+                const inspection_info_end = formReviewData.inspection_info.end.map((v,i)=>{
+                    return {...v, data_result: inspection_info_end_result}
+                })
+
+                const inspection_result_beginning = []
+                const inspection_result_middle = []
+                const inspection_result_end = []
+
+                for(let i = 0; i < formReviewData.inspection_info.beginning[0].samples; i++) {
+                    inspection_result_beginning.push({sequence: i+1, pass: true})
+                    inspection_result_middle.push({sequence: i+1, pass: true})
+                    inspection_result_end.push({sequence: i+1, pass: true})
+                }
+
                 const reviewData = {
+                    writer: cookie.load('userInfo'),
                     sic_id: formReviewData.sic_id,
                     record_id: formReviewData.record_id,
                     legendary_list: legendary_list,
-                    inspection_info: formReviewData.inspection_info,
+                    inspection_info: {
+                        middle: inspection_info_middle,
+                        beginning: inspection_info_beginning,
+                        end: inspection_info_end
+                    },
                     inspection_result: {
-                        middle: [],
-                        beginning: [],
-                        end: []
+                        middle: inspection_result_middle,
+                        beginning: inspection_result_beginning,
+                        end: inspection_result_end
                     },
                     inspection_time: {
                         beginning: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
