@@ -51,9 +51,13 @@ const BasicMidrangeDetail = () => {
                 return {legendary: v, LegendaryExplain: legendaryValue[i]}
             })
 
+            const itemBasic = res.category_info.map((v)=>{
+                return {...v, type: v.type === 1 ? '범례 적용' : "수치 입력"}
+            })
+
             setSampleBasicRow([{samples: res.samples}])
             setLegendaryBasicRow(legendaryArray)
-            setItemBasicRow(res.category_info)
+            setItemBasicRow(itemBasic)
         }
     }
 

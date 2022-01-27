@@ -34,11 +34,15 @@ const BasicMidrangeModify = () => {
             legendaryKeyValue[v.legendary] = v.LegendaryExplain
         })
 
+        const categoryInfo = itemBasicRow.map((v)=>{
+            return {...v, type: v.type === "범례 적용" ? 1 : 0}
+        })
+
         const midrangeData = {
             product_id: productId,
             samples: Number(sampleBasicRow[0].samples),
             legendary_list: legendaryKeyValue,
-            category_info: itemBasicRow
+            category_info: categoryInfo
         }
         let res: any
         res = await RequestMethod('post', `inspectCategorySave`,[midrangeData])
@@ -65,9 +69,13 @@ const BasicMidrangeModify = () => {
                 return {legendary: v, LegendaryExplain: legendaryValue[i]}
             })
 
+            const itemBasic = res.category_info.map((v)=>{
+                return {...v, type: v.type === 1 ? '범례 적용' : "수치 입력"}
+            })
+
             setSampleBasicRow([{samples: res.samples}])
             setLegendaryBasicRow(legendaryArray)
-            setItemBasicRow(res.category_info)
+            setItemBasicRow(itemBasic)
         }
     }
 
