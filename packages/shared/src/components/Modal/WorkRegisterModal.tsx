@@ -99,6 +99,18 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   const SaveBasic = async () => {
     console.log("searchList : ", searchList)
+    searchList.map((row) => {
+      if(!row.lot_number){
+        Notiflix.Report.warning("경고","LOT번호를 입력해주시기 바랍니다.","확인",)
+        return;
+      }else if(!row.manager){
+        Notiflix.Report.warning("경고","작업자를 선택해주시기 바랍니다.","확인",)
+        return;
+      }else if(!row.good_quantity){
+        Notiflix.Report.warning("경고","양품 수량을 입력해주시기 바랍니다.","확인",)
+        return;
+      }
+    })
     let res = await RequestMethod('post', `recordSave`,
       searchList.map((v, i) => {
         let selectData: any = {}
@@ -264,6 +276,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
               headerList={searchModalList.workRegister}
               row={searchList ?? [{}]}
               setRow={(e) => {
+                console.log(e)
                 let tmp = e.map((v, index) => {
                   if(v.newTab === true){
                     const newTabIndex = bomDummy.length+1
