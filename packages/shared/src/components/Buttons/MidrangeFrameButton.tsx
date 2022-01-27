@@ -22,7 +22,7 @@ const selectList = [
 const MidrangeFrameButton = ({row, column }: IProps) => {
     const [modalOpen, setModalOpen] = React.useState<boolean>(false)
     const [modify, setModify] = React.useState<boolean>(false)
-    const [execlInfo, setExcelInfo] = React.useState({sic_id: '',record_id: '',basic: [], samples:[], legendary: [], inspection_info: {}})
+    const [execlInfo, setExcelInfo] = React.useState<{writer?: string,version?: number, sic_id: string, record_id: string, basic: {osd_id: string, lot_number: number, code: string, material_name: string, type: number , process_id: string, worker_name: string, name: string}[] | [], samples: {samples: number}[], legendary: string[], inspection_info: {}, inspection_time?: {}, inspection_result?: []}>({sic_id: '',record_id: '',basic: [], samples:[], legendary: [], inspection_info: {}})
 
     const midrangeRecordInspectLoad = async () => {
 
@@ -33,9 +33,9 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
         })
 
         if(res){
-            const legendaryValue = Object.values(res.legendary_list)
+            const legendaryValue : string[] = Object.values(res.legendary_list)
 
-            const legendaryArray = legendaryValue.map((v,i)=>{
+            const legendaryArray: string[] = legendaryValue.map((v,i)=>{
                 return v
             })
 

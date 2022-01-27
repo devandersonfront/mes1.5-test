@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import moment from "moment";
 import {RequestMethod} from "../../common/RequestFunctions";
 import Modal from "react-modal";
+//@ts-ignore
 import IcX from "../../../public/images/ic_x.png";
 import {ExcelTable} from "../Excel/ExcelTable";
 import {searchModalList} from "../../common/modalInit";
@@ -10,6 +11,7 @@ import {POINT_COLOR} from "../../common/configset";
 import styled from "styled-components";
 import {MidrangeExcelFrameTable} from "../Excel/MidrangeExcelFrameTable";
 import Notiflix from "notiflix";
+import {MidrangeRecordRegister} from "../../@types/type";
 
 
 interface IProps {
@@ -24,21 +26,29 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
     const [selectRow, setSelectRow] = useState<number>()
     const [ midrangeUpdate, setMidrangeUpdate] = useState<boolean>(false)
     const [searchList, setSearchList] = useState<Array<any>>()
-    const [ midrangeData, setMidrangeData ] = useState({
-        inspection_time: {},
+    const [ midrangeData, setMidrangeData ] = useState<MidrangeRecordRegister>({
+        inspection_time: {
+            beginning: '',
+            middle: '',
+            end: ''
+        },
         inspection_result: {},
         legendary_list: [],
         inspection_info: {},
         sic_id: '',
         record_id: '',
+        writer: ''
     })
 
     const recordInspectFrameSave = async () => {
 
 
         midrangeData.inspection_time = {
+            //@ts-ignore
             beginning: moment(midrangeData.inspection_time.beginning).format('YYYY-MM-DD[T]HH:mm:ss'),
+            //@ts-ignore
             middle: moment(midrangeData.inspection_time.middle).format('YYYY-MM-DD[T]HH:mm:ss'),
+            //@ts-ignore
             end: moment(midrangeData.inspection_time.end).format('YYYY-MM-DD[T]HH:mm:ss')
         }
 
