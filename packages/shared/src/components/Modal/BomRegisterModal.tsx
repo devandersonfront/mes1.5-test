@@ -52,26 +52,17 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const [summaryData, setSummaryData] = useState<any>({})
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>(
     [{}])
   const [tabs, setTabs] = useState<string[]>([])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
     if(isOpen) {
-      console.log("searchList : ", searchList);
       if(row.bom_root_id){
         SearchBasic().then(() => {
-          Notiflix.Loading.remove()
+          // Notiflix.Loading.remove()
         })
       } else {
         setIsOpen(false)
@@ -110,7 +101,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     }else{
       tmpRows = [{...tmpRow}]
     }
-    console.log("tmpRows : ", tmpRows)
 
 
     tmpData = tmpRows.map((v, i) => {
@@ -170,7 +160,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         }: null,
         sub_material: v.type === 1 ?{
           ...childData,
-        }: null
+        }: null,
       }
     })
 
@@ -184,7 +174,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
         if(res){
           let searchList = changeRow(res)
-          console.log("searchList : ", searchList);
 
           dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
           setSearchList([...searchList])
@@ -196,7 +185,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
         if(res){
           let searchList = changeRow(res)
-          console.log("! searchList : ", searchList)
           dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
           setSearchList([...searchList])
         }else{
@@ -381,6 +369,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                     v.border = false;
                   })
                   searchList[e].border = true
+                  console.log("???? : ", searchList)
                   setSearchList([...searchList])
                 }
                 setSelectRow(e)
@@ -401,11 +390,12 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
+                console.log("searchList :" ,searchList)
                 onRowChange({
                   ...row,
                   input_bom: [
                     ...searchList.map((v, i) => {
-                      if(v.spare === '여'){
+                      // if(v.spare === '여'){
                         return {
                           bom: {
                             seq: i+1,
@@ -419,12 +409,13 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                             usage: v.usage,
                           }
                         }
-                      }
+                      // }
                     }).filter(v=>v)
                   ],
                   name: row.name,
                   isChange: true
                 })
+                console.log("row : ", row)
                 dispatch(reset_summary_info())
                 setIsOpen(false)
               }}

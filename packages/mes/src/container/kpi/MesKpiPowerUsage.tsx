@@ -1,36 +1,29 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 import moment from "moment";
 import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
 import ButtonGroup from "../../../../main/component/ButtonGroup";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
+import axios from 'axios'
+import { SF_ENDPOINT_PMS } from 'shared/src/common/configset';
+import cookie from 'react-cookies'
 
 interface SelectParameter {
     from:string
     to:string
 }
 
-
+//192.168.0.35:8299, id
 const MesKpiPowerUsage = () => {
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
-    const [processBasicRow, setProcessBasicRow] = useState<any[]>([{
-        id: '', customer_id: ''
-    }]);
+    const [processBasicRow, setProcessBasicRow] = useState<any>({id: ''});
     const changeHeaderStatus = (value:number) => {
         setHeaderStatus(value);
     }
 
     const [processColumn, setProcessColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiPowerUsage`] );
-    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiPowerUsageContent`].map(v => {
-        if(v.key === 'amount'){
-            return {
-                ...v,
-                result: changeHeaderStatus
-            }
-        }
-        return v
-    }));
+    const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`kpiPowerUsageContent`]);
     const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set());
     const [headerStatus, setHeaderStatus] = useState<number | string>("");
 
@@ -61,6 +54,77 @@ const MesKpiPowerUsage = () => {
     }
 
 
+    // 전력 사용량은 API 요청을 PMS 에서 해야해서 주석처리함..
+
+    // const RequestPowerUsageApi = async (productId: number) => {
+
+    //     const tokenData = cookie.load('userInfo')?.token;
+
+    //     const res = await axios.get(`${SF_ENDPOINT_PMS}/api/v2/statistics/press/electric-power`,{
+    //         params: {
+    //             productIds: productId,
+    //             sorts : 'date',
+    //             from: selectDate.from,
+    //             to: selectDate.to
+    //         },
+    //         headers : {
+    //             Authorization : tokenData
+    //         }
+    //     })
+
+
+    //     if(res){
+    //         const filterResponse = res.data.map((v)=>{
+
+    //             return {
+    //                 osd_id: v.operation_sheet.os_id,
+    //                 code: v.operation_sheet.product.code,
+    //                 name: v.operation_sheet.product.name,
+    //                 process_id: v.operation_sheet.product.process?.name,
+    //                 lot_number: v.lot_number,
+    //                 user_id: v.worker.name,
+    //                 start: v.start,
+    //                 end: v.end,
+    //                 paused_time: 0,
+    //                 good_quantity: v.good_quantity,
+    //                 poor_quantity: v.poor_quantity,
+    //                 power_usage : v.power_usage
+    //             }
+    //         })
+    //         setPauseBasicRow(filterResponse)
+    //     }
+    // }
+
+
+    // React.useEffect(()=>{
+
+    //     if(processBasicRow.id){
+    //         RequestPowerUsageApi(processBasicRow.id)
+    //     }
+
+    // },[processBasicRow.id,selectDate])
+
+    // React.useEffect(()=>{
+
+    //     if(pauseBasicRow.length){
+            
+    //         const rowLenth = pauseBasicRow.length;
+    //         let sum = 0;
+    //         if(rowLenth){
+    //             pauseBasicRow.map((row)=> {
+    //                 sum += row.power_usage
+    //             })
+    //             setProcessBasicRow({...processBasicRow , powerUsage_average : `${Math.round(sum/rowLenth)}`})
+    //         }
+    //     }else{
+
+    //         setProcessBasicRow({...processBasicRow , powerUsage_average : '-'})
+    //     }
+
+
+    // },[pauseBasicRow])
+
+
     return (
         <div>
             <PageHeader title={"전력 사용량(E)"} />
@@ -69,18 +133,15 @@ const MesKpiPowerUsage = () => {
                 headerList={[
                     ...processColumn
                 ]}
-                row={processBasicRow}
-                setRow={(e) => {
-                    const tmpBasicRow = [...e];
-                    tmpBasicRow[0] = {
-                        ...tmpBasicRow[0],
-                        // customer: tmpBasicRow[0].customer.name,
-                        // customerData: tmpBasicRow[0].customer,
-                        // model: tmpBasicRow[0].model.model,
-                        // modelData: tmpBasicRow[0].model,
-                        product_id: tmpBasicRow[0].product.product_id
-                    }
-                    setProcessBasicRow(tmpBasicRow)
+                row={[processBasicRow]}
+                setRow={(row) => {
+                    setProcessBasicRow({...processBasicRow, 
+                        id : row[0].product.product_id,
+                        customer_id : row[0].customer_id,
+                        cm_id : row[0].cm_id,
+                        code : row[0].code,
+                        name: row[0].product_name,
+                    })
                 }}
                 selectList={selectList}
                 //@ts-ignore
@@ -89,9 +150,9 @@ const MesKpiPowerUsage = () => {
             />
             <div style={{display:"flex", justifyContent:"space-between", margin:"15px 0"}}>
                 {
-                    processBasicRow[0].product_id
+                    processBasicRow?.product_id
                         ? <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            공정별 불량 통계
+                            작업이력별 전력 사용량
                         </span>
                         : <span style={{color:"#ffffff58", fontSize:22, fontWeight:"bold"}}>
                             제품을 선택해주세요

@@ -17,5 +17,7 @@ export {BasicMidrangeDetail} from './container/BasicMidrangeDetail'
 export {BasicMidrangeModify} from './container/BasicMidrangeModify'
 export {BasicMidrangeRegister} from './container/BasicMidrangeRegister'
 export {BasicTool} from "./container/BasicTool"
-export {BasicDocumentationManagement} from "./container/BasicDocumentaionManagement"
+export {BasicDocument} from "./container/BasicDocument"
+export {BasicDocumentLogs} from "./container/BasicDocumentLogs"
+
 

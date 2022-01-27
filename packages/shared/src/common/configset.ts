@@ -19,7 +19,16 @@ export const BUTTON_TEXT_COLOR: string = '#ffffff' as const
 export const BG_COLOR_SUB3: string = '#353b48' as const
 export const POINT_COLOR_3: string = '#e7e9eb' as const
 
+//CNC 주소
 export const SF_ADDRESS = "3.36.78.194"
+
+//1.5v 주소
+// export const SF_ADDRESS = "3.37.196.98"
+
+let hostname
+if (typeof window !== 'undefined') {
+    hostname = window.location.hostname;
+}
 
 export const isLocalhost = () => {
   //@ts-ignore
@@ -30,15 +39,18 @@ export const isLocalhost = () => {
   }
 }
 
-// export const SF_ENDPOINT = `http://${isLocalhost()}:9910`
+// export const SF_ENDPOINT = `http://${isLocalhost()}:9910`z
 export const SF_ENDPOINT = `http://${isLocalhost()}:8443`
 export const SF_ENDPOINT_EXCEL = `http://${isLocalhost()}:8399`
 export const SF_ENDPOINT_ADMIN = `http://${isLocalhost()}:8286/api`
 export const SF_ENDPOINT_FILE = `http://${isLocalhost()}:8099`
 export const SF_ENDPOINT_RESOURCE = `http://${isLocalhost()}:8285`
+export const SF_ENDPOINT_S3 = "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"
 export const SF_PORT = ``
 
 export const SF_ENDPOINT_BARCODE = 'http://192.168.0.49:18080'
+
+export const SF_ENDPOINT_PMS = `http://${hostname}:8999`
 
 export const AUTHORITY_LIST = [
   { title: "HOME", show: false, checkable: true, check: false, child: [

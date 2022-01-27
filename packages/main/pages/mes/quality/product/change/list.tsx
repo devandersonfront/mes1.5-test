@@ -6,9 +6,17 @@ import {SelectColumn} from "react-data-grid";
 //@ts-ignore
 import Notiflix from "notiflix";
 import {MesProductChangeList} from 'mes'
+import {NextPageContext} from "next";
 
 
-const RegisterBasicContainer = () => {
+interface IProps {
+    children?: any
+    page?: number
+    keyword?: string
+    option?: number
+}
+
+const RegisterBasicContainer = ({page, keyword, option}: IProps) => {
 
 
     return (
@@ -16,10 +24,21 @@ const RegisterBasicContainer = () => {
             <MenuNavigation pageType={'MES'} subType={2}/>
             <div>
                 <ProfileHeader/>
-                <MesProductChangeList/>
+                <MesProductChangeList page={page} keyword={keyword} option={option}/>
             </div>
         </div>
     )
 }
+
+export const getServerSideProps = (ctx: NextPageContext) => {
+    return {
+        props: {
+            page: ctx.query.page ?? 1,
+            keyword: ctx.query.keyword ?? "",
+            option: ctx.query.opt ?? 0,
+        }
+    }
+}
+
 
 export default RegisterBasicContainer;

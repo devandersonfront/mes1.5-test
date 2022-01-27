@@ -70,6 +70,8 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       }
     })
 
+    console.log(tmpSelectList,'tmpSelectListtmpSelectListtmpSelectList')
+
     setSelectRow(tmpSelectList[0])
 
   }
@@ -188,12 +190,19 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
               ...row,
               ...selectData,
               customer: row.customerArray,
-              customer_id: row.customerArray.customer_id,
+              // customer_id: row.customerArray.customer_id,
+              customer_id: undefined,
               model: row.modelArray,
               // standard_uph: row.uph,
               molds:[...row?.molds?.map((mold)=>{
                 return {...mold, setting:mold.mold.setting}
               }) ?? []],
+              tools:[
+                  ...row?.tools?.map((tool) => {
+                    // return {...tool, tool:{...tool.tool, seq:undefined, customer:tool.tool.customerData}, setting:tool.tool.setting}
+                    return {...tool, tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional}, setting:tool.tool.setting}
+                  })
+              ],
               machines:[
                   ...row?.machines?.map((machine)=>{
                     return {
@@ -497,11 +506,11 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const handleBarcode = async (dataurl : string) => {
+  const handleBarcode = async (dataurl : string , id : string) => {
 
     await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
                 {
-                  "id":1,
+                  "id":id,
                   "functions":
                   {"func0":{"checkLabelStatus":[]},
                     "func1":{"clearBuffer":[]},
@@ -601,14 +610,14 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
           }}
         />
 
-      {/*<BarcodeModal */}
-      {/*  title={'바코드 미리보기'} */}
-      {/*  handleBarcode={handleBarcode}*/}
-      {/*  handleModal={handleModal}*/}
-      {/*  isOpen={barcodeOpen}*/}
-      {/*  type={'product'}*/}
-      {/*  data={selectRow}*/}
-      {/*/>*/}
+      <BarcodeModal
+       title={'바코드 미리보기'}
+       handleBarcode={handleBarcode}
+       handleModal={handleModal}
+       isOpen={barcodeOpen}
+       type={'product'}
+       data={selectRow}
+      />
       {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}

@@ -108,6 +108,11 @@ export const getServerSideProps = async (ctx: any) => {
           title: "주변창지 정보관리",
           code:"ROLE_BASE_12"
         }
+      case "tool" :
+        return {
+          title: "공구 관리",
+          code: "ROLE_BASE_14"
+        }
     }
   }
 

@@ -293,7 +293,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
         }else{
             LoadBasic()
         }
-        console.log(selectDate);
+        setIsFirst(false)
 
     },[selectDate, keyword])
 

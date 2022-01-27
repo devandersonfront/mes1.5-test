@@ -21,26 +21,8 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-//column에다가 header type을 넣어서 자유롭게 커스텀 할 수 있게 만들자
-const machineType = [
-        {name:"금형명",},
-        // {type: "기계 종류", weldingType: "용접 종류", mfrCode: "제조번호", manager: "담당자",},
-        // {interwork:"오버홀"}
-    ]
-
-const moldType = [
-  {code:"CODE", name:"금형명"},
-  {cavity:"캐비티", spm:"SPM", slideHeight:"슬라이드 위치"},
-  {limit:"최대 타수", inspect:"점검 타수", current:"현재 타수"},
-]
-
-
-
 const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
@@ -52,28 +34,9 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       cleanUpData();
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
 
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
-    }
-    return tmpData
-  }
 
   const cleanType = (type:number) => {
     switch(type) {
@@ -90,33 +53,81 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
 
   const cleanUpData = () => {
-    switch(column.type){
-      case "mold" :
-        console.log("mold : ", row.product_id)
-        let moldArray = [];
-        row?.product_id.map((data)=>{
-          let result:any = {...data};
-          result.customerData = data?.customer;
-          result.customer = data?.customer?.name;
-          result.modelData = data?.model;
-          result.model = data?.model?.model;
-          result.type_id = data.type;
-          result.product_type = cleanType(data.type);
-          result.unit = data.unit;
-          result.stock = data.stock;
+    console.log("row : ", row)
+    if(row.product_id){
+      switch(column.type){
+        case "mold" :
+          console.log("mold : ", row.product_id)
+              let moldArray = [];
+              row?.product_id.map((data)=>{
+                let result:any = {...data};
+                result.customerData = data?.customer;
+                result.customer = data?.customer?.name;
+                result.modelData = data?.model;
+                result.model = data?.model?.model;
+                result.type_id = data.type;
+                result.product_type = cleanType(data.type);
+                result.unit = data.unit;
+                result.stock = data.stock;
+
+                moldArray.push(result);
+              })
+              console.log("moldArray : ", moldArray)
+              setSearchList(moldArray);
 
 
-          moldArray.push(result);
-        })
-        console.log("moldArray : ", moldArray)
-        setSearchList(moldArray);
+          return
+        case "machine" :
+          console.log("machine : ", row.product_id)
+          let machineArray = [];
+          row?.product_id?.map((data)=>{
+            let result:any = {...data};
+            result.customerData = data?.customer;
+            result.customer = data?.customer?.name;
+            result.modelData = data?.model;
+            result.model = data?.model?.model;
+            result.type_id = data?.type;
+            result.product_type = cleanType(data?.type);
+            result.unit = data?.unit;
+            result.stock = data?.stock;
 
-        return
-      case "machine" :
-        console.log("machine : ", row.product_id)
-        let machineArray = [];
-        row?.product_id?.map((data)=>{
-          let result:any = {...data};
+
+            machineArray.push(result);
+          })
+          console.log("machineArray : ", machineArray)
+          setSearchList(machineArray);
+          return
+
+        case "tool" :
+          console.log("tool : ", row?.product_id)
+          let toolArray = [];
+          row?.product_id?.map((data)=>{
+            let result:any = {...data};
+            result.customerData = data?.customer;
+            result.customer = data?.customer?.name;
+            result.modelData = data?.model;
+            result.model = data?.model?.model;
+            result.type_id = data?.type;
+            result.product_type = cleanType(data?.type);
+            result.unit = data?.unit;
+            result.stock = data?.stock;
+
+
+            toolArray.push(result);
+          })
+          console.log("toolArray : ", toolArray)
+          setSearchList(toolArray);
+
+          return
+        default :
+          break;
+      }
+    }else{
+      if(row?.products){
+        let productArray = [];
+        row?.products?.map((data) => {
+          let result:any = {...data}
+          console.log(data)
           result.customerData = data?.customer;
           result.customer = data?.customer?.name;
           result.modelData = data?.model;
@@ -126,68 +137,16 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
           result.unit = data?.unit;
           result.stock = data?.stock;
 
-
-          machineArray.push(result);
+          productArray.push(result);
         })
-        console.log("machineArray : ", machineArray)
-        setSearchList(machineArray);
-        return
-
-      case "tool" :
-        console.log("tool : ", row?.product_id)
-        let toolArray = [];
-        row?.product_id?.map((data)=>{
-          let result:any = {...data};
-          result.customerData = data?.customer;
-          result.customer = data?.customer?.name;
-          result.modelData = data?.model;
-          result.model = data?.model?.model;
-          result.type_id = data?.type;
-          result.product_type = cleanType(data?.type);
-          result.unit = data?.unit;
-          result.stock = data?.stock;
-
-
-          toolArray.push(result);
-        })
-        console.log("toolArray : ", toolArray)
-        setSearchList(toolArray);
-
-        return
-      default :
-        break;
+        console.log("productArray : ", productArray);
+        setSearchList(productArray);
+      }else{
+        Notiflix.Report.warning("경고","품목이 없습니다.","확인",() => setIsOpen(false))
+      }
     }
   }
 
-  // const SearchBasic = async (keyword: any, option: number, page: number) => {
-  //   Notiflix.Loading.circle()
-  //   setKeyword(keyword)
-  //   setOptionIndex(option)
-  //   const res = await RequestMethod('get', `machineSearch`,{
-  //     path: {
-  //       page: page,
-  //       renderItem: 18,
-  //     },
-  //     params: {
-  //       keyword: keyword ?? '',
-  //       opt: option ?? 0
-  //     }
-  //   })
-  //
-  //   if(res){
-  //     let searchList = res.info_list.map((row: any, index: number) => {
-  //       return changeRow(row)
-  //     })
-  //
-  //     setPageInfo({
-  //       ...pageInfo,
-  //       page: res.page,
-  //       total: res.totalPages,
-  //     })
-  //
-  //     setSearchList([...searchList])
-  //   }
-  // }
 
   const settingTitle = (index:number, inindex?:number) => {
     if(column.type === "mold" && index === 0 ? 450 : 144)
@@ -326,7 +285,8 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
-                headerList={searchModalList.productInfo}
+                // headerList={searchModalList.productInfo}
+                headerList={row.products ? searchModalList.productToolInfo : searchModalList.productInfo}
                 // row={row.products ?? row.product_id ?? [{}]}
                 row={searchList}
                 setRow={(e) => setSearchList([...e])}

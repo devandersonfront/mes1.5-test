@@ -541,11 +541,11 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
 
   // 바코드
 
-  const handleBarcode = async (dataurl) => {
+  const handleBarcode = async (dataurl , id) => {
 
     await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
                 {
-                  "id":1,
+                  "id":id,
                   "functions":
                   {"func0":{"checkLabelStatus":[]},
                     "func1":{"clearBuffer":[]},
@@ -639,14 +639,14 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
           }}
         />
 
-      {/*<BarcodeModal */}
-      {/*  title={'바코드 미리보기'} */}
-      {/*  handleBarcode={handleBarcode}*/}
-      {/*  handleModal={handleModal}*/}
-      {/*  isOpen={barcodeOpen}*/}
-      {/*  type={'rawMaterial'}*/}
-      {/*  data={selectRow}*/}
-      {/*/>*/}
+      <BarcodeModal
+        title={'바코드 미리보기'}
+        handleBarcode={handleBarcode}
+        handleModal={handleModal}
+        isOpen={barcodeOpen}
+        type={'rawMaterial'}
+        data={selectRow}
+      />
       {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}

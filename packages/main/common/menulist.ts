@@ -62,6 +62,7 @@ const BASIC_MENUS: IMenuType[] = [
   {title: '원자재 기준정보', url: '/mes/basic/rawmaterialV1u'},
   {title: '부자재 기준정보', url: '/mes/basic/submaterial'},
   {title: '제품 등록 관리', url: '/mes/basic/productV1u'},
+  {title: '문서 관리', url: '/mes/basic/document'},
 ]
 
 const MES_MENUS: IMenuType[] = [
@@ -79,7 +80,7 @@ const MES_MENUS: IMenuType[] = [
     subMenu: [
       {title: '작업지시서 등록', url: '/mes/operationV1u/register'},
       {title: '작업지시서 리스트', url: '/mes/operationV1u/list'},
-      {title: '작업 일보 리스트', url: '/mes/recordV2/list'},
+      {title: '작업일보 리스트', url: '/mes/recordV2/list'},
       {title: '작업 완료 리스트', url: '/mes/finishV2/list'},
     ]
   },
@@ -123,18 +124,18 @@ const MES_MENUS: IMenuType[] = [
       {title: '생산/납품 현황(관리자용)', url: '/mes/stock/admin'},
     ]
   },
-  // {
-  //   title: 'KPI', url: '',
-  //   subMenu: [
-  //     {title: '제조리드타임(P)', url: '/mes/kpi/leadtime/manufacture'},
-  //     {title: '작업공수(C)', url: '/mes/kpi/manhour'},
-  //     {title: '품질 불량률(Q)', url: '/mes/kpi/defect'},
-  //     {title: '수주/납품 리드타임(D)', url: '/mes/kpi/leadtime/order'},
-  //     {title: '전력사용량(E)', url: '/mes/kpi/powerusage'},
-  //     {title: 'UPH(P)', url: '/mes/kpi/uph'},
-  //     {title: '설비가동률(P)', url: '/mes/kpi/operation'}
-  //   ]
-  // }
+  {
+    title: 'KPI', url: '',
+    subMenu: [
+      {title: '제조리드타임(P)', url: '/mes/kpi/leadtime/manufacture'},
+      {title: '작업공수(C)', url: '/mes/kpi/manhour'},
+      {title: '품질 불량률(Q)', url: '/mes/kpi/defect'},
+      {title: '수주/납품 리드타임(D)', url: '/mes/kpi/leadtime/order'},
+      {title: '전력사용량(E)', url: '/mes/kpi/powerusage'},
+      {title: 'UPH(P)', url: '/mes/kpi/uph'},
+      {title: '설비가동률(P)', url: '/mes/kpi/operation'}
+    ]
+  }
 ]
 
 const PMS_MENUS: IMenuType[] = [

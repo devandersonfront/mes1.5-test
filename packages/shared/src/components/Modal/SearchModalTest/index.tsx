@@ -48,6 +48,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   // const [page, setPage] = useState<number>(1);
   // const [totalPage, setTotalPage] = useState<number>(0);
 
+
+
   useEffect(() => {
     if(column.type){
       if(column.type === "bom"){

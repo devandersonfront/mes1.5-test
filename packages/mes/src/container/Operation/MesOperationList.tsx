@@ -386,15 +386,19 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
           (e) => {
             switch(e) {
               case 1:
-                dispatch(setModifyInitData({
-                  modifyInfo: basicRow.map(v => {
-                    if (selectList.has(v.id)) {
-                      return v
-                    }
-                  }).filter(v => v),
-                  type: 'order'
-                }))
-                router.push('/mes/order/modify')
+                if(selectList.size > 0){
+                  dispatch(setModifyInitData({
+                    modifyInfo: basicRow.map(v => {
+                      if (selectList.has(v.id)) {
+                        return v
+                      }
+                    }).filter(v => v),
+                    type: 'order'
+                  }))
+                  router.push('/mes/order/modify')
+                }else{
+                  Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
+                }
                 break;
               case 2:
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
