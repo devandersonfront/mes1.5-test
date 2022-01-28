@@ -7,6 +7,7 @@ import {menuSelect} from './common/menulist'
 import {rootReducer} from './reducer'
 import exp from "constants";
 
+
 export {
   getMachineTypeList,
   getSubMachineTypeList,
@@ -112,6 +113,9 @@ export {ProductTitleFomatter} from "./components/Formatter/ProductTitleFomatter"
 export {RecordDetailFormatter} from "./components/Formatter/RecordDetailFormatter"
 export {StatusComponent} from "./components/Formatter/StatusComponent"
 export {LineBorderContainer} from "./components/Formatter/LineBorderContainer"
+export {UnderLineContainer} from "./components/Formatter/UnderLineContainer"
+
+
 
 //헤더
 export {Header} from "./components/Header"

@@ -32,34 +32,39 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
     const [moveFile, setMoveFile] = useState<number>();
     const [selectList, setSelectList] = useState<Set<number>>(new Set());
 
+    console.log(basicRow,'basicRowbasicRow')
+
+    // 해당 리스트의 데이터를 받아오는 함수 
     const LoadBasic = async() => {
-        const res = await RequestMethod("get", "documentList",
-            {
-                path:{
-                    docId:doc_id ?? null
-                }
-            })
+
+        const res = await RequestMethod("get", "documentList",{ path: { docId : doc_id ?? null}})
+
+        console.log(res,'resresresres')
 
         if(res){
-            cleanUpData(res)
-            setSelectList(new Set());
+            const convertData = res.map((v)=>({...v , id : v.doc_id, type : v.type === "dir" ? "폴더" : v.type , date : moment().format("YYYY-MM-DD")})) 
+            // cleanUpData(res)
+            const classfyData = res.filter(v => v.type === 'dir')
+
+            setBasicRow(convertData)
+            setFolderList(classfyData)
         }
     }
-
+    
+    // 문서관리의 이름만을 위한 함수
     const LoadDocumentState = async() => {
         if(doc_id){
-            const res = await RequestMethod("get", "documentLoad", {
-                path:{doc_id : doc_id}
-            })
+            const res = await RequestMethod("get", "documentLoad", {path:{doc_id : doc_id}})
             if(res){
-                console.log("res : ", res)
-                setParentData({...res})
-            }
 
+                return setParentData({...res})
+            }
         }
 
+        return setParentData({...parentData , name : '표준 문서 관리'})
     }
 
+    // 삭제
     const DeleteBasic = async() => {
         const res = await RequestMethod("delete", "documentDelete", selectFile())
         if(res){
@@ -67,6 +72,7 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
         }
     }
 
+    // 문서 다운로드
     const DocumentDownLoad = async() => {
 
         const downloadDatas = []
@@ -80,55 +86,18 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
             .then((res) => {
                 if(res){
                     downloadDatas.map((file) => {
-                        console.log(file.file_uuid)
-                        RequestMethod("get", "anonymousLoad", {
-                            path:{
-                                uuid:file.file_uuid
-                            }
-                        })
-                            .then((response) => {
-                                console.log("response : ", response)
-                                window.open(response.url)
+                        if(file.file_uuid){
+                            RequestMethod("get", "anonymousLoad", {
+                                path:{
+                                    uuid:file.file_uuid
+                                }
+                            }).then((response) => {
+
+                                    window.open(response.url)
                             })
+                        }
                     })
                 }
-
-            })
-    }
-
-    const cleanUpData = (datas:any[]) => {
-        let resultDatas = [];
-        let folderList = [];
-        datas.map((data) => {
-            const randomId = Math.random()*1000;
-            let result:any = {...data, id:"document_"+randomId};
-            result.type = data.type === "dir" ? "폴더" : data.type;
-            // result.date = data.created;
-            result.date = moment().format("YYYY-MM-DD");
-
-            if(data.type === "dir"){
-                folderList.push(data)
-                console.log(data)
-                // folderList.push("fileParent")
-            }
-
-            resultDatas.push(result);
-        })
-
-        setBasicRow(resultDatas)
-        setFolderList(folderList);
-        settingFolderList();
-    }
-
-    const settingFolderList = async() => {
-        await RequestMethod("get", "documentAll",{
-            params:{
-                type:"dir"
-            }
-        })
-            .then((res) => {
-                console.log("res : ", res)
-                setFolderList(res)
             })
     }
 
@@ -166,12 +135,13 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                         if(value.type === "폴더"){
                             Notiflix.Report.warning("경고", "파일을 선택해주시기 바랍니다.", "확인");
                             return
+                        }else{
+                            // 문서 다운로드시 hwp는 다운로드가 안됨..
+                            DocumentDownLoad();
                         }
                     })
                 }
-                DocumentDownLoad();
                 return
-
             case 3:
                 router.push("/mes/basic/document/logs")
                 return
@@ -188,6 +158,7 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                 }
                 setIsOpen(true);
                 setModalType("fileMove");
+                
                 return
 
             case 5:
@@ -207,12 +178,22 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
         }
     }
 
+    const moveFolder = (id: string) => {
+
+        if (id !== undefined) {
+            router.push({
+                pathname: `/mes/basic/document`,
+                query: {doc_id : id}
+            });
+        }
+    };
+
     useEffect(()=>{
         LoadBasic();
         LoadDocumentState();
-        setSelectList(new Set());
-        setParentData("")
     },[doc_id])
+
+
 
     return (
         <div>
@@ -222,7 +203,10 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                 buttonsOnclick={buttonEvents}
             />
             <ExcelTable
-                headerList={[SelectColumn,...columnlist.documentManage]}
+                headerList={[SelectColumn,
+                    ...columnlist.documentManage({
+                        move: moveFolder
+                    })]}
                 row={basicRow}
                 setRow={(e) => {
                     setBasicRow(e)
@@ -231,15 +215,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                 setSelectList={(e) => {
                     //@ts-ignore
                     setSelectList(e)
-                }}
-                setSelectRow={(e) => {
-                    setMoveFile(e)
-                    if(basicRow[e].type === "폴더" || basicRow[e].type === "dir"){
-                        // setFolderId(basicRow[e]?.doc_id)
-                        if(moveFile === e){
-                            router.push("/mes/basic/document?doc_id="+basicRow[e].doc_id)
-                        }
-                    }
                 }}
             />
             <DocumentControlModal
