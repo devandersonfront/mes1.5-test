@@ -23,6 +23,8 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
         setSelectOption(value)
     }
 
+    console.log(parentData,'parentDataparentData')
+
     const contentSet = (type:"folderAdd" | "documentUpload" | "fileMove") => {
         switch (type){
             case "folderAdd":
@@ -41,7 +43,8 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                             <Button
                                 style={{color:"#111319", background:"#19B9DF"}}
                                 onClick={async()=>{
-                                    await RequestMethod("post", "documentSave", [{...fileInfo[0], parent:parentData}])
+                                    await RequestMethod("post", "documentSave",
+                                    [{...fileInfo[0], parent:parentData.name ==="표준 문서 관리" ? undefined : parentData}])
                                         .then((res) => {
                                             setIsOpen(false);
                                             reload()
@@ -59,8 +62,8 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                         </ModalHeader>
                         <FileUploader type={"input"} onChange={(file) => {
                             const fileData = {...file};
-                            fileData.file_uuid = file.uuid;
-                            setFileInfo([{file_uuid:file.UUID, type:file.type, name:file.name, parent:parentData}] )
+                            fileData.UUID = file.UUID;
+                            setFileInfo([{file_uuid:file.UUID, type:file.type, name:file.name, parent: parentData.name ==='표준 문서 관리' ? undefined : parentData}] )
                         }} />
                         <div style={{display:"flex",}}>
                             <Button onClick={() => {
@@ -97,10 +100,9 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                                 onClick={async() => {
                                     await RequestMethod("post", "documentMove",[{...selectFile, parent:selectOption}])
                                         .then((res) => {
-
+                                            setIsOpen(false)
+                                            reload()
                                         })
-                                    // setIsOpen(false)
-                                    // reload()
                                 }}
                             >확인</Button>
                         </div>
@@ -116,9 +118,9 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
         }
     }
 
-    useEffect(() => {
-        setFileInfo([])
-    },[isOpen])
+    // useEffect(() => {
+    //     setFileInfo([])
+    // },[isOpen])
 
     return (
         <div>

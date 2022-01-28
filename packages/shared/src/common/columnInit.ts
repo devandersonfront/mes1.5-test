@@ -58,6 +58,7 @@ import placeholder from "lodash/fp/placeholder";
 import {ToolInfoModal} from "../components/Modal/ToolInfoModal";
 import {ToolListModal} from "../components/Modal/ToolListModal";
 import {MidrangeFrameButton} from "../components/Buttons/MidrangeFrameButton";
+import {UnderLineContainer} from '../components/Formatter/UnderLineContainer'
 
 
 export const columnlist: any = {
@@ -1224,8 +1225,8 @@ export const columnlist: any = {
     {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
-  documentManage:[
-    {key:"name", name:"이름", width:1056, formatter: PlaceholderBox },
+  documentManage:({move})=>[
+    {key:"name", name:"이름", width:1056, formatter: UnderLineContainer , callback : move },
     {key:"type", name:"종류", width:247 },
     {key:"date", name:"날짜", width:224},
   ],

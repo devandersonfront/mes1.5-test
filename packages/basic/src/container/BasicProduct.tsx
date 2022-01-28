@@ -45,6 +45,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     page: 1,
     total: 1
   })
+
   const [buttonList , setButtonList ] = useState<string[]>([])
 
   useEffect(() => {
@@ -69,8 +70,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         tmpSelectList.push(row)
       }
     })
-
-
     setSelectRow(tmpSelectList[0])
 
   }
