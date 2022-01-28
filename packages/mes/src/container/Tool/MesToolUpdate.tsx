@@ -28,13 +28,11 @@ const MesToolUpdate = () => {
 
             return value
         })
-        console.log(cleanData)
         setBasicRow([...cleanData]);
     }
 
     const SaveCleanUpData = (data:any[]) => {
         let resultData = [];
-        console.log("data : ", data)
         data.map((rowData, index) => {
             let tmpRow:any = {};
             let toolObject:any = {};
@@ -54,7 +52,6 @@ const MesToolUpdate = () => {
 
             resultData.push(tmpRow);
         })
-        console.log(resultData)
         return resultData;
     }
 
@@ -67,17 +64,14 @@ const MesToolUpdate = () => {
             Notiflix.Report.failure("에러가 발생했습니다. 관리자에게 문의해주시기 바랍니다.","","확인")
         }
     }
-    console.log("toolStore : ", toolStore)
     const buttonEvents = (number:number) => {
         switch(number) {
             case 0:
                 const result = basicRow.filter((row) => {
                     if (selectList.has(row.id)) return row
                 })
-                console.log(basicRow)
                 //result 값 가지고 save
                 SaveCleanUpData(result)
-                console.log(result)
                 SaveBasic(SaveCleanUpData(result));
                 router.push("/mes/tool/list");
 
@@ -94,7 +88,6 @@ const MesToolUpdate = () => {
     }
 
     useEffect(() => {
-        console.log(toolStore)
         if(toolStore?.data === ''){
             // Notiflix.Report.warning("수정할 데이터가 없습니다.","","확인",() =>
                 router.back()

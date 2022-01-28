@@ -101,9 +101,8 @@ const MesStockProductList = ({page, keyword, option}) => {
           }
         }).filter(v=>v)
       }else{
-        tmpRow = [{...res}]
+        tmpRow = [...res]
       }
-
       tmpRes = {
         menus: menus,
         summaries: tmpRow

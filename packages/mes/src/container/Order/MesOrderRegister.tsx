@@ -37,7 +37,6 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
   }, [])
 
   useEffect(() => {
-    console.log(basicRow)
   }, [basicRow])
 
   const getMenus = async () => {

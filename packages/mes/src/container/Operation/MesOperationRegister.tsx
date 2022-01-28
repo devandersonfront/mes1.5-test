@@ -120,6 +120,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
+            os_id:undefined,
             input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
               // return {
               //   ...bom,
@@ -411,7 +412,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           const eData = e.filter((eValue) => {
             let equal = false;
             basicRow.map((bValue)=>{
-              console.log(eValue, bValue)
               if(eValue.product?.product_id === bValue.product?.product_id){
                 equal = true
               }
@@ -420,7 +420,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             if(!equal) return eValue
           })
           if(eData.length <= 0){
-            console.log("e : ", e)
             setSelectList(new Set());
             setBasicRow([...e])
           }else{

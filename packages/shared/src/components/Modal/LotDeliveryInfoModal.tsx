@@ -53,7 +53,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         let index = row.lots.findIndex((lot) => lot.group.sum.lot_number === v.group.sum.lot_number)
         if (index !== -1) {
           totalAmount += row.lots[index].amount
-          console.log("row.lots[index].amount : ",row.lots[index].amount)
           return {
             seq: i + 1,
             lot_number: v.group.sum.lot_number,
@@ -71,7 +70,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         }
 
         // totalAmount += row.amount
-        console.log("totalAmount : ", totalAmount)
         return {
           seq: i + 1,
           lot_number: v.group.sum.lot_number,

@@ -20,7 +20,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
 
   const loadMaterialLot = async (type) => {
     let res
-    console.log("!!!!!!!type : ", type, row)
     switch(type){
       case 0:
         res = await RequestMethod('get', `lotRmSearch`, {
