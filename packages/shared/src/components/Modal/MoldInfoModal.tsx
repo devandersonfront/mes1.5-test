@@ -40,7 +40,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     if(isOpen) {
       if(row?.molds && row?.molds.length > 0){
         setSearchList(row.molds.map((v,i) => {
-          console.log("v : ", v)
           return {
             ...v,
             ...v.mold,

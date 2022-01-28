@@ -91,7 +91,7 @@ const MesAdminStockProductList = () => {
           }
         }).filter(v=>v)
       }else{
-        tmpRow = [{...res}]
+        tmpRow = [...res]
       }
 
       tmpRes = {
@@ -121,7 +121,7 @@ const MesAdminStockProductList = () => {
         to:modalResult.to
       }
     })
-    if(res && res.status === 200 ){
+    if(res ){
       // if(res.results.summaries.length > 0){
       cleanUpData(res, "model");
       cleanUpData(res, "date");

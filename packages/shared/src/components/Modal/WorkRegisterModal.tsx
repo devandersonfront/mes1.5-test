@@ -98,7 +98,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const SaveBasic = async () => {
-    console.log("searchList : ", searchList)
     searchList.map((row) => {
       if(!row.lot_number){
         Notiflix.Report.warning("경고","LOT번호를 입력해주시기 바랍니다.","확인",)
@@ -276,7 +275,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
               headerList={searchModalList.workRegister}
               row={searchList ?? [{}]}
               setRow={(e) => {
-                console.log(e)
                 let tmp = e.map((v, index) => {
                   if(v.newTab === true){
                     const newTabIndex = bomDummy.length+1
@@ -289,7 +287,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                     newTab: false
                   }
                 })
-                console.log('tmp', tmp)
                 setSearchList([...tmp.map(v => {
                   return {
                     ...v,

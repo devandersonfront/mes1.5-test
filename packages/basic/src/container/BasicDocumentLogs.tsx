@@ -20,7 +20,6 @@ const BasicDocumentLogs = () => {
         })
 
         if(res){
-            console.log(res)
             cleanUpData(res)
         }
     }

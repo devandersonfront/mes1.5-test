@@ -59,7 +59,6 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
 
     useEffect(() => {
         if(isOpen) {
-            console.log("row : ", row)
             if(!!row.tools && row.tools.length){
                 setSearchList([...row.tools.map(v => {
                     return {

@@ -70,7 +70,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       }
     })
 
-    console.log(tmpSelectList,'tmpSelectListtmpSelectListtmpSelectList')
 
     setSelectRow(tmpSelectList[0])
 
@@ -467,7 +466,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         let items = {}
 
         column.map((value) => {
-          console.log("value : ", value)
           if(value.selectList && value.selectList.length){
             items = {
               ...value.selectList[0],

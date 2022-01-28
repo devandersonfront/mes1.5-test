@@ -41,7 +41,6 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                             <Button
                                 style={{color:"#111319", background:"#19B9DF"}}
                                 onClick={async()=>{
-                                    console.log("fileInfo : ", [{...fileInfo[0], parent:parentData}])
                                     await RequestMethod("post", "documentSave", [{...fileInfo[0], parent:parentData}])
                                         .then((res) => {
                                             setIsOpen(false);
@@ -70,7 +69,6 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                             <Button
                                 style={{color:"#111319", background:"#19B9DF"}}
                                 onClick={async() => {
-                                    console.log("fileInfo : ", fileInfo)
                                     await RequestMethod("post", "documentSave", fileInfo)
                                         .then(() => {
                                             setIsOpen(false);
@@ -99,10 +97,8 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                                 onClick={async() => {
                                     await RequestMethod("post", "documentMove",[{...selectFile, parent:selectOption}])
                                         .then((res) => {
-                                            console.log(res);
 
                                         })
-                                    console.log(selectFile, selectOption )
                                     // setIsOpen(false)
                                     // reload()
                                 }}

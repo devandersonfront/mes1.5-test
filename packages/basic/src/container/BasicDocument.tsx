@@ -52,7 +52,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                 path:{doc_id : doc_id}
             })
             if(res){
-                console.log("res : ", res)
                 setParentData({...res})
             }
 
@@ -80,14 +79,12 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
             .then((res) => {
                 if(res){
                     downloadDatas.map((file) => {
-                        console.log(file.file_uuid)
                         RequestMethod("get", "anonymousLoad", {
                             path:{
                                 uuid:file.file_uuid
                             }
                         })
                             .then((response) => {
-                                console.log("response : ", response)
                                 window.open(response.url)
                             })
                     })
@@ -108,7 +105,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
 
             if(data.type === "dir"){
                 folderList.push(data)
-                console.log(data)
                 // folderList.push("fileParent")
             }
 
@@ -127,7 +123,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
             }
         })
             .then((res) => {
-                console.log("res : ", res)
                 setFolderList(res)
             })
     }
@@ -141,7 +136,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
             })
             return selectList.has(row.id);
         })
-        console.log(data)
         return [...data]
     }
 
