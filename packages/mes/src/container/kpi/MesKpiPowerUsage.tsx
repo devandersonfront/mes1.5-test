@@ -62,7 +62,7 @@ const MesKpiPowerUsage = () => {
 
         const res = await axios.get(`${SF_ENDPOINT_PMS}/api/v2/statistics/press/electric-power`,{
             params: {
-                productIds: productId,
+                productId: productId,
                 sorts : 'date',
                 from: selectDate.from,
                 to: selectDate.to
@@ -86,9 +86,9 @@ const MesKpiPowerUsage = () => {
                     start: v.start,
                     end: v.end,
                     paused_time: 0,
-                    good_quantity: v.good_quantity,
-                    poor_quantity: v.poor_quantity,
-                    power_usage : v.power_usage
+                    good_quantity: v.goodQuantity,
+                    poor_quantity: v.poorQuantity,
+                    power_per_unit : v.power_per_unit
                 }
             })
             setPauseBasicRow(filterResponse)
@@ -112,7 +112,7 @@ const MesKpiPowerUsage = () => {
             let sum = 0;
             if(rowLenth){
                 pauseBasicRow.map((row)=> {
-                    sum += row.power_usage
+                    sum += row.power_per_unit
                 })
                 setProcessBasicRow({...processBasicRow , powerUsage_average : `${Math.round(sum/rowLenth)}`})
             }
