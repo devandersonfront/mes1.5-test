@@ -70,7 +70,7 @@ const MesKpiDefect = () => {
                     total_quantity : v.total_quantity,
                     good_quantity: v.good_quantity,
                     poor_quantity: v.poor_quantity,
-                    defective_rate : v.total_quantity !== 0 ? String(((v.poor_quantity/v.total_quantity) * 100).toFixed(1)) : 0.0
+                    defective_rate : v.total_quantity !== 0 ? ((v.poor_quantity/v.total_quantity) * 100).toFixed(1) : '0.0'
                 }
             })
             setPauseBasicRow(filterResponse)
