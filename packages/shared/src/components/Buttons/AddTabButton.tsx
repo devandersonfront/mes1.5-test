@@ -20,10 +20,10 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
 
   const loadMaterialLot = async (type) => {
     let res
-    console.log("!!!!!!!type : ", type)
+    console.log("!!!!!!!type : ", type, row)
     switch(type){
       case 0:
-        res = await RequestMethod('get', `lotRmList`, {
+        res = await RequestMethod('get', `lotRmSearch`, {
           path:{
             page:1,
             renderItem:15
@@ -32,14 +32,14 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
             from: "2000-01-01",
             to:moment().format("YYYY-MM-DD"),
             option:0,
-            keyword:"SPFC590-0120-312",
+            keyword:row.code,
             // rm_id: row.rm_id,
             nz: false
           }
         })
         break;
       case 1:
-        res = await RequestMethod('get', `lotSmList`, {
+        res = await RequestMethod('get', `lotSmSearch`, {
           path:{
             page:1,
           },

@@ -96,11 +96,11 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       let searchList = row.map((row: any, index: number) => {
 
         return {
-          seq: row.sum.sequence,
-          code: row.sum.operation_sheet?.product?.code,
-          name: row.sum.operation_sheet?.product?.name,
-          type: TransferCodeToValue(row.sum.operation_sheet?.product?.type, 'productType'),
-          unit: row.sum.operation_sheet?.product?.unit,
+          seq: row.sum?.sequence ?? index+1,
+          code: row.sum?.operation_sheet?.product?.code,
+          name: row.sum?.operation_sheet?.product?.name,
+          type: TransferCodeToValue(row.sum?.operation_sheet?.product?.type, 'productType'),
+          unit: row.sum?.operation_sheet?.product?.unit,
         }
       })
       setSearchList([...searchList])
@@ -376,7 +376,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
                   return {
                     ...v,
-                    spare: '여',
+                    // spare: '여',
                     newTab: false
                   }
                 })

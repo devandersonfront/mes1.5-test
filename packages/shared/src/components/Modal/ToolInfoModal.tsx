@@ -63,10 +63,10 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
 
     const ModalContents = () => {
-        if(row?.tools){
-            if(row.tools.length){
-                return <>
-                    <div style={{
+        console.log("asd;lkasd;lkasd;laskd; row : ", row)
+        // if(row?.tools){
+            if(row.tools?.length){
+                return <div style={{
                         padding: '3.5px 0px 0px 3.5px',
                         width: 112
                     }}>
@@ -76,10 +76,9 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                             <p>공구 수정</p>
                         </Button>
                     </div>
-                </>
+
             }else{
-                return <>
-                    <div style={{
+                return <div style={{
                         padding: '3.5px 0px 0px 3.5px',
                         width: '100%'
                     }}>
@@ -89,9 +88,8 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                             <p>공구 등록</p>
                         </UploadButton>
                     </div>
-                </>
             }
-        }
+        // }
     }
     console.log("row : " , row)
     return (

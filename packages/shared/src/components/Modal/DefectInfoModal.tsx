@@ -27,7 +27,6 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const tabRef = useRef(null)
 
-  console.log(row,'rowrowrowrowrowrowrowrowrowrowrowrowrowrowrow')
 
   const [bomDummy, setBomDummy] = useState<any[]>([
     {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
