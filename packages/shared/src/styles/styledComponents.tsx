@@ -144,7 +144,7 @@ export const ContentsItem = styled.div`
 `
 
 export const UploadButton = styled.div`
-  width: 100%;
+  width:112px;
   height: 32px;
   background-color: #19B9DF;
   cursor: pointer;
@@ -155,6 +155,8 @@ export const UploadButton = styled.div`
     color: black;
     font-size: 15px;
   }
+    border:none;
+    border-radius:6px;
 `
 
 export const Handler = styled.div`

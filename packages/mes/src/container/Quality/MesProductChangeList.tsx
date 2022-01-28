@@ -149,7 +149,6 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                             return v
                         }
                     }).filter(v => v)
-                    console.log(selectProduct[0].pcr_id)
                     Notiflix.Loading.remove(300);
                     router.push({pathname: '/mes/quality/product/change/detail', query: { pcr_id: selectProduct[0].pcr_id }})
                 } else if(count > 1){

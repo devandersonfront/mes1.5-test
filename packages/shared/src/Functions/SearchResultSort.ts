@@ -98,7 +98,6 @@ export const SearchResultSort = (infoList, type: string) => {
     }
     case 'tool' : {
       return infoList.map((v,index) => {
-        console.log(v);
         return {
           ...v,
           seq:index,
@@ -115,7 +114,6 @@ export const SearchResultSort = (infoList, type: string) => {
 
 export const SearchModalResult = (selectData, type: string) => {
 
-  console.log(selectData,'selectDataselectDataselectDataselectData')
 
   switch(type) {
     case 'user': {
@@ -174,7 +172,7 @@ export const SearchModalResult = (selectData, type: string) => {
         lead_time : selectData.lead_time,
         uph : selectData.uph,
         identification : selectData.identification
-        
+
       }
     }
     case "process": {
@@ -185,7 +183,6 @@ export const SearchModalResult = (selectData, type: string) => {
       }
     }
     case 'rawmaterial': {
-      console.log(selectData)
       const unitResult = () => {
         let result = "-";
         switch (selectData.type){

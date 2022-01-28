@@ -90,7 +90,6 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
 
         if(isOpen) {
             setSearchList([...tmpMachines.map((v, index) => {
-                console.log(v)
                 return {
                     ...v.machine,
                     ...v.machine.machine,

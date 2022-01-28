@@ -250,11 +250,8 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     }
 
     const DeleteBasic = async() => {
-        console.log(basicRow.filter((row)=>selectList.has(row.id)));
-
         const res = await RequestMethod("delete", "lotToolDelete", basicRow.filter((row)=>selectList.has(row.id)))
 
-        console.log(res);
         if(res){
             Notiflix.Report.success("삭제되었습니다.","","확인",() => {
                 LoadBasic()
@@ -265,9 +262,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     const ButtonEvents = (index:number) => {
         switch(index) {
             case 0:
-                console.log(selectList)
                 if(selectList.size > 0){
-                    console.log(basicRow.filter((row)=>selectList.has(row.id)))
                     // @ts-ignore
                     dispatch(setToolDataAdd(basicRow.filter((row)=>selectList.has(row.id))));
                     router.push("/mes/tool/update")

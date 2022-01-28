@@ -120,7 +120,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
 
         return resultRow;
       })
-      console.log("result : ", tmpRes);
       totalGood += Number(tmpRow.good_quantity)
       totalPoor += Number(tmpRow.poor_quantity)
       defectReasons = tmpRow.defect_reasons

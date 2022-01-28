@@ -79,7 +79,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       await RequestMethod("get", "bomLoad", {path: { key: tabStore.datas[tabStore.index].code }})
           .then((res) => {
             const result = changeRow(res);
-            console.log("result : ", result)
             setSearchList([...result])
 
             result.map((value, i) => {
@@ -488,7 +487,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     newTab: false
                   }
                 })
-                console.log(e)
 
                 setSearchList([...tmp])
               }}

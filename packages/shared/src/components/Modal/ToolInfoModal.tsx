@@ -63,7 +63,6 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
 
     const ModalContents = () => {
-        console.log("asd;lkasd;lkasd;laskd; row : ", row)
         // if(row?.tools){
             if(row.tools?.length){
                 return <div style={{
@@ -91,7 +90,6 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             }
         // }
     }
-    console.log("row : " , row)
     return (
         <SearchModalWrapper >
             { ModalContents() }

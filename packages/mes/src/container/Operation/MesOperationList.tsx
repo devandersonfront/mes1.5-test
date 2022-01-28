@@ -139,7 +139,6 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }else{
-      console.log(res);
     }
   }
 
