@@ -21,7 +21,7 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
 
     const changeSetSelectOption = (value:any) => {
         setSelectOption(value)
-    }   
+    }
 
     console.log(parentData,'parentDataparentData')
 
@@ -43,7 +43,7 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                             <Button
                                 style={{color:"#111319", background:"#19B9DF"}}
                                 onClick={async()=>{
-                                    await RequestMethod("post", "documentSave", 
+                                    await RequestMethod("post", "documentSave",
                                     [{...fileInfo[0], parent:parentData.name ==="표준 문서 관리" ? undefined : parentData}])
                                         .then((res) => {
                                             setIsOpen(false);
@@ -72,7 +72,6 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                             <Button
                                 style={{color:"#111319", background:"#19B9DF"}}
                                 onClick={async() => {
-                                    console.log("fileInfo : ", fileInfo)
                                     await RequestMethod("post", "documentSave", fileInfo)
                                         .then(() => {
                                             setIsOpen(false);
@@ -103,7 +102,6 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                                         .then((res) => {
                                             setIsOpen(false)
                                             reload()
-
                                         })
                                 }}
                             >확인</Button>

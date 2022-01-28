@@ -22,7 +22,6 @@ const MesToolRegister = () => {
 
     const SaveCleanUpData = (data:any[]) => {
         let resultData = [];
-        console.log("data : ", data)
         data.map((rowData, index) => {
             let tmpRow:any = {};
             let toolObject:any = {};
@@ -40,7 +39,6 @@ const MesToolRegister = () => {
             tmpRow.warehousing = rowData.warehousing;
             resultData.push(tmpRow);
         })
-        console.log(resultData)
         return resultData;
     }
 
@@ -68,10 +66,8 @@ const MesToolRegister = () => {
                 const result = basicRow.filter((row) => {
                     if (selectList.has(row.id)) return row
                 })
-                console.log(basicRow)
                 //result 값 가지고 save
                 SaveCleanUpData(result)
-                console.log(result)
                 SaveBasic(SaveCleanUpData(result));
 
                 return

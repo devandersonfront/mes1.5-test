@@ -156,7 +156,6 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         })
         .catch((error) => {
           Notiflix.Loading.remove(300)
-          console.log(error)
           if(error.response.status === 400) {
             Notiflix.Report.failure('삭제할 수 없습니다.', '입력값을 확인해주세요', '확인')
           }

@@ -34,7 +34,7 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
 
     console.log(basicRow,'basicRowbasicRow')
 
-    // 해당 리스트의 데이터를 받아오는 함수 
+    // 해당 리스트의 데이터를 받아오는 함수
     const LoadBasic = async() => {
 
         const res = await RequestMethod("get", "documentList",{ path: { docId : doc_id ?? null}})
@@ -42,7 +42,7 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
         console.log(res,'resresresres')
 
         if(res){
-            const convertData = res.map((v)=>({...v , id : v.doc_id, type : v.type === "dir" ? "폴더" : v.type , date : moment().format("YYYY-MM-DD")})) 
+            const convertData = res.map((v)=>({...v , id : v.doc_id, type : v.type === "dir" ? "폴더" : v.type , date : moment().format("YYYY-MM-DD")}))
             // cleanUpData(res)
             const classfyData = res.filter(v => v.type === 'dir')
 
@@ -50,13 +50,12 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
             setFolderList(classfyData)
         }
     }
-    
+
     // 문서관리의 이름만을 위한 함수
     const LoadDocumentState = async() => {
         if(doc_id){
             const res = await RequestMethod("get", "documentLoad", {path:{doc_id : doc_id}})
             if(res){
-
                 return setParentData({...res})
             }
         }
@@ -101,6 +100,40 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
             })
     }
 
+    const cleanUpData = (datas:any[]) => {
+        let resultDatas = [];
+        let folderList = [];
+        datas.map((data) => {
+            const randomId = Math.random()*1000;
+            let result:any = {...data, id:"document_"+randomId};
+            result.type = data.type === "dir" ? "폴더" : data.type;
+            // result.date = data.created;
+            result.date = moment().format("YYYY-MM-DD");
+
+            if(data.type === "dir"){
+                folderList.push(data)
+                // folderList.push("fileParent")
+            }
+
+            resultDatas.push(result);
+        })
+
+        setBasicRow(resultDatas)
+        setFolderList(folderList);
+        settingFolderList();
+    }
+
+    const settingFolderList = async() => {
+        await RequestMethod("get", "documentAll",{
+            params:{
+                type:"dir"
+            }
+        })
+            .then((res) => {
+                setFolderList(res)
+            })
+    }
+
     const selectFile = () => {
         const data = basicRow.filter((row) => {
             Object.keys(row).map((key) => {
@@ -110,7 +143,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
             })
             return selectList.has(row.id);
         })
-        console.log(data)
         return [...data]
     }
 
@@ -158,7 +190,7 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                 }
                 setIsOpen(true);
                 setModalType("fileMove");
-                
+
                 return
 
             case 5:

@@ -27,7 +27,6 @@ const MesKpiManHour = () => {
         id: '', customer_id: ''
     });
 
-    console.log(processBasicRow,'processBasicRowprocessBasicRow')
 
     const changeHeaderStatus = (value:number) => {
         setHeaderStatus(value);

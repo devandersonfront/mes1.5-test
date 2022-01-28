@@ -31,7 +31,6 @@ const tooUploadReducer = (state: ToolUploadInterface=initalState, action:Default
     switch(action.type){
         case SET_TOOL_DATA_ADD:
             const modifyInit = action.payload as any
-            console.log("modifyInit : ", modifyInit)
             // state.data = modifyInit;
             return modifyInit
 
