@@ -10,7 +10,8 @@ import ic_info from '../../public/images/ic_info.png'
 //@ts-ignore
 import ic_mes from '../../public/images/ic_mes.png'
 //@ts-ignore
-import ic_pms from '../../public/images/ic_pms.png'
+import ic_pms from '../../public/images/icon_CMS_WH_T.svg'
+// import ic_pms from '../../public/images/ic_pms.png'
 //@ts-ignore
 import ic_wms from '../../public/images/ic_wms.png'
 //@ts-ignore
@@ -22,7 +23,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import {setMenuStateChange} from '../../reducer/menuState'
 import {RootState} from '../../reducer'
 
-type IMenu = 'HOME' | 'BASIC' | 'MES' | 'PMS' | 'WMS' | 'UMS' | 'SETTING' | ""
+type IMenu = 'HOME' | 'BASIC' | 'MES' | 'PMS' | 'WMS' | 'UMS' | 'SETTING' | "CNC" | ""
 
 interface IProps {
   pageType?: IMenu,
@@ -102,7 +103,7 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
             changeMenuType("PMS")
           }}>
             <img src={ic_pms} style={{width: 30, height: 30, marginBottom: 5}}/>
-            <MenuText>PMS</MenuText>
+            <MenuText>CNC</MenuText>
           </MenuNavItem>
           {/*<MenuNavItem style={{backgroundColor: menuType === "WMS" ? POINT_COLOR : undefined}} onClick={() => {*/}
           {/*  changeMenuType("WMS")*/}

@@ -1,6 +1,6 @@
 import {IMenuType} from './@types/type'
 
-type IMenu = 'HOME' | 'BASIC' | 'MES' | 'PMS' | 'WMS' | 'UMS' | 'SETTING' | ""
+type IMenu = 'HOME' | 'BASIC' | 'MES' | 'PMS' | 'WMS' | 'UMS' | 'SETTING' | "CNC" | ""
 
 export const menuSelect = (type: IMenu) => {
   switch(type){
