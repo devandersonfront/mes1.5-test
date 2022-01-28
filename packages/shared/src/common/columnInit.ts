@@ -244,11 +244,11 @@ export const columnlist: any = {
     {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister"},
     {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process"},
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
-    {key: 'tool_id', name: '공구', formatter: ToolInfoModal},
+    // {key: 'tool_id', name: '공구', formatter: ToolInfoModal},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
     {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, formatter: PlaceholderBox, placeholder: 0},
     {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer},
-    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' }
+    // {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' }
   ],
   // rawmaterial: [
   //   {key: 'customer_id',},

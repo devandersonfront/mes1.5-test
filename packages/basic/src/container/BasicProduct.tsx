@@ -70,8 +70,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       }
     })
 
-    console.log(tmpSelectList,'tmpSelectListtmpSelectListtmpSelectList')
-
     setSelectRow(tmpSelectList[0])
 
   }
@@ -80,7 +78,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       if(v.selectList && v.selectList.length === 0){
         let tmpKey = v.key
 
-
         let res: any
         res = await RequestMethod('get', `${tmpKey}List`,{
           path: {
@@ -88,7 +85,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
             renderItem: MAX_VALUE,
           }
         })
-
 
         let pk = "";
 

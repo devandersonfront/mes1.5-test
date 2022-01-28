@@ -204,7 +204,7 @@ const ApiList = {
   processSave: `/api/v1/process/save`,
   machineSave: `/api/v1/machine/save`,
   // productSave: `/api/v1/product/save`,
-  productSave: `/cnc/api/v1/product/save`,
+  // productSave: `/cnc/api/v1/product/save`,
   rawmaterialSave: `/api/v1/rawmaterial/save`,
   moldSave: `/api/v1/mold/save`,
   pauseSave: `/api/v1/process/reason/pause/save`,
@@ -225,11 +225,11 @@ const ApiList = {
   contractSave: `/api/v1/contract/save`,
   sheetSave: `/api/v1/sheet/save`,
   shipmentSave: `/api/v1/shipment/save`,
-  toolSave: `/cnc/api/v1/tool/save`,
-  inspecCategorySave: '/cnc/api/v1/inspec/category/save',
-  lotToolSave: `/cnc/api/v1/lot-tool/save`,
-  productChangeSave: `/cnc/api/v1/product-changes/save`,
-  documentSave: `/cnc/api/v1/document/save`,
+  // toolSave: `/cnc/api/v1/tool/save`,
+  // inspecCategorySave: '/cnc/api/v1/inspec/category/save',
+  // lotToolSave: `/cnc/api/v1/lot-tool/save`,
+  // productChangeSave: `/cnc/api/v1/product-changes/save`,
+  // documentSave: `/cnc/api/v1/document/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -239,9 +239,9 @@ const ApiList = {
   productLoad: `/api/v1/product/load`,
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
-  inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
-  documentLoad: `/cnc/api/v1/document/load`,
-  productChangeLoad: `/cnc/api/v1/product-changes/load`,
+  // inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
+  // documentLoad: `/cnc/api/v1/document/load`,
+  // productChangeLoad: `/cnc/api/v1/product-changes/load`,
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -271,9 +271,9 @@ const ApiList = {
   contractDelete: `/api/v1/contract/delete`,
   sheetDelete: `/api/v1/sheet/delete`,
   recodeDelete: `/api/v1/record/delete`,
-  toolDelete: `/cnc/api/v1/tool/delete`,
-  lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
-  documentDelete: `/cnc/api/v1/document/delete`,
+  // toolDelete: `/cnc/api/v1/tool/delete`,
+  // lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
+  // documentDelete: `/cnc/api/v1/document/delete`,
 
 
   //list
@@ -283,8 +283,8 @@ const ApiList = {
   modelList: `/api/v1/model/list`,
   processList: `/api/v1/process/list`,
   machineList: `/api/v1/machine/list`,
-  // productList: `/api/v1/product/list`
-  productList: `/cnc/api/v1/product/list`,
+  productList: `/api/v1/product/list`,
+  // productList: `/cnc/api/v1/product/list`,
   rawmaterialList: `/api/v1/rawmaterial/list`,
   moldList: `/api/v1/mold/list`,
   pauseReasonList: '/api/v1/process/reason/pause/list',
@@ -296,9 +296,9 @@ const ApiList = {
   stockSummaryList: '/api/v1/stock/summary/list',
   operactionList: `/api/v1/operation/list`,
   defectList: `/api/v1/quality/statistics/defect`,
-  productChangeList: `/cnc/api/v1/product-changes/list`,
+  // productChangeList: `/cnc/api/v1/product-changes/list`,
   recordList: `/api/v1/record/list`,
-  cncRecordList: `/cnc/api/v1/record/list`,
+  // cncRecordList: `/cnc/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
   factoryList: `/api/v1/factory/list`,
   deviceList: `/api/v1/device/list`,
@@ -316,16 +316,16 @@ const ApiList = {
   lotSmList: `/api/v1/lot-sm/list`,
   recordGroupList: `/api/v1/record/groups`,
   stockAdminList: '/api/v1/stock/admin/summary',
-  toolList: `/cnc/api/v1/tool/list`,
-  lotToolList: `/cnc/api/v1/lot-tool/list`,
-  documentList:`/cnc/api/v1/document/list`,
-  productLeadTimeList: `/cnc/api/v1/kpi/product/lead-time/list`,
-  costManDayCostList: `/cnc/api/v1/kpi/cost/man-day-cost/list`,
-  qualityDefectRateList: `/cnc/api/v1/kpi/quality/defect-rate/list`,
-  deliveryLoadTimeList: `/cnc/api/v1/kpi/delivery/lead-time/list`,
+  // toolList: `/cnc/api/v1/tool/list`,
+  // lotToolList: `/cnc/api/v1/lot-tool/list`,
+  // documentList:`/cnc/api/v1/document/list`,
+  // productLeadTimeList: `/cnc/api/v1/kpi/product/lead-time/list`,
+  // costManDayCostList: `/cnc/api/v1/kpi/cost/man-day-cost/list`,
+  // qualityDefectRateList: `/cnc/api/v1/kpi/quality/defect-rate/list`,
+  // deliveryLoadTimeList: `/cnc/api/v1/kpi/delivery/lead-time/list`,
   electicPowerList : `/api/v2/statistics/press/electric-power`,
-  productUphList: `/cnc/api/v1/kpi/product/uph/list`,
-  productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
+  // productUphList: `/cnc/api/v1/kpi/product/uph/list`,
+  // productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -344,7 +344,7 @@ const ApiList = {
   stockSearch: '/api/v1/stock/search',
   operationSearch: `/api/v1/sheet/search`,
   recordSearch: `/api/v1/record/search`,
-  cncRecordSearch: `/cnc/api/v1/record/search`,
+  // cncRecordSearch: `/cnc/api/v1/record/search`,
   shipmentSearch: `/api/v1/shipment/search`,
   recordSumSearch: `/api/v1/record/summation/search`,
   submaterialSearch: `/api/v1/sub-material/search`,
@@ -362,14 +362,14 @@ const ApiList = {
   itemSave: `/menu/save`,
   itemDelete: `/menu/delete`,
   deviceSearch: `/api/v1/device/search`,
-  toolSearch: `/cnc/api/v1/tool/search`,
-  lotToolSearch: `/cnc/api/v1/lot-tool/search`,
+  // toolSearch: `/cnc/api/v1/tool/search`,
+  // lotToolSearch: `/cnc/api/v1/lot-tool/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,
   recordAll: `/api/v1/record/all`,
   shipmentAll:`/api/v1/shipment/all`,
-  documentAll: `/cnc/api/v1/document/all`,
+  // documentAll: `/cnc/api/v1/document/all`,
 
   //fetch
   summaryFetch: `/api/v1/stock/summary/fetch`,
@@ -385,11 +385,11 @@ const ApiList = {
 
   anonymousLoad: `/anonymous/load`,
 
-  documentDownLoad: `/cnc/api/v1/document/download`,
-  documentLogs: `/cnc/api/v1/document/logs`,
-  documentMove: `/cnc/api/v1/document/move`,
+  // documentDownLoad: `/cnc/api/v1/document/download`,
+  // documentLogs: `/cnc/api/v1/document/logs`,
+  // documentMove: `/cnc/api/v1/document/move`,
 
-  toolAverage: `/cnc/api/v1/tool/average`,
+  // toolAverage: `/cnc/api/v1/tool/average`,
   //전력사용량 list
   statisticsPressElectricPower: `/api/v2/statistics/press/electric-power`,
 }

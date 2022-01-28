@@ -395,7 +395,7 @@ export const searchModalList: any = {
     {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center'},
     {key: 'molds', name: '금형', formatter: MoldSelectModal, textAlign: 'center'},
     {key: 'machines', name: '기계', formatter: MachineSelectModal, textAlign: 'center'},
-    {key: 'tool', name: '공구', formatter: ToolSelectModal, textAlign: 'center'},
+    // {key: 'tool', name: '공구', formatter: ToolSelectModal, textAlign: 'center'},
   ],
   workList: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
