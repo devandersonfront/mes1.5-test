@@ -39,15 +39,13 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
 
         const res = await RequestMethod("get", "documentList",{ path: { docId : doc_id ?? null}})
 
-        console.log(res,'resresresres')
-
         if(res){
             const convertData = res.map((v)=>({...v , id : v.doc_id, type : v.type === "dir" ? "폴더" : v.type , date : moment().format("YYYY-MM-DD")})) 
-            // cleanUpData(res)
             const classfyData = res.filter(v => v.type === 'dir')
 
             setBasicRow(convertData)
             setFolderList(classfyData)
+            setSelectList(new Set())
         }
     }
     
@@ -177,6 +175,8 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                 return
         }
     }
+
+    console.log('selectList : ' , selectList)
 
     const moveFolder = (id: string) => {
 
