@@ -46,23 +46,28 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 //@ts-ignore
                 setTestData(reviewData)
             }else {
-                const inspection_info_beginning_result = []
-                const inspection_info_middle_result = []
-                const inspection_info_end_result = []
-
-                for(let i = 0; i < formReviewData.inspection_info.beginning[0].samples; i++) {
-                    inspection_info_beginning_result.push({sequence: i+1, pass: true, value: ''})
-                    inspection_info_middle_result.push({sequence: i+1, pass: true, value: ''})
-                    inspection_info_end_result.push({sequence: i+1, pass: true, value: ''})
-                }
 
                 const inspection_info_beginning = formReviewData.inspection_info.beginning.map((v,i)=>{
+                    const inspection_info_beginning_result = []
+                    for(let i = 0; i < formReviewData.inspection_info.beginning[0].samples; i++) {
+                        inspection_info_beginning_result.push({sequence: i+1, pass: true, value: ''})
+                    }
                         return {...v, data_result: inspection_info_beginning_result}
                 })
+
                 const inspection_info_middle = formReviewData.inspection_info.middle.map((v,i)=>{
+                    const inspection_info_middle_result = []
+                    for(let i = 0; i < formReviewData.inspection_info.beginning[0].samples; i++) {
+                        inspection_info_middle_result.push({sequence: i+1, pass: true, value: ''})
+                    }
                     return {...v, data_result: inspection_info_middle_result}
                 })
+
                 const inspection_info_end = formReviewData.inspection_info.end.map((v,i)=>{
+                    const inspection_info_end_result = []
+                    for(let i = 0; i < formReviewData.inspection_info.beginning[0].samples; i++) {
+                        inspection_info_end_result.push({sequence: i+1, pass: true, value: ''})
+                    }
                     return {...v, data_result: inspection_info_end_result}
                 })
 
@@ -97,7 +102,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                         end: moment().format('YYYY-MM-DD[T]HH:mm:ss'),
                     }
                 }
-                //@ts-ignore
+
                 setTestData(reviewData)
             }
 
@@ -142,7 +147,6 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
             }
         }
 
-        //@ts-ignore
         setTestData({...testData,temp})
     }
 
@@ -181,7 +185,6 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
             }
         }
 
-        // @ts-ignore
         setTestData({...testData, temp})
     }
 
@@ -218,7 +221,6 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
             }
         }
 
-        // @ts-ignore
         setTestData({...testData, temp})
     }
 
