@@ -37,7 +37,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingList)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
+    const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().subtract(7, "days").format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [pageInfo, setPageInfo] = useState<{page:number, totalPage:number}>({page:page, totalPage:1});
     const [isFirst, setIsFirst] = useState<boolean>(true);
@@ -199,11 +199,11 @@ const MesToolList = ({page, keyword, option}: IProps) => {
                 ...row,
                 ...appendAdditional,
                 id: `tool_${random_id}`,
-                tool_id:row.tool.code,
-                elapsed: row.elapsed  === 0 ? "0" : row.elapsed,
-                name: row.tool.name,
-                unit:row.tool.unit,
-                customer_id:row.tool.customer.name,
+                tool_id:row?.tool?.code,
+                elapsed: row?.elapsed  === 0 ? "0" : row?.elapsed,
+                name: row?.tool?.name,
+                unit:row?.tool?.unit,
+                customer_id:row?.tool?.customer?.name,
             }
         })
         setBasicRow([...tmpBasicRow])

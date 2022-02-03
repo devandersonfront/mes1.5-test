@@ -244,9 +244,33 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             }
         })
 
+        // console.log(res,'resresresresresresres')
+
         if(res){
-            const resultData = cleanUpData(res);
+
+            const productIdArrayList = [];
+            res.info_list.map((row)=>{
+                const productList = [];
+                row?.products?.map((product) => {
+                    // productList.push(product.product_id)
+                    RequestMethod("get", "toolAverage", {
+                        path:{
+                            product_id: product.product_id,
+                            tool_id: row.tool_id
+                        }
+                    })
+                        .then((res) => {
+                            productList.push(res)
+                        })
+                })
+                productIdArrayList.push(productList);
+            })
+
+            cleanUpData(res, productIdArrayList);
             setPageInfo({...pageInfo, total:res.totalPages});
+
+            // const resultData = cleanUpData(res);
+            // console.log(resultData,'resultData')            
             // setBasicRow(resultData);
         }
     }

@@ -23,6 +23,7 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
   const ref = useOnclickOutside(() => setIsOpen(false))
 
   React.useEffect(() => {
+      console.log("column : ", column);
     if(isOpen){
       if(row[column.key]) setSelect(moment(row[column.key]).toDate())
       else setSelect(moment().toDate())
@@ -35,7 +36,7 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
         setIsOpen(true)
       }}>
         <p style={{padding: 0, margin: 0, color: row[column.key] ? '#ffffff' : '#ffffff4d', textAlign: 'center', width: '100%' }}>
-          {row[column.key] ? row[column.key] : column.placeholder}
+          {row[column.key] ? row[column.key] : moment().format("YYYY-MM-DD")}
         </p>
         <img src={calendarWhite} style={{width: 24, height: 24}}/>
       </Background>

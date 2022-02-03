@@ -140,8 +140,9 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }
 
   const AddComma = (number:number) => {
-    let regexp = /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g;
-    return number.toString().replace(regexp, ",");
+    //후방탐색 부정형은 TV, 아이폰에서 현재 지원을 안함
+    // let regexp = /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g
+    return number.toLocaleString()
   }
 
   const totalDefect = () => {

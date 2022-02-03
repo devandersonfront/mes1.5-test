@@ -64,11 +64,11 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    // if(isOpen && row.os_id) {
-    //   SearchBasic(searchKeyword, optionIndex, 1)
-    // }
-    SearchBasic(searchKeyword, optionIndex, 1)
-  }, [isOpen, searchKeyword])
+    if(isOpen && row.os_id) {
+      SearchBasic(searchKeyword, optionIndex, 1)
+    }
+    // SearchBasic(searchKeyword, optionIndex, 1)
+  }, [isOpen, /*searchKeyword*/])
 
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpRes = []
@@ -106,7 +106,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       }).filter(v=>v)
     }else{
 
-      tmpRes = tmpRow.info_list.map((row) => {
+      tmpRes = tmpRow?.info_list?.map((row) => {
         let resultRow:any = {...row};
         resultRow.seq = row.sequence;
         resultRow.lot_number = row.lot_number;
@@ -123,7 +123,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       totalGood += Number(tmpRow.good_quantity)
       totalPoor += Number(tmpRow.poor_quantity)
       defectReasons = tmpRow.defect_reasons
-      // tmpRes = [{...tmpRow}]
+      tmpRes = [{...tmpRow}]
     }
 
     onRowChange({
@@ -134,7 +134,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       total_counter: totalGood + totalPoor,
     })
 
-    return tmpRes.map((v, i) => {
+    return tmpRes?.map((v, i) => {
       return {
         ...v,
         worker_name: v.worker?.name,
@@ -165,9 +165,9 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     // })
     if(res){
 
-      let tmpList = changeRow(res, )
+      let tmpList = changeRow(res)
 
-      setSearchList([...tmpList.map(v => {
+      setSearchList([...tmpList?.map(v => {
         return {
           ...row,
           ...v,

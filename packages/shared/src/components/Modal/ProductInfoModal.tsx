@@ -260,15 +260,17 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
             })}
             {column.type !== "tool" &&
               <div style={{display: 'flex', justifyContent: 'flex-start', margin: '24px 0 8px 16px'}}>
-                <Button style={{backgroundColor: '#19B9DF'}} onClick={() => {
-                  let tmp = searchList
-                  setSearchList([
-                    ...searchList,
-                    {
-                      seq: searchList.length+1
-                    }
-                  ])
-                }}>
+                <Button style={{backgroundColor: '#19B9DF'}} 
+                // onClick={() => {
+                //   let tmp = searchList
+                //   setSearchList([
+                //     ...searchList,
+                //     {
+                //       seq: searchList.length+1
+                //     }
+                //   ])
+                // }}
+                >
                   <p style={{fontWeight: 'bold'}}>반·완제품</p>
                 </Button>
               </div>
