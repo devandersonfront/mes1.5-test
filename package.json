@@ -61,6 +61,7 @@
     "next-transpile-modules": "^8.0.0",
     "notiflix": "^3.0.1",
     "react": "next",
+    "react-app-polyfill": "^3.0.0",
     "react-barcode": "1.4.1",
     "react-barcodes": "1.2.0",
     "react-calendar": "^3.4.0",
