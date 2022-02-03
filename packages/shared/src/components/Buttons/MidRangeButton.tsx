@@ -13,7 +13,7 @@ const MidRangeButton = ({row, column }: IProps) => {
     const router = useRouter()
 
     const contentCheck = () => {
-        if(row.inspection_category !== null){
+        if(row.inspection_category !== null && row.inspection_category !== undefined){
             return (<>
             <div style={{
                 padding: '3.5px 0px 0px 3.5px',
