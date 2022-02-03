@@ -5,8 +5,6 @@
 import {menuSelect} from './common/menulist'
 //캘린더
 import {rootReducer} from './reducer'
-import 'react-app-polyfill/ie11';
-import 'react-app-polyfill/stable';
 import exp from "constants";
 
 
