@@ -47,13 +47,13 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   }, [isOpen, searchKeyword])
 
   const initData = async() => {
-    let totalAmount = 0;
-    let searchList = await SearchBasic().then((results) => {
-      return results.map((v, i) => {
+    let searchList;
+    if(row?.lots.length > 0){
+      return row?.lots.map((v, i) => {
         let index = row.lots.findIndex((lot) => lot.group.sum.lot_number === v.group.sum.lot_number)
         if (index !== -1) {
           totalAmount += row.lots[index].amount
-          return {
+          searchList = {
             seq: i + 1,
             lot_number: v.group.sum.lot_number,
             start: v.group.sum.start,
@@ -61,7 +61,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
             worker_name: v.group.sum.worker.name,
             good_quantity: v.group.sum.good_quantity,
             current: v.group.sum.current,
-            amount: row.lots[index].amount,
+            amount: row.lots[index].amount ?? row.amount,
             group: {
               ...v,
             },
@@ -70,7 +70,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         }
 
         // totalAmount += row.amount
-        return {
+        searchList = {
           seq: i + 1,
           lot_number: v.group.sum.lot_number,
           start: v.group.sum.start,
@@ -78,15 +78,56 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           worker_name: v.group.sum.worker.name,
           good_quantity: v.group.sum.good_quantity,
           current: v.group.sum.current,
-          amount: v.amount ?? 0,
+          amount: v.amount ?? row.amount,
           group: {
             ...v,
           },
           ...v,
         }
       })
+    }else{
+        searchList = await SearchBasic().then((results) => {
+        return results.map((v, i) => {
+          let index = row.lots.findIndex((lot) => lot.group.sum.lot_number === v.group.sum.lot_number)
+          if (index !== -1) {
+            totalAmount += row.lots[index].amount
+            return {
+              seq: i + 1,
+              lot_number: v.group.sum.lot_number,
+              start: v.group.sum.start,
+              end: v.group.sum.end,
+              worker_name: v.group.sum.worker.name,
+              good_quantity: v.group.sum.good_quantity,
+              current: v.group.sum.current,
+              amount: row.lots[index].amount,
+              group: {
+                ...v,
+              },
+              ...v,
+            }
+          }
 
-    })
+          // totalAmount += row.amount
+          return {
+            seq: i + 1,
+            lot_number: v.group.sum.lot_number,
+            start: v.group.sum.start,
+            end: v.group.sum.end,
+            worker_name: v.group.sum.worker.name,
+            good_quantity: v.group.sum.good_quantity,
+            current: v.group.sum.current,
+            amount: v.amount ?? 0,
+            group: {
+              ...v,
+            },
+            ...v,
+          }
+        })
+
+      })
+    }
+
+    let totalAmount = 0;
     setTotalDelivery(totalAmount)
     setSearchList([...searchList])
   }
@@ -116,6 +157,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         worker_name: v.sum.worker.name,
         good_quantity: v.sum.good_quantity,
         current: v.sum.current,
+        amount: v.sum.lot?.amount,
         group: {
           ...v,
         }
@@ -281,7 +323,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
               headerList={column.type === 'baseReadonly'  || column.type === "placeholder" ? searchModalList.lotDeliveryInfoReadonly : searchModalList.lotDeliveryInfo}
-              row={searchList ?? [{}]}
+              row={searchList }
               setRow={(e) => {
                 let total = 0
                 setSearchList([...e])
@@ -379,7 +421,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                     name: row.name,
                     isChange: true
                   })
-
                   setIsOpen(false)
                 }}
                 style={{

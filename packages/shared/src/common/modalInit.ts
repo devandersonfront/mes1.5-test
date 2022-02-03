@@ -557,7 +557,7 @@ export const searchModalList: any = {
     {key: 'end', name: '작업 종료 일시'},
     {key: 'worker_name', name: '작업자'},
     {key: 'current', name: '재고량'},
-    {key: 'amount', name: '납품 수량', editor: TextEditor, textType: 'Modal',},
+    {key: 'amount', name: '납품 수량', editor: TextEditor, formatter: LineBorderContainer, textType: 'Modal', placeholder:"수량을 입력해주세요."},
   ],
   lotDeliveryInfoReadonly: [
     {key: 'seq', name: '번호', width: 32, textAlign: 'center'},
