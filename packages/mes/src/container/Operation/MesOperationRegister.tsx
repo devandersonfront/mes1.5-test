@@ -424,7 +424,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             setBasicRow([...e])
           }else{
             setSelectList(new Set());
-            const resultData = await loadLatestSheet(e[0].product.product_id, e[0]).then((value) => value)
+            const resultData = await loadLatestSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
             // const resultData = await loadGraphSheet(e[0].product.product_id, e[0]).then((value) => value)
             setBasicRow([...resultData])
           }

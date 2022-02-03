@@ -54,7 +54,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
 
     if(res){
       let tmpColumn = columnlist["deliveryRegister"]
-
       tmpColumn = tmpColumn.map((column: any) => {
         let menuData: object | undefined;
         res.bases && res.bases.map((menu: any) => {
@@ -114,7 +113,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
             }
           }
         })
-
         return {
           ...row,
           lots: row.lot_number,
@@ -186,7 +184,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
       />
       <ExcelTable
         editable
-        resizable
+        // resizable
         headerList={[
           SelectColumn,
           ...column

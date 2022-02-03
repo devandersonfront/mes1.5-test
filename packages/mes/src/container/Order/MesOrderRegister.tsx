@@ -192,7 +192,6 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
-          console.log("e : ", e)
           setBasicRow(e.map(v => ({...v, name: v.product_name, date:v?.date ?? moment().format("YYYY-MM-DD"), deadline:v?.deadline ?? moment().format("YYYY-MM-DD")})))
         }}
         selectList={selectList}
