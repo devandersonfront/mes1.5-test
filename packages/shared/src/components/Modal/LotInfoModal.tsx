@@ -58,11 +58,11 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
 
     return {
       seq: i+1,
-      lot_number: row.sum.lot_number,
-      start: row.sum.start,
-      end: row.sum.end,
-      worker: `${row.sum.worker?.name ?? '-'} ${row.elements.length > 1 ? `외 ${row.elements.length-1}명`: ''}`,
-      amount: row.sum.current
+      lot_number: row.sum?.lot_number,
+      start: row.sum?.start,
+      end: row.sum?.end,
+      worker: `${row.sum?.worker?.name ?? '-'} ${row.elements?.length > 1 ? `외 ${row.elements?.length-1}명`: ''}`,
+      amount: row.sum?.current
     }
 
   }
@@ -92,7 +92,7 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
           }
         }).filter(v=>v)
       }else{
-        tmp = [{...res}]
+        tmp = [...res?.info_list]
       }
 
       let searchList = tmp.map((row: any, index: number) => {
