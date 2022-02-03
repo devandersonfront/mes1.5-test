@@ -368,7 +368,7 @@ const ApiList = {
   modelSearch: `/api/v1/model/search`,
   processSearch: `/api/v1/process/search`,
   machineSearch: `/api/v1/machine/search`,
-  productSearch: `/api/v1/product/search`,
+  productSearch: `/cnc/api/v1/product/search`,
   pauseSearch: `/api/v1/process/reason/pause/search`,
   rawmaterialSearch: `/api/v1/raw-material/search`,
   moldSearch: `/api/v1/mold/search`,
