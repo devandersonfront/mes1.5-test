@@ -50,7 +50,7 @@ export const SF_PORT = ``
 
 export const SF_ENDPOINT_BARCODE = 'http://192.168.0.49:18080'
 
-export const SF_ENDPOINT_PMS = `http://${hostname}:8999`
+export const SF_ENDPOINT_PMS = `http://211.208.115.66:18999`
 
 export const AUTHORITY_LIST = [
   { title: "HOME", show: false, checkable: true, check: false, child: [

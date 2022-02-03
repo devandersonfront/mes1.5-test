@@ -1140,7 +1140,7 @@ export const columnlist: any = {
     {key: 'paused_time', name: '일시 정지 시간', width:120, formatter: PauseInfoModal, type: 'readonly', modalType: false},
     {key: 'good_quantity', name: '양품 수량', width:120, editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
     {key: 'poor_quantity', name: '불량 수량', width:120, editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
-    {key: "power_usage", name: '개당 전력 사용량 (kW)', width: 208},
+    {key: "power_per_unit", name: '개당 전력 사용량 (kW)', width: 208},
   ],
   kpiUph: [
     {key: "customer_id", name: '거래처', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},
