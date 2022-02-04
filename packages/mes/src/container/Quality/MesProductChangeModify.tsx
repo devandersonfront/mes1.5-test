@@ -50,7 +50,15 @@ const MesProductChangeModify = () => {
             setBasicRow(basicTmp)
             setChangeInfo({title: res.title, content: res.content, registered: moment(res.created).format("YYYY.MM.DD"), product: res.product, writer: res.writer})
             if(res.files.length !== 0) {
-                setFiles(res.files)
+                for(let i = 0; i<2; i++) {
+                    if (res.files[i] !== undefined) {
+                        files[res.files[i].sequence-1] = {
+                            name: res.files[i].name,
+                            UUID: res.files[i].UUID,
+                            sequence: res.files[i].sequence
+                        }
+                    }
+                }
             }
             setVersion(res.version)
         }
