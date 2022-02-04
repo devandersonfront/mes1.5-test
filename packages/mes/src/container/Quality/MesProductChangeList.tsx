@@ -82,7 +82,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
         if(!isPaging){
             setOptionIndex(option)
         }
-        const res = await RequestMethod('get', `productChangeList`,{
+        const res = await RequestMethod('get', `productChangeSearch`,{
             path: {
                 page: isPaging ?? 1,
                 renderItem: 22,
