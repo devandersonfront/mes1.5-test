@@ -42,6 +42,18 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     const [pageInfo, setPageInfo] = useState<{page:number, totalPage:number}>({page:page, totalPage:1});
     const [isFirst, setIsFirst] = useState<boolean>(true);
 
+    const CheckAuthorize = async() => {
+        await RequestMethod("get", "loadMenu", {
+            path:{
+                tab:"ROLE_TOOL_02"
+            }
+        }).then((res) =>{
+            console.log(res)
+        })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {
             if(v.selectList && v.selectList.length === 0){
@@ -283,6 +295,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     }
 
     useEffect(()=>{
+        CheckAuthorize()
         if(keyword){
             SearchBasic()
         }else{

@@ -15,14 +15,15 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 //@ts-ignore
 import Notiflix from "notiflix";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../reducer";
+import {add_summary_info, change_summary_info_index, delete_summary_info} from "../../reducer/infoModal";
 
 interface IProps {
   column: IExcelHeaderType
   row: any
   onRowChange: (e: any) => void
 }
-
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [{title: '거래처', infoWidth: 144, key: 'customer'}, {title: '모델', infoWidth: 144, key: 'model'},],
@@ -39,10 +40,9 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 
 const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
+  const dispatch = useDispatch()
 
-  const [bomDummy, setBomDummy] = useState<any[]>([
-    {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
-  ])
+  const bomInfoList = useSelector((root:RootState) => root.infoModal)
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
@@ -60,65 +60,82 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-
-      // loadRecordGroup(1, row.operation_sheet?.product?.product_id)
       if(row.input_bom.length > 0) {
-        changeRow(row.input_bom)
+        changeRow(row.input_bom, row)
+        setSummaryData({
+          // ...res.parent
+          customer: row.product.customer?.name,
+          model: row.product.model?.model,
+          code: row.product.code,
+          name: row.product.name,
+          process: row.product.process?.name,
+          type: TransferCodeToValue(row.product.type, 'material'),
+          unit: row.product.unit,
+          goal: row.goal,
+        })
       }else{
         Notiflix.Report.warning("경고","투입 자재가 없습니다.","확인",() => setIsOpen(false))
       }
     }
   }, [isOpen, searchKeyword])
 
-  const loadRecordGroup = async (page: number, product_id: number) => {
+  useEffect(() => {
+    if(isOpen){
+      loadRecordGroup(bomInfoList.datas[bomInfoList.index].product_id)
+    }
+  },[bomInfoList.index])
+
+  const loadRecordGroup = async (product_id: any) => {
     // Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `recordGroupList`,{
+    const res = await RequestMethod('get', `bomLoad`,{
       path: {
         product_id: product_id,
-        page: page,
-        renderItem: 18,
       },
     })
 
-
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
+    if(res){
+      // let searchList = res.map((row: any, index: number) => {
+      //   return changeRow(row)
+      // })
+      let searchList = changeRow(res,row)
       setSearchList([...searchList])
     }
   }
 
-  const changeRow = (tmpRow: any, key?: string) => {
+
+  const changeRow = (tmpRow: any, parent?:any) => {
     let tmpData = []
-    let tmpRows = tmpRow;
+    let row = [];
+    if(typeof tmpRow === 'string'){
+      let tmpRowArray = tmpRow.split('\n')
 
-    setSummaryData({
-      // ...res.parent
-      customer: row.product.customer?.name,
-      model: row.product.model?.model,
-      code: row.product.code,
-      name: row.product.name,
-      process: row.product.process?.name,
-      type: TransferCodeToValue(row.product.type, 'material'),
-      unit: row.product.unit,
-      goal: row.goal,
-    })
+      row = tmpRowArray.map(v => {
+        if(v !== ""){
+          let tmp = JSON.parse(v)
+          return tmp
+        }
+      }).filter(v=>v)
+    }else{
+      row = [{...tmpRow}]
+    }
 
-    tmpData = tmpRows.map((v, i) => {
+    tmpData = row.map((v, i) => {
       let childData: any = {}
-      switch(v.bom.type){
+      let type = "";
+      switch(v.type){
         case 0:{
-          childData = v.bom.child_rm
+          childData = v.child_rm
+          type = v.child_rm.type == "1" ? "Kg" : v.child_rm.type == "2" ? "장" : "-";
           break;
         }
         case 1:{
-          childData = v.bom.child_sm
+          childData = v.child_sm
+          type = "1";
           break;
         }
         case 2:{
-          childData = v.bom.child_product
+          childData = v.child_product
+          type = "2";
           break;
         }
       }
@@ -127,51 +144,51 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
         ...childData,
         seq: i+1,
         code: childData.code,
-        type: TransferCodeToValue(v.bom.type, 'material'),
-        tab: v.bom.type,
-        type_name: TransferCodeToValue(v.bom.type, 'material'),
-        unit: childData.unit ?? "-",
-        parent: v.bom.parent,
-        usage: v.bom.usage,
-        version: v.bom.version,
-        setting: v.bom.setting,
-        stock: childData.stock,
-        disturbance: Number(row.goal) * Number(v.bom.usage),
+        type: v.type,
+        tab: v.type,
+        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? "submaterial" : "product"),
+        unit: childData.unit ?? type,
+        usage: v.usage,
+        version: v.version,
         processArray: childData.process ?? null,
-        process: childData.process ? childData.process.name : '-',
-        bom_root_id: childData.bom_root_id,
-        product: v.bom.type === 2 ?{
+        process: childData.process ? childData.process.name : null,
+        // bom_root_id: childData.bom_root_id,
+        product: v.type === 2 ?{
           ...childData,
         }: null,
-        raw_material: v.bom.type === 0 ?{
+        product_id: v?.parent?.product_id,
+        raw_material: v.type === 0 ?{
           ...childData,
         }: null,
-        sub_material: v.bom.type === 1 ?{
+        sub_material: v.type === 1 ?{
           ...childData,
-        }: null
+        }: null,
+        parent:v.parent,
+        setting:v.setting === 0 ? "기본" : "스페어",
+        disturbance:parent?.goal * v.usage
       }
     })
-
-    setSearchList([...tmpData])
+    return tmpData
   }
 
-  const addNewTab = (index: number) => {
-    let tmp = bomDummy
-    tmp.push({code: 'SU-20210701-'+index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
-    setBomDummy([...tmp])
-  }
+  // const addNewTab = (index: number) => {
+  //   let tmp = bomInfoList
+  //   tmp.datas.push({code: 'SU-20210701-'+index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
+  //   dispatch(add_summary_info({}))
+  //   setBomDummy([...tmp])
+  // }
 
   const deleteTab = (index: number) => {
-    if(bomDummy.length - 1 === focusIndex){
+    if(bomInfoList.datas.length - 1 === focusIndex){
       setFocusIndex(focusIndex-1)
     }
-    if(bomDummy.length === 1) {
+    if(bomInfoList.datas.length === 1) {
       return setIsOpen(false)
     }
 
-    let tmp = bomDummy
-    tmp.splice(index, 1)
-    setBomDummy([...tmp])
+    let tmp = bomInfoList
+    tmp.datas.splice(index, 1)
+    dispatch(delete_summary_info(index))
   }
 
   const ModalContents = () => {
@@ -182,6 +199,8 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
       }}>
         <div onClick={() => {
           setIsOpen(true)
+          dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: 0, product_id:row.product.bom_root_id}))
+          loadRecordGroup(row.product.bom_root_id);
         }}>
           <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
         </div>
@@ -263,12 +282,15 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-              {bomDummy.map((v, i) => {
-                return <TabBox ref={i === 0 ? tabRef : null} style={ focusIndex === i ? {opacity: 1} : {}}>
+              {bomInfoList.datas.map((v, i) => {
+                return <TabBox ref={i === 0 ? tabRef : null} style={ bomInfoList.index == i ? {opacity: 1} : {}}>
                   {
                     tabRef.current && tabRef.current.clientWidth < 63
-                      ? focusIndex !== i
-                        ? <><p onClick={() => {setFocusIndex(i)}}>{v.code}</p></>
+                      ? bomInfoList.index !== i
+                        ? <><p onClick={() => {
+                          dispatch(change_summary_info_index(i))
+                          // loadRecordGroup(bomInfoList.datas[i].product_id)
+                        }}>{v.title}</p></>
                         : <>
                               <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
                                 deleteTab(i)
@@ -277,7 +299,10 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
                             </div>
                           </>
                       : <>
-                        <p onClick={() => {setFocusIndex(i)}}>{v.code}</p>
+                        <p onClick={() => {
+                          dispatch(change_summary_info_index(i))
+                          // loadRecordGroup(bomInfoList.datas[i].product_id)
+                        }}>{v.title}</p>
                         <div style={{cursor: 'pointer', width: 20, height: 20}} onClick={() => {
                           deleteTab(i)
                         }}>
@@ -299,11 +324,10 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
               setRow={(e) => {
                 let tmp = e.map((v, index) => {
                   if(v.newTab === true){
-                    const newTabIndex = bomDummy.length+1
-                    addNewTab(newTabIndex)
+                    const newTabIndex = bomInfoList.datas.length+1
+                    // addNewTab(newTabIndex)
                     setFocusIndex(newTabIndex-1)
                   }
-
                   return {
                     ...v,
                     newTab: false

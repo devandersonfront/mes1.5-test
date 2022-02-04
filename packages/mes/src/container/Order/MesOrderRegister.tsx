@@ -85,6 +85,18 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
     let res: any
+    let checkValue = true;
+    basicRow.map((row) => {
+      console.log(row)
+      if(!Number(row.amount) && row.amount !== "0"){
+        Notiflix.Report.warning("경고", "정확한 수주량을 입력해주세요.", "확인", )
+        checkValue = false;
+        return;
+      }
+    })
+
+    if(!checkValue) return
+
     res = await RequestMethod('post', `contractSave`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
@@ -191,8 +203,15 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
           })
+          console.log(e)
           setSelectList(tmp)
-          setBasicRow(e.map(v => ({...v, name: v.product_name, date:v?.date ?? moment().format("YYYY-MM-DD"), deadline:v?.deadline ?? moment().format("YYYY-MM-DD")})))
+          setBasicRow(e.map((v, index) => ({
+            ...v,
+            name: v.product_name,
+            date:v?.date ?? basicRow[index]?.date,
+            deadline:v?.deadline ?? basicRow[index]?.date,
+            amount:v?.amount ?? basicRow[index]?.amount
+          })))
         }}
         selectList={selectList}
         //@ts-ignore

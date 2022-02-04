@@ -36,6 +36,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         let tmpRow:Array<any> = []
         tmpColumn = tmpColumn.map((column: any) => {
             let menuData: object | undefined;
+            console.log("info_list : ", info_list)
             info_list.menus && info_list.menus.map((menu: any) => {
                 if(!menu.hide){
                     if(menu.colName === column.key){
@@ -48,7 +49,8 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                             moddable: !menu.moddable,
                             version: menu.version,
                             sequence: menu.sequence,
-                            hide: menu.hide
+                            hide: menu.hide,
+                            // unitData:"KG"
                         }
                     } else if(menu.colName === 'id' && column.key === 'tmpId'){
                         menuData = {
@@ -60,7 +62,21 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                             moddable: !menu.moddable,
                             version: menu.version,
                             sequence: menu.sequence,
-                            hide: menu.hide
+                            hide: menu.hide,
+                            // unitData:"KG"
+                        }
+                    }else if(menu.key === "stock"){
+                        menuData = {
+                            id: menu.mi_id,
+                            name: menu.title,
+                            width: menu.width,
+                            tab:menu.tab,
+                            unit:menu.unit,
+                            moddable: !menu.moddable,
+                            version: menu.version,
+                            sequence: menu.sequence,
+                            hide: menu.hide,
+                            unitData:"KG"
                         }
                     }
                 }
@@ -115,12 +131,6 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             }
         })
 
-        // let pk = "";
-        // Object.keys(tmpRow).map((v) => {
-        //     if(v.indexOf('_id') !== -1){
-        //         pk = v
-        //     }
-        // })
         let tmpBasicRow = tmpRow.map((row: any) => {
             let appendAdditional: any = {}
 
@@ -184,6 +194,11 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                         ...v,
                         pk: v.unit_id
                     }
+                }else if(v.key === "stock"){
+                    return {
+                        ...v,
+                        // unitData:
+                    }
                 }else{
                     return v
                 }
@@ -244,8 +259,6 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             }
         })
 
-        // console.log(res,'resresresresresresres')
-
         if(res){
 
             const productIdArrayList = [];
@@ -269,8 +282,6 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             cleanUpData(res, productIdArrayList);
             setPageInfo({...pageInfo, total:res.totalPages});
 
-            // const resultData = cleanUpData(res);
-            // console.log(resultData,'resultData')            
             // setBasicRow(resultData);
         }
     }
@@ -287,7 +298,8 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         })
         data.map((rowData, index) => {
             let tmpRow:any = {};
-            tmpRow.unit = rowData.unitPK;
+            // tmpRow.unit = rowData.unitPK;
+            tmpRow.unit = rowData.unit;
             tmpRow.tool_id = rowData?.tool_id;
             tmpRow.code = rowData.code;
             tmpRow.name = rowData.name;
@@ -300,7 +312,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                     mi_id: v.id,
                     title: v.name,
                     value: rowData[v.colName] ?? "",
-                    unit: v.unit,
+                    // unit: v.unit,
                     version:rowData.additional[index]?.version ?? undefined
                 }
             }).filter((v) => v)

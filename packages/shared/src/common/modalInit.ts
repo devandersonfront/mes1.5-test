@@ -20,6 +20,7 @@ import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
 import {LotNumberRegister} from '../components/Cell/LotNumberRegister'
 import OperationSearchModal from "../../../main/component/Modal/OperationSearchModal";
 import {ToolSelectModal} from "../components/Modal/ToolSelectModal";
+import {ToolListModal} from "../components/Modal/ToolListModal";
 
 export const searchModalList: any = {
   member: [
@@ -411,6 +412,7 @@ export const searchModalList: any = {
     {key: 'input', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center', type: 'readonly'},
     {key: 'mold', name: '금형', formatter: MoldListModal, textAlign: 'center', type: 'Modal'},
     {key: 'machine', name: '기계', formatter: MachineListModal, textAlign: 'center', type: 'Modal'},
+    {key: 'tool', name: '공구', formatter: ToolListModal, textAlign: 'center', type: 'Modal'},
   ],
   pauseTime: [
     {key: 'reason', name: '일시 정지 유형', formatter: LineBorderContainer},

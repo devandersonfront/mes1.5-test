@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {ExcelTable, Header as PageHeader, PaginationComponent, RequestMethod} from "shared";
 import {columnlist} from "shared";
@@ -19,6 +19,18 @@ const MesToolRegister = () => {
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingRegister);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
+    const CheckAuthorize = async() => {
+        await RequestMethod("get", "loadMenu", {
+            path:{
+                tab:"ROLE_TOOL_01"
+            }
+        }).then((res) =>{
+            console.log(res)
+        })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
 
     const SaveCleanUpData = (data:any[]) => {
         let resultData = [];
@@ -81,6 +93,10 @@ const MesToolRegister = () => {
                 return
         }
     }
+
+    useEffect(() => {
+        CheckAuthorize()
+    },[])
 
     return (
         <div>

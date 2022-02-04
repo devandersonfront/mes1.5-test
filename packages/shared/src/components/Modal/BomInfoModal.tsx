@@ -234,6 +234,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             width: '100%'
           }}>
             <div onClick={() => {
+              console.log("isOpen : ", isOpen)
               setIsOpen(true)
             }}>
               <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>

@@ -207,8 +207,10 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
           })
           setSelectList(tmp)
           if(tmpRow.indexOf(false) !== -1){
+            console.log("basicRow : ", basicRow)
             setBasicRow([...basicRow])
           }else{
+            console.log("e : ", e)
             setBasicRow([...e.map(v => ({...v, name: v.product_name}))])
           }
         }}
