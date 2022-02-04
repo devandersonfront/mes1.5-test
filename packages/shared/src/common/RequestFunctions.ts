@@ -399,6 +399,7 @@ const ApiList = {
   toolSearch: `/cnc/api/v1/tool/search`,
   lotToolSearch: `/cnc/api/v1/lot-tool/search`,
   qualityRecordInspectSearch: '/cnc/api/v1/quality/record/inspect/search',
+  productChangeSearch: `/cnc/api/v1/product-changes/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,

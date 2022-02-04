@@ -16,9 +16,7 @@ interface IProps {
 
 const MesProductChangeList = ({page, keyword, option}: IProps) => {
     const router = useRouter()
-    const [basicRow, setBasicRow] = useState<Array<any>>([{
-        order_num: '-', operation_num: '20210401-013'
-    }])
+    const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productChangeList"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionList, setOptionList] = useState<string[]>([ '거래처', '모델', 'CODE', '품명', '제목', '작성자'])
@@ -36,7 +34,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
 
     useEffect(() => {
         // setOptionIndex(option)
-        if(searchKeyword !== ""){
+        if(searchKeyword){
             SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
             })
@@ -82,7 +80,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
         if(!isPaging){
             setOptionIndex(option)
         }
-        const res = await RequestMethod('get', `shipmentSearch`,{
+        const res = await RequestMethod('get', `productChangeSearch`,{
             path: {
                 page: isPaging ?? 1,
                 renderItem: 22,
@@ -124,7 +122,12 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 pcr_id: v.pcr_id
             }
         })
-        setBasicRow([...tmpRow])
+        if(pageInfo.page > 1) {
+            const basicAddTmpRow = basicRow.concat(tmpRow)
+            setBasicRow([...basicAddTmpRow])
+        }else {
+            setBasicRow([...tmpRow])
+        }
     }
 
     const buttonEvents = (number:number) => {
@@ -172,12 +175,9 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 isCalendar
                 searchKeyword={keyword}
                 searchOptionList={optionList}
-                onChangeSearchKeyword={(keyword) => {
-                    if(keyword){
-                        router.push(`/mes/quality/product/change/list?page=1&keyword=${keyword}&opt=${optionIndex}`)
-                    }else{
-                        router.push(`/mes/quality/product/change/list?page=1&keyword=`)
-                    }
+                onChangeSearchKeyword={(keyword) =>{
+                    setSearchKeyword(keyword)
+                    // SearchBasic(keyword, option, 1)
                 }}
                 onChangeSearchOption={(option) => {
                     // SearchBasic(keyword, option, 1)
