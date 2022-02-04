@@ -127,10 +127,10 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
                             margin: 0,
                         }}> {modify ? "초ㆍ중ㆍ종 검사 결과보기" : "초ㆍ중ㆍ종 검사 등록"}</p>
                         <div style={{display: 'flex'}}>
-                            {modify &&
-                            <Button onClick={()=>setMidrangeUpdate(true)}>
-                                <p>수정 하기</p>
-                            </Button>
+                            {modify && !midrangeUpdate &&
+                                <Button onClick={()=>setMidrangeUpdate(true)}>
+                                    <p>수정 하기</p>
+                                </Button>
                             }
                             <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                                 setIsOpen(false)
