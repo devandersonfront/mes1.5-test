@@ -43,7 +43,7 @@ const MesProductChangeDetail = () => {
         if(res){
 
             const basicTmp = [{
-                customer_id: res.product.customerId  === null ? '-' : res.product.customerId,
+                customer_id: res.product.customer === null ? '-' : res.product.customer.name,
                 cm_id: res.product.model === null ? '-' : res.product.model.model,
                 code: res.product.code,
                 name: res.product.name === null ? '-' : res.product.name,
@@ -51,7 +51,7 @@ const MesProductChangeDetail = () => {
             setBasicRow(basicTmp)
             setChangeInfo({title: res.title, content: res.content, registered: moment(res.created).format("YYYY.MM.DD"), product: res.product, writer: res.writer})
             if(res.files.length !== 0) {
-                for(let i = 0; i<2; i++) {
+                for(let i = 0; i<3; i++) {
                     if (res.files[i] !== undefined) {
                         files[res.files[i].sequence-1] = {
                             name: res.files[i].name,

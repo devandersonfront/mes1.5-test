@@ -16,9 +16,7 @@ interface IProps {
 
 const MesProductChangeList = ({page, keyword, option}: IProps) => {
     const router = useRouter()
-    const [basicRow, setBasicRow] = useState<Array<any>>([{
-        order_num: '-', operation_num: '20210401-013'
-    }])
+    const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productChangeList"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionList, setOptionList] = useState<string[]>([ '거래처', '모델', 'CODE', '품명', '제목', '작성자'])
