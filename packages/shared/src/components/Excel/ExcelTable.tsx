@@ -139,6 +139,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
         setSelectedRows(e)
       }}
       onRowClick={(i, r) => {
+        console.log('rowClick', i, r)
         setSelectRow && setSelectRow(i)
       }}
       style={{

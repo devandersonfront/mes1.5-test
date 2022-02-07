@@ -257,6 +257,12 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
   }
 
+  React.useEffect(()=>{
+    dispatch(reset_summary_info())
+  },[])
+
+  console.log(tabStore,'tabStoretabStoretabStoretabStore')
+
   return (
     <SearchModalWrapper >
       { ModalContents() }

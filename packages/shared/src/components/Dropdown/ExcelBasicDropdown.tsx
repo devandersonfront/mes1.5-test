@@ -27,6 +27,17 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
     }
   }
 
+  const filterValue = (value : string) => {
+    switch(value){
+      case '여' :
+        return 1
+      case '부' : 
+        return 0
+      default : 
+        return value
+    }
+  }
+
   return (
     <select
       className={'editDropdown'}
@@ -98,9 +109,10 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
                 break;
             }
           }
+
           return onRowChange({
             //@ts-ignore
-            ...row, [column.key]:event.target.value, [column.key+"PK"]: pkValue ?? undefined,
+            ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
             [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
             // ...tmpData,
             isChange: true
