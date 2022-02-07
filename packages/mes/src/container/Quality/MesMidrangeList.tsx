@@ -135,9 +135,12 @@ const MesMidrangeList = ({option}:IProps) => {
                     inspection_category: v.inspection_category,
                 }
             })
-
-            setBasicRow([...data])
-
+            if(pageInfo.page > 1) {
+                const basicAddResponseData = basicRow.concat(data)
+                setBasicRow([...basicAddResponseData])
+            }else {
+                setBasicRow([...data])
+            }
         }
 
     }
