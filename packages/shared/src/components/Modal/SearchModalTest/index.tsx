@@ -336,18 +336,36 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                       return row.name;
                   }
                 }
-                onRowChange(
-                    {
+                console.log(row)
+                if(column.clearContract) {
+                  onRowChange(
+                      {
                         ...row,
-                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
-                        manager:  SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                        name:  selectNameFunction(column.type),
+                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                        manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                        name: selectNameFunction(column.type),
                         tab: tab,
-                        type_name:  undefined,
+                        type_name: undefined,
                         version: row.version,
-                        isChange:true,
+                        isChange: true,
+                        contract: null,
+                        contract_id: null
                       }
-                )
+                  )
+                }else {
+                  onRowChange(
+                      {
+                        ...row,
+                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                        manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                        name: selectNameFunction(column.type),
+                        tab: tab,
+                        type_name: undefined,
+                        version: row.version,
+                        isChange: true,
+                      }
+                  )
+                }
               }}
               style={{backgroundColor: POINT_COLOR}}
             >
