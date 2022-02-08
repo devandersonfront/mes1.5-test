@@ -49,7 +49,11 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         })
         break;
       case 2:
-        res = await RequestMethod('get', `recordList`, {
+        res = await RequestMethod('get', `recordSearch`, {
+          path:{
+            page:1,
+
+          },
           params: {
             productIds: row.product_id,
             nz: true

@@ -350,11 +350,14 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? '-',
         id: `sheet_${random_id}`,
+        total_counter:"-",
+        total_good_quantity:"-"
       }
     })
 
     Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
+    console.log(tmpBasicRow)
   }
 
   return (

@@ -18,8 +18,8 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
     switch(type){
       case "spare":
         // 22/01/24 수정
-        // return row.setting == 1 ? "스페어" : "기본"
-        return row.spare
+        return row.setting == 1 ? "스페어" : "기본"
+        // return row.spare
       case "setting" :
         return row[column.key] == 1 || row[column.key] == "여" ? "여" : "부"
       default:

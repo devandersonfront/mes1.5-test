@@ -17,7 +17,12 @@ import {TransferCodeToValue} from '../../common/TransferFunction'
 import Notiflix from "notiflix";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../reducer";
-import {add_summary_info, change_summary_info_index, delete_summary_info} from "../../reducer/infoModal";
+import {
+  add_summary_info,
+  change_summary_info_index,
+  delete_summary_info,
+  reset_summary_info
+} from "../../reducer/infoModal";
 
 interface IProps {
   column: IExcelHeaderType
@@ -76,6 +81,8 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
       }else{
         Notiflix.Report.warning("경고","투입 자재가 없습니다.","확인",() => setIsOpen(false))
       }
+    }else{
+      dispatch(reset_summary_info())
     }
   }, [isOpen, searchKeyword])
 
@@ -144,7 +151,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
         ...childData,
         seq: i+1,
         code: childData.code,
-        type: v.type,
+        type: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? "submaterial" : "product"),
         tab: v.type,
         type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? "submaterial" : "product"),
         unit: childData.unit ?? type,
@@ -181,8 +188,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   const deleteTab = (index: number) => {
     if(bomInfoList.datas.length - 1 === focusIndex){
       setFocusIndex(focusIndex-1)
-    }
-    if(bomInfoList.datas.length === 1) {
+    }else if(bomInfoList.datas.length === 1) {
       return setIsOpen(false)
     }
 

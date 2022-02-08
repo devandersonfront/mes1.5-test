@@ -481,7 +481,7 @@ export const searchModalList: any = {
   moldSearch: [
     {key: 'code', name: 'CODE'},
     {key: 'name', name: '금형명'},
-    {key: 'cavity', name: '캐비'},
+    {key: 'cavity', name: '캐비티'},
     {key: 'spm', name: 'SPM'},
     {key: 'slideHeight', name: '슬라이드 위치'},
     {key: 'limit', name: '최대 타수'},

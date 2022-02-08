@@ -403,6 +403,7 @@ const ApiList = {
   //all
   authorityAll: `/api/v1/auth/all`,
   recordAll: `/api/v1/record/all`,
+  cncRecordAll: `/cnc/api/v1/record/all`,
   shipmentAll:`/api/v1/shipment/all`,
   documentAll: `/cnc/api/v1/document/all`,
 
