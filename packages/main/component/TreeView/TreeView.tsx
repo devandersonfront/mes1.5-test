@@ -19,9 +19,10 @@ import checkIcon from "../../public/images/ic_check.png"
 interface IProps {
   item: IMenu[]
   setItem: (item: IMenu[]) => void
+  selectIndex : number
 }
 
-const TreeViewTable = ({item, setItem}: IProps) => {
+const TreeViewTable = ({item, setItem , selectIndex}: IProps) => {
   const [menu, setMenu] = React.useState<IMenu[]>([{title: "", show: false, checkable: false, value: "", child: []}])
 
   React.useEffect(() => {
@@ -174,7 +175,9 @@ const TreeViewTable = ({item, setItem}: IProps) => {
       </TreeViewHeader>
       <TreeViewContainer>
         {
-          menu && item && menu.map((outerMenu, outerIndex) => menu[outerIndex] && <div style={{height: "100%"}}>
+          menu && item && selectIndex !== -1 &&
+          menu.map((outerMenu, outerIndex) => menu[outerIndex] && 
+          <div style={{height: "100%"}}>
               <TopMenuView onClick={() => onClickMenu(1, [outerIndex])}>
                   <ArrowImageWrapper style={{marginRight: 16}}>
                       <img src={menu[outerIndex].show ? menuClose : menuOpen} style={{width: 16, height: 16}} alt={'treeview-alter2'} />
