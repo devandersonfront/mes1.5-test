@@ -53,11 +53,9 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
 
   const cleanUpData = () => {
-    console.log("row : ", row)
     if(row.product_id){
       switch(column.type){
         case "mold" :
-          console.log("mold : ", row.product_id)
               let moldArray = [];
               row?.product_id.map((data)=>{
                 let result:any = {...data};
@@ -72,13 +70,11 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
                 moldArray.push(result);
               })
-              console.log("moldArray : ", moldArray)
               setSearchList(moldArray);
 
 
           return
         case "machine" :
-          console.log("machine : ", row.product_id)
           let machineArray = [];
           row?.product_id?.map((data)=>{
             let result:any = {...data};
@@ -94,12 +90,10 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
             machineArray.push(result);
           })
-          console.log("machineArray : ", machineArray)
           setSearchList(machineArray);
           return
 
         case "tool" :
-          console.log("tool : ", row?.product_id)
           let toolArray = [];
           row?.product_id?.map((data)=>{
             let result:any = {...data};
@@ -115,7 +109,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
             toolArray.push(result);
           })
-          console.log("toolArray : ", toolArray)
           setSearchList(toolArray);
 
           return
@@ -127,7 +120,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
         let productArray = [];
         row?.products?.map((data) => {
           let result:any = {...data}
-          console.log(data)
           result.customerData = data?.customer;
           result.customer = data?.customer?.name;
           result.modelData = data?.model;
@@ -139,7 +131,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
           productArray.push(result);
         })
-        console.log("productArray : ", productArray);
         setSearchList(productArray);
       }else{
         Notiflix.Report.warning("경고","품목이 없습니다.","확인",() => setIsOpen(false))
@@ -269,15 +260,17 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
             })}
             {column.type !== "tool" &&
               <div style={{display: 'flex', justifyContent: 'flex-start', margin: '24px 0 8px 16px'}}>
-                <Button style={{backgroundColor: '#19B9DF'}} onClick={() => {
-                  let tmp = searchList
-                  setSearchList([
-                    ...searchList,
-                    {
-                      seq: searchList.length+1
-                    }
-                  ])
-                }}>
+                <Button style={{backgroundColor: '#19B9DF'}} 
+                // onClick={() => {
+                //   let tmp = searchList
+                //   setSearchList([
+                //     ...searchList,
+                //     {
+                //       seq: searchList.length+1
+                //     }
+                //   ])
+                // }}
+                >
                   <p style={{fontWeight: 'bold'}}>반·완제품</p>
                 </Button>
               </div>

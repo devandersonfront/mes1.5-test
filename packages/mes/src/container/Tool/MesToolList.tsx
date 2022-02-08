@@ -37,11 +37,23 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingList)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
+    const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().subtract(7, "days").format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [pageInfo, setPageInfo] = useState<{page:number, totalPage:number}>({page:page, totalPage:1});
     const [isFirst, setIsFirst] = useState<boolean>(true);
 
+    const CheckAuthorize = async() => {
+        await RequestMethod("get", "loadMenu", {
+            path:{
+                tab:"ROLE_TOOL_02"
+            }
+        }).then((res) =>{
+            console.log(res)
+        })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {
             if(v.selectList && v.selectList.length === 0){
@@ -199,11 +211,11 @@ const MesToolList = ({page, keyword, option}: IProps) => {
                 ...row,
                 ...appendAdditional,
                 id: `tool_${random_id}`,
-                tool_id:row.tool.code,
-                elapsed: row.elapsed  === 0 ? "0" : row.elapsed,
-                name: row.tool.name,
-                unit:row.tool.unit,
-                customer_id:row.tool.customer.name,
+                tool_id:row?.tool?.code,
+                elapsed: row?.elapsed  === 0 ? "0" : row?.elapsed,
+                name: row?.tool?.name,
+                unit:row?.tool?.unit,
+                customer_id:row?.tool?.customer?.name,
             }
         })
         setBasicRow([...tmpBasicRow])
@@ -250,11 +262,8 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     }
 
     const DeleteBasic = async() => {
-        console.log(basicRow.filter((row)=>selectList.has(row.id)));
-
         const res = await RequestMethod("delete", "lotToolDelete", basicRow.filter((row)=>selectList.has(row.id)))
 
-        console.log(res);
         if(res){
             Notiflix.Report.success("삭제되었습니다.","","확인",() => {
                 LoadBasic()
@@ -265,9 +274,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     const ButtonEvents = (index:number) => {
         switch(index) {
             case 0:
-                console.log(selectList)
                 if(selectList.size > 0){
-                    console.log(basicRow.filter((row)=>selectList.has(row.id)))
                     // @ts-ignore
                     dispatch(setToolDataAdd(basicRow.filter((row)=>selectList.has(row.id))));
                     router.push("/mes/tool/update")
@@ -288,6 +295,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     }
 
     useEffect(()=>{
+        CheckAuthorize()
         if(keyword){
             SearchBasic()
         }else{

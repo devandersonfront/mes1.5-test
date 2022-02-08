@@ -71,7 +71,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     }else{
       dispatch(reset_summary_info());
     }
-  }, [isOpen, row])
+  }, [isOpen, /*row*/])
 
   const setInfoModal = async (product: any, index: number) => {
     if(selector){
@@ -369,7 +369,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                     v.border = false;
                   })
                   searchList[e].border = true
-                  console.log("???? : ", searchList)
                   setSearchList([...searchList])
                 }
                 setSelectRow(e)
@@ -390,7 +389,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-                console.log("searchList :" ,searchList)
                 onRowChange({
                   ...row,
                   input_bom: [
@@ -415,7 +413,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                   name: row.name,
                   isChange: true
                 })
-                console.log("row : ", row)
                 dispatch(reset_summary_info())
                 setIsOpen(false)
               }}

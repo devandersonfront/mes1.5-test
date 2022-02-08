@@ -306,7 +306,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               }}
               width={1746}
               rowHeight={32}
-              height={560}
+              height={526}
               // setSelectRow={(e) => {
               //   setSelectRow(e)
               // }}

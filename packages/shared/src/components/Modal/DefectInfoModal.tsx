@@ -27,6 +27,7 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const tabRef = useRef(null)
 
+
   const [bomDummy, setBomDummy] = useState<any[]>([
     {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
   ])
@@ -43,6 +44,8 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     {reason: '이종',},
     {reason: '기타',},
   ])
+
+
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -54,6 +57,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     if(row['defect_reasons'] && row['defect_reasons'].length){
       let total = 0
       setSearchList([...row.defect_reasons.map(v => {
+
         if(v.amount){
           total += Number(v.amount)
         }
@@ -136,8 +140,9 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }
 
   const AddComma = (number:number) => {
-    let regexp = /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g;
-    return number.toString().replace(regexp, ",");
+    //후방탐색 부정형은 TV, 아이폰에서 현재 지원을 안함
+    // let regexp = /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g
+    return number.toLocaleString()
   }
 
   const totalDefect = () => {
@@ -248,7 +253,9 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={ searchModalList.defectCount }
+              headerList={ searchModalList.defectCount({
+                readonly : column.type
+              })}
               row={searchList ?? []}
               setRow={(e) => {
                 let addIndex = 0
@@ -271,7 +278,6 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     add: false
                   }
                 })
-
                 setTotalCount(total)
 
                 if(addIndex){

@@ -50,14 +50,18 @@ const BasicMidrangeRegister = () => {
             legendaryKeyValue[v.legendary] = v.LegendaryExplain
         })
 
+        const categoryInfo = itemBasicRow.map((v)=>{
+            return {...v, type: v.type === "범례 적용" ? 1 : 0}
+        })
+
         const midrangeData = {
             product_id: productId,
             samples: Number(sampleBasicRow[0].samples),
             legendary_list: legendaryKeyValue,
-            category_info: itemBasicRow
+            category_info: categoryInfo
         }
         let res: any
-        res = await RequestMethod('post', `inspecCategorySave`,[midrangeData])
+        res = await RequestMethod('post', `inspectCategorySave`,[midrangeData])
 
         if(res){
             Notiflix.Report.success('저장되었습니다.','','확인');
@@ -156,6 +160,7 @@ const BasicMidrangeRegister = () => {
                 setRow={(e) => {
                     let tmp: Set<any> = sampleSelectList
                     setSampleSelectList(tmp)
+                    console.log(e)
                     setSampleBasicRow(e)
                 }}
                 selectList={sampleSelectList}

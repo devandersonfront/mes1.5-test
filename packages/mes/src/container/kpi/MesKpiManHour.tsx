@@ -27,7 +27,6 @@ const MesKpiManHour = () => {
         id: '', customer_id: ''
     });
 
-    console.log(processBasicRow,'processBasicRowprocessBasicRow')
 
     const changeHeaderStatus = (value:number) => {
         setHeaderStatus(value);
@@ -108,7 +107,7 @@ const MesKpiManHour = () => {
     React.useEffect(()=>{
 
         if(pauseBasicRow.length){
-            
+
             const rowLenth = pauseBasicRow.length;
             let sum = 0;
             if(rowLenth){
@@ -138,8 +137,7 @@ const MesKpiManHour = () => {
                 ]}
                 row={[processBasicRow]}
                 setRow={(row) => {
-                    console.log(row,'rowrowrowrow')
-                    setProcessBasicRow({...processBasicRow, 
+                    setProcessBasicRow({...processBasicRow,
                         id : row[0].product.product_id,
                         customer_id : row[0].customer_id,
                         cm_id : row[0].cm_id,

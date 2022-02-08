@@ -58,11 +58,11 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
 
     return {
       seq: i+1,
-      lot_number: row.sum.lot_number,
-      start: row.sum.start,
-      end: row.sum.end,
-      worker: `${row.sum.worker?.name ?? '-'} ${row.elements.length > 1 ? `외 ${row.elements.length-1}명`: ''}`,
-      amount: row.sum.current
+      lot_number: row.sum?.lot_number,
+      start: row.sum?.start,
+      end: row.sum?.end,
+      worker: `${row.sum?.worker?.name ?? '-'} ${row.elements?.length > 1 ? `외 ${row.elements?.length-1}명`: ''}`,
+      amount: row.sum?.current
     }
 
   }
@@ -77,6 +77,9 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
         page: page,
         renderItem: 18,
       },
+      params:{
+        keyword:keyword
+      }
     })
 
     if(res){
@@ -92,7 +95,7 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
           }
         }).filter(v=>v)
       }else{
-        tmp = [{...res}]
+        tmp = [...res?.info_list]
       }
 
       let searchList = tmp.map((row: any, index: number) => {
@@ -221,37 +224,37 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
                 <p style={{fontSize: 22, padding: 0, marginBottom: 8}}>{column.type === 'readonly'? "LOT 별 수량" : "작업이력"}</p>
               </div>
             </div>
-            <div style={{height: '100%', display: 'flex', alignItems:"flex-end", paddingBottom: 7}}>
-              <div style={{
-                display:"flex", justifyContent: 'flex-end', width: "400px", height: "32px", borderRadius: 6, backgroundColor: '#F4F6FA', marginRight: 16,
-                border:'0.5px solid #b3b3b3'
-              }}>
-                <div style={{
-                  width: 120, height:32, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                  backgroundColor: POINT_COLOR, borderRadius: 6,
-                }}>
-                    LOT 번호
-                </div>
-                <input
-                  value={keyword ?? ""}
-                  type={"text"}
-                  placeholder="검색어를 입력해주세요."
-                  onChange={(e) => {setKeyword(e.target.value)}}
-                  onKeyDown={(e) => {
-                    if(e.key === 'Enter'){
-
-                    }
-                  }}
-                  style={{width:"248px", height:"31px", borderRadius: '6px', paddingLeft:"10px", border:"none", backgroundColor: 'rgba(0,0,0,0)'}}
-                />
-                <div
-                  style={{background:"#19b9df", width:"31px",height:"31px",display:"flex",justifyContent:"center",alignItems:"center",borderRadius:"6px"}}
-                  onClick={() => {}}
-                >
-                  <img src={Search_icon} style={{width:"16.3px",height:"16.3px"}} />
-                </div>
-              </div>
-            </div>
+            {/*<div style={{height: '100%', display: 'flex', alignItems:"flex-end", paddingBottom: 7}}>*/}
+            {/*  <div style={{*/}
+            {/*    display:"flex", justifyContent: 'flex-end', width: "400px", height: "32px", borderRadius: 6, backgroundColor: '#F4F6FA', marginRight: 16,*/}
+            {/*    border:'0.5px solid #b3b3b3'*/}
+            {/*  }}>*/}
+            {/*    <div style={{*/}
+            {/*      width: 120, height:32, display: 'flex', justifyContent: 'center', alignItems: 'center',*/}
+            {/*      backgroundColor: POINT_COLOR, borderRadius: 6,*/}
+            {/*    }}>*/}
+            {/*        LOT 번호*/}
+            {/*    </div>*/}
+            {/*    <input*/}
+            {/*      value={keyword ?? ""}*/}
+            {/*      type={"text"}*/}
+            {/*      placeholder="검색어를 입력해주세요."*/}
+            {/*      onChange={(e) => {setKeyword(e.target.value)}}*/}
+            {/*      onKeyDown={(e) => {*/}
+            {/*        if(e.key === 'Enter'){*/}
+            {/*          // SearchBasic(keyword,)*/}
+            {/*        }*/}
+            {/*      }}*/}
+            {/*      style={{width:"248px", height:"31px", borderRadius: '6px', paddingLeft:"10px", border:"none", backgroundColor: 'rgba(0,0,0,0)'}}*/}
+            {/*    />*/}
+            {/*    <div*/}
+            {/*      style={{background:"#19b9df", width:"31px",height:"31px",display:"flex",justifyContent:"center",alignItems:"center",borderRadius:"6px"}}*/}
+            {/*      onClick={() => {}}*/}
+            {/*    >*/}
+            {/*      <img src={Search_icon} style={{width:"16.3px",height:"16.3px"}} />*/}
+            {/*    </div>*/}
+            {/*  </div>*/}
+            {/*</div>*/}
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable

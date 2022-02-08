@@ -35,11 +35,11 @@ const BasicMidrangeDetail = () => {
     const [ItemSelectList, setItemSelectList] = useState<Set<number>>(new Set())
     const router = useRouter()
 
-    const LoadMidrange = async () => {
+    const LoadMidrange = async (product_id: number) => {
         Notiflix.Loading.circle()
         const res = await RequestMethod('get', `inspectCategoryLoad`,{
             path: {
-                product_id: 28
+                product_id: product_id
             }
         })
 
@@ -51,9 +51,13 @@ const BasicMidrangeDetail = () => {
                 return {legendary: v, LegendaryExplain: legendaryValue[i]}
             })
 
+            const itemBasic = res.category_info.map((v)=>{
+                return {...v, type: v.type === 1 ? '범례 적용' : "수치 입력"}
+            })
+
             setSampleBasicRow([{samples: res.samples}])
             setLegendaryBasicRow(legendaryArray)
-            setItemBasicRow(res.category_info)
+            setItemBasicRow(itemBasic)
         }
     }
 
@@ -66,7 +70,7 @@ const BasicMidrangeDetail = () => {
                 setIsOpen(!isOpen)
                 return
             case 2 :
-                router.push(({pathname: '/mes/basic/productV1u/midrange/form/register',
+                router.push(({pathname: '/mes/basic/productV1u/midrange/form/modify',
                     query: { customer_id: router.query.customer_id, cm_id: router.query.cm_id, code: router.query.code, name: router.query.name, product_id: router.query.product_id, type: router.query.type} }))
                 return
         }
@@ -80,15 +84,11 @@ const BasicMidrangeDetail = () => {
             type: router.query.type,
         }
         setBasicRow([data])
-        setProductId(Number(router.query.product_id))
+        if(router.query.product_id){
+            LoadMidrange(Number(router.query.product_id))
+        }
     },[router.query])
 
-    //product_id
-    // console.log(28)
-    React.useEffect(()=>{
-        console.log(router)
-        LoadMidrange()
-    },[])
 
     return (
         <div>

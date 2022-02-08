@@ -113,6 +113,39 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return false
         })
     case 'delete':
+        if(data.path){
+          let tmpUrl = `${ENDPOINT}${url}`
+
+          Object.values(data.path).map(v => {
+            if(v){
+              tmpUrl += `/${v}`
+            }
+          })
+          return Axios.delete(tmpUrl, token && {'headers': {'Authorization': token}, responseType: contentsType})
+              .then((result) => {
+                // if(result.data.status !== 200){
+                //   Notiflix.Report.failure('불러올 수 없습니다.', result.data.message, '확인')
+                //   return false
+                // }
+                Notiflix.Loading.remove(300)
+                return true
+              })
+              .catch((error) => {
+                if(error.response.status === 406 || error.response.status === 403) {
+                  Notiflix.Loading.remove(300)
+                  Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
+                  return false
+                }else if (error.response.status === 401){
+                  Notiflix.Loading.remove(300)
+                  Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
+                  return false
+                }else if(error.response.status === 500){
+                  Notiflix.Loading.remove(300)
+                  Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+                  return false
+                }
+              })
+        }
       return Axios.delete(ENDPOINT+url, token && {
         'headers': {'Authorization': token}, responseType: contentsType,
         data: data
@@ -123,7 +156,6 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         })
         .catch((error) => {
           Notiflix.Loading.remove(300)
-          console.log(error)
           if(error.response.status === 400) {
             Notiflix.Report.failure('삭제할 수 없습니다.', '입력값을 확인해주세요', '확인')
           }
@@ -225,11 +257,7 @@ const ApiList = {
   contractSave: `/api/v1/contract/save`,
   sheetSave: `/api/v1/sheet/save`,
   shipmentSave: `/api/v1/shipment/save`,
-  // toolSave: `/cnc/api/v1/tool/save`,
-  // inspecCategorySave: '/cnc/api/v1/inspec/category/save',
-  // lotToolSave: `/cnc/api/v1/lot-tool/save`,
-  // productChangeSave: `/cnc/api/v1/product-changes/save`,
-  // documentSave: `/cnc/api/v1/document/save`,
+
 
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -239,9 +267,7 @@ const ApiList = {
   productLoad: `/api/v1/product/load`,
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
-  // inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
-  // documentLoad: `/cnc/api/v1/document/load`,
-  // productChangeLoad: `/cnc/api/v1/product-changes/load`,
+
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -271,9 +297,6 @@ const ApiList = {
   contractDelete: `/api/v1/contract/delete`,
   sheetDelete: `/api/v1/sheet/delete`,
   recodeDelete: `/api/v1/record/delete`,
-  // toolDelete: `/cnc/api/v1/tool/delete`,
-  // lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
-  // documentDelete: `/cnc/api/v1/document/delete`,
 
 
   //list
@@ -334,7 +357,7 @@ const ApiList = {
   modelSearch: `/api/v1/model/search`,
   processSearch: `/api/v1/process/search`,
   machineSearch: `/api/v1/machine/search`,
-  productSearch: `/api/v1/product/search`,
+  productSearch: `/cnc/api/v1/product/search`,
   pauseSearch: `/api/v1/process/reason/pause/search`,
   rawmaterialSearch: `/api/v1/raw-material/search`,
   moldSearch: `/api/v1/mold/search`,
@@ -368,6 +391,7 @@ const ApiList = {
   //all
   authorityAll: `/api/v1/auth/all`,
   recordAll: `/api/v1/record/all`,
+  cncRecordAll: `/cnc/api/v1/record/all`,
   shipmentAll:`/api/v1/shipment/all`,
   // documentAll: `/cnc/api/v1/document/all`,
 

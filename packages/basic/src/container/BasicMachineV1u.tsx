@@ -124,15 +124,17 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       }
     })
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
+      setColumn([...res.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     })
-    // }
   }
 
   const SaveBasic = async () => {
-    let res: any
     let result = [];
     basicRow.map((row, index)=>{
       if(selectList.has(row.id)){
@@ -140,13 +142,21 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
         result.push(cleanForRegister(row))
       }
-
     })
+    if(result.length === 0) {
+      Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인", )
+      return
+    }
       RequestMethod('post', `machineSave`, result)
           .then((res) => {
             Notiflix.Report.success("저장되었습니다.","","확인");
             LoadBasic(page);
           })
+          .catch((err) => {
+            console.log(err.data.message);
+            Notiflix.Report.failure("경고", err.data.message, "확인");
+          })
+
 
   }
 
@@ -226,21 +236,29 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           result.push(cleanForRegister(value))
         }
       }
-
     })
-    RequestMethod("delete", "machineDelete", result)
-        .then((res) => {
-          Notiflix.Report.success( "삭제되었습니다.", "", "확인");
-          if(keyword){
-            SearchBasic(keyword, option, page).then(() => {
-              Notiflix.Loading.remove()
-            })
-          }else{
-            LoadBasic(page).then(() => {
-              Notiflix.Loading.remove()
-            })
-          }
-        })
+    if(result.length === 0){
+      Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인", )
+      return
+    } Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+        ()=>{
+          RequestMethod("delete", "machineDelete", result)
+              .then((res) => {
+                Notiflix.Report.success( "삭제되었습니다.", "", "확인");
+                if(keyword){
+                  SearchBasic(keyword, option, page).then(() => {
+                    Notiflix.Loading.remove()
+                  })
+                }else{
+                  LoadBasic(page).then(() => {
+                    Notiflix.Loading.remove()
+                  })
+                }
+              })
+
+        },
+        ()=>{}
+    )
 
   }
 
@@ -463,12 +481,8 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
         break;
       case 5:
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{
-            DeleteBasic()
-          },
-          ()=>{}
-        )
+        DeleteBasic()
+
 
         break;
 

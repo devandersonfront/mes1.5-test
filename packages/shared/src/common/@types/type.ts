@@ -19,6 +19,8 @@ export interface IExcelHeaderType {
   textType?: string
   options?:{status:number, name:string}[]
   result?:(value:number | string | boolean) => void
+  staticCalendar?: boolean
+  clearContract?: boolean
   maxDate?:boolean
   theme?: string
   toFix?: number
@@ -31,6 +33,7 @@ export interface IExcelHeaderType {
   title?: string
   url?: string
   headerType?:any[]
+  callback?: (data : any) => void
 }
 
 export interface IResponseType {

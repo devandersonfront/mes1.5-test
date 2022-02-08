@@ -165,6 +165,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
       case 0:
         return addRow()
       case 1:
+
         return deleteAuth()
     }
   }

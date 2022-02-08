@@ -43,6 +43,8 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
   });
 
+
+
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -137,7 +139,6 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }else{
-      console.log(res);
     }
   }
 
@@ -349,11 +350,14 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? '-',
         id: `sheet_${random_id}`,
+        total_counter:"-",
+        total_good_quantity:"-"
       }
     })
 
     Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
+    console.log(tmpBasicRow)
   }
 
   return (

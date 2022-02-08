@@ -41,7 +41,7 @@ const MesStockList = ({page, keyword, option}: IProps) => {
   ])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["stockV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['거래처', '모델', 'CODE', '품명', '품목종류'])
+  const [optionList, setOptionList] = useState<string[]>(['거래처', '모델', 'CODE', '품명', /*'품목종류'*/])
   const [optionIndex, setOptionIndex] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -50,7 +50,7 @@ const MesStockList = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
-    setOptionIndex(option)
+    // setOptionIndex(option)
     if(keyword){
       SearchBasic(keyword, option, page).then(() => {
         Notiflix.Loading.remove()
@@ -145,7 +145,7 @@ const MesStockList = ({page, keyword, option}: IProps) => {
       },
       params: {
         keyword: keyword ?? '',
-        opt: option ?? 0
+        opt: optionIndex ?? 0
       }
     })
 

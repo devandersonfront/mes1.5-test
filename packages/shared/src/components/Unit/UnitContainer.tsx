@@ -11,8 +11,9 @@ interface IProps {
 const UnitContainer = ({ row, column, setRow}: IProps) => {
   const [title, setTitle] = useState<string>("")
     const AddComma = (number:number) => {
-        let regexp = /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g;
-        return number.toString().replace(regexp, ",");
+        //후방탐색 부정형은 TV, 아이폰에서 현재 지원을 안함
+        // let regexp = /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g
+        return number.toLocaleString()
     }
 
     useEffect(() => {
@@ -47,7 +48,7 @@ const UnitContainer = ({ row, column, setRow}: IProps) => {
         }
       </UnitValue>
       <UnitBox>
-        {
+        {row.unit ? row.unit :
           column.searchType === 'rawin'
             ? <span>{row.type ? row.type === 'COIL' ? 'kg' : '장' : ''}</span>
             : column.type === 'selectUnit'

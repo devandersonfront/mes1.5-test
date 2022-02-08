@@ -112,7 +112,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
 
   const SearchBasic = async (keyword, opt, page?: number) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `recordSearch`,{
+    const res = await RequestMethod('get', `cncRecordSearch`,{
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
@@ -340,6 +340,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         unit: row.operation_sheet?.product?.unit,
         process_id: row.operation_sheet?.product?.process?.name ?? '-',
         user: row.worker,
+        sic_id: row.inspection_category,
         worker: row.worker?.name ?? '-',
         id: `sheet_${random_id}`,
       }
@@ -347,6 +348,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
 
     setBasicRow([...tmpBasicRow])
   }
+
 
   return (
     <div>
@@ -401,6 +403,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {
+
           let tmp: Set<any> = selectList
           e.map(v => {
             if(v.isChange) tmp.add(v.id)

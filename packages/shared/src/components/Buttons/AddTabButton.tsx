@@ -20,10 +20,9 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
 
   const loadMaterialLot = async (type) => {
     let res
-    console.log("!!!!!!!type : ", type)
     switch(type){
       case 0:
-        res = await RequestMethod('get', `lotRmList`, {
+        res = await RequestMethod('get', `lotRmSearch`, {
           path:{
             page:1,
             renderItem:15
@@ -32,14 +31,14 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
             from: "2000-01-01",
             to:moment().format("YYYY-MM-DD"),
             option:0,
-            keyword:"SPFC590-0120-312",
+            keyword:row.code,
             // rm_id: row.rm_id,
             nz: false
           }
         })
         break;
       case 1:
-        res = await RequestMethod('get', `lotSmList`, {
+        res = await RequestMethod('get', `lotSmSearch`, {
           path:{
             page:1,
           },
@@ -50,7 +49,11 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         })
         break;
       case 2:
-        res = await RequestMethod('get', `recordList`, {
+        res = await RequestMethod('get', `recordSearch`, {
+          path:{
+            page:1,
+
+          },
           params: {
             productIds: row.product_id,
             nz: true
@@ -120,7 +123,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           }
         }else {
           if (row.bom_root_id) {
-            dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1}))
+            console.log("row : ", row)
+            dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1, product_id:row.bom_root_id}))
           } else {
             Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
             })

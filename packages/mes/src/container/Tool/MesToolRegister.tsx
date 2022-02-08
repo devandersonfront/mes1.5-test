@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {ExcelTable, Header as PageHeader, PaginationComponent, RequestMethod} from "shared";
 import {columnlist} from "shared";
@@ -19,10 +19,21 @@ const MesToolRegister = () => {
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingRegister);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
+    const CheckAuthorize = async() => {
+        await RequestMethod("get", "loadMenu", {
+            path:{
+                tab:"ROLE_TOOL_01"
+            }
+        }).then((res) =>{
+            console.log(res)
+        })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
 
     const SaveCleanUpData = (data:any[]) => {
         let resultData = [];
-        console.log("data : ", data)
         data.map((rowData, index) => {
             let tmpRow:any = {};
             let toolObject:any = {};
@@ -40,7 +51,6 @@ const MesToolRegister = () => {
             tmpRow.warehousing = rowData.warehousing;
             resultData.push(tmpRow);
         })
-        console.log(resultData)
         return resultData;
     }
 
@@ -68,10 +78,8 @@ const MesToolRegister = () => {
                 const result = basicRow.filter((row) => {
                     if (selectList.has(row.id)) return row
                 })
-                console.log(basicRow)
                 //result 값 가지고 save
                 SaveCleanUpData(result)
-                console.log(result)
                 SaveBasic(SaveCleanUpData(result));
 
                 return
@@ -85,6 +93,10 @@ const MesToolRegister = () => {
                 return
         }
     }
+
+    useEffect(() => {
+        CheckAuthorize()
+    },[])
 
     return (
         <div>

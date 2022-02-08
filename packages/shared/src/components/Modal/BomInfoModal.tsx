@@ -79,7 +79,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       await RequestMethod("get", "bomLoad", {path: { key: tabStore.datas[tabStore.index].code }})
           .then((res) => {
             const result = changeRow(res);
-            console.log("result : ", result)
             setSearchList([...result])
 
             result.map((value, i) => {
@@ -235,6 +234,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             width: '100%'
           }}>
             <div onClick={() => {
+              console.log("isOpen : ", isOpen)
               setIsOpen(true)
             }}>
               <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>
@@ -488,7 +488,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     newTab: false
                   }
                 })
-                console.log(e)
 
                 setSearchList([...tmp])
               }}

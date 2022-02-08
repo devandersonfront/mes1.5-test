@@ -56,73 +56,73 @@ const MesKpiPowerUsage = () => {
 
     // 전력 사용량은 API 요청을 PMS 에서 해야해서 주석처리함..
 
-    // const RequestPowerUsageApi = async (productId: number) => {
+    const RequestPowerUsageApi = async (productId: number) => {
 
-    //     const tokenData = cookie.load('userInfo')?.token;
+        const tokenData = cookie.load('userInfo')?.token;
 
-    //     const res = await axios.get(`${SF_ENDPOINT_PMS}/api/v2/statistics/press/electric-power`,{
-    //         params: {
-    //             productIds: productId,
-    //             sorts : 'date',
-    //             from: selectDate.from,
-    //             to: selectDate.to
-    //         },
-    //         headers : {
-    //             Authorization : tokenData
-    //         }
-    //     })
-
-
-    //     if(res){
-    //         const filterResponse = res.data.map((v)=>{
-
-    //             return {
-    //                 osd_id: v.operation_sheet.os_id,
-    //                 code: v.operation_sheet.product.code,
-    //                 name: v.operation_sheet.product.name,
-    //                 process_id: v.operation_sheet.product.process?.name,
-    //                 lot_number: v.lot_number,
-    //                 user_id: v.worker.name,
-    //                 start: v.start,
-    //                 end: v.end,
-    //                 paused_time: 0,
-    //                 good_quantity: v.good_quantity,
-    //                 poor_quantity: v.poor_quantity,
-    //                 power_usage : v.power_usage
-    //             }
-    //         })
-    //         setPauseBasicRow(filterResponse)
-    //     }
-    // }
+        const res = await axios.get(`${SF_ENDPOINT_PMS}/api/v2/statistics/press/electric-power`,{
+            params: {
+                productId: productId,
+                sorts : 'date',
+                from: selectDate.from,
+                to: selectDate.to
+            },
+            headers : {
+                Authorization : tokenData
+            }
+        })
 
 
-    // React.useEffect(()=>{
+        if(res){
+            const filterResponse = res.data.map((v)=>{
 
-    //     if(processBasicRow.id){
-    //         RequestPowerUsageApi(processBasicRow.id)
-    //     }
+                return {
+                    osd_id: v.operation_sheet.os_id,
+                    code: v.operation_sheet.product.code,
+                    name: v.operation_sheet.product.name,
+                    process_id: v.operation_sheet.product.process?.name,
+                    lot_number: v.lot_number,
+                    user_id: v.worker.name,
+                    start: v.start,
+                    end: v.end,
+                    paused_time: 0,
+                    good_quantity: v.goodQuantity,
+                    poor_quantity: v.poorQuantity,
+                    power_per_unit : v.power_per_unit
+                }
+            })
+            setPauseBasicRow(filterResponse)
+        }
+    }
 
-    // },[processBasicRow.id,selectDate])
 
-    // React.useEffect(()=>{
+    React.useEffect(()=>{
 
-    //     if(pauseBasicRow.length){
+        if(processBasicRow.id){
+            RequestPowerUsageApi(processBasicRow.id)
+        }
+
+    },[processBasicRow.id,selectDate])
+
+    React.useEffect(()=>{
+
+        if(pauseBasicRow.length){
             
-    //         const rowLenth = pauseBasicRow.length;
-    //         let sum = 0;
-    //         if(rowLenth){
-    //             pauseBasicRow.map((row)=> {
-    //                 sum += row.power_usage
-    //             })
-    //             setProcessBasicRow({...processBasicRow , powerUsage_average : `${Math.round(sum/rowLenth)}`})
-    //         }
-    //     }else{
+            const rowLenth = pauseBasicRow.length;
+            let sum = 0;
+            if(rowLenth){
+                pauseBasicRow.map((row)=> {
+                    sum += row.power_per_unit
+                })
+                setProcessBasicRow({...processBasicRow , powerUsage_average : `${Math.round(sum/rowLenth)}`})
+            }
+        }else{
 
-    //         setProcessBasicRow({...processBasicRow , powerUsage_average : '-'})
-    //     }
+            setProcessBasicRow({...processBasicRow , powerUsage_average : '-'})
+        }
 
 
-    // },[pauseBasicRow])
+    },[pauseBasicRow])
 
 
     return (

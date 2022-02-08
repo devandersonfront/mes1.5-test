@@ -29,9 +29,9 @@ const TitleFileUpload = ({title,index,uuid, detail,value,placeholder,fileOnClick
             <TitleBox>{title}</TitleBox>
             <ValueBox onClick={()=> uuid !== '' && detail && window.open(SF_ENDPOINT_S3+uuid)} style={{color: value === '' ? 'rgba(255,255,255,0.3)' : 'white', width: detail && '100%', textDecoration:  detail && "underline", textUnderlinePosition: 'under', cursor: detail && "pointer"}}>
                 {value === '' ? placeholder : value}
-                <div style={{width: '20px', height: '20px'}}>
-                    X
-                </div>
+                {/*<div style={{width: '20px', height: '20px'}}>*/}
+                {/*    X*/}
+                {/*</div>*/}
             </ValueBox>
             {!detail &&
                 <SelectButton onClick={() => onClickImageUpload('1')}>
@@ -42,12 +42,12 @@ const TitleFileUpload = ({title,index,uuid, detail,value,placeholder,fileOnClick
                    onChange={async (e) => {
                        if(e.target.files && e.target.files.length !== 0) {
                            // Buffer.from(e.target.files[0]);
-                           const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true, "application/json");
+                           const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true, e.target.files[0].type);
 
                            if(uploadImg !== undefined){
                                const fileInfo = {
                                    name: e.target.files[0].name,
-                                   uuid: uploadImg.UUID,
+                                   UUID: uploadImg.UUID,
                                    sequence: index+1
                                }
                                fileOnClick(fileInfo)
