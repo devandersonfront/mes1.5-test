@@ -53,7 +53,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
+  // const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
@@ -64,11 +64,13 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    if(isOpen && row.os_id) {
-      SearchBasic(searchKeyword, optionIndex, 1)
+    // if(isOpen && row.os_id) {
+      // SearchBasic()
+    // }
+    if(row.os_id){
+      SearchBasic()
     }
-    // SearchBasic(searchKeyword, optionIndex, 1)
-  }, [isOpen, /*searchKeyword*/])
+  }, [row.os_id])
 
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpRes = []
@@ -144,9 +146,9 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     })
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    setKeyword(keyword)
-    setOptionIndex(option)
+  const SearchBasic = async () => {
+    // setKeyword(keyword)
+    // setOptionIndex(option)
     const res = await RequestMethod('get', `recordAll`,{
       params: {
         identification:row.os_id

@@ -172,7 +172,7 @@ export const searchModalList: any = {
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 425, formatter: SearchModalTest, placeholder: '-', type: 'bom', modalType: true},
     {key: 'name', name: '품명', width: 280, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'setting', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
+    {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 0, name: '기본'},
         {pk: 1, name: '스페어'},
       ], type: 'Modal'},
@@ -317,7 +317,7 @@ export const searchModalList: any = {
     {key: 'disturbance', name: '소요량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-', type : 'readonly'},
+    {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-' },
   ],
   InputInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},

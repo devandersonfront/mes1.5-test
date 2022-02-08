@@ -18,8 +18,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   const [title, setTitle] = useState<string>(column.key === 'lot' ? "LOT 보기" : "BOM 보기")
   const selector = useSelector((state:RootState) => state.infoModal)
 
-  console.log(tabStore,'tabStore2222')
-
   const loadMaterialLot = async (type) => {
     let res
     switch(type){
@@ -81,8 +79,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         background:row.border ? "#19B9DF80" : "white",
         cursor: 'pointer',
       }} onClick={() => {
-
-        console.log(column.key,'column.keycolumn.keycolumn.key')
 
         if(column.key === 'lot'){
           if(column.type === 'readonly'){
