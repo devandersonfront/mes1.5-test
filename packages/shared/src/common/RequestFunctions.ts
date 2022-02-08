@@ -350,6 +350,7 @@ const ApiList = {
   lotSmList: `/api/v1/lot-sm/list`,
   recordGroupList: `/api/v1/record/groups`,
   stockAdminList: '/api/v1/stock/admin/summary',
+  qualityRecordInspectList: '/cnc/api/v1/quality/record/inspect/list',
   toolList: `/cnc/api/v1/tool/list`,
   lotToolList: `/cnc/api/v1/lot-tool/list`,
   documentList:`/cnc/api/v1/document/list`,
@@ -399,6 +400,7 @@ const ApiList = {
   toolSearch: `/cnc/api/v1/tool/search`,
   lotToolSearch: `/cnc/api/v1/lot-tool/search`,
   qualityRecordInspectSearch: '/cnc/api/v1/quality/record/inspect/search',
+  productChangeSearch: `/cnc/api/v1/product-changes/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,

@@ -44,6 +44,8 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
 
             setExcelInfo({sic_id: res.sic_id, record_id: row.record_id ,basic: [{osd_id: row.identification, lot_number: row.lot_number, code: row.product.code, material_name: row.product.name, type: row.type , process_id: processName, worker_name: row.user.name, name: machineName}], samples: [{samples: res.samples}], legendary: legendaryArray, inspection_info: res.inspection_info})
             setModalOpen(true)
+        }else {
+            Notiflix.Report.warning('검사 항목을 등록해주세요.','','확인');
         }
     }
 

@@ -42,7 +42,7 @@ const MesProductChangeModify = () => {
         if(res){
 
             const basicTmp = [{
-                customer_id: res.product.customerId  === null ? '-' : res.product.customerId,
+                customer_id: res.product.customer === null ? '-' : res.product.customer.name,
                 cm_id: res.product.model === null ? '-' : res.product.model.model,
                 code: res.product.code,
                 name: res.product.name === null ? '-' : res.product.name,
@@ -50,11 +50,20 @@ const MesProductChangeModify = () => {
             setBasicRow(basicTmp)
             setChangeInfo({title: res.title, content: res.content, registered: moment(res.created).format("YYYY.MM.DD"), product: res.product, writer: res.writer})
             if(res.files.length !== 0) {
-                setFiles(res.files)
+                for(let i = 0; i<3; i++) {
+                    if (res.files[i] !== undefined) {
+                        files[res.files[i].sequence-1] = {
+                            name: res.files[i].name,
+                            UUID: res.files[i].UUID,
+                            sequence: res.files[i].sequence
+                        }
+                    }
+                }
             }
             setVersion(res.version)
         }
     }
+
 
 
     React.useEffect(()=>{
