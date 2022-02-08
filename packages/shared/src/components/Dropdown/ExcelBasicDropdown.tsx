@@ -98,6 +98,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
                 break;
             }
           }
+
           return onRowChange({
             //@ts-ignore
             ...row, [column.key]:event.target.value, [column.key+"PK"]: pkValue ?? undefined,

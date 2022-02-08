@@ -258,7 +258,6 @@ const ApiList = {
   sheetSave: `/api/v1/sheet/save`,
   shipmentSave: `/api/v1/shipment/save`,
 
-
   //modify
   operationModify: `/api/v1/operation/modify`,
 
@@ -267,6 +266,7 @@ const ApiList = {
   productLoad: `/api/v1/product/load`,
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
+  inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
 
 
   //recent
@@ -339,16 +339,7 @@ const ApiList = {
   lotSmList: `/api/v1/lot-sm/list`,
   recordGroupList: `/api/v1/record/groups`,
   stockAdminList: '/api/v1/stock/admin/summary',
-  // toolList: `/cnc/api/v1/tool/list`,
-  // lotToolList: `/cnc/api/v1/lot-tool/list`,
-  // documentList:`/cnc/api/v1/document/list`,
-  // productLeadTimeList: `/cnc/api/v1/kpi/product/lead-time/list`,
-  // costManDayCostList: `/cnc/api/v1/kpi/cost/man-day-cost/list`,
-  // qualityDefectRateList: `/cnc/api/v1/kpi/quality/defect-rate/list`,
-  // deliveryLoadTimeList: `/cnc/api/v1/kpi/delivery/lead-time/list`,
   electicPowerList : `/api/v2/statistics/press/electric-power`,
-  // productUphList: `/cnc/api/v1/kpi/product/uph/list`,
-  // productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -385,8 +376,6 @@ const ApiList = {
   itemSave: `/menu/save`,
   itemDelete: `/menu/delete`,
   deviceSearch: `/api/v1/device/search`,
-  // toolSearch: `/cnc/api/v1/tool/search`,
-  // lotToolSearch: `/cnc/api/v1/lot-tool/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,
@@ -409,11 +398,6 @@ const ApiList = {
 
   anonymousLoad: `/anonymous/load`,
 
-  // documentDownLoad: `/cnc/api/v1/document/download`,
-  // documentLogs: `/cnc/api/v1/document/logs`,
-  // documentMove: `/cnc/api/v1/document/move`,
-
-  // toolAverage: `/cnc/api/v1/tool/average`,
   //전력사용량 list
   statisticsPressElectricPower: `/api/v2/statistics/press/electric-power`,
 }

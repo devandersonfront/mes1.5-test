@@ -126,7 +126,6 @@ const MesKpiManHour = () => {
     },[pauseBasicRow])
 
 
-
     return (
         <div>
             <PageHeader title={"작업공수(C)"} />

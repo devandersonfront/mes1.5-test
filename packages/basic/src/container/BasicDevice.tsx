@@ -186,6 +186,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
                   }
                 }
               })
+              console.log("row : ", row)
               return {
                 ...row,
                 ...selectData,

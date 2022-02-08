@@ -45,7 +45,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     page: 1,
     total: 1
   })
-
   const [buttonList , setButtonList ] = useState<string[]>([])
 
   useEffect(() => {
@@ -193,12 +192,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
               molds:[...row?.molds?.map((mold)=>{
                 return {...mold, setting:mold.mold.setting}
               }) ?? []],
-              tools:[
-                  ...row?.tools?.map((tool) => {
-                    // return {...tool, tool:{...tool.tool, seq:undefined, customer:tool.tool.customerData}, setting:tool.tool.setting}
-                    return {...tool, tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional}, setting:tool.tool.setting}
-                  })
-              ],
               machines:[
                   ...row?.machines?.map((machine)=>{
                     return {

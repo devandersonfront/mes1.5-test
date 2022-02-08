@@ -19,8 +19,6 @@ import {SearchModalTest} from '../components/Modal/SearchModalTest'
 import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
 import {LotNumberRegister} from '../components/Cell/LotNumberRegister'
 import OperationSearchModal from "../../../main/component/Modal/OperationSearchModal";
-import {ToolSelectModal} from "../components/Modal/ToolSelectModal";
-import {ToolListModal} from "../components/Modal/ToolListModal";
 
 export const searchModalList: any = {
   member: [
@@ -111,13 +109,6 @@ export const searchModalList: any = {
     {key: 'type', name: '장치 종류', width: 160, formatter: LineBorderContainer},
     {key: 'manager', name: '담당자', width: 160, formatter: LineBorderContainer},
   ],
-  productToolInfo: [
-    {key: 'code', name: '품목 CODE', formatter: LineBorderContainer, placeholder: '-' },
-    {key: 'name', name: '품명', formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'product_type', name: '종류', formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'unit', name: '단위', formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'average', name: '평균 공구 교환주기', formatter: LineBorderContainer, placeholder: '-'},
-  ],
   productInfo: [
     {key: 'customer', name: '고객사명', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'model', name: '모델', width: 160, formatter: LineBorderContainer, placeholder: '-' },
@@ -139,25 +130,6 @@ export const searchModalList: any = {
     {key: 'cavity', name: '캐비티', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'spm', name: 'SPM', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'slideHeight', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
-  ],
-  toolInfo: [
-    {key: 'seq', name: '번호', textAlign: 'center', width: 64, formatter: LineBorderContainer},
-    {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '공구명', width: 472, formatter: SearchModalTest, type: 'tool', modalType: true },
-    {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
-        {pk: 'basic', name: '기본'},
-        {pk: 'spare', name: '스페어'},
-      ], type: 'Modal'},
-    // {key: 'cavity', name: '재고량', width: 160, formatter: LineBorderContainer, placeholder: '0'},
-    // {key: 'spm', name: 'SPM', width: 160, formatter: LineBorderContainer, placeholder: '0'},
-    // {key: 'slideHeight', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
-  ],
-  toolSearch: [
-    {key: 'seq', name: '번호', textAlign: 'center', width:30, formatter: LineBorderContainer},
-    {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '공구 품명', /*formatter: SearchModalTest,*/ type: 'mold', modalType: true },
-    {key: 'unit', name: '단위', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
-    {key: 'customer', name: '거래처'},
   ],
   machineInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
@@ -225,13 +197,6 @@ export const searchModalList: any = {
     {key: 'cavity', name: '캐비티', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'spm', name: 'SPM', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'dieheigth', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
-  ],
-  toolList: [
-    {key: 'sequence', name: '번호', width: 64, textAlign: 'center', formatter: LineBorderContainer},
-    {key: 'code', name: '공구 CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '공구명', formatter: LineBorderContainer, type: 'Modal'},
-    {key: 'cavity', name: '거래처', width: 160, formatter: LineBorderContainer, placeholder: '0'},
-    {key: 'spm', name: '생산량', width: 160, formatter: LineBorderContainer, placeholder: '0'},
   ],
   machineList: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
@@ -396,7 +361,6 @@ export const searchModalList: any = {
     {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center'},
     {key: 'molds', name: '금형', formatter: MoldSelectModal, textAlign: 'center'},
     {key: 'machines', name: '기계', formatter: MachineSelectModal, textAlign: 'center'},
-    // {key: 'tool', name: '공구', formatter: ToolSelectModal, textAlign: 'center'},
   ],
   workList: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
@@ -411,7 +375,6 @@ export const searchModalList: any = {
     {key: 'input', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center', type: 'readonly'},
     {key: 'mold', name: '금형', formatter: MoldListModal, textAlign: 'center', type: 'Modal'},
     {key: 'machine', name: '기계', formatter: MachineListModal, textAlign: 'center', type: 'Modal'},
-    {key: 'tool', name: '공구', formatter: ToolListModal, textAlign: 'center', type: 'Modal'},
   ],
   pauseTime: [
     {key: 'reason', name: '일시 정지 유형', formatter: LineBorderContainer},

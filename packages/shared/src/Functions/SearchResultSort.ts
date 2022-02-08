@@ -96,16 +96,6 @@ export const SearchResultSort = (infoList, type: string) => {
         }
       })
     }
-    case 'tool' : {
-      return infoList.map((v,index) => {
-        return {
-          ...v,
-          seq:index,
-          customerData:v.customer,
-          customer:v.customer?.name,
-        }
-      })
-    }
     default : {
       return infoList
     }

@@ -160,9 +160,11 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const SearchBasic = async (selectKey?:string) => {
     Notiflix.Loading.circle()
+    console.log("여기 아니야??!?!?!?!?!?!?!?!?!?!!?!?!?!?", selectKey)
     let res;
     if(selectKey){
       res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
+      console.log("res : ", res)
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       setSearchList([...searchList])
@@ -488,7 +490,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     newTab: false
                   }
                 })
-
                 setSearchList([...tmp])
               }}
               width={1746}
