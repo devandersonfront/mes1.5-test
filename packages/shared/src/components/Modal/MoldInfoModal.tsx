@@ -40,7 +40,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     if(isOpen) {
       if(row?.molds && row?.molds.length > 0){
         setSearchList(row.molds.map((v,i) => {
-          console.log("v : ", v)
           return {
             ...v,
             ...v.mold,
@@ -50,17 +49,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       }
     }
   }, [isOpen, searchKeyword])
-
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
-    }
-
-    return tmpData
-  }
 
 
   const ModalContents = () => {

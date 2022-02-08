@@ -17,7 +17,11 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
   const cleanValue = (type?:string) => {
     switch(type){
       case "spare":
+        // 22/01/24 수정
         return row.setting == 1 ? "스페어" : "기본"
+        // return row.spare
+      case "setting" :
+        return row[column.key] == 1 || row[column.key] == "여" ? "여" : "부"
       default:
         return row[column.key] ? row[column.key] : "무"
     }
@@ -64,7 +68,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         }else{
           let tmpData = {}
 
-          if(column.key === 'customer') {
+          // if(column.key === 'customer' || column.key === "Modal") {
             let tmpCrn = ''
             column.selectList.map(v => {
               if(v.name === event.target.value) {
@@ -75,8 +79,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
               ...tmpData,
               crn: tmpCrn
             }
-          }
-          console.log(event.target.value)
+          // }
           if(column.key === "spare"){
             switch (event.target.value){
               case "스페어":
@@ -98,8 +101,9 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
 
           return onRowChange({
             //@ts-ignore
-            ...row, [column.key]: event.target.value, [column.key+"PK"]: pkValue ?? undefined,
-            [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue, ...tmpData,
+            ...row, [column.key]:event.target.value, [column.key+"PK"]: pkValue ?? undefined,
+            [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
+            // ...tmpData,
             isChange: true
           })
         }

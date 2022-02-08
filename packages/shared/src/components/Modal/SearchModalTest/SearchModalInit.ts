@@ -47,11 +47,6 @@ export const SearchInit: Record<string, SearchInitType> = {
     searchFilter: ['거래처명', '대표자명', '사업자 번호', '모델명'],
     excelColumnType: 'model'
   },
-  tool: {
-    title: '공구 검색',
-    searchFilter: ['거래처명', '대표자명', '사업자 번호', '모델명'],
-    excelColumnType: 'tool'
-  },
   customerModel: {
     title: "모델명 검색",
     searchFilter: ['거래처명', '대표자명', '사업자 번호', '모델명'],
@@ -74,12 +69,12 @@ export const SearchInit: Record<string, SearchInitType> = {
   },
   machine: {
     title: '기계 검색',
-    searchFilter: ['제조 번호', '기게 이름', '기계 종류', '톤 수', '공장명'],
+    searchFilter: ['제조 번호', '기계 이름', '기계 종류', '톤 수', '공장명'],
     excelColumnType: 'machine'
   },
   device: {
     title: '주변장치 검색',
-    searchFilter: ['제조 번호', '기게 이름', '기계 종류', '톤 수', '공장명'],
+    searchFilter: ['제조 번호', '기계 이름', '기계 종류', '톤 수', '공장명'],
     excelColumnType: 'device'
   },
   product: {

@@ -60,7 +60,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         result = "탭핑기";
         break ;
       default:
-        result = value.toString();
+        result = value?.toString();
         break;
     }
     return result;

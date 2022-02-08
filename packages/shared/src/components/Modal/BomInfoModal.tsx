@@ -31,8 +31,6 @@ interface IProps {
   modify?: boolean
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
 const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const tabRef = useRef(null)
   const tabStore = useSelector((rootState: RootState) => rootState.infoModal)
@@ -81,7 +79,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       await RequestMethod("get", "bomLoad", {path: { key: tabStore.datas[tabStore.index].code }})
           .then((res) => {
             const result = changeRow(res);
-            console.log("result : ", result)
             setSearchList([...result])
 
             result.map((value, i) => {
@@ -111,7 +108,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
 
     tmpData = row.map((v, i) => {
-      console.log(v)
       let childData: any = {}
       let type = "";
       switch(v.type){
@@ -131,8 +127,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           break;
         }
       }
-
-      console.log("childData : ", childData)
 
       return {
         ...childData,
@@ -158,7 +152,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           ...childData,
         }: null,
         parent:v.parent,
-        setting:v.setting === 1 ? "기본" : "스페어"
+        setting:v.setting === 0 ? "기본" : "스페어"
       }
     })
     return tmpData
@@ -173,22 +167,17 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       console.log("res : ", res)
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
-      console.log(searchList)
       setSearchList([...searchList])
 
     }else{
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
       let searchList = changeRow(res)
-      console.log("??? : ", searchList, " || ", res, " || ", row)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       setSearchList(searchList.length > 0 ? searchList : [{seq:1}])
     }
   }
 
   const SaveBasic = async () => {
-    console.log("searchList : ", searchList);
-    console.log("row : ", row);
-
     let body = searchList.map((v, i) => {
       return {
         seq: i+1,
@@ -211,7 +200,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         } : null,
         type: v.tab,
         key: row.bom_root_id,
-        setting: v.setting === "스페어" ? 1 : 0,
+        setting: v.setting === "기본" ? 0 : 1,
         usage: v.usage,
         version: v.version
       }
@@ -247,6 +236,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             width: '100%'
           }}>
             <div onClick={() => {
+              console.log("isOpen : ", isOpen)
               setIsOpen(true)
             }}>
               <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>
@@ -500,8 +490,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     newTab: false
                   }
                 })
-                console.log(e)
-
                 setSearchList([...tmp])
               }}
               width={1746}

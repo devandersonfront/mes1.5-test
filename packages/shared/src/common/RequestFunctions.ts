@@ -43,15 +43,15 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return result.data
         })
         .catch((error) => {
-          if(error.response.status === 406 || error.response.status === 403) {
+          if(error.response?.status === 406 || error.response?.status === 403) {
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
             return false
-          }else if (error.response.status === 401){
+          }else if (error.response?.status === 401){
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
             return false
-          }else if(error.response.status === 500){
+          }else if(error.response?.status === 500){
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
             return false
@@ -113,6 +113,39 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return false
         })
     case 'delete':
+        if(data.path){
+          let tmpUrl = `${ENDPOINT}${url}`
+
+          Object.values(data.path).map(v => {
+            if(v){
+              tmpUrl += `/${v}`
+            }
+          })
+          return Axios.delete(tmpUrl, token && {'headers': {'Authorization': token}, responseType: contentsType})
+              .then((result) => {
+                // if(result.data.status !== 200){
+                //   Notiflix.Report.failure('불러올 수 없습니다.', result.data.message, '확인')
+                //   return false
+                // }
+                Notiflix.Loading.remove(300)
+                return true
+              })
+              .catch((error) => {
+                if(error.response.status === 406 || error.response.status === 403) {
+                  Notiflix.Loading.remove(300)
+                  Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
+                  return false
+                }else if (error.response.status === 401){
+                  Notiflix.Loading.remove(300)
+                  Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
+                  return false
+                }else if(error.response.status === 500){
+                  Notiflix.Loading.remove(300)
+                  Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+                  return false
+                }
+              })
+        }
       return Axios.delete(ENDPOINT+url, token && {
         'headers': {'Authorization': token}, responseType: contentsType,
         data: data
@@ -161,7 +194,7 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
       if(data.params){
         Object.keys(data.params).map((v, i) => {
           if(i === 0) {
-            tmpUrl += `?${v}=${data.params[v]}`
+          tmpUrl += `?${v}=${data.params[v]}`
           }else{
             tmpUrl += `&${v}=${data.params[v]}`
           }
@@ -202,7 +235,8 @@ const ApiList = {
   modelSave: `/api/v1/model/save`,
   processSave: `/api/v1/process/save`,
   machineSave: `/api/v1/machine/save`,
-  productSave: `/api/v1/product/save`,
+  // productSave: `/api/v1/product/save`,
+  // productSave: `/cnc/api/v1/product/save`,
   rawmaterialSave: `/api/v1/rawmaterial/save`,
   moldSave: `/api/v1/mold/save`,
   pauseSave: `/api/v1/process/reason/pause/save`,
@@ -223,9 +257,6 @@ const ApiList = {
   contractSave: `/api/v1/contract/save`,
   sheetSave: `/api/v1/sheet/save`,
   shipmentSave: `/api/v1/shipment/save`,
-  toolSave: `/cnc/api/v1/tool/save`,
-  inspecCategorySave: '/cnc/api/v1/inspec/category/save',
-  lotToolSave: `/cnc/api/v1/lot-tool/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -236,6 +267,7 @@ const ApiList = {
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
+
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -265,8 +297,6 @@ const ApiList = {
   contractDelete: `/api/v1/contract/delete`,
   sheetDelete: `/api/v1/sheet/delete`,
   recodeDelete: `/api/v1/record/delete`,
-  toolDelete: `/cnc/api/v1/tool/delete`,
-  lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
 
 
   //list
@@ -289,7 +319,9 @@ const ApiList = {
   stockSummaryList: '/api/v1/stock/summary/list',
   operactionList: `/api/v1/operation/list`,
   defectList: `/api/v1/quality/statistics/defect`,
+  // productChangeList: `/cnc/api/v1/product-changes/list`,
   recordList: `/api/v1/record/list`,
+  // cncRecordList: `/cnc/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
   factoryList: `/api/v1/factory/list`,
   deviceList: `/api/v1/device/list`,
@@ -307,8 +339,7 @@ const ApiList = {
   lotSmList: `/api/v1/lot-sm/list`,
   recordGroupList: `/api/v1/record/groups`,
   stockAdminList: '/api/v1/stock/admin/summary',
-  toolList: `/cnc/api/v1/tool/list`,
-  lotToolList: `/cnc/api/v1/lot-tool/list`,
+  electicPowerList : `/api/v2/statistics/press/electric-power`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -317,7 +348,7 @@ const ApiList = {
   modelSearch: `/api/v1/model/search`,
   processSearch: `/api/v1/process/search`,
   machineSearch: `/api/v1/machine/search`,
-  productSearch: `/api/v1/product/search`,
+  productSearch: `/cnc/api/v1/product/search`,
   pauseSearch: `/api/v1/process/reason/pause/search`,
   rawmaterialSearch: `/api/v1/raw-material/search`,
   moldSearch: `/api/v1/mold/search`,
@@ -327,6 +358,7 @@ const ApiList = {
   stockSearch: '/api/v1/stock/search',
   operationSearch: `/api/v1/sheet/search`,
   recordSearch: `/api/v1/record/search`,
+  // cncRecordSearch: `/cnc/api/v1/record/search`,
   shipmentSearch: `/api/v1/shipment/search`,
   recordSumSearch: `/api/v1/record/summation/search`,
   submaterialSearch: `/api/v1/sub-material/search`,
@@ -344,13 +376,13 @@ const ApiList = {
   itemSave: `/menu/save`,
   itemDelete: `/menu/delete`,
   deviceSearch: `/api/v1/device/search`,
-  toolSearch: `/cnc/api/v1/tool/search`,
-  lotToolSearch: `/cnc/api/v1/lot-tool/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,
   recordAll: `/api/v1/record/all`,
+  cncRecordAll: `/cnc/api/v1/record/all`,
   shipmentAll:`/api/v1/shipment/all`,
+  // documentAll: `/cnc/api/v1/document/all`,
 
   //fetch
   summaryFetch: `/api/v1/stock/summary/fetch`,
@@ -365,4 +397,7 @@ const ApiList = {
   bomSave: `/api/v1/bom/save`,
 
   anonymousLoad: `/anonymous/load`,
+
+  //전력사용량 list
+  statisticsPressElectricPower: `/api/v2/statistics/press/electric-power`,
 }

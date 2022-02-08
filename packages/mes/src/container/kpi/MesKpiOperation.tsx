@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 import moment from "moment";
 import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
 import ButtonGroup from "../../../../main/component/ButtonGroup";
@@ -15,9 +15,7 @@ interface SelectParameter {
 
 const MesKpiOperation = () => {
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
-    const [processBasicRow, setProcessBasicRow] = useState<any[]>([{
-        id: '', customer_id: ''
-    }]);
+    const [processBasicRow, setProcessBasicRow] = useState<any>({id: ''});
     const changeHeaderStatus = (value:number) => {
         setHeaderStatus(value);
     }
@@ -61,6 +59,65 @@ const MesKpiOperation = () => {
         }
     }
 
+    const RequestOperationApi = async (productId: number) => {
+        const res = await RequestMethod('get', `productCapacityUtilizationList`,{
+            params: {
+                productIds: productId,
+                from: selectDate.from,
+                sorts : 'date',
+                to: selectDate.to
+            },
+        })
+
+        if(res){
+            const filterResponse = res.map((v)=>{
+
+                return {
+                    osd_id: v.operation_sheet.os_id,
+                    code: v.operation_sheet.product.code,
+                    name: v.operation_sheet.product.name,
+                    process_id: v.operation_sheet.product.process?.name,
+                    lot_number: v.lot_number,
+                    user_id: v.worker.name,
+                    start: v.start,
+                    end: v.end,
+                    paused_time: 0,
+                    good_quantity: v.good_quantity,
+                    poor_quantity: v.poor_quantity,
+                    operation : v.standardUph ? ((v.good_quantity/(v.standardUph * v.workTime)) * 100).toFixed(1) : '0'
+                }
+            })
+            setPauseBasicRow(filterResponse)
+        }
+    }
+
+    React.useEffect(()=>{
+
+        if(processBasicRow.id){
+            RequestOperationApi(processBasicRow.id)
+        }
+
+    },[processBasicRow.id,selectDate])
+
+    React.useEffect(()=>{
+
+        if(pauseBasicRow.length){
+
+            const rowLenth = pauseBasicRow.length;
+            let sum = 0;
+            if(rowLenth){
+                pauseBasicRow.map((row)=> {
+                    sum += Number(row.operation)
+                })
+                setProcessBasicRow({...processBasicRow , operation_average : `${Math.round(sum/rowLenth)}`})
+            }
+        }else{
+
+            setProcessBasicRow({...processBasicRow , operation_average : '-'})
+        }
+
+
+    },[pauseBasicRow])
 
     return (
         <div>
@@ -70,18 +127,16 @@ const MesKpiOperation = () => {
                 headerList={[
                     ...processColumn
                 ]}
-                row={processBasicRow}
-                setRow={(e) => {
-                    const tmpBasicRow = [...e];
-                    tmpBasicRow[0] = {
-                        ...tmpBasicRow[0],
-                        // customer: tmpBasicRow[0].customer.name,
-                        // customerData: tmpBasicRow[0].customer,
-                        // model: tmpBasicRow[0].model.model,
-                        // modelData: tmpBasicRow[0].model,
-                        product_id: tmpBasicRow[0].product.product_id
-                    }
-                    setProcessBasicRow(tmpBasicRow)
+                row={[processBasicRow]}
+                setRow={(row) => {
+                    setProcessBasicRow({...processBasicRow,
+                        id : row[0].machine_id,
+                        mfrName : row[0].mfrName,
+                        name : row[0].name,
+                        mfrCode : row[0].mfrCode,
+                        // undefined 나옴
+                        machine_type: row[0].machine_type ?? '-',
+                    })
                 }}
                 selectList={selectList}
                 //@ts-ignore
@@ -90,9 +145,9 @@ const MesKpiOperation = () => {
             />
             <div style={{display:"flex", justifyContent:"space-between", margin:"15px 0"}}>
                 {
-                    processBasicRow[0].product_id
+                    processBasicRow.id
                         ? <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            공정별 불량 통계
+                            작업이력별 설비가동률
                         </span>
                         : <span style={{color:"#ffffff58", fontSize:22, fontWeight:"bold"}}>
                             제품을 선택해주세요

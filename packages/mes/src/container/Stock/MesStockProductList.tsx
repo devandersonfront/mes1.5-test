@@ -101,9 +101,8 @@ const MesStockProductList = ({page, keyword, option}) => {
           }
         }).filter(v=>v)
       }else{
-        tmpRow = [{...res}]
+        tmpRow = [...res]
       }
-
       tmpRes = {
         menus: menus,
         summaries: tmpRow
@@ -146,6 +145,7 @@ const MesStockProductList = ({page, keyword, option}) => {
           })
 
           if(menuData){
+            console.log("menuData : ", menuData)
             return {
               ...column,
               ...menuData
@@ -164,7 +164,7 @@ const MesStockProductList = ({page, keyword, option}) => {
         return
       case "date":
         if(res.summaries.length > 0){
-          tmpColumn = res.summaries[0].statistics.logs.map((col)=>{
+          tmpColumn = res.summaries[0]?.statistics?.logs?.map((col)=>{
             result.push(
               {key:col.date, name:col.date, formatter: UnitContainer, unitData: 'EA', width:100},
             );
@@ -205,13 +205,13 @@ const MesStockProductList = ({page, keyword, option}) => {
       let random = Math.random()*1000;
       let tmp_row_produced = {};
       let tmp_row_shipped = {};
-      row.statistics.logs.map((log)=>{
+      row?.statistics?.logs?.map((log)=>{
         tmp_row_produced[log.date] = log.produced;
         tmp_row_shipped[log.date] = log.shipped;
       })
-      tmp_row_produced["carryforward"] = row.statistics.carryforward;
-      tmp_row_produced["total"] = row.statistics.total_produced + row.statistics.carryforward;
-      tmp_row_shipped["total"] = row.statistics.total_shipped;
+      tmp_row_produced["carryforward"] = row?.statistics?.carryforward;
+      tmp_row_produced["total"] = row?.statistics?.total_produced + row?.statistics?.carryforward;
+      tmp_row_shipped["total"] = row?.statistics?.total_shipped;
 
       tmpRow_date.push({
         title:"생산",
@@ -338,7 +338,7 @@ const MesStockProductList = ({page, keyword, option}) => {
                     selectList={selectList}
                     setSelectList={setSelectList}
                     row={rowData} setRow={setRowData} width={excelTableWidths.model} rowHeight={80} overflow={"hidden"}
-                    resizable
+                    // resizable
         />
       </ScrollSyncPane>
       <ScrollSyncPane>

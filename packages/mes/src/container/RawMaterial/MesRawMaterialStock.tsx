@@ -312,7 +312,6 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
     res = await RequestMethod('post', `lotRmSave`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
-          console.log(row)
           let selectKey: string[] = []
           let additional:any[] = []
           column.map((v) => {
@@ -529,7 +528,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
       />
       <ExcelTable
         editable
-        resizable
+        // resizable
         headerList={[
           SelectColumn,
           ...column

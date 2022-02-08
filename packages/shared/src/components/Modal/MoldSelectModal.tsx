@@ -47,7 +47,6 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 
 const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
@@ -89,7 +88,6 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
     }
 
     if(isOpen) {
-      console.log('row', row)
       setSearchList([...tmpMolds.map((v, index) => {
         return {
           ...v.mold,

@@ -25,16 +25,14 @@ interface IProps {
 const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
-  const [excelOpen, setExcelOpen] = useState<boolean>(false)
+  // const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
     deadline: moment().format('YYYY-MM-DD'),first:true
   }])
-  const [isFirst, setIsFirst] = useState<boolean>(true)
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationRegisterV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
       path: {
@@ -78,10 +76,10 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const SaveBasic = async () => {
+  const SaveBasic = async (result:any, selectList:Set<any>) => {
     let res: any
     res = await RequestMethod('post', `sheetSave`,
-      basicRow.map((row, i) => {
+        result.map((row, i) => {
         if(selectList.has(row.id)){
           let selectKey: string[] = []
           let additional:any[] = []
@@ -119,11 +117,18 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               }
             }
           })
-
           return {
             ...row,
             ...selectData,
-            input_bom: row.input ?? [],
+            os_id:undefined,
+            input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
+              // return {
+              //   ...bom,
+              //   setting:bom.setting === "여" || bom.setting === 1 ? 1 : 0
+              // }
+              bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
+              return {...bom}
+            })] ?? [],
             status: 1,
             additional: [
               ...additional.map(v => {
@@ -207,7 +212,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
         router.push('/mes/operationV1u/list')
       });
-
     }
   }
 
@@ -217,9 +221,9 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       path: { product_id }
     })
     let resultData = [];
-
     if(res){
-      console.log("NONONONO!")
+      setSelectList(new Set())
+      Notiflix.Report.success("알림","최근 작업지시서를 불러왔습니다.","확인")
       let row:any = [];
       if(typeof res === 'string'){
         let tmpRowArray = res.split('\n')
@@ -238,6 +242,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 ...object,
                 bom_root_id: data.product?.bom_root_id,
                 id: "operation_"+random_id,
+                date: data?.date ?? moment().format("YYYY-MM-DD"),
+                deadline: data?.deadline ?? moment().format("YYYY-MM-DD"),
                 name:data.product?.name,
                 model:data.product?.model,
                 cm_id: data.product?.model.model,
@@ -249,8 +255,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               :
               {
                 contract_id:"-",
-                date:object.date,
-                deadline:object.deadline,
+                date: data?.data === undefined ? moment().format("YYYY-MM-DD") : data.date,
+                deadline: data?.deadline === undefined ? moment().format("YYYY-MM-DD") : data.deadline,
                 customer:data.product?.customer ?? "-",
                 customer_id: data.product?.customer.name ?? "-",
                 model:data.product?.model,
@@ -266,18 +272,16 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 goal: data.goal,
               }
         })]
-      // }else if(){
-
       } else{
         let random_id = Math.random()*1000;
-        if(!res.contract){
-        }
         resultData = [
             {
               ...res,
               first:true,
               // contract_id:res.identification,
               contract_id:res.contract?.identification ?? "-",
+              date: res?.data === undefined ? moment().format("YYYY-MM-DD") : res.date,
+              deadline: res?.deadline === undefined ? moment().format("YYYY-MM-DD") : res.deadline,
               customer:res.product.customer,
               customer_id: res.product.customer?.name,
               model:res.product.model,
@@ -320,15 +324,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       // ])
       // return resultData;
     }else{
-      console.log("HERE?????")
       return loadGraphSheet(product_id, object)
     }
-    // setIsFirst(false)
   }
 
   const loadGraphSheet = async (product_id: string, object?: any) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `sheetGraphList`,{
+    const res=  await RequestMethod('get', `sheetGraphList`,{
       path: { product_id }
     })
     if(res){
@@ -362,14 +364,17 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       //     }
       //   }
       // }).filter(v => v)])
+      setSelectList(new Set())
+      Notiflix.Report.warning("알림","최근 작업지시서가 없어 BOM기준으로 불러왔습니다.","확인")
       return [{
         ...object,
         goal: 0,
-        name: object.product_name
+        name: object.product_name,
+        date: object?.date ?? moment().format('YYYY-MM-DD'),
+        deadline: object?.deadline ?? moment().format('YYYY-MM-DD'),
       }, ...res.map(v => {
         if(v.type === 2){
           let random_id = Math.random()*1000;
-          console.log(v)
           tmp.add("operation_"+random_id)
 
           return {
@@ -392,9 +397,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
       }).filter(v => v)]
       // setSelectList(tmp)
-      setSelectList(new Set())
-      setIsFirst(false)
-
     }
   }
 
@@ -422,7 +424,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       //   ])
       //   break;
       case 2:
-        SaveBasic()
+        SaveBasic(basicRow, selectList)
         break;
       case 3:
         if(selectList.size > 0) {
@@ -439,8 +441,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                   setBasicRow([...basicRow])
                 })
               },
-              () => {
-              }
           )
         }else{
           Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인");
@@ -451,20 +451,14 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     getMenus()
-    Notiflix.Loading.remove()
   }, [])
 
   return (
     <div>
       <PageHeader
         title={"작업지시서 등록"}
-        buttons={
-          ['BOM 기준으로 보기', '', '저장하기', '삭제']
-        }
-        buttonsOnclick={
-          // () => {}
-          onClickHeaderButton
-        }
+        buttons={['BOM 기준으로 보기', '', '저장하기', '삭제']}
+        buttonsOnclick={onClickHeaderButton}
       />
       <ExcelTable
         editable
@@ -494,14 +488,12 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           }else{
             console.log("??AAA??", e)
             setSelectList(new Set());
-            const resultData = await loadLatestSheet(e[0].product.product_id, e[0]).then((value) => value)
-            console.log("resultData : ", resultData)
-
+            const resultData = await loadLatestSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
             // const resultData = await loadGraphSheet(e[0].product.product_id, e[0]).then((value) => value)
             setBasicRow([...resultData])
           }
-          // let tmp: Set<any> = selectList;
-          // setSelectList(tmp)
+          let tmp: Set<any> = selectList;
+          setSelectList(tmp)
         }}
         selectList={selectList}
         setSelectList={(select) => {
@@ -510,16 +502,16 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
-      <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
-      />
+      {/*<ExcelDownloadModal*/}
+      {/*  isOpen={excelOpen}*/}
+      {/*  column={column}*/}
+      {/*  basicRow={basicRow}*/}
+      {/*  filename={`금형기본정보`}*/}
+      {/*  sheetname={`금형기본정보`}*/}
+      {/*  selectList={selectList}*/}
+      {/*  tab={'ROLE_BASE_07'}*/}
+      {/*  setIsOpen={setExcelOpen}*/}
+      {/*/>*/}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import styled from "styled-components";
 // @ts-ignore
-import DataGrid, {TextEditor} from 'react-data-grid'
+import DataGrid, {TextEditor, Row, RowRendererProps} from 'react-data-grid'
 import {IExcelHeaderType} from '../../@types/type'
 import {SearchModalStyle} from '../../styles/styledComponents'
 import {RequestMethod} from "../../common/RequestFunctions";
@@ -35,7 +35,17 @@ interface IProps {
 }
 
 const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd}: IProps) => {
-  const [selectedRows, setSelectedRows] = useState<ReadonlySet<number>>(selectList ?? new Set());
+  const [ selectedRows, setSelectedRows ] = useState<ReadonlySet<number>>(selectList ?? new Set())
+  
+
+  useEffect(() => {
+    setSelectedRows(selectList)
+  }, [selectList])
+
+  useEffect(() => {
+    setSelectList && setSelectList(selectedRows)    
+  }, [ selectedRows ])
+  
   const onePageHeight = 600;
   const rowKeyGetter = (row: any) => {
     return row.id;
@@ -52,9 +62,9 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
 
   let tempData:any[] = [];
 
-  useEffect(() => {
-    setSelectList && setSelectList(selectedRows)
-  }, [selectedRows])
+  
+
+
 
   useEffect(() => {
     let allWidth = 0
@@ -157,6 +167,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
 
         scrollEnd && scrollEnd(isAtBottom(e))
       }}
+
       clickable={clickable}
     />
   }

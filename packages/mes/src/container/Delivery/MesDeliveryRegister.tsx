@@ -42,9 +42,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.remove()
   }, [])
 
-  useEffect(() => {
-  }, [basicRow])
-
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
       path: {
@@ -54,7 +51,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
 
     if(res){
       let tmpColumn = columnlist["deliveryRegister"]
-
       tmpColumn = tmpColumn.map((column: any) => {
         let menuData: object | undefined;
         res.bases && res.bases.map((menu: any) => {
@@ -114,7 +110,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
             }
           }
         })
-
         return {
           ...row,
           lots: row.lot_number,
@@ -175,6 +170,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     }
   }
 
+
+
   return (
     <div>
       <PageHeader
@@ -186,7 +183,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
       />
       <ExcelTable
         editable
-        resizable
+        // resizable
         headerList={[
           SelectColumn,
           ...column
@@ -209,8 +206,10 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
           })
           setSelectList(tmp)
           if(tmpRow.indexOf(false) !== -1){
+            console.log("basicRow : ", basicRow)
             setBasicRow([...basicRow])
           }else{
+            console.log("e : ", e)
             setBasicRow([...e.map(v => ({...v, name: v.product_name}))])
           }
         }}

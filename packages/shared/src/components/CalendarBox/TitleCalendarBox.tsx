@@ -9,10 +9,11 @@ import useOnclickOutside from "react-cool-onclickoutside";
 
 interface IProps{
     value: string
+    detail?: boolean
     onChange: (date: Date) => void
 }
 
-const TitleCalendarBox = ({value, onChange}:IProps) => {
+const TitleCalendarBox = ({value,detail, onChange}:IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [select, setSelect] = useState<Date>(moment().toDate())
     const ref = useOnclickOutside(() => setIsOpen(false))
@@ -20,12 +21,14 @@ const TitleCalendarBox = ({value, onChange}:IProps) => {
     return (
         <div style={{display: "flex", marginBottom: '8px', alignItems: "center"}}>
             <TitleBox>등록 날짜</TitleBox>
-            <ValueBox>
+            <ValueBox style={{width: detail && '100%'}}>
                 {value}
             </ValueBox>
-            <SelectButton onClick={()=>setIsOpen(true)}>
-                날짜선택
-            </SelectButton>
+            {!detail &&
+                <SelectButton onClick={() => setIsOpen(true)}>
+                    날짜선택
+                </SelectButton>
+            }
             <Modal
                 isOpen={isOpen}
                 style={{

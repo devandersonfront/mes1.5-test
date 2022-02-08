@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {
+  BarcodeModal,
     columnlist,
     excelDownload,
     ExcelDownloadModal,
@@ -68,7 +69,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         tmpSelectList.push(row)
       }
     })
-
     setSelectRow(tmpSelectList[0])
 
   }
@@ -77,7 +77,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       if(v.selectList && v.selectList.length === 0){
         let tmpKey = v.key
 
-
         let res: any
         res = await RequestMethod('get', `${tmpKey}List`,{
           path: {
@@ -85,7 +84,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
             renderItem: MAX_VALUE,
           }
         })
-
 
         let pk = "";
 
@@ -187,7 +185,8 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
               ...row,
               ...selectData,
               customer: row.customerArray,
-              customer_id: row.customerArray.customer_id,
+              // customer_id: row.customerArray.customer_id,
+              customer_id: undefined,
               model: row.modelArray,
               // standard_uph: row.uph,
               molds:[...row?.molds?.map((mold)=>{
@@ -496,11 +495,11 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const handleBarcode = async (dataurl : string) => {
+  const handleBarcode = async (dataurl : string , id : string) => {
 
     await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
                 {
-                  "id":1,
+                  "id":id,
                   "functions":
                   {"func0":{"checkLabelStatus":[]},
                     "func1":{"clearBuffer":[]},
@@ -600,6 +599,14 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
           }}
         />
 
+      <BarcodeModal
+       title={'바코드 미리보기'}
+       handleBarcode={handleBarcode}
+       handleModal={handleModal}
+       isOpen={barcodeOpen}
+       type={'product'}
+       data={selectRow}
+      />
       {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}

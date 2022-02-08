@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export interface IMenuType {
   title: string
   url: string
@@ -115,6 +117,7 @@ type InspectionDataResult = {
 
 export type ChangeProductFileInfo = {
   name: string
-  uuid: string
+  UUID: string
   sequence: number
 }
+

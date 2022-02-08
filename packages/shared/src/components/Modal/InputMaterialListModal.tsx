@@ -59,7 +59,6 @@ const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: st
 
 
 const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
-  const tabRef = useRef(null)
 
   const [bomDummy, setBomDummy] = useState<any[]>([
     {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
@@ -85,7 +84,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     if(isOpen) {
       if(row.operation_sheet && row.operation_sheet?.input_bom?.length > 0){
         changeRow(row.operation_sheet.input_bom)
-      }else if(row.input_bom.length > 0){
+      }else if(row.input_bom?.length > 0){
         changeRow(row.input_bom)
       }else{
         Notiflix.Report.warning("경고","투입 자재가 없습니다.","확인", () => setIsOpen(false))
@@ -383,7 +382,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
                   return {
                     ...v,
-                    spare: '여',
+                    // spare: '여',
                     newTab: false
                   }
                 })

@@ -12,6 +12,7 @@ import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
+import moment from "moment"
 
 interface IProps {
   column: IExcelHeaderType
@@ -55,7 +56,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -67,7 +68,8 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     if(isOpen && row.os_id) {
       SearchBasic(searchKeyword, optionIndex, 1)
     }
-  }, [isOpen, searchKeyword])
+    SearchBasic(searchKeyword, optionIndex, 1)
+  }, [isOpen, /*searchKeyword*/])
 
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpRes = []
@@ -75,7 +77,9 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     let totalPoor:number = 0
     let defectReasons = []
     let tmpRowArray = []
+    console.log("tmpRow : ", tmpRow)
     if(typeof tmpRow === 'string'){
+
       tmpRowArray = tmpRow.split('\n')
 
       tmpRes = tmpRowArray.map((v, index) => {
@@ -84,14 +88,18 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           totalGood += tmp.good_quantity
           totalPoor += tmp.poor_quantity
 
+
           if(tmp.defect_reasons){
-            if(defectReasons && defectReasons.length){
-              tmp.defect_reasons.map((defect, index) => {
-                defectReasons[index].amount += defect.amount
-              })
-            } else {
-              defectReasons = tmp.defect_reasons
-            }
+            tmp.defect_reasons.map((v)=>{
+              defectReasons.push(v)
+            })
+            // if(defectReasons && defectReasons.length){
+            //   tmp.defect_reasons.map((defect, index) => {
+            //     defectReasons[index].amount += defect?.amount
+            //   })
+            // } else {
+            //   defectReasons = tmp.defect_reasons
+            // }
           }
 
           return tmp
@@ -99,7 +107,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       }).filter(v=>v)
     }else{
 
-      tmpRes = tmpRow.info_list.map((row) => {
+      tmpRes = tmpRow?.info_list?.map((row) => {
         let resultRow:any = {...row};
         resultRow.seq = row.sequence;
         resultRow.lot_number = row.lot_number;
@@ -113,21 +121,20 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
 
         return resultRow;
       })
-      console.log("result : ", tmpRes);
       totalGood += Number(tmpRow.good_quantity)
       totalPoor += Number(tmpRow.poor_quantity)
       defectReasons = tmpRow.defect_reasons
-      // tmpRes = [{...tmpRow}]
+      tmpRes = [{...tmpRow}]
     }
-
     onRowChange({
       ...row,
       defect_reasons: defectReasons,
-      total_good_quantity: Number(totalGood),
-      total_poor_quantity: Number(totalPoor),
-      total_counter: totalGood + totalPoor,
+      total_good_quantity: Number(totalGood) ,
+      total_poor_quantity: Number(totalPoor) ,
+      total_counter: totalGood + totalPoor ,
     })
-    return tmpRes.map((v, i) => {
+
+    return tmpRes?.map((v, i) => {
       return {
         ...v,
         worker_name: v.worker?.name,
@@ -140,20 +147,31 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const SearchBasic = async (keyword: any, option: number, page: number) => {
     setKeyword(keyword)
     setOptionIndex(option)
-    const res = await RequestMethod('get', `recordSearch`,{
-      path:{
-        page:1,
-        item:19
-      },
+    console.log("row : ", row)
+    const res = await RequestMethod('get', `recordAll`,{
       params: {
-        identification:row.os_id
-        // sheetIds: row.os_id
+        identification:row.os_id,
+        sheetIds: row.os_id
       }
     })
-    if(!!res){
-      let tmpList = changeRow(res, )
+    // const res = await RequestMethod('get', `cncRecordSearch`,{
+    //   path:{
+    //     // page:1,
+    //
+    //   },
+    //   params: {
+    //     keyword:row.contract.identification,
+    //     opt:0,
+    //     from:"2000-01-01",
+    //     to:moment().format("YYYY-MM-DD")
+    //     // sheetIds: row.os_id
+    //   }
+    // })
+    if(res){
+      console.log("res : ", res )
+      let tmpList = changeRow(res)
 
-      setSearchList([...tmpList.map(v => {
+      setSearchList([...tmpList?.map(v => {
         return {
           ...row,
           ...v,

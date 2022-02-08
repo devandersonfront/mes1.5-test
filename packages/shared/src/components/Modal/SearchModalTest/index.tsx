@@ -48,6 +48,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   // const [page, setPage] = useState<number>(1);
   // const [totalPage, setTotalPage] = useState<number>(0);
 
+
   useEffect(() => {
     if(column.type){
       if(column.type === "bom"){
@@ -329,24 +330,40 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                       return searchList[selectRow].name;
                     case "mold":
                       return searchList[selectRow].name;
-                    case "tool":
-                      return searchList[selectRow].name;
                     default:
                       return row.name;
                   }
                 }
-                onRowChange(
-                    {
+                console.log(row)
+                if(column.clearContract) {
+                  onRowChange(
+                      {
                         ...row,
-                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
-                        manager:  SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                        name:  selectNameFunction(column.type),
+                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                        manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                        name: selectNameFunction(column.type),
                         tab: tab,
-                        type_name:  undefined,
+                        type_name: undefined,
                         version: row.version,
-                        isChange:true,
+                        isChange: true,
+                        contract: null,
+                        contract_id: null
                       }
-                )
+                  )
+                }else {
+                  onRowChange(
+                      {
+                        ...row,
+                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                        manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                        name: selectNameFunction(column.type),
+                        tab: tab,
+                        type_name: undefined,
+                        version: row.version,
+                        isChange: true,
+                      }
+                  )
+                }
               }}
               style={{backgroundColor: POINT_COLOR}}
             >

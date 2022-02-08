@@ -43,6 +43,8 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
   });
 
+
+
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -137,7 +139,6 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }else{
-      console.log(res);
     }
   }
 
@@ -349,11 +350,14 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? '-',
         id: `sheet_${random_id}`,
+        total_counter:"-",
+        total_good_quantity:"-"
       }
     })
 
     Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
+    console.log(tmpBasicRow)
   }
 
   return (
@@ -386,15 +390,19 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
           (e) => {
             switch(e) {
               case 1:
-                dispatch(setModifyInitData({
-                  modifyInfo: basicRow.map(v => {
-                    if (selectList.has(v.id)) {
-                      return v
-                    }
-                  }).filter(v => v),
-                  type: 'order'
-                }))
-                router.push('/mes/order/modify')
+                if(selectList.size > 0){
+                  dispatch(setModifyInitData({
+                    modifyInfo: basicRow.map(v => {
+                      if (selectList.has(v.id)) {
+                        return v
+                      }
+                    }).filter(v => v),
+                    type: 'order'
+                  }))
+                  router.push('/mes/order/modify')
+                }else{
+                  Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
+                }
                 break;
               case 2:
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",

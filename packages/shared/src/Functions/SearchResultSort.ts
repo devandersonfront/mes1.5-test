@@ -82,7 +82,7 @@ export const SearchResultSort = (infoList, type: string) => {
           model_name: v.product.model?.model,
           product_code: v.product.code,
           product_name: v.product.name,
-          product_type: TransferCodeToValue(v.product.type, 'material'),
+          product_type: TransferCodeToValue(v.product.type, 'product'),
           product_unit: v.product.unit,
         }
       }) : []
@@ -96,24 +96,15 @@ export const SearchResultSort = (infoList, type: string) => {
         }
       })
     }
-    case 'tool' : {
-      return infoList.map((v,index) => {
-        console.log(v);
-        return {
-          ...v,
-          seq:index,
-          customerData:v.customer,
-          customer:v.customer.name,
-        }
-      })
-    }
     default : {
       return infoList
     }
   }
 }
 
-export const SearchModalResult = (selectData, type: string) => {
+export const SearchModalResult = (selectData, type: string , staticCalendar?: boolean) => {
+
+
   switch(type) {
     case 'user': {
       return {
@@ -141,7 +132,8 @@ export const SearchModalResult = (selectData, type: string) => {
       }
     }
     case 'product': {
-      return {
+
+      return staticCalendar ? {
         code: selectData.code,
         name: selectData.name,
         type: TransferCodeToValue(selectData.type, 'material'),
@@ -160,7 +152,47 @@ export const SearchModalResult = (selectData, type: string) => {
         product: {...selectData},
         bom_root_id: selectData.bom_root_id,
         customerData: selectData.customer,
-        modelData: selectData.model
+        modelData: selectData.model,
+        standard_uph : selectData.standard_uph,
+        os_id : selectData.os_id,
+        amount: selectData.amount,
+        shipment_amount : selectData.shipment_amount,
+        shipment_date : selectData.shipment_date,
+        lead_time : selectData.lead_time,
+        uph : selectData.uph,
+        identification : selectData.identification
+
+      }:{
+        code: selectData.code,
+        name: selectData.name,
+        type: TransferCodeToValue(selectData.type, 'product'),
+        customer: selectData.customer ? selectData.customer.name : '',
+        customer_id: selectData.customer?.name,
+        cm_id: selectData.model?.model,
+        product_id: selectData.code,
+        model: selectData.model ? selectData.model.model : '',
+        type_name: selectData.type_name ?? TransferCodeToValue(selectData.type, 'product'),
+        unit: selectData.unit,
+        usage: selectData.usage,
+        process: selectData.process?.name ?? "-",
+        product_name: selectData.name,
+        product_type: TransferCodeToValue(selectData.type, 'product'),
+        product_unit: selectData.unit,
+        product: {...selectData},
+        bom_root_id: selectData.bom_root_id,
+        customerData: selectData.customer,
+        modelData: selectData.model,
+        standard_uph : selectData.standard_uph,
+        os_id : selectData.os_id,
+        date : selectData.date,
+        deadline : selectData.deadline,
+        amount: selectData.amount,
+        shipment_amount : selectData.shipment_amount,
+        shipment_date : selectData.shipment_date,
+        lead_time : selectData.lead_time,
+        uph : selectData.uph,
+        identification : selectData.identification
+
       }
     }
     case "process": {
@@ -171,7 +203,6 @@ export const SearchModalResult = (selectData, type: string) => {
       }
     }
     case 'rawmaterial': {
-      console.log(selectData)
       const unitResult = () => {
         let result = "-";
         switch (selectData.type){
@@ -249,7 +280,7 @@ export const SearchModalResult = (selectData, type: string) => {
         product_id: selectData.product.code,
         product_name: selectData.product.name,
         name: selectData.product.name,
-        type: TransferCodeToValue(selectData.product.type, 'material'),
+        type: TransferCodeToValue(selectData.product.type, 'product'),
         unit: selectData.product.unit,
         process: selectData.product.process?.name,
         contract_id: selectData.identification

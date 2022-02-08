@@ -1,14 +1,22 @@
-import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType} from "shared";
+import React, {useEffect, useState} from 'react';
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod, setModifyInitData} from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
+import {useRouter} from "next/router";
+import Notiflix from "notiflix";
 
-const MesProductChangeList = () => {
+interface IProps {
+    children?: any
+    page?: number
+    keyword?: string
+    option?: number
+}
 
-    const [basicRow, setBasicRow] = useState<Array<any>>([{
-        order_num: '-', operation_num: '20210401-013'
-    }])
+
+const MesProductChangeList = ({page, keyword, option}: IProps) => {
+    const router = useRouter()
+    const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productChangeList"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionList, setOptionList] = useState<string[]>([ '거래처', '모델', 'CODE', '품명', '제목', '작성자'])
@@ -24,17 +32,152 @@ const MesProductChangeList = () => {
         total: 1
     })
 
+    useEffect(() => {
+        // setOptionIndex(option)
+        if(searchKeyword){
+            SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
+        }else{
+            LoadBasic(pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
+        }
+    }, [pageInfo.page, searchKeyword, option, selectDate])
+
+    const LoadBasic = async (page?: number) => {
+        Notiflix.Loading.circle()
+        const res = await RequestMethod('get', `productChangeList`,{
+            path: {
+                page: pageInfo.page ?? 1,
+                renderItem: 18,
+            },
+            params: {
+                from: selectDate.from,
+                to: selectDate.to,
+            }
+
+        })
+
+        if(res){
+            setPageInfo({
+                ...pageInfo,
+                page: res.page,
+                total: res.totalPages
+            })
+            cleanUpData(res)
+        }else if (res === 401) {
+            Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
+                router.back()
+            })
+        }
+
+    }
+
+
+    const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
+        Notiflix.Loading.circle()
+        if(!isPaging){
+            setOptionIndex(option)
+        }
+        const res = await RequestMethod('get', `productChangeSearch`,{
+            path: {
+                page: isPaging ?? 1,
+                renderItem: 22,
+            },
+            params: {
+                keyword: keyword ?? '',
+                opt: option ?? 0,
+                from: selectDate.from,
+                to: selectDate.to,
+            }
+        })
+
+        if(res){
+            setPageInfo({
+                ...pageInfo,
+                page: res.page,
+                total: res.totalPages
+            })
+            cleanUpData(res)
+        }
+    }
+
+
+    const cleanUpData = (res: any) => {
+        let tmpRow = []
+        tmpRow = res.map((v,i)=>{
+            let random_id = Math.random()*1000;
+            return {
+                customer_id: v.product.customer  === null ? '-' :  v.product.customer.name ,
+                cm_id: v.product.model === null ? '-' : v.product.model.model,
+                code: v.product.code,
+                material_name: v.product.name === null ? '-' : v.product.name,
+                type: column[4].selectList[v.product.type].name,
+                process_id: v.product.process === null ? '-' : v.product.process.name,
+                title: v.title,
+                register: moment(v.created).format('YYYY.MM.DD'),
+                writer: v.writer.name,
+                id: `sheet_${random_id}`,
+                pcr_id: v.pcr_id
+            }
+        })
+        if(pageInfo.page > 1) {
+            const basicAddTmpRow = basicRow.concat(tmpRow)
+            setBasicRow([...basicAddTmpRow])
+        }else {
+            setBasicRow([...tmpRow])
+        }
+    }
+
+    const buttonEvents = (number:number) => {
+        switch(number) {
+            case 0:
+
+                return
+            case 1:
+                Notiflix.Loading.standard();
+                let check = false;
+                let count = 0;
+                basicRow.map((v) => {
+                    if(selectList.has(v.id)){
+                        check = true;
+                        count+=1
+                    }
+                })
+
+                if(check && count === 1) {
+                    const selectProduct = basicRow.map(v => {
+                        if (selectList.has(v.id)) {
+                            return v
+                        }
+                    }).filter(v => v)
+                    Notiflix.Loading.remove(300);
+                    router.push({pathname: '/mes/quality/product/change/detail', query: { pcr_id: selectProduct[0].pcr_id }})
+                } else if(count > 1){
+                    Notiflix.Loading.remove(300);
+                    Notiflix.Report.warning("데이터를 한개만 선택해주세요.","","확인")
+                } else{
+                    Notiflix.Loading.remove(300);
+                    Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
+                }
+                return
+            default :
+                return
+        }
+    }
+
+
     return (
         <div>
             <PageHeader
                 isSearch
                 isCalendar
-                searchKeyword={""}
+                searchKeyword={keyword}
                 searchOptionList={optionList}
-                onChangeSearchKeyword={(keyword) => {
+                onChangeSearchKeyword={(keyword) =>{
+                    setSearchKeyword(keyword)
                     // SearchBasic(keyword, option, 1)
-                    setSearchKeyword(keyword);
-                    setPageInfo({page:1, total:1})
                 }}
                 onChangeSearchOption={(option) => {
                     // SearchBasic(keyword, option, 1)
@@ -49,6 +192,7 @@ const MesProductChangeList = () => {
                 buttons={
                     ['', '수정하기']
                 }
+                buttonsOnclick={buttonEvents}
             />
             <ExcelTable
                 editable
