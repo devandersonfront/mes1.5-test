@@ -19,6 +19,8 @@ export interface IExcelHeaderType {
   textType?: string
   options?:{status:number, name:string}[]
   result?:(value:number | string | boolean) => void
+  staticCalendar?: boolean
+  clearContract?: boolean
   maxDate?:boolean
   theme?: string
   toFix?: number

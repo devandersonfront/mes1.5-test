@@ -45,7 +45,7 @@ const MesMidrangeList = ({option}:IProps) => {
 
     const searchQualityRecordInspect = async (keyword, opt, page?: number) => {
         Notiflix.Loading.circle()
-        const res = await RequestMethod('get', `cncRecordSearch`,{
+        const res = await RequestMethod('get', `qualityRecordInspectSearch`,{
             path: {
                 page: (page || page !== 0) ? page : 1,
                 renderItem: 22,
@@ -87,15 +87,19 @@ const MesMidrangeList = ({option}:IProps) => {
                     inspection_category: v.inspection_category,
                 }
             })
-
-            setBasicRow([...data])
+            if(pageInfo.page > 1) {
+                const basicAddResponseData = basicRow.concat(data)
+                setBasicRow([...basicAddResponseData])
+            }else {
+                setBasicRow([...data])
+            }
         }
 
     }
 
     const qualityRecordInspectList =  async  (page?: number) => {
         Notiflix.Loading.circle()
-        const res = await RequestMethod('get', `qualityRecordInspectSearch`,{
+        const res = await RequestMethod('get', `qualityRecordInspectList`,{
             path: {
                 page: (page || page !== 0) ? page : 1,
                 renderItem: 22,
@@ -135,9 +139,12 @@ const MesMidrangeList = ({option}:IProps) => {
                     inspection_category: v.inspection_category,
                 }
             })
-
-            setBasicRow([...data])
-
+            if(pageInfo.page > 1) {
+                const basicAddResponseData = basicRow.concat(data)
+                setBasicRow([...basicAddResponseData])
+            }else {
+                setBasicRow([...data])
+            }
         }
 
     }

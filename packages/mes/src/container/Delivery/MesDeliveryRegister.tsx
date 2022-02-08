@@ -42,9 +42,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.remove()
   }, [])
 
-  useEffect(() => {
-  }, [basicRow])
-
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
       path: {
@@ -172,6 +169,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         break;
     }
   }
+
+
 
   return (
     <div>
