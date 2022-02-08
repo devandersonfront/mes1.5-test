@@ -38,12 +38,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([
-    {reason: '재질',},
-    {reason: '누락',},
-    {reason: '이종',},
-    {reason: '기타',},
-  ])
+  const [searchList, setSearchList] = useState<any[]>([])
 
 
   const [searchKeyword, setSearchKeyword] = useState<string>('')
@@ -230,7 +225,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>불량 유형별 수량 (20210517-001)</p>
+            }}>불량 유형별 수량 ({row.identification})</p>
             <div style={{display: 'flex', alignItems: 'center', justifyContent:'center', height: 28}}>
               <div style={{display: 'flex'}}>
                 <p style={{margin: 0, padding: 0, fontSize: 22, fontWeight: 'bold'}}>총 불량 개수</p>
