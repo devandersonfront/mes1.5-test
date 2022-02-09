@@ -100,11 +100,14 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       }
     })
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
+      setColumn([...res.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     })
-    // }
   }
 
   const SaveBasic = async () => {
@@ -153,8 +156,9 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
           }
 
           }
-        }).filter((v) => v))
-
+      }).filter((v) => v)).catch((error)=>{
+          return error.data && Notiflix.Notify.failure(error.data.message);
+      })
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인');
