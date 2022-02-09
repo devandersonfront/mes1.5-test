@@ -71,7 +71,7 @@ export const columnlist: any = {
   ],
   factory: [
     {key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력'},
-    {key: 'address', name: '공장 주소', width: 480, formatter: DaumAddressModal},
+    {key: 'address', name: '공장 주소', width: 480, editor: TextEditor},
     {key: 'manager', name: '담당자', width: 120, formatter: SearchModalTest, type: 'user'},
     {key: 'appointment', name: '직책', width: 120, formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: 'telephone', name: '전화번호', width: 120, formatter: PlaceholderBox, placeholder: '자동 입력'},
