@@ -106,7 +106,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   const SaveBasic = async () => {
     
     if(selectList.size === 0){
-      return Notiflix.Notify.warning('우선 선택을 하셔야 합니다.')
+      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
     }
 
     const isCheck = passwordCompete()
@@ -472,7 +472,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
 
         
         if(selectList.size === 0){
-          return Notiflix.Notify.warning('우선 선택을 하셔야 합니다.')
+          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
         }else{
           const haveMaster = haveMasterAuthority()
           if(!haveMaster){

@@ -111,6 +111,11 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
+
+    if(selectList.size === 0){
+      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+    }
+
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -174,7 +179,12 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const DeleteBasic = async () => {
+  const DeleteBasic = async () => { 
+
+    if(selectList.size === 0){
+      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+    }
+
 
     const res = await RequestMethod('delete', `factoryDelete`,
       basicRow.map((row, i) => {

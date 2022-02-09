@@ -85,7 +85,7 @@ export const columnlist: any = {
     {key: 'telephone', editor: TextEditor},
     {key: 'cellphone', editor: TextEditor},
     {key: 'fax', editor: TextEditor},
-    {key: 'address', formatter: DaumAddressModal},
+    {key: 'address', editor: TextEditor},
     {key: 'crn', editor: TextEditor},
     {key: 'photo', formatter: FileEditer},
   ],

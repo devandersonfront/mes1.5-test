@@ -32,7 +32,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["customer"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명', '대표자명', '담당자명', '전화 번호','휴대폰 번호', '팩스 번호', '주소', '사업자 번호'])
+  const [optionList, setOptionList] = useState<string[]>(['거래처명', '대표자명', '담당자명', '전화 번호','휴대폰 번호', '팩스 번호', '주소', '사업자 번호'])
   const [optionIndex, setOptionIndex] = useState<number>(option)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -55,6 +55,10 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   }, [page, keyword, option])
 
   const SaveBasic = async () => {
+
+    if(selectList.size === 0){
+      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+    }
 
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
@@ -142,6 +146,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   }
 
   const DeleteBasic = async () => {
+    
     const res = await RequestMethod('delete', `customerDelete`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
@@ -475,6 +480,11 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
 
         break;
       case 5:
+        
+        if(selectList.size === 0){
+          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+        }
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{DeleteBasic()}
           ,()=>{}
