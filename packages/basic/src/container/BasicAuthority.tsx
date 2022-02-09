@@ -107,12 +107,15 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
   }
 
   const createAuth = async (data: any) => {
+
     if(data){
       const addedAuthorities = changeAuthToList(data.authorities)
       const res = await RequestMethod('post', 'authoritySave', {
         ca_id: undefined,
         name: data.name,
         authorities: addedAuthorities
+      }).catch((error)=>{
+        return error.data && Notiflix.Notify.failure(error.data.message);
       })
 
       if (res){
@@ -132,32 +135,43 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const deleteAuth = async () => {
-    if(selectIndex !== -1 && row[selectIndex].ca_id){
-      const res = await RequestMethod('delete', 'authorityDelete', [row[selectIndex]])
+  const deleteAuth = () =>  {
 
-      if (res){
-        Notiflix.Report.success('삭제 성공!', '권한이 성공적으로 삭제됐습니다.', '확인', () => {
-          loadAuthorityList().then(() => {
-            Notiflix.Loading.remove()
-          })
-        })
-      }
+    if(selectIndex === -1){
+      return Notiflix.Notify.warning('삭제를 하기 위해서는 선택을 해주세요')
+    }
+
+    if(row[selectIndex]?.ca_id){
+      Notiflix.Confirm.show(
+        '권한명 삭제',
+        '정말로 삭제 하시겠습니까?',
+        'Yes',
+        'No',
+        async () => {
+          const res = await RequestMethod('delete', 'authorityDelete', [row[selectIndex]])
+          if (res){
+            Notiflix.Report.success('삭제 성공!', '권한이 성공적으로 삭제됐습니다.', '확인', () => {
+              loadAuthorityList().then(() => {
+                Notiflix.Loading.remove()
+              })
+            })
+          }
+        },
+      );
     } else {
-      let tmpRow = row
-      tmpRow.splice(selectIndex, 1)
-
+      let tmpRow = [...row]
+      tmpRow.splice(0, 1)
+      setSelectIndex(-1)
       setRow([...tmpRow])
     }
-    setSelectIndex(-1)
   }
 
   const addRow = () => {
-    setRow([...row, {
-      ca_id: "",
-      name: '',
-      authorities: []
-    }])
+
+    const tempRow = [...row]
+    tempRow.unshift({ca_id: "",name: '',authorities: []})
+    setRow(tempRow)
+
   }
 
   const leftButtonOnClick = (index: number) => {
@@ -209,7 +223,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
           <ExcelTable
             clickable
             width={280}
-            headerList={[{key: 'name', width: 280, name: '권한명', editor: TextEditor},]}
+            headerList={[{key: 'name', width: 280, name: '권한명(필수)', editor: TextEditor}]}
             row={row}
             setRow={(row) => setRow([...row])}
             setSelectRow={(index) => {
@@ -231,7 +245,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
             }}
           />
         </div>
-        <TreeViewTable item={auth} setItem={setAuth} />
+        <TreeViewTable item={auth} setItem={setAuth} selectIndex={selectIndex}/>
       </div>
     </div>
   );
