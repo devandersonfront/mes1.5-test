@@ -79,8 +79,10 @@ export const searchModalList: any = {
     {key: 'manger', name: '담당자명', formatter: LineBorderContainer},
   ],
   device: [
-    {key: 'name', name: '주변장치명'},
+    {key: 'name', name: '장치 이름'},
     {key: 'mfrName', name: '제조사'},
+    {key: 'mfrCode', name: '제조 번호'},
+    {key: 'manager', name: '담당자명'},
   ],
   mold: [
     {key: 'code', name: 'CODE', textAlign: 'center', formatter: LineBorderContainer},

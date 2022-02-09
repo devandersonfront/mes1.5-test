@@ -66,6 +66,7 @@ export const SearchResultSort = (infoList, type: string) => {
       })
     }
     case 'factory': {
+      console.log("infoList : ", infoList)
       return infoList ? infoList.map((v) => {
         return {
           ...v,
@@ -103,7 +104,7 @@ export const SearchResultSort = (infoList, type: string) => {
 }
 
 export const SearchModalResult = (selectData, type: string , staticCalendar?: boolean) => {
-
+  console.log(selectData, type, staticCalendar)
 
   switch(type) {
     case 'user': {
@@ -246,13 +247,16 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
       }
     }
     case 'factory': {
+      console.log("selectData : ", selectData)
       return {
         ...selectData,
         factory: {
           ...selectData,
           manager: selectData.managerArray,
         },
-        factory_id: selectData.name
+        factory_id: selectData.name,
+        subFactory:null,
+        subFactories:null
       }
     }
     case 'customer': {

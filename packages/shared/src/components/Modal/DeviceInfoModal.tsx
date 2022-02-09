@@ -21,6 +21,16 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
+const deviceList = [
+  {pk: 0, name: "선택없음"},
+  {pk: 1, name: "미스피드 검출장치"},
+  {pk: 2, name: "하사점 검출장치"},
+  {pk: 3, name: "로드모니터"},
+  {pk: 4, name: "앵글시퀀서"},
+  {pk: 5, name: "엔코더"},
+  {pk: 6, name: "통관센서"},
+  {pk: 7, name: "유틸리티 센서"},
+]
 
 const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -36,26 +46,17 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
   })
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
+        console.log(row)
       if(row.devices !== undefined && row.devices !== null && row.devices.length > 0){
         const rowDevices = [];
         row.devices.map((device, index)=>{
-          rowDevices.push({...device, seq:index+1, manager:device.manager?.name ?? "", manager_data:device.manager});
-
+          rowDevices.push({...device, seq:index+1, manager:device.manager?.name ?? "", manager_data:device.manager, type:deviceList[device.type]?.name ?? device.type});
         })
         setSearchList(rowDevices);
       }
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
+
 
   const changeRow = (row: any, key?: string) => {
     let tmpData = {
@@ -137,17 +138,27 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     if(row.manager){
       switch (typeof row.manager){
         case "string":
-
           return row.manager;
         case "object":
-
-
           return row.manager.name;
         default:
            return ""
       }
-
     }
+  }
+
+  const settingTypeId = (type:string | number) => {
+    let result:number = 0;
+    if(typeof type === "number"){
+      return type
+    }
+    deviceList.map((value) => {
+      if(type === value.name){
+        result = value.pk;
+      }
+    })
+console.log("result : ", result)
+    return result;
   }
 
   return (
@@ -301,7 +312,13 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               headerList={searchModalList.deviceInfo}
               row={searchList ?? [{}]}
               setRow={(e) => {
-                searchList[selectRow].device =
+                console.log(e)
+                // searchList[selectRow].device =
+                e.map((row) => {
+                  row.type_id = settingTypeId(row.type)
+                  row.type = Number(row.type) ? deviceList[row.type]?.name : row.type
+                  console.log(row)
+                })
                 setSearchList([...e])
               }}
               width={1746}

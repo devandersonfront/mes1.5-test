@@ -168,7 +168,7 @@ export const columnlist: any = {
     {key: 'volt', name: '사용 전압',editor: TextEditor, formatter: UnitContainer, unitData: 'V', width: 118},
     {key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory',},
     {key: 'affiliated_id',name: '공장 세분화명', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory',},
-    {key: 'product_id',name: '생산 품목', width: 118, formatter: ProductInfoModal, type:"machine", headerType:[{name: "금형명"}]},
+    {key: 'product_id',name: '생산 품목', width: 118, formatter: ProductInfoModal, type:"machine", headerType:[{name: "기계명"}]},
   ],
   device: [
     {key: 'mfrName', name: '장치 제조사', editor: TextEditor},
