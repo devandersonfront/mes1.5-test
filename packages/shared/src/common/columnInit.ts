@@ -54,6 +54,7 @@ import DaumAddressModal from "../components/InputBox/DaumAddressModal";
 import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFactorySearchModal";
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
 import placeholder from "lodash/fp/placeholder";
+import {OnClickContainer} from '../components/InputBox/OnClickContainer'
 
 
 export const columnlist: any = {
@@ -481,7 +482,7 @@ export const columnlist: any = {
     {key: 'title', editor: TextEditor, name: "기본 항목명"},
   ],
   pause: [
-    {key: 'name'}
+    {key: 'name' , formatter : OnClickContainer}
   ],
   pauseReason: [
     {key: 'index', name:"순번", width:130},

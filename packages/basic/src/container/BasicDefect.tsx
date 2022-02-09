@@ -34,6 +34,8 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
 
   const router = useRouter()
 
+  console.log(processBasicRow,'processBasicRowprocessBasicRow')
+
   useEffect(()=>{
     if(processBasicRow.length > 0){
       LoadPauseList(processBasicRow[selectRow].process_id);
@@ -141,9 +143,9 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove(300);
       }
       setProcessColumn(tmpColumn);
-      setProcessBasicRow([...tmpRow.map((row: any) => {
+      setProcessBasicRow([...tmpRow.map((row: any, index) => {
         return {
-          ...row,
+          ...row, onClicked: index === 0 ? true : false
         }
       })])
     }
@@ -288,6 +290,8 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
       setState(false);
     }
   },[pauseBasicRow])
+
+
   return (
     <div>
       <PageHeader title={"공정별 자주검사 항목 등록"} />
@@ -298,7 +302,17 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         ]}
         row={processBasicRow}
         setRow={setProcessBasicRow}
-        setSelectRow={setSelectRow}
+        setSelectRow={(e) => {
+          const clickedList = processBasicRow.map((data, index) => {
+            if (e === index) {
+              return { ...data, onClicked: true }
+            } else {
+              return { ...data, onClicked: false }
+            }
+          })
+          setProcessBasicRow(clickedList)
+          setSelectRow(e)
+        }}
         width={1576}
         height={300}
       />

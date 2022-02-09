@@ -135,9 +135,9 @@ const BasicPause = ({page, keyword, option}: IProps) => {
               Notiflix.Loading.remove(300);
             }
             setProcessColumn(tmpColumn);
-            setProcessBasicRow([...tmpRow.map((row: any) => {
+            setProcessBasicRow([...tmpRow.map((row: any,index) => {
               return {
-                ...row,
+                ...row, onClicked: index === 0 ? true : false
               }
             })])
             Notiflix.Loading.remove(300);
@@ -306,7 +306,17 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           ]}
           row={processBasicRow}
           setRow={setProcessBasicRow}
-          setSelectRow={setSelectRow}
+          setSelectRow={(e) => {
+            const clickedList = processBasicRow.map((data, index) => {
+              if (e === index) {
+                return { ...data, onClicked: true }
+              } else {
+                return { ...data, onClicked: false }
+              }
+            })
+            setProcessBasicRow(clickedList)
+            setSelectRow(e)
+          }}
           width={1576}
           height={280}
         />
