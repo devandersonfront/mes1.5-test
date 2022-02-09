@@ -94,5 +94,5 @@ export const SearchInit: Record<string, SearchInitType> = {
     searchFilter:["공정명"],
     excelColumnType:"process",
 
-  }
+  },
 }

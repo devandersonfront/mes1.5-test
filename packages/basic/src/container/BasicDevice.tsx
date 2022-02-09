@@ -61,7 +61,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   }
 
   useEffect(() => {
-    setOptionIndex(option)
+    // setOptionIndex(option)
     if(keyword){
       SearchBasic(keyword, option, page).then(() => {
         Notiflix.Loading.remove()
@@ -71,7 +71,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option, typesState])
+  }, [page, keyword, typesState])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -119,14 +119,21 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       }
     })
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
+      setColumn([...res.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     })
-    // }
   }
 
   const SaveBasic = async () => {
+
+    if(selectList.size === 0){
+      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+    }
 
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
@@ -209,7 +216,9 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
               }
 
             }
-          }).filter((v) => v))
+          }).filter((v) => v)).catch((error)=>{
+            return error.data && Notiflix.Notify.failure(error.data.message);
+          })
 
 
       if(res){
@@ -545,6 +554,11 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
 
         break;
       case 5:
+
+        if(selectList.size === 0){
+          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+        }
+        
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{DeleteBasic()},
           ()=>{}

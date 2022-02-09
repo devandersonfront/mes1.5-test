@@ -15,6 +15,7 @@ import {RequestMethod} from '../../../common/RequestFunctions'
 import {MoldRegisterModal} from '../MoldRegisterModal'
 import Notiflix from 'notiflix'
 import {Select} from '@material-ui/core'
+import {SearchInit} from './SearchModalInit'
 
 
 interface IProps {
@@ -38,6 +39,14 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
     // useEffect(() => {
     // }, [column.type, tab])
 
+    console.log(column.type,'column.type]')
+
+    
+    useEffect(() => {
+        setSearchModalInit(SearchInit[column.type])
+    }, [column.type, tab])
+
+
     useEffect(() => {
         if(isOpen ){
             if(row.factory?.factory_id){
@@ -46,7 +55,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 Notiflix.Report.failure("경고","공장을 먼저 선택하시기 바랍니다.","확인", () => setIsOpen(false))
             }
         }
-    }, [isOpen, searchModalInit, keyword, optionIndex])
+    }, [isOpen, searchModalInit])
 
     const getContents = () => {
         // if(row[`${column.key}`]){
@@ -227,6 +236,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 onKeyDown={(e) => {
                                     if(e.key === 'Enter'){
                                         // SearchBasic(keyword, optionIndex)
+                                        LoadBasic(1);
                                     }
                                 }}
                                 style={{
