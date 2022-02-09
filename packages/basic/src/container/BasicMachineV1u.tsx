@@ -138,8 +138,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     let result = [];
     basicRow.map((row, index)=>{
       if(selectList.has(row.id)){
-        cleanForRegister(row)
-
+        console.log("row : ", row)
         result.push(cleanForRegister(row))
       }
     })
@@ -376,6 +375,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         id: `mold_${random_id}`,
       }
     })
+    console.log("tmpBasicRow : ", tmpBasicRow)
     setBasicRow([...tmpBasicRow])
     // setBasicRow([{ id: "", name: "400톤 2호기", weldingType: '선택없음', type: '프레스', mfrCode: '125-77-123', interwork: '유', user_id: '차지훈', manufacturer:'Aidas'}])
   }
@@ -390,6 +390,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     return result;
   }
   const cleanForRegister = (value:any) => {
+    console.log("value : ", value)
     const tempData = {...value};
     let additional:any[] = []
     column.map((v) => {
@@ -411,6 +412,9 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     }
     tempData.weldingType = weldingPK;
     tempData.interwork = value.interworkPK === "true";
+    tempData.devices = value.devices.map((device) => {
+      return {...device, type: device.type_id}
+    })
     tempData.additional =[
       ...additional.map((v, index)=>{
           if(!value[v.colName]) return undefined;
@@ -522,6 +526,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           row={basicRow}
           // setRow={setBasicRow}
           setRow={(e) => {
+            console.log("result : : : :  ", e)
             let tmp: Set<any> = selectList
             e.map(v => {
               if(v.isChange) tmp.add(v.id)

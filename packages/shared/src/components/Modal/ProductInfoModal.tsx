@@ -239,7 +239,10 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
               <ExcelTable
                 headerList={searchModalList.productInfo}
                 row={searchList}
-                setRow={(e) => setSearchList([...e])}
+                setRow={(e) => {
+
+                  setSearchList([...e])
+                }}
                 width={1746}
                 rowHeight={32}
                 height={591}
@@ -252,32 +255,44 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
           </div>
 
-          <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
+          {column.readonly? <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
             <div
-              onClick={() => {
-                setIsOpen(false)
-              }}
-              style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                onClick={() => {
+                  setIsOpen(false)
+                }}
+                style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>취소</p>
             </div>
             <div
-              onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
-                  onRowChange({
-                    ...row,
-                    ...searchList[selectRow],
-                    name: row.name,
-                    isChange: true
-                  })
-                }
-                setIsOpen(false)
-              }}
-              style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                onClick={() => {
+                  if(selectRow !== undefined && selectRow !== null){
+                    onRowChange({
+                      ...row,
+                      ...searchList[selectRow],
+                      name: row.name,
+                      isChange: true
+                    })
+                  }
+                  setIsOpen(false)
+                }}
+                style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>등록하기</p>
             </div>
           </div>
+          :
+              <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
+                <div
+                    onClick={() => {
+                      setIsOpen(false)
+                    }}
+                    style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                >
+                  <p>확인</p>
+                </div>
+              </div>
+          }
         </div>
       </Modal>
     </SearchModalWrapper>

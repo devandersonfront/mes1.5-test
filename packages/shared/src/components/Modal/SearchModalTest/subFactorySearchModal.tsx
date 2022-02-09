@@ -280,17 +280,20 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         <FooterButton
                             onClick={() => {
                                 setIsOpen(false)
-                                onRowChange({
-                                    ...row,
-                                    // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
-                                    // name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
-                                    // tab: column.type === 'bom' ? tab : undefined,
-                                    // type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
-                                    // version: row.version,
-                                    subFactory: searchList[selectRow],
-                                    affiliated_id: searchList[selectRow].name,
-                                    isChange:true
-                                })
+                                console.log("selectRow : ", selectRow, selectRow === 0 && selectRow, selectRow === 0 , selectRow)
+                                if(selectRow === 0 && selectRow !== undefined){
+                                    onRowChange({
+                                        ...row,
+                                        // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
+                                        // name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
+                                        // tab: column.type === 'bom' ? tab : undefined,
+                                        // type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
+                                        // version: row.version,
+                                        subFactory: searchList[selectRow],
+                                        affiliated_id: searchList[selectRow].name,
+                                        isChange:true
+                                    })
+                                }
                             }}
                             style={{backgroundColor: POINT_COLOR}}
                         >
