@@ -131,25 +131,57 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
       Notiflix.Report.failure('권한 없음', '권한을 선택해주세요', '확인')
     }
   }
+  
 
-  const deleteAuth = async () => {
-    if(selectIndex !== -1 && row[selectIndex].ca_id){
-      const res = await RequestMethod('delete', 'authorityDelete', [row[selectIndex]])
+  const deleteAuth = () => {
 
-      if (res){
-        Notiflix.Report.success('삭제 성공!', '권한이 성공적으로 삭제됐습니다.', '확인', () => {
-          loadAuthorityList().then(() => {
-            Notiflix.Loading.remove()
-          })
-        })
-      }
+    if(selectIndex === -1){
+      return Notiflix.Notify.warning('삭제를 하기 위해서는 선택을 해주세요')
+    }
+
+    if(row[selectIndex].ca_id){
+      Notiflix.Confirm.show(
+        '권한명 삭제',
+        '정말로 삭제 하시겠습니까?',
+        'Yes',
+        'No',
+        async () => {
+          const res = await RequestMethod('delete', 'authorityDelete', [row[selectIndex]])
+          if (res){
+            Notiflix.Report.success('삭제 성공!', '권한이 성공적으로 삭제됐습니다.', '확인', () => {
+              loadAuthorityList().then(() => {
+                Notiflix.Loading.remove()
+              })
+            })
+          }
+        },
+      );
     } else {
       let tmpRow = row
-      tmpRow.splice(selectIndex, 1)
-
+      tmpRow.splice(-1, 1)
+      setSelectIndex(-1)
       setRow([...tmpRow])
     }
-    setSelectIndex(-1)
+
+
+
+    // if(selectIndex !== -1 && row[selectIndex].ca_id){
+    //   const res = await RequestMethod('delete', 'authorityDelete', [row[selectIndex]])
+
+    //   if (res){
+    //     Notiflix.Report.success('삭제 성공!', '권한이 성공적으로 삭제됐습니다.', '확인', () => {
+    //       loadAuthorityList().then(() => {
+    //         Notiflix.Loading.remove()
+    //       })
+    //     })
+    //   }
+    // } else {
+    //   let tmpRow = row
+    //   tmpRow.splice(selectIndex, 1)
+
+    //   setRow([...tmpRow])
+    // }
+    // setSelectIndex(-1)
   }
 
   const addRow = () => {
@@ -230,7 +262,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
             }}
           />
         </div>
-        <TreeViewTable item={auth} setItem={setAuth} />
+        <TreeViewTable item={auth} setItem={setAuth} selectIndex={selectIndex}/>
       </div>
     </div>
   );

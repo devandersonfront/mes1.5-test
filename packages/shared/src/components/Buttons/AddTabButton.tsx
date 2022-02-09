@@ -79,6 +79,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         background:row.border ? "#19B9DF80" : "white",
         cursor: 'pointer',
       }} onClick={() => {
+
         if(column.key === 'lot'){
           if(column.type === 'readonly'){
             let lot = []
@@ -118,6 +119,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
             loadMaterialLot(row.tab)
           }
         }else {
+
+          console.log(row.bom_root_id,'row.bom_root_id')
           if (row.bom_root_id) {
             dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1}))
           } else {

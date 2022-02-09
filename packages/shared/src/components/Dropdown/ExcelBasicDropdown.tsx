@@ -14,16 +14,30 @@ interface IProps {
 
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
 
+
+  console.log(row,'rowrowrowrowrow')
+
   const cleanValue = (type?:string) => {
     switch(type){
       case "spare":
         // 22/01/24 수정
         // return row.setting == 1 ? "스페어" : "기본"
-        return row.spare
+        return row.setting
       case "setting" :
-        return row[column.key] == 1 || row[column.key] == "여" ? "여" : "부"
+        return (row[column.key] === 1 || row[column.key] === "여") ? "여" : "부"
       default:
         return row[column.key] ? row[column.key] : "무"
+    }
+  }
+
+  const filterValue = (value : string) => {
+    switch(value){
+      case '여' :
+        return 1
+      case '부' : 
+        return 0
+      default : 
+        return value
     }
   }
 
@@ -98,9 +112,10 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
                 break;
             }
           }
+
           return onRowChange({
             //@ts-ignore
-            ...row, [column.key]:event.target.value, [column.key+"PK"]: pkValue ?? undefined,
+            ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
             [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
             // ...tmpData,
             isChange: true

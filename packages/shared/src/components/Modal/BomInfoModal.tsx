@@ -41,6 +41,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [searchList, setSearchList] = useState<any[]>([
     {seq: 1,}
   ])
+
+  console.log(searchList,'searchListsearchList')
+
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   const [headerData, setHeaderData] = useState<any>();
@@ -67,7 +70,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   },[tabStore, ])
 
   useEffect(() => {
-    if(isOpen ) {
+    if(isOpen) {
       getModalData()
     }
 
@@ -256,6 +259,12 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       }
     }
   }
+
+  React.useEffect(()=>{
+    dispatch(reset_summary_info())
+  },[])
+
+  console.log(tabStore,'tabStoretabStoretabStoretabStore')
 
   return (
     <SearchModalWrapper >
