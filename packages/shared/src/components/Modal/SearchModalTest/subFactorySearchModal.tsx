@@ -88,7 +88,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
             case 1 : 
                 return 2
             case 2 : 
-                return 3
+                return 4
             default : 
                 return undefined
         }

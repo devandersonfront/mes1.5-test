@@ -94,6 +94,8 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           setPauseBasicRow([...tmpRow]);
 
         })
+
+        setSelectList(new Set())
   }
 
   const LoadBasic = async () => {

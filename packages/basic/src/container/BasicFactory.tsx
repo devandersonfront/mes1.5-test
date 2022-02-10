@@ -179,14 +179,16 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const DeleteBasic = async () => { 
+  const DeleteBasic = () => { 
 
     if(selectList.size === 0){
       return Notiflix.Notify.warning('선택된 정보가 없습니다.')
     }
 
 
-    const res = await RequestMethod('delete', `factoryDelete`,
+    Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소", async ()=>{
+
+      const res = await RequestMethod('delete', `factoryDelete`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
           let selectKey: string[] = []
@@ -236,6 +238,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       }
     }
 
+    })
   }
 
   const LoadBasic = async (page?: number) => {
@@ -255,6 +258,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       cleanUpData(res)
     }
 
+    setSelectList(new Set())
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -282,6 +286,8 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const cleanUpData = (res: any) => {

@@ -263,6 +263,8 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
         cleanUpData(res)
       }
     }
+
+    setSelectList(new Set())
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -289,6 +291,8 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const changeRow = (row: any) => {

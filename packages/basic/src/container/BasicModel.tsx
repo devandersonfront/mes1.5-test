@@ -312,6 +312,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         cleanUpData(res)
       }
     }
+    setSelectList(new Set())
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: string | string[] | number) => {
@@ -340,6 +341,8 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
   const cleanUpBasicData = (res:any) => {
     let tmpRow = res.data.results.info_list;

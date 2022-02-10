@@ -241,6 +241,8 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
         cleanUpData(res)
       }
     }
+
+    setSelectList(new Set())
   }
 
 
@@ -269,6 +271,8 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
   const cleanUpBasicData = (res:any) => {
     let tmpRow = res.data.results.info_list;
