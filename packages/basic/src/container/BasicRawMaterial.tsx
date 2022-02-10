@@ -30,7 +30,7 @@ export interface IProps {
 
 
 
-const BasicRawMaterial = ({page, keyword, option}: IProps) => {
+const BasicRawMaterial = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -42,6 +42,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [keyword, setKeyword] = useState<string>();
   const [selectRow , setSelectRow ] = useState<any>(undefined)
   const [buttonList , setButtonList ] = useState<string[]>([])
 
@@ -52,17 +53,17 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
 
 
   useEffect(() => {
-    setOptionIndex(option)
+    setOptionIndex(optionIndex)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword])
 
 
   const settingType = (type:any) => {
@@ -129,11 +130,14 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
       }
     })
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
+      setColumn([...res.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     })
-    // }
   }
 
   const SaveBasic = async () => {
@@ -197,11 +201,11 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인');
       if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
+        SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }else{
-        LoadBasic(page).then(() => {
+        LoadBasic(pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }
@@ -447,11 +451,11 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
     if(res) {
       Notiflix.Report.success('삭제되었습니다.','','확인',() => {
         if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
-          LoadBasic(page).then(() => {
+          LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }
@@ -466,33 +470,10 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
 
   }
 
-  const selectedData = () => {
-
-    let tmpSelectList : any[] = []
-    basicRow.map(row => {
-      if(selectList.has(row.id)){
-        tmpSelectList.push(row)
-      }
-    })
-
-    setSelectRow(tmpSelectList[0])
-
-  }
 
   const onClickHeaderButton = (index: number) => {
 
     switch(buttonList[index]){
-      case '바코드 미리보기':
-
-      if(selectList.size === 0){
-        return Notiflix.Report.failure('선택을 하셔야 합니다.',
-        '선택을 하셔야지 바코드를 보실수 있습니다.',
-        'Okay')
-      }
-      setBarcodeOpen(true)
-      selectedData()
-      break;
-
       case '항목관리':
         router.push(`/mes/item/manage/rawmaterial`)
         break;
@@ -504,7 +485,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
             items = {
               ...value.selectList[0],
               [value.key] : value.selectList[0].name,
-              [value.key+'PK'] : value.selectList[0].pk, //여기 봐야됨!
+              [value.key+'PK'] : value.selectList[0].pk,
               ...items,
             }
           }
@@ -539,44 +520,11 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
     }
   }
 
-  // 바코드
 
-  const handleBarcode = async (dataurl , id) => {
-
-    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
-                {
-                  "id":id,
-                  "functions":
-                  {"func0":{"checkLabelStatus":[]},
-                    "func1":{"clearBuffer":[]},
-                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
-                    "func3":{"printBuffer":[]}
-                  }
-                },
-                {
-                  headers : {
-                    'Content-Type' : 'application/x-www-form-urlencoded'
-                  }
-                }
-    ).catch((error) => {
-
-      if(error){
-        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-        return false
-      }
-
-    })
-  }
 
   React.useEffect(()=>{
 
-    if(selectList.size > 1){
-
-      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
-
-    }
-
-    return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
+     return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
 
   },[selectList.size])
 
@@ -588,11 +536,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            if(keyword){
-              router.push(`/mes/basic/rawmaterialV1u?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            }else{
-              router.push(`/mes/basic/rawmaterialV1u?page=1&keyword=`)
-            }
+            setKeyword(keyword)
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -631,22 +575,10 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            if(keyword){
-              router.push(`/mes/basic/rawmaterialV1u?page=${page}&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/rawmaterialV1u?page=${page}`)
-            }
+            setPageInfo({...pageInfo, page:page})
           }}
         />
 
-      <BarcodeModal
-        title={'바코드 미리보기'}
-        handleBarcode={handleBarcode}
-        handleModal={handleModal}
-        isOpen={barcodeOpen}
-        type={'rawMaterial'}
-        data={selectRow}
-      />
       {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}

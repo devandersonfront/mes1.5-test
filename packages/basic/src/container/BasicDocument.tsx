@@ -206,8 +206,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
         }
     }
 
-    console.log('selectList : ' , selectList)
-
     const moveFolder = (id: string) => {
 
         if (id !== undefined) {

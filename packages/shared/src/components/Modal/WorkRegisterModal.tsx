@@ -110,7 +110,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         return;
       }
     })
-    console.log(searchList)
     let res = await RequestMethod('post', `recordSave`,
       searchList.map((v, i) => {
         let selectData: any = {}

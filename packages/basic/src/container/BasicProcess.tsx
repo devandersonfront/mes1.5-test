@@ -116,6 +116,10 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   }
   const SaveBasic = async () => {
 
+    if(selectList.size === 0){
+      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+    }
+
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional?.map((addi, i)=>{
@@ -158,7 +162,9 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
           }
         }).filter((v) => v)
-    )
+    ).catch((error)=>{
+      return error.data && Notiflix.Notify.failure(error.data.message);
+    })
 
     if(res){
 
@@ -257,6 +263,8 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
         cleanUpData(res)
       }
     }
+
+    setSelectList(new Set())
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -283,6 +291,8 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const changeRow = (row: any) => {
@@ -470,6 +480,11 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
         break;
       case 5:
+
+        if(selectList.size === 0){
+          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+        }
+        
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{DeleteBasic()},
           ()=>{}

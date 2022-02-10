@@ -292,7 +292,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                     total += Number(v.amount)
                   }
                 })
-                console.log()
                 setTotalDelivery(total)
               }}
               width={1746}

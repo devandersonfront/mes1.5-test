@@ -12,7 +12,10 @@ import {HeaderButton} from '../../../../styles/styledComponents'
 import ItemManageBox from '../../../../component/ItemManage/ItemManageBox'
 //@ts-ignore
 import Notiflix from "notiflix";
-import {RequestMethod} from "shared";
+import {RequestMethod, RootState} from "shared";
+import {useDispatch, useSelector} from "react-redux";
+import { getUserInfoAction } from '../../../../reducer/userInfo'
+import { useRouter } from 'next/router'
 
 interface IProps {
   children?: any
@@ -129,9 +132,19 @@ let unitData = [
 ]
 
 const ItemManagePage = ({title, type, code}: IProps) => {
+
+  const dispatch = useDispatch()
+  const user = useSelector((state : RootState)=> state.mainUserInfo)
+  const router = useRouter();
   const [baseItem, setBaseItem] = useState<IItemMenuType[]>([])
   const [addiItem, setAddiItem] = useState<IItemMenuType[]>([])
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set())
+
+
+  const checkValidation = () => {
+    dispatch(getUserInfoAction())
+    return user.authority === 'MASTER' ?? undefined
+  }
 
   const listItem = async (code: string) => {
     const res =  await RequestMethod('get', 'itemList', {
@@ -232,7 +245,17 @@ const ItemManagePage = ({title, type, code}: IProps) => {
 
   useEffect(() => {
     Notiflix.Loading.standard();
-    listItem(code)
+    if(checkValidation()){
+      listItem(code)
+    }else{
+      Notiflix.Report.failure(
+        '권한 오류',
+        '관리자만 항목관리가 가능합니다.',
+        'Okay', () => {
+          router.back()
+        }
+      )
+    }
   }, [])
 
   return (

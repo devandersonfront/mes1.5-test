@@ -144,7 +144,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         product: v.type === 2 ?{
           ...childData,
         }: null,
-        product_id: v.parent.product_id,
+        product_id: v.parent?.product_id,
         raw_material: v.type === 0 ?{
           ...childData,
         }: null,
@@ -160,11 +160,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const SearchBasic = async (selectKey?:string) => {
     Notiflix.Loading.circle()
-    console.log("여기 아니야??!?!?!?!?!?!?!?!?!?!!?!?!?!?", selectKey)
     let res;
     if(selectKey){
       res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
-      console.log("res : ", res)
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       setSearchList([...searchList])
@@ -178,7 +176,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    let  modelIdCheck = true
     let body = searchList.map((v, i) => {
+      if(!v.cmId) modelIdCheck = false
       return {
         seq: i+1,
         parent: {
@@ -206,10 +206,14 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       }
     })
 
-    const res = await RequestMethod('post', `bomSave`,body)
+    if(modelIdCheck){
+      const res = await RequestMethod('post', `bomSave`,body)
 
-    if(res) {
-      Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
+      if(res) {
+        Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
+      }
+    }else{
+        Notiflix.Report.warning("모델을 등록해주세요.","","확인", () => setIsOpen(false))
     }
 
   }
@@ -236,7 +240,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             width: '100%'
           }}>
             <div onClick={() => {
-              console.log("isOpen : ", isOpen)
               setIsOpen(true)
             }}>
               <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>
@@ -258,6 +261,27 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         </>
       }
     }
+  }
+
+  const typeCheck = (data:any) => {
+
+    const result = data.map((row) => {
+      switch(row.tab){
+        case 0:
+          row.type_name = row.type;
+
+          return row;
+        case 1:
+          row.type_name = "-";
+          return row
+        case 2:
+          row.type_name = row.type;
+          return row
+        default:
+        return row
+      }
+    })
+    return result;
   }
 
   return (
@@ -490,6 +514,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     newTab: false
                   }
                 })
+                typeCheck(tmp)
+
                 setSearchList([...tmp])
               }}
               width={1746}

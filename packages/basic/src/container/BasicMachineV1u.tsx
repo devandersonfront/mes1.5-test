@@ -41,7 +41,7 @@ const weldingType = [
   {pk:3, name: "스팟"},
 ]
 
-const BasicMachineV1u = ({page, keyword, option}: IProps) => {
+const BasicMachineV1u = ({ option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -51,7 +51,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['기계 제조사', '기계 이름', "", '제조 번호'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-
+  const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -66,17 +66,17 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
 
   useEffect(() => {
-    setOptionIndex(option)
+    // setOptionIndex(option)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option, typesState])
+  }, [pageInfo.page, keyword, typesState])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -138,7 +138,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     let result = [];
     basicRow.map((row, index)=>{
       if(selectList.has(row.id)){
-        console.log("row : ", row)
         result.push(cleanForRegister(row))
       }
     })
@@ -149,7 +148,7 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       RequestMethod('post', `machineSave`, result)
           .then((res) => {
             Notiflix.Report.success("저장되었습니다.","","확인");
-            LoadBasic(page);
+            LoadBasic(pageInfo.page);
           })
           .catch((err) => {
             console.log(err.data.message);
@@ -195,9 +194,9 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
     Notiflix.Loading.circle()
-    if(!isPaging){
-      setOptionIndex(option)
-    }
+    // if(!isPaging){
+    //   setOptionIndex(option)
+    // }
     const res = await RequestMethod('get', `machineSearch`,{
       path: {
         page: isPaging ?? 1,
@@ -245,11 +244,11 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
               .then((res) => {
                 Notiflix.Report.success( "삭제되었습니다.", "", "확인");
                 if(keyword){
-                  SearchBasic(keyword, option, page).then(() => {
+                  SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
                     Notiflix.Loading.remove()
                   })
                 }else{
-                  LoadBasic(page).then(() => {
+                  LoadBasic(pageInfo.page).then(() => {
                     Notiflix.Loading.remove()
                   })
                 }
@@ -375,7 +374,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
         id: `mold_${random_id}`,
       }
     })
-    console.log("tmpBasicRow : ", tmpBasicRow)
     setBasicRow([...tmpBasicRow])
     // setBasicRow([{ id: "", name: "400톤 2호기", weldingType: '선택없음', type: '프레스', mfrCode: '125-77-123', interwork: '유', user_id: '차지훈', manufacturer:'Aidas'}])
   }
@@ -390,7 +388,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     return result;
   }
   const cleanForRegister = (value:any) => {
-    console.log("value : ", value)
     const tempData = {...value};
     let additional:any[] = []
     column.map((v) => {
@@ -499,11 +496,12 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            if(keyword){
-              router.push(`/mes/basic/machine?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            }else{
-              router.push(`/mes/basic/machine?page=1&keyword=`)
-            }
+            // if(keyword){
+              setKeyword(keyword)
+              // router.push(`/mes/basic/machine?page=1&keyword=${keyword}&opt=${optionIndex}`)
+            // }else{
+            //   router.push(`/mes/basic/machine?page=1&keyword=`)
+            // }
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -526,7 +524,6 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           row={basicRow}
           // setRow={setBasicRow}
           setRow={(e) => {
-            console.log("result : : : :  ", e)
             let tmp: Set<any> = selectList
             e.map(v => {
               if(v.isChange) tmp.add(v.id)

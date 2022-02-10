@@ -22,7 +22,6 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   const selector = useSelector((state:RootState) => state.MachineSelectReducer);
 
   useEffect(() => {
-    // console.log(row, column)
   }, [row])
 
   return (

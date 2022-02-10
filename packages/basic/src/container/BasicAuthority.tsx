@@ -144,7 +144,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
     if(row[selectIndex]?.ca_id){
       Notiflix.Confirm.show(
         '권한명 삭제',
-        '정말로 삭제 하시겠습니까?',
+        '권한명을 삭제 하시겠습니까?',
         'Yes',
         'No',
         async () => {
@@ -160,8 +160,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
       );
     } else {
       let tmpRow = [...row]
-      tmpRow.splice(0, 1)
-      setSelectIndex(-1)
+      tmpRow.splice(selectIndex, 1)
       setRow([...tmpRow])
     }
   }

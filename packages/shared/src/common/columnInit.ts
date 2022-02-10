@@ -54,6 +54,7 @@ import DaumAddressModal from "../components/InputBox/DaumAddressModal";
 import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFactorySearchModal";
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
 import placeholder from "lodash/fp/placeholder";
+import {OnClickContainer} from '../components/InputBox/OnClickContainer'
 
 
 export const columnlist: any = {
@@ -71,7 +72,7 @@ export const columnlist: any = {
   ],
   factory: [
     {key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력'},
-    {key: 'address', name: '공장 주소', width: 480, formatter: DaumAddressModal},
+    {key: 'address', name: '공장 주소', width: 480, editor: TextEditor},
     {key: 'manager', name: '담당자', width: 120, formatter: SearchModalTest, type: 'user'},
     {key: 'appointment', name: '직책', width: 120, formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: 'telephone', name: '전화번호', width: 120, formatter: PlaceholderBox, placeholder: '자동 입력'},
@@ -85,7 +86,7 @@ export const columnlist: any = {
     {key: 'telephone', editor: TextEditor},
     {key: 'cellphone', editor: TextEditor},
     {key: 'fax', editor: TextEditor},
-    {key: 'address', formatter: DaumAddressModal},
+    {key: 'address', editor: TextEditor},
     {key: 'crn', editor: TextEditor},
     {key: 'photo', formatter: FileEditer},
   ],
@@ -481,7 +482,7 @@ export const columnlist: any = {
     {key: 'title', editor: TextEditor, name: "기본 항목명"},
   ],
   pause: [
-    {key: 'name'}
+    {key: 'name' , formatter : OnClickContainer}
   ],
   pauseReason: [
     {key: 'index', name:"순번", width:130},
@@ -850,26 +851,6 @@ export const columnlist: any = {
     {key: 'input', name: '자재 선택', formatter: BomRegisterModal, width: 118},
   ],
   recordListV2: [
-    {key:"contract_id", name:"수주 번호", width: 118},
-    {key:"identification", name:"지시 고유 번호", width: 118   },
-    {key:"product_id", name:"CODE", width: 118},
-    {key:"name", name:"품명", width: 118},
-    {key:"type", name:"품목 종류", width: 118},
-    {key:"unit", name:"단위", width: 118},
-    {key:"process_id", name:"생산 공정", width: 118},
-    {key:"lot_number", name:"LOT 번호", width: 118},
-    {key:"worker", name:"작업자", width: 118},
-    {key:"start", name:"작업 시작 일시", width: 118},
-    {key:"end", name:"작업 종료 일시", width: 118},
-    {key:"paused_time", name:"일시 정지 시간", formatter: PauseInfoModal, type: 'readonly', modalType: false, width: 118},
-    {key:"good_quantity", name:"양품 수량", width: 118},
-    {key:"poor_quantity", name:"불량 수량", formatter: DefectInfoModal, type: 'readonly', width: 118},
-    {key:"uph", name:"UPH", width: 118},
-    {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, type: 'readonly'},
-    {key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit},
-    {key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit},
-  ],
-  cncRecordListV2: [
     {key:"contract_id", name:"수주 번호", width: 118},
     {key:"identification", name:"지시 고유 번호", width: 118   },
     {key:"product_id", name:"CODE", width: 118},
