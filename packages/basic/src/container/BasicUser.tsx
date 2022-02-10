@@ -166,7 +166,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         }
       }
     }else{
-      return Notiflix.Notify.failure('비밀번호와 비밀번호 확인이 같지 않습니다.')
+      return Notiflix.Notify.failure('비밀번호와 비밀번호 확인이 일치하지 않습니다.')
     }
 
   }
