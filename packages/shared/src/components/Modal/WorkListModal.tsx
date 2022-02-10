@@ -77,7 +77,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     let totalPoor:number = 0
     let defectReasons = []
     let tmpRowArray = []
-    console.log("tmpRow : ", tmpRow)
     if(typeof tmpRow === 'string'){
 
       tmpRowArray = tmpRow.split('\n')
@@ -147,7 +146,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const SearchBasic = async (keyword: any, option: number, page: number) => {
     setKeyword(keyword)
     setOptionIndex(option)
-    console.log("row : ", row)
     const res = await RequestMethod('get', `recordAll`,{
       params: {
         identification:row.os_id,
@@ -168,7 +166,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     //   }
     // })
     if(res){
-      console.log("res : ", res )
       let tmpList = changeRow(res)
 
       setSearchList([...tmpList?.map(v => {

@@ -24,7 +24,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicMold = ({page, keyword, option}: IProps) => {
+const BasicMold = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -34,6 +34,7 @@ const BasicMold = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['CODE', '금형명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [keyword, setKeyword] = useState<string>();
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -41,17 +42,17 @@ const BasicMold = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
-    setOptionIndex(option)
+    setOptionIndex(optionIndex)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -181,11 +182,11 @@ const BasicMold = ({page, keyword, option}: IProps) => {
     if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
-          LoadBasic(page).then(() => {
+          LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }
@@ -280,11 +281,11 @@ const BasicMold = ({page, keyword, option}: IProps) => {
     if(res) {
       Notiflix.Report.success('삭제되었습니다.','','확인');
       if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
+        SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }else{
-        LoadBasic(page).then(() => {
+        LoadBasic(pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }
@@ -503,11 +504,12 @@ const BasicMold = ({page, keyword, option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            if(keyword){
-              router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            }else{
-              router.push(`/mes/basic/moldV1u?page=1&keyword=`)
-            }
+            setKeyword(keyword)
+            // if(keyword){
+            //   router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${optionIndex}`)
+            // }else{
+            //   router.push(`/mes/basic/moldV1u?page=1&keyword=`)
+            // }
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -546,11 +548,12 @@ const BasicMold = ({page, keyword, option}: IProps) => {
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            if(keyword){
-              router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/moldV1u?page=${page}`)
-            }
+            // if(keyword){
+            //   router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${option}`)
+              setPageInfo({...pageInfo,page:page})
+            // }else{
+            //   router.push(`/mes/basic/moldV1u?page=${page}`)
+            // }
           }}
         />
       <ExcelDownloadModal

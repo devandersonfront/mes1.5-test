@@ -273,7 +273,6 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 if(selectRow !== undefined && selectRow !== null){
-                  console.log("row : ", row, searchList[selectRow])
                   onRowChange({
                     ...row,
                     ...searchList[selectRow],

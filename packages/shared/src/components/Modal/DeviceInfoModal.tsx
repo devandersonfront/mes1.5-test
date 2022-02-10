@@ -46,7 +46,6 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
   })
   useEffect(() => {
     if(isOpen) {
-        console.log(row)
       if(row.devices !== undefined && row.devices !== null && row.devices.length > 0){
         const rowDevices = [];
         row.devices.map((device, index)=>{
@@ -157,7 +156,6 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
         result = value.pk;
       }
     })
-console.log("result : ", result)
     return result;
   }
 
@@ -257,8 +255,6 @@ console.log("result : ", result)
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
             <Button onClick={() => {
-              let tmp = searchList
-
               setSearchList([
                 ...searchList,
                 {
@@ -267,6 +263,17 @@ console.log("result : ", result)
               ])
             }}>
               <p>행 추가</p>
+            </Button>
+            <Button style={{marginLeft: 16}}  onClick={() => {
+              if(Number(selectRow) === 0 || selectRow){
+                searchList.splice(selectRow, 1);
+                setSearchList([
+                  ...searchList,
+                ])
+              }
+              setSelectRow(undefined);
+            }}>
+              <p>행 삭제</p>
             </Button>
             <Button style={{marginLeft: 16}} onClick={() => {
               if(selectRow === 0){
@@ -312,12 +319,10 @@ console.log("result : ", result)
               headerList={searchModalList.deviceInfo}
               row={searchList ?? [{}]}
               setRow={(e) => {
-                console.log(e)
                 // searchList[selectRow].device =
                 e.map((row) => {
                   row.type_id = settingTypeId(row.type)
                   row.type = Number(row.type) ? deviceList[row.type]?.name : row.type
-                  console.log(row)
                 })
                 setSearchList([...e])
               }}
@@ -352,7 +357,7 @@ console.log("result : ", result)
             </div>
             <div
               onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
+                // if(selectRow !== undefined && selectRow !== null){
                   onRowChange({
                     ...row,
                     // ...searchList[selectRow],
@@ -366,7 +371,7 @@ console.log("result : ", result)
                     }),
                     isChange: true,
                   })
-                }
+                // }
                 setIsOpen(false)
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}

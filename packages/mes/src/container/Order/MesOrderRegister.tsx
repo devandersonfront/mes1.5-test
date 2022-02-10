@@ -87,7 +87,6 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
     let res: any
     let checkValue = true;
     basicRow.map((row) => {
-      console.log(row)
       if(!Number(row.amount) && row.amount !== "0"){
         Notiflix.Report.warning("경고", "정확한 수주량을 입력해주세요.", "확인", )
         checkValue = false;
@@ -203,7 +202,6 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
           e.map(v => {
             if(v.isChange) tmp.add(v.id)
           })
-          console.log(e)
           setSelectList(tmp)
           setBasicRow(e.map((v, index) => ({
             ...v,

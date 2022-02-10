@@ -357,7 +357,6 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
 
     Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
-    console.log(tmpBasicRow)
   }
 
   return (

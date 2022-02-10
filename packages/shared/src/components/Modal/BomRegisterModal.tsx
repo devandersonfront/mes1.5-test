@@ -60,7 +60,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log("searchList : ", searchList);
       if(row.bom_root_id){
         SearchBasic().then(() => {
           // Notiflix.Loading.remove()
@@ -102,8 +101,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     }else{
       tmpRows = [{...tmpRow}]
     }
-    console.log("tmpRows : ", tmpRows)
-
 
     tmpData = tmpRows.map((v, i) => {
       let childData: any = {}
@@ -186,7 +183,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
         if(res){
           let searchList = changeRow(res)
-          console.log("! searchList : ", searchList)
           dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
           setSearchList([...searchList])
         }else{
