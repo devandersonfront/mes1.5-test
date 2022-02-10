@@ -97,7 +97,7 @@ export const searchModalList: any = {
 
   factoryInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'name', name: '세분화명', width: 576, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '세분화명 입력'},
+    {key: 'name', name: '세분화명(필수)', width: 576, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '세분화명 입력'},
     {key: 'manager_name', name: '담당자', width: 392, formatter: ManagerSearchModal, type:"modal"},
     {key: 'appointment', name: '직책', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력'},
     {key: 'telephone', name: '전화번호', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력'},

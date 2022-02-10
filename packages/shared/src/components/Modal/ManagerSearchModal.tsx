@@ -303,7 +303,7 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
               <div
                 onClick={() => {
                   if(selectRow !== undefined && selectRow !== null){
-                    onRowChange({...row, manager_info: searchList[selectRow], appointment: searchList[selectRow].appointment, isChange: true})
+                    onRowChange({...row, manager_info: searchList[selectRow], appointment: searchList[selectRow].appointment, isChange: true , telephone : searchList[selectRow].telephone})
                   }
                   setIsOpen(false)
                 }}

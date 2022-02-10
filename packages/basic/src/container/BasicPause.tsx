@@ -94,6 +94,8 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           setPauseBasicRow([...tmpRow]);
 
         })
+
+        setSelectList(new Set())
   }
 
   const LoadBasic = async () => {
@@ -135,9 +137,9 @@ const BasicPause = ({page, keyword, option}: IProps) => {
               Notiflix.Loading.remove(300);
             }
             setProcessColumn(tmpColumn);
-            setProcessBasicRow([...tmpRow.map((row: any) => {
+            setProcessBasicRow([...tmpRow.map((row: any,index) => {
               return {
-                ...row,
+                ...row, onClicked: index === 0 ? true : false
               }
             })])
             Notiflix.Loading.remove(300);
@@ -188,6 +190,11 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         return
 
       case 3 :
+
+        if(selectList.size === 0){
+          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+        }
+
         Notiflix.Loading.standard();
         let savePauseBasicRow:any[] = [];
         pauseBasicRow.map((value,index)=>{
@@ -214,6 +221,10 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         return
 
       case 4 :
+        if(selectList.size === 0){
+          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+        }
+        
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           async()=>{
             const idList = [];
@@ -297,7 +308,17 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           ]}
           row={processBasicRow}
           setRow={setProcessBasicRow}
-          setSelectRow={setSelectRow}
+          setSelectRow={(e) => {
+            const clickedList = processBasicRow.map((data, index) => {
+              if (e === index) {
+                return { ...data, onClicked: true }
+              } else {
+                return { ...data, onClicked: false }
+              }
+            })
+            setProcessBasicRow(clickedList)
+            setSelectRow(e)
+          }}
           width={1576}
           height={280}
         />

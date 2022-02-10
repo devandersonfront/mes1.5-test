@@ -38,7 +38,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{...row}])
+  const [searchList, setSearchList] = useState<any[]>([{}])
   const [tab, setTab] = useState<number>(0)
   const [searchModalInit, setSearchModalInit] = useState<any>()
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -101,7 +101,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     })
 
     if(res){
-      console.log("res : ", res, row)
         if(res.page !== 1){
           setSearchList([...searchList,...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({...pageInfo, total:res.totalPages});
@@ -295,7 +294,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     v.border = false;
                   })
                   searchList[e].border = true
-                  // setSearchList([...searchList])
+                  setSearchList([...searchList])
                 }
                 setSelectRow(e)
               }}
@@ -330,6 +329,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     case "machine" :
                       return searchList[selectRow].name;
                     case "mold":
+                      return searchList[selectRow].name;
+                    case "tool":
                       return searchList[selectRow].name;
                     default:
                       return row.name;

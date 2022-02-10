@@ -215,6 +215,8 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
+  console.log(searchList,'searchList')
+
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -303,7 +305,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
             <Button onClick={() => {
-              let tmp = searchList
               let random_id = Math.random()*1000;
               setSearchList([
                 ...searchList,
@@ -376,18 +377,18 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
               row={searchList ?? [{}]}
               setRow={(e) => {
-
+                
                 let tmp: Set<any> = selectList
                 e.map(v => {
                   if(v.isChange) tmp.add(v.id)
                 })
                 setSelectList(tmp)
 
-                e.map((v)=>{
-                  v.manager_name = v.manager?.name;
-                  v.appointment = v.manager?.appointment;
-                  v.telephone = v.manager?.telephone;
-                })
+                // e.map((v)=>{
+                //   v.manager_name = v.manager?.name;
+                //   v.appointment = v.manager?.appointment;
+                //   v.telephone = v.manager?.telephone;
+                // })
 
                 setSearchList([...e])
               }}
@@ -402,6 +403,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
                 setSelectList(e as Set<number>);
               }}
               setSelectRow={(e) => {
+                
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{
                     v.border = false;
