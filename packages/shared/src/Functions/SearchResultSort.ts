@@ -257,7 +257,8 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         affiliated_id:null,
         factory_id: selectData.name,
         subFactory:null,
-        subFactories:null
+        subFactories:null,
+        affiliated_id:null 
       }
     }
     case 'customer': {

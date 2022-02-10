@@ -23,7 +23,6 @@ interface IReqType {
 
 const LoginPage: NextPage<IProps> = ({children, data, setData }) => {
   const router = useRouter()
-
   const dispatch = useDispatch()
 
 
@@ -36,7 +35,8 @@ const LoginPage: NextPage<IProps> = ({children, data, setData }) => {
         setToken( res )
         dispatch(setUserInfoAction({
           name: res.name,
-          profile: res.profilePath
+          profile: res.profilePath,
+          authority : res.ca_id.name
         }))
         router.push('/mes/dashboard').then()
       }

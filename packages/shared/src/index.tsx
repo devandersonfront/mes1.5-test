@@ -124,6 +124,7 @@ export {HeaderFilter} from './components/HeaderFilter/HeaderFilter'
 export {TextEditor} from './components/InputBox/ExcelBasicInputBox'
 export {WelcomeInput} from './components/InputBox/WelcomeInput'
 export {TitleInput} from './components/InputBox/TitleInput'
+export {OnClickContainer} from './components/InputBox/OnClickContainer'
 
 //모달
 export {AuthoritySearchModal} from './components/Modal/AuthoritySearchModal'

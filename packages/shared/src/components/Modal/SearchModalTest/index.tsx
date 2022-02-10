@@ -294,7 +294,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     v.border = false;
                   })
                   searchList[e].border = true
-                  // setSearchList([...searchList])
+                  setSearchList([...searchList])
                 }
                 setSelectRow(e)
               }}
@@ -329,6 +329,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     case "machine" :
                       return searchList[selectRow].name;
                     case "mold":
+                      return searchList[selectRow].name;
+                    case "tool":
                       return searchList[selectRow].name;
                     default:
                       return row.name;

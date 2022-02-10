@@ -12,7 +12,6 @@ import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
-import moment from "moment"
 
 interface IProps {
   column: IExcelHeaderType
@@ -56,7 +55,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([])
+  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -68,7 +67,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     if(isOpen && row.os_id) {
       SearchBasic(searchKeyword, optionIndex, 1)
     }
-    SearchBasic(searchKeyword, optionIndex, 1)
+    // SearchBasic(searchKeyword, optionIndex, 1)
   }, [isOpen, /*searchKeyword*/])
 
   const changeRow = (tmpRow: any, key?: string) => {
@@ -125,12 +124,13 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       defectReasons = tmpRow.defect_reasons
       tmpRes = [{...tmpRow}]
     }
+
     onRowChange({
       ...row,
       defect_reasons: defectReasons,
-      total_good_quantity: Number(totalGood) ,
-      total_poor_quantity: Number(totalPoor) ,
-      total_counter: totalGood + totalPoor ,
+      total_good_quantity: Number(totalGood),
+      total_poor_quantity: Number(totalPoor),
+      total_counter: totalGood + totalPoor,
     })
 
     return tmpRes?.map((v, i) => {
@@ -148,20 +148,17 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     setOptionIndex(option)
     const res = await RequestMethod('get', `recordAll`,{
       params: {
-        identification:row.os_id,
-        sheetIds: row.os_id
+        identification:row.os_id
+        // sheetIds: row.os_id
       }
     })
-    // const res = await RequestMethod('get', `cncRecordSearch`,{
+    // const res = await RequestMethod('get', `recordSearch`,{
     //   path:{
-    //     // page:1,
-    //
+    //     page:1,
+    //     item:19
     //   },
     //   params: {
-    //     keyword:row.contract.identification,
-    //     opt:0,
-    //     from:"2000-01-01",
-    //     to:moment().format("YYYY-MM-DD")
+    //     identification:row.os_id
     //     // sheetIds: row.os_id
     //   }
     // })

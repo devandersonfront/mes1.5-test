@@ -126,8 +126,9 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
+            current: row.amount,
+            warehousing: row.amount,
             customer: row.customerArray,
-            // stock:row.amount,
             additional: [
               ...additional.map(v => {
                 if(row[v.name]) {

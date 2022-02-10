@@ -28,18 +28,16 @@ const FinishButton = ({ row, column, onRowChange}: IProps) => {
 
 
     if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인');
+      Notiflix.Report.success('저장되었습니다.','','확인', ()=>  onRowChange({
+        ...row,
+        finish: true
+      }));
     }
   }
 
   return (
     <CellButton onClick={() => {
-      SaveBasic().then(()=>{
-        onRowChange({
-          ...row,
-          finish: true
-        })
-      })
+      SaveBasic()
     }}>
       {title}
     </CellButton>

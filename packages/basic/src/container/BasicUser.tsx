@@ -87,67 +87,92 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       })])
     })
   }
+  
+  
+
+  const passwordCompete = () => {
+
+    const selectedRows  = basicRow.map((row, i) => {
+      if(selectList.has(row.id)){
+        return row 
+      }
+    })
+
+    const selectRows = selectedRows.filter(v => v)
+
+    return selectRows.every((row) => row.password === row['password-confirm'])
+  }
 
   const SaveBasic = async () => {
-
-    const searchAiID = (rowAdditional:any[], index:number) => {
-      let result:number = undefined;
-      rowAdditional.map((addi, i)=>{
-        if(index === i){
-          result = addi.ai_id;
-        }
-      })
-      return result;
+    
+    if(selectList.size === 0){
+      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
     }
 
-    let res = await RequestMethod('post', `memberSave`,
-      basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-            return {
-              ...row,
-              id: row.tmpId,
-              authority: row.authorityPK,
-              // user_id: row.tmpId,
-              version: row.version ?? null,
-              additional: [
-              ...additional.map((v, index)=>{
-                if(!row[v.colName]) return undefined;
-                   return {
-                    mi_id: v.id,
-                    title: v.name,
-                    value: row[v.colName] ?? "",
-                    unit: v.unit,
-                    ai_id: searchAiID(row.additional, index) ?? undefined,
-                    version:row.additional[index]?.version ?? undefined
-                  }
-                }).filter((v) => v)
-              ]
-            }
+    const isCheck = passwordCompete()
 
+    if(isCheck){
+      const searchAiID = (rowAdditional:any[], index:number) => {
+        let result:number = undefined;
+        rowAdditional.map((addi, i)=>{
+          if(index === i){
+            result = addi.ai_id;
           }
-        }).filter((v) => v))
-    //
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
         })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
+        return result;
       }
+      let res = await RequestMethod('post', `memberSave`,
+        basicRow.map((row, i) => {
+            if(selectList.has(row.id)){
+              let additional:any[] = []
+              column.map((v) => {
+                if(v.type === 'additional'){
+                  additional.push(v)
+                }
+              })
+              return {
+                ...row,
+                id: row.tmpId,
+                authority: row.authorityPK,
+                // user_id: row.tmpId,
+                version: row.version ?? null,
+                additional: [
+                ...additional.map((v, index)=>{
+                  if(!row[v.colName]) return undefined;
+                  return {
+                      mi_id: v.id,
+                      title: v.name,
+                      value: row[v.colName] ?? "",
+                      unit: v.unit,
+                      ai_id: searchAiID(row.additional, index) ?? undefined,
+                      version:row.additional[index]?.version ?? undefined
+                    }
+                  }).filter((v) => v)
+                ]
+              }
+  
+            }
+          }).filter((v) => v))
+      if(res){
+        Notiflix.Report.success('저장되었습니다.','','확인');
+        if(keyword){
+          SearchBasic(keyword, option, page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }else{
+          LoadBasic(page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+      }
+    }else{
+      return Notiflix.Notify.failure('비밀번호와 비밀번호 확인이 일치하지 않습니다.')
     }
+
   }
 
   const DeleteBasic = async () => {
+    
     const res = await RequestMethod('delete', `memberDelete`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
@@ -206,6 +231,8 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       }
     })
 
+    console.log(res,'resresresresres')
+
     if(res){
       if(res.totalPages < page){
         LoadBasic(page - 1)
@@ -218,6 +245,9 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         cleanUpData(res)
       }
     }
+
+    setSelectList(new Set())
+
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -442,15 +472,39 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         SaveBasic()
         break;
       case 5:
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{
-            DeleteBasic()
+
+        
+        if(selectList.size === 0){
+          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+        }else{
+          const haveMaster = haveMasterAuthority()
+          if(!haveMaster){
+              return Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+              ()=>{
+                DeleteBasic()
+              }
+              ,
+              ()=>{});
+          }else{
+            Notiflix.Notify.failure('마스터는 삭제 할수 없습니다.');
           }
-          ,
-          ()=>{});
+        }
         break;
 
     }
+  }
+
+  const haveMasterAuthority = () => {
+    // 내가 선택한것중에 Master가 있어면 return false 
+    let isAuthority = false;
+    basicRow.forEach((row)=>{
+      if(selectList.has(row.id)){
+        if(row.authority === 'MASTER'){
+          isAuthority = true
+        }
+      }
+    })
+    return isAuthority
   }
 
   return (

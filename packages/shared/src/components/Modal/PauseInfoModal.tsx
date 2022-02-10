@@ -39,12 +39,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [totalSec, setTotalSec] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([
-    {reason: '휴식', },
-    {reason: '금형 교체', },
-    {reason: '재료 결손', },
-    {reason: '기타01', },
-  ])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -75,7 +70,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       sumTotalTime(total)
     }else {
       if (column.type !== 'readonly') {
-        if (isOpen && row.process_id && searchList.findIndex((e) => !!e.amount) === -1) {
+        if (isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount) === -1) {
           loadPauseList()
         }
       }
@@ -178,7 +173,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>일시 정지 시간 (20210517-001)</p>
+            }}>일시 정지 시간 ({row.identification})</p>
             <div style={{display: 'flex', alignItems: 'center', justifyContent:'center', height: 28}}>
               <div style={{display: 'flex'}}>
                 <p style={{margin: 0, padding: 0, fontSize: 22, fontWeight: 'bold'}}>총 시간</p>

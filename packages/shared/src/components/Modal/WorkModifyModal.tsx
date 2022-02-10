@@ -245,18 +245,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
             </div>
           </div>
           <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-            <Button onClick={() => {
-              let tmp = searchList
 
-              setSearchList([
-                ...searchList,
-                {
-                  seq: searchList.length+1
-                }
-              ])
-            }}>
-              <p>행 추가</p>
-            </Button>
           </div>
         </div>
         <div style={{padding: '0 16px', width: 1776}}>
