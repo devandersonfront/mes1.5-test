@@ -118,10 +118,12 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               }
             }
           })
+          console.log(row?.input_bom)
           return {
             ...row,
             ...selectData,
             os_id:undefined,
+            version: undefined,
             input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
               // return {
               //   ...bom,
