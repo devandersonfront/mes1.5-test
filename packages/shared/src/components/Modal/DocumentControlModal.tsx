@@ -23,8 +23,6 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
         setSelectOption(value)
     }
 
-    console.log(parentData,'parentDataparentData')
-
     const contentSet = (type:"folderAdd" | "documentUpload" | "fileMove") => {
         switch (type){
             case "folderAdd":

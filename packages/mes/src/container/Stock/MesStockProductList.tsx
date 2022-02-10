@@ -145,7 +145,6 @@ const MesStockProductList = ({page, keyword, option}) => {
           })
 
           if(menuData){
-            console.log("menuData : ", menuData)
             return {
               ...column,
               ...menuData

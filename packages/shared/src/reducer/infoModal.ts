@@ -166,7 +166,6 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
       const changeIndexState = {...state};
       const changeIndexPayload = payload as number;
       changeIndexState.index = changeIndexPayload;
-      console.log("changeIndexState : ", changeIndexState)
       return changeIndexState;
 
     case RESET_SUMMARY_INFO :

@@ -307,7 +307,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         <FooterButton
                             onClick={() => {
                                 setIsOpen(false)
-                                console.log("selectRow : ", selectRow, selectRow === 0 && selectRow, selectRow === 0 , selectRow)
                                 if(selectRow === 0 && selectRow !== undefined){
                                     onRowChange({
                                         ...row,

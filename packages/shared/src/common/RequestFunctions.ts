@@ -235,8 +235,7 @@ const ApiList = {
   modelSave: `/api/v1/model/save`,
   processSave: `/api/v1/process/save`,
   machineSave: `/api/v1/machine/save`,
-  // productSave: `/api/v1/product/save`,
-  // productSave: `/cnc/api/v1/product/save`,
+  productSave: `/api/v1/product/save`,
   rawmaterialSave: `/api/v1/rawmaterial/save`,
   moldSave: `/api/v1/mold/save`,
   pauseSave: `/api/v1/process/reason/pause/save`,
@@ -257,7 +256,6 @@ const ApiList = {
   contractSave: `/api/v1/contract/save`,
   sheetSave: `/api/v1/sheet/save`,
   shipmentSave: `/api/v1/shipment/save`,
-
   //modify
   operationModify: `/api/v1/operation/modify`,
 
@@ -348,7 +346,7 @@ const ApiList = {
   modelSearch: `/api/v1/model/search`,
   processSearch: `/api/v1/process/search`,
   machineSearch: `/api/v1/machine/search`,
-  productSearch: `/cnc/api/v1/product/search`,
+  productSearch: `/api/v1/product/search`,
   pauseSearch: `/api/v1/process/reason/pause/search`,
   rawmaterialSearch: `/api/v1/raw-material/search`,
   moldSearch: `/api/v1/mold/search`,

@@ -336,7 +336,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                       return row.name;
                   }
                 }
-                console.log(row)
                 if(column.clearContract) {
                   onRowChange(
                       {

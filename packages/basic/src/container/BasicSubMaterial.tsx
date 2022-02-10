@@ -21,10 +21,10 @@ export interface IProps {
   children?: any
   page?: number
   keyword?: string
-  option?: number
+  optionIndex?: number
 }
 
-const BasicSubMaterial = ({page, keyword, option}: IProps) => {
+const BasicSubMaterial = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -36,6 +36,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['부자재 CODE', '부자재 품명', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [keyword, setKeyword] = useState<string>();
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -43,17 +44,16 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
-    setOptionIndex(option)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -100,11 +100,14 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
       }
     })
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
+      setColumn([...res.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     })
-    // }
   }
 
   const SaveBasic = async () => {
@@ -181,11 +184,11 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인');
       if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
+        SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }else{
-        LoadBasic(page).then(() => {
+        LoadBasic(pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }
@@ -257,11 +260,11 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
     if(res) {
       Notiflix.Report.success('삭제되었습니다.','','확인', () =>{
         if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
-          LoadBasic(page).then(() => {
+          LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }
@@ -293,9 +296,6 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
     Notiflix.Loading.circle()
-    if(!isPaging){
-      setOptionIndex(option)
-    }
     const res = await RequestMethod('get', `submaterialSearch`,{
       path: {
         page: isPaging ?? 1,
@@ -500,11 +500,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            if(keyword){
-              router.push(`/mes/basic/submaterial?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            }else{
-              router.push(`/mes/basic/submaterial?page=1&keyword=`)
-            }
+            setKeyword(keyword);
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -554,11 +550,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            if(keyword){
-              router.push(`/mes/basic/submaterial?page=${page}&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/submaterial?page=${page}`)
-            }
+            setPageInfo({...pageInfo, page:page})
           }}
         />
       <ExcelDownloadModal

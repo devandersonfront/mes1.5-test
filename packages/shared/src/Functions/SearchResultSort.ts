@@ -66,7 +66,6 @@ export const SearchResultSort = (infoList, type: string) => {
       })
     }
     case 'factory': {
-      console.log("infoList : ", infoList)
       return infoList ? infoList.map((v) => {
         return {
           ...v,
@@ -94,6 +93,9 @@ export const SearchResultSort = (infoList, type: string) => {
           ...v,
           factory_id: v.factory?.name,
           affiliated_id: v.subFactory?.name,
+          type:TransferCodeToValue(v.type, "machine"),
+          weldingType_id:v.weldingType,
+          weldingType:TransferCodeToValue(v.weldingType, "welding")
         }
       })
     }
@@ -104,7 +106,6 @@ export const SearchResultSort = (infoList, type: string) => {
 }
 
 export const SearchModalResult = (selectData, type: string , staticCalendar?: boolean) => {
-  console.log(selectData, type, staticCalendar)
 
   switch(type) {
     case 'user': {
@@ -247,13 +248,13 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
       }
     }
     case 'factory': {
-      console.log("selectData : ", selectData)
       return {
-        ...selectData,
+        // ...selectData,
         factory: {
           ...selectData,
           manager: selectData.managerArray,
         },
+        affiliated_id:null,
         factory_id: selectData.name,
         subFactory:null,
         subFactories:null,
