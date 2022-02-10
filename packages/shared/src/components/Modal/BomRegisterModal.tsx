@@ -60,7 +60,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log("searchList : ", searchList);
       if(row.bom_root_id){
         SearchBasic().then(() => {
           // Notiflix.Loading.remove()

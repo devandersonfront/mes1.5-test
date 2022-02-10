@@ -47,13 +47,14 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   }, [isOpen, searchKeyword])
 
   const initData = async() => {
-    let searchList;
+    let tmpData = []
+    let totalAmount = 0
     if(row?.lots.length > 0){
-      return row?.lots.map((v, i) => {
+      tmpData = row?.lots.map((v, i) => {
         let index = row.lots.findIndex((lot) => lot.group.sum.lot_number === v.group.sum.lot_number)
         if (index !== -1) {
           totalAmount += row.lots[index].amount
-          searchList = {
+          return  {
             seq: i + 1,
             lot_number: v.group.sum.lot_number,
             start: v.group.sum.start,
@@ -70,7 +71,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         }
 
         // totalAmount += row.amount
-        searchList = {
+        return {
           seq: i + 1,
           lot_number: v.group.sum.lot_number,
           start: v.group.sum.start,
@@ -85,51 +86,10 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           ...v,
         }
       })
-    }else{
-        searchList = await SearchBasic().then((results) => {
-        return results.map((v, i) => {
-          let index = row.lots.findIndex((lot) => lot.group.sum.lot_number === v.group.sum.lot_number)
-          if (index !== -1) {
-            totalAmount += row.lots[index].amount
-            return {
-              seq: i + 1,
-              lot_number: v.group.sum.lot_number,
-              start: v.group.sum.start,
-              end: v.group.sum.end,
-              worker_name: v.group.sum.worker.name,
-              good_quantity: v.group.sum.good_quantity,
-              current: v.group.sum.current,
-              amount: row.lots[index].amount,
-              group: {
-                ...v,
-              },
-              ...v,
-            }
-          }
-
-          // totalAmount += row.amount
-          return {
-            seq: i + 1,
-            lot_number: v.group.sum.lot_number,
-            start: v.group.sum.start,
-            end: v.group.sum.end,
-            worker_name: v.group.sum.worker.name,
-            good_quantity: v.group.sum.good_quantity,
-            current: v.group.sum.current,
-            amount: v.amount ?? 0,
-            group: {
-              ...v,
-            },
-            ...v,
-          }
-        })
-
-      })
     }
 
-    let totalAmount = 0;
     setTotalDelivery(totalAmount)
-    setSearchList([...searchList])
+    setSearchList([...tmpData])
   }
 
   const changeRow = (tmpRow: any) => {
