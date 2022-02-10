@@ -78,6 +78,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async (result:any, selectList:Set<any>) => {
     let res: any
+    console.log(selectList, result)
     res = await RequestMethod('post', `sheetSave`,
         result.map((row, i) => {
         if(selectList.has(row.id)){
@@ -117,10 +118,12 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               }
             }
           })
+          console.log(row?.input_bom)
           return {
             ...row,
             ...selectData,
             os_id:undefined,
+            version: undefined,
             input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
               // return {
               //   ...bom,
@@ -496,10 +499,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           setSelectList(tmp)
         }}
         selectList={selectList}
-        setSelectList={(select) => {
         //@ts-ignore
-          setSelectList(select)
-        }}
+        setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
       {/*<ExcelDownloadModal*/}
