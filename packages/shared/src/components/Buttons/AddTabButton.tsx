@@ -19,6 +19,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   const selector = useSelector((state:RootState) => state.infoModal)
 
   const loadMaterialLot = async (type) => {
+    console.log(type)
     let res
     switch(type){
       case 0:
@@ -120,6 +121,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
               })]
             })
           }else{
+            console.log(row)
             loadMaterialLot(row.tab)
           }
         }else {
