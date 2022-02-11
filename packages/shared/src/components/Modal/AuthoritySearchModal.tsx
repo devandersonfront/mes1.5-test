@@ -102,11 +102,10 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
       }} onClick={() => {
         // 마스터 일때는 클릭 되면 안됨
         if(column.key === 'authority' && row[column.key]?.toUpperCase() !== 'MASTER'){
-            console.log(row,'row')
             setIsOpen(true)
         }
       }}>
-        <img style={{width: 20, height: 20}} src={IcSearchButton}/>
+        <img style={{width: 20, height: 20 , opacity : column.key === 'authority' && row[column.key]?.toUpperCase() !== 'MASTER' ? 1 : .3}} src={IcSearchButton}/>
       </div>
     </>
   }
