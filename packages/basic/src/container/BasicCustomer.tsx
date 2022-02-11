@@ -508,8 +508,8 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     if(spliceRow){
       if(spliceRow.some((row)=> row.name === tempRow[selectRow].name)){
         return Notiflix.Report.warning(
-          '공장명 경고',
-          `중복된 공장명을 입력할 수 없습니다`,
+          '거래처명 경고',
+          `중복된 거래처명을 입력할 수 없습니다`,
           'Okay'
         );
       }

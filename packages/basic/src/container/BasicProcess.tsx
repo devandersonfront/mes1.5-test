@@ -507,8 +507,8 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     if(spliceRow){
       if(spliceRow.some((row)=> row.customer_id === tempRow[selectRow].customer_id)){
         return Notiflix.Report.warning(
-          '거래처 경고',
-          `중복된 거래처를 입력할 수 없습니다`,
+          '공정명 경고',
+          `중복된 공정명을 입력할 수 없습니다`,
           'Okay'
         );
       }

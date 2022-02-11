@@ -46,8 +46,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
-
-
   useEffect(() => {
     if(keyword){
       SearchBasic(keyword, option, page)
