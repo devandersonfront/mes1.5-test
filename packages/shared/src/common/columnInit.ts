@@ -245,7 +245,6 @@ export const columnlist: any = {
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
     {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, formatter: PlaceholderBox, placeholder: 0},
-    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer},
   ],
   // rawmaterial: [
   //   {key: 'customer_id',},

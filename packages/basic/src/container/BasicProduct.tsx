@@ -186,7 +186,7 @@ const BasicProduct = ({}: IProps) => {
           // standard_uph: row.uph,
           molds:[...row?.molds?.map((mold)=>{
             return {...mold, setting:mold.mold.setting}
-          }) ?? []],
+          }).filter((mold) => mold.mold.mold_id) ?? []],
           machines:[
             ...row?.machines?.map((machine)=>{
               return {
@@ -194,7 +194,7 @@ const BasicProduct = ({}: IProps) => {
                 setting:machine.machine.setting,
                 machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
               }
-            }) ?? []
+            }).filter((machine) => machine.machine.machine_id)?? []
           ],
           type:row.type_id ?? row.typeId ?? row.typePK,
           additional: [
@@ -231,15 +231,17 @@ const BasicProduct = ({}: IProps) => {
         }
       }
     }else if(!selectCheck){
+      Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
     }else if(!codeCheck){
+      Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인");
     }
 
   }
 
   const DeleteBasic = async() => {
-    Notiflix.Loading.circle();
+    // Notiflix.Loading.circle();
     let selectCheck = false;
     let data:any[] = [];
 
@@ -295,7 +297,7 @@ const BasicProduct = ({}: IProps) => {
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
-    Notiflix.Loading.circle()
+    // Notiflix.Loading.circle()
     if(!isPaging){
       setOptionIndex(option)
     }

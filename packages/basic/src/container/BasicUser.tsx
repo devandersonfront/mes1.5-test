@@ -87,14 +87,14 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       })])
     })
   }
-  
-  
+
+
 
   const passwordCompete = () => {
 
     const selectedRows  = basicRow.map((row, i) => {
       if(selectList.has(row.id)){
-        return row 
+        return row
       }
     })
 
@@ -104,7 +104,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
-    
+
     if(selectList.size === 0){
       return Notiflix.Notify.warning('선택된 정보가 없습니다.')
     }
@@ -150,7 +150,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
                   }).filter((v) => v)
                 ]
               }
-  
+
             }
           }).filter((v) => v))
       if(res){
@@ -172,7 +172,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   }
 
   const DeleteBasic = async () => {
-    
+
     const res = await RequestMethod('delete', `memberDelete`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
@@ -230,8 +230,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         renderItem: 18,
       }
     })
-
-    console.log(res,'resresresresres')
 
     if(res){
       if(res.totalPages < page){
@@ -473,7 +471,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         break;
       case 5:
 
-        
+
         if(selectList.size === 0){
           return Notiflix.Notify.warning('선택된 정보가 없습니다.')
         }else{
@@ -495,7 +493,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   }
 
   const haveMasterAuthority = () => {
-    // 내가 선택한것중에 Master가 있어면 return false 
+    // 내가 선택한것중에 Master가 있어면 return false
     let isAuthority = false;
     basicRow.forEach((row)=>{
       if(selectList.has(row.id)){

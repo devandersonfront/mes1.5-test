@@ -32,7 +32,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -96,7 +96,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
         page: res.page,
         total: res.totalPages,
       })
-
       setSearchList([...searchList])
   }
   const saveSubFactory = async () => {
@@ -120,11 +119,10 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
     searchList.map((value) => {
       let oneSubFactory:any = {...value, manager:value.manager_info};
-
-      if(value.manager_info.user_idPK && value.manager_info.user_id){
-        oneSubFactory.manager.user_id = value.manager_info.user_idPK;
+      if(value.manager_info?.user_idPK && value.manager_info?.user_id){
+        oneSubFactory.manager.user_id = value.manager_info?.user_idPK;
+        oneSubFactory.manager.authority = value.manager_info?.authorityPK;
       }
-      oneSubFactory.manager.authority = value.manager_info.authorityPK;
       oneSubFactory.factory_id = row.factory_id;
 
       result.push(oneSubFactory);
@@ -215,7 +213,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
-  console.log(searchList,'searchList')
 
   return (
     <SearchModalWrapper >
@@ -377,7 +374,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
               row={searchList ?? [{}]}
               setRow={(e) => {
-                
+
                 let tmp: Set<any> = selectList
                 e.map(v => {
                   if(v.isChange) tmp.add(v.id)
@@ -403,7 +400,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
                 setSelectList(e as Set<number>);
               }}
               setSelectRow={(e) => {
-                
+
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{
                     v.border = false;
