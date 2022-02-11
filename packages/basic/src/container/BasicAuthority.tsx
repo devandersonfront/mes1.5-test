@@ -135,8 +135,8 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const deleteAuth = () =>  {
 
+  const deleteAuth = () =>  {
     if(selectIndex === -1){
       return Notiflix.Notify.warning('삭제를 하기 위해서는 선택을 해주세요')
     }

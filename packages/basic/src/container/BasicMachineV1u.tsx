@@ -409,7 +409,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
     }
     tempData.weldingType = weldingPK;
     tempData.interwork = value.interworkPK === "true";
-    tempData.devices = value.devices.map((device) => {
+    tempData.devices = value?.devices?.map((device) => {
       return {...device, type: device.type_id}
     })
     tempData.additional =[
