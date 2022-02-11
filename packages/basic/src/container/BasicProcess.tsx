@@ -118,7 +118,11 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   const SaveBasic = async () => {
 
     if(selectList.size === 0){
-      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+      return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
     }
 
     const searchAiID = (rowAdditional:any[], index:number) => {
@@ -483,7 +487,11 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       case 5:
 
         if(selectList.size === 0){
-          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
         }
         
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
@@ -505,7 +513,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     console.log(spliceRow,'spliceRowspliceRow')
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.customer_id.toUpperCase() === tempRow[selectRow].customer_id.toUpperCase())){
+      if(spliceRow.some((row)=> row.customer_id === tempRow[selectRow].customer_id)){
         return Notiflix.Report.warning(
           '공정명 경고',
           `중복된 공정명을 입력할 수 없습니다`,
