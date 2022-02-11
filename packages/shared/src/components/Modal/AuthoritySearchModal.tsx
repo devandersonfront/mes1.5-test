@@ -105,7 +105,7 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
             setIsOpen(true)
         }
       }}>
-        <img style={{width: 20, height: 20}} src={IcSearchButton}/>
+        <img style={{width: 20, height: 20 , opacity : column.key === 'authority' && row[column.key]?.toUpperCase() !== 'MASTER' ? 1 : .3}} src={IcSearchButton}/>
       </div>
     </>
   }

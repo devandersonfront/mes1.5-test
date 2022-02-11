@@ -48,6 +48,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(["장치 제조사", "장치 이름", "제조 번호", "담당자"])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -570,6 +571,25 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const competeDevice = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.mfrCode.toUpperCase() === tempRow[selectRow].mfrCode.toUpperCase())){
+        return Notiflix.Report.warning(
+          '제조번호 경고',
+          `중복된 제조 번호를 입력할 수 없습니다`,
+          'Okay'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
+
   return (
     <div>
         <PageHeader
@@ -608,8 +628,9 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow(e)
+            competeDevice(e)
           }}
+          setSelectRow={setSelectRow}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}

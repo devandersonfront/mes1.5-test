@@ -44,6 +44,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     page: 1,
     total: 1
   })
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   useEffect(() => {
     if(keyword){
@@ -189,7 +190,11 @@ const BasicModel = ({page, keyword, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v))
+        }).filter((v) => v)).catch((error)=>{
+          if(error.status === 409) {
+            return Notiflix.Report.failure('저장할 수 없습니다.', error?.data.message, '확인')
+          }
+        })
 
 
     if(res){
@@ -549,6 +554,27 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const competeModel = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    console.log(spliceRow,'spliceRowspliceRow')
+
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.customer_id === tempRow[selectRow].customer_id && row.model === tempRow[selectRow].model)){
+        return Notiflix.Report.warning(
+          '같은 행 경고',
+          `거래처와 모델이 같은 행은 존재할수 없습니다.`,
+          'Okay'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
+
   return (
     <div>
       <PageHeader
@@ -587,7 +613,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
-          setBasicRow(e)
+          competeModel(e)
         }}
         selectList={selectList}
         //@ts-ignore

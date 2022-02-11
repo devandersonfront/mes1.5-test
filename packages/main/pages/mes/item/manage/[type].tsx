@@ -141,10 +141,10 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set())
 
 
-  const checkValidation = () => {
-    dispatch(getUserInfoAction())
-    return user.authority === 'MASTER' ?? undefined
-  }
+  // const checkValidation = () => {
+  //   dispatch(getUserInfoAction())
+  //   return user.authority === 'MASTER' ?? undefined
+  // }
 
   const listItem = async (code: string) => {
     const res =  await RequestMethod('get', 'itemList', {
@@ -245,17 +245,18 @@ const ItemManagePage = ({title, type, code}: IProps) => {
 
   useEffect(() => {
     Notiflix.Loading.standard();
-    if(checkValidation()){
-      listItem(code)
-    }else{
-      Notiflix.Report.failure(
-        '권한 오류',
-        '관리자만 항목관리가 가능합니다.',
-        'Okay', () => {
-          router.back()
-        }
-      )
-    }
+    listItem(code)
+    // if(checkValidation()){
+
+    // }else{
+    //   Notiflix.Report.failure(
+    //     '권한 오류',
+    //     '관리자만 항목관리가 가능합니다.',
+    //     'Okay', () => {
+    //       router.back()
+    //     }
+    //   )
+    // }
   }, [])
 
   return (
