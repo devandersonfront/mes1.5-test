@@ -192,7 +192,11 @@ const BasicPause = ({page, keyword, option}: IProps) => {
       case 3 :
 
         if(selectList.size === 0){
-          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
         }
 
         Notiflix.Loading.standard();
@@ -222,7 +226,11 @@ const BasicPause = ({page, keyword, option}: IProps) => {
 
       case 4 :
         if(selectList.size === 0){
-          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
         }
         
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",

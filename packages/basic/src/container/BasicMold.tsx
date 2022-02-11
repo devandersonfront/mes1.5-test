@@ -35,6 +35,7 @@ const BasicMold = ({}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(['CODE', '금형명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>();
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -222,6 +223,7 @@ const BasicMold = ({}: IProps) => {
       })
       cleanUpData(res)
     }
+    setSelectList(new Set())
 
   }
 
@@ -341,6 +343,8 @@ const BasicMold = ({}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const cleanUpData = (res: any) => {
@@ -516,6 +520,29 @@ const BasicMold = ({}: IProps) => {
     }
   }
 
+  const competeMoldV1u = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    console.log(spliceRow,'spliceRowspliceRow')
+
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.code === tempRow[selectRow].code)){
+        return Notiflix.Report.warning(
+          '코드 경고',
+          `중복된 코드를 입력할 수 없습니다`,
+          'Okay'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
+
+
+
   return (
     <div>
         <PageHeader
@@ -555,11 +582,12 @@ const BasicMold = ({}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow(e)
+            competeMoldV1u(e)
           }}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent

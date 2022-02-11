@@ -46,6 +46,7 @@ const BasicProduct = ({}: IProps) => {
     page: 1,
     total: 1
   })
+  
   const [buttonList , setButtonList ] = useState<string[]>([])
 
   useEffect(() => {
@@ -128,6 +129,7 @@ const BasicProduct = ({}: IProps) => {
   const SaveBasic = async () => {
     let selectCheck = false
     let codeCheck = true
+    let processCheck = true
 
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
@@ -141,9 +143,13 @@ const BasicProduct = ({}: IProps) => {
 
     Notiflix.Loading.standard();
     let result = basicRow.map((row, i) => {
+
+      console.log(row,'rowrowrowrow')
+
       if(selectList.has(row.id)){
         selectCheck = true;
         if(!row.code) codeCheck = false
+        if(!row.process_id) processCheck = false
         let additional:any[] = []
         column.map((v) => {
           if(v.type === 'additional'){
@@ -215,7 +221,7 @@ const BasicProduct = ({}: IProps) => {
       }
     }).filter((v) => v)
 
-    if(selectCheck && codeCheck){
+    if(selectCheck && codeCheck && processCheck){
       let res = await RequestMethod('post', `productSave`,result)
 
       if(res){
@@ -236,6 +242,9 @@ const BasicProduct = ({}: IProps) => {
     }else if(!codeCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인");
+    }else{
+      Notiflix.Loading.remove()
+      Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
     }
 
   }
@@ -293,6 +302,7 @@ const BasicProduct = ({}: IProps) => {
       })
       cleanUpData(res)
     }
+    setSelectList(new Set())
 
   }
 
@@ -319,6 +329,8 @@ const BasicProduct = ({}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const cleanUpData = (res: any) => {
@@ -494,12 +506,38 @@ const BasicProduct = ({}: IProps) => {
     }
   }
 
+  const competeProductV1u = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    console.log(spliceRow,'spliceRowspliceRow')
+
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.code === tempRow[selectRow]?.code)){
+        return Notiflix.Report.warning(
+          '코드 경고',
+          `중복된 코드를 입력할 수 없습니다`,
+          'Okay'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
+
+
+  
+
 
   React.useEffect(()=>{
     return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
 
   },[selectList.size])
 
+
+  
   return (
     <div>
         <PageHeader
@@ -535,11 +573,12 @@ const BasicProduct = ({}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow(e)
+            competeProductV1u(e)
           }}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent

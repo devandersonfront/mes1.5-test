@@ -36,7 +36,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-
+  const [selectRow , setSelectRow] = useState<number>(0);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -375,6 +375,29 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const competeSubMaterial = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    console.log(spliceRow,'spliceRowspliceRow')
+
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.code === tempRow[selectRow].code)){
+        return Notiflix.Report.warning(
+          '코드 경고',
+          `중복된 코드를 입력할 수 없습니다`,
+          'Okay'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
+
+
+
   return (
     <div>
         <PageHeader
@@ -416,11 +439,14 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow(e)
+
+            console.log(e,'eeee')
+            competeSubMaterial(e)
           }}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent

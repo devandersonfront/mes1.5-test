@@ -37,7 +37,7 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(['부자재 CODE', '부자재 품명', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>();
-
+  const [selectRow , setSelectRow ] = useState<any>(undefined)
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -313,6 +313,8 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
       cleanUpData(res)
     }
 
+    setSelectList(new Set())
+
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -336,6 +338,8 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const cleanUpData = (res: any) => {
@@ -509,6 +513,27 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
 
     }
   }
+
+  const competeSubMaterial = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    console.log(spliceRow,'spliceRowspliceRow')
+
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.code === tempRow[selectRow].code)){
+        return Notiflix.Report.warning(
+          '코드 경고',
+          `중복된 코드를 입력할 수 없습니다`,
+          'Okay'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
   return (
     <div>
         <PageHeader
@@ -554,11 +579,12 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
             })
 
             // setBasicRow([...basicRow])
-            setBasicRow(e)
+            competeSubMaterial(e)
           }}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent

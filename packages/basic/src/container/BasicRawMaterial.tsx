@@ -238,7 +238,7 @@ const BasicRawMaterial = ({}: IProps) => {
       })
       cleanUpData(res)
     }
-
+    setSelectList(new Set())
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -265,6 +265,8 @@ const BasicRawMaterial = ({}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const cleanUpData = (res: any) => {
@@ -537,6 +539,27 @@ const BasicRawMaterial = ({}: IProps) => {
 
   },[selectList.size])
 
+  const competeRawMaterial = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    console.log(spliceRow,'spliceRowspliceRow')
+
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.code === tempRow[selectRow].code)){
+        return Notiflix.Report.warning(
+          '코드 경고',
+          `중복된 코드를 입력할 수 없습니다`,
+          'Okay'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
+
 
 
   return (
@@ -573,9 +596,10 @@ const BasicRawMaterial = ({}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow(e)
+            competeRawMaterial(e)
           }}
           selectList={selectList}
+          setSelectRow={setSelectRow}
           //@ts-ignore
           setSelectList={setSelectList}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}

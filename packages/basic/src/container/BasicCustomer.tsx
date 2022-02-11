@@ -58,7 +58,11 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   const SaveBasic = async () => {
 
     if(selectList.size === 0){
-      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+      return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
     }
 
     const searchAiID = (rowAdditional:any[], index:number) => {
@@ -487,7 +491,11 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
       case 5:
         
         if(selectList.size === 0){
-          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
         }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",

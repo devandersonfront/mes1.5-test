@@ -111,7 +111,11 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
   const SaveBasic = async () => {
 
     if(selectList.size === 0){
-      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+      return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
     }
 
     const searchAiID = (rowAdditional:any[], index:number) => {
@@ -180,7 +184,11 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
   const DeleteBasic = () => {
 
     if(selectList.size === 0){
-      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+      return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
     }
 
 
@@ -455,7 +463,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     spliceRow.splice(selectRow, 1)
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.name.toUpperCase() === tempRow[selectRow].name.toUpperCase())){
+      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name)){
         return Notiflix.Report.warning(
           '공장명 경고',
           `중복된 공장명을 입력할 수 없습니다`,

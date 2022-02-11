@@ -114,8 +114,6 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
         ca_id: undefined,
         name: data.name,
         authorities: addedAuthorities
-      }).catch((error)=>{
-        return error.data && Notiflix.Notify.failure(error.data.message);
       })
 
       if (res){
@@ -202,7 +200,6 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
       const tempRow = [...rows]
       const spliceRow = [...rows]
 
-      console.log(tempRow,'tempRowtempRowtempRow')
       spliceRow.splice(selectIndex, 1)
       if(spliceRow){
         if(spliceRow.some((row)=> row.name.toUpperCase() === tempRow[selectIndex].name.toUpperCase())){

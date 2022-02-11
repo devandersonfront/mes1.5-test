@@ -195,6 +195,8 @@ const BasicMachineV1u = ({ option}: IProps) => {
     //   })
     // }
 
+    setSelectList(new Set())
+
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -228,6 +230,8 @@ const BasicMachineV1u = ({ option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const DeleteBasic = async () => {
