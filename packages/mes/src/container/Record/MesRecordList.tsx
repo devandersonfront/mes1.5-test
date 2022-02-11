@@ -377,10 +377,10 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
           (e) => {
             switch(e) {
               case 1: {
-                if(selectList.size > 0) {
+                if(selectList.size === 1) {
                   setExcelOpen(true)
                 }else{
-                  Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
+                  Notiflix.Report.warning("경고","데이터를 하나 선택해주시기 바랍니다.","확인")
                 }
                 break
               }
