@@ -20,11 +20,11 @@ import {NextPageContext} from 'next'
 export interface IProps {
   children?: any
   page?: number
-  keyword?: string
-  optionIndex?: number
+  search?: string
+  option?: number
 }
 
-const BasicSubMaterial = ({}: IProps) => {
+const BasicSubMaterial = ({page, search, option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)

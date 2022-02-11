@@ -231,8 +231,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       }
     })
 
-    console.log(res,'resresresresres')
-
     if(res){
       if(res.totalPages < page){
         LoadBasic(page - 1)
