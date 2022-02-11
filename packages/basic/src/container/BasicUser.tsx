@@ -263,7 +263,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   }
 
   const DeleteBasic = async () => {
-    
+
     const res = await RequestMethod('delete', `memberDelete`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
@@ -562,7 +562,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         break;
       case 5:
 
-        
+
         if(selectList.size === 0){
           return Notiflix.Report.warning(
             '선택 경고',
@@ -593,7 +593,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   }
 
   const haveMasterAuthority = () => {
-    // 내가 선택한것중에 Master가 있어면 return false 
+    // 내가 선택한것중에 Master가 있어면 return false
     let isAuthority = false;
     basicRow.forEach((row)=>{
       if(selectList.has(row.id)){

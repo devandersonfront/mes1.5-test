@@ -126,6 +126,9 @@ const BasicProduct = ({}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    let selectCheck = false
+    let codeCheck = true
+
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -137,136 +140,144 @@ const BasicProduct = ({}: IProps) => {
     }
 
     Notiflix.Loading.standard();
-    let res: any
-
-    const check = basicRow.map((row) => {
-      if(selectList.has(row.id) && !row.code && !row.name){
-          Notiflix.Loading.remove(300)
-          Notiflix.Report.failure("CODE를 입력해주세요.","","확인", )
-        return false
-      }
-    })
-    if(check.includes(false)){
-      return
-    }
-    res = await RequestMethod('post', `productSave`,
-      basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-            })
-
-            return {
-              ...row,
-              ...selectData,
-              customer: row.customerArray,
-              // customer_id: row.customerArray.customer_id,
-              customer_id: undefined,
-              model: row.modelArray,
-              // standard_uph: row.uph,
-              molds:[...row?.molds?.map((mold)=>{
-                return {...mold, setting:mold.mold.setting}
-              }) ?? []],
-              machines:[
-                  ...row?.machines?.map((machine)=>{
-                    return {
-                      ...machine,
-                      setting:machine.machine.setting,
-                      machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
-                    }
-                  }) ?? []
-              ],
-              type:row.type_id ?? row.typeId ?? row.typePK,
-              additional: [
-                ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
-                  return {
-                    mi_id: v.id,
-                    title: v.name,
-                    value: row[v.colName] ?? "",
-                    unit: v.unit,
-                    ai_id: searchAiID(row.additional, index) ?? undefined,
-                    version:row.additional[index]?.version ?? undefined
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
+    let result = basicRow.map((row, i) => {
+      if(selectList.has(row.id)){
+        selectCheck = true;
+        if(!row.code) codeCheck = false
+        let additional:any[] = []
+        column.map((v) => {
+          if(v.type === 'additional'){
+            additional.push(v)
           }
-        }).filter((v) => v))
-
-
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-          Notiflix.Loading.remove()
         })
-      }else{
-        LoadBasic(pageInfo.page).then(() => {
-          Notiflix.Loading.remove()
+
+        let selectData: any = {}
+
+        Object.keys(row).map(v => {
+          if(v.indexOf('PK') !== -1) {
+            selectData = {
+              ...selectData,
+              [v.split('PK')[0]]: row[v]
+            }
+          }
+
+          if(v === 'unitWeight') {
+            selectData = {
+              ...selectData,
+              unitWeight: Number(row['unitWeight'])
+            }
+          }
+
+          if(v === 'tmpId') {
+            selectData = {
+              ...selectData,
+              id: row['tmpId']
+            }
+          }
         })
+
+        return {
+          ...row,
+          ...selectData,
+          customer: row.customerArray,
+          // customer_id: row.customerArray.customer_id,
+          customer_id: undefined,
+          model: row.modelArray,
+          // standard_uph: row.uph,
+          molds:[...row?.molds?.map((mold)=>{
+            return {...mold, setting:mold.mold.setting}
+          }).filter((mold) => mold.mold.mold_id) ?? []],
+          machines:[
+            ...row?.machines?.map((machine)=>{
+              return {
+                ...machine,
+                setting:machine.machine.setting,
+                machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
+              }
+            }).filter((machine) => machine.machine.machine_id)?? []
+          ],
+          type:row.type_id ?? row.typeId ?? row.typePK,
+          additional: [
+            ...additional.map((v, index)=>{
+              if(!row[v.colName]) return undefined;
+              return {
+                mi_id: v.id,
+                title: v.name,
+                value: row[v.colName] ?? "",
+                unit: v.unit,
+                ai_id: searchAiID(row.additional, index) ?? undefined,
+                version:row.additional[index]?.version ?? undefined
+              }
+            }).filter((v) => v)
+          ]
+        }
+
       }
+    }).filter((v) => v)
+
+    if(selectCheck && codeCheck){
+      let res = await RequestMethod('post', `productSave`,result)
+
+      if(res){
+        Notiflix.Report.success('저장되었습니다.','','확인');
+        if(keyword){
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }else{
+          LoadBasic(pageInfo.page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+      }
+    }else if(!selectCheck){
+      Notiflix.Loading.remove()
+      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
+    }else if(!codeCheck){
+      Notiflix.Loading.remove()
+      Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인");
     }
+
   }
 
   const DeleteBasic = async() => {
-    Notiflix.Loading.circle();
-    let res: any
+    // Notiflix.Loading.circle();
+    let selectCheck = false;
     let data:any[] = [];
 
     basicRow.map((value,index)=>{
       if(selectList.has(value.id) && value.product_id !== undefined && value.product_id !== null){
+        selectCheck = true;
         let tmpRow = {...value};
         tmpRow.type = value.type_id;
         data.push(tmpRow);
       }
     })
 
-
-    await RequestMethod("delete", "productDelete", data)
-        .then((res) => {
-          Notiflix.Loading.remove(300);
-          Notiflix.Report.success("삭제되었습니다.","","확인", () =>LoadBasic(1))
-        })
-        .catch((err) => {
-          Notiflix.Loading.remove(300);
-        })
+    if(selectCheck){
+      Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          async()=>{
+            await RequestMethod("delete", "productDelete", data)
+                .then((res) => {
+                  Notiflix.Loading.remove(300);
+                  Notiflix.Report.success("삭제되었습니다.","","확인", () =>LoadBasic(1))
+                })
+                .catch((err) => {
+                  Notiflix.Loading.remove(300);
+                })
+          },
+          ()=>{}
+      )
+    }else{
+      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
+    }
 
 
   }
 
 
   const LoadBasic = async (page?: number) => {
-    Notiflix.Loading.circle()
+    // Notiflix.Loading.circle()
     const res = await RequestMethod('get', `productList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
@@ -286,7 +297,7 @@ const BasicProduct = ({}: IProps) => {
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
-    Notiflix.Loading.circle()
+    // Notiflix.Loading.circle()
     if(!isPaging){
       setOptionIndex(option)
     }
@@ -477,13 +488,7 @@ const BasicProduct = ({}: IProps) => {
         SaveBasic()
         break;
       case '삭제':
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{
-            DeleteBasic()
-          },
-          ()=>{}
-        )
-
+        DeleteBasic()
         break;
 
     }

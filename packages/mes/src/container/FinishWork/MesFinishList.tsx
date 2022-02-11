@@ -29,8 +29,6 @@ let now = moment().format('YYYY-MM-DD');
 const MesFinishList = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
-  const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
   const [basicRow, setBasicRow] = useState<Array<any>>([{id: '',}])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["finishListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -54,6 +52,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
           Notiflix.Loading.remove()
         })
       }else{
+
         LoadBasic(pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
@@ -149,9 +148,9 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
     Notiflix.Loading.circle()
-    // if(!isPaging){
-    //   setOptionIndex(option)
-    // }
+    if(!isPaging){
+      setOptionIndex(option)
+    }
     const res = await RequestMethod('get', `operationSearch`,{
       path: {
         page: isPaging ?? 1,
@@ -159,7 +158,10 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       },
       params: {
         keyword: keyword ?? '',
-        opt: optionIndex ?? 0
+        opt: optionIndex ?? 0,
+        status : 2,
+        from: selectDate.from,
+        to: selectDate.to,
       }
     })
 
@@ -282,6 +284,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       }
     })
 
+    Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
   }
 
@@ -290,8 +293,9 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       <PageHeader
         isSearch
         isCalendar
-        searchKeyword={""}
+        searchKeyword={keyword}
         searchOptionList={optionList}
+        optionIndex={option}
         onChangeSearchKeyword={(keyword) => {
           setSearchKeyword(keyword)
           setPageInfo({page:1, total:1})
@@ -305,13 +309,6 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectDate={(date) => setSelectDate(date)}
         title={"작업 완료 리스트"}
-        buttons={
-          ['']
-        }
-        buttonsOnclick={
-          () => {}
-          // onClickHeaderButton
-        }
       />
       <ExcelTable
         editable
@@ -361,7 +358,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         }}
 
       />
-      <ExcelDownloadModal
+      {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
@@ -370,7 +367,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}
-      />
+      /> */}
     </div>
   );
 }

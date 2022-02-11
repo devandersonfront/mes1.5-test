@@ -39,9 +39,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
     // useEffect(() => {
     // }, [column.type, tab])
 
-    console.log(column.type,'column.type]')
 
-    
     useEffect(() => {
         setSearchModalInit(SearchInit[column.type])
     }, [column.type, tab])
@@ -85,11 +83,11 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
         switch(optionIndex){
             case 0 :
                 return 0
-            case 1 : 
+            case 1 :
                 return 2
-            case 2 : 
+            case 2 :
                 return 4
-            default : 
+            default :
                 return undefined
         }
     }

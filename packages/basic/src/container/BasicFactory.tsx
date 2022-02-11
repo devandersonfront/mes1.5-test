@@ -29,10 +29,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([
-    {name: "", id: ""},
-    // {name: "드랑금속", id: "", address: '인천시 연수구 송도미래로125 송도타워 123동 11-10호', manager: '차지훈', appointment: '실장', cellphone: '02)777-1235',},
-  ])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["factory"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['공장명','주소', '담당자명', '담당자 직책', '담당자 휴대폰 번호'])
@@ -180,7 +177,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const DeleteBasic = () => { 
+  const DeleteBasic = () => {
 
     if(selectList.size === 0){
       return Notiflix.Notify.warning('선택된 정보가 없습니다.')

@@ -38,9 +38,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([
-    {seq: 1,}
-  ])
+  const [searchList, setSearchList] = useState<any[]>([])
+
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   const [headerData, setHeaderData] = useState<any>();
@@ -67,7 +66,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   },[tabStore, ])
 
   useEffect(() => {
-    if(isOpen ) {
+    if(isOpen) {
       getModalData()
     }
 
@@ -171,14 +170,14 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
-      setSearchList(searchList.length > 0 ? searchList : [{seq:1}])
+      setSearchList(searchList.length > 0 ? searchList : [])
     }
   }
 
   const SaveBasic = async () => {
     let  modelIdCheck = true
+    if(!row.code) modelIdCheck = false
     let body = searchList.map((v, i) => {
-      if(!v.cmId) modelIdCheck = false
       return {
         seq: i+1,
         parent: {
@@ -186,7 +185,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           process: row.processArray,
           type: row.type_id ?? row.type,
           product_id:row.product_id ?? row.productId,
-          code: row.cmId,
+          code: row.code,
         },
         child_product: v.tab === 2 ? {
           ...v.product
@@ -269,7 +268,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       switch(row.tab){
         case 0:
           row.type_name = row.type;
-
           return row;
         case 1:
           row.type_name = "-";

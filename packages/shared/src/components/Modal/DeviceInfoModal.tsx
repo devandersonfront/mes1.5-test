@@ -38,7 +38,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -53,6 +53,8 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
         })
         setSearchList(rowDevices);
       }
+    }else{
+      setSearchList([]);
     }
   }, [isOpen, searchKeyword])
 
