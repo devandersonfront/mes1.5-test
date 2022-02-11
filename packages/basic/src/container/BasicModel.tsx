@@ -190,7 +190,11 @@ const BasicModel = ({page, keyword, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v))
+        }).filter((v) => v)).catch((error)=>{
+          if(error.status === 409) {
+            return Notiflix.Report.failure('저장할 수 없습니다.', error?.data.message, '확인')
+          }
+        })
 
 
     if(res){
