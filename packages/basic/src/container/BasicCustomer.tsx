@@ -39,6 +39,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     page: 1,
     total: 1
   })
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   useEffect(() => {
     if(keyword){
@@ -498,6 +499,26 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const competeCustom = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name)){
+        return Notiflix.Report.warning(
+          '공장명 경고',
+          `중복된 공장명을 입력할 수 없습니다`,
+          'Okay'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+    
+  }
+
   return (
     <div>
       <PageHeader
@@ -537,11 +558,12 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
-          setBasicRow(e)
+          competeCustom(e)
         }}
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
+        setSelectRow={setSelectRow}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
       <PaginationComponent

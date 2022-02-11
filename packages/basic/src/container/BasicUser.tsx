@@ -620,10 +620,10 @@ const BasicUser = ({page, keyword, option}: IProps) => {
             `중복되는 아이디가 존재합니다.`,
             'Okay'
           );
-        }else{
-          setBasicRow(rows)
         }
       }
+
+      setBasicRow(rows)
   }
 
   return (

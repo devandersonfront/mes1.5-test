@@ -41,6 +41,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     page: page,
     total: 1
   })
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   useEffect(() => {
     if(keyword){
@@ -495,6 +496,27 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const competeProcess = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    console.log(spliceRow,'spliceRowspliceRow')
+
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.customer_id === tempRow[selectRow].customer_id)){
+        return Notiflix.Report.warning(
+          '거래처 경고',
+          `중복된 거래처를 입력할 수 없습니다`,
+          'Okay'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
+
   return (
     <div>
       <PageHeader
@@ -533,7 +555,8 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
-          setBasicRow(e)
+          // setBasicRow(e)
+          competeProcess(e)
         }}
         selectList={selectList}
         //@ts-ignore
