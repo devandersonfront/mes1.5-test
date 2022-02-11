@@ -111,7 +111,8 @@ const BasicMold = ({}: IProps) => {
 
   const SaveBasic = async () => {
     let res: any
-    let selectCheck = false;
+    let selectCheck = false
+    let codeCheck = true
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -125,6 +126,7 @@ const BasicMold = ({}: IProps) => {
     const result = basicRow.map((row, i) => {
       if(selectList.has(row.id)){
         selectCheck = true
+        if(!row.code) codeCheck = false
         let additional:any[] = []
         column.map((v) => {
           if(v.type === 'additional'){
@@ -177,7 +179,7 @@ const BasicMold = ({}: IProps) => {
 
       }
     }).filter((v) => v)
-    if(selectCheck){
+    if(selectCheck && codeCheck){
       res = await RequestMethod('post', `moldSave`, result)
 
       if(res){
@@ -193,8 +195,10 @@ const BasicMold = ({}: IProps) => {
           }
       }
 
-    }else{
+    }else if(!selectCheck){
       Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
+    }else if(!codeCheck){
+      Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인")
     }
 
 
