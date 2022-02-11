@@ -578,7 +578,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     spliceRow.splice(selectRow, 1)
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode)){
+      if(spliceRow.some((row)=> row.mfrCode.toUpperCase() === tempRow[selectRow].mfrCode.toUpperCase())){
         return Notiflix.Report.warning(
           '제조번호 경고',
           `중복된 제조 번호를 입력할 수 없습니다`,

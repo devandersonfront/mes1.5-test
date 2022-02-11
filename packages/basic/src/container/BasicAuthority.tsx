@@ -193,6 +193,28 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
       }
       resolve(true)
     }).then(() => Notiflix.Loading.remove(1000))
+
+
+  }
+
+  const competeAuthority = (rows) => {
+
+      const tempRow = [...rows]
+      const spliceRow = [...rows]
+
+      console.log(tempRow,'tempRowtempRowtempRow')
+      spliceRow.splice(selectIndex, 1)
+      if(spliceRow){
+        if(spliceRow.some((row)=> row.name.toUpperCase() === tempRow[selectIndex].name.toUpperCase())){
+          return Notiflix.Report.warning(
+            '권한명 경고',
+            `중복되는 권한명이 존재합니다.`,
+            'Okay'
+          );
+        }
+      }
+
+      setRow(rows)
   }
 
   return (
@@ -224,7 +246,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
             width={280}
             headerList={[{key: 'name', width: 280, name: '권한명(필수)', editor: TextEditor}]}
             row={row}
-            setRow={(row) => setRow([...row])}
+            setRow={(row) => competeAuthority(row)}
             setSelectRow={(index) => {
               changeListToAuth(row[index].authorities ?? [])
               setSelectIndex(index)

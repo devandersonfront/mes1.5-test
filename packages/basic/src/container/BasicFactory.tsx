@@ -458,7 +458,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     spliceRow.splice(selectRow, 1)
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name)){
+      if(spliceRow.some((row)=> row.name.toUpperCase() === tempRow[selectRow].name.toUpperCase())){
         return Notiflix.Report.warning(
           '공장명 경고',
           `중복된 공장명을 입력할 수 없습니다`,

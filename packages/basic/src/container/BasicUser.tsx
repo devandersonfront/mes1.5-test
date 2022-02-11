@@ -612,7 +612,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       const spliceRow = [...rows]
       spliceRow.splice(selectRow, 1)
       if(spliceRow){
-        if(spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId)){
+        if(spliceRow.some((row)=> row.tmpId.toUpperCase() === tempRow[selectRow].tmpId.toUpperCase())){
           return Notiflix.Report.warning(
             '아이디 경고',
             `중복되는 아이디가 존재합니다.`,

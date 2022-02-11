@@ -559,10 +559,10 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     console.log(spliceRow,'spliceRowspliceRow')
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.customer_id === tempRow[selectRow].customer_id)){
+      if(spliceRow.some((row)=> row.customer_id === tempRow[selectRow].customer_id && row.model === tempRow[selectRow].model)){
         return Notiflix.Report.warning(
-          '거래처 경고',
-          `중복된 거래처를 입력할 수 없습니다`,
+          '같은 행 경고',
+          `거래처와 모델이 같은 행은 존재할수 없습니다.`,
           'Okay'
         );
       }
