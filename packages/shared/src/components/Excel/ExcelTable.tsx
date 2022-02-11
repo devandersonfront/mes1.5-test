@@ -36,16 +36,16 @@ interface IProps {
 
 const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd}: IProps) => {
   const [ selectedRows, setSelectedRows ] = useState<ReadonlySet<number>>(selectList ?? new Set())
-  
+
 
   useEffect(() => {
     setSelectedRows(selectList)
   }, [selectList])
 
   useEffect(() => {
-    setSelectList && setSelectList(selectedRows)    
+    setSelectList && setSelectList(selectedRows)
   }, [ selectedRows ])
-  
+
   const onePageHeight = 600;
   const rowKeyGetter = (row: any) => {
     return row.id;
@@ -62,7 +62,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
 
   let tempData:any[] = [];
 
-  
+
 
 
 
@@ -139,7 +139,6 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
         setSelectedRows(e)
       }}
       onRowClick={(i, r) => {
-        console.log('rowClick', i, r)
         setSelectRow && setSelectRow(i)
       }}
       style={{

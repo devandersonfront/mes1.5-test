@@ -60,8 +60,6 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
     }
   }, [pageInfo.page, searchKeyword, selectDate])
 
-  console.log('여기서 무한랜더링..??')
-
 
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {

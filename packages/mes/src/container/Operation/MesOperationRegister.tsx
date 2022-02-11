@@ -78,7 +78,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async (result:any, selectList:Set<any>) => {
     let res: any
-    console.log(selectList, result)
     res = await RequestMethod('post', `sheetSave`,
         result.map((row, i) => {
         if(selectList.has(row.id)){
@@ -118,7 +117,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               }
             }
           })
-          console.log(row?.input_bom)
           return {
             ...row,
             ...selectData,

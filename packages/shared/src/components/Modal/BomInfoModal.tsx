@@ -176,7 +176,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const SaveBasic = async () => {
     let  modelIdCheck = true
-    if(!row.cmId) modelIdCheck = false
+    if(!row.code) modelIdCheck = false
     let body = searchList.map((v, i) => {
       return {
         seq: i+1,
@@ -185,7 +185,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           process: row.processArray,
           type: row.type_id ?? row.type,
           product_id:row.product_id ?? row.productId,
-          code: row.cmId,
+          code: row.code,
         },
         child_product: v.tab === 2 ? {
           ...v.product

@@ -268,7 +268,10 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         />
         <div style={{width: 1570}}>
           <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
-            <HeaderButton onClick={() => {}} key={`btnCreate`}>초기화</HeaderButton>
+            {/*<HeaderButton onClick={() => {*/}
+            {/*  console.log(baseItem)*/}
+            {/*  console.log(columnlist[type])*/}
+            {/*}} key={`btnCreate`}>초기화</HeaderButton>*/}
             <HeaderButton onClick={() => saveItem(code, baseItem)} key={`btnCreate`}>저장</HeaderButton>
           </div>
           <ItemManageBox title={title} items={baseItem} setItems={setBaseItem} type={'base'}/>

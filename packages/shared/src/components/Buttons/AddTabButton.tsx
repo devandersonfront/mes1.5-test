@@ -19,7 +19,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   const selector = useSelector((state:RootState) => state.infoModal)
 
   const loadMaterialLot = async (type) => {
-    console.log(type)
     let res
     switch(type){
       case 0:
@@ -121,12 +120,10 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
               })]
             })
           }else{
-            console.log(row)
             loadMaterialLot(row.tab)
           }
         }else {
 
-          console.log(row.bom_root_id,'row.bom_root_id')
           if (row.bom_root_id) {
             dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1, product_id:row.bom_root_id}))
           } else {
