@@ -123,7 +123,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
     }
 
@@ -547,7 +547,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
           return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
         }
 
@@ -567,13 +567,14 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.customer_id === tempRow[selectRow].customer_id && row.model === tempRow[selectRow].model && row.customer_id !== undefined && row.model !== undefined)
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.customer_id === tempRow[selectRow].customer_id && row.model === tempRow[selectRow].model)){
+      if(isCheck){
         return Notiflix.Report.warning(
           '중복 경고',
           `거래처와 모델이 같은 행은 존재할수 없습니다.`,
-          'Okay'
+          '확인'
         );
       }
     }

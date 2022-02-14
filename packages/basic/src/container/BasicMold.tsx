@@ -525,15 +525,14 @@ const BasicMold = ({}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-
-    console.log(spliceRow,'spliceRowspliceRow')
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow].code && row.code !== undefined)
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.code === tempRow[selectRow].code)){
+      if(isCheck){
         return Notiflix.Report.warning(
           '코드 경고',
           `중복된 코드를 입력할 수 없습니다`,
-          'Okay'
+          '확인'
         );
       }
     }

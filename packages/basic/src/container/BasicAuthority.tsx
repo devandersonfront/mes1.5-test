@@ -199,14 +199,15 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
 
       const tempRow = [...rows]
       const spliceRow = [...rows]
-
       spliceRow.splice(selectIndex, 1)
+      const isCheck = spliceRow.some((row)=> row.name === tempRow[selectIndex].name && row.name !== undefined)
+
       if(spliceRow){
-        if(spliceRow.some((row)=> row.name.toUpperCase() === tempRow[selectIndex].name.toUpperCase())){
+        if(isCheck){
           return Notiflix.Report.warning(
             '권한명 경고',
             `중복되는 권한명이 존재합니다.`,
-            'Okay'
+            '확인'
           );
         }
       }

@@ -58,6 +58,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
   })
 
   const [typesState, setTypesState] = useState<number>(null);
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   const changeSetTypesState = (value:number) => {
     setTypesState(value);
@@ -499,6 +500,29 @@ const BasicMachineV1u = ({ option}: IProps) => {
     }
   }
 
+  const competeMachineV1u = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    console.log(spliceRow,'spliceRowspliceRowspliceRow')
+    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined)
+
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '제조 번호 경고',
+          `중복되는 제조 번호가 존재합니다.`,
+          '확인'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+}
+
+
   return (
     <div>
         <PageHeader
@@ -538,11 +562,12 @@ const BasicMachineV1u = ({ option}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow(e)
+            competeMachineV1u(e)
           }}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent

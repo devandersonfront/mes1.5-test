@@ -182,7 +182,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       return Notiflix.Report.warning(
         '선택 경고',
         `선택된 정보가 없습니다.`,
-        'Okay',
+        '확인',
       );
     }
 
@@ -253,14 +253,14 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         Notiflix.Report.warning(
           '비밀번호 경고',
           `비밀번호와 비밀번호 확인이 서로 일치하지 않습니다.`,
-          'Okay',
+          '확인',
         );
       }
     }else{
       return Notiflix.Report.warning(
         '필수값 경고',
         `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
-        'Okay',
+        '확인',
       );
     }
   
@@ -571,7 +571,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
           return Notiflix.Report.warning(
             '선택 경고',
             `선택된 정보가 없습니다.`,
-            'Okay',
+            '확인',
           );
 
         }else{
@@ -587,7 +587,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
               return Notiflix.Report.warning(
               '권한 경고',
               `마스터 권한은 삭제하실수 없습니다.`,
-              'Okay',
+              '확인',
             );
           }
         }
@@ -620,7 +620,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
           return Notiflix.Report.warning(
             '아이디 경고',
             `중복되는 아이디가 존재합니다.`,
-            'Okay'
+            '확인'
           );
         }
       }

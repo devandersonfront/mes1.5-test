@@ -46,14 +46,18 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      if(row.bom_root_id){
+      // if(row.bom_root_id){
+      //   SearchBasic().then(() => {
+      //     Notiflix.Loading.remove()
+      //   })
+      // } else {
+      //   setIsOpen(false)
+      //   Notiflix.Report.warning("데이터를 저장해주시기 바랍니다.", "", "확인",)
+      // }
         SearchBasic().then(() => {
           Notiflix.Loading.remove()
         })
-      } else {
-        setIsOpen(false)
-        Notiflix.Report.warning("데이터를 저장해주시기 바랍니다.", "", "확인",)
-      }
+      
     }else{
       dispatch(reset_summary_info());
     }
@@ -177,7 +181,11 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const SaveBasic = async () => {
     let  modelIdCheck = true
     if(!row.code) modelIdCheck = false
+
+    console.log(row,'row!!!!!')
     let body = searchList.map((v, i) => {
+
+      console.log(v,'vvvvvv')
       return {
         seq: i+1,
         parent: {

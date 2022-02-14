@@ -388,7 +388,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
         return Notiflix.Report.warning(
           '코드 경고',
           `중복된 코드를 입력할 수 없습니다`,
-          'Okay'
+          '확인'
         );
       }
     }

@@ -252,7 +252,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
     //   Notiflix.Report.failure(
     //     '권한 오류',
     //     '관리자만 항목관리가 가능합니다.',
-    //     'Okay', () => {
+    //     '확인', () => {
     //       router.back()
     //     }
     //   )

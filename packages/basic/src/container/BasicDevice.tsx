@@ -136,7 +136,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
     }
 
@@ -567,7 +567,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
           return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
         }
         
@@ -584,13 +584,14 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined)
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode)){
+      if(isCheck){
         return Notiflix.Report.warning(
           '제조번호 경고',
           `중복된 제조 번호를 입력할 수 없습니다`,
-          'Okay'
+          '확인'
         );
       }
     }

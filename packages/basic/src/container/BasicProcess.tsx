@@ -121,7 +121,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
     }
 
@@ -490,7 +490,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
           return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
         }
         
@@ -509,15 +509,13 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-
-    console.log(spliceRow,'spliceRowspliceRow')
-
+    
     if(spliceRow){
-      if(spliceRow.some((row)=> row.customer_id === tempRow[selectRow].customer_id)){
+      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined)){
         return Notiflix.Report.warning(
           '공정명 경고',
           `중복된 공정명을 입력할 수 없습니다`,
-          'Okay'
+          '확인'
         );
       }
     }
@@ -569,6 +567,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
+        setSelectRow={setSelectRow}
         loadEvent={LoadBasic}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
