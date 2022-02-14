@@ -489,7 +489,6 @@ const BasicProduct = ({}: IProps) => {
             id: `process_${random_id}`,
             name: null,
             additional: [],
-            type:2,
           },
           ...basicRow
         ])
