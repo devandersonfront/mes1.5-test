@@ -124,6 +124,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return Axios.delete(tmpUrl, token && {'headers': {'Authorization': token}, responseType: contentsType})
               .then((result) => {
                 // if(result.data.status !== 200){
+                console.log(result)
                 //   Notiflix.Report.failure('불러올 수 없습니다.', result.data.message, '확인')
                 //   return false
                 // }
@@ -158,6 +159,9 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           Notiflix.Loading.remove(300)
           if(error.response.status === 400) {
             Notiflix.Report.failure('삭제할 수 없습니다.', '입력값을 확인해주세요', '확인')
+          }else if(error.response.status === 422){
+            Notiflix.Loading.remove(300)
+            Notiflix.Report.failure('권한 에러', error.response.data.message, '확인', )
           }
           return false
         })
