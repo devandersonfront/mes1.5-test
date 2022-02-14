@@ -32,9 +32,11 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   const [excelDownOpen, setExcelDownOpen] = useState<boolean>(false)
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
 
+  
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     name: "", id: ""
   }])
+
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist.member)
   const [selectList, setSelectList] = useState<Set<any>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(optList)
@@ -615,8 +617,10 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       const tempRow = [...rows]
       const spliceRow = [...rows]
       spliceRow.splice(selectRow, 1)
+      const isCheck = spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId && row.tmpId !== undefined)
+
       if(spliceRow){
-        if(spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId)){
+        if(isCheck){
           return Notiflix.Report.warning(
             '아이디 경고',
             `중복되는 아이디가 존재합니다.`,
