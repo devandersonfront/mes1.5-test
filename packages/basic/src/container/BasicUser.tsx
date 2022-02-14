@@ -32,9 +32,11 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   const [excelDownOpen, setExcelDownOpen] = useState<boolean>(false)
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
 
+  
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     name: "", id: ""
   }])
+
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist.member)
   const [selectList, setSelectList] = useState<Set<any>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(optList)
