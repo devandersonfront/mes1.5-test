@@ -58,7 +58,8 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable:menu.moddable
             }
           } else if(menu.colName === 'id' && column.key === 'tmpId'){
             menuData = {
@@ -66,7 +67,8 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable:menu.moddable
             }
           }
         })
@@ -77,22 +79,34 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
             ...menuData,
           }
         }
+
       }).filter((v:any) => v)
 
-      setColumn([...tmpColumn])
+      setColumn([...tmpColumn.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     }
   }
 
   const SaveBasic = async () => {
     let res: any
     let checkValue = true;
-    basicRow.map((row) => {
-      if(!Number(row.amount) && row.amount !== "0"){
-        Notiflix.Report.warning("경고", "정확한 수주량을 입력해주세요.", "확인", )
-        checkValue = false;
-        return;
-      }
-    })
+
+    if(selectList.size <= 0) {
+      Notiflix.Report.warning("경고", "데이터를 선택해주세요.", "확인")
+      return
+    }else{
+      basicRow.map((row) => {
+        if(!Number(row.amount) && row.amount !== "0"){
+          Notiflix.Report.warning("경고", "정확한 수주량을 입력해주세요.", "확인", )
+          checkValue = false;
+          return;
+        }
+      })
+    }
 
     if(!checkValue) return
 
@@ -168,10 +182,18 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
 
         break;
       case 2:
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{},
-          ()=>{}
-        )
+        if(selectList.size <= 0){
+          Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
+        }else{
+          Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+            ()=>{
+              const filter = basicRow.filter((row, index) => !selectList.has(row.id))
+              setBasicRow([...filter])
+              setSelectList(new Set())
+            },
+            ()=>{}
+          )
+        }
         break;
     }
   }
