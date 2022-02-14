@@ -32,12 +32,14 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+
+  console.log(selectList,'selectListselectListselectList')
 
   useEffect(() => {
     if(isOpen) {
@@ -96,7 +98,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
         page: res.page,
         total: res.totalPages,
       })
-
       setSearchList([...searchList])
   }
   const saveSubFactory = async () => {
@@ -118,27 +119,20 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     //description :
 
 
-    searchList.map((value) => {
-      let oneSubFactory:any = {...value, manager:value.manager_info};
-
-      if(value.manager_info.user_idPK && value.manager_info.user_id){
-        oneSubFactory.manager.user_id = value.manager_info.user_idPK;
-      }
-      oneSubFactory.manager.authority = value.manager_info.authorityPK;
-      oneSubFactory.factory_id = row.factory_id;
-
-      result.push(oneSubFactory);
-    })
-    if(result.filter((subFactory) => {
-      if(subFactory.factory_id){
-        return true
+    const filterList = searchList.map((list)=>{
+      if(!list.manager){
+        return {...list, manager : list.manager_info , managerId : list.manager_info?.user_id}
       }else{
-        return false
+        return list
       }
-    }).length > 0){
-      await RequestMethod("post", "subFactorySave", result)
+    })
+
+   
+
+    if(filterList){
+      await RequestMethod("post", "subFactorySave", filterList)
           .then((res) => {
-            onRowChange({...row, subFactories:result})
+            onRowChange({...row, subFactories:filterList})
             Notiflix.Loading.remove(300);
             Notiflix.Report.success("확인","저장되었습니다.","확인",() => setIsOpen(false))
 
@@ -215,7 +209,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
-  console.log(searchList,'searchList')
 
   return (
     <SearchModalWrapper >
@@ -333,7 +326,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               if(selectRow === 0){
                 return
               }
-              let tmpRow = searchList
+              let tmpRow = [...searchList]
 
               let tmp = tmpRow[selectRow]
               tmpRow[selectRow] = tmpRow[selectRow - 1]
@@ -352,7 +345,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               if(selectRow === searchList.length-1){
                 return
               }
-              let tmpRow = searchList
+              let tmpRow = [...searchList]
 
               let tmp = tmpRow[selectRow]
               tmpRow[selectRow] = tmpRow[selectRow + 1]
@@ -377,7 +370,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
               row={searchList ?? [{}]}
               setRow={(e) => {
-                
+
                 let tmp: Set<any> = selectList
                 e.map(v => {
                   if(v.isChange) tmp.add(v.id)
@@ -403,7 +396,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
                 setSelectList(e as Set<number>);
               }}
               setSelectRow={(e) => {
-                
+
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{
                     v.border = false;
@@ -428,6 +421,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 setIsOpen(false)
+                setSelectList(new Set())
               }}
               style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
@@ -436,6 +430,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 saveSubFactory();
+                setSelectList(new Set())
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >

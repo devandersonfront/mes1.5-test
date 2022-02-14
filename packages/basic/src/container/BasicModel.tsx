@@ -44,6 +44,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     page: 1,
     total: 1
   })
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   useEffect(() => {
     if(keyword){
@@ -119,7 +120,11 @@ const BasicModel = ({page, keyword, option}: IProps) => {
   const SaveBasic = async () => {
 
     if(selectList.size === 0){
-      return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+      return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
     }
 
     const searchAiID = (rowAdditional:any[], index:number) => {
@@ -189,7 +194,11 @@ const BasicModel = ({page, keyword, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v))
+        }).filter((v) => v)).catch((error)=>{
+          if(error.status === 409) {
+            return Notiflix.Report.failure('저장할 수 없습니다.', error?.data.message, '확인')
+          }
+        })
 
 
     if(res){
@@ -535,7 +544,11 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       case 5:
         
         if(selectList.size === 0){
-          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
         }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
@@ -547,6 +560,25 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         break;
 
     }
+  }
+
+  const competeModel = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.customer_id === tempRow[selectRow].customer_id && row.model === tempRow[selectRow].model)){
+        return Notiflix.Report.warning(
+          '중복 경고',
+          `거래처와 모델이 같은 행은 존재할수 없습니다.`,
+          'Okay'
+        );
+      }
+    }
+
+    setBasicRow(rows)
   }
 
   return (
@@ -587,7 +619,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
-          setBasicRow(e)
+          competeModel(e)
         }}
         selectList={selectList}
         //@ts-ignore

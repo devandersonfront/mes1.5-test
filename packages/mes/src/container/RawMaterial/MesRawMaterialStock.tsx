@@ -476,11 +476,11 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         }))
         router.push('/mes/rawmaterialV1u/modify')
         break;
+      // case 1:
+      //   // router.push(`/mes/item/manage/mold`)
+      //   SaveBasic()
+      //   break;
       case 1:
-        // router.push(`/mes/item/manage/mold`)
-        SaveBasic()
-        break;
-      case 2:
         DeleteBasic()
         break;
     }
@@ -514,7 +514,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         setSelectDate={setSelectDate}
         title={"원자재 재고 현황"}
         buttons={
-          [ '수정하기', '저장하기', '삭제']
+          [ '수정하기', '삭제']
         }
         buttonsOnclick={
           // (e) => {

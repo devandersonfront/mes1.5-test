@@ -90,7 +90,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         .catch((error) => {
           Notiflix.Loading.remove(300)
           if(error.response.status === 400) {
-            Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
+            Notiflix.Report.failure('저장할 수 없습니다.', '필수값을 입력 해주세요', '확인')
           }else if(error.response.status === 500){
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
           }else if(error.response.status === 404){

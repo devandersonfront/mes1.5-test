@@ -3,20 +3,20 @@ import styled from "styled-components";
 import {IExcelHeaderType} from "../../common/@types/type";
 
 interface IProps {
-  row: any
-  column: IExcelHeaderType
-  setRow: (row: any) => void
+    row: any
+    column: IExcelHeaderType
+    setRow: (row: any) => void
 }
 
 const TimeFormatter = ({row, column, setRow}: IProps) => {
-  return(
-    <Background style={{background: "white"}} onClick={()=>{
-    }} >
-      <p style={{padding: 0, color: row[column.key] ? '#0D0D0D' : '#0D0D0D66', width: '100%', textAlign: column.textAlign ?? 'left' }}>
-        {row[column.key] ?? "00:00:00"}
-      </p>
-    </Background>
-  )
+    return(
+        <Background style={{background: "white"}} onClick={()=>{
+        }} >
+            <p style={{padding: 0, color: row[column.key] ? '#0D0D0D' : '#0D0D0D66', width: '100%', textAlign: column.textAlign ?? 'left' }}>
+                {row[column.key] ?? "00:00:00"}
+            </p>
+        </Background>
+    )
 }
 
 const Background = styled.div`

@@ -136,13 +136,18 @@ const BasicMachineV1u = ({ option}: IProps) => {
 
   const SaveBasic = async () => {
     let result = [];
+    let mfrCodeCheck = true
     basicRow.map((row, index)=>{
       if(selectList.has(row.id)){
+        if(!row.mfrCode) mfrCodeCheck = false;
         result.push(cleanForRegister(row))
       }
     })
     if(result.length === 0) {
       Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인", )
+      return
+    }else if(!mfrCodeCheck){
+      Notiflix.Report.warning("경고","제조 번호를 입력해주세요.","확인", )
       return
     }
       RequestMethod('post', `machineSave`, result)
@@ -190,6 +195,8 @@ const BasicMachineV1u = ({ option}: IProps) => {
     //   })
     // }
 
+    setSelectList(new Set())
+
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -223,6 +230,8 @@ const BasicMachineV1u = ({ option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const DeleteBasic = async () => {
@@ -409,7 +418,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
     }
     tempData.weldingType = weldingPK;
     tempData.interwork = value.interworkPK === "true";
-    tempData.devices = value.devices.map((device) => {
+    tempData.devices = value?.devices?.map((device) => {
       return {...device, type: device.type_id}
     })
     tempData.additional =[

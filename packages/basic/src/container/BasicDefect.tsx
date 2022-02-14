@@ -34,8 +34,6 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
 
   const router = useRouter()
 
-  console.log(processBasicRow,'processBasicRowprocessBasicRow')
-
   useEffect(()=>{
     if(processBasicRow.length > 0){
       LoadPauseList(processBasicRow[selectRow].process_id);
@@ -195,7 +193,11 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         // let validation = true;
 
         if(selectList.size === 0){
-          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
         }
 
         Notiflix.Loading.standard();
@@ -224,9 +226,13 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
       case 4 :
 
         if(selectList.size === 0){
-          return Notiflix.Notify.warning('선택된 정보가 없습니다.')
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        'Okay',
+        );
         }
-        
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           async()=>{
             const idList = [];

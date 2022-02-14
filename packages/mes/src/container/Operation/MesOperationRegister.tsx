@@ -77,9 +77,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async (result:any, selectList:Set<any>) => {
-    // if(selectList){
-    //   return Notiflix.Report.warning("저장할 ","관리자에게 문의하세요.", "확인");
-    // }
     let res: any
     res = await RequestMethod('post', `sheetSave`,
         result.map((row, i) => {
@@ -124,15 +121,15 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               ...row,
               ...selectData,
               os_id:undefined,
-              // input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
-              //   // return {
-              //   //   ...bom,
-              //   //   setting:bom.setting === "여" || bom.setting === 1 ? 1 : 0
-              //   // }
-              //   bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
-              //   return {...bom}
-              // })] ?? [],
-              input_bom : [...row?.input_bom?.filter((bom)=> bom.bom.setting > 0)],
+              version: undefined,
+              input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
+                // return {
+                //   ...bom,
+                //   setting:bom.setting === "여" || bom.setting === 1 ? 1 : 0
+                // }
+                bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
+                return {...bom}
+              })] ?? [],
               status: 1,
               additional: [
                 ...additional.map(v => {
@@ -339,8 +336,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
       }).filter(v => v)]
       // setSelectList(tmp)
-
-
     }
   }
 
@@ -436,10 +431,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               setSelectList(tmp)
             }}
             selectList={selectList}
-            setSelectList={(select) => {
-              //@ts-ignore
-              setSelectList(select)
-            }}
+            //@ts-ignore
+            setSelectList={setSelectList}
             height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         {/*<ExcelDownloadModal*/}

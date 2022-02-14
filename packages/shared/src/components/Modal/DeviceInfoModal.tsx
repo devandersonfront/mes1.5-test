@@ -38,12 +38,14 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+
+
   useEffect(() => {
     if(isOpen) {
       if(row.devices !== undefined && row.devices !== null && row.devices.length > 0){
@@ -53,6 +55,8 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
         })
         setSearchList(rowDevices);
       }
+    }else{
+      setSearchList([]);
     }
   }, [isOpen, searchKeyword])
 
@@ -110,6 +114,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
             }}>
               <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
                 setIsOpen(true)
+                setSelectRow(undefined)
               }}>
                 <p style={{color: 'white', textDecoration: 'underline'}}>주변장치 보기</p>
               </UploadButton>
@@ -265,6 +270,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               <p>행 추가</p>
             </Button>
             <Button style={{marginLeft: 16}}  onClick={() => {
+
               if(Number(selectRow) === 0 || selectRow){
                 searchList.splice(selectRow, 1);
                 setSearchList([

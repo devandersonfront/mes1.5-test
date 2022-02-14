@@ -141,10 +141,10 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set())
 
 
-  const checkValidation = () => {
-    dispatch(getUserInfoAction())
-    return user.authority === 'MASTER' ?? undefined
-  }
+  // const checkValidation = () => {
+  //   dispatch(getUserInfoAction())
+  //   return user.authority === 'MASTER' ?? undefined
+  // }
 
   const listItem = async (code: string) => {
     const res =  await RequestMethod('get', 'itemList', {
@@ -245,17 +245,18 @@ const ItemManagePage = ({title, type, code}: IProps) => {
 
   useEffect(() => {
     Notiflix.Loading.standard();
-    if(checkValidation()){
-      listItem(code)
-    }else{
-      Notiflix.Report.failure(
-        '권한 오류',
-        '관리자만 항목관리가 가능합니다.',
-        'Okay', () => {
-          router.back()
-        }
-      )
-    }
+    listItem(code)
+    // if(checkValidation()){
+
+    // }else{
+    //   Notiflix.Report.failure(
+    //     '권한 오류',
+    //     '관리자만 항목관리가 가능합니다.',
+    //     'Okay', () => {
+    //       router.back()
+    //     }
+    //   )
+    // }
   }, [])
 
   return (
@@ -268,7 +269,10 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         />
         <div style={{width: 1570}}>
           <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
-            <HeaderButton onClick={() => {}} key={`btnCreate`}>초기화</HeaderButton>
+            {/*<HeaderButton onClick={() => {*/}
+            {/*  console.log(baseItem)*/}
+            {/*  console.log(columnlist[type])*/}
+            {/*}} key={`btnCreate`}>초기화</HeaderButton>*/}
             <HeaderButton onClick={() => saveItem(code, baseItem)} key={`btnCreate`}>저장</HeaderButton>
           </div>
           <ItemManageBox title={title} items={baseItem} setItems={setBaseItem} type={'base'}/>
