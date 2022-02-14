@@ -411,7 +411,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
                         setOptionIndex(option)
                     }}
                     optionIndex={optionIndex}
-                    title={"원자재 기본정보"}
+                    title={"원자재 기준정보"}
                     buttons={
                              ['', '항목관리', '저장하기']
                     }
@@ -455,8 +455,8 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
               isOpen={excelOpen}
               column={column}
               basicRow={basicRow}
-              filename={`원자재기본정보`}
-              sheetname={`원자재기본정보`}
+              filename={`원자재기준정보`}
+              sheetname={`원자재기준정보`}
               selectList={selectList}
               tab={'ROLE_BASE_06'}
               setIsOpen={setExcelOpen}

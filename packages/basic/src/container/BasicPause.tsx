@@ -195,7 +195,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
         }
 
@@ -229,7 +229,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
         }
         
