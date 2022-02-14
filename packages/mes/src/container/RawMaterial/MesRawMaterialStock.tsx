@@ -58,8 +58,8 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
 
 
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment().startOf('isoWeek').format('YYYY-MM-DD'),
-    to: moment().endOf('isoWeek').format('YYYY-MM-DD')
+    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    to: moment().format('YYYY-MM-DD')
   });
 
   const [nzState, setNzState] = useState<boolean>(false);

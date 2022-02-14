@@ -87,7 +87,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         return Notiflix.Report.warning("경고", "원자재 CODE를 선택해 주시기 바랍니다.", "확인",)
       }
       if(v.lot_number === undefined){
-        return Notiflix.Report.warning("경고", "원자재 CODE를 선택해 주시기 바랍니다.", "확인",)
+        return Notiflix.Report.warning("경고", "원자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
       }
     })
 

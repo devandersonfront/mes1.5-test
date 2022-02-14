@@ -213,8 +213,6 @@ const MesSubMaterialStockModify = ({page, keyword, option}: IProps) => {
       case 0:
         SaveBasic()
         break;
-      case 1:
-        break;
     }
   }
 
@@ -223,7 +221,7 @@ const MesSubMaterialStockModify = ({page, keyword, option}: IProps) => {
       <PageHeader
         title={"부자재 입고 (수정)"}
         buttons={
-          ['저장하기', '삭제']
+          ['저장하기']
         }
         buttonsOnclick={
           onClickHeaderButton
