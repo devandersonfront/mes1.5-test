@@ -135,13 +135,15 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       },
-      params:first ?
+      params:
+          // first ?
+          // {
+          //   nz:nzState,
+          //   from:"2000-01-01",
+          //   to:moment().format("yyyy-MM-DD")
+          // }
+          // :
           {
-            nz:nzState,
-            from:"2000-01-01",
-            to:moment().format("yyyy-MM-DD")
-          }
-          :{
               nz:nzState,
                   from:selectDate.from,
                   to:selectDate.to
