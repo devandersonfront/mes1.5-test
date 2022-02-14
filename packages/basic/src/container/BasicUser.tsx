@@ -615,6 +615,8 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       const tempRow = [...rows]
       const spliceRow = [...rows]
       spliceRow.splice(selectRow, 1)
+      const isCheck = spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId && row.tmpId !== undefined)
+
       if(spliceRow){
         if(spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId)){
           return Notiflix.Report.warning(
