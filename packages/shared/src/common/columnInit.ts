@@ -456,7 +456,6 @@ export const columnlist: any = {
   ],
 
   substockV1u: [
-    {key: 'elapsed', name: '경과일', formatter: UseDateCell, width: 118},
     {key: 'wip_id',name:'부자재 CODE', formatter: PlaceholderBox, placeholder: '부자재 CODE', width: 118},
     {key: 'name', name:'부자재 품명', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
     {key: 'unit', name:'단위', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
