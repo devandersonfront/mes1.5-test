@@ -380,7 +380,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
                 if(selectList.size === 1) {
                   setExcelOpen(true)
                 }else{
-                  Notiflix.Report.warning("경고","데이터를 하나 선택해주시기 바랍니다.","확인")
+                  Notiflix.Report.warning("경고","작업일보는 한 개씩만 수정 가능합니다.","확인")
                 }
                 break
               }

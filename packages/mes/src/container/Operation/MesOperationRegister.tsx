@@ -77,78 +77,79 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async (result:any, selectList:Set<any>) => {
+    // if(selectList){
+    //   return Notiflix.Report.warning("저장할 ","관리자에게 문의하세요.", "확인");
+    // }
     let res: any
-    console.log(selectList, result)
     res = await RequestMethod('post', `sheetSave`,
         result.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
-
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
-
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
+          if(selectList.has(row.id)){
+            let selectKey: string[] = []
+            let additional:any[] = []
+            column.map((v) => {
+              if(v.selectList){
+                selectKey.push(v.key)
               }
-            }
 
-            if(v === 'unitWeight') {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(row['unitWeight'])
+              if(v.type === 'additional'){
+                additional.push(v)
               }
-            }
+            })
 
-            if(v === 'tmpId') {
-              selectData = {
-                ...selectData,
-                id: row['tmpId']
-              }
-            }
-          })
-          console.log(row?.input_bom)
-          return {
-            ...row,
-            ...selectData,
-            os_id:undefined,
-            version: undefined,
-            input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
-              // return {
-              //   ...bom,
-              //   setting:bom.setting === "여" || bom.setting === 1 ? 1 : 0
-              // }
-              bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
-              return {...bom}
-            })] ?? [],
-            status: 1,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
-                  }
+            let selectData: any = {}
+
+            Object.keys(row).map(v => {
+              if(v.indexOf('PK') !== -1) {
+                selectData = {
+                  ...selectData,
+                  [v.split('PK')[0]]: row[v]
                 }
-              }).filter((v) => v)
-            ]
-          }
+              }
 
-        }
-      }).filter((v) => v))
+              if(v === 'unitWeight') {
+                selectData = {
+                  ...selectData,
+                  unitWeight: Number(row['unitWeight'])
+                }
+              }
+
+              if(v === 'tmpId') {
+                selectData = {
+                  ...selectData,
+                  id: row['tmpId']
+                }
+              }
+            })
+            return {
+              ...row,
+              ...selectData,
+              os_id:undefined,
+              // input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
+              //   // return {
+              //   //   ...bom,
+              //   //   setting:bom.setting === "여" || bom.setting === 1 ? 1 : 0
+              //   // }
+              //   bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
+              //   return {...bom}
+              // })] ?? [],
+              input_bom : [...row?.input_bom?.filter((bom)=> bom.bom.setting > 0)],
+              status: 1,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
+                  }
+                }).filter((v) => v)
+              ]
+            }
+
+          }
+        }).filter((v) => v))
 
 
     if(res){
@@ -217,27 +218,27 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       } else{
         let random_id = Math.random()*1000;
         resultData = [
-            {
-              ...res,
-              first:true,
-              // contract_id:res.identification,
-              contract_id:res.contract?.identification ?? "-",
-              date: res?.data === undefined ? moment().format("YYYY-MM-DD") : res.date,
-              deadline: res?.deadline === undefined ? moment().format("YYYY-MM-DD") : res.deadline,
-              customer:res.product.customer,
-              customer_id: res.product.customer?.name,
-              model:res.product.model,
-              cm_id: res.product.model.model,
-              product_id: res.product.code,
-              type:res.product.type === 0 ? "반제품" : res.product.type === 1 ? "재공품" :"완제품" ,
-              type_id:res.product.type,
-              unit: res.product.unit,
-              bom_root_id: res.product?.bom_root_id,
-              id: "operation_"+random_id,
-              name:res.product?.name,
-              process_id:res.product?.process?.name ?? "-",
-            }
-          ]
+          {
+            ...res,
+            first:true,
+            // contract_id:res.identification,
+            contract_id:res.contract?.identification ?? "-",
+            date: res?.data === undefined ? moment().format("YYYY-MM-DD") : res.date,
+            deadline: res?.deadline === undefined ? moment().format("YYYY-MM-DD") : res.deadline,
+            customer:res.product.customer,
+            customer_id: res.product.customer?.name,
+            model:res.product.model,
+            cm_id: res.product.model.model,
+            product_id: res.product.code,
+            type:res.product.type === 0 ? "반제품" : res.product.type === 1 ? "재공품" :"완제품" ,
+            type_id:res.product.type,
+            unit: res.product.unit,
+            bom_root_id: res.product?.bom_root_id,
+            id: "operation_"+random_id,
+            name:res.product?.name,
+            process_id:res.product?.process?.name ?? "-",
+          }
+        ]
       }
       return resultData;
       // setBasicRow([
@@ -338,6 +339,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
       }).filter(v => v)]
       // setSelectList(tmp)
+
+
     }
   }
 
@@ -353,17 +356,17 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           Notiflix.Report.warning("경고","한개의 데이터만 선택해 주시기 바랍니다.","확인");
         }
         break;
-      // case 1:
-      //   const randomId = Math.random()*1000;
-      //   setBasicRow([
-      //     {
-      //       id:"operation_"+randomId,
-      //       date: moment().format('YYYY-MM-DD'),
-      //       deadline: moment().format('YYYY-MM-DD')
-      //     },
-      //     ...basicRow
-      //   ])
-      //   break;
+        // case 1:
+        //   const randomId = Math.random()*1000;
+        //   setBasicRow([
+        //     {
+        //       id:"operation_"+randomId,
+        //       date: moment().format('YYYY-MM-DD'),
+        //       deadline: moment().format('YYYY-MM-DD')
+        //     },
+        //     ...basicRow
+        //   ])
+        //   break;
       case 2:
         SaveBasic(basicRow, selectList)
         break;
@@ -395,59 +398,61 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   }, [])
 
   return (
-    <div>
-      <PageHeader
-        title={"작업지시서 등록"}
-        buttons={['BOM 기준으로 보기', '', '저장하기', '삭제']}
-        buttonsOnclick={onClickHeaderButton}
-      />
-      <ExcelTable
-        editable
-        // resizable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
-        row={basicRow}
-        setRow={async(e) => {
-          const eData = e.filter((eValue) => {
-            let equal = false;
-            basicRow.map((bValue)=>{
-              if(eValue.product?.product_id === bValue.product?.product_id){
-                equal = true
+      <div>
+        <PageHeader
+            title={"작업지시서 등록"}
+            buttons={['BOM 기준으로 보기', '', '저장하기', '삭제']}
+            buttonsOnclick={onClickHeaderButton}
+        />
+        <ExcelTable
+            editable
+            // resizable
+            headerList={[
+              SelectColumn,
+              ...column
+            ]}
+            row={basicRow}
+            setRow={async(e) => {
+              const eData = e.filter((eValue) => {
+                let equal = false;
+                basicRow.map((bValue)=>{
+                  if(eValue.product?.product_id === bValue.product?.product_id){
+                    equal = true
+                  }
+                })
+                if(basicRow[0].product == undefined) return "first"
+                if(!equal) return eValue
+              })
+              if(eData.length <= 0){
+                setSelectList(new Set());
+                setBasicRow([...e])
+              }else{
+                setSelectList(new Set());
+                const resultData = await loadLatestSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
+                // const resultData = await loadGraphSheet(e[0].product.product_id, e[0]).then((value) => value)
+                setBasicRow([...resultData])
               }
-            })
-            if(basicRow[0].product == undefined) return "first"
-            if(!equal) return eValue
-          })
-          if(eData.length <= 0){
-            setSelectList(new Set());
-            setBasicRow([...e])
-          }else{
-            setSelectList(new Set());
-            const resultData = await loadLatestSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
-            // const resultData = await loadGraphSheet(e[0].product.product_id, e[0]).then((value) => value)
-            setBasicRow([...resultData])
-          }
-          let tmp: Set<any> = selectList;
-          setSelectList(tmp)
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`금형기본정보`}*/}
-      {/*  sheetname={`금형기본정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
-    </div>
+              let tmp: Set<any> = selectList;
+              setSelectList(tmp)
+            }}
+            selectList={selectList}
+            setSelectList={(select) => {
+              //@ts-ignore
+              setSelectList(select)
+            }}
+            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        />
+        {/*<ExcelDownloadModal*/}
+        {/*  isOpen={excelOpen}*/}
+        {/*  column={column}*/}
+        {/*  basicRow={basicRow}*/}
+        {/*  filename={`금형기본정보`}*/}
+        {/*  sheetname={`금형기본정보`}*/}
+        {/*  selectList={selectList}*/}
+        {/*  tab={'ROLE_BASE_07'}*/}
+        {/*  setIsOpen={setExcelOpen}*/}
+        {/*/>*/}
+      </div>
   );
 }
 
@@ -462,4 +467,3 @@ export const getServerSideProps = (ctx: NextPageContext) => {
 }
 
 export {MesOperationRegister};
-

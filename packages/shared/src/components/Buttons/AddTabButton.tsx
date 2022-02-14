@@ -87,7 +87,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         if(column.key === 'lot'){
           if(column.type === 'readonly'){
             let lot = []
-
+            console.log(row)
             if(row.bom){
               if(row.bom[row.seq-1].lot && !Array.isArray(row.bom[row.seq-1].lot)){
                 lot = [row.bom[row.seq-1].lot]
