@@ -60,7 +60,7 @@ const MesStockProductList = ({page, keyword, option}) => {
       })
     })
     // }
-  }, [page, keyword, option])
+  }, [page, keyword, option, selectDate])
 
   const changeSelectDate = (from:string, to:string) => {
     setSelectDate({from:from, to:to});
@@ -165,7 +165,7 @@ const MesStockProductList = ({page, keyword, option}) => {
         if(res.summaries.length > 0){
           tmpColumn = res.summaries[0]?.statistics?.logs?.map((col)=>{
             result.push(
-              {key:col.date, name:col.date, formatter: UnitContainer, unitData: 'EA', width:100},
+              {key:col.date, name:col.date.split('-')[0].substring(2)+"-"+col.date.split('-')[1]+"-"+col.date.split('-')[2], formatter: UnitContainer, unitData: 'EA', width:100},
             );
           })
           setDateColumn([
@@ -277,9 +277,6 @@ const MesStockProductList = ({page, keyword, option}) => {
     }
   }
 
-  useEffect(()=>{
-    LoadData();
-  },[selectDate, keyword])
 
   useEffect(()=>{
     let modelWidth = 0;
