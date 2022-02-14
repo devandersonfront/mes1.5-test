@@ -127,8 +127,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               //   ...bom,
               //   setting:bom.setting === "여" || bom.setting === 1 ? 1 : 0
               // }
-              bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
-              return {...bom}
+              bom.bom.setting = bom.bom?.setting === "여" || bom.bom?.setting === 1 ? 1 : 0
+              return bom
             })] ?? [],
             status: 1,
             additional: [
