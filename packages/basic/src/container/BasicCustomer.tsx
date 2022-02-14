@@ -61,7 +61,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
       return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
     }
 
@@ -494,7 +494,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
           return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
         }
 
@@ -512,13 +512,14 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined)
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name)){
+      if(isCheck){
         return Notiflix.Report.warning(
           '거래처명 경고',
           `중복된 거래처명을 입력할 수 없습니다`,
-          'Okay'
+          '확인'
         );
       }
     }

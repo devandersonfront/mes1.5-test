@@ -240,6 +240,22 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               {/*  <p>엑셀로 받기</p>*/}
               {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
+                onRowChange({
+                  ...row,
+                  poor_quantity: 0,
+                  defect_reasons: [
+                    ...searchList.map(v => ({
+                      amount: 0,
+                    }))
+                  ],
+                  isChange: true
+                })
+                setSearchList([...row.defect_reasons.map(v => {
+                  return ({
+                    ...v,
+                    amount: 0,
+                  })
+                })])
                 setIsOpen(false)
               }}>
                 <img style={{width: 20, height: 20}} src={IcX}/>
@@ -300,6 +316,22 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             {
               column.type !== 'readonly' && <div
                   onClick={() => {
+                    onRowChange({
+                      ...row,
+                      poor_quantity: 0,
+                      defect_reasons: [
+                        ...searchList.map(v => ({
+                          amount: 0,
+                        }))
+                      ],
+                      isChange: true
+                    })
+                    setSearchList([...row.defect_reasons.map(v => {
+                      return ({
+                        ...v,
+                        amount: 0,
+                      })
+                    })])
                     setIsOpen(false)
                   }}
                   style={{width: "50%", height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}

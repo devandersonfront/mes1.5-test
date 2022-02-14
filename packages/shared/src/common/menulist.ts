@@ -35,7 +35,7 @@ const BASIC_MENUS: IMenuType[] = [
       {title: '유저 관리', url: '/mes/basic/user?page=1'},
     ]
   },
-  {title: '공장 기본정보', url: '/mes/basic/factory'},
+  {title: '공장 기준정보', url: '/mes/basic/factory'},
   {
     title: '고객사 관리', url: '',
     subMenu: [
@@ -50,16 +50,16 @@ const BASIC_MENUS: IMenuType[] = [
     ]
   },
   {
-    title: '품질 기본정보', url: '',
+    title: '품질 기준정보', url: '',
     subMenu: [
       {title: '공정별 자주검사 항목 등록', url: '/mes/basic/register/defect'},
     ]
   },
   {title: '주변장치 기준정보', url: '/mes/basic/device'},
-  // {title: '기계 기본정보', url: '/mes/basic/machine?page=1'},
+  // {title: '기계 기준정보', url: '/mes/basic/machine?page=1'},
   {title: '기계 기준정보', url: '/mes/basic/machineV1u'},
   {title: '제품 등록 관리', url: '/mes/basic/product?page=1'},
-  // {title: '원자재 기본정보', url: '/mes/basic/rawmaterial?page=1'},
+  // {title: '원자재 기준정보', url: '/mes/basic/rawmaterial?page=1'},
   {title: '원자재 기준정보', url: '/mes/basic/rawmaterialV1u'},
   {title: '금형 기준정보', url: '/mes/basic/mold?page=1'},
 ]

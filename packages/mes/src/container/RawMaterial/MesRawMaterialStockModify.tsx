@@ -171,6 +171,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
+            current: row.exhaustion ? 0 : row.current,
             additional: [
               ...additional.map(v => {
                 if(row[v.name]) {
@@ -213,8 +214,6 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
       case 0:
         SaveBasic()
         break;
-      case 1:
-        break;
     }
   }
 
@@ -223,7 +222,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
       <PageHeader
         title={"원자재 입고 (수정)"}
         buttons={
-          ['저장하기', '삭제']
+          ['저장하기']
         }
         buttonsOnclick={
           // () => {}
@@ -257,9 +256,9 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
         totalPage={pageInfo.total}
         setPage={(page) => {
           if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
+            router.push(`/mes/rawmaterialV1u/modify?page=${page}&keyword=${keyword}&opt=${option}`)
           }else{
-            router.push(`/mes/basic/mold?page=${page}`)
+            router.push(`/mes/rawmaterialV1u/modify?page=${page}`)
           }
         }}
       />
@@ -267,8 +266,8 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

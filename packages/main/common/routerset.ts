@@ -22,14 +22,14 @@ const BASIC_MENUS: IMenuType[] = [
     url: '',
   },
   {
-    title: '품질 기본정보',
+    title: '품질 기준정보',
     url: '',
     subMenu: [
       { title: '공정별 자주검사 항목 등록', url: '' },
     ]
   },
   {
-    title: '기계 기본정보',
+    title: '기계 기준정보',
     url: '',
   },
   {
@@ -37,11 +37,11 @@ const BASIC_MENUS: IMenuType[] = [
     url: '',
   },
   {
-    title: '원자재 기본정보',
+    title: '원자재 기준정보',
     url: '',
   },
   {
-    title: '금형 기본정보',
+    title: '금형 기준정보',
     url: '',
   }
 ]
