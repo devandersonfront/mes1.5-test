@@ -618,7 +618,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       const isCheck = spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId && row.tmpId !== undefined)
 
       if(spliceRow){
-        if(spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId)){
+        if(isCheck){
           return Notiflix.Report.warning(
             '아이디 경고',
             `중복되는 아이디가 존재합니다.`,
