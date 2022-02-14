@@ -182,6 +182,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               setSearchList([
                 ...searchList,
                 {
+                  setting: 0,
                   seq: searchList.length+1
                 }
               ])
@@ -189,7 +190,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <p>행 추가</p>
             </Button>
             <Button style={{marginLeft: 16}} onClick={() => {
-              if(selectRow === 0){
+              if(selectRow === 0 || selectRow === undefined){
                 return
               }
               let tmpRow = searchList
@@ -199,6 +200,14 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               tmpRow[selectRow - 1] = tmp
 
               setSearchList([...tmpRow.map((v, i) => {
+                if(!searchList[selectRow-1].border){
+                  searchList.map((v,i)=>{
+                    v.border = false;
+                  })
+                  searchList[selectRow-1].border = true
+                  setSearchList([...searchList])
+                }
+                setSelectRow(selectRow -1)
                 return {
                   ...v,
                   seq: i+1
@@ -208,7 +217,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <p>위로</p>
             </Button>
             <Button style={{marginLeft: 16}} onClick={() => {
-              if(selectRow === searchList.length-1){
+              if(selectRow === searchList.length-1 || selectRow === undefined){
                 return
               }
               let tmpRow = searchList
@@ -218,6 +227,14 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               tmpRow[selectRow + 1] = tmp
 
               setSearchList([...tmpRow.map((v, i) => {
+                if(!searchList[selectRow+1].border){
+                  searchList.map((v,i)=>{
+                    v.border = false;
+                  })
+                  searchList[selectRow+1].border = true
+                  setSearchList([...searchList])
+                }
+                setSelectRow(selectRow +1)
                 return {
                   ...v,
                   seq: i+1
@@ -228,10 +245,11 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             </Button>
             <Button style={{marginLeft: 16}} onClick={() => {
               let tmpRow = [...searchList]
-
-              tmpRow.splice(selectRow, 1)
-
-              setSearchList([...tmpRow])
+              if(selectRow){
+                tmpRow.splice(selectRow, 1)
+                setSelectRow(undefined);
+                setSearchList([...tmpRow])
+              }
             }}>
               <p>삭제</p>
             </Button>
