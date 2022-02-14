@@ -15,6 +15,7 @@ import menuOpen from "../../public/images/ic_monitoring_open.png"
 import menuClose from "../../public/images/ic_monitoring_close.png"
 //@ts-ignore
 import checkIcon from "../../public/images/ic_check.png"
+import Notiflix from 'notiflix'
 
 interface IProps {
   item: IMenu[]
@@ -26,9 +27,30 @@ interface IProps {
 const TreeViewTable = ({item, setItem, selectIndex}: IProps) => {
   const [menu, setMenu] = React.useState<IMenu[]>([{title: "", show: false, checkable: false, value: "", child: []}])
 
+  console.log(menu,'menumenumenu')
+
   React.useEffect(() => {
-    setMenu(item)
+    setMenu(recursiveMenu(item))
+
   }, [item])
+
+
+  const recursiveMenu = (menu : IMenu[]) => {
+
+    if(menu.length === 0){
+      return [];
+    }
+    const recursiveData = menu.map((data,i)=>{
+      if(data.title !== 'HOME'){
+        return data 
+      }
+      return {...data , child : recursiveMenu(data.child.map((v,i)=>({...v ,checkable : false , check : true})))}
+    })
+
+    return recursiveData
+  }
+
+  
 
   const onClickMenu = (depth: number, i: number[]) => {
     let tmp = menu
@@ -149,7 +171,34 @@ const TreeViewTable = ({item, setItem, selectIndex}: IProps) => {
                   }}
                 />
               </>
-              : <div style={{width: 30, height: 14}} />
+              : <>
+                  <label
+                  htmlFor={`check${key}`}
+                  style={{
+                    backgroundColor: value.check ? '#19b9df' :'white',
+                    width: 14,
+                    height: 14,
+                    marginRight: 16,
+                    cursor: "pointer",
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 0
+                  }}
+                  >
+                  {
+                    value.check && <img src={checkIcon} style={{width: 14, height: 14}} alt={'treeview-checked'} />
+                  }
+                  </label>
+                  <input
+                    hidden
+                    type="checkbox"
+                    id={`check${key}`}
+                    onChange={() => {
+                      Notiflix.Report.warning('오류', '이 메뉴는 수정하실수 없습니다' , '확인')
+                    }}
+                  />
+                </>
           }
           <p style={{color: 'white'}}>{value.title}</p>
           {

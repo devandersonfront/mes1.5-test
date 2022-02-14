@@ -49,7 +49,7 @@ export const getServerSideProps = async (ctx: any) => {
         }
       case 'machine':
         return {
-          title: '기계 기본정보',
+          title: '기계 기준정보',
           code: 'ROLE_BASE_04'
         }
       case 'product':
@@ -59,17 +59,17 @@ export const getServerSideProps = async (ctx: any) => {
         }
       case 'rawmaterial':
         return {
-          title: '원자재 기본정보',
+          title: '원자재 기준정보',
           code: 'ROLE_BASE_06'
         }
       case 'submaterial':
         return {
-          title: '부자재 기본정보',
+          title: '부자재 기준정보',
           code: 'ROLE_BASE_13'
         }
       case 'mold':
         return {
-          title: '금형 기본정보',
+          title: '금형 기준정보',
           code: 'ROLE_BASE_07'
         }
       case 'model':
@@ -79,7 +79,7 @@ export const getServerSideProps = async (ctx: any) => {
         }
       case 'factory' :
         return {
-          title:"공장 기본정보",
+          title:"공장 기준정보",
           code: "ROLE_BASE_11"
         }
       case 'rawin':

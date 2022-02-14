@@ -341,7 +341,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
     basicRow.map(row => {
       tmpSelectList.push(selectList.has(row.id))
     })
-    excelDownload(column, basicRow, `기계기본정보`, 'machine', tmpSelectList)
+    excelDownload(column, basicRow, `기계기준정보`, 'machine', tmpSelectList)
   }
 
   const onClickHeaderButton = (index: number) => {

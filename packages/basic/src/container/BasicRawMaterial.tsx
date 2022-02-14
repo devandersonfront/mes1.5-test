@@ -573,7 +573,7 @@ const BasicRawMaterial = ({}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"원자재 기본정보"}
+          title={"원자재 기준정보"}
           buttons={buttonList}
           buttonsOnclick={
             onClickHeaderButton

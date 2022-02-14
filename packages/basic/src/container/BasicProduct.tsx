@@ -27,7 +27,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicProduct = ({}: IProps) => {
+const BasicProduct = ({page}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -51,7 +51,7 @@ const BasicProduct = ({}: IProps) => {
 
   useEffect(() => {
     if(keyword){
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+      SearchBasic(keyword, optionIndex, page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -323,6 +323,7 @@ const BasicProduct = ({}: IProps) => {
       params: {
         keyword: keyword ?? '',
         opt: option ?? 0
+
       }
     })
     if(res){
@@ -597,8 +598,8 @@ const BasicProduct = ({}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

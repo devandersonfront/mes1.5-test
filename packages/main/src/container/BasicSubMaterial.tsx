@@ -415,7 +415,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"부자재 기본정보"}
+          title={"부자재 기준정보"}
           buttons={
             ['', '', '항목관리', '행추가', '저장하기', '삭제']
           }
@@ -464,8 +464,8 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

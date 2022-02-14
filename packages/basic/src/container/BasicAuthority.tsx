@@ -129,14 +129,14 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
         }))
       }
     } else {
-      Notiflix.Report.failure('권한 없음', '권한을 선택해주세요', '확인')
+      Notiflix.Report.warning('권한 없음', '권한을 선택해주세요', '확인')
     }
   }
 
 
   const deleteAuth = () =>  {
     if(selectIndex === -1){
-      return Notiflix.Notify.warning('삭제를 하기 위해서는 선택을 해주세요')
+      return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
     }
 
     if(row[selectIndex]?.ca_id){
