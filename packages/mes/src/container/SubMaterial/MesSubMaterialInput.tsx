@@ -82,6 +82,16 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
 
 
   const SaveBasic = async () => {
+
+    basicRow.filter((v)=> {
+      if(v.rm_id === undefined){
+        return Notiflix.Report.warning("경고", "부자재 CODE를 선택해 주시기 바랍니다.", "확인",)
+      }
+      if(v.lot_number === undefined){
+        return Notiflix.Report.warning("경고", "부자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
+      }
+    })
+
     let res: any
     res = await RequestMethod('post', `lotSmSave`,
       basicRow.map((row, i) => {

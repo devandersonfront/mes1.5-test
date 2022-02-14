@@ -51,8 +51,8 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   })
 
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment().startOf('isoWeek').format('YYYY-MM-DD'),
-    to: moment().endOf('isoWeek').format('YYYY-MM-DD')
+    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    to: moment().format('YYYY-MM-DD')
   });
 
   const [nzState, setNzState] = useState<boolean>(false);
@@ -135,13 +135,15 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       },
-      params:first ?
+      params:
+          // first ?
+          // {
+          //   nz:nzState,
+          //   from:"2000-01-01",
+          //   to:moment().format("yyyy-MM-DD")
+          // }
+          // :
           {
-            nz:nzState,
-            from:"2000-01-01",
-            to:moment().format("yyyy-MM-DD")
-          }
-          :{
               nz:nzState,
                   from:selectDate.from,
                   to:selectDate.to

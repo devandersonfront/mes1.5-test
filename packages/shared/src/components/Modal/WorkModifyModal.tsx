@@ -31,10 +31,10 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
     {title: '모델', infoWidth: 144, key: 'cm_id'},
   ],
   [
-    {title: 'CODE', infoWidth: 144, key: 'product_id'},
+    {title: 'CODE', infoWidth: 144, key: 'code'},
     {title: '품명', infoWidth: 144, key: 'name'},
     {title: '품목 종류', infoWidth: 144, key: 'type'},
-    {title: '생산 공정', infoWidth: 144, key: 'process_id'},
+    {title: '생산 공정', infoWidth: 144, key: 'process'},
   ],
   [
     {title: '단위', infoWidth: 144, key: 'unit'},
@@ -76,9 +76,9 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
         good_quantity += v.good_quantity
         poor_quantity += v.poor_quantity
       })
-
+      console.log(row)
       setSummaryData({
-        contract_id: row[0].operation_sheet?.contract_id,
+        contract_id: row[0].operation_sheet?.contract?.identification,
         identification: row[0].operation_sheet?.identification,
         customer_id: row[0].operation_sheet?.product?.customer?.name,
         cm_id: row[0].operation_sheet?.product?.model?.model,
@@ -88,7 +88,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
         || row[0].operation_sheet?.product?.type === 0
           ? TransferCodeToValue(row[0].operation_sheet?.product?.type, 'productType')
           : null,
-        process: row[0].operation_sheet?.product?.process?.name,
+        process: row[0].product?.process?.name,
         unit: row[0].operation_sheet?.product?.unit,
         goal: row[0].operation_sheet?.goal,
         total_counter: total_count,
