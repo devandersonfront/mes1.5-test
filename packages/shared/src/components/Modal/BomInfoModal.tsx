@@ -566,7 +566,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             <div
               onClick={() => {
                 if(column.type !== 'readonly' && tabStore.index === 0){
-                  console.log("???????????")
                   SaveBasic()
                   if(selectRow !== undefined && selectRow !== null) {
                     onRowChange(
