@@ -16,6 +16,7 @@ import {RequestMethod, RootState} from "shared";
 import {useDispatch, useSelector} from "react-redux";
 import { getUserInfoAction } from '../../../../reducer/userInfo'
 import { useRouter } from 'next/router'
+import cookie from 'react-cookies'
 
 interface IProps {
   children?: any
@@ -139,12 +140,13 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   const [baseItem, setBaseItem] = useState<IItemMenuType[]>([])
   const [addiItem, setAddiItem] = useState<IItemMenuType[]>([])
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set())
+  let userInfo = cookie.load('userInfo')
 
+  // console.log(userInfo,'userInfouserInfo')
 
-  // const checkValidation = () => {
-  //   dispatch(getUserInfoAction())
-  //   return user.authority === 'MASTER' ?? undefined
-  // }
+  const checkValidation = () => {
+    return userInfo.ca_id.name === 'MASTER' ?? undefined
+  }
 
   const listItem = async (code: string) => {
     const res =  await RequestMethod('get', 'itemList', {
@@ -246,17 +248,17 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   useEffect(() => {
     Notiflix.Loading.standard();
     listItem(code)
-    // if(checkValidation()){
+    if(checkValidation()){
 
-    // }else{
-    //   Notiflix.Report.failure(
-    //     '권한 오류',
-    //     '관리자만 항목관리가 가능합니다.',
-    //     '확인', () => {
-    //       router.back()
-    //     }
-    //   )
-    // }
+    }else{
+      Notiflix.Report.failure(
+        '권한 오류',
+        '관리자만 항목관리가 가능합니다.',
+        '확인', () => {
+          router.back()
+        }
+      )
+    }
   }, [])
 
   return (
