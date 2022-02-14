@@ -37,7 +37,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const dispatch = useDispatch();
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [selectRow, setSelectRow] = useState<number>()
+  const [selectRow, setSelectRow] = useState<number>(null)
   const [searchList, setSearchList] = useState<any[]>([])
 
   const [focusIndex, setFocusIndex] = useState<number>(0)
@@ -176,8 +176,13 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const SaveBasic = async () => {
     let  modelIdCheck = true
+    let dataCheck = true
     if(!row.code) modelIdCheck = false
     let body = searchList.map((v, i) => {
+      if(!v.rm_id || !v.sm_id || !v.product_id){
+        dataCheck = false
+      }
+
       return {
         seq: i+1,
         parent: {
@@ -205,15 +210,20 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       }
     })
 
-    if(modelIdCheck){
+    // if(body.length === 0){
+    //   Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
+    // }else
+    if(!dataCheck){
+      Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
+    }else if(modelIdCheck){
       const res = await RequestMethod('post', `bomSave`,body)
-
       if(res) {
         Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
       }
-    }else{
-        Notiflix.Report.warning("모델을 등록해주세요.","","확인", () => setIsOpen(false))
     }
+    // else if(){
+    //     Notiflix.Report.warning("모델을 등록해주세요.","","확인", () => setIsOpen(false))
+    // }
 
   }
 
@@ -431,6 +441,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 setSearchList([
                   ...searchList,
                   {
+                    setting:0,
                     seq: searchList.length+1
                   }
                 ])
@@ -493,8 +504,13 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
                 let tmpRow = [...searchList]
-                tmpRow.splice(selectRow, 1)
-                setSearchList([...tmpRow])
+                if(selectRow !== undefined && selectRow !== null){
+                  tmpRow.splice(selectRow, 1)
+
+                  setSearchList([...tmpRow])
+                  setSelectRow(undefined)
+                }
+
               }}>
                 <p>삭제</p>
               </Button>
@@ -549,7 +565,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             }
             <div
               onClick={() => {
-                if(column.type !== 'readonly'){
+                if(column.type !== 'readonly' && tabStore.index === 0){
                   SaveBasic()
                   if(selectRow !== undefined && selectRow !== null) {
                     onRowChange(
@@ -569,11 +585,11 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     )
                   }
                 }
-                setIsOpen(false)
+                // setIsOpen(false)
               }}
               style={{width: column.type === 'readonly' ? '100%' : '50%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
-              <p>{column.type !== 'readonly' ? '등록하기' : '확인'}</p>
+              <p>{column.type !== 'readonly' && tabStore.index === 0 ? '등록하기' : '확인'}</p>
             </div>
           </div>
         </div>
