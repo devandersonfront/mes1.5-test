@@ -37,8 +37,8 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(['수주번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
+    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    to: moment().format('YYYY-MM-DD')
   });
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -377,10 +377,10 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
           (e) => {
             switch(e) {
               case 1: {
-                if(selectList.size > 0) {
+                if(selectList.size === 1) {
                   setExcelOpen(true)
                 }else{
-                  Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
+                  Notiflix.Report.warning("경고","작업일보는 한 개씩만 수정 가능합니다.","확인")
                 }
                 break
               }
