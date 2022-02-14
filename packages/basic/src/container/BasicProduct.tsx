@@ -27,7 +27,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicProduct = ({}: IProps) => {
+const BasicProduct = ({page}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -51,7 +51,7 @@ const BasicProduct = ({}: IProps) => {
 
   useEffect(() => {
     if(keyword){
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+      SearchBasic(keyword, optionIndex, page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -130,7 +130,7 @@ const BasicProduct = ({}: IProps) => {
     let selectCheck = false
     let codeCheck = true
     let processCheck = true
-
+    let bomCheck = true
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -148,6 +148,7 @@ const BasicProduct = ({}: IProps) => {
         selectCheck = true;
         if(!row.code) codeCheck = false
         if(!row.process_id) processCheck = false
+        if(!row.bom_root) bomCheck = false
         let additional:any[] = []
         column.map((v) => {
           if(v.type === 'additional'){
@@ -240,7 +241,10 @@ const BasicProduct = ({}: IProps) => {
     }else if(!codeCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인");
-    }else{
+    }else if(!bomCheck){
+      Notiflix.Loading.remove()
+      Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
+    }else if(!processCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
     }
@@ -317,6 +321,7 @@ const BasicProduct = ({}: IProps) => {
       params: {
         keyword: keyword ?? '',
         opt: option ?? 0
+
       }
     })
     if(res){
@@ -509,14 +514,15 @@ const BasicProduct = ({}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined)
+    console.log(spliceRow,'spliceRowspliceRow')
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.code === tempRow[selectRow]?.code)){
+      if(isCheck){
         return Notiflix.Report.warning(
           '코드 경고',
           `중복된 코드를 입력할 수 없습니다`,
-          'Okay'
+          '확인'
         );
       }
     }
@@ -590,8 +596,8 @@ const BasicProduct = ({}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

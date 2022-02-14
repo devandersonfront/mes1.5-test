@@ -114,7 +114,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
     }
 
@@ -187,7 +187,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
-        'Okay',
+        '확인',
         );
     }
 
@@ -461,13 +461,14 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined)
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name)){
+      if(isCheck){
         return Notiflix.Report.warning(
           '공장명 경고',
           `중복된 공장명을 입력할 수 없습니다`,
-          'Okay'
+          '확인'
         );
       }
     }
@@ -538,8 +539,8 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

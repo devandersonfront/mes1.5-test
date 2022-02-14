@@ -124,7 +124,7 @@ export const columnlist: any = {
     {key: 'tons', editor: TextEditor, formatter: UnitContainer, unitData: 'T'},
     {key: 'volt', editor: TextEditor, formatter: UnitContainer, unitData: 'V'},
   ],
-  machineV2:[ //기계기본정보
+  machineV2:[ //기계기준정보
     {key: 'mfrName',name: '기계 제조사',  editor: TextEditor, width: 118},
     {key: 'name', name: '기계 이름', editor: TextEditor, width: 118},
     {key: 'type', name: '기계 종류', formatter: DropDownEditor, headerRenderer: HeaderFilter,

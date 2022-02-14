@@ -519,15 +519,15 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow].code && row.code !== undefined)
     console.log(spliceRow,'spliceRowspliceRow')
 
     if(spliceRow){
-      if(spliceRow.some((row)=> row.code === tempRow[selectRow].code)){
+      if(isCheck){
         return Notiflix.Report.warning(
           '코드 경고',
           `중복된 코드를 입력할 수 없습니다`,
-          'Okay'
+          '확인'
         );
       }
     }
@@ -598,8 +598,8 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}
