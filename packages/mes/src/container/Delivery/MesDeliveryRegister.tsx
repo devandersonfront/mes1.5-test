@@ -162,10 +162,18 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
 
         break;
       case 2:
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{},
-          ()=>{}
-        )
+        if(selectList.size <= 0){
+          Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
+        }else{
+          Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+              ()=>{
+                const filter = basicRow.filter((row, index) => !selectList.has(row.id))
+                setBasicRow([...filter])
+                setSelectList(new Set())
+              },
+              ()=>{}
+          )
+        }
         break;
     }
   }

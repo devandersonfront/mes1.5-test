@@ -46,7 +46,7 @@ const BasicProduct = ({}: IProps) => {
     page: 1,
     total: 1
   })
-  
+
   const [buttonList , setButtonList ] = useState<string[]>([])
 
   useEffect(() => {
@@ -143,8 +143,6 @@ const BasicProduct = ({}: IProps) => {
 
     Notiflix.Loading.standard();
     let result = basicRow.map((row, i) => {
-
-      console.log(row,'rowrowrowrow')
 
       if(selectList.has(row.id)){
         selectCheck = true;
@@ -491,6 +489,7 @@ const BasicProduct = ({}: IProps) => {
             id: `process_${random_id}`,
             name: null,
             additional: [],
+            type:2,
           },
           ...basicRow
         ])
@@ -512,7 +511,6 @@ const BasicProduct = ({}: IProps) => {
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
 
-    console.log(spliceRow,'spliceRowspliceRow')
 
     if(spliceRow){
       if(spliceRow.some((row)=> row.code === tempRow[selectRow]?.code)){
@@ -528,7 +526,7 @@ const BasicProduct = ({}: IProps) => {
   }
 
 
-  
+
 
 
   React.useEffect(()=>{
@@ -537,7 +535,7 @@ const BasicProduct = ({}: IProps) => {
   },[selectList.size])
 
 
-  
+
   return (
     <div>
         <PageHeader

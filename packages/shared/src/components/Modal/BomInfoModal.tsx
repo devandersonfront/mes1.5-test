@@ -431,6 +431,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 setSearchList([
                   ...searchList,
                   {
+                    setting:0,
                     seq: searchList.length+1
                   }
                 ])
@@ -493,8 +494,19 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
                 let tmpRow = [...searchList]
-                tmpRow.splice(selectRow, 1)
-                setSearchList([...tmpRow])
+                if(selectRow){
+                  tmpRow.splice(selectRow, 1)
+
+                  console.log(tmpRow)
+                  console.log(tmpRow.slice(0,selectRow))
+                  console.log(tmpRow.slice(selectRow).map((row) =>
+                    row.seq -= 1
+                  ))
+
+                  setSearchList([...tmpRow])
+                  setSelectRow(undefined)
+                }
+
               }}>
                 <p>삭제</p>
               </Button>
