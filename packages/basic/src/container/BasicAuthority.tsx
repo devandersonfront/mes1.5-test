@@ -146,15 +146,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
         'Yes',
         'No',
         async () => {
-          const res = await RequestMethod('delete', 'authorityDelete', [row[selectIndex]]).catch((error)=>{
-            if(error.response.status === 422){
-              return Notiflix.Report.failure('삭제 실패', error.message, '확인', () => {
-                loadAuthorityList().then(() => {
-                  Notiflix.Loading.remove()
-                })
-              })
-            }
-          })
+          const res = await RequestMethod('delete', 'authorityDelete', [row[selectIndex]])
           if (res){
             Notiflix.Report.success('삭제 성공', '권한이 성공적으로 삭제됐습니다.', '확인', () => {
               loadAuthorityList().then(() => {
