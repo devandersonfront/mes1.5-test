@@ -55,6 +55,9 @@ interface IProps {
   isNz?: boolean
   onChangeNz?: (nz:boolean) => void
   nz?: boolean
+  isCode?: boolean
+  onChangeCode?: (code:boolean) => void
+  code?: boolean
 }
 
 const useStyles = makeStyles(_ => {
@@ -149,7 +152,7 @@ const lightTheme = createMuiTheme({
 const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnclick, isSearch, style, leftButton, onClickMenu, menuIndex,
                       searchKeyword, onChangeSearchKeyword, searchOptionList, onChangeSearchOption, filterList, onChangeFilter,
                       serviceFilterButton, onClickServiceButton, leftButtonOnClick, basicMachineType, typeListOnClick, isCalendar, onChangeSelectDate,
-                      calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz}: IProps) => {
+                      calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz, isCode, onChangeCode, code}: IProps) => {
 
   const [machineCheck, setMachineCheck] = React.useState<any>({
     all: true,
@@ -201,6 +204,38 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
               title && <span style={{fontSize: 22, marginRight: 18, marginLeft: 3, fontWeight: 'bold', color: 'white', marginTop:20}}>{title}</span>
             }
             <ButtonWrapper style={{marginTop: 20 }}>
+              {
+                isCode && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
+                  <input id='codeTrue' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                    onChangeCode && onChangeCode(true)
+                  }}/>
+                  <label htmlFor="codeTrue">
+                    <div style={{display:"flex", alignItems:"center",}}>
+                      {
+                        code
+                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
+                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
+                      }
+
+                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>CODE로 등록</p>
+                    </div>
+                  </label>
+                  <input id='codeFalse' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                    onChangeCode && onChangeCode(false)
+                  }}/>
+                  <label htmlFor="codeFalse">
+                    <div style={{display:"flex", alignItems:"center",}}>
+                      {
+                        !code
+                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
+                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
+                      }
+
+                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>수주번호로 등록</p>
+                    </div>
+                  </label>
+                </div>
+              }
               {
                 isNz && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
                     <input id='nzTrue' name={'nz'} type={'radio'} style={{display: 'none'}} onClick={() => {
