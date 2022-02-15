@@ -273,11 +273,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       let tmp: Set<any> = selectList
       setSelectList(new Set())
       setBomCheck(false)
-      Notiflix.Report.warning("알림","최근 작업지시서가 없어 BOM기준으로 불러왔습니다.","확인")
+      if(codeCheck) {
+        Notiflix.Report.warning("알림", "최근 작업지시서가 없어 BOM기준으로 불러왔습니다.", "확인")
+      }
       return [{
         ...object,
         contract_id: codeCheck ? "-" : object.contract_id,
-        goal: 0,
+        goal: codeCheck ? 0 : object.contract.amount,
         cm_id: object.cm_id ?? '-',
         process_id: object.process_id ?? '-',
         name: object.product_name ?? '-',
