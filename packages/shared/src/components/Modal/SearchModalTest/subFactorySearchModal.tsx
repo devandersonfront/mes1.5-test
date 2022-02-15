@@ -106,19 +106,22 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 opt:optionFilter(optionIndex)
             }
         }).then((res) => {
+            console.log(res,'resres!!')
             // setSearchList([...SearchResultSort(res.info_list, "subFactory")])
             const tempData = [];
             res.info_list.map((value)=>{
                 const tmpValue = {...value};
                 tmpValue.manager_info = value.manager;
-                tmpValue.manager = value.manager.name;
-                tmpValue.telephone = value.manager.telephone;
+                tmpValue.manager = value.manager?.name;
+                tmpValue.telephone = value.manager?.telephone;
                 tempData.push(tmpValue)
             })
-            setSearchList(tempData);
             Notiflix.Loading.remove()
+            return setSearchList(tempData);
         }).catch((err) => {
-            Notiflix.Report.failure("경고","공장을 선택해주시기 바랍니다.","확인",() => {setIsOpen(false)})
+            if(err){
+                Notiflix.Report.failure("경고","공장을 선택해주시기 바랍니다.","확인",() => {setIsOpen(false)})
+            }
         })
 
 

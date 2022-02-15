@@ -48,7 +48,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   // const [page, setPage] = useState<number>(1);
   // const [totalPage, setTotalPage] = useState<number>(0);
 
-
   useEffect(() => {
     if(column.type){
       if(column.type === "bom"){
@@ -344,7 +343,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                         name: selectNameFunction(column.type),
                         tab: tab,
-                        type_name: undefined,
+                        // type_name: undefined,
                         version: row.version,
                         isChange: true,
                         contract: null,
@@ -359,7 +358,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                         name: selectNameFunction(column.type),
                         tab: tab,
-                        type_name: undefined,
+                        // type_name: undefined,
                         version: row.version,
                         isChange: true,
                       }

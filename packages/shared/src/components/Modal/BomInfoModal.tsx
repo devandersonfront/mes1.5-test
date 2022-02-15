@@ -180,7 +180,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     if(!row.code) modelIdCheck = false
 
     let body = searchList.map((v, i) => {
-      if(!v.rm_id || !v.sm_id || !v.product_id){
+      if(!v.rm_id && !v.sm_id && !v.product_id){
         dataCheck = false
       }
 
@@ -529,7 +529,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     newTab: false
                   }
                 })
-                typeCheck(tmp)
+                // typeCheck(tmp)
+
+                console.log(e,'eeee')
 
                 setSearchList([...tmp])
               }}

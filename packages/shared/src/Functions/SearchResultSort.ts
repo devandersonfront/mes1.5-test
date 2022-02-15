@@ -51,7 +51,8 @@ export const SearchResultSort = (infoList, type: string) => {
           customer: v.customer?.name ?? "",
           rawName: v.name,
           type: v.type === 2 ? "SHEET" : "COIL",
-          type_id:v.type
+          type_id:v.type,
+          type_name : v.type === 2 ? "SHEET" : "COIL",
         }
       })
     }

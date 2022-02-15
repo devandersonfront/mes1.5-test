@@ -115,6 +115,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
             //@ts-ignore
             ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
             [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
+            setting : event.target.value,
             // ...tmpData,
             isChange: true
           })
