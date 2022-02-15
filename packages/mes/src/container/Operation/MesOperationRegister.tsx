@@ -116,6 +116,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                   id: row['tmpId']
                 }
               }
+
             })
             return {
               ...row,

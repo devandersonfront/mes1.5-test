@@ -48,7 +48,7 @@ const UnitContainer = ({ row, column, setRow}: IProps) => {
         }
       </UnitValue>
       <UnitBox>
-        {row.unit ? row.unit :
+        {
           column.searchType === 'rawin'
             ? <span>{row.type ? row.type === 'COIL' ? 'kg' : '장' : ''}</span>
             : column.type === 'selectUnit'

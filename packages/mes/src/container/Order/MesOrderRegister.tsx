@@ -98,15 +98,22 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
     if(selectList.size <= 0) {
       Notiflix.Report.warning("경고", "데이터를 선택해주세요.", "확인")
       return
-    }else{
-      basicRow.map((row) => {
-        if(!Number(row.amount) && row.amount !== "0"){
-          Notiflix.Report.warning("경고", "정확한 수주량을 입력해주세요.", "확인", )
-          checkValue = false;
-          return;
-        }
-      })
     }
+    basicRow.map((row) => {
+      if(selectList.has(row.id) && !row.code){
+        Notiflix.Report.warning("경고","CODE를 입력해주세요.","확인")
+        return
+      }
+    })
+    // else{
+    //   basicRow.map((row) => {
+    //     if(!Number(row.amount) && row.amount !== "0"){
+    //       Notiflix.Report.warning("경고", "정확한 수주량을 입력해주세요.", "확인", )
+    //       checkValue = false;
+    //       return;
+    //     }
+    //   })
+    // }
 
     if(!checkValue) return
 
@@ -140,6 +147,7 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
             ...row,
             ...selectData,
             customer: row.customerArray,
+            amount: row.amount ?? 0,
             additional: [
               ...additional.map(v => {
                 if(row[v.name]) {
@@ -212,7 +220,6 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
       />
       <ExcelTable
         editable
-        resizable
         headerList={[
           SelectColumn,
           ...column
@@ -229,7 +236,7 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
             ...v,
             name: v.product_name,
             date:v?.date ?? basicRow[index]?.date,
-            deadline:v?.deadline ?? basicRow[index]?.date,
+            deadline:v?.deadline ?? basicRow[index]?.deadline,
             amount:v?.amount ?? basicRow[index]?.amount
           })))
         }}
