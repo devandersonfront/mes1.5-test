@@ -6,7 +6,9 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {delete_delivery_identification} from "../../../../shared/src/reducer/deliveryRegisterState";
+import {TransferCodeToValue} from "shared/src/common/TransferFunction";
 
 interface IProps {
   children?: any
@@ -17,16 +19,15 @@ interface IProps {
 
 const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const orderIdentificationId = useSelector((root:RootState) => root.deliveryRegisterState)
 
-  console.log("orderIdentificationId : ", orderIdentificationId);
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     date: moment().format('YYYY-MM-DD'),
-    limit_date: moment().format('YYYY-MM-DD')
+    // limit_date: moment().format('YYYY-MM-DD')
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["deliveryRegister"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -43,8 +44,41 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
-    getMenus()
+    getMenus().then((res) => {
+      if(res && orderIdentificationId.identification !== ""){
+        RequestMethod("get", "contractSearch", {
+          path:{
+            page:1,
+            renderItem:22
+          },
+          params:{
+            keyword:orderIdentificationId.identification,
+            opt:0
+          }
+        })
+            .then((res) => {
+              setBasicRow([{
+                ...basicRow[0],
+                date: res.info_list[0].deadline,
+                contract_id: res.info_list[0].identification,
+                product:res.info_list[0].product,
+                // product_id: res.info_list[0].product.product_id,
+                customer_id: res.info_list[0].product.customer.name,
+                name: res.info_list[0].product.name,
+                cm_id: res.info_list[0].product.model.model,
+                product_id: res.info_list[0].product.code,
+                type: TransferCodeToValue(res.info_list[0].product.type, "product"),
+                unit: res.info_list[0].product.unit,
+                version: res.info_list[0].product.version
+              }])
+            })
+      }
+    })
+
     Notiflix.Loading.remove()
+     return () => {
+      dispatch(delete_delivery_identification());
+     }
   }, [])
 
   const getMenus = async () => {
@@ -87,6 +121,9 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
       }).filter((v:any) => v)
 
       setColumn([...tmpColumn])
+      return true
+    }else {
+      return false
     }
   }
 

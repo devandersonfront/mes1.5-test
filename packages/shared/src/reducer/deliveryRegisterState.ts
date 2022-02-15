@@ -1,107 +1,3 @@
-
-// interface DeliveryRegisterState
-// {
-//     shipment_id?: number
-//     identification?: string
-//     contract: {
-//         contract_id: number
-//         identification: string
-//         date: string
-//         deadline: string
-//         product: {
-//             product_id?:number
-//             customer: {
-//                 customer_id: number
-//                 name: string
-//                 rep: string
-//                 manager: string
-//                 telephone: string
-//                 cellphone: string
-//                 fax: string
-//                 address: string
-//                 crn: string
-//                 photo: string
-//                 additional: Array<any>
-//             },
-//             model: {
-//                 cm_id: number
-//                 // customer: { ... }
-//                 model: string
-//                 additional: Array<any>
-//             },
-//             code: string
-//             name?: string
-//             type: number
-//             unit: string
-//             process: {
-//                 process_id: number
-//                 name: string
-//                 additional: Array<any>
-//             },
-//             // molds: [ ... ]
-//             // machines: [ ... ],
-//             standard_uph: number
-//             work_standard_image: string
-//             version?: number
-//             // additional: [ ... ],
-//         },
-//     },
-//     product: {
-//         product_id?: number
-//         customer: {
-//             customer_id: number
-//             name: string
-//             rep: string
-//             manager: string
-//             telephone: string
-//             cellphone: string
-//             fax: string
-//             address: string
-//             crn: string
-//             photo: string
-//             additional: Array<any>
-//         },
-//         model: {
-//             cm_id: number
-//             // customer: { ... }
-//             model: string
-//             additional: Array<any>,
-//         },
-//         code: string
-//         name?: string
-//         type: number
-//         unit: string
-//         process: {
-//             process_id: number
-//             name: string
-//             additional: Array<any>
-//         },
-//         // molds: [ ... ]
-//         // machines: [ ... ],
-//         standard_uph: number
-//         work_standard_image: string
-//         version?: number
-//         additional: Array<any>
-//     },
-//     date: string
-//     lots: [
-//         {
-//             amount: number
-//             group: {
-//                 sum: {
-//
-//                 },
-//                 elements: [
-//
-//                 ]
-//             }
-//         }
-// ],
-// version?: number
-// }
-
-import {delete_machine_list, insert_machine_list, insert_machine_list_index} from "./machineSelect";
-
 interface deliveryRegisterState {
     identification:string
 }
@@ -147,7 +43,7 @@ const DeliveryRegisterState = (state = initialState,{type, payload}:DefaultActio
 
         case DELETE_DELIVERY_IDENTIFICATION  :
             const delete_state = {...state}
-            delete_state.identification = payload as string
+            delete_state.identification = ""
             return delete_state
 
         default:
