@@ -49,7 +49,11 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         })
         break;
       case 2:
-        res = await RequestMethod('get', `recordList`, {
+        res = await RequestMethod('get', `recordSearch`, {
+          path:{
+            page:1,
+
+          },
           params: {
             productIds: row.product_id,
             nz: true
@@ -83,7 +87,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         if(column.key === 'lot'){
           if(column.type === 'readonly'){
             let lot = []
-
+            console.log(row)
             if(row.bom){
               if(row.bom[row.seq-1].lot && !Array.isArray(row.bom[row.seq-1].lot)){
                 lot = [row.bom[row.seq-1].lot]
@@ -120,9 +124,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           }
         }else {
 
-          console.log(row.bom_root_id,'row.bom_root_id')
           if (row.bom_root_id) {
-            dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1}))
+            dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1, product_id:row.bom_root_id}))
           } else {
             Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
             })

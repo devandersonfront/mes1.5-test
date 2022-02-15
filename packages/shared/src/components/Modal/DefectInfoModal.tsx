@@ -67,7 +67,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }else {
 
       if(column.type !== 'readonly'){
-        if(isOpen && row.process_id && searchList.findIndex((e) => !!e.amount ) === -1) {
+        if(isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount ) === -1) {
           loadDefectList()
         }
       }
@@ -225,7 +225,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>불량 유형별 수량 ({row.identification})</p>
+            }}>불량 유형별 수량 ({row['identification']})</p>
             <div style={{display: 'flex', alignItems: 'center', justifyContent:'center', height: 28}}>
               <div style={{display: 'flex'}}>
                 <p style={{margin: 0, padding: 0, fontSize: 22, fontWeight: 'bold'}}>총 불량 개수</p>
@@ -240,6 +240,22 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               {/*  <p>엑셀로 받기</p>*/}
               {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
+                onRowChange({
+                  ...row,
+                  poor_quantity: 0,
+                  defect_reasons: [
+                    ...searchList.map(v => ({
+                      amount: 0,
+                    }))
+                  ],
+                  isChange: true
+                })
+                setSearchList([...row.defect_reasons.map(v => {
+                  return ({
+                    ...v,
+                    amount: 0,
+                  })
+                })])
                 setIsOpen(false)
               }}>
                 <img style={{width: 20, height: 20}} src={IcX}/>
@@ -300,6 +316,22 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             {
               column.type !== 'readonly' && <div
                   onClick={() => {
+                    onRowChange({
+                      ...row,
+                      poor_quantity: 0,
+                      defect_reasons: [
+                        ...searchList.map(v => ({
+                          amount: 0,
+                        }))
+                      ],
+                      isChange: true
+                    })
+                    setSearchList([...row.defect_reasons.map(v => {
+                      return ({
+                        ...v,
+                        amount: 0,
+                      })
+                    })])
                     setIsOpen(false)
                   }}
                   style={{width: "50%", height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}

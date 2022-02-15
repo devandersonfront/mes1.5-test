@@ -86,8 +86,6 @@ export {CellButtonComponent} from "./components/Buttons/CellButtom"
 export {FinishButton} from "./components/Buttons/FinishButton"
 export {FinishCancelButton} from "./components/Buttons/FinishCancelButton"
 export {OrderRegisterButton} from "./components/Buttons/OrderRegisterButton"
-export {MidRangeButton} from "./components/Buttons/MidRangeButton"
-export {MidrangeFrameButton} from "./components/Buttons/MidrangeFrameButton"
 
 export {UseDateCell} from "./components/Cell/UseDateCell"
 export {RelationWork} from "./components/Cell/RelationWork"
@@ -95,10 +93,6 @@ export {LotNumberRegister} from "./components/Cell/LotNumberRegister"
 
 //드롭다운
 export {DropDownEditor} from "./components/Dropdown/ExcelBasicDropdown"
-export {MidrangeExcelDropdown} from './components/Dropdown/MidrangeExcelDropdown'
-
-export {MidrangeExcelTable} from "./components/Excel/MidrangeExcelTable"
-export {MidrangeExcelFrameTable} from "./components/Excel/MidrangeExcelFrameTable"
 export {ExcelTable} from "./components/Excel/ExcelTable"
 
 export {FileEditer} from "./components/FileUpload/ExcelBasicFileUpload"
@@ -130,6 +124,7 @@ export {HeaderFilter} from './components/HeaderFilter/HeaderFilter'
 export {TextEditor} from './components/InputBox/ExcelBasicInputBox'
 export {WelcomeInput} from './components/InputBox/WelcomeInput'
 export {TitleInput} from './components/InputBox/TitleInput'
+export {OnClickContainer} from './components/InputBox/OnClickContainer'
 
 //모달
 export {AuthoritySearchModal} from './components/Modal/AuthoritySearchModal'
@@ -164,9 +159,6 @@ export {WorkRegisterModal} from './components/Modal/WorkRegisterModal'
 export {OperationInfoModal} from './components/Modal/OperationInfoModal'
 export {InfoModal} from './components/Modal/InfoModal'
 export {LotInputInfoModal} from './components/Modal/LotInputInfoModal'
-export {MidrangeMemberSearchModal} from './components/Modal/MidrangeMemberSearchModal'
-export {MidrangeFormReviewModal} from './components/Modal/MidrangeFormReviewModal'
-export {MidrangeRegisterModal} from './components/Modal/MidrangeRegisterModal'
 
 export {TestModule} from "./components/ComponentTest"
 

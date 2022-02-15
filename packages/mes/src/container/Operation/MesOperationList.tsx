@@ -39,8 +39,8 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(['지시 고유 번호', '고객사명', '모델', 'CODE', '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
+    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    to: moment().format('YYYY-MM-DD')
   });
 
 
@@ -340,6 +340,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         status: TransferCodeToValue(row.status, 'workStatus'),
         status_no: row.status,
         contract_id: row.contract?.identification ?? '-' ,
+        bom_root_id: row.product?.bom_root_id,
         // operation_sheet: row.
         customer_id: row.product.customer?.name ?? '-',
         cm_id: row.product.model?.model ?? '-',
@@ -350,6 +351,8 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? '-',
         id: `sheet_${random_id}`,
+        total_counter:"-",
+        total_good_quantity:"-"
       }
     })
 
@@ -364,7 +367,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         isCalendar
         searchKeyword={keyword}
         searchOptionList={optionList}
-        optionIndex={option}
+        optionIndex={optionIndex}
         calendarTitle={'작업 기한'}
         calendarType={'period'}
         selectDate={selectDate}
@@ -385,9 +388,12 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         }
         buttonsOnclick={
           (e) => {
+
             switch(e) {
               case 1:
-                if(selectList.size > 0){
+                if( 0 > selectList.size){
+                  Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
+                }else if(selectList.size < 2){
                   dispatch(setModifyInitData({
                     modifyInfo: basicRow.map(v => {
                       if (selectList.has(v.id)) {
@@ -396,12 +402,15 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
                     }).filter(v => v),
                     type: 'order'
                   }))
-                  router.push('/mes/order/modify')
+                  router.push('/mes/operationV1u/modify')
                 }else{
-                  Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
+                  Notiflix.Report.warning("경고","데이터를 하나만 선택해주시기 바랍니다.","확인");
                 }
                 break;
               case 2:
+                if(selectList.size === 0) {
+                  return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
+                }
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
                   ()=>{
                     DeleteBasic()

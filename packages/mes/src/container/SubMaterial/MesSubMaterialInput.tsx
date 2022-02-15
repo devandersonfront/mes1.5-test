@@ -82,6 +82,22 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
 
 
   const SaveBasic = async () => {
+
+    if(basicRow.length === 0) {
+      return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
+    }
+
+    basicRow.map((v)=> {
+      if(selectList.has(v.id)) {
+        if (v.rm_id === undefined) {
+          return Notiflix.Report.warning("경고", "부자재 CODE를 선택해 주시기 바랍니다.", "확인",)
+        }
+        if (v.lot_number === undefined) {
+          return Notiflix.Report.warning("경고", "부자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
+        }
+      }
+    })
+
     let res: any
     res = await RequestMethod('post', `lotSmSave`,
       basicRow.map((row, i) => {
@@ -126,6 +142,7 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
+            current: row.amount,
             warehousing: row.amount,
             customer: row.customerArray,
             additional: [
@@ -174,6 +191,9 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
         SaveBasic()
         break;
       case 2:
+        if(selectList.size === 0) {
+          return  Notiflix.Report.warning("경고","삭제할 행을 선택해주세요.","확인" )
+        }
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인", "취소", () => {
           const tmpRow = basicRow.filter(({id}, index) => !selectList.has(id))
           setBasicRow(tmpRow);
@@ -226,8 +246,8 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

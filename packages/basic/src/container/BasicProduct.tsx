@@ -27,7 +27,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicProduct = ({page, keyword, option}: IProps) => {
+const BasicProduct = ({page}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -41,6 +41,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [barcodeOpen , setBarcodeOpen] = useState<boolean>(false)
   const [selectRow , setSelectRow ] = useState<any>(undefined)
+  const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -49,17 +50,16 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
   const [buttonList , setButtonList ] = useState<string[]>([])
 
   useEffect(() => {
-    setOptionIndex(option)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword])
 
 
   const selectedData = () => {
@@ -78,7 +78,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       if(v.selectList && v.selectList.length === 0){
         let tmpKey = v.key
 
-
         let res: any
         res = await RequestMethod('get', `${tmpKey}List`,{
           path: {
@@ -86,7 +85,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
             renderItem: MAX_VALUE,
           }
         })
-
 
         let pk = "";
 
@@ -118,14 +116,21 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       }
     })
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
+      setColumn([...res.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     })
-    // }
   }
 
   const SaveBasic = async () => {
+    let selectCheck = false
+    let codeCheck = true
+    let processCheck = true
+    let bomCheck = true
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -137,142 +142,149 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
     }
 
     Notiflix.Loading.standard();
-    let res: any
+    let result = basicRow.map((row, i) => {
 
-    const check = basicRow.map((row) => {
-      if(selectList.has(row.id) && !row.code && !row.name){
-          Notiflix.Loading.remove(300)
-          Notiflix.Report.failure("CODE를 입력해주세요.","","확인", )
-        return false
-      }
-    })
-    if(check.includes(false)){
-      return
-    }
-    res = await RequestMethod('post', `productSave`,
-      basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-            })
-
-            return {
-              ...row,
-              ...selectData,
-              customer: row.customerArray,
-              // customer_id: row.customerArray.customer_id,
-              customer_id: undefined,
-              model: row.modelArray,
-              // standard_uph: row.uph,
-              molds:[...row?.molds?.map((mold)=>{
-                return {...mold, setting:mold.mold.setting}
-              }) ?? []],
-              tools:[
-                  ...row?.tools?.map((tool) => {
-                    // return {...tool, tool:{...tool.tool, seq:undefined, customer:tool.tool.customerData}, setting:tool.tool.setting}
-                    return {...tool, tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional}, setting:tool.tool.setting}
-                  })
-              ],
-              machines:[
-                  ...row?.machines?.map((machine)=>{
-                    return {
-                      ...machine,
-                      setting:machine.machine.setting,
-                      machine:{...machine.machine, type:machine.machine.type_id}
-                    }
-                  }) ?? []
-              ],
-              type:row.type_id ?? row.typeId ?? row.typePK,
-              additional: [
-                ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
-                  return {
-                    mi_id: v.id,
-                    title: v.name,
-                    value: row[v.colName] ?? "",
-                    unit: v.unit,
-                    ai_id: searchAiID(row.additional, index) ?? undefined,
-                    version:row.additional[index]?.version ?? undefined
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
+      if(selectList.has(row.id)){
+        selectCheck = true;
+        if(!row.code) codeCheck = false
+        if(!row.process_id) processCheck = false
+        let additional:any[] = []
+        column.map((v) => {
+          if(v.type === 'additional'){
+            additional.push(v)
           }
-        }).filter((v) => v))
-
-
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
         })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
+
+        let selectData: any = {}
+
+        Object.keys(row).map(v => {
+          if(v.indexOf('PK') !== -1) {
+            selectData = {
+              ...selectData,
+              [v.split('PK')[0]]: row[v]
+            }
+          }
+
+          if(v === 'unitWeight') {
+            selectData = {
+              ...selectData,
+              unitWeight: Number(row['unitWeight'])
+            }
+          }
+
+          if(v === 'tmpId') {
+            selectData = {
+              ...selectData,
+              id: row['tmpId']
+            }
+          }
         })
+
+        return {
+          ...row,
+          ...selectData,
+          customer: row.customerArray,
+          // customer_id: row.customerArray.customer_id,
+          customer_id: undefined,
+          model: row.modelArray,
+          // standard_uph: row.uph,
+          molds:[...row?.molds?.map((mold)=>{
+            return {...mold, setting:mold.mold.setting}
+          }).filter((mold) => mold.mold.mold_id) ?? []],
+          machines:[
+            ...row?.machines?.map((machine)=>{
+              return {
+                ...machine,
+                setting:machine.machine.setting,
+                machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
+              }
+            }).filter((machine) => machine.machine.machine_id)?? []
+          ],
+          type:row.type_id ?? row.typeId ?? row.typePK,
+          additional: [
+            ...additional.map((v, index)=>{
+              if(!row[v.colName]) return undefined;
+              return {
+                mi_id: v.id,
+                title: v.name,
+                value: row[v.colName] ?? "",
+                unit: v.unit,
+                ai_id: searchAiID(row.additional, index) ?? undefined,
+                version:row.additional[index]?.version ?? undefined
+              }
+            }).filter((v) => v)
+          ]
+        }
+
       }
+    }).filter((v) => v)
+
+    if(selectCheck && codeCheck && processCheck){
+      let res = await RequestMethod('post', `productSave`,result)
+
+      if(res){
+        Notiflix.Report.success('저장되었습니다.','','확인');
+        if(keyword){
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }else{
+          LoadBasic(pageInfo.page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+      }
+    }else if(!selectCheck){
+      Notiflix.Loading.remove()
+      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
+    }else if(!codeCheck){
+      Notiflix.Loading.remove()
+      Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인");
+    }else if(!processCheck){
+      Notiflix.Loading.remove()
+      Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
     }
+
   }
 
   const DeleteBasic = async() => {
-    Notiflix.Loading.circle();
-    let res: any
+    // Notiflix.Loading.circle();
+    let selectCheck = false;
     let data:any[] = [];
 
     basicRow.map((value,index)=>{
       if(selectList.has(value.id) && value.product_id !== undefined && value.product_id !== null){
+        selectCheck = true;
         let tmpRow = {...value};
         tmpRow.type = value.type_id;
         data.push(tmpRow);
       }
     })
 
-
-    await RequestMethod("delete", "productDelete", data)
-        .then((res) => {
-          Notiflix.Loading.remove(300);
-          Notiflix.Report.success("삭제되었습니다.","","확인", () =>LoadBasic(1))
-        })
-        .catch((err) => {
-          Notiflix.Loading.remove(300);
-        })
+    if(selectCheck){
+      Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          async()=>{
+            await RequestMethod("delete", "productDelete", data)
+                .then((res) => {
+                  Notiflix.Loading.remove(300);
+                  Notiflix.Report.success("삭제되었습니다.","","확인", () =>LoadBasic(1))
+                })
+                .catch((err) => {
+                  Notiflix.Loading.remove(300);
+                })
+          },
+          ()=>{}
+      )
+    }else{
+      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
+    }
 
 
   }
 
 
   const LoadBasic = async (page?: number) => {
-    Notiflix.Loading.circle()
+    // Notiflix.Loading.circle()
     const res = await RequestMethod('get', `productList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
@@ -288,11 +300,12 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+    setSelectList(new Set())
 
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
-    Notiflix.Loading.circle()
+    // Notiflix.Loading.circle()
     if(!isPaging){
       setOptionIndex(option)
     }
@@ -304,6 +317,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       params: {
         keyword: keyword ?? '',
         opt: option ?? 0
+
       }
     })
     if(res){
@@ -314,6 +328,8 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const cleanUpData = (res: any) => {
@@ -449,15 +465,6 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
 
   const onClickHeaderButton = (index: number) => {
     switch(buttonList[index]){
-      case '바코드 미리보기':
-        if(selectList.size === 0){
-          return Notiflix.Report.failure('선택을 하셔야 합니다.',
-          '선택을 하셔야지 바코드를 보실수 있습니다.',
-          'Okay',)
-        }
-        setBarcodeOpen(true)
-        selectedData()
-        break;
       case '항목관리':
         router.push(`/mes/item/manage/product`)
         break;
@@ -492,63 +499,43 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
         SaveBasic()
         break;
       case '삭제':
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{
-            DeleteBasic()
-          },
-          ()=>{}
-        )
-
+        DeleteBasic()
         break;
 
     }
   }
 
-  const handleBarcode = async (dataurl : string , id : string) => {
+  const competeProductV1u = (rows) => {
 
-    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
-                {
-                  "id":id,
-                  "functions":
-                  {"func0":{"checkLabelStatus":[]},
-                    "func1":{"clearBuffer":[]},
-                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
-                    "func3":{"printBuffer":[]}
-                  }
-                },
-                {
-                  headers : {
-                    'Content-Type' : 'application/x-www-form-urlencoded'
-                  }
-                }
-    ).catch((error) => {
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined)
+    console.log(spliceRow,'spliceRowspliceRow')
 
-      if(error){
-        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-        return false
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '코드 경고',
+          `중복된 코드를 입력할 수 없습니다`,
+          '확인'
+        );
       }
-
-    })
-  }
-
-
-  const handleModal = (open:boolean) => {
-
-    setBarcodeOpen(!open)
-
-  }
-
-  React.useEffect(()=>{
-
-    if(selectList.size > 1){
-
-      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
-
     }
 
-    return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
+    setBasicRow(rows)
+  }
+
+
+
+
+
+  React.useEffect(()=>{
+    return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
 
   },[selectList.size])
+
+
 
   return (
     <div>
@@ -556,11 +543,7 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            if(keyword){
-              router.push(`/mes/basic/productV1u?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            }else{
-              router.push(`/mes/basic/productV1u?page=1&keyword=`)
-            }
+            setKeyword(keyword)
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -589,39 +572,28 @@ const BasicProduct = ({page, keyword, option}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow(e)
+            competeProductV1u(e)
           }}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            if(keyword){
-              router.push(`/mes/basic/productV1u?page=${page}&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/productV1u?page=${page}`)
-            }
+            setPageInfo({...pageInfo,page:page})
           }}
         />
 
-      <BarcodeModal
-       title={'바코드 미리보기'}
-       handleBarcode={handleBarcode}
-       handleModal={handleModal}
-       isOpen={barcodeOpen}
-       type={'product'}
-       data={selectRow}
-      />
       {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

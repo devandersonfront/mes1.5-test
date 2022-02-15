@@ -78,7 +78,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     let totalPoor:number = 0
     let defectReasons = []
     let tmpRowArray = []
-
     if(typeof tmpRow === 'string'){
 
       tmpRowArray = tmpRow.split('\n')
@@ -166,7 +165,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     //   }
     // })
     if(res){
-
       let tmpList = changeRow(res)
 
       setSearchList([...tmpList?.map(v => {

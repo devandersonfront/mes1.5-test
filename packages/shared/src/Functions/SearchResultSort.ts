@@ -82,7 +82,7 @@ export const SearchResultSort = (infoList, type: string) => {
           model_name: v.product.model?.model,
           product_code: v.product.code,
           product_name: v.product.name,
-          product_type: TransferCodeToValue(v.product.type, 'material'),
+          product_type: TransferCodeToValue(v.product.type, 'product'),
           product_unit: v.product.unit,
         }
       }) : []
@@ -93,16 +93,9 @@ export const SearchResultSort = (infoList, type: string) => {
           ...v,
           factory_id: v.factory?.name,
           affiliated_id: v.subFactory?.name,
-        }
-      })
-    }
-    case 'tool' : {
-      return infoList.map((v,index) => {
-        return {
-          ...v,
-          seq:index,
-          customerData:v.customer,
-          customer:v.customer?.name,
+          type:TransferCodeToValue(v.type, "machine"),
+          weldingType_id:v.weldingType,
+          weldingType:TransferCodeToValue(v.weldingType, "welding")
         }
       })
     }
@@ -113,7 +106,6 @@ export const SearchResultSort = (infoList, type: string) => {
 }
 
 export const SearchModalResult = (selectData, type: string , staticCalendar?: boolean) => {
-
 
   switch(type) {
     case 'user': {
@@ -175,18 +167,18 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
       }:{
         code: selectData.code,
         name: selectData.name,
-        type: TransferCodeToValue(selectData.type, 'material'),
+        type: TransferCodeToValue(selectData.type, 'product'),
         customer: selectData.customer ? selectData.customer.name : '',
         customer_id: selectData.customer?.name,
         cm_id: selectData.model?.model,
         product_id: selectData.code,
         model: selectData.model ? selectData.model.model : '',
-        type_name: selectData.type_name ?? TransferCodeToValue(selectData.type, 'material'),
+        type_name: selectData.type_name ?? TransferCodeToValue(selectData.type, 'product'),
         unit: selectData.unit,
         usage: selectData.usage,
         process: selectData.process?.name ?? "-",
         product_name: selectData.name,
-        product_type: TransferCodeToValue(selectData.type, 'material'),
+        product_type: TransferCodeToValue(selectData.type, 'product'),
         product_unit: selectData.unit,
         product: {...selectData},
         bom_root_id: selectData.bom_root_id,
@@ -257,12 +249,15 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
     }
     case 'factory': {
       return {
-        ...selectData,
+        // ...selectData,
         factory: {
           ...selectData,
           manager: selectData.managerArray,
         },
-        factory_id: selectData.name
+        affiliated_id:null,
+        factory_id: selectData.name,
+        subFactory:null,
+        subFactories:null,
       }
     }
     case 'customer': {
@@ -290,7 +285,7 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         product_id: selectData.product.code,
         product_name: selectData.product.name,
         name: selectData.product.name,
-        type: TransferCodeToValue(selectData.product.type, 'material'),
+        type: TransferCodeToValue(selectData.product.type, 'product'),
         unit: selectData.product.unit,
         process: selectData.product.process?.name,
         contract_id: selectData.identification

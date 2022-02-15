@@ -35,8 +35,8 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(['지시고유번호', '거래처', '모델', 'code',  '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD'),
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
+    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    to: moment().format('YYYY-MM-DD')
   });
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -59,8 +59,6 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       }
     }
   }, [pageInfo.page, searchKeyword, selectDate])
-
-  console.log('여기서 무한랜더링..??')
 
 
   const getMenus = async () => {
@@ -364,8 +362,8 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

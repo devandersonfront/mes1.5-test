@@ -89,9 +89,7 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
     }
 
     return <>
-      <div style={{width: 'calc(100% - 40px)', height: 40}} onClick={() => {
-        setIsOpen(true)
-      }}>
+      <div style={{width: 'calc(100% - 40px)', height: 40}}>
         { row[`${column.key}`]}
       </div>
       <div style={{
@@ -102,9 +100,12 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
         justifyContent: 'center',
         alignItems: 'center'
       }} onClick={() => {
-        setIsOpen(true)
+        // 마스터 일때는 클릭 되면 안됨
+        if(column.key === 'authority' && row[column.key] !== 'MASTER'){
+            setIsOpen(true)
+        }
       }}>
-        <img style={{width: 20, height: 20}} src={IcSearchButton}/>
+        <img style={{width: 20, height: 20 , opacity : column.key === 'authority' && row[column.key] !== 'MASTER' ? 1 : .3}} src={IcSearchButton}/>
       </div>
     </>
   }

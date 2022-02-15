@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react'
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from 'shared'
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod, RootState} from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
+import {useSelector} from "react-redux";
 
 interface IProps {
   children?: any
@@ -18,6 +19,10 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
+
+  const orderIdentificationId = useSelector((root:RootState) => root.deliveryRegisterState)
+
+  console.log("orderIdentificationId : ", orderIdentificationId);
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     date: moment().format('YYYY-MM-DD'),
@@ -162,10 +167,18 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
 
         break;
       case 2:
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{},
-          ()=>{}
-        )
+        if(selectList.size <= 0){
+          Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
+        }else{
+          Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+              ()=>{
+                const filter = basicRow.filter((row, index) => !selectList.has(row.id))
+                setBasicRow([...filter])
+                setSelectList(new Set())
+              },
+              ()=>{}
+          )
+        }
         break;
     }
   }

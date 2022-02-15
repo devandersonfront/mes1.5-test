@@ -32,13 +32,14 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["customer"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명', '대표자명', '담당자명', '전화 번호','휴대폰 번호', '팩스 번호', '주소', '사업자 번호'])
+  const [optionList, setOptionList] = useState<string[]>(['거래처명', '대표자명', '담당자명', '전화 번호','휴대폰 번호', '팩스 번호', '주소', '사업자 번호'])
   const [optionIndex, setOptionIndex] = useState<number>(option)
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   useEffect(() => {
     if(keyword){
@@ -55,6 +56,14 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   }, [page, keyword, option])
 
   const SaveBasic = async () => {
+
+    if(selectList.size === 0){
+      return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+    }
 
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
@@ -142,6 +151,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   }
 
   const DeleteBasic = async () => {
+    
     const res = await RequestMethod('delete', `customerDelete`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
@@ -236,6 +246,8 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
         cleanUpData(res)
       }
     }
+
+    setSelectList(new Set())
   }
 
 
@@ -264,6 +276,8 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
   const cleanUpBasicData = (res:any) => {
     let tmpRow = res.data.results.info_list;
@@ -475,6 +489,15 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
 
         break;
       case 5:
+        
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+        }
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{DeleteBasic()}
           ,()=>{}
@@ -482,6 +505,27 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
         break;
 
     }
+  }
+
+  const competeCustom = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined)
+
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '거래처명 경고',
+          `중복된 거래처명을 입력할 수 없습니다`,
+          '확인'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+    
   }
 
   return (
@@ -523,11 +567,12 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
-          setBasicRow(e)
+          competeCustom(e)
         }}
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
+        setSelectRow={setSelectRow}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
       <PaginationComponent

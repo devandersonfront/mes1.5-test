@@ -50,7 +50,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     let tmpData = []
     let totalAmount = 0
     if(row?.lots.length > 0){
-       tmpData = row?.lots.map((v, i) => {
+      tmpData = row?.lots.map((v, i) => {
         let index = row.lots.findIndex((lot) => lot.group.sum.lot_number === v.group.sum.lot_number)
         if (index !== -1) {
           totalAmount += row.lots[index].amount

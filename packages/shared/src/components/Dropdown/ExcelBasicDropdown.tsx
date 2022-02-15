@@ -15,14 +15,12 @@ interface IProps {
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
 
 
-  console.log(row,'rowrowrowrowrow')
-
   const cleanValue = (type?:string) => {
     switch(type){
       case "spare":
         // 22/01/24 수정
-        // return row.setting == 1 ? "스페어" : "기본"
-        return row.setting
+        return row.setting == 1 ? "스페어" : row.setting == 0 ? "기본" : row.setting
+        // return row.spare
       case "setting" :
         return (row[column.key] === 1 || row[column.key] === "여") ? "여" : "부"
       default:
@@ -34,9 +32,9 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
     switch(value){
       case '여' :
         return 1
-      case '부' : 
+      case '부' :
         return 0
-      default : 
+      default :
         return value
     }
   }

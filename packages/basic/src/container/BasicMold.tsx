@@ -24,16 +24,18 @@ export interface IProps {
   option?: number
 }
 
-const BasicMold = ({page, keyword, option}: IProps) => {
+const BasicMold = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["moldV2"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["moldV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['CODE', '금형명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [keyword, setKeyword] = useState<string>();
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -41,17 +43,17 @@ const BasicMold = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
-    setOptionIndex(option)
+    setOptionIndex(optionIndex)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -98,15 +100,20 @@ const BasicMold = ({page, keyword, option}: IProps) => {
       }
     })
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
+      setColumn([...res.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     })
-    // }
   }
 
   const SaveBasic = async () => {
-
+    let res: any
+    let selectCheck = false
+    let codeCheck = true
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -117,76 +124,85 @@ const BasicMold = ({page, keyword, option}: IProps) => {
       return result;
     }
 
-    let res: any
-    res = await RequestMethod('post', `moldSave`,
-      basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-            })
-
-            return {
-              ...row,
-              ...selectData,
-              additional: [
-                ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
-                  return {
-                    mi_id: v.id,
-                    title: v.name,
-                    value: row[v.colName] ?? "",
-                    unit: v.unit,
-                    ai_id: searchAiID(row.additional, index) ?? undefined,
-                    version:row.additional[index]?.version ?? undefined
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
+    const result = basicRow.map((row, i) => {
+      if(selectList.has(row.id)){
+        selectCheck = true
+        if(!row.code) codeCheck = false
+        let additional:any[] = []
+        column.map((v) => {
+          if(v.type === 'additional'){
+            additional.push(v)
           }
-        }).filter((v) => v))
+        })
 
+        let selectData: any = {}
 
-    if(res){
-        Notiflix.Report.success('저장되었습니다.','','확인');
-        if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(page).then(() => {
-            Notiflix.Loading.remove()
-          })
+        Object.keys(row).map(v => {
+          if(v.indexOf('PK') !== -1) {
+            selectData = {
+              ...selectData,
+              [v.split('PK')[0]]: row[v]
+            }
+          }
+
+          if(v === 'unitWeight') {
+            selectData = {
+              ...selectData,
+              unitWeight: Number(row['unitWeight'])
+            }
+          }
+
+          if(v === 'tmpId') {
+            selectData = {
+              ...selectData,
+              id: row['tmpId']
+            }
+          }
+        })
+
+        return {
+          ...row,
+          ...selectData,
+          additional: [
+            ...additional.map((v, index)=>{
+              if(!row[v.colName]) return undefined;
+              return {
+                mi_id: v.id,
+                title: v.name,
+                value: row[v.colName] ?? "",
+                unit: v.unit,
+                ai_id: searchAiID(row.additional, index) ?? undefined,
+                version:row.additional[index]?.version ?? undefined
+              }
+            }).filter((v) => v)
+          ]
         }
+
+      }
+    }).filter((v) => v)
+    if(selectCheck && codeCheck){
+      res = await RequestMethod('post', `moldSave`, result)
+
+      if(res){
+          Notiflix.Report.success('저장되었습니다.','','확인');
+          if(keyword){
+            SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+              Notiflix.Loading.remove()
+            })
+          }else{
+            LoadBasic(pageInfo.page).then(() => {
+              Notiflix.Loading.remove()
+            })
+          }
+      }
+
+    }else if(!selectCheck){
+      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
+    }else if(!codeCheck){
+      Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인")
     }
+
+
   }
 
 
@@ -207,84 +223,97 @@ const BasicMold = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+    setSelectList(new Set())
 
   }
 
   const DeleteBasic = async () => {
+    let selectCheck = false;
+    const result = basicRow.map((row, i) => {
+      if(selectList.has(row.id)){
+        selectCheck = true;
+        let selectKey: string[] = []
+        let additional:any[] = []
+        column.map((v) => {
+          if(v.selectList){
+            selectKey.push(v.key)
+          }
 
-    const res = await RequestMethod('delete', `moldDelete`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
+          if(v.type === 'additional'){
+            additional.push(v)
+          }
+        })
 
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
+        let selectData: any = {}
 
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
-              }
-            }
-
-            if(v === 'unitWeight') {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(row['unitWeight'])
-              }
-            }
-
-            if(v === 'tmpId') {
-              selectData = {
-                ...selectData,
-                id: row['tmpId']
-              }
-            }
-          })
-          if(row.mold_id){
-            return {
-              ...row,
+        Object.keys(row).map(v => {
+          if(v.indexOf('PK') !== -1) {
+            selectData = {
               ...selectData,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
+              [v.split('PK')[0]]: row[v]
             }
+          }
 
+          if(v === 'unitWeight') {
+            selectData = {
+              ...selectData,
+              unitWeight: Number(row['unitWeight'])
+            }
+          }
+
+          if(v === 'tmpId') {
+            selectData = {
+              ...selectData,
+              id: row['tmpId']
+            }
+          }
+        })
+        if(row.mold_id){
+          return {
+            ...row,
+            ...selectData,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
           }
 
         }
-      }).filter((v) => v))
-
-    if(res) {
-      Notiflix.Report.success('삭제되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
       }
+    }).filter((v) => v);
+
+    if(selectCheck){
+
+      Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
+          async() => {
+          const res = await RequestMethod('delete', `moldDelete`, result)
+
+          if(res) {
+            Notiflix.Report.success('삭제되었습니다.','','확인');
+            if(keyword){
+              SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+              })
+            }else{
+              LoadBasic(pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+              })
+            }
+          }
+
+          },
+          () => {}
+      )
+    }else{
+      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
     }
 
   }
@@ -314,6 +343,8 @@ const BasicMold = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const cleanUpData = (res: any) => {
@@ -481,18 +512,35 @@ const BasicMold = ({page, keyword, option}: IProps) => {
 
         break;
       case 5:
-        Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
-          () => {
-            DeleteBasic()
-          },
-          () => {
-          }
-        )
+        DeleteBasic()
+
 
         break;
 
     }
   }
+
+  const competeMoldV1u = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow].code && row.code !== undefined)
+
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '코드 경고',
+          `중복된 코드를 입력할 수 없습니다`,
+          '확인'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
+
+
 
   return (
     <div>
@@ -500,11 +548,12 @@ const BasicMold = ({page, keyword, option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            if(keyword){
-              router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            }else{
-              router.push(`/mes/basic/moldV1u?page=1&keyword=`)
-            }
+            setKeyword(keyword)
+            // if(keyword){
+            //   router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${optionIndex}`)
+            // }else{
+            //   router.push(`/mes/basic/moldV1u?page=1&keyword=`)
+            // }
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -532,22 +581,24 @@ const BasicMold = ({page, keyword, option}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow(e)
+            competeMoldV1u(e)
           }}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            if(keyword){
-              router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/moldV1u?page=${page}`)
-            }
+            // if(keyword){
+            //   router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${option}`)
+              setPageInfo({...pageInfo,page:page})
+            // }else{
+            //   router.push(`/mes/basic/moldV1u?page=${page}`)
+            // }
           }}
         />
       <ExcelDownloadModal

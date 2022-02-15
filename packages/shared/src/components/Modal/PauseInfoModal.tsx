@@ -70,7 +70,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       sumTotalTime(total)
     }else {
       if (column.type !== 'readonly') {
-        if (isOpen && row.process_id && searchList.findIndex((e) => !!e.amount) === -1) {
+        if (isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount) === -1) {
           loadPauseList()
         }
       }

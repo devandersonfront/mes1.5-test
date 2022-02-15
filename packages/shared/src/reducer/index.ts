@@ -5,7 +5,8 @@ import MachineSelectReducer from "./machineSelect";
 import MulitpleSelectModal from "./ProductSelect";
 import infoModal from './infoModal'
 import modifyInfo from './modifyInfo'
-import toolInfo from './toolInfo'
+import mainUserInfo from '../../../main/reducer/userInfo'
+import deliveryRegisterState from "./deliveryRegisterState";
 
 const rootReducer = combineReducers({
   userInfo,
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
   MulitpleSelectModal,
   infoModal,
   modifyInfo,
-  toolInfo
+  mainUserInfo,
+  deliveryRegisterState
 })
 
 export {rootReducer};

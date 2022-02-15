@@ -51,7 +51,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
-
   const cleanUpData = () => {
     if(row.product_id){
       switch(column.type){
@@ -93,25 +92,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
           setSearchList(machineArray);
           return
 
-        case "tool" :
-          let toolArray = [];
-          row?.product_id?.map((data)=>{
-            let result:any = {...data};
-            result.customerData = data?.customer;
-            result.customer = data?.customer?.name;
-            result.modelData = data?.model;
-            result.model = data?.model?.model;
-            result.type_id = data?.type;
-            result.product_type = cleanType(data?.type);
-            result.unit = data?.unit;
-            result.stock = data?.stock;
-
-
-            toolArray.push(result);
-          })
-          setSearchList(toolArray);
-
-          return
         default :
           break;
       }
@@ -137,8 +117,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
       }
     }
   }
-
-
   const settingTitle = (index:number, inindex?:number) => {
     if(column.type === "mold" && index === 0 ? 450 : 144)
     switch(column.type){
@@ -159,8 +137,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
           return 144;
         }
         return
-      case "tool" :
-        return 450
     }
   }
 
@@ -258,45 +234,19 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
                   </HeaderTable>
               )
             })}
-            {column.type !== "tool" &&
-              <div style={{display: 'flex', justifyContent: 'flex-start', margin: '24px 0 8px 16px'}}>
-                <Button style={{backgroundColor: '#19B9DF'}} 
-                // onClick={() => {
-                //   let tmp = searchList
-                //   setSearchList([
-                //     ...searchList,
-                //     {
-                //       seq: searchList.length+1
-                //     }
-                //   ])
-                // }}
-                >
-                  <p style={{fontWeight: 'bold'}}>반·완제품</p>
-                </Button>
-              </div>
-            }
 
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
-                // headerList={searchModalList.productInfo}
-                headerList={row.products ? searchModalList.productToolInfo : searchModalList.productInfo}
-                // row={row.products ?? row.product_id ?? [{}]}
+                headerList={searchModalList.productInfo}
                 row={searchList}
-                setRow={(e) => setSearchList([...e])}
+                setRow={(e) => {
+
+                  setSearchList([...e])
+                }}
                 width={1746}
                 rowHeight={32}
                 height={591}
-                // setSelectRow={(e) => {
-                //   setSelectRow(e)
-                // }}
                 setSelectRow={(e) => {
-                  // if(!searchList[e].border){
-                  //   searchList.map((v,i)=>{
-                  //     v.border = false;
-                  //   })
-                  //   searchList[e].border = true
-                  //   setSearchList([...searchList])
-                  // }
                   setSelectRow(e)
                 }}
                 type={'searchModal'}
@@ -305,32 +255,44 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
           </div>
 
-          <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
+          {column.readonly? <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
             <div
-              onClick={() => {
-                setIsOpen(false)
-              }}
-              style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                onClick={() => {
+                  setIsOpen(false)
+                }}
+                style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>취소</p>
             </div>
             <div
-              onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
-                  onRowChange({
-                    ...row,
-                    ...searchList[selectRow],
-                    name: row.name,
-                    isChange: true
-                  })
-                }
-                setIsOpen(false)
-              }}
-              style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                onClick={() => {
+                  if(selectRow !== undefined && selectRow !== null){
+                    onRowChange({
+                      ...row,
+                      ...searchList[selectRow],
+                      name: row.name,
+                      isChange: true
+                    })
+                  }
+                  setIsOpen(false)
+                }}
+                style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>등록하기</p>
             </div>
           </div>
+          :
+              <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
+                <div
+                    onClick={() => {
+                      setIsOpen(false)
+                    }}
+                    style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                >
+                  <p>확인</p>
+                </div>
+              </div>
+          }
         </div>
       </Modal>
     </SearchModalWrapper>
@@ -354,7 +316,7 @@ const Button = styled.button`
     justify-content:center;
     align-items:center;
     cursor:pointer;
-    
+
 `;
 
 const HeaderTable = styled.div`
@@ -385,7 +347,7 @@ const HeaderTableText = styled.p`
 const HeaderTableTitle = styled.div`
   width: 99px;
   padding: 0 8px;
-  display: flex; 
+  display: flex;
   align-items: center;
 `
 

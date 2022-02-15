@@ -59,11 +59,8 @@ const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: st
 
 
 const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
-  const tabRef = useRef(null)
 
-  const [bomDummy, setBomDummy] = useState<any[]>([
-    {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
-  ])
+  const [bomDummy, setBomDummy] = useState<any[]>([])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
@@ -71,8 +68,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const [summaryData, setSummaryData] = useState<any>({})
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
-  const [lotList, setLotList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
+  const [lotList, setLotList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [selectProduct, setSelectProduct] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({

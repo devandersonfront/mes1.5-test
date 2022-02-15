@@ -41,6 +41,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     page: page,
     total: 1
   })
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   useEffect(() => {
     if(keyword){
@@ -116,6 +117,14 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   }
   const SaveBasic = async () => {
 
+    if(selectList.size === 0){
+      return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+    }
+
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional?.map((addi, i)=>{
@@ -158,7 +167,9 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
           }
         }).filter((v) => v)
-    )
+    ).catch((error)=>{
+      return error.data && Notiflix.Notify.failure(error.data.message);
+    })
 
     if(res){
 
@@ -257,6 +268,8 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
         cleanUpData(res)
       }
     }
+
+    setSelectList(new Set())
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -283,6 +296,8 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const changeRow = (row: any) => {
@@ -470,6 +485,15 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
         break;
       case 5:
+
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+        }
+        
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{DeleteBasic()},
           ()=>{}
@@ -478,6 +502,25 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
         break;
 
     }
+  }
+
+  const competeProcess = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+    
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined)){
+        return Notiflix.Report.warning(
+          '공정명 경고',
+          `중복된 공정명을 입력할 수 없습니다`,
+          '확인'
+        );
+      }
+    }
+
+    setBasicRow(rows)
   }
 
   return (
@@ -518,11 +561,13 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
-          setBasicRow(e)
+          // setBasicRow(e)
+          competeProcess(e)
         }}
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
+        setSelectRow={setSelectRow}
         loadEvent={LoadBasic}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />

@@ -21,8 +21,6 @@ interface SelectParameter {
 }
 
 
-
-
 const MesLeadtimeManufacture = () => {
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
     const [processBasicRow, setProcessBasicRow] = useState<any>({id : '' });
@@ -90,7 +88,7 @@ const MesLeadtimeManufacture = () => {
                 return
         }
     }
-    
+
     // Date 변화에 따른 API 요청
     React.useEffect(()=>{
 
@@ -104,7 +102,7 @@ const MesLeadtimeManufacture = () => {
     React.useEffect(()=>{
 
         if(pauseBasicRow.length){
-            
+
             const rowLenth = pauseBasicRow.length;
             let sum = 0;
             if(rowLenth){
@@ -131,7 +129,7 @@ const MesLeadtimeManufacture = () => {
                 ]}
                 row={[processBasicRow]}
                 setRow={(row) => {
-                    setProcessBasicRow({...processBasicRow, 
+                    setProcessBasicRow({...processBasicRow,
                         id : row[0].product.product_id,
                         customer_id : row[0].customer_id,
                         cm_id : row[0].cm_id,

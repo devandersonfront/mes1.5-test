@@ -58,7 +58,8 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable:menu.moddable
             }
           } else if(menu.colName === 'id' && column.key === 'tmpId'){
             menuData = {
@@ -66,7 +67,8 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable:menu.moddable
             }
           }
         })
@@ -77,14 +79,44 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
             ...menuData,
           }
         }
+
       }).filter((v:any) => v)
 
-      setColumn([...tmpColumn])
+      setColumn([...tmpColumn.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     }
   }
 
   const SaveBasic = async () => {
     let res: any
+    let checkValue = true;
+
+    if(selectList.size <= 0) {
+      Notiflix.Report.warning("경고", "데이터를 선택해주세요.", "확인")
+      return
+    }
+    basicRow.map((row) => {
+      if(selectList.has(row.id) && !row.code){
+        Notiflix.Report.warning("경고","CODE를 입력해주세요.","확인")
+        return
+      }
+    })
+    // else{
+    //   basicRow.map((row) => {
+    //     if(!Number(row.amount) && row.amount !== "0"){
+    //       Notiflix.Report.warning("경고", "정확한 수주량을 입력해주세요.", "확인", )
+    //       checkValue = false;
+    //       return;
+    //     }
+    //   })
+    // }
+
+    if(!checkValue) return
+
     res = await RequestMethod('post', `contractSave`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
@@ -115,6 +147,7 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
             ...row,
             ...selectData,
             customer: row.customerArray,
+            amount: row.amount ?? 0,
             additional: [
               ...additional.map(v => {
                 if(row[v.name]) {
@@ -157,10 +190,18 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
 
         break;
       case 2:
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{},
-          ()=>{}
-        )
+        if(selectList.size <= 0){
+          Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
+        }else{
+          Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+            ()=>{
+              const filter = basicRow.filter((row, index) => !selectList.has(row.id))
+              setBasicRow([...filter])
+              setSelectList(new Set())
+            },
+            ()=>{}
+          )
+        }
         break;
     }
   }
@@ -179,7 +220,6 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
       />
       <ExcelTable
         editable
-        resizable
         headerList={[
           SelectColumn,
           ...column
@@ -192,7 +232,13 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
-          setBasicRow(e.map(v => ({...v, name: v.product_name, date:v?.date ?? moment().format("YYYY-MM-DD"), deadline:v?.deadline ?? moment().format("YYYY-MM-DD")})))
+          setBasicRow(e.map((v, index) => ({
+            ...v,
+            name: v.product_name,
+            date:v?.date ?? basicRow[index]?.date,
+            deadline:v?.deadline ?? basicRow[index]?.deadline,
+            amount:v?.amount ?? basicRow[index]?.amount
+          })))
         }}
         selectList={selectList}
         //@ts-ignore
@@ -203,8 +249,8 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}
