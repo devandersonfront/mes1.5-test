@@ -246,7 +246,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             customer:res.product.customer,
             customer_id: res.product.customer?.name,
             model:res.product.model,
-            cm_id: res.product.model.model,
+            cm_id: res.product.model?.model ?? '-',
             product_id: res.product.code,
             type:res.product.type === 0 ? "반제품" : res.product.type === 1 ? "재공품" :"완제품" ,
             type_id:res.product.type,
@@ -293,6 +293,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
           return {
             ...v,
+            contract_id: codeCheck ? "-" : object.contract_id,
             id: "operation_"+random_id,
             bom_root_id: v.child_product.bom_root_id,
             product: v.child_product,
