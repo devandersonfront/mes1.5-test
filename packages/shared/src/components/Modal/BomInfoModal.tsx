@@ -46,14 +46,19 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      if(row.bom_root_id){
+      setSelectRow(null)
+      // if(row.bom_root_id){
+
+      if(row.process_id){
         SearchBasic().then(() => {
           Notiflix.Loading.remove()
         })
-      } else {
-        setIsOpen(false)
-        Notiflix.Report.warning("데이터를 저장해주시기 바랍니다.", "", "확인",)
       }
+
+      // } else {
+      //   setIsOpen(false)
+      //   Notiflix.Report.warning("데이터를 저장해주시기 바랍니다.", "", "확인",)
+      // }
     }else{
       dispatch(reset_summary_info());
     }
@@ -67,7 +72,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      getModalData()
+      if(row.process_id){
+        getModalData()
+      }
     }
 
   },[tabStore.index])
@@ -174,13 +181,19 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
   }
 
+ 
+
   const SaveBasic = async () => {
     let  modelIdCheck = true
     let dataCheck = true
     if(!row.code) modelIdCheck = false
 
+    if(searchList.length === 0){
+      return Notiflix.Report.warning("경고","BOM은 하나라도 등록이 되어야합니다.","확인",)
+    }
+
     let body = searchList.map((v, i) => {
-      if(!v.rm_id || !v.sm_id || !v.product_id){
+      if(!v.rm_id && !v.sm_id && !v.product_id){
         dataCheck = false
       }
 
@@ -262,7 +275,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             padding: '3.5px 0px 0px 3.5px',
             width: '100%'
           }}>
-            <UploadButton onClick={() => {
+            <UploadButton 
+            onClick={() => {
               setIsOpen(true)
             }}>
               <p>BOM 등록</p>
@@ -442,7 +456,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 setSearchList([
                   ...searchList,
                   {
-                    setting:0,
+                    setting: '기본',
                     seq: searchList.length+1
                   }
                 ])
@@ -504,6 +518,15 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>아래로</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
+                
+                if(selectRow === null){
+                  return Notiflix.Report.warning(
+                    '경고',
+                    '선택된 정보가 없습니다.',
+                    '확인',
+                    );
+                }
+
                 let tmpRow = [...searchList]
                 if(selectRow !== undefined && selectRow !== null){
                   tmpRow.splice(selectRow, 1)
@@ -529,7 +552,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     newTab: false
                   }
                 })
-                typeCheck(tmp)
+                // typeCheck(tmp)
+
+                console.log(e,'eeee')
 
                 setSearchList([...tmp])
               }}
@@ -567,13 +592,43 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             <div
               onClick={() => {
                 if(column.type !== 'readonly' && tabStore.index === 0){
-                  SaveBasic()
+
+                  if(row.product_id){
+                      SaveBasic()
+                  }
                   if(selectRow !== undefined && selectRow !== null) {
                     onRowChange(
                       column.type === "bomRegister" ?
                         {
                           ...row,
-                          isChange: true
+                          isChange: true,
+                          bom : searchList.map((v, i) => {
+                            setIsOpen(false)
+                            return {
+                              seq: i+1,
+                              parent: {
+                                ...row,
+                                process: row.processArray,
+                                type: row.type_id ?? row.type,
+                                product_id:row.product_id ?? row.productId,
+                                code: row.code,
+                              },
+                              child_product: v.tab === 2 ? {
+                                ...v.product
+                              } : null,
+                              child_rm: v.tab === 0 ? {
+                                ...v.raw_material,
+                                type:v.raw_material.type_id
+                              } : null,
+                              child_sm: v.tab === 1 ? {
+                                ...v.sub_material
+                              } : null,
+                              type: v.tab,
+                              key: row.bom_root_id,
+                              setting: v.setting === "기본" ? 0 : 1,
+                              usage: v.usage,
+                              version: v.version
+                            }})
                         }
                         :
                         {

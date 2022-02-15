@@ -47,6 +47,8 @@ const BasicProduct = ({page}: IProps) => {
     total: 1
   })
 
+  console.log(basicRow,'basicRowbasicRowbasicRow')
+
   const [buttonList , setButtonList ] = useState<string[]>([])
 
   useEffect(() => {
@@ -130,7 +132,7 @@ const BasicProduct = ({page}: IProps) => {
     let selectCheck = false
     let codeCheck = true
     let processCheck = true
-    let bomCheck = true
+    let bom = true
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -147,6 +149,7 @@ const BasicProduct = ({page}: IProps) => {
       if(selectList.has(row.id)){
         selectCheck = true;
         if(!row.code) codeCheck = false
+        if(!row.bom) bom = false
         if(!row.process_id) processCheck = false
         let additional:any[] = []
         column.map((v) => {
@@ -240,7 +243,11 @@ const BasicProduct = ({page}: IProps) => {
     }else if(!codeCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인");
-    }else if(!processCheck){
+    }else if(!bom){
+      Notiflix.Loading.remove()
+      Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
+    }
+    else if(!processCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
     }
@@ -477,10 +484,12 @@ const BasicProduct = ({page}: IProps) => {
               ...value.selectList[0],
               [value.key] : value.selectList[0].name,
               [value.key+'PK'] : value.selectList[0].pk, //여기 봐야됨!
+              type_id : '0',
               ...items,
             }
           }
         })
+
 
         const random_id = Math.random()*1000
 
@@ -490,6 +499,7 @@ const BasicProduct = ({page}: IProps) => {
             id: `process_${random_id}`,
             name: null,
             additional: [],
+
           },
           ...basicRow
         ])
@@ -511,7 +521,6 @@ const BasicProduct = ({page}: IProps) => {
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
     const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined)
-    console.log(spliceRow,'spliceRowspliceRow')
 
     if(spliceRow){
       if(isCheck){

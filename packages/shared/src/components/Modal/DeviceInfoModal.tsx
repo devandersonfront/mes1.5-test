@@ -45,7 +45,6 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     total: 1
   })
 
-
   useEffect(() => {
     if(isOpen) {
       if(row.devices !== undefined && row.devices !== null && row.devices.length > 0){
@@ -269,28 +268,16 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
             }}>
               <p>행 추가</p>
             </Button>
-            <Button style={{marginLeft: 16}}  onClick={() => {
-
-              if(Number(selectRow) === 0 || selectRow){
-                searchList.splice(selectRow, 1);
-                setSearchList([
-                  ...searchList,
-                ])
-              }
-              setSelectRow(undefined);
-            }}>
-              <p>행 삭제</p>
-            </Button>
             <Button style={{marginLeft: 16}} onClick={() => {
               if(selectRow === 0){
                 return
               }
-              let tmpRow = searchList
+              let tmpRow = [...searchList]
 
               let tmp = tmpRow[selectRow]
               tmpRow[selectRow] = tmpRow[selectRow - 1]
               tmpRow[selectRow - 1] = tmp
-
+              setSelectRow((prevSelectRow)=> prevSelectRow - 1)
               setSearchList([...tmpRow.map((v, i) => {
                 return {
                   ...v,
@@ -305,7 +292,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
                 return
               }
               let tmpRow = searchList
-
+              setSelectRow((prevSelectRow)=> prevSelectRow + 1)
               let tmp = tmpRow[selectRow]
               tmpRow[selectRow] = tmpRow[selectRow + 1]
               tmpRow[selectRow + 1] = tmp
@@ -318,6 +305,24 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               })])
             }}>
               <p>아래로</p>
+            </Button>
+            <Button style={{marginLeft: 16}}  onClick={() => {
+              
+              if(selectRow === undefined){
+                return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
+              }
+
+              searchList.splice(selectRow, 1);
+              setSelectRow(undefined)
+              setSearchList([...searchList.map((v, i) => {
+                  return {
+                    ...v,
+                    seq: i+1
+                  }
+              })])
+
+              }}>
+              <p>삭제</p>
             </Button>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
@@ -372,11 +377,10 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
                     devices:searchList.map((device)=>{
                       const tmpDevice = {...device};
                       tmpDevice.manager = device.manager_data;
-
                       return tmpDevice
-                    }),
+                    }).filter(v => v.mfrCode !== undefined),
                     isChange: true,
-                  })
+                    })
                 // }
                 setIsOpen(false)
               }}

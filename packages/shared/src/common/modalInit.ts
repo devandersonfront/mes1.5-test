@@ -104,7 +104,7 @@ export const searchModalList: any = {
     {key: 'description', name: '비고', width: 370, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '내용 입력'},
   ],
   deviceInfo: [
-    // {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
+    {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
     {key: 'mfrCode', name: '제조 번호', width: 440, formatter: DeviceSearchModal, type: 'Modal', placeholder: '주변장치를 선택해 주세요'},
     {key: 'name', name: '장치 이름', width: 440, formatter: LineBorderContainer, placeholder: '주변장치를 선택해 주세요' },
     {key: 'mfrName', name: '제조사', width: 160, formatter: LineBorderContainer},

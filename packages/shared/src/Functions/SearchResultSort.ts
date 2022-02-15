@@ -51,7 +51,8 @@ export const SearchResultSort = (infoList, type: string) => {
           customer: v.customer?.name ?? "",
           rawName: v.name,
           type: v.type === 2 ? "SHEET" : "COIL",
-          type_id:v.type
+          type_id:v.type,
+          type_name : v.type === 2 ? "SHEET" : "COIL",
         }
       })
     }
@@ -127,6 +128,10 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         ...selectData,
         cm_id: selectData.model,
         customer: selectData.customerArray,
+        model : {
+          ...selectData,
+          customer: selectData.customerArray
+        },
         modelArray: {
           ...selectData,
           customer: selectData.customerArray
