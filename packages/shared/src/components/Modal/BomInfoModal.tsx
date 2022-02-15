@@ -54,10 +54,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         setIsOpen(false)
         Notiflix.Report.warning("데이터를 저장해주시기 바랍니다.", "", "확인",)
       }
-        SearchBasic().then(() => {
-          Notiflix.Loading.remove()
-        })
-      
+
     }else{
       dispatch(reset_summary_info());
     }
