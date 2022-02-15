@@ -148,7 +148,6 @@ const BasicProduct = ({page}: IProps) => {
         selectCheck = true;
         if(!row.code) codeCheck = false
         if(!row.process_id) processCheck = false
-        if(!row.bom_root) bomCheck = false
         let additional:any[] = []
         column.map((v) => {
           if(v.type === 'additional'){
@@ -241,9 +240,6 @@ const BasicProduct = ({page}: IProps) => {
     }else if(!codeCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인");
-    }else if(!bomCheck){
-      Notiflix.Loading.remove()
-      Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
     }else if(!processCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
