@@ -128,6 +128,10 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         ...selectData,
         cm_id: selectData.model,
         customer: selectData.customerArray,
+        model : {
+          ...selectData,
+          customer: selectData.customerArray
+        },
         modelArray: {
           ...selectData,
           customer: selectData.customerArray

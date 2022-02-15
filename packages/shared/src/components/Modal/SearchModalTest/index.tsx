@@ -45,6 +45,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
+
   // const [page, setPage] = useState<number>(1);
   // const [totalPage, setTotalPage] = useState<number>(0);
 
