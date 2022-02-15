@@ -190,9 +190,9 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
         totalPage={pageInfo.total}
         setPage={(page) => {
           if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
+            router.push(`/mes/operationV1u/modify?page=${page}&keyword=${keyword}&opt=${option}`)
           }else{
-            router.push(`/mes/basic/mold?page=${page}`)
+            router.push(`/mes/operationV1u/modify?page=${page}`)
           }
         }}
       />

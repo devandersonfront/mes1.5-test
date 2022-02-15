@@ -25,13 +25,13 @@ interface IProps {
 const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
-  // const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
+  const [bomCheck, setBomCheck] = useState<boolean>(false)
+  const [codeCheck, setCodeCheck] = useState<boolean>(true)
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
     deadline: moment().format('YYYY-MM-DD'),first:true
   }])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationRegisterV2"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationCodeRegisterV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
@@ -41,7 +41,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     })
 
     if(res){
-      let tmpColumn = columnlist["operationRegisterV2"]
+      let tmpColumn = codeCheck ?  columnlist["operationCodeRegisterV2"] : columnlist['operationIdentificationRegisterV2']
 
       tmpColumn = tmpColumn.map((column: any) => {
         let menuData: object | undefined;
@@ -77,6 +77,30 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async (result:any, selectList:Set<any>) => {
+    if(basicRow.length === 0) {
+      return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
+    }
+    if(selectList.size === 0){
+      return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
+    }
+    const error = result.map((row)=>{
+      if(selectList.has(row.id)){
+        if(row.product_id === undefined) {
+          return 1
+        }
+        if(row.input_bom === undefined){
+          return 2
+        }
+      }
+    })
+
+    if(error.includes(1)){
+      return Notiflix.Report.warning("경고","CODE OR 수주번호를 선택해주세요.","확인")
+    }
+    if(error.includes(2)){
+      return Notiflix.Report.warning("경고","자재 보기를 눌러 BOM 등록을 해주세요.","확인")
+    }
+
     let res: any
     res = await RequestMethod('post', `sheetSave`,
         result.map((row, i) => {
@@ -123,11 +147,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               ...selectData,
               os_id:undefined,
               version: undefined,
-              input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
-                // return {
-                //   ...bom,
-                //   setting:bom.setting === "여" || bom.setting === 1 ? 1 : 0
-                // }
+              input_bom: [...row?.input_bom?.map((bom)=>{
                 bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
                 return {...bom}
               })] ?? [],
@@ -164,6 +184,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     })
     let resultData = [];
     if(res){
+      setBomCheck(true)
       setSelectList(new Set())
       Notiflix.Report.success("알림","최근 작업지시서를 불러왔습니다.","확인")
       let row:any = [];
@@ -181,6 +202,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           return index === 0 ?
               {
                 ...object,
+                contract_id:"-",
                 bom_root_id: data.product?.bom_root_id,
                 id: "operation_"+random_id,
                 date: data?.date ?? moment().format("YYYY-MM-DD"),
@@ -191,7 +213,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 code:data.product?.code,
                 product_id:data.product?.code,
                 process_id:data.product?.process?.name ?? "-",
-                goal: data.goal,
               }
               :
               {
@@ -210,7 +231,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 id: "operation_"+random_id,
                 name:data.product?.name,
                 process_id:data.product?.process?.name ?? "-",
-                goal: data.goal,
+                goal: 0,
               }
         })]
       } else{
@@ -219,14 +240,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           {
             ...res,
             first:true,
-            // contract_id:res.identification,
-            contract_id:res.contract?.identification ?? "-",
+            contract_id: "-",
             date: res?.data === undefined ? moment().format("YYYY-MM-DD") : res.date,
             deadline: res?.deadline === undefined ? moment().format("YYYY-MM-DD") : res.deadline,
             customer:res.product.customer,
             customer_id: res.product.customer?.name,
             model:res.product.model,
-            cm_id: res.product.model.model,
+            cm_id: res.product.model?.model ?? '-',
             product_id: res.product.code,
             type:res.product.type === 0 ? "반제품" : res.product.type === 1 ? "재공품" :"완제품" ,
             type_id:res.product.type,
@@ -238,32 +258,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           }
         ]
       }
+
       return resultData;
-      // setBasicRow([
-      //     // ...basicRow,
-      //   {
-      //     id: "operation_"+random_id,
-      //     bom_root_id: row.product?.bom_root_id,
-      //     ...object,
-      //     name:row.product?.name,
-      //     process_id:row.product?.process?.name ?? "-",
-      //     // contract: res.contract,
-      //     // contract_id: res.contract?.identification ?? "-",
-      //     // date: res.date,
-      //     // deadline: res.deadline,
-      //     // customer_id: res.product.customer?.name,
-      //     // cm_id: res.product.model?.model,
-      //     // product_id: res.product.code,
-      //     // name: res.product.name ?? '-',
-      //     // product: res.product,
-      //     // product_name: res.product.name,
-      //     // type: res.product.type ? TransferCodeToValue(res.product.type, 'material') : '',
-      //     // unit: res.product.unit,
-      //     // process_id: res.product.process?.name ?? '-',
-      //     goal: row.goal,
-      //   }
-      // ])
-      // return resultData;
     }else{
       return loadGraphSheet(product_id, object)
     }
@@ -276,40 +272,18 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     })
     if(res){
       let tmp: Set<any> = selectList
-      // setBasicRow([{
-      //   ...object,
-      //   goal: 0,
-      // }, ...res.map(v => {
-      //   if(v.type === 2){
-      //     let random_id = Math.random()*1000;
-      //
-      //     tmp.add("operation_"+random_id)
-      //
-      //     return {
-      //       ...v,
-      //       id: "operation_"+random_id,
-      //       bom_root_id: v.child_product.bom_root_id,
-      //       product: v.child_product,
-      //       date: moment().format('YYYY-MM-DD'),
-      //       deadline: moment().format('YYYY-MM-DD'),
-      //       customer_id: v.child_product.customer?.name,
-      //       cm_id: v.child_product.model?.model,
-      //       name: v.child_product.name,
-      //       product_id: v.child_product.code,
-      //       code: v.child_product.code,
-      //       type: TransferCodeToValue(v.type, 'product'),
-      //       unit: v.child_product.unit,
-      //       process_id: v.child_product.process?.name ?? '-',
-      //       readonly: true,
-      //     }
-      //   }
-      // }).filter(v => v)])
       setSelectList(new Set())
-      Notiflix.Report.warning("알림","최근 작업지시서가 없어 BOM기준으로 불러왔습니다.","확인")
+      setBomCheck(false)
+      if(codeCheck) {
+        Notiflix.Report.warning("알림", "최근 작업지시서가 없어 BOM기준으로 불러왔습니다.", "확인")
+      }
       return [{
         ...object,
-        goal: 0,
-        name: object.product_name,
+        contract_id: codeCheck ? "-" : object.contract_id,
+        goal: codeCheck ? 0 : object.contract.amount,
+        cm_id: object.cm_id ?? '-',
+        process_id: object.process_id ?? '-',
+        name: object.product_name ?? '-',
         date: object?.date ?? moment().format('YYYY-MM-DD'),
         deadline: object?.deadline ?? moment().format('YYYY-MM-DD'),
       }, ...res.map(v => {
@@ -319,6 +293,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
           return {
             ...v,
+            contract_id: codeCheck ? "-" : object.contract_id,
             id: "operation_"+random_id,
             bom_root_id: v.child_product.bom_root_id,
             product: v.child_product,
@@ -336,7 +311,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           }
         }
       }).filter(v => v)]
-      // setSelectList(tmp)
     }
   }
 
@@ -347,22 +321,12 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           if (basicRow[0].product.product_id) {
             const data = await loadGraphSheet(basicRow[0].product.product_id, basicRow[0]).then(value => value)
             setBasicRow(data);
+            setBomCheck(false)
           }
         }else{
           Notiflix.Report.warning("경고","한개의 데이터만 선택해 주시기 바랍니다.","확인");
         }
         break;
-        // case 1:
-        //   const randomId = Math.random()*1000;
-        //   setBasicRow([
-        //     {
-        //       id:"operation_"+randomId,
-        //       date: moment().format('YYYY-MM-DD'),
-        //       deadline: moment().format('YYYY-MM-DD')
-        //     },
-        //     ...basicRow
-        //   ])
-        //   break;
       case 2:
         SaveBasic(basicRow, selectList)
         break;
@@ -393,11 +357,25 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     getMenus()
   }, [])
 
+  useEffect(()=>{
+    if(codeCheck) {
+      setColumn(columnlist["operationCodeRegisterV2"])
+    }else {
+      setColumn(columnlist["operationIdentificationRegisterV2"])
+    }
+  },[codeCheck])
+
   return (
       <div>
         <PageHeader
+            isCode
+            onChangeCode={(value)=> {setCodeCheck(value), setBasicRow([{
+              id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
+              deadline: moment().format('YYYY-MM-DD'), first:true
+            }])}}
+            code={codeCheck}
             title={"작업지시서 등록"}
-            buttons={['BOM 기준으로 보기', '', '저장하기', '삭제']}
+            buttons={[bomCheck ? 'BOM 기준으로 보기' : '', '', '저장하기', '삭제']}
             buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
@@ -409,6 +387,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             ]}
             row={basicRow}
             setRow={async(e) => {
+
               const eData = e.filter((eValue) => {
                 let equal = false;
                 basicRow.map((bValue)=>{
@@ -420,15 +399,21 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 if(!equal) return eValue
               })
               if(eData.length <= 0){
-                setSelectList(new Set());
                 setBasicRow([...e])
               }else{
-                setSelectList(new Set());
-                const resultData = await loadLatestSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
-                // const resultData = await loadGraphSheet(e[0].product.product_id, e[0]).then((value) => value)
-                setBasicRow([...resultData])
+                if(codeCheck) {
+                  const resultData = await loadLatestSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
+                  setBasicRow([...resultData])
+                }else{
+                  const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
+                  setBasicRow([...resultData])
+                }
               }
               let tmp: Set<any> = selectList;
+              e.map(v => {
+                if(v.isChange) tmp.add(v.id)
+              })
+              // setSelectList(tmp)
               setSelectList(tmp)
             }}
             selectList={selectList}
@@ -436,16 +421,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             setSelectList={setSelectList}
             height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
-        {/*<ExcelDownloadModal*/}
-        {/*  isOpen={excelOpen}*/}
-        {/*  column={column}*/}
-        {/*  basicRow={basicRow}*/}
-        {/*  filename={`금형기준정보`}*/}
-        {/*  sheetname={`금형기준정보`}*/}
-        {/*  selectList={selectList}*/}
-        {/*  tab={'ROLE_BASE_07'}*/}
-        {/*  setIsOpen={setExcelOpen}*/}
-        {/*/>*/}
       </div>
   );
 }
