@@ -169,6 +169,7 @@ export const columnlist: any = {
     {key: 'volt', name: '사용 전압',editor: TextEditor, formatter: UnitContainer, unitData: 'V', width: 118},
     {key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory',},
     {key: 'affiliated_id',name: '공장 세분화명', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory',},
+      {key: 'check',name: '일상 점검', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory',},
     {key: 'product_id',name: '생산 품목', width: 118, formatter: ProductInfoModal, type:"machine", headerType:[{name: "기계명"}]},
   ],
   device: [
@@ -1030,6 +1031,48 @@ export const columnlist: any = {
     {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput'},
     {key: "code", name: 'CODE', formatter: SearchModalTest, type: 'product', width: 480},
     {key: "name", name:"품명", formatter: PlaceholderBox, placeholder: '자동입력',type: 'autoInput'},
+  ],
+
+  dailyInspectionMachine: [
+    {key: "customer_id", name: '기계 제조사', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168, type: 'autoInput'},
+    {key: "cm_id", name: '기계 이름',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput'},
+    {key: "code", name: '제조 번호', formatter: PlaceholderBox, width: 480, type: 'autoInput'},
+    {key: "name", name:"기계 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
+    {key: "name", name:"용접 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
+    {key: "name", name:"제조 연원일", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
+    {key: "name", name:"담당자", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
+  ],
+  dailyInspectionMachinePicture: [
+    {key: "customer_id", name: '기계 사진', formatter: FileEditer, placeholder: '자동 입력', width: 300, type: 'autoInput'},
+    {key: "cm_id", name: '점검사항 부위01',formatter: FileEditer, placeholder: '자동 입력' , type: 'autoInput'},
+    {key: "code", name: '점검사항 부위02', formatter: FileEditer, type: 'product'},
+    {key: "name", name:"점검사항 부위03", formatter: FileEditer, placeholder: '자동입력',type: 'autoInput'},
+    {key: "name", name:"점검사항 부위04", formatter: FileEditer, placeholder: '자동입력',type: 'autoInput'},
+    {key: "name", name:"점검사항 부위05", formatter: FileEditer, placeholder: '자동입력',type: 'autoInput'},
+    {key: "name", name:"점검사항 부위06", formatter: FileEditer, placeholder: '자동입력',type: 'autoInput'},
+    {key: "name", name:"점검사항 부위07", formatter: FileEditer, placeholder: '자동입력',type: 'autoInput'},
+    {key: "name", name:"점검사항 부위08", formatter: FileEditer, placeholder: '자동입력',type: 'autoInput'},
+    {key: "name", name:"점검사항 부위09", formatter: FileEditer, placeholder: '자동입력',type: 'autoInput'},
+  ],
+  dailyInspectionMachineLegendary: [
+    {key: "seq", name: '구분', formatter: PlaceholderBox, placeholder: '자동 입력', width: 48,},
+    {key: "legendary", name: '범례',formatter: PlaceholderBox, editor: TextEditor, placeholder: '범례 입력',},
+    {key: "content", name: '범례 설명',formatter: PlaceholderBox, editor: TextEditor, placeholder: '범례 설명 입력',},
+  ],
+  dailyInspectionMachineCheck: [
+    {key: "sequence", name: '구분', formatter: PlaceholderBox, width: 48, type: 'autoInput'},
+    {key: "title", name: '점검 항목',formatter: PlaceholderBox, editor: TextEditor, width: 500, placeholder: '점검 항목 입력',},
+    {key: "standard", name: '점검 기준',formatter: PlaceholderBox, editor: TextEditor, width: 424, placeholder: '점검 기준 입력',},
+    {key: "method", name: '점검 방법',formatter: PlaceholderBox, editor: TextEditor, width: 432, placeholder: '점검 방법 입력',},
+    {key: "type", name: '기록 방록',formatter: DropDownEditor, placeholder: '자동 입력',
+      selectList: [
+        {pk: 0, name: "범례 적용"},
+        {pk: 1, name: "수치 입력"},
+      ]
+    },
+  ],
+  dailyInspectionMachineETC: [
+    {key: "etc", name: '기타 사항', formatter: PlaceholderBox, editor: TextEditor, placeholder: '기타 사항 입력'},
   ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},

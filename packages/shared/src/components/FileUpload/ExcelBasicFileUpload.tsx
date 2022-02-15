@@ -115,6 +115,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         accept={column.type === "image" ? "image/png, image/jpeg" : "*"}
         hidden
         onChange={async (e) => {
+            console.log("e : ", e, e.target.files[0])
           if(e.target.files && e.target.files.length !== 0) {
               // Buffer.from(e.target.files[0]);
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
