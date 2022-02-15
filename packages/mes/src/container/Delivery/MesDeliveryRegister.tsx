@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react'
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from 'shared'
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod, RootState} from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
+import {useSelector} from "react-redux";
 
 interface IProps {
   children?: any
@@ -18,6 +19,10 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
+
+  const orderIdentificationId = useSelector((root:RootState) => root.deliveryRegisterState)
+
+  console.log("orderIdentificationId : ", orderIdentificationId);
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     date: moment().format('YYYY-MM-DD'),
