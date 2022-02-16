@@ -381,7 +381,6 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
 
-    console.log(spliceRow,'spliceRowspliceRow')
 
     if(spliceRow){
       if(spliceRow.some((row)=> row.code === tempRow[selectRow].code)){
@@ -440,7 +439,6 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
             })
             setSelectList(tmp)
 
-            console.log(e,'eeee')
             competeSubMaterial(e)
           }}
           selectList={selectList}
