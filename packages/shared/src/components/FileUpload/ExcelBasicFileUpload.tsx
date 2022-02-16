@@ -29,15 +29,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
   const changeSetOnImage = (value:boolean) => {
       setOnImage(value)
   }
-
   return (
-    // <input
-    //   className={'editCell'}
-    //   ref={autoFocusAndSelect}
-    //   value={row[column.key]}
-    //   onChange={(event) => onRowChange({ ...row, [column.key]: event.target.value })}
-    //   onBlur={() => onClose(true)}
-    // />
     <div style={{
       width: "100%",
       height: "100%",
@@ -86,16 +78,8 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                       .catch((err) => {
                           Notiflix.Report.failure("에러","에러입니다.","확인")
                       })
-                // if(row[column.key+'Path']){
-                //   window.open(SF_ENDPOINT_RESOURCE+`/${row[column.key+'Path']}`)
-                // }else{
-                //   window.open(SF_ENDPOINT_RESOURCE+`${row[column.key+'Resource']}`)
-                // }
               }}
             >
-              {/*{*/}
-              {/*  row[column.key]*/}
-              {/*}*/}
                 {column.type === "image" ? "이미지 확인" : "파일 다운로드" }
             </p>
           </div>
@@ -119,14 +103,25 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
           if(e.target.files && e.target.files.length !== 0) {
               // Buffer.from(e.target.files[0]);
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
-
               if(uploadImg !== undefined){
-                onRowChange({
-                  ...row,
-                  [column.key]: uploadImg.UUID,
-                  [column.key+'Resource']: uploadImg.url,
-                  isChange: true
-                })
+                  if(column.key.includes("photo")){
+                      onRowChange({
+                          ...row,
+                          [column.key]: {
+                              ...row[column.key],
+                              name:e.target.files[0].name,
+                              uuid: uploadImg.UUID,
+                              sequence: column.idx
+                          }
+                      })
+                  }else{
+                    onRowChange({
+                      ...row,
+                      [column.key]: uploadImg.UUID,
+                      [column.key+'Resource']: uploadImg.url,
+                      isChange: true
+                    })
+                  }
               }
           }
 

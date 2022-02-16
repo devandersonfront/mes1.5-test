@@ -3,13 +3,34 @@ import styled from "styled-components"
 import {columnlist, ExcelTable, Header as PageHeader, RequestMethod} from "shared"
 import Notiflix from "notiflix"
 import {NextPageContext} from "next";
+import {useRouter} from "next/router";
+import DailyInspectionModal from "../../../shared/src/components/Modal/DailyInspection/DailyInspectionModal";
 
 export interface IProps {
     machine_id: number
 }
 
+interface PictureInfo {
+    name:string
+    uuid:string
+    sequence:number
+}
+
+interface PictureInterface {
+    machinePicture?:PictureInfo
+    photo1?:PictureInfo
+    photo2?:PictureInfo
+    photo3?:PictureInfo
+    photo4?:PictureInfo
+    photo5?:PictureInfo
+    photo6?:PictureInfo
+    photo7?:PictureInfo
+    photo8?:PictureInfo
+    photo9?:PictureInfo
+}
 
 const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
+    const router = useRouter()
     const [basicRow, setBasicRow] = useState<any>({
         form_id:"",
         machine:{},
@@ -26,37 +47,83 @@ const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
             ],
         legendary_list: [],
         check_list:[],
-        etc:"s",
+        etc:"",
         version:0
     })
+
+    const [photoTitleList, setPhotoTitleList] = useState<PictureInterface[]>(
+        [{
+            machinePicture: {name:"", uuid:"", sequence:0},
+            // photo1: {name:"", uuid:"", sequence:1},
+            // photo2: {name:"", uuid:"", sequence:2},
+            // photo3: {name:"", uuid:"", sequence:3},
+            // photo4: {name:"", uuid:"", sequence:4},
+            // photo5: {name:"", uuid:"", sequence:5},
+            // photo6: {name:"", uuid:"", sequence:6},
+            // photo7: {name:"", uuid:"", sequence:7},
+            // photo8: {name:"", uuid:"", sequence:8},
+            // photo9: {name:"", uuid:"", sequence:9},
+        }]
+        )
+
+    const [infoModalOpen, setInfoModalOpen] = useState<boolean>(false)
 
     const onClickHeaderButton = (index:number) => {
         switch(index){
             case 0:
                 console.log("점검 양식 검토")
+                setInfoModalOpen(true)
+                return
+
             case 1:
                 console.log("저장하기 : ", basicRow)
+                forSaveClean(basicRow, photoTitleList)
+                return
+
             default:
                 return
         }
     }
 
+    const forSaveClean = (basic:any, photoList:PictureInterface[]) => {
+        const result = {...basic}
+        result.etc = result.etc[0].etc
+        Object.values(photoList[0]).filter((photo) => {
+            basicRow.inspection_photo.filter((row, index) => {
+                if(photo.sequence === row.sequence){
+                    result.inspection_photo[index] = (photo)
+                }
+            })
+
+        })
+        let legendary = {}
+        result.legendary_list.map((e) =>{
+            legendary[e.legendary] = e.content
+        })
+        result.legendary_list = legendary;
+    }
+
 
     useEffect(() => {
-        // RequestMethod("get", "inspecLoadMachine",{
-        //     path:{
-        //         machine_id:machine_id
-        //     }
-        // } )
-        //     .then((res) => {
-        //         console.log("res : ", res)
-        //     })
-        //     .catch((err) => {
-        //         console.log("err : ", err)
-        //     })
+        // if(machine_id){
+            // RequestMethod("get", "inspecLoadMachine",{
+            //     path:{
+            //         machine_id:machine_id
+            //     }
+            // } )
+            //     .then((res) => {
+            //         console.log("res : ", res)
+            //     })
+            //     .catch((err) => {
+            //         console.log("err : ", err)
+            //     })
+        // }else{
+        //     Notiflix.Report.warning("경고","기계 정보가 없습니다.","확인", () => router.back())
+        // }
     }, []);
     return (
         <div>
+            <DailyInspectionModal isOpen={infoModalOpen} setIsOpen={setInfoModalOpen} />
             <PageHeader
                 title={"일상점검 정보 등록"}
                 buttons={
@@ -66,7 +133,10 @@ const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
             />
             <ExcelTable headerList={columnlist.dailyInspectionMachine} row={[""]} setRow={() => {}} height={105}/>
 
-            <ExcelTable headerList={columnlist.dailyInspectionMachinePicture} row={[""]} setRow={() => {}} height={105}/>
+            <ExcelTable headerList={columnlist.dailyInspectionMachinePicture} row={photoTitleList} setRow={(e) => {
+                console.log("e : ", e)
+                setPhotoTitleList(e)
+            }} height={105}/>
 
             <div>
                 <ExcelTable headerList={columnlist.dailyInspectionMachineLegendary}

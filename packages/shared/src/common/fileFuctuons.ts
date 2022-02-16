@@ -32,7 +32,7 @@ export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, 
                 })
           .then((res) => {
               result = res.data;
-              console.log(res)
+              console.log(result)
           }).
           catch((err)=>{
               console.log(err)

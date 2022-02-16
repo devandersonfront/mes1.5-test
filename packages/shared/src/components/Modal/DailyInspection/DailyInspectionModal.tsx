@@ -14,54 +14,59 @@ import {searchModalList} from "../../../common/modalInit";
 import {PaginationComponent} from "../../Pagination/PaginationComponent";
 import Notiflix from "notiflix";
 import styled from "styled-components";
+import {columnlist} from "../../../common/columnInit";
+import DefaultImageProfile from "../../ImageProfile/DefaultImageProfile";
 
 interface IProps {
-    column: IExcelHeaderType
-    row: any
-    onRowChange: (e: any) => void
+    // column: IExcelHeaderType
+    // row: any
+    // onRowChange: (e: any) => void
+    isOpen:boolean
+    setIsOpen:(value:boolean) => void
 }
 
-const DailyInspectionModal = ({row, column, onRowChange}:IProps) => {
+const dummy = {key1:"data1",key2:"data2",key3:"data3",key4:"data4",key5:"data5",}
+const dummyETC = "더미 ETC야!"
+const DailyInspectionModal = ({isOpen, setIsOpen}:IProps) => {
 
-    const [isOpen, setIsOpen] = useState<boolean>(false)
 
-    const ModalContents = () => {
-        if(column.searchType === 'operation' && row.index !== 1){
-            return <></>
-        }
-
-        if(column.disableType === 'record' && row.osd_id){
-            return <div style={{width: '100%', height: 40, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <p>{row[`${column.key}`]}</p>
-            </div>
-        }
-
-        return <>
-            <div style={{width: '100%', height: 32}} onClick={() => {
-            }}>
-                {
-                    column.type === 'Modal'
-                        ? <LineBorderContainer row={row} column={column} setRow={() => {}}/>
-                        : row[`${column.key}`]
-                }
-            </div>
-            <div style={{
-                display: 'flex',
-                backgroundColor: POINT_COLOR,
-                width: 30,
-                height: 30,
-                justifyContent: 'center',
-                alignItems: 'center'
-            }} onClick={() => {
-                setIsOpen(true)
-            }}>
-                <img style={{width: 16.3, height: 16.3}} src={IcSearchButton}/>
-            </div>
-        </>
-    }
+    // const ModalContents = () => {
+    //     if(column.searchType === 'operation' && row.index !== 1){
+    //         return <></>
+    //     }
+    //
+    //     if(column.disableType === 'record' && row.osd_id){
+    //         return <div style={{width: '100%', height: 40, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+    //             <p>{row[`${column.key}`]}</p>
+    //         </div>
+    //     }
+    //
+    //     return <>
+    //         <div style={{width: '100%', height: 32}} onClick={() => {
+    //         }}>
+    //             {
+    //                 column.type === 'Modal'
+    //                     ? <LineBorderContainer row={row} column={column} setRow={() => {}}/>
+    //                     : row[`${column.key}`]
+    //             }
+    //         </div>
+    //         <div style={{
+    //             display: 'flex',
+    //             backgroundColor: POINT_COLOR,
+    //             width: 30,
+    //             height: 30,
+    //             justifyContent: 'center',
+    //             alignItems: 'center'
+    //         }} onClick={() => {
+    //             setIsOpen(true)
+    //         }}>
+    //             <img style={{width: 16.3, height: 16.3}} src={IcSearchButton}/>
+    //         </div>
+    //     </>
+    // }
     return (
         <SearchModalWrapper >
-            { ModalContents() }
+            {/*{ ModalContents() }*/}
             <Modal isOpen={isOpen} style={{
                 content: {
                     top: '50%',
@@ -100,33 +105,35 @@ const DailyInspectionModal = ({row, column, onRowChange}:IProps) => {
                             <img style={{width: 20, height: 20}} src={IcX}/>
                         </div>
                     </div>
-
-
-                    <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
-                        <div
-                            onClick={() => {
-                                setIsOpen(false)
-                            }}
-                            style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                        >
-                            <p>취소</p>
-                        </div>
-                        <div
-                            onClick={() => {
-                                // if(selectRow !== undefined && selectRow !== null){
-                                //     onRowChange({
-                                //         ...row,
-                                //         ...searchList[selectRow],
-                                //         isChange: true
-                                //     })
-                                // }
-                                setIsOpen(false)
-                            }}
-                            style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                        >
-                            <p>등록하기</p>
-                        </div>
-                    </div>
+                    <BorderBox>
+                        <Title>일상 점검 리스트</Title>
+                        <ContentBox>
+                            <ExcelTable headerList={columnlist.dailyInspectionModal} row={[""]} setRow={() => {}} type={"searchModal"} />
+                            <ImageTable>
+                                <DefaultImageProfile  title={"타이틀"} style={{border:"1px solid pink"}}/>
+                                <ImageGrid>
+                                    {new Array(9).fill("1").map((value) => <DefaultImageProfile title={"Yes"} style={{width:168, height:119, border:"1px solid"}}/>)}
+                                </ImageGrid>
+                                <NoteBox>
+                                    <LegendaryBox>
+                                        <div style={{width:"100%", height:40, border:"1px solid red"}}>범례</div>
+                                        <div>
+                                            {Object.keys(dummy).map((key) => <span style={{display:"block"}}>{key} : {dummy[key]}</span>)}
+                                        </div>
+                                    </LegendaryBox>
+                                    <ETCBox>
+                                        <div style={{width:"100%", height:40, border:"1px solid red"}}>기타 사항</div>
+                                        <div>
+                                            {dummyETC}
+                                        </div>
+                                    </ETCBox>
+                                </NoteBox>
+                            </ImageTable>
+                            <div>
+                                {/*<ExcelTable headerList={} row={} setRow={} />*/}
+                            </div>
+                        </ContentBox>
+                    </BorderBox>
                 </div>
             </Modal>
         </SearchModalWrapper>
@@ -137,6 +144,50 @@ const SearchModalWrapper = styled.div`
   display: flex;
   width: 100%;
 `
+const BorderBox = styled.div`
+ display:flex;
+ justify-content:center;
+ flex-direction: column;   
+ align-items:center;
+ border:1px solid;
+ margin:0 15px;
+`
 
+const Title = styled.text`
+ font-size:40px;
+ font-weight:bold;
+ padding-top:23px;
+`
+
+const ContentBox = styled.div`
+ border:1px solid blue;
+ width:95%;
+`
+
+const ImageTable = styled.div`
+    
+`
+
+const ImageGrid = styled.div`
+    width:720px;
+    border:1px solid;
+    display:grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+`
+
+const NoteBox = styled.div`
+    
+`
+const LegendaryBox = styled.div`
+    border:1px solid;
+    width:280px;
+    height:180px;
+`
+const ETCBox = styled.div`
+    border:1px solid;
+    width:280px;
+    height:180px;
+`
 
 export default DailyInspectionModal

@@ -34,6 +34,7 @@ export interface IExcelHeaderType {
   url?: string
   headerType?:any[]
   callback?: (data : any) => void
+  idx?:number
 }
 
 export interface IResponseType {
