@@ -357,7 +357,7 @@ export const searchModalList: any = {
     {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200},
     {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200},
     {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true, width: 120},
-    {key: 'good_quantity', name: '양품 수량', editor: TextEditor, textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'good_quantity', name: '양품 수량', textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 250},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center'},

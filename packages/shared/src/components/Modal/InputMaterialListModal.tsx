@@ -371,6 +371,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               headerList={column.type === 'readonly' ? searchModalList.InputLotReadonlyInfo : searchModalList.InputLotInfo}
               row={lotList ?? [{}]}
               setRow={(e) => {
+                e.map((v)=>console.log(v.amount))
                 let tmp = e.map((v, index) => {
                   if(v.newTab === true){
                     const newTabIndex = bomDummy.length+1

@@ -86,17 +86,24 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
     if(basicRow.length === 0) {
       return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
     }
-
-    basicRow.map((v)=> {
+    console.log(basicRow)
+    const error = basicRow.map((v)=> {
       if(selectList.has(v.id)) {
-        if (v.rm_id === undefined) {
-          return Notiflix.Report.warning("경고", "부자재 CODE를 선택해 주시기 바랍니다.", "확인",)
+        if (v.sm_id === undefined) {
+          return 1
         }
         if (v.lot_number === undefined) {
-          return Notiflix.Report.warning("경고", "부자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
+          return 2
         }
       }
     })
+
+    if(error.includes(1)){
+      return Notiflix.Report.warning("경고", "부자재 CODE를 선택해 주시기 바랍니다.", "확인",)
+    }
+    if(error.includes(2)){
+      return Notiflix.Report.warning("경고", "부자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
+    }
 
     let res: any
     res = await RequestMethod('post', `lotSmSave`,
@@ -142,8 +149,8 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
-            current: row.amount,
-            warehousing: row.amount,
+            current: row.stock,
+            warehousing: row.stock,
             customer: row.customerArray,
             additional: [
               ...additional.map(v => {

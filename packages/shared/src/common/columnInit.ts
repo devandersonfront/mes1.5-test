@@ -450,7 +450,7 @@ export const columnlist: any = {
     {key: 'name', name:'부자재 품명', frozen: true, formatter: PlaceholderBox, placeholder:'자동 입력'},
     {key: 'unit', name:'단위', formatter: PlaceholderBox, placeholder:'자동 입력'},
     {key: 'customer_id', name:'거래처', formatter: PlaceholderBox, placeholder:'자동 입력' },
-    {key: 'amount', name:'입고량', editor: TextEditor,formatter: UnitContainer, unitData: '', placeholder: '0'},
+    {key: 'stock', name:'입고량', editor: TextEditor,formatter: UnitContainer, unitData: '', placeholder: '0'},
     {key: 'date', name:'입고일', formatter: CalendarBox},
     {key: 'lot_number', name:'부자재 LOT 번호', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'LOT 입력'},
   ],
