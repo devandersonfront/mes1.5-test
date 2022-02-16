@@ -47,8 +47,6 @@ const BasicProduct = ({page}: IProps) => {
     total: 1
   })
 
-  console.log(basicRow,'basicRowbasicRowbasicRow')
-
   const [buttonList , setButtonList ] = useState<string[]>([])
 
   useEffect(() => {
@@ -75,6 +73,8 @@ const BasicProduct = ({page}: IProps) => {
     setSelectRow(tmpSelectList[0])
 
   }
+
+  
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
@@ -534,7 +534,6 @@ const BasicProduct = ({page}: IProps) => {
 
     setBasicRow(rows)
   }
-
 
 
 

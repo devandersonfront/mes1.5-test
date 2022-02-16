@@ -153,8 +153,6 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
                 Notiflix.Loading.remove()
               })
             })
-          }else{
-            console.log("res : ", res)
           }
         },
       );

@@ -44,6 +44,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const [headerData, setHeaderData] = useState<any>();
 
+
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
@@ -181,23 +182,48 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
   }
 
- 
 
-  const SaveBasic = async () => {
-    let  modelIdCheck = true
-    let dataCheck = true
-    if(!row.code) modelIdCheck = false
+  // tab : 0 -> 원자재
+  // tab : 1 -> 부자재 
+  // tab : 2 => 제품
+  
+  // 무조건 1개의 기본은 가지고 있어야한다.
+  const haveBasicValidation = () => {
+    
+    let haveRawMaterialBasic = false ;
+    let haveSubMaterialBasic = false ;
+    let haveProductBasic = false ;
 
-    if(searchList.length === 0){
-      return Notiflix.Report.warning("경고","BOM은 하나라도 등록이 되어야합니다.","확인",)
+    searchList.forEach((value)=>{
+      if(value.setting === '기본' && value.tab === 0) return haveRawMaterialBasic = true
+      else if(value.setting === '기본' && value.tab === 1) return haveSubMaterialBasic = true
+      else if(value.setting === '기본' && value.tab === 2) return haveProductBasic = true
+    })
+
+    if(haveRawMaterialBasic || haveSubMaterialBasic || haveProductBasic){
+      return true
     }
+    return false
 
-    let body = searchList.map((v, i) => {
+  }
+
+  // 데이터 유무 판단
+  const haveDataValidation = () => {
+    
+    let dataCheck = true
+
+    searchList.map((v,i)=>{
       if(!v.rm_id && !v.sm_id && !v.product_id){
         dataCheck = false
       }
+    })
 
-      return {
+    return dataCheck
+  }
+
+  const filterList = () => {
+    return searchList.map((v, i) => (
+      {
         seq: i+1,
         parent: {
           ...row,
@@ -222,23 +248,47 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         usage: v.usage,
         version: v.version
       }
-    })
+    ))
+  }
 
-    // if(body.length === 0){
-    //   Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
-    // }else
-    if(!dataCheck){
-      Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
-    }else if(modelIdCheck){
-      const res = await RequestMethod('post', `bomSave`,body)
-      if(res) {
-        Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
+  const executeValidation = () => {
+
+    let isValidation = false 
+    const haveList = searchList.length === 0  
+    const haveData = haveDataValidation()
+    const haveBasic = haveBasicValidation()
+
+    if(haveList){
+      isValidation = true
+      return Notiflix.Report.warning("경고","BOM은 하나라도 등록이 되어야합니다.","확인",)
+    }else if(!haveData){
+      isValidation = true
+      return Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
+    }else if(!haveBasic){
+      isValidation = true
+      return Notiflix.Report.warning("경고","기본설정은 최소 한개 이상 필요합니다.","확인",)
+    }
+
+    return isValidation
+
+  }
+
+
+  const SaveBasic = async () => {
+
+    const isValidation = executeValidation()
+
+    if(isValidation){
+      return undefined;
+    }else{
+      const body = filterList()
+      if(body.length !== 0){
+        const res = await RequestMethod('post', `bomSave`, body)
+        if(res) {
+            Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
+        }
       }
     }
-    // else if(){
-    //     Notiflix.Report.warning("모델을 등록해주세요.","","확인", () => setIsOpen(false))
-    // }
-
   }
 
   const ModalContents = () => {
@@ -553,9 +603,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   }
                 })
                 // typeCheck(tmp)
-
-                console.log(e,'eeee')
-
                 setSearchList([...tmp])
               }}
               width={1746}
@@ -592,57 +639,32 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             <div
               onClick={() => {
                 if(column.type !== 'readonly' && tabStore.index === 0){
-
-                  if(row.product_id){
-                      SaveBasic()
-                  }
-                  if(selectRow !== undefined && selectRow !== null) {
-                    onRowChange(
-                      column.type === "bomRegister" ?
-                        {
-                          ...row,
-                          isChange: true,
-                          bom : searchList.map((v, i) => {
-                            setIsOpen(false)
-                            return {
-                              seq: i+1,
-                              parent: {
-                                ...row,
-                                process: row.processArray,
-                                type: row.type_id ?? row.type,
-                                product_id:row.product_id ?? row.productId,
-                                code: row.code,
-                              },
-                              child_product: v.tab === 2 ? {
-                                ...v.product
-                              } : null,
-                              child_rm: v.tab === 0 ? {
-                                ...v.raw_material,
-                                type:v.raw_material.type_id
-                              } : null,
-                              child_sm: v.tab === 1 ? {
-                                ...v.sub_material
-                              } : null,
-                              type: v.tab,
-                              key: row.bom_root_id,
-                              setting: v.setting === "기본" ? 0 : 1,
-                              usage: v.usage,
-                              version: v.version
-                            }})
-                        }
-                        :
-                        {
-                          ...row,
-                          ...searchList[selectRow],
-                          name: row.name,
-                          isChange: true
-                        }
-
-                    )
+                    if(row.product_id){
+                        return SaveBasic()
+                    }else{
+                      const isValidation = executeValidation()
+                      if(!isValidation){
+                        onRowChange(
+                          column.type === "bomRegister" ?
+                            {
+                              ...row,
+                              isChange: true,
+                              bom : filterList()
+                            }
+                            :
+                            {
+                              ...row,
+                              ...searchList[selectRow],
+                              name: row.name,
+                              isChange: true
+                            }
+                        )
+                        Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
+                      }
                   }
                 }
-                // setIsOpen(false)
-              }}
+                }
+              }
               style={{width: column.type === 'readonly' ? '100%' : '50%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>{column.type !== 'readonly' && tabStore.index === 0 ? '등록하기' : '확인'}</p>

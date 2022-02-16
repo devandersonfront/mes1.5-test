@@ -157,7 +157,6 @@ const BasicMachineV1u = ({ option}: IProps) => {
             LoadBasic(pageInfo.page);
           })
           .catch((err) => {
-            console.log(err.data.message);
             Notiflix.Report.failure("경고", err.data.message, "확인");
           })
 
@@ -506,7 +505,6 @@ const BasicMachineV1u = ({ option}: IProps) => {
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
 
-    console.log(spliceRow,'spliceRowspliceRowspliceRow')
     const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined)
 
     if(spliceRow){

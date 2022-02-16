@@ -244,7 +244,7 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         ...selectData,
         wip_id: selectData.code,
         customer_id: selectData.customerArray?.name,
-        // type:"부자재",
+        type:"부자재",
         type_name:"부자재",
         sub_material: {
           ...selectData,

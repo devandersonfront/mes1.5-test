@@ -142,7 +142,6 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set())
   let userInfo = cookie.load('userInfo')
 
-  // console.log(userInfo,'userInfouserInfo')
 
   const checkValidation = () => {
     return userInfo.ca_id.name === 'MASTER' ?? undefined

@@ -106,7 +106,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 opt:optionFilter(optionIndex)
             }
         }).then((res) => {
-            console.log(res,'resres!!')
             // setSearchList([...SearchResultSort(res.info_list, "subFactory")])
             const tempData = [];
             res.info_list.map((value)=>{

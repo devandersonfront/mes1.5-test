@@ -27,8 +27,6 @@ interface IProps {
 const TreeViewTable = ({item, setItem, selectIndex}: IProps) => {
   const [menu, setMenu] = React.useState<IMenu[]>([{title: "", show: false, checkable: false, value: "", child: []}])
 
-  console.log(menu,'menumenumenu')
-
   React.useEffect(() => {
     setMenu(recursiveMenu(item))
 
