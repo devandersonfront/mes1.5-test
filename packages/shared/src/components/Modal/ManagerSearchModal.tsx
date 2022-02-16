@@ -55,8 +55,6 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
 
   const changeRow = (row: any, key?: string) => {
 
-    console.log(row,'rowrowrow')
-
     let tmpData: any = {  
       ...row,
       user_id: row.name,

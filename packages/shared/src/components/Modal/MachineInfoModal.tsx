@@ -13,6 +13,7 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {UploadButton} from '../../styles/styledComponents'
 import {TransferCodeToValue} from '../../common/TransferFunction'
+import Notiflix from 'notiflix'
 
 interface IProps {
   column: IExcelHeaderType
@@ -225,26 +226,34 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               if(selectRow === 0 || selectRow === undefined){
                 return
               }
-              let tmpRow = searchList
+              let tmpRow = [...searchList]
 
               let tmp = tmpRow[selectRow]
               tmpRow[selectRow] = tmpRow[selectRow - 1]
               tmpRow[selectRow - 1] = tmp
 
+              // setSearchList([...tmpRow.map((v, i) => {
+              //   if(!searchList[selectRow-1].border){
+              //     searchList.map((v,i)=>{
+              //       v.border = false;
+              //     })
+              //     searchList[selectRow-1].border = true
+              //     setSearchList([...searchList])
+              //   }
+              //   setSelectRow(selectRow -1)
+              //   return {
+              //     ...v,
+              //     seq: i+1
+              //   }
+              // })])
+              setSelectRow((prevSelectRow)=> prevSelectRow - 1)
               setSearchList([...tmpRow.map((v, i) => {
-                if(!searchList[selectRow-1].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[selectRow-1].border = true
-                  setSearchList([...searchList])
-                }
-                setSelectRow(selectRow -1)
                 return {
                   ...v,
                   seq: i+1
                 }
               })])
+
             }}>
               <p>위로</p>
             </Button>
@@ -252,21 +261,27 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               if(selectRow === searchList.length-1 || selectRow === undefined){
                 return
               }
-              let tmpRow = searchList
-
+              let tmpRow = [...searchList]
               let tmp = tmpRow[selectRow]
               tmpRow[selectRow] = tmpRow[selectRow + 1]
               tmpRow[selectRow + 1] = tmp
 
+              // setSearchList([...tmpRow.map((v, i) => {
+              //   if(!searchList[selectRow+1].border){
+              //     searchList.map((v,i)=>{
+              //       v.border = false;
+              //     })
+              //     searchList[selectRow+1].border = true
+              //     setSearchList([...searchList])
+              //   }
+              //   setSelectRow(selectRow +1)
+              //   return {
+              //     ...v,
+              //     seq: i+1
+              //   }
+              // })])
+              setSelectRow((prevSelectRow)=> prevSelectRow + 1)
               setSearchList([...tmpRow.map((v, i) => {
-                if(!searchList[selectRow+1].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[selectRow+1].border = true
-                  setSearchList([...searchList])
-                }
-                setSelectRow(selectRow +1)
                 return {
                   ...v,
                   seq: i+1
@@ -276,12 +291,20 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <p>아래로</p>
             </Button>
             <Button style={{marginLeft: 16}} onClick={() => {
-              let tmpRow = [...searchList]
 
+              if(selectRow === -1){
+                return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
+              }
               if(selectRow){
+                let tmpRow = [...searchList]
                 tmpRow.splice(selectRow, 1)
-                setSelectRow(undefined);
-                setSearchList([...tmpRow])
+                setSearchList([...tmpRow.map((v, i) => {
+                  return {
+                    ...v,
+                    seq: i+1
+                  }
+                })])
+                setSelectRow(-1)
               }
             }}>
               <p>삭제</p>
@@ -340,7 +363,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                         sequence: i+1,
                         machine: v
                       }
-                    }),
+                    }).filter((v)=> v.machine?.mfrCode),
                     isChange: true
                   })
                 }

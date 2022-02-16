@@ -76,7 +76,6 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
         good_quantity += v.good_quantity
         poor_quantity += v.poor_quantity
       })
-      console.log(row)
       setSummaryData({
         contract_id: row[0].operation_sheet?.contract?.identification,
         identification: row[0].operation_sheet?.identification,

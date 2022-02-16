@@ -162,6 +162,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     })
     return result;
   }
+  
 
   return (
     <SearchModalWrapper >
@@ -375,9 +376,10 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
                     machine_idPK:row.machine_id,
                     name: row.name,
                     devices:searchList.map((device)=>{
-                      const tmpDevice = {...device};
-                      tmpDevice.manager = device.manager_data;
-                      return tmpDevice
+                      // const tmpDevice = {...device};
+                      // tmpDevice.manager = device.manager_data;
+                      // return tmpDevice
+                      return {...device , border : false ,manager : device.manager_data}
                     }).filter(v => v.mfrCode !== undefined),
                     isChange: true,
                     })
