@@ -1076,10 +1076,10 @@ export const columnlist: any = {
     {key: "etc", name: '기타 사항', formatter: PlaceholderBox, editor: TextEditor, placeholder: '기타 사항 입력'},
   ],
   dailyInspectionModal: [
-    {key: "date", name: '점검 날짜', formatter: PlaceholderBox, editor: TextEditor, placeholder: '기타 사항 입력'},
-    {key: "name", name: '기계 이름', formatter: PlaceholderBox, editor: TextEditor, placeholder: '기타 사항 입력'},
-    {key: "code", name: '제조 번호', formatter: PlaceholderBox, editor: TextEditor, placeholder: '기타 사항 입력'},
-    {key: "type", name: '기계 종류', formatter: PlaceholderBox, editor: TextEditor, placeholder: '기타 사항 입력'},
+    {key: "date", name: '점검 날짜', formatter: PlaceholderBox, editor: CalendarBox,width:304},
+    {key: "name", name: '기계 이름', formatter: PlaceholderBox, width:360},
+    {key: "code", name: '제조 번호', formatter: PlaceholderBox, width:880},
+    {key: "type", name: '기계 종류', formatter: PlaceholderBox, },
   ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},

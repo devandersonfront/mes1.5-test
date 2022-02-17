@@ -12,7 +12,7 @@ interface IProps {
   headerList: Array<IExcelHeaderType>
   setHeaderList?:(value:Array<IExcelHeaderType>) => void
   row: Array<any>
-  width?: number
+  width?: number | string
   maxWidth?:number
   rowHeight?: number
   height?:number

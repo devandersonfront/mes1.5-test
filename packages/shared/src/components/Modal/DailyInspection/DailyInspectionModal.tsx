@@ -108,9 +108,9 @@ const DailyInspectionModal = ({isOpen, setIsOpen}:IProps) => {
                     <BorderBox>
                         <Title>일상 점검 리스트</Title>
                         <ContentBox>
-                            <ExcelTable headerList={columnlist.dailyInspectionModal} row={[""]} setRow={() => {}} type={"searchModal"} />
+                            <ExcelTable headerList={columnlist.dailyInspectionModal} row={[""]} setRow={() => {}} type={"searchModal"} width={"100%"} height={80}/>
                             <ImageTable>
-                                <DefaultImageProfile  title={"타이틀"} style={{border:"1px solid pink"}}/>
+                                <DefaultImageProfile  title={"타이틀"} style={{border:"1px solid blue", width:516}}/>
                                 <ImageGrid>
                                     {new Array(9).fill("1").map((value) => <DefaultImageProfile title={"Yes"} style={{width:168, height:119, border:"1px solid"}}/>)}
                                 </ImageGrid>
@@ -122,7 +122,7 @@ const DailyInspectionModal = ({isOpen, setIsOpen}:IProps) => {
                                         </div>
                                     </LegendaryBox>
                                     <ETCBox>
-                                        <div style={{width:"100%", height:40, border:"1px solid red"}}>기타 사항</div>
+                                        <div style={{width:"100%", height:40, border:"1px solid red", display:"flex",justifyContent:"center", alignItems:"center"}}>기타 사항</div>
                                         <div>
                                             {dummyETC}
                                         </div>
@@ -165,7 +165,8 @@ const ContentBox = styled.div`
 `
 
 const ImageTable = styled.div`
-    
+    display:flex;
+    justify-content:space-between;
 `
 
 const ImageGrid = styled.div`

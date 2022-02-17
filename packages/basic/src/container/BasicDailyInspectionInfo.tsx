@@ -47,7 +47,7 @@ const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
             ],
         legendary_list: [],
         check_list:[],
-        etc:"",
+        etc:[""],
         version:0
     })
 
