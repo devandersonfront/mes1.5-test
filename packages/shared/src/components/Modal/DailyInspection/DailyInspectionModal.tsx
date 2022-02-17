@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import {LineBorderContainer} from "../../Formatter/LineBorderContainer";
 import {POINT_COLOR} from "../../../common/configset";
 //@ts-ignore
@@ -16,57 +16,41 @@ import Notiflix from "notiflix";
 import styled from "styled-components";
 import {columnlist} from "../../../common/columnInit";
 import DefaultImageProfile from "../../ImageProfile/DefaultImageProfile";
+import {DailyInspection} from "../../../../../basic/src/container/BasicDailyInspectionInfo";
+import {TextEditor} from "../../InputBox/ExcelBasicInputBox";
+
 
 interface IProps {
-    // column: IExcelHeaderType
-    // row: any
-    // onRowChange: (e: any) => void
     isOpen:boolean
     setIsOpen:(value:boolean) => void
+    basicRow:DailyInspection
+    modalSelectOption?: { seq?: number, legendary?: string, content?: string, }[]
 }
 
-const dummy = {key1:"data1",key2:"data2",key3:"data3",key4:"data4",key5:"data5",}
-const dummyETC = "더미 ETC야!"
-const DailyInspectionModal = ({isOpen, setIsOpen}:IProps) => {
+const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, modalSelectOption}:IProps) => {
 
+    const changeSelectOption = () => {
+        let options = columnlist.dailyInspectionCheckList;
+        if(modalSelectOption){
+            options.map((column) => {
 
-    // const ModalContents = () => {
-    //     if(column.searchType === 'operation' && row.index !== 1){
-    //         return <></>
-    //     }
-    //
-    //     if(column.disableType === 'record' && row.osd_id){
-    //         return <div style={{width: '100%', height: 40, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-    //             <p>{row[`${column.key}`]}</p>
-    //         </div>
-    //     }
-    //
-    //     return <>
-    //         <div style={{width: '100%', height: 32}} onClick={() => {
-    //         }}>
-    //             {
-    //                 column.type === 'Modal'
-    //                     ? <LineBorderContainer row={row} column={column} setRow={() => {}}/>
-    //                     : row[`${column.key}`]
-    //             }
-    //         </div>
-    //         <div style={{
-    //             display: 'flex',
-    //             backgroundColor: POINT_COLOR,
-    //             width: 30,
-    //             height: 30,
-    //             justifyContent: 'center',
-    //             alignItems: 'center'
-    //         }} onClick={() => {
-    //             setIsOpen(true)
-    //         }}>
-    //             <img style={{width: 16.3, height: 16.3}} src={IcSearchButton}/>
-    //         </div>
-    //     </>
-    // }
+                if(column.key === "type"){
+                // column.formatter = TextEditor
+                    let changedOption = [];
+                    modalSelectOption.map((option, index) => {
+                        changedOption.push({pk:index, name:option.legendary, content:option.content})
+                    })
+                    column.selectList = changedOption
+                }
+            })
+        }
+    }
+    useEffect(() => {
+        if(isOpen) changeSelectOption()
+    },[isOpen])
+
     return (
         <SearchModalWrapper >
-            {/*{ ModalContents() }*/}
             <Modal isOpen={isOpen} style={{
                 content: {
                     top: '50%',
@@ -110,28 +94,42 @@ const DailyInspectionModal = ({isOpen, setIsOpen}:IProps) => {
                         <ContentBox>
                             <ExcelTable headerList={columnlist.dailyInspectionModal} row={[""]} setRow={() => {}} type={"searchModal"} width={"100%"} height={80}/>
                             <ImageTable>
-                                <DefaultImageProfile  title={"타이틀"} style={{border:"1px solid blue", width:516}}/>
+                                <DefaultImageProfile  title={"타이틀"} style={{width:592, display:"flex", justifyContent:"center", alignItems:"center"}}/>
                                 <ImageGrid>
-                                    {new Array(9).fill("1").map((value) => <DefaultImageProfile title={"Yes"} style={{width:168, height:119, border:"1px solid"}}/>)}
+                                    {Object.values(basicRow.inspection_photo).map((value, index) =>
+                                        <DefaultImageProfile title={`부위0${index+1}`} image={value.uuid ?
+                                            "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"+value.uuid
+                                            :
+                                            ""
+                                        } style={{width:168, height:119, display:"flex", justifyContent:"center", alignItems:"center"}}/>
+                                        )}
                                 </ImageGrid>
                                 <NoteBox>
                                     <LegendaryBox>
-                                        <div style={{width:"100%", height:40, border:"1px solid red"}}>범례</div>
-                                        <div>
-                                            {Object.keys(dummy).map((key) => <span style={{display:"block"}}>{key} : {dummy[key]}</span>)}
+                                        <div style={{width:"100%", height:40, fontWeight:"bold", background:"#F4F6FA", display:"flex",justifyContent:"center", alignItems:"center"}}>범례</div>
+                                        <div style={{display:"flex", justifyContent:"space-between", width:"100%"}}>
+                                            <div style={{width:"50%", marginLeft:"15px"}}>
+                                                {Object.values(basicRow.legendary_list).map((value, index) => {
+                                                    if (index <= 4) return <span style={{display: "block"}}>{value["legendary"]} : {value["content"]}</span>
+                                                })}
+                                            </div>
+                                            <div style={{width:"50%", marginLeft:"15px"}}>
+                                                {Object.values(basicRow.legendary_list).map((value, index) => {
+                                                    if(index > 5) return <span style={{display: "block"}}>{value["legendary"]} : {value["content"]}</span>
+
+                                                })}
+                                            </div>
                                         </div>
                                     </LegendaryBox>
                                     <ETCBox>
-                                        <div style={{width:"100%", height:40, border:"1px solid red", display:"flex",justifyContent:"center", alignItems:"center"}}>기타 사항</div>
+                                        <div style={{width:"100%", height:40, fontWeight:"bold", background:"#F4F6FA", display:"flex",justifyContent:"center", alignItems:"center"}}>기타 사항</div>
                                         <div>
-                                            {dummyETC}
+                                            {basicRow?.etc[0]?.etc ?? "-"}
                                         </div>
                                     </ETCBox>
                                 </NoteBox>
                             </ImageTable>
-                            <div>
-                                {/*<ExcelTable headerList={} row={} setRow={} />*/}
-                            </div>
+                            <ExcelTable headerList={columnlist.dailyInspectionCheckList} row={basicRow.check_list} width={"100%"} setRow={() => {}} type={"searchModal"}/>
                         </ContentBox>
                     </BorderBox>
                 </div>
@@ -147,9 +145,9 @@ const SearchModalWrapper = styled.div`
 const BorderBox = styled.div`
  display:flex;
  justify-content:center;
- flex-direction: column;   
+ flex-direction: column;
  align-items:center;
- border:1px solid;
+ border:1px solid #B3B3B3;
  margin:0 15px;
 `
 
@@ -160,7 +158,6 @@ const Title = styled.text`
 `
 
 const ContentBox = styled.div`
- border:1px solid blue;
  width:95%;
 `
 
@@ -171,24 +168,26 @@ const ImageTable = styled.div`
 
 const ImageGrid = styled.div`
     width:720px;
-    border:1px solid;
     display:grid;
     grid-template-rows: repeat(3, 1fr);
     grid-template-columns: repeat(3, 1fr);
 `
 
 const NoteBox = styled.div`
-    
+
 `
 const LegendaryBox = styled.div`
-    border:1px solid;
+    border:1px solid #B3B3B3;
     width:280px;
-    height:180px;
+    height:185px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 `
 const ETCBox = styled.div`
-    border:1px solid;
+    border:1px solid #B3B3B3;
     width:280px;
-    height:180px;
+    height:185px;
 `
 
 export default DailyInspectionModal

@@ -9,7 +9,7 @@ interface IProps {
   row: any
   column: IExcelHeaderType
   onRowChange: (e: any) => void
-  onClose: (state: boolean) => void
+  onClose?: (state: boolean) => void
 }
 
 const autoFocusAndSelect = (input: HTMLInputElement | null) => {
@@ -65,7 +65,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onRowChange({ ...row, [column.key]: event.target.value, isChange: true })
         }
       }}
-      onBlur={() => onClose(true)}
+      onBlur={() => onClose && onClose(true)}
     />
   );
 }

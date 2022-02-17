@@ -122,7 +122,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
       }}
     >
       {column.selectList && column.selectList.map((title) => {
-        return (<option key={title.pk} value={title.name}>
+        return (<option style={{background:column.type === "Modal" ? "white" : "#353B48"}} key={title.pk} value={title.name}>
           {title.name}
         </option>)
       })}

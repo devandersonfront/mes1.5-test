@@ -1065,7 +1065,7 @@ export const columnlist: any = {
     {key: "title", name: '점검 항목',formatter: PlaceholderBox, editor: TextEditor, width: 500, placeholder: '점검 항목 입력',},
     {key: "standard", name: '점검 기준',formatter: PlaceholderBox, editor: TextEditor, width: 424, placeholder: '점검 기준 입력',},
     {key: "method", name: '점검 방법',formatter: PlaceholderBox, editor: TextEditor, width: 432, placeholder: '점검 방법 입력',},
-    {key: "type", name: '기록 방록',formatter: DropDownEditor, placeholder: '자동 입력',
+    {key: "type", name: '기록 방법',formatter: DropDownEditor, placeholder: '자동 입력',
       selectList: [
         {pk: 0, name: "범례 적용"},
         {pk: 1, name: "수치 입력"},
@@ -1080,6 +1080,19 @@ export const columnlist: any = {
     {key: "name", name: '기계 이름', formatter: PlaceholderBox, width:360},
     {key: "code", name: '제조 번호', formatter: PlaceholderBox, width:880},
     {key: "type", name: '기계 종류', formatter: PlaceholderBox, },
+  ],
+  dailyInspectionCheckList: [
+    {key: "sequence", name: 'NO.', width:40},
+    {key: "title", name: '점검 항목', width:256},
+    {key: "standard", name: '점검 기준', width:368},
+    {key: "method", name: '점검 방법', width:256 },
+    {key: "type", name: '결과', width:144 ,formatter: DropDownEditor, selectList: [
+        {pk: 0, name: "범례 적용"},
+        {pk: 1, name: "수치 입력"},
+      ], type:"Modal"},
+    {key: "", name: '작성자 확인', width:240},
+    {key: "", name: '관리자 확인', width:240 },
+    {key: "", name: '문제 사항', width:120},
   ],
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},

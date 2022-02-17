@@ -12,6 +12,7 @@ export interface IProps {
 
 interface PictureInfo {
     name:string
+    url:string
     uuid:string
     sequence:number
 }
@@ -27,6 +28,16 @@ interface PictureInterface {
     photo7?:PictureInfo
     photo8?:PictureInfo
     photo9?:PictureInfo
+}
+
+export interface DailyInspection {
+    from_id:string
+    machine:any
+    inspection_photo:PictureInterface
+    legendary_list:object
+    check_list:{sequence:number, title:string, standard:string, method:string, type:0 | 1}[]
+    etc:{etc:string}[]
+    version:number
 }
 
 const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
@@ -50,10 +61,11 @@ const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
         etc:[""],
         version:0
     })
+    const [modalSelectOption, setModalSelectOption] = useState<{ seq?: number, legendary?: string, content?: string, }[]>([]);
 
     const [photoTitleList, setPhotoTitleList] = useState<PictureInterface[]>(
         [{
-            machinePicture: {name:"", uuid:"", sequence:0},
+            // machinePicture: {name:"", uuid:"", sequence:0},
             // photo1: {name:"", uuid:"", sequence:1},
             // photo2: {name:"", uuid:"", sequence:2},
             // photo3: {name:"", uuid:"", sequence:3},
@@ -71,13 +83,12 @@ const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
     const onClickHeaderButton = (index:number) => {
         switch(index){
             case 0:
-                console.log("점검 양식 검토")
+                console.log("점검 양식 검토", modalSelectOption)
                 setInfoModalOpen(true)
                 return
 
             case 1:
-                console.log("저장하기 : ", basicRow)
-                forSaveClean(basicRow, photoTitleList)
+                console.log("저장하기 : ", forSaveClean(basicRow, photoTitleList))
                 return
 
             default:
@@ -87,6 +98,7 @@ const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
 
     const forSaveClean = (basic:any, photoList:PictureInterface[]) => {
         const result = {...basic}
+        console.log(basic, photoList)
         result.etc = result.etc[0].etc
         Object.values(photoList[0]).filter((photo) => {
             basicRow.inspection_photo.filter((row, index) => {
@@ -94,13 +106,13 @@ const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
                     result.inspection_photo[index] = (photo)
                 }
             })
-
         })
         let legendary = {}
         result.legendary_list.map((e) =>{
             legendary[e.legendary] = e.content
         })
         result.legendary_list = legendary;
+        return result;
     }
 
 
@@ -123,7 +135,7 @@ const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
     }, []);
     return (
         <div>
-            <DailyInspectionModal isOpen={infoModalOpen} setIsOpen={setInfoModalOpen} />
+            <DailyInspectionModal isOpen={infoModalOpen} setIsOpen={setInfoModalOpen} basicRow={basicRow} modalSelectOption={modalSelectOption}/>
             <PageHeader
                 title={"일상점검 정보 등록"}
                 buttons={
@@ -134,16 +146,23 @@ const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
             <ExcelTable headerList={columnlist.dailyInspectionMachine} row={[""]} setRow={() => {}} height={105}/>
 
             <ExcelTable headerList={columnlist.dailyInspectionMachinePicture} row={photoTitleList} setRow={(e) => {
-                console.log("e : ", e)
+                console.log("e : ", Object.values(e[0]), e)
+                console.log("PhotoList : ", photoTitleList)
                 setPhotoTitleList(e)
+                console.log(forSaveClean(basicRow, e))
+                // setBasicRow(forSaveClean(basicRow, e))
+                // setBasicRow({...basicRow, inspection_photo:[...basicRow.inspection_photo,  ...Object.values(e[0])] })
             }} height={105}/>
 
             <div>
                 <ExcelTable headerList={columnlist.dailyInspectionMachineLegendary}
                             row={basicRow.legendary_list}
                             setRow={(e) => {
+                                console.log("범례 : ", e)
                                 basicRow.legendary_list = e;
                                 setBasicRow({...basicRow})
+                                setModalSelectOption(e)
+
                             }}
                             height={basicRow.legendary_list.length * 40 >= 40*18+56 ? 40*19 : basicRow.legendary_list.length * 40 + 40}
                 />
@@ -166,6 +185,7 @@ const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
                     headerList={columnlist.dailyInspectionMachineCheck}
                     row={basicRow.check_list}
                     setRow={(e) => {
+                        console.log("검사 항목 : ", e);
                         basicRow.check_list = e;
                         setBasicRow({...basicRow})
                     }}
@@ -195,7 +215,8 @@ const BasicDailyInspectionInfo = ({machine_id}: IProps) => {
             </div>
 
             <ExcelTable headerList={columnlist.dailyInspectionMachineETC} row={basicRow.etc} setRow={(e) => {
-                basicRow.etc = e
+                console.log("e : ", e)
+                basicRow.etc[0] = e[0]
                 setBasicRow({...basicRow})
             }} height={105}/>
         </div>

@@ -66,18 +66,37 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                 whiteSpace:'nowrap'
               }}
               onClick={() => {
-                  RequestMethod("get", "anonymousLoad", {
-                      path:{
-                        uuid:row[column.key]
-                      }
-                  })
-                      .then((res) => {
-                          setImgUrl(res.url)
-                          setOnImage(true)
+                  console.log("row : ", row[column.key].uuid)
+                  if(typeof row[column.key] === "object"){
+                      console.log("일상 점검")
+                      RequestMethod("get", "anonymousLoad", {
+                          path:{
+                              uuid:row[column.key].uuid
+                          }
                       })
-                      .catch((err) => {
-                          Notiflix.Report.failure("에러","에러입니다.","확인")
+                          .then((res) => {
+                              setImgUrl(res.url)
+                              setOnImage(true)
+                          })
+                          .catch((err) => {
+                              Notiflix.Report.failure("에러","에러입니다.","확인")
+                          })
+                  }else{
+                      console.log("일반 사진0")
+                      RequestMethod("get", "anonymousLoad", {
+                          path:{
+                              uuid:row[column.key]
+                          }
                       })
+                          .then((res) => {
+                              setImgUrl(res.url)
+                              setOnImage(true)
+                          })
+                          .catch((err) => {
+                              Notiflix.Report.failure("에러","에러입니다.","확인")
+                          })
+                  }
+
               }}
             >
                 {column.type === "image" ? "이미지 확인" : "파일 다운로드" }
@@ -111,6 +130,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                               ...row[column.key],
                               name:e.target.files[0].name,
                               uuid: uploadImg.UUID,
+                              url:uploadImg.url,
                               sequence: column.idx
                           }
                       })
