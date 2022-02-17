@@ -314,6 +314,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
+                setSelectRow(undefined)
               }}
               style={{backgroundColor: '#E7E9EB'}}
             >
@@ -322,51 +323,58 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
-                const selectNameFunction = (type:string) => {
-                  switch(type){
-                    case "bom":
-                      return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
-                    case "rawmaterial" :
-                      return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
-                    case "machine" :
-                      return searchList[selectRow].name;
-                    case "mold":
-                      return searchList[selectRow].name;
-                    case "tool":
-                      return searchList[selectRow].name;
-                    default:
-                      return row.name;
+                
+                if(selectRow !== undefined){
+
+                  const selectNameFunction = (type:string) => {
+                    switch(type){
+                      case "bom":
+                        return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
+                      case "rawmaterial" :
+                        return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
+                      case "machine" :
+                        return searchList[selectRow].name;
+                      case "mold":
+                        return searchList[selectRow].name;
+                      case "tool":
+                        return searchList[selectRow].name;
+                      default:
+                        return row.name;
+                    }
                   }
+                  if(column.clearContract) {
+                    onRowChange(
+                        {
+                          ...row,
+                          ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                          manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                          name: selectNameFunction(column.type),
+                          tab: tab,
+                          // type_name: undefined,
+                          version: row.version,
+                          isChange: true,
+                          contract: null,
+                          contract_id: null
+                        }
+                    )
+                  }else {
+                    onRowChange(
+                        {
+                          ...row,
+                          ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                          manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                          name: selectNameFunction(column.type),
+                          tab: tab,
+                          // type_name: undefined,
+                          version: row.version,
+                          isChange: true,
+                        }
+                    )
+                  }
+
                 }
-                if(column.clearContract) {
-                  onRowChange(
-                      {
-                        ...row,
-                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-                        manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                        name: selectNameFunction(column.type),
-                        tab: tab,
-                        // type_name: undefined,
-                        version: row.version,
-                        isChange: true,
-                        contract: null,
-                        contract_id: null
-                      }
-                  )
-                }else {
-                  onRowChange(
-                      {
-                        ...row,
-                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-                        manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                        name: selectNameFunction(column.type),
-                        tab: tab,
-                        // type_name: undefined,
-                        version: row.version,
-                        isChange: true,
-                      }
-                  )
-                }
+
+               
               }}
               style={{backgroundColor: POINT_COLOR}}
             >
