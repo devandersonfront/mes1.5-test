@@ -162,6 +162,9 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         setting:v.setting === 0 ? "기본" : "스페어"
       }
     })
+
+    console.log('tmpData : ' , tmpData)
+
     return tmpData
   }
 
@@ -171,12 +174,15 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     let res;
     if(selectKey){
       res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
+
+      
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       setSearchList([...searchList])
-
+      
     }else{
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
+      
       let searchList = changeRow(res)
 
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
@@ -329,7 +335,11 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           }}>
             <UploadButton
             onClick={() => {
-              setIsOpen(true)
+              if(row.code){
+                setIsOpen(true)
+              }else{
+                Notiflix.Report.warning("경고","BOM을 등록하시려면 CODE가 입력 되어야합니다.","확인",)
+              }
             }}>
               <p>BOM 등록</p>
             </UploadButton>
@@ -516,34 +526,38 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>행 추가</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-                if(selectRow === 0 || selectRow === undefined){
-                  return
+
+                if(selectRow === null || selectRow === 0){
+                  return;
+                }else{
+
+                  let tmpRow = searchList
+  
+                  let tmp = tmpRow[selectRow]
+                  tmpRow[selectRow] = tmpRow[selectRow - 1]
+                  tmpRow[selectRow - 1] = tmp
+  
+                  setSearchList([...tmpRow.map((v, i) => {
+                    if(!searchList[selectRow-1].border){
+                        searchList.map((v,i)=>{
+                          v.border = false;
+                        })
+                        searchList[selectRow-1].border = true
+                        setSearchList([...searchList])
+                    }
+                    setSelectRow(selectRow -1)
+                    return {
+                      ...v,
+                      seq: i+1
+                    }
+                  })])
                 }
-                let tmpRow = searchList
 
-                let tmp = tmpRow[selectRow]
-                tmpRow[selectRow] = tmpRow[selectRow - 1]
-                tmpRow[selectRow - 1] = tmp
-
-                setSearchList([...tmpRow.map((v, i) => {
-                  if(!searchList[selectRow-1].border){
-                    searchList.map((v,i)=>{
-                      v.border = false;
-                    })
-                    searchList[selectRow-1].border = true
-                    setSearchList([...searchList])
-                  }
-                  setSelectRow(selectRow -1)
-                  return {
-                    ...v,
-                    seq: i+1
-                  }
-                })])
               }}>
                 <p>위로</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-                if(selectRow === searchList.length-1 || selectRow === undefined){
+                if(selectRow === searchList.length-1 || selectRow === null){
                   return
                 }
                 let tmpRow = searchList
@@ -583,7 +597,10 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 if(selectRow !== undefined && selectRow !== null){
                   tmpRow.splice(selectRow, 1)
 
-                  setSearchList([...tmpRow])
+                  const filterRow = tmpRow.map((v , i)=>{
+                    return {...v , seq : i + 1}
+                  })
+                  setSearchList(filterRow)
                   setSelectRow(undefined)
                 }
 
