@@ -239,6 +239,7 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
               <div
                 onClick={() => {
                   setOptionIndex(0)
+                  setSelectRow(undefined)
                   setIsOpen(false)
                 }}
                 style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
