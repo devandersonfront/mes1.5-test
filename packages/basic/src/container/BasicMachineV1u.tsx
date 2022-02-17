@@ -41,7 +41,7 @@ const weldingType = [
   {pk:3, name: "스팟"},
 ]
 
-const BasicMachineV1u = ({page, keyword, option}: IProps) => {
+const BasicMachineV1u = ({ option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -51,13 +51,14 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['기계 제조사', '기계 이름', "", '제조 번호'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-
+  const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
 
   const [typesState, setTypesState] = useState<number>(null);
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   const changeSetTypesState = (value:number) => {
     setTypesState(value);
@@ -66,17 +67,17 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
 
   useEffect(() => {
-    setOptionIndex(option)
+    // setOptionIndex(option)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option, typesState])
+  }, [pageInfo.page, keyword, typesState])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -124,29 +125,41 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       }
     })
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
+      setColumn([...res.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     })
-    // }
   }
 
   const SaveBasic = async () => {
-    let res: any
     let result = [];
+    let mfrCodeCheck = true
     basicRow.map((row, index)=>{
       if(selectList.has(row.id)){
-        cleanForRegister(row)
-
+        if(!row.mfrCode) mfrCodeCheck = false;
         result.push(cleanForRegister(row))
       }
-
     })
+    if(result.length === 0) {
+      Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인", )
+      return
+    }else if(!mfrCodeCheck){
+      Notiflix.Report.warning("경고","제조 번호를 입력해주세요.","확인", )
+      return
+    }
       RequestMethod('post', `machineSave`, result)
           .then((res) => {
             Notiflix.Report.success("저장되었습니다.","","확인");
-            LoadBasic(page);
+            LoadBasic(pageInfo.page);
           })
+          .catch((err) => {
+            Notiflix.Report.failure("경고", err.data.message, "확인");
+          })
+
 
   }
 
@@ -182,13 +195,15 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     //   })
     // }
 
+    setSelectList(new Set())
+
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
     Notiflix.Loading.circle()
-    if(!isPaging){
-      setOptionIndex(option)
-    }
+    // if(!isPaging){
+    //   setOptionIndex(option)
+    // }
     const res = await RequestMethod('get', `machineSearch`,{
       path: {
         page: isPaging ?? 1,
@@ -215,6 +230,8 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const DeleteBasic = async () => {
@@ -226,21 +243,29 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           result.push(cleanForRegister(value))
         }
       }
-
     })
-    RequestMethod("delete", "machineDelete", result)
-        .then((res) => {
-          Notiflix.Report.success( "삭제되었습니다.", "", "확인");
-          if(keyword){
-            SearchBasic(keyword, option, page).then(() => {
-              Notiflix.Loading.remove()
-            })
-          }else{
-            LoadBasic(page).then(() => {
-              Notiflix.Loading.remove()
-            })
-          }
-        })
+    if(result.length === 0){
+      Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인", )
+      return
+    } Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+        ()=>{
+          RequestMethod("delete", "machineDelete", result)
+              .then((res) => {
+                Notiflix.Report.success( "삭제되었습니다.", "", "확인");
+                if(keyword){
+                  SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+                    Notiflix.Loading.remove()
+                  })
+                }else{
+                  LoadBasic(pageInfo.page).then(() => {
+                    Notiflix.Loading.remove()
+                  })
+                }
+              })
+
+        },
+        ()=>{}
+    )
 
   }
 
@@ -393,6 +418,9 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
     }
     tempData.weldingType = weldingPK;
     tempData.interwork = value.interworkPK === "true";
+    tempData.devices = value?.devices?.map((device) => {
+      return {...device, type: device.type_id}
+    })
     tempData.additional =[
       ...additional.map((v, index)=>{
           if(!value[v.colName]) return undefined;
@@ -463,17 +491,35 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
 
         break;
       case 5:
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{
-            DeleteBasic()
-          },
-          ()=>{}
-        )
+        DeleteBasic()
+
 
         break;
 
     }
   }
+
+  const competeMachineV1u = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined)
+
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '제조 번호 경고',
+          `중복되는 제조 번호가 존재합니다.`,
+          '확인'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+}
+
 
   return (
     <div>
@@ -481,11 +527,12 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            if(keyword){
-              router.push(`/mes/basic/machine?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            }else{
-              router.push(`/mes/basic/machine?page=1&keyword=`)
-            }
+            // if(keyword){
+              setKeyword(keyword)
+              // router.push(`/mes/basic/machine?page=1&keyword=${keyword}&opt=${optionIndex}`)
+            // }else{
+            //   router.push(`/mes/basic/machine?page=1&keyword=`)
+            // }
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -513,11 +560,12 @@ const BasicMachineV1u = ({page, keyword, option}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow(e)
+            competeMachineV1u(e)
           }}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent

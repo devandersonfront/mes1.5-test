@@ -30,7 +30,7 @@ export interface IProps {
 
 
 
-const BasicRawMaterial = ({page, keyword, option}: IProps) => {
+const BasicRawMaterial = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -42,6 +42,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [keyword, setKeyword] = useState<string>();
   const [selectRow , setSelectRow ] = useState<any>(undefined)
   const [buttonList , setButtonList ] = useState<string[]>([])
 
@@ -52,17 +53,17 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
 
 
   useEffect(() => {
-    setOptionIndex(option)
+    setOptionIndex(optionIndex)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword])
 
 
   const settingType = (type:any) => {
@@ -129,14 +130,63 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
       }
     })
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
+      setColumn([...res.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     })
-    // }
   }
 
   const SaveBasic = async () => {
+    let selectCheck = false
+    let codeCheck = true
+    let result = basicRow.map((row, i) => {
+      if(selectList.has(row.id)){
+        selectCheck = true
+        if(!row.code) codeCheck = false
+        let additional:any[] = []
+        column.map((v) => {
+          if(v.type === 'additional'){
+            additional.push(v)
+          }
+        })
+
+        let selectData: any = {}
+
+        Object.keys(row).map(v => {
+          if(v.indexOf('PK') !== -1) {
+            selectData = {
+              ...selectData,
+              [v.split('PK')[0]]: row[v]
+            }
+          }
+        })
+
+        return {
+          ...row,
+          ...selectData,
+          type:settingType(row.type),
+          // customer: row.customerArray,
+          additional: [
+            ...additional.map((v, index)=>{
+              if(!row[v.colName]) return undefined;
+              return {
+                mi_id: v.id,
+                title: v.name,
+                value: row[v.colName] ?? "",
+                unit: v.unit,
+                ai_id: searchAiID(row.additional, index) ?? undefined,
+                version:row.additional[index]?.version ?? undefined
+              }
+            }).filter((v) => v)
+          ]
+        }
+
+      }
+    }).filter((v) => v);
 
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
@@ -148,63 +198,25 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
       return result;
     }
 
-    let res: any
-    res = await RequestMethod('post', `rawMaterialSave`,
-      basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
+    if(selectCheck && codeCheck){
+      let res = await RequestMethod('post', `rawMaterialSave`, result)
 
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-            })
-
-            return {
-              ...row,
-              ...selectData,
-              type:settingType(row.type),
-              // customer: row.customerArray,
-              additional: [
-                ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
-                  return {
-                    mi_id: v.id,
-                    title: v.name,
-                    value: row[v.colName] ?? "",
-                    unit: v.unit,
-                    ai_id: searchAiID(row.additional, index) ?? undefined,
-                    version:row.additional[index]?.version ?? undefined
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
-          }
-        }).filter((v) => v))
-
-
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
+      if (res) {
+        Notiflix.Report.success('저장되었습니다.', '', '확인');
+        if (keyword) {
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        } else {
+          LoadBasic(pageInfo.page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
       }
+    }else if(!selectCheck){
+      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
+    }else if(!codeCheck){
+      Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인")
     }
   }
 
@@ -226,7 +238,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
-
+    setSelectList(new Set())
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -253,6 +265,8 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const cleanUpData = (res: any) => {
@@ -380,119 +394,113 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
 
   const DeleteBasic = async () => {
 
-    const res = await RequestMethod('delete', `rawMaterialDelete`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
+    let checkList = false
+    let result = basicRow.map((row, i) => {
+      if(selectList.has(row.id)){
+        checkList = true
+        let selectKey: string[] = []
+        let additional:any[] = []
+        column.map((v) => {
+          if(v.selectList){
+            selectKey.push(v.key)
+          }
 
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
+          if(v.type === 'additional'){
+            additional.push(v)
+          }
+        })
 
-          let selectData: any = {}
+        let selectData: any = {}
 
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
-              }
-            }
-
-            if(v === 'unitWeight') {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(row['unitWeight'])
-              }
-            }
-
-            if(v === 'tmpId') {
-              selectData = {
-                ...selectData,
-                id: row['tmpId']
-              }
-            }
-          })
-          if(row.rm_id){
-            return {
-              ...row,
+        Object.keys(row).map(v => {
+          if(v.indexOf('PK') !== -1) {
+            selectData = {
               ...selectData,
-              customer: row.customerArray,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ],
-              type:settingType(row.type)
+              [v.split('PK')[0]]: row[v]
             }
+          }
 
+          if(v === 'unitWeight') {
+            selectData = {
+              ...selectData,
+              unitWeight: Number(row['unitWeight'])
+            }
+          }
+
+          if(v === 'tmpId') {
+            selectData = {
+              ...selectData,
+              id: row['tmpId']
+            }
+          }
+        })
+        if(row.rm_id){
+          return {
+            ...row,
+            ...selectData,
+            customer: row.customerArray,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ],
+            type:settingType(row.type)
           }
 
         }
-      }).filter((v) => v))
 
-    if(res) {
-      Notiflix.Report.success('삭제되었습니다.','','확인',() => {
-        if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
-      });
-    }
-
-  }
-
-  const handleModal = (open:boolean) => {
-
-    setBarcodeOpen(!open)
-
-  }
-
-  const selectedData = () => {
-
-    let tmpSelectList : any[] = []
-    basicRow.map(row => {
-      if(selectList.has(row.id)){
-        tmpSelectList.push(row)
       }
-    })
+    }).filter((v) => v);
 
-    setSelectRow(tmpSelectList[0])
+    if(checkList){
+      Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          async()=>{
+            const res = await RequestMethod('delete', `rawMaterialDelete`, result)
 
+            if(res) {
+              Notiflix.Report.success('삭제되었습니다.','','확인',() => {
+                if(keyword){
+                  SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+                    Notiflix.Loading.remove()
+                  })
+                }else{
+                  LoadBasic(pageInfo.page).then(() => {
+                    Notiflix.Loading.remove()
+                  })
+                }
+              });
+            }
+
+          },
+          ()=>{}
+      )
+    }else{
+      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
+    }
   }
+
+
 
   const onClickHeaderButton = (index: number) => {
 
     switch(buttonList[index]){
       case '바코드 미리보기':
 
-      if(selectList.size === 0){
-        return Notiflix.Report.failure('선택을 하셔야 합니다.',
-        '선택을 하셔야지 바코드를 보실수 있습니다.',
-        'Okay')
-      }
-      setBarcodeOpen(true)
-      selectedData()
-      break;
-
+        if(selectList.size === 0){
+          return Notiflix.Report.failure('선택을 하셔야 합니다.',
+          '선택을 하셔야지 바코드를 보실수 있습니다.',
+          'Okay')
+        }
+        setBarcodeOpen(true)
+        selectedData()
+        break;
       case '항목관리':
         router.push(`/mes/item/manage/rawmaterial`)
         break;
@@ -504,7 +512,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
             items = {
               ...value.selectList[0],
               [value.key] : value.selectList[0].name,
-              [value.key+'PK'] : value.selectList[0].pk, //여기 봐야됨!
+              [value.key+'PK'] : value.selectList[0].pk,
               ...items,
             }
           }
@@ -527,19 +535,11 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
 
         break;
       case '삭제':
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{
-            DeleteBasic()
-          },
-          ()=>{}
-        )
-
+        DeleteBasic()
         break;
 
     }
   }
-
-  // 바코드
 
   const handleBarcode = async (dataurl , id) => {
 
@@ -568,17 +568,51 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
     })
   }
 
+  const handleModal = (open:boolean) => {
+
+    setBarcodeOpen(!open)
+
+  }
+
+  const selectedData = () => {
+
+    let tmpSelectList : any[] = []
+    basicRow.map(row => {
+      if(selectList.has(row.id)){
+        tmpSelectList.push(row)
+      }
+    })
+
+    setSelectRow(tmpSelectList[0])
+
+  }
+
+
+
   React.useEffect(()=>{
 
-    if(selectList.size > 1){
-
-      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
-
-    }
-
-    return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
+     return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
 
   },[selectList.size])
+
+  const competeRawMaterial = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow].code && row.code !== undefined)
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '코드 경고',
+          `중복된 코드를 입력할 수 없습니다`,
+          '확인'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
 
 
 
@@ -588,18 +622,14 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            if(keyword){
-              router.push(`/mes/basic/rawmaterialV1u?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            }else{
-              router.push(`/mes/basic/rawmaterialV1u?page=1&keyword=`)
-            }
+            setKeyword(keyword)
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"원자재 기본정보"}
+          title={"원자재 기준정보"}
           buttons={buttonList}
           buttonsOnclick={
             onClickHeaderButton
@@ -620,9 +650,10 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow(e)
+            competeRawMaterial(e)
           }}
           selectList={selectList}
+          setSelectRow={setSelectRow}
           //@ts-ignore
           setSelectList={setSelectList}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
@@ -631,11 +662,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            if(keyword){
-              router.push(`/mes/basic/rawmaterialV1u?page=${page}&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/rawmaterialV1u?page=${page}`)
-            }
+            setPageInfo({...pageInfo, page:page})
           }}
         />
 
@@ -647,6 +674,7 @@ const BasicRawMaterial = ({page, keyword, option}: IProps) => {
         type={'rawMaterial'}
         data={selectRow}
       />
+
       {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}

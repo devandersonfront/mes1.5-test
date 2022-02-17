@@ -107,6 +107,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
   }
 
   const createAuth = async (data: any) => {
+
     if(data){
       const addedAuthorities = changeAuthToList(data.authorities)
       const res = await RequestMethod('post', 'authoritySave', {
@@ -128,27 +129,26 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
         }))
       }
     } else {
-      Notiflix.Report.failure('권한 없음', '권한을 선택해주세요', '확인')
+      Notiflix.Report.warning('권한 없음', '권한을 선택해주세요', '확인')
     }
   }
-  
 
-  const deleteAuth = () => {
 
+  const deleteAuth = () =>  {
     if(selectIndex === -1){
-      return Notiflix.Notify.warning('삭제를 하기 위해서는 선택을 해주세요')
+      return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
     }
 
-    if(row[selectIndex].ca_id){
+    if(row[selectIndex]?.ca_id){
       Notiflix.Confirm.show(
         '권한명 삭제',
-        '정말로 삭제 하시겠습니까?',
+        '권한명을 삭제 하시겠습니까?',
         'Yes',
         'No',
         async () => {
           const res = await RequestMethod('delete', 'authorityDelete', [row[selectIndex]])
           if (res){
-            Notiflix.Report.success('삭제 성공!', '권한이 성공적으로 삭제됐습니다.', '확인', () => {
+            Notiflix.Report.success('삭제 성공', '권한이 성공적으로 삭제됐습니다.', '확인', () => {
               loadAuthorityList().then(() => {
                 Notiflix.Loading.remove()
               })
@@ -157,39 +157,18 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
         },
       );
     } else {
-      let tmpRow = row
-      tmpRow.splice(-1, 1)
-      setSelectIndex(-1)
+      let tmpRow = [...row]
+      tmpRow.splice(selectIndex, 1)
       setRow([...tmpRow])
     }
-
-
-
-    // if(selectIndex !== -1 && row[selectIndex].ca_id){
-    //   const res = await RequestMethod('delete', 'authorityDelete', [row[selectIndex]])
-
-    //   if (res){
-    //     Notiflix.Report.success('삭제 성공!', '권한이 성공적으로 삭제됐습니다.', '확인', () => {
-    //       loadAuthorityList().then(() => {
-    //         Notiflix.Loading.remove()
-    //       })
-    //     })
-    //   }
-    // } else {
-    //   let tmpRow = row
-    //   tmpRow.splice(selectIndex, 1)
-
-    //   setRow([...tmpRow])
-    // }
-    // setSelectIndex(-1)
   }
 
   const addRow = () => {
-    setRow([...row, {
-      ca_id: "",
-      name: '',
-      authorities: []
-    }])
+
+    const tempRow = [...row]
+    tempRow.unshift({ca_id: "",name: '',authorities: []})
+    setRow(tempRow)
+
   }
 
   const leftButtonOnClick = (index: number) => {
@@ -197,6 +176,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
       case 0:
         return addRow()
       case 1:
+
         return deleteAuth()
     }
   }
@@ -211,6 +191,28 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
       }
       resolve(true)
     }).then(() => Notiflix.Loading.remove(1000))
+
+
+  }
+
+  const competeAuthority = (rows) => {
+
+      const tempRow = [...rows]
+      const spliceRow = [...rows]
+      spliceRow.splice(selectIndex, 1)
+      const isCheck = spliceRow.some((row)=> row.name === tempRow[selectIndex].name && row.name !== undefined)
+
+      if(spliceRow){
+        if(isCheck){
+          return Notiflix.Report.warning(
+            '권한명 경고',
+            `중복되는 권한명이 존재합니다.`,
+            '확인'
+          );
+        }
+      }
+
+      setRow(rows)
   }
 
   return (
@@ -240,9 +242,9 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
           <ExcelTable
             clickable
             width={280}
-            headerList={[{key: 'name', width: 280, name: '권한명', editor: TextEditor},]}
+            headerList={[{key: 'name', width: 280, name: '권한명(필수)', editor: TextEditor}]}
             row={row}
-            setRow={(row) => setRow([...row])}
+            setRow={(row) => competeAuthority(row)}
             setSelectRow={(index) => {
               changeListToAuth(row[index].authorities ?? [])
               setSelectIndex(index)

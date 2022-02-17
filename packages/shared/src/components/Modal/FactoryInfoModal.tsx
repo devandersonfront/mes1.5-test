@@ -30,9 +30,9 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
-  const [selectRow, setSelectRow] = useState<number>()
+  const [selectRow, setSelectRow] = useState<number>(-1)
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -41,6 +41,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      setSelectRow(-1)
       if(!row.factory_id){
         Notiflix.Report.warning("경고","공장을 먼저 등록해주시기 바랍니다.","확인", () => setIsOpen(false));
       }
@@ -51,7 +52,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
   }, [isOpen, searchKeyword])
 
 
-  const changeRow = (row: any, key?: string) => {
+  const changeRow = (row: any, i : number) => {
     let random_id = Math.random()*1000;
     let tmpData = {
       ...row,
@@ -61,7 +62,8 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
       manager_name: row.manager?.name,
       appointment: row.manager?.appointment,
       telephone:row.manager?.telephone,
-      id: `subFactory_${random_id}`
+      id: `subFactory_${random_id}`,
+      seq : i + 1
     }
 
     return tmpData
@@ -84,19 +86,18 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
         renderItem: 18,
       },
       params: {
-        sorts:"name"
+        sorts:"seq"
       }
     })
 
       let searchList = res.info_list.map((row: any, index: number) => {
-        return changeRow(row)
+        return changeRow(row, index)
       })
       setPageInfo({
         ...pageInfo,
         page: res.page,
         total: res.totalPages,
       })
-
       setSearchList([...searchList])
   }
   const saveSubFactory = async () => {
@@ -117,64 +118,88 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     //}
     //description :
 
+    
+    // const filterList = searchList.map((list)=>{
+    //   if(!list.manager){
+    //     return {...list, manager : list.manager_info , managerId : list.manager_info?.user_id}
+    //   }else{
+    //     return list
+    //   }
+    // })
 
-    searchList.map((value) => {
-      let oneSubFactory:any = {...value, manager:value.manager_info};
-
-      if(value.manager_info.user_idPK && value.manager_info.user_id){
-        oneSubFactory.manager.user_id = value.manager_info.user_idPK;
-      }
-      oneSubFactory.manager.authority = value.manager_info.authorityPK;
-      oneSubFactory.factory_id = row.factory_id;
-
-      result.push(oneSubFactory);
+    const filterList = searchList.map((list)=>{
+        return {...list , factory_id : row.factory_id}
     })
-    if(result.filter((subFactory) => {
-      if(subFactory.factory_id){
-        return true
-      }else{
-        return false
-      }
-    }).length > 0){
-      await RequestMethod("post", "subFactorySave", result)
+
+    if(filterList){
+      await RequestMethod("post", "subFactorySave", filterList)
           .then((res) => {
-            onRowChange({...row, subFactories:result})
+            onRowChange({...row, subFactories:filterList})
             Notiflix.Loading.remove(300);
             Notiflix.Report.success("확인","저장되었습니다.","확인",() => setIsOpen(false))
-
           })
           .catch((err) => {
-            Notiflix.Loading.remove(300);
-            Notiflix.Report.failure("경고","예상치 못한 에러가 발생했습니다.","확인",() => setIsOpen(false))
+            if(err.response?.status === 300){
+              Notiflix.Loading.remove(300);
+              Notiflix.Report.failure("경고","예상치 못한 에러가 발생했습니다.","확인")
+            }else if(err.response?.status === 209){
+              Notiflix.Loading.remove(300);
+              Notiflix.Report.failure("경고", err.response.data.message,"확인")
+            }
           })
     }else {
             Notiflix.Loading.remove(300);
-            Notiflix.Report.failure("경고","공장을 먼저 등록해주시기 바랍니다.","확인",() => setIsOpen(false))
+            Notiflix.Report.failure("경고","공장을 먼저 등록해주시기 바랍니다.","확인")
     }
   }
 
-  const deleteSubFactory = async() => {
-    // Notiflix.Loading.standard();
+  const deleteSubFactory = async () => {
 
-    const deleteRows = [];
+    if(selectRow === -1){
+      return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
+    }
 
-    searchList.map((row)=>{
-      if(selectList.has(row.id)){
-          deleteRows.push(row);
-      }
-    })
+    if(searchList[selectRow]?.sf_id){
+      Notiflix.Confirm.show(
+        '행 삭제',
+        '행을 삭제 하시겠습니까?',
+        'Yes',
+        'No',
+        async () => {
 
-    await RequestMethod("delete", "subFactoryDelete",deleteRows.filter((row)=> row.sf_id))
-        .then((res)=>{
-          Notiflix.Report.success("확인", "삭제되었습니다.", "확인" ,() =>{
-            SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-              Notiflix.Loading.remove()
-            });
+          await RequestMethod("delete", "subFactoryDelete",[searchList[selectRow]])
+          .then((res)=>{
+            Notiflix.Report.success("확인", "삭제되었습니다.", "확인" ,() =>{
+              SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+                Notiflix.Loading.remove()
+              });
+            })
           })
-        })
-        .catch((err) => {
+        },
+      );
+    } else {
+      let tmpRow = [...searchList]
+      tmpRow.splice(selectRow, 1)
+      setSearchList([...tmpRow.map((v, i) => {
+        return {
+          ...v,
+          seq: i+1
+        }
+      })])
+      setSelectRow(-1)
+    }
 
-        })
+
+
+    // await RequestMethod("delete", "subFactoryDelete",[searchList[selectRow]])
+    //     .then((res)=>{
+    //       Notiflix.Report.success("확인", "삭제되었습니다.", "확인" ,() =>{
+    //         SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+    //           Notiflix.Loading.remove()
+    //         });
+    //       })
+    //     })
+       
   }
   const ModalContents = () => {
     if(row.subFactories && row.subFactories.length > 0){
@@ -214,6 +239,27 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
       return row[key]
     }
   }
+
+  const competeAuthority = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined)
+
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '권한명 경고',
+          `중복되는 권한명이 존재합니다.`,
+          '확인'
+        );
+      }
+    }
+
+    setSearchList(rows)
+}
+
 
   return (
     <SearchModalWrapper >
@@ -303,7 +349,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
             <Button onClick={() => {
-              let tmp = searchList
               let random_id = Math.random()*1000;
               setSearchList([
                 ...searchList,
@@ -316,28 +361,15 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               <p>행 추가</p>
             </Button>
             <Button style={{marginLeft: 16}} onClick={() => {
-              let tmp = searchList
-
-              deleteSubFactory()
-              // setSearchList([
-              //   ...searchList,
-              //   {
-              //     seq: searchList.length-1
-              //   }
-              // ])
-            }}>
-              <p>행 삭제</p>
-            </Button>
-            <Button style={{marginLeft: 16}} onClick={() => {
               if(selectRow === 0){
                 return
               }
-              let tmpRow = searchList
+              let tmpRow = [...searchList]
 
               let tmp = tmpRow[selectRow]
               tmpRow[selectRow] = tmpRow[selectRow - 1]
               tmpRow[selectRow - 1] = tmp
-
+              setSelectRow((prevSelectRow)=> prevSelectRow - 1)
               setSearchList([...tmpRow.map((v, i) => {
                 return {
                   ...v,
@@ -347,30 +379,39 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             }}>
               <p>위로</p>
             </Button>
+            
             <Button style={{marginLeft: 16}} onClick={() => {
-              if(selectRow === searchList.length-1){
-                return
-              }
-              let tmpRow = searchList
 
-              let tmp = tmpRow[selectRow]
-              tmpRow[selectRow] = tmpRow[selectRow + 1]
-              tmpRow[selectRow + 1] = tmp
-
-              setSearchList([...tmpRow.map((v, i) => {
-                return {
-                  ...v,
-                  seq: i+1
+              if(selectRow > -1){
+                if(selectRow === searchList.length-1){
+                  return
                 }
-              })])
+  
+                let tmpRow = [...searchList]
+                let tmp = tmpRow[selectRow]
+                tmpRow[selectRow] = tmpRow[selectRow + 1]
+                tmpRow[selectRow + 1] = tmp
+                setSelectRow((prevSelectRow)=> prevSelectRow + 1)
+                setSearchList([...tmpRow.map((v, i) => {
+                  return {
+                    ...v,
+                    seq: i+1
+                  }
+                })])
+              }
             }}>
               <p>아래로</p>
+            </Button>
+            <Button style={{marginLeft: 16}} onClick={() => {
+              let tmpRow = [...searchList]
+              deleteSubFactory()
+            }}>
+              <p>삭제</p>
             </Button>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
               headerList={[
-                  SelectColumn,
                   ...searchModalList.factoryInfo
               ]}
 
@@ -383,13 +424,14 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
                 })
                 setSelectList(tmp)
 
-                e.map((v)=>{
-                  v.manager_name = v.manager?.name;
-                  v.appointment = v.manager?.appointment;
-                  v.telephone = v.manager?.telephone;
-                })
+                // e.map((v)=>{
+                //   v.manager_name = v.manager?.name;
+                //   v.appointment = v.manager?.appointment;
+                //   v.telephone = v.manager?.telephone;
+                // })
 
-                setSearchList([...e])
+                // setSearchList([...e])
+                competeAuthority(e)
               }}
               width={1746}
               rowHeight={32}
@@ -402,6 +444,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
                 setSelectList(e as Set<number>);
               }}
               setSelectRow={(e) => {
+
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{
                     v.border = false;
@@ -426,6 +469,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 setIsOpen(false)
+                setSelectRow(-1)
               }}
               style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
@@ -434,6 +478,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 saveSubFactory();
+                setSelectList(new Set())
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >

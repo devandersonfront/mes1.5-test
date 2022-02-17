@@ -100,6 +100,8 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
     }else{
       Notiflix.Loading.remove(300);
     }
+
+    setSelectList(new Set())
   }
 
   const LoadBasic = async () => {
@@ -141,9 +143,9 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove(300);
       }
       setProcessColumn(tmpColumn);
-      setProcessBasicRow([...tmpRow.map((row: any) => {
+      setProcessBasicRow([...tmpRow.map((row: any, index) => {
         return {
-          ...row,
+          ...row, onClicked: index === 0 ? true : false
         }
       })])
     }
@@ -189,6 +191,15 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         return
       case 3 :
         // let validation = true;
+
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+        }
+
         Notiflix.Loading.standard();
         let savePauseBasicRow:any[] = [];
         pauseBasicRow.map((value, i)=>{
@@ -213,6 +224,15 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         return
 
       case 4 :
+
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+        }
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           async()=>{
             const idList = [];
@@ -288,6 +308,8 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
       setState(false);
     }
   },[pauseBasicRow])
+
+
   return (
     <div>
       <PageHeader title={"공정별 자주검사 항목 등록"} />
@@ -298,7 +320,17 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         ]}
         row={processBasicRow}
         setRow={setProcessBasicRow}
-        setSelectRow={setSelectRow}
+        setSelectRow={(e) => {
+          const clickedList = processBasicRow.map((data, index) => {
+            if (e === index) {
+              return { ...data, onClicked: true }
+            } else {
+              return { ...data, onClicked: false }
+            }
+          })
+          setProcessBasicRow(clickedList)
+          setSelectRow(e)
+        }}
         width={1576}
         height={300}
       />
