@@ -222,7 +222,7 @@ const BasicProduct = ({page}: IProps) => {
       }
     }).filter((v) => v)
 
-    if(selectCheck && codeCheck && processCheck){
+    if(selectCheck && codeCheck && processCheck && bom){
       let res = await RequestMethod('post', `productSave`,result)
 
       if(res){

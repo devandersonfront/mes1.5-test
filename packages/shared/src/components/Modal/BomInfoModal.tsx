@@ -262,13 +262,13 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
     if(haveList){
       isValidation = true
-      return Notiflix.Report.warning("경고","BOM은 하나라도 등록이 되어야합니다.","확인",)
+      Notiflix.Report.warning("경고","BOM은 하나라도 등록이 되어야합니다.","확인",)
     }else if(!haveData){
       isValidation = true
-      return Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
+      Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
     }else if(!haveBasic){
       isValidation = true
-      return Notiflix.Report.warning("경고","기본설정은 최소 한개 이상 필요합니다.","확인",)
+      Notiflix.Report.warning("경고","기본설정은 최소 한개 이상 필요합니다.","확인",)
     }
 
     return isValidation
