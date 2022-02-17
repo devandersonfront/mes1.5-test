@@ -73,11 +73,13 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }, [column.type, tab])
 
+
+
   useEffect(() => {
     if(isOpen){
       LoadBasic();
     }
-  }, [isOpen, searchModalInit, optionIndex, pageInfo.page])
+  }, [isOpen, searchModalInit, pageInfo.page])
 
   const LoadBasic = async (page?:number) => {
     Notiflix.Loading.circle();

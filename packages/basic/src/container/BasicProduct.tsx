@@ -222,7 +222,10 @@ const BasicProduct = ({page}: IProps) => {
       }
     }).filter((v) => v)
 
-    if(selectCheck && codeCheck && processCheck && bom){
+
+
+
+    if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
       let res = await RequestMethod('post', `productSave`,result)
 
       if(res){
