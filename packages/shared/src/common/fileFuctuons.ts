@@ -12,23 +12,27 @@ import Notiflix from "notiflix";
  */
 export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, fileType?: string) => {
   // const res = await requestApi('post',`${SF_ENDPOINT}/anonymous/upload`, data, )
+    console.log("data : ", data, " length : ", length)
     let result:any;
     const type = data.type.split("/")[0];
       await Axios.post(`${SF_ENDPOINT}/anonymous/upload`, data,
           {
-                  headers: type === "image"?
+                  headers:
+                      // type === "image"?
                       {
                           "Content-Type": data.type,
                           "Content-Length": length
-                      } : fileType !== undefined ?
-                          {
-                              "Content-Type": fileType,
-                          }
-                          :
-                          {}
+                      }
+                      // : fileType !== undefined ?
+                      //     {
+                      //         "Content-Type": fileType,
+                      //     }
+                      //     :
+                      //     {}
                 })
           .then((res) => {
               result = res.data;
+              console.log(result)
           }).
           catch((err)=>{
               console.log(err)

@@ -160,8 +160,6 @@ const BasicMachineV1u = ({ option}: IProps) => {
             console.log(err.data.message);
             Notiflix.Report.failure("경고", err.data.message, "확인");
           })
-
-
   }
 
 

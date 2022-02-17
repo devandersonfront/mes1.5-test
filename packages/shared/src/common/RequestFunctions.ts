@@ -269,7 +269,7 @@ const ApiList = {
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
-
+  inspecLoadMachine: `/api/v1/inspec/daily/form/machine/load`,
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
