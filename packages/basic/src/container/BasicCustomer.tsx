@@ -509,10 +509,12 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
 
   const competeCustom = (rows) => {
 
+    console.log(rows,'rowsrowsrowsrows')
+
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined)
+    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null)
 
     if(spliceRow){
       if(isCheck){
