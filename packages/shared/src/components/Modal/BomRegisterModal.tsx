@@ -107,9 +107,11 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
     tmpData = tmpRows.map((v, i) => {
       let childData: any = {}
+      let rmType
       switch(v.type){
         case 0:{
           childData = v.child_rm
+          rmType = childData.type === 1 ? 'kg' : '장'
           break;
         }
         case 1:{
@@ -143,7 +145,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         type: TransferCodeToValue(v.type, 'material'),
         tab: v.type,
         type_name: TransferCodeToValue(v.type, 'material'),
-        unit: childData.unit ?? "-",
+        unit: v.type === 0 ? rmType : childData.unit ?? "-",
         parent: v.parent,
         usage: v.usage,
         version: v.version,

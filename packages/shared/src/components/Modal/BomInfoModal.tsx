@@ -166,6 +166,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }
 
   const SearchBasic = async (selectKey?:string) => {
+
     Notiflix.Loading.circle()
     let res;
     if(selectKey){
@@ -177,6 +178,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }else{
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
       let searchList = changeRow(res)
+
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       setSearchList(searchList.length > 0 ? searchList : [])
     }
@@ -184,12 +186,12 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
 
   // tab : 0 -> 원자재
-  // tab : 1 -> 부자재 
+  // tab : 1 -> 부자재
   // tab : 2 => 제품
-  
+
   // 무조건 1개의 기본은 가지고 있어야한다.
   const haveBasicValidation = () => {
-    
+
     let haveRawMaterialBasic = false ;
     let haveSubMaterialBasic = false ;
     let haveProductBasic = false ;
@@ -209,7 +211,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   // 데이터 유무 판단
   const haveDataValidation = () => {
-    
+
     let dataCheck = true
 
     searchList.map((v,i)=>{
@@ -253,8 +255,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const executeValidation = () => {
 
-    let isValidation = false 
-    const haveList = searchList.length === 0  
+    let isValidation = false
+    const haveList = searchList.length === 0
     const haveData = haveDataValidation()
     const haveBasic = haveBasicValidation()
 
@@ -325,7 +327,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             padding: '3.5px 0px 0px 3.5px',
             width: '100%'
           }}>
-            <UploadButton 
+            <UploadButton
             onClick={() => {
               setIsOpen(true)
             }}>
@@ -568,7 +570,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>아래로</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-                
+
                 if(selectRow === null){
                   return Notiflix.Report.warning(
                     '경고',
