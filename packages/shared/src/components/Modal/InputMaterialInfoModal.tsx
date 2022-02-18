@@ -41,7 +41,7 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
   [{title: '단위', infoWidth: 144, key: 'unit'},{title: '목표 생산량', infoWidth: 144, key: 'goal'},],
 ]
 
-
+//작업지시서 리스트 자재 보기
 
 const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
@@ -55,7 +55,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [summaryData, setSummaryData] = useState<any>({})
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
