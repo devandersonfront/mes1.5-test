@@ -191,14 +191,6 @@ const BasicPause = ({page, keyword, option}: IProps) => {
 
       case 3 :
 
-        if(selectList.size === 0){
-          return Notiflix.Report.warning(
-        '경고',
-        '선택된 정보가 없습니다.',
-        '확인',
-        );
-        }
-
         Notiflix.Loading.standard();
         let savePauseBasicRow:any[] = [];
         pauseBasicRow.map((value,index)=>{
