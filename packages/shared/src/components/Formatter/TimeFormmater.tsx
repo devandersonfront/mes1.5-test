@@ -12,12 +12,12 @@ const TimeFormatter = ({row, column, setRow}: IProps) => {
     return(
         <Background style={{background: "white"}} onClick={()=>{}} >
             <p style={{padding: 0, color: row[column.key] ? '#0D0D0D' : '#0D0D0D66', width: '100%', textAlign: column.textAlign ?? 'left' }}>
-                {/*{row[column.key] ?? "00:00:00"}*/}
-                <input value={''} style={{width: "30px"}}/>
-                :
-                <input value={''} style={{width: "30px"}}/>
-                :
-                <input value={''} style={{width: "30px"}}/>
+                {row[column.key] ?? "00:00:00"}
+                {/*<input value={''} style={{width: '30px'}}/>*/}
+                {/*:*/}
+                {/*<input value={''} style={{width: '30px'}}/>*/}
+                {/*:*/}
+                {/*<input value={''} style={{width: '30px'}}/>z*/}
             </p>
         </Background>
     )
