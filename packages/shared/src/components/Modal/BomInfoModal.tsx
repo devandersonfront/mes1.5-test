@@ -194,23 +194,49 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   // tab : 0 -> 원자재
   // tab : 1 -> 부자재
   // tab : 2 => 제품
-
-  // 무조건 1개의 기본은 가지고 있어야한다.
+  // 이 로직을 좀더 간단한게 할수 있을것 같은데..
   const haveBasicValidation = () => {
 
-    let haveRawMaterialBasic = false ;
-    let haveSubMaterialBasic = false ;
-    let haveProductBasic = false ;
+    let rawMaterialBasic = [] ;
+    let subMaterialBasic = [] ;
+    let productBasic = [];
 
-    searchList.forEach((value)=>{
-      if(value.setting === '기본' && value.tab === 0) return haveRawMaterialBasic = true
-      else if(value.setting === '기본' && value.tab === 1) return haveSubMaterialBasic = true
-      else if(value.setting === '기본' && value.tab === 2) return haveProductBasic = true
+    let haveRawMaterialBasic;
+    let haveSubMaterialBasic;
+    let haveProductBasic;
+
+    searchList.map((list)=>{
+      if(list.tab === 0){
+        rawMaterialBasic.push({type : list.setting})
+      }else if(list.tab === 1){
+        subMaterialBasic.push({type : list.setting})
+      }else if(list.tab === 2){
+        productBasic.push({type : list.setting})
+      }
     })
 
-    if(haveRawMaterialBasic || haveSubMaterialBasic || haveProductBasic){
+    if(rawMaterialBasic.length !== 0){
+      haveRawMaterialBasic = rawMaterialBasic.some((v) => v.type === '기본')
+    }else{
+      haveRawMaterialBasic = true
+    }
+
+    if(subMaterialBasic.length !== 0){
+      haveSubMaterialBasic = subMaterialBasic.some((v) => v.type === '기본')
+    }else{
+      haveSubMaterialBasic = true
+    }
+
+    if(productBasic.length !== 0){
+      haveProductBasic = productBasic.some((v) => v.type === '기본')
+    }else{
+      haveProductBasic = true
+    }
+
+    if(haveRawMaterialBasic && haveSubMaterialBasic && haveProductBasic){
       return true
     }
+
     return false
 
   }
@@ -274,7 +300,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
     }else if(!haveBasic){
       isValidation = true
-      Notiflix.Report.warning("경고","기본설정은 최소 한개 이상 필요합니다.","확인",)
+      Notiflix.Report.warning("경고","품목별 기본설정은 최소 한개 이상 필요합니다.","확인",)
     }
 
     return isValidation
