@@ -21,6 +21,7 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
+//작업지시서 리스트 투입 자재 모달
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
@@ -72,27 +73,48 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const [lotList, setLotList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [selectProduct, setSelectProduct] = useState<string>('')
+  const [selectType, setSelectType] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
-  useEffect(() => {
-    if(isOpen) {
-      if(row.operation_sheet && row.operation_sheet?.input_bom?.length > 0){
-        changeRow(row.operation_sheet.input_bom)
-      }else if(row.input_bom?.length > 0){
-        changeRow(row.input_bom)
-      }else{
-        Notiflix.Report.warning("경고","투입 자재가 없습니다.","확인", () => setIsOpen(false))
-      }
-    }
-  }, [isOpen, searchKeyword])
+  // useEffect(() => {
+  //   if(isOpen) {
+  //     if(row.operation_sheet && row.operation_sheet?.input_bom?.length > 0){
+  //       changeRow(row.operation_sheet.input_bom)
+  //     }else if(row.input_bom?.length > 0){
+  //       changeRow(row.input_bom)
+  //     }else{
+  //       Notiflix.Report.warning("경고","투입 자재가 없습니다.","확인", () => setIsOpen(false))
+  //     }
+  //   }
+  // }, [isOpen, searchKeyword])
 
-  const changeRow = (tmpRow: any, key?: string) => {
+  useEffect(() => {
+    if(isOpen){
+      loadRecordGroup(row.bom_root_id)
+    }
+  },[isOpen])
+
+  const loadRecordGroup = async (product_id: any) => {
+    // Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `bomLoad`,{
+      path: {
+        product_id: product_id,
+      },
+    })
+
+    if(res){
+      let tmpSearchList = changeRow(res,row)
+      setSearchList([...tmpSearchList])
+    }
+  }
+
+
+  const changeRow = (tmpRow: any, parent?:any) => {
     let tmpData = []
-    let tmpRows = tmpRow;
 
     setSummaryData({
       // ...res.parent
@@ -110,56 +132,70 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       good_quantity: row.good_quantity ?? 0,
       poor_quantity: row.qoor_quantity ?? 0,
     })
-    // if(tmpRows){
-      tmpData = tmpRows?.map((v, i) => {
-        let childData: any = {}
-        switch(v.bom.type){
-          case 0:{
-            childData = v.bom.child_rm
-            break;
-          }
-          case 1:{
-            childData = v.bom.child_sm
-            break;
-          }
-          case 2:{
-            childData = v.bom.child_product
-            break;
-          }
-        }
 
-        return {
+    if(typeof tmpRow === 'string'){
+      let tmpRowArray = tmpRow.split('\n')
+
+      row = tmpRowArray.map(v => {
+        if(v !== ""){
+          let tmp = JSON.parse(v)
+          return tmp
+        }
+      }).filter(v=>v)
+    }else{
+      row = [{...tmpRow}]
+    }
+
+    tmpData = row.map((v, i) => {
+      let childData: any = {}
+      let type = "";
+      switch(v.type){
+        case 0:{
+          childData = v.child_rm
+          type = v.child_rm.type == "1" ? "kg" : v.child_rm.type == "2" ? "장" : "-";
+          break;
+        }
+        case 1:{
+          childData = v.child_sm
+          type = "1";
+          break;
+        }
+        case 2:{
+          childData = v.child_product
+          type = "2";
+          break;
+        }
+      }
+
+      return {
+        ...childData,
+        seq: i+1,
+        code: childData.code,
+        type: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? "submaterial" : "product"),
+        tab: v.type,
+        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? "submaterial" : "product"),
+        unit: childData.unit ?? type,
+        usage: v.usage,
+        version: v.version,
+        processArray: childData.process ?? null,
+        process: childData.process ? childData.process.name : null,
+        // bom_root_id: childData.bom_root_id,
+        product: v.type === 2 ?{
           ...childData,
-          seq: i+1,
-          code: childData.code,
-          type: TransferCodeToValue(v.bom.type, 'material'),
-          tab: v.bom.type,
-          type_name: TransferCodeToValue(v.bom.type, 'material'),
-          unit: childData.unit ?? "-",
-          parent: v.bom.parent,
-          usage: v.bom.usage,
-          version: v.bom.version,
-          setting: v.bom.setting,
-          stock: childData.stock,
-          bom_lot_list: tmpRow,
-          disturbance: (Number(row.good_quantity ?? 0)+Number(row.poor_quantity ?? 0)) * Number(v.bom.usage),
-          processArray: childData.process ?? null,
-          process: childData.process ? childData.process.name : '-',
-          bom: row.bom,
-          product: v.bom.type === 2 ?{
-            ...childData,
-          }: null,
-          raw_material: v.bom.type === 0 ?{
-            ...childData,
-          }: null,
-          sub_material: v.bom.type === 1 ?{
-            ...childData,
-          }: null
-        }
-      })
-    // }
-
-    setSearchList([...tmpData])
+        }: null,
+        product_id: v?.parent?.product_id,
+        raw_material: v.type === 0 ?{
+          ...childData,
+        }: null,
+        sub_material: v.type === 1 ?{
+          ...childData,
+        }: null,
+        parent:v.parent,
+        setting:v.setting === 0 ? "기본" : "스페어",
+        disturbance: 0
+      }
+    })
+    return tmpData
   }
 
   const SearchBasic = async (keyword: any, option: number, page: number) => {
@@ -328,6 +364,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   }
 
                   if(v.lotList){
+
+                    setSelectType(v.type === 'COIL' || v.type === 'SHEET' ? '원자재' : v.type)
                     setSelectProduct(v.code)
                     setLotList([...v.lotList.map((v,i) => ({
                       ...v,
@@ -359,7 +397,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-                <p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 ({selectProduct})</p>
+                <p style={{fontSize: 22, padding: 0, margin: 0}}>{selectType} LOT 리스트 ({selectProduct})</p>
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
@@ -371,7 +409,29 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               headerList={column.type === 'readonly' ? searchModalList.InputLotReadonlyInfo : searchModalList.InputLotInfo}
               row={lotList ?? [{}]}
               setRow={(e) => {
-                e.map((v)=>console.log(v.amount))
+                let allAmount = 0
+
+                const error = e.map((v)=> {
+                  if (v.current < v.amount) {
+                    return 1
+                  }
+                }).filter(v=>v)
+                if(error.includes(1)){
+                  return   Notiflix.Report.warning("경고", "LOT 재고량 보다 생산량이 많습니다.", "확인");
+                }
+
+                e.filter((v=>v.amount)).map((v)=> {
+                  allAmount += Number(v.amount)
+                })
+
+
+                let selectTmp = searchList.map((v)=>{
+                  if(v.code === selectProduct){
+                    return {...v, disturbance: allAmount}
+                  }else{
+                    return v
+                  }
+                })
                 let tmp = e.map((v, index) => {
                   if(v.newTab === true){
                     const newTabIndex = bomDummy.length+1
@@ -385,7 +445,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                     newTab: false
                   }
                 })
-                let tmpSearchList = [...searchList]
+                let tmpSearchList = [...selectTmp]
                 if(selectRow >= 0) {
 
                   tmpSearchList[selectRow] = {

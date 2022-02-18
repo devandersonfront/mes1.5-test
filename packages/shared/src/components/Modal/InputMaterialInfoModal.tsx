@@ -132,7 +132,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
       switch(v.type){
         case 0:{
           childData = v.child_rm
-          type = v.child_rm.type == "1" ? "Kg" : v.child_rm.type == "2" ? "장" : "-";
+          type = v.child_rm.type == "1" ? "kg" : v.child_rm.type == "2" ? "장" : "-";
           break;
         }
         case 1:{

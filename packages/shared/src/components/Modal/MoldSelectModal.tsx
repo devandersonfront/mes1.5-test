@@ -67,7 +67,8 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             mold: {
               ...v.mold
             },
-            setting: v.spare === '여' ? 0 : 1
+            setting: v.spare === '여' ? 0 : 1,
+            spare: v.spare === '여' ? 0 : 1
           }
         }
       }) ?? []
@@ -281,6 +282,8 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 if(selectRow !== undefined && selectRow !== null){
+                  console.log(searchList.map(v=> v.spare))
+                  const visibleSpare = searchList.map(v=> v.spare)
                   onRowChange({
                     ...row,
                     name: row.name,
