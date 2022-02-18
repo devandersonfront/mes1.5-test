@@ -229,10 +229,13 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         seq: i+1,
         parent: {
           ...row,
+          additional: row.additional ?? [],
           process: row.processArray,
-          type: row.type_id ?? row.type,
-          product_id:row.product_id ?? row.productId,
+          model: row.model === '' ? null : row.model,
+          type: row.type_id ?? row.type === '완제품' ? 2 : 1,
+          product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
           code: row.code,
+          customer: row.customer === '' ? null : row.customer
         },
         child_product: v.tab === 2 ? {
           ...v.product

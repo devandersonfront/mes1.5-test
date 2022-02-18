@@ -303,14 +303,14 @@ export const searchModalList: any = {
   InputLotInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'elapsed', name: '경과일', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'lot_number', name: '원자재 LOT 번호', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'lot_number', name: 'LOT 번호', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'date', name: '입고일', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'warehousing', name: '입고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'current', name: 'LOT 재고량', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'spare', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
-        {pk: 1, name: '여'},
-        {pk: 0, name: '부'},
-      ], type: 'Modal'},
+    // {key: 'spare', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
+    //     {pk: 1, name: '여'},
+    //     {pk: 0, name: '부'},
+    //   ], type: 'Modal'},
     {key: 'amount', name: '생산량', formatter: LineBorderContainer, editor: TextEditor, textAlign: 'center', textType: 'Modal',},
 
   ],
@@ -380,10 +380,11 @@ export const searchModalList: any = {
   ],
   pauseTime: [
     {key: 'reason', name: '일시 정지 유형', formatter: LineBorderContainer},
-    {key: 'amount', width: 194, name: '시간', editor: TextEditor, formatter: TimeFormatter, textType: 'Modal', searchType: 'pause'},
+    {key: 'amount', width: 194, name: '시간', formatter: TimeFormatter, textType: 'Modal', searchType: 'pause'},
   ],
   defectCount : function({readonly}){
     return [
+      {key: 'process_name', name: '공정명', width: 200},
       {key: 'reason', name: '불량 유형', formatter: LineBorderContainer},
       {key: 'amount', width: 194, name: '불량 개수', editor: readonly !== 'readonly' ? TextEditor : undefined, formatter: UnitContainer, unitData: 'EA', textType: 'Modal', searchType: 'pause', placeholder: '숫자만 입력'},
     ]

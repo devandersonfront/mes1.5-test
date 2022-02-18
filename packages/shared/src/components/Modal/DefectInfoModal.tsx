@@ -157,7 +157,6 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       path: {
         page: 1,
         renderItem: 18,
-        process_id: row.processId,
       }
     })
 
