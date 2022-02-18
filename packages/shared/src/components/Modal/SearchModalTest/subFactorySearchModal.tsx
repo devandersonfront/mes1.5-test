@@ -302,6 +302,9 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         <FooterButton
                             onClick={() => {
                                 setIsOpen(false)
+                                setOptionIndex(0)
+                                setSelectRow(undefined)
+                                setKeyword('')
                             }}
                             style={{backgroundColor: '#E7E9EB'}}
                         >
