@@ -211,14 +211,12 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     ppr_id = v.ppr_id
                   }
 
-                  if(v.amount){
+                  if(v.hour || v.minute || v.second){
+                    const numHour = v.hour === undefined ? 0 : Number(v.hour)
+                    const numMinute = v.minute === undefined ? 0 : Number(v.minute)
+                    const numSecond = v.second === undefined ? 0 : Number(v.second)
 
-                    const times = v.amount.split(':')
-                    let hour = Number(times[0])
-                    let min = Number(times[1])
-                    let sec = Number(times[2])
-
-                    time_sec = (hour*3600)+(min*60)+sec
+                    time_sec = (numHour*3600)+(numMinute*60)+(numSecond)
 
                     total = total+time_sec
                   }

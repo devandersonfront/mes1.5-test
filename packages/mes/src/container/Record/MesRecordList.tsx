@@ -447,7 +447,8 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
             // })
           }else{
             LoadBasic(page).then(() => {
-              Notiflix.Loading.remove()
+              Notiflix.Loading.remove();
+              setSelectList(new Set())
             })
           }}
         }

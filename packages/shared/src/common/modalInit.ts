@@ -380,7 +380,7 @@ export const searchModalList: any = {
   ],
   pauseTime: [
     {key: 'reason', name: '일시 정지 유형', formatter: LineBorderContainer},
-    {key: 'amount', width: 194, name: '시간', formatter: TimeFormatter, textType: 'Modal', searchType: 'pause', editor: TextEditor},
+    {key: 'amount', width: 194, name: '시간', formatter: TimeFormatter, textType: 'Modal', searchType: 'pause', },
   ],
   defectCount : function({readonly}){
     return [
