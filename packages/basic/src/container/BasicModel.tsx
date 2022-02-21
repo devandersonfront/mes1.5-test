@@ -214,85 +214,152 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       }
     }
   }
+  const setAdditionalData = () => {
+
+    const addtional = []
+    basicRow.map((row)=>{     
+      if(selectList.has(row.id)){
+        column.map((v) => {
+          if(v.type === 'additional'){
+              addtional.push(v)
+            }
+          })
+      }
+    })
+
+    return addtional;
+  }
+
+  const convertDataToMap = () => {
+    const map = new Map()
+    basicRow.map((v)=>map.set(v.id , v))
+    return map 
+  }
+
+  const filterSelectedRows = () => {
+    return basicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.cm_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
+      }
+    })
+
+    return [normalRows , haveIdRows]
+  }
 
   const DeleteBasic = async () => {
-    const res = await RequestMethod('delete', `modelDelete`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
+
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const additional = setAdditionalData()
+
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+      
+      await RequestMethod('delete','modelDelete', haveIdRows.map((row) => (
+          {...row , customer: row.customerArray, additional : [...additional.map(v => {
+            if(row[v.name]) {
+              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
             }
+          }).filter(v => v)
+          ]}
+      )))
 
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
-
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
-              }
-            }
-
-            if(v === 'unitWeight') {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(row['unitWeight'])
-              }
-            }
-
-            if(v === 'tmpId') {
-              selectData = {
-                ...selectData,
-                id: row['tmpId']
-              }
-            }
-          })
-
-          return {
-            ...row,
-            ...selectData,
-            customer: row.customerArray,
-            // customer_iu: row.customer_id,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
-                  }
-                }
-              }).filter((v) => v)
-            ]
-          }
-
-        }
-      }).filter((v) => v))
-
-    if(res) {
-      Notiflix.Report.success('삭제 성공!', '', '확인', () => {
-        if(Number(page) === 1){
-          LoadBasic(1).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          if(keyword){
-            router.push(`/mes/basic/customer/model?page=1&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/customer/model?page=1`)
-          }
-        }
-      })
     }
+      
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+    setBasicRow(Array.from(map.values()))
+    
+    // const res = await RequestMethod('delete', `modelDelete`,
+    //   basicRow.map((row, i) => {
+    //     if(selectList.has(row.id)){
+    //       let selectKey: string[] = []
+    //       let additional:any[] = []
+    //       column.map((v) => {
+    //         if(v.selectList){
+    //           selectKey.push(v.key)
+    //         }
+
+    //         if(v.type === 'additional'){
+    //           additional.push(v)
+    //         }
+    //       })
+
+    //       let selectData: any = {}
+
+    //       Object.keys(row).map(v => {
+    //         if(v.indexOf('PK') !== -1) {
+    //           selectData = {
+    //             ...selectData,
+    //             [v.split('PK')[0]]: row[v]
+    //           }
+    //         }
+
+    //         if(v === 'unitWeight') {
+    //           selectData = {
+    //             ...selectData,
+    //             unitWeight: Number(row['unitWeight'])
+    //           }
+    //         }
+
+    //         if(v === 'tmpId') {
+    //           selectData = {
+    //             ...selectData,
+    //             id: row['tmpId']
+    //           }
+    //         }
+    //       })
+
+    //       return {
+    //         ...row,
+    //         ...selectData,
+    //         customer: row.customerArray,
+    //         // customer_iu: row.customer_id,
+    //         additional: [
+    //           ...additional.map(v => {
+    //             if(row[v.name]) {
+    //               return {
+    //                 id: v.id,
+    //                 title: v.name,
+    //                 value: row[v.name],
+    //                 unit: v.unit
+    //               }
+    //             }
+    //           }).filter((v) => v)
+    //         ]
+    //       }
+
+    //     }
+    //   }).filter((v) => v))
+
+    // if(res) {
+    //   Notiflix.Report.success('삭제 성공!', '', '확인', () => {
+    //     if(Number(page) === 1){
+    //       LoadBasic(1).then(() => {
+    //         Notiflix.Loading.remove()
+    //       })
+    //     }else{
+    //       if(keyword){
+    //         router.push(`/mes/basic/customer/model?page=1&keyword=${keyword}&opt=${option}`)
+    //       }else{
+    //         router.push(`/mes/basic/customer/model?page=1`)
+    //       }
+    //     }
+    //   })
+    // }
   }
 
   const LoadBasic = async (page?: number) => {

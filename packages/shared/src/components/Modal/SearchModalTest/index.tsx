@@ -74,6 +74,21 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   }, [column.type, tab])
 
 
+  const switchOption = (option : number) => {
+
+    if(column.key === 'customer_id'){
+      switch(option){
+        case 3: 
+        return 7
+        default :
+        return option
+      }
+    }
+
+    return option
+
+
+  }
 
   useEffect(() => {
     if(isOpen){
@@ -101,6 +116,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         opt:optionIndex
       }
     })
+
+    console.log(res,'resresresres')
 
     if(res){
         if(res.page !== 1){
@@ -232,7 +249,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 <select
                   defaultValue={'-'}
                   onChange={(e) => {
-                    setOptionIndex(Number(e.target.value))
+                    const option = switchOption(Number(e.target.value))
+                    setOptionIndex(option)
                     // SearchBasic('', Number(e.target.value))
                   }}
                   style={{
@@ -315,6 +333,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               onClick={() => {
                 setIsOpen(false)
                 setSelectRow(undefined)
+                setOptionIndex(0)
+                setKeyword('')
               }}
               style={{backgroundColor: '#E7E9EB'}}
             >
@@ -323,7 +343,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
-                
                 if(selectRow !== undefined){
 
                   const selectNameFunction = (type:string) => {
