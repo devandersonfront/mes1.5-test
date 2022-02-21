@@ -160,7 +160,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
           ...childData,
         }: null,
         parent:v.parent,
-        setting:v.setting === 0 ? "기본" : "스페어"
+        setting:v.setting === 1 ? "기본" : "스페어"
       }
     })
 
@@ -282,7 +282,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         } : null,
         type: v.tab,
         key: row.bom_root_id,
-        setting: v.setting === "기본" ? 0 : 1,
+        setting: v.setting === "기본" ? 1 : 0,
         usage: v.usage,
         version: v.version
       }

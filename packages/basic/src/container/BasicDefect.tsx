@@ -203,6 +203,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
     Notiflix.Report.success('삭제되었습니다.','','확인');
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setPauseBasicRow(Array.from(map.values()).map((data,index)=>({...data, index : index + 1})))
+    setSelectList(new Set())
   }
 
 

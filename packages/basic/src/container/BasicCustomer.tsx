@@ -221,6 +221,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     Notiflix.Report.success('삭제되었습니다.','','확인');
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setBasicRow(Array.from(map.values()))
+    setSelectList(new Set())
     
     // const res = await RequestMethod('delete', `customerDelete`,
     //   basicRow.map((row, i) => {
