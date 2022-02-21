@@ -338,6 +338,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                       return row.name;
                   }
                 }
+                console.log(row)
                 if(column.clearContract) {
                   onRowChange(
                       {
@@ -346,7 +347,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                         name: selectNameFunction(column.type),
                         tab: tab,
-                        // type_name: undefined,
+                        type_name: undefined,
                         version: row.version,
                         isChange: true,
                         contract: null,
@@ -361,7 +362,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                         name: selectNameFunction(column.type),
                         tab: tab,
-                        // type_name: undefined,
+                        type_name: undefined,
                         version: row.version,
                         isChange: true,
                       }
