@@ -337,7 +337,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
     Notiflix.Report.success('삭제되었습니다.','','확인');
     selectedRows.forEach((row)=>{ map.delete(row.id)})
     setBasicRow(Array.from(map.values()))
-    
+    setSelectList(new Set())
 
     // if(keyword){
     //   SearchBasic(keyword, option, page).then(() => {
