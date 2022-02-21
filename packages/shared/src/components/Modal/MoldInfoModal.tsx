@@ -30,7 +30,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -43,13 +43,14 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         setSearchList(row.molds.map((v,i) => {
           return {
             ...v,
-            ...v.mold,
-            seq: i+1
+            ...v.mold.mold,
+            sequence: i+1
           }
         }))
       }
     }
   }, [isOpen, searchKeyword])
+
 
 
   const ModalContents = () => {
@@ -184,7 +185,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 ...searchList,
                 {
                   setting: 0,
-                  seq: searchList.length+1
+                  sequence: searchList.length+1
                 }
               ])
             }}>
@@ -218,7 +219,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               setSearchList([...tmpRow.map((v, i) => {
                 return {
                   ...v,
-                  seq: i+1
+                  sequence: i+1
                 }
               })])
             }}>
@@ -251,10 +252,10 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 setSearchList([...tmpRow.map((v, i) => {
                   return {
                     ...v,
-                    seq: i+1
+                    sequence: i+1
                   }
                 })])
-                
+
             }}>
               <p>아래로</p>
             </Button>
@@ -274,7 +275,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 setSearchList([...tmpRow.map((v, i) => {
                   return {
                     ...v,
-                    seq: i+1
+                    sequence: i+1
                   }
                 })])
                 setSelectRow(-1)

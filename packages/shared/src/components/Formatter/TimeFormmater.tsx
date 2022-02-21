@@ -6,18 +6,18 @@ interface IProps {
     row: any
     column: IExcelHeaderType
     setRow: (row: any) => void
+    onRowChange: (e: any) => void
 }
 
-const TimeFormatter = ({row, column, setRow}: IProps) => {
+const TimeFormatter = ({row, column, setRow,onRowChange}: IProps) => {
     return(
         <Background style={{background: "white"}} onClick={()=>{}} >
-            <p style={{padding: 0, color: row[column.key] ? '#0D0D0D' : '#0D0D0D66', width: '100%', textAlign: column.textAlign ?? 'left' }}>
-                {row[column.key] ?? "00:00:00"}
-                {/*<input value={''} style={{width: '30px'}}/>*/}
-                {/*:*/}
-                {/*<input value={''} style={{width: '30px'}}/>*/}
-                {/*:*/}
-                {/*<input value={''} style={{width: '30px'}}/>z*/}
+            <p style={{padding: 0, color: '#000', width: '100%', textAlign: column.textAlign ?? 'left' }}>
+                <input value={row['hour']} style={{width: '30px'}} onChange={(e)=>onRowChange({...row, hour: e.target.value})}/>
+                :
+                <input value={row['minute']} style={{width: '30px'}} onChange={(e)=>{if(Number(e.target.value) < 60){onRowChange({...row, minute: e.target.value})}}}/>
+                :
+                <input value={row['second']} style={{width: '30px'}} onChange={(e)=>{if(Number(e.target.value) < 60) {onRowChange({...row, second: e.target.value})}}}/>
             </p>
         </Background>
     )

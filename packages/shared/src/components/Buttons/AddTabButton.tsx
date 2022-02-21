@@ -55,7 +55,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
 
           },
           params: {
-            productIds: row.product_id,
+            productIds: row.product.product_id,
             nz: true
           }
         })
@@ -119,6 +119,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
               })]
             })
           }else{
+            console.log(row)
             loadMaterialLot(row.tab)
           }
         }else {
