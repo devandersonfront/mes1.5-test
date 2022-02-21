@@ -15,6 +15,7 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import ExcelUploadModal from '../../../main/component/Modal/ExcelUploadModal'
+import { Row } from 'react-data-grid';
 
 export interface IProps {
   children?: any
@@ -268,55 +269,121 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   
   }
 
-  const DeleteBasic = async () => {
 
-    const res = await RequestMethod('delete', `memberDelete`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.type === 'additional'){
-              additional.push(v)
+  const setAdditionalData = () => {
+
+    const addtional = []
+    basicRow.map((row)=>{     
+      if(selectList.has(row.id)){
+        column.map((v) => {
+          if(v.type === 'additional'){
+              addtional.push(v)
             }
           })
-          let selectData: any = {}
-          if(row.user_id){
-            return {
-              ...row,
-              ...selectData,
-              id: row.tmpId,
-              authority: row.authorityPK,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
-          }
-
-        }
-      }).filter((v) => v))
-
-    if(res) {
-      Notiflix.Report.success('삭제되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
       }
+    })
+
+    return addtional;
+  }
+
+  const convertDataToMap = () => {
+    const map = new Map()
+    basicRow.map((v)=>map.set(v.id , v))
+    return map 
+  }
+
+  const filterSelectedRows = () => {
+    return basicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.user_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
+      }
+    })
+
+    return [normalRows , haveIdRows]
+  }
+
+  const DeleteBasic = async () => {
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const additional = setAdditionalData()
+    
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((row)=>{ map.delete(row.id)})
+      
+      await RequestMethod('delete','memberDelete', haveIdRows.map((row) => (
+          {...row , id: row.tmpId , authority: row.authorityPK, additional : [...additional.map(v => {
+            if(row[v.name]) {
+              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
+            }
+          }).filter(v => v)
+          ]}
+      )))
+
     }
+    
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((row)=>{ map.delete(row.id)})
+    setBasicRow(Array.from(map.values()))
+    setSelectList(new Set())
+
+    // if(keyword){
+    //   SearchBasic(keyword, option, page).then(() => {
+    //     Notiflix.Loading.remove()
+    //   })
+    // }else{
+    //   LoadBasic(page).then(() => {
+    //     Notiflix.Loading.remove()
+    //   })
+    // }
+
+
+    // const res = await RequestMethod('delete', `memberDelete`,
+    //   basicRow.map((row, i) => {
+    //     if(selectList.has(row.id)){
+    //       let additional:any[] = []
+    //       column.map((v) => {
+    //         if(v.type === 'additional'){
+    //           additional.push(v)
+    //         }
+    //       })
+    //       let selectData: any = {}
+    //       if(row.user_id){
+    //         return {
+    //           ...row,
+    //           ...selectData,
+    //           id: row.tmpId,
+    //           authority: row.authorityPK,
+              // additional: [
+              //   ...additional.map(v => {
+              //     if(row[v.name]) {
+              //       return {
+              //         id: v.id,
+              //         title: v.name,
+              //         value: row[v.name],
+              //         unit: v.unit
+              //       }
+              //     }
+              //   }).filter((v) => v)
+              // ]
+    //         }
+
+    //       }
+
+    //     }
+    //   }).filter((v) => v))
 
   }
 

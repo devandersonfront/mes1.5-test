@@ -74,6 +74,21 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   }, [column.type, tab])
 
 
+  const switchOption = (option : number) => {
+
+    if(column.key === 'customer_id'){
+      switch(option){
+        case 3: 
+        return 7
+        default :
+        return option
+      }
+    }
+
+    return option
+
+
+  }
 
   useEffect(() => {
     if(isOpen){
@@ -101,6 +116,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         opt:optionIndex
       }
     })
+
+    console.log(res,'resresresres')
 
     if(res){
         if(res.page !== 1){
@@ -232,7 +249,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 <select
                   defaultValue={'-'}
                   onChange={(e) => {
-                    setOptionIndex(Number(e.target.value))
+                    const option = switchOption(Number(e.target.value))
+                    setOptionIndex(option)
                     // SearchBasic('', Number(e.target.value))
                   }}
                   style={{
@@ -314,6 +332,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
+                setSelectRow(undefined)
+                setOptionIndex(0)
+                setKeyword('')
               }}
               style={{backgroundColor: '#E7E9EB'}}
             >
@@ -322,52 +343,57 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
-                const selectNameFunction = (type:string) => {
-                  switch(type){
-                    case "bom":
-                      return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
-                    case "rawmaterial" :
-                      return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
-                    case "machine" :
-                      return searchList[selectRow].name;
-                    case "mold":
-                      return searchList[selectRow].name;
-                    case "tool":
-                      return searchList[selectRow].name;
-                    default:
-                      return row.name;
+                if(selectRow !== undefined){
+
+                  const selectNameFunction = (type:string) => {
+                    switch(type){
+                      case "bom":
+                        return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
+                      case "rawmaterial" :
+                        return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
+                      case "machine" :
+                        return searchList[selectRow].name;
+                      case "mold":
+                        return searchList[selectRow].name;
+                      case "tool":
+                        return searchList[selectRow].name;
+                      default:
+                        return row.name;
+                    }
                   }
+                  if(column.clearContract) {
+                    onRowChange(
+                        {
+                          ...row,
+                          ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                          manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                          name: selectNameFunction(column.type),
+                          tab: tab,
+                          // type_name: undefined,
+                          version: row.version,
+                          isChange: true,
+                          contract: null,
+                          contract_id: null
+                        }
+                    )
+                  }else {
+                    onRowChange(
+                        {
+                          ...row,
+                          ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                          manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                          name: selectNameFunction(column.type),
+                          tab: tab,
+                          // type_name: undefined,
+                          version: row.version,
+                          isChange: true,
+                        }
+                    )
+                  }
+
                 }
-                console.log(row)
-                if(column.clearContract) {
-                  onRowChange(
-                      {
-                        ...row,
-                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-                        manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                        name: selectNameFunction(column.type),
-                        tab: tab,
-                        type_name: undefined,
-                        version: row.version,
-                        isChange: true,
-                        contract: null,
-                        contract_id: null
-                      }
-                  )
-                }else {
-                  onRowChange(
-                      {
-                        ...row,
-                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-                        manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                        name: selectNameFunction(column.type),
-                        tab: tab,
-                        type_name: undefined,
-                        version: row.version,
-                        isChange: true,
-                      }
-                  )
-                }
+
+               
               }}
               style={{backgroundColor: POINT_COLOR}}
             >

@@ -159,6 +159,53 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
     excelDownload(pauseColumn, pauseBasicRow, `공정별 불량유형 등록`, '공정별 불량유형 등록', tmpSelectList)
   }
 
+  const convertDataToMap = () => {
+    const map = new Map()
+    pauseBasicRow.map((v)=>map.set(v.id , v))
+    return map 
+  }
+
+  const filterSelectedRows = () => {
+    return pauseBasicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  console.log(pauseBasicRow,'pauseBasicRowpauseBasicRowpauseBasicRow')
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.pdr_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
+      }
+    })
+
+    return [normalRows , haveIdRows]
+  }
+
+  const DeleteBasic = async () => {
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})      
+      await RequestMethod('delete','defectDelete', haveIdRows)
+
+    }
+
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+    setPauseBasicRow(Array.from(map.values()).map((data,index)=>({...data, index : index + 1})))
+    setSelectList(new Set())
+  }
+
 
   const buttonEvents = async(index:number) => {
     switch (index) {
@@ -191,14 +238,6 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         return
       case 3 :
         // let validation = true;
-
-        if(selectList.size === 0){
-          return Notiflix.Report.warning(
-        '경고',
-        '선택된 정보가 없습니다.',
-        '확인',
-        );
-        }
 
         Notiflix.Loading.standard();
         let savePauseBasicRow:any[] = [];
@@ -234,42 +273,33 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          async()=>{
-            const idList = [];
-            // const spliceArray:number[] = [];
+          () => DeleteBasic()
+          // async()=>{
+          //   const idList = [];
+          //   const spliceArray:number[] = [];
 
-            pauseBasicRow.map((v,i)=> {
-              if(selectList.has(v.id)){
-                // spliceArray.push(i);
-                idList.push(v)
-              }
-            })
+          //   pauseBasicRow.map((v)=> {
+          //     if(selectList.has(v.id)){
+          //       idList.push(v)
+          //     }
+          //   })
 
-            const tmpPauseBasicRow = [...pauseBasicRow];
-            // spliceArray.reverse();
-            // spliceArray.map((value, index)=>{
-            //   tmpPauseBasicRow.splice(value, 1);
-            // })
+          //   const tmpPauseBasicRow = [...pauseBasicRow];
+          //   spliceArray.reverse();
+          //   spliceArray.map((value, index)=>{
+          //     tmpPauseBasicRow.splice(value, 1);
+          //   })
 
-            const res = await RequestMethod("delete", `defectDelete`, idList );
+          //   const res = await RequestMethod("delete", `pauseDelete`, idList );
 
-            if(res){
-              Notiflix.Report.success("삭제되었습니다.","","확인", () => {
-                sortObject(tmpPauseBasicRow);
-                LoadPauseList(processBasicRow[selectRow].process_id);
-              });
-            }
-          },
-          ()=>{
-              const idList = [];
-            pauseBasicRow.map((v,i)=> {
-              if(selectList.has(v.id)){
-                // spliceArray.push(i);
-                idList.push(v)
-              }
-            })
-          }
-        );
+          //   if(res){
+          //     Notiflix.Report.success("삭제되었습니다.",""," 확인", () => {
+          //       sortObject(tmpPauseBasicRow);
+          //       LoadPauseList(processBasicRow[selectRow].process_id);
+          //     });
+          //   }else{
+          //     No
+        )
 
 
     }
