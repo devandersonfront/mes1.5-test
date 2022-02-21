@@ -712,6 +712,8 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                         Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
                       }
                   }
+                }else {
+                  setIsOpen(false)
                 }
                 }
               }
