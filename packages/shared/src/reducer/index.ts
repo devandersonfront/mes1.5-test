@@ -5,9 +5,11 @@ import MachineSelectReducer from "./machineSelect";
 import MulitpleSelectModal from "./ProductSelect";
 import infoModal from './infoModal'
 import modifyInfo from './modifyInfo'
+import mainUserInfo from '../../../main/reducer/userInfo'
 import toolInfo from './toolInfo'
 
 const rootReducer = combineReducers({
+  mainUserInfo,
   userInfo,
   menuState,
   MachineSelectReducer,

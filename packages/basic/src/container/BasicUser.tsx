@@ -15,6 +15,7 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import ExcelUploadModal from '../../../main/component/Modal/ExcelUploadModal'
+import { Row } from 'react-data-grid';
 
 export interface IProps {
   children?: any
@@ -32,18 +33,23 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   const [excelDownOpen, setExcelDownOpen] = useState<boolean>(false)
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
 
+
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     name: "", id: ""
   }])
+
+
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist.member)
   const [selectList, setSelectList] = useState<Set<any>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(optList)
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+
   useEffect(() => {
     if(keyword){
       SearchBasic(keyword, option, page)
@@ -88,113 +94,296 @@ const BasicUser = ({page, keyword, option}: IProps) => {
     })
   }
 
-  const SaveBasic = async () => {
+  // 내가 선택한 Row의 성명, 권한 , 아이디 ,비밀번호 , 비밀번호 확인등 값이 존재하지 않을경우 해당 Row의 컬럼명을 리턴해준다.
 
-    const searchAiID = (rowAdditional:any[], index:number) => {
-      let result:number = undefined;
-      rowAdditional.map((addi, i)=>{
-        if(index === i){
-          result = addi.ai_id;
+  // Map으로 변환하는 함수
+  const covertDataToMap = (data : Array<any>) => {
+    const rowMap = new Map()
+    data.map((row)=>{
+      rowMap.set(row.id,row)
+    })
+    return rowMap
+  }
+
+  // 내가 선택한 Row 
+  const selectRowList = () => {
+
+    let temp = []
+
+    const convertMap = covertDataToMap(basicRow)
+
+    selectList.forEach((list)=>{
+        if(convertMap.has(list)){
+          return temp.push(convertMap.get(list))
         }
-      })
-      return result;
-    }
+    })
+    return temp;
 
-    let res = await RequestMethod('post', `memberSave`,
-      basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-            return {
-              ...row,
-              id: row.tmpId,
-              authority: row.authorityPK,
-              // user_id: row.tmpId,
-              version: row.version ?? null,
-              additional: [
-              ...additional.map((v, index)=>{
-                if(!row[v.colName]) return undefined;
-                   return {
-                    mi_id: v.id,
-                    title: v.name,
-                    value: row[v.colName] ?? "",
-                    unit: v.unit,
-                    ai_id: searchAiID(row.additional, index) ?? undefined,
-                    version:row.additional[index]?.version ?? undefined
-                  }
-                }).filter((v) => v)
-              ]
-            }
+  }
 
-          }
-        }).filter((v) => v))
-    //
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
+  // 선택을 했는데, isChange가 바뀌지 않은 것들만 예외 처리
+
+  const valueExistence = () => {
+
+    const selectedRows = selectRowList()
+    const newRows = selectedRows.filter((row) => row.user_id === undefined)
+    
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함 
+    if(newRows.length > 0){ 
+
+      const nameCheck = newRows.every((data)=> data.name)
+      const idCheck = newRows.every((data) => data.tmpId)
+      const authorityCheck = newRows.every((data)=> data.authority)
+      const passwordCheck = newRows.every((data)=> data.password)
+      const passwordConfirmCheck = newRows.every((data)=> data['password-confirm'])
+  
+      if(!nameCheck){
+        return '성명'
+      }else if(!authorityCheck){
+        return '권한'
+      }else if(!idCheck){
+        return '아이디'
+      }else if(!passwordCheck){
+        return '비밀번호'
+      }else if(!passwordConfirmCheck){
+        return '비밀번호 확인'
+      }
+
+    }else{
+      const nameCheck = selectedRows.every((data)=> data.name)
+      const authorityCheck = selectedRows.every((data)=> data.authority)
+
+      if(!nameCheck){
+        return '성명'
+      }else if(!authorityCheck){
+        return '권한'
       }
     }
+
+    return false;
+    
+  }
+
+  
+
+
+  const passwordCompete = () => {
+    
+    const selectedRows  = selectRowList()
+
+    return selectedRows.every((row)=>{
+      const passwordConfirm = row['password-confirm'] ?? null
+      return row.password === passwordConfirm 
+    })
+  }
+
+  const SaveBasic = async () => {
+    
+    const existence = valueExistence()
+
+    if(selectList.size === 0){
+      return Notiflix.Report.warning(
+        '선택 경고',
+        `선택된 정보가 없습니다.`,
+        '확인',
+      );
+    }
+
+    if(!existence){
+
+      const passwordCheck = passwordCompete()
+
+      if(passwordCheck){
+
+          const searchAiID = (rowAdditional:any[], index:number) => {
+            let result:number = undefined;
+            rowAdditional.map((addi, i)=>{
+              if(index === i){
+                result = addi.ai_id;
+              }
+            })
+            return result;
+          }
+          let res = await RequestMethod('post', `memberSave`,
+            basicRow.map((row, i) => {
+                if(selectList.has(row.id)){
+                  let additional:any[] = []
+                  column.map((v) => {
+                    if(v.type === 'additional'){
+                      additional.push(v)
+                    }
+                  })
+                  return {
+                    ...row,
+                    id: row.tmpId,
+                    authority: row.authorityPK,
+                    // user_id: row.tmpId,
+                    version: row.version ?? null,
+                    additional: [
+                    ...additional.map((v, index)=>{
+                      if(!row[v.colName]) return undefined;
+                      return {
+                          mi_id: v.id,
+                          title: v.name,
+                          value: row[v.colName] ?? "",
+                          unit: v.unit,
+                          ai_id: searchAiID(row.additional, index) ?? undefined,
+                          version:row.additional[index]?.version ?? undefined
+                        }
+                      }).filter((v) => v)
+                    ]
+                  }
+      
+                }
+              }).filter((v) => v)).catch((error)=>{
+                if(error.status === 409) {
+                  return Notiflix.Report.failure('저장할 수 없습니다.', error?.data.message, '확인')
+                }
+              })
+            if(res){
+              Notiflix.Report.success('저장되었습니다.','','확인');
+              if(keyword){
+                SearchBasic(keyword, option, page).then(() => {
+                  Notiflix.Loading.remove()
+                })
+              }else{
+                LoadBasic(page).then(() => {
+                  Notiflix.Loading.remove()
+                })
+              }
+            }
+      }else{
+        Notiflix.Report.warning(
+          '비밀번호 경고',
+          `비밀번호와 비밀번호 확인이 서로 일치하지 않습니다.`,
+          '확인',
+        );
+      }
+    }else{
+      return Notiflix.Report.warning(
+        '필수값 경고',
+        `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+        '확인',
+      );
+    }
+  
+  }
+
+
+  const setAdditionalData = () => {
+
+    const addtional = []
+    basicRow.map((row)=>{     
+      if(selectList.has(row.id)){
+        column.map((v) => {
+          if(v.type === 'additional'){
+              addtional.push(v)
+            }
+          })
+      }
+    })
+
+    return addtional;
+  }
+
+  const convertDataToMap = () => {
+    const map = new Map()
+    basicRow.map((v)=>map.set(v.id , v))
+    return map 
+  }
+
+  const filterSelectedRows = () => {
+    return basicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.user_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
+      }
+    })
+
+    return [normalRows , haveIdRows]
   }
 
   const DeleteBasic = async () => {
-    const res = await RequestMethod('delete', `memberDelete`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.type === 'additional'){
-              additional.push(v)
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const additional = setAdditionalData()
+    
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((row)=>{ map.delete(row.id)})
+      
+      await RequestMethod('delete','memberDelete', haveIdRows.map((row) => (
+          {...row , id: row.tmpId , authority: row.authorityPK, additional : [...additional.map(v => {
+            if(row[v.name]) {
+              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
             }
-          })
-          let selectData: any = {}
-          if(row.user_id){
-            return {
-              ...row,
-              ...selectData,
-              id: row.tmpId,
-              authority: row.authorityPK,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
-            }
+          }).filter(v => v)
+          ]}
+      )))
 
-          }
-
-        }
-      }).filter((v) => v))
-
-    if(res) {
-      Notiflix.Report.success('삭제되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }
     }
+    
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((row)=>{ map.delete(row.id)})
+    setBasicRow(Array.from(map.values()))
+    setSelectList(new Set())
+
+    // if(keyword){
+    //   SearchBasic(keyword, option, page).then(() => {
+    //     Notiflix.Loading.remove()
+    //   })
+    // }else{
+    //   LoadBasic(page).then(() => {
+    //     Notiflix.Loading.remove()
+    //   })
+    // }
+
+
+    // const res = await RequestMethod('delete', `memberDelete`,
+    //   basicRow.map((row, i) => {
+    //     if(selectList.has(row.id)){
+    //       let additional:any[] = []
+    //       column.map((v) => {
+    //         if(v.type === 'additional'){
+    //           additional.push(v)
+    //         }
+    //       })
+    //       let selectData: any = {}
+    //       if(row.user_id){
+    //         return {
+    //           ...row,
+    //           ...selectData,
+    //           id: row.tmpId,
+    //           authority: row.authorityPK,
+              // additional: [
+              //   ...additional.map(v => {
+              //     if(row[v.name]) {
+              //       return {
+              //         id: v.id,
+              //         title: v.name,
+              //         value: row[v.name],
+              //         unit: v.unit
+              //       }
+              //     }
+              //   }).filter((v) => v)
+              // ]
+    //         }
+
+    //       }
+
+    //     }
+    //   }).filter((v) => v))
 
   }
 
@@ -218,6 +407,9 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         cleanUpData(res)
       }
     }
+
+    setSelectList(new Set())
+
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -442,15 +634,69 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         SaveBasic()
         break;
       case 5:
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{
-            DeleteBasic()
+
+
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+            '선택 경고',
+            `선택된 정보가 없습니다.`,
+            '확인',
+          );
+
+        }else{
+          const haveMaster = haveMasterAuthority()
+          if(!haveMaster){
+              return Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+              ()=>{
+                DeleteBasic()
+              }
+              ,
+              ()=>{});
+          }else{
+              return Notiflix.Report.warning(
+              '권한 경고',
+              `마스터 권한은 삭제하실수 없습니다.`,
+              '확인',
+            );
           }
-          ,
-          ()=>{});
+        }
         break;
 
     }
+  }
+
+  const haveMasterAuthority = () => {
+    // 내가 선택한것중에 Master가 있어면 return false
+    let isAuthority = false;
+    basicRow.forEach((row)=>{
+      if(selectList.has(row.id)){
+        if(row.authority === 'MASTER'){
+          isAuthority = true
+        }
+      }
+    })
+    return isAuthority
+  }
+
+
+  const competeId = (rows) => {
+
+      const tempRow = [...rows]
+      const spliceRow = [...rows]
+      spliceRow.splice(selectRow, 1)
+      const isCheck = spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId && row.tmpId !== undefined)
+
+      if(spliceRow){
+        if(isCheck){
+          return Notiflix.Report.warning(
+            '아이디 경고',
+            `중복되는 아이디가 존재합니다.`,
+            '확인'
+          );
+        }
+      }
+
+      setBasicRow(rows)
   }
 
   return (
@@ -493,8 +739,9 @@ const BasicUser = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
-          setBasicRow(e)
+          competeId(e)
         }}
+        setSelectRow={setSelectRow}
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
@@ -511,7 +758,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
           }
         }}
       />
-      <ExcelDownloadModal
+      {/* <ExcelDownloadModal
         isOpen={excelDownOpen}
         column={column}
         basicRow={basicRow}
@@ -526,7 +773,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         setIsOpen={setExcelUploadOpen}
         tab={'ROLE_HR_02'}
         cleanUpBasicData={cleanUpBasicData}
-      />
+      /> */}
     </div>
   );
 }

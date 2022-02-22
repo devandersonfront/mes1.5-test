@@ -41,6 +41,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     page: page,
     total: 1
   })
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   useEffect(() => {
     if(keyword){
@@ -116,6 +117,14 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   }
   const SaveBasic = async () => {
 
+    if(selectList.size === 0){
+      return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+    }
+
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional?.map((addi, i)=>{
@@ -158,7 +167,9 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
           }
         }).filter((v) => v)
-    )
+    ).catch((error)=>{
+      return error.data && Notiflix.Notify.failure(error.data.message);
+    })
 
     if(res){
 
@@ -176,62 +187,135 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     }
   }
 
+  console.log(basicRow,'basicRowbasicRow')
+
+  const setAdditionalData = () => {
+
+    const addtional = []
+    basicRow.map((row)=>{     
+      if(selectList.has(row.id)){
+        column.map((v) => {
+          if(v.type === 'additional'){
+              addtional.push(v)
+            }
+          })
+      }
+    })
+
+    return addtional;
+  }
+
+  const convertDataToMap = () => {
+    const map = new Map()
+    basicRow.map((v)=>map.set(v.id , v))
+    return map 
+  }
+
+  const filterSelectedRows = () => {
+    return basicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.process_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
+      }
+    })
+
+    return [normalRows , haveIdRows]
+  }
+
+
   const DeleteBasic = async () => {
-    const res = await RequestMethod('delete', `processDelete`,
 
-        basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let selectKey: string[] = []
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
 
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const additional = setAdditionalData()
 
-            let selectData: any = {}
-            if(row.process_id){
-              return {
-                ...row,
-                ...selectData,
-                additional: additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              }
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+      
+      await RequestMethod('delete','processDelete', haveIdRows.map((row) => (
+          {...row , customer: row.customerArray, additional : [...additional.map(v => {
+            if(row[v.name]) {
+              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
             }
-
-          }
-        }).filter((v) => v)
-      )
-
-    if(res) {
-
-        Notiflix.Report.success('삭제 성공!', '공정 데이터를 삭제하였습니다.', '확인', () => {
-          if(Number(page) === 1){
-            LoadBasic(1).then(() => {
-              Notiflix.Loading.remove()
-            })
-          }else{
-            if(keyword){
-              router.push(`/mes/basic/process?page=1&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/process?page=1`)
-            }
-          }
-        })
+          }).filter(v => v)
+          ]}
+      )))
 
     }
+      
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+    setBasicRow(Array.from(map.values()))
+    setSelectList(new Set())
+    
+
+    // const res = await RequestMethod('delete', `processDelete`,
+
+    //     basicRow.map((row, i) => {
+    //       if(selectList.has(row.id)){
+    //         let selectKey: string[] = []
+    //         let additional:any[] = []
+    //         column.map((v) => {
+    //           if(v.selectList){
+    //             selectKey.push(v.key)
+    //           }
+
+    //           if(v.type === 'additional'){
+    //             additional.push(v)
+    //           }
+    //         })
+
+    //         let selectData: any = {}
+    //         if(row.process_id){
+    //           return {
+    //             ...row,
+    //             ...selectData,
+    //             additional: additional.map(v => {
+    //               if(row[v.name]) {
+    //                 return {
+    //                   id: v.id,
+    //                   title: v.name,
+    //                   value: row[v.name],
+    //                   unit: v.unit
+    //                 }
+    //               }
+    //             }).filter((v) => v)
+    //           }
+    //         }
+
+    //       }
+    //     }).filter((v) => v)
+    //   )
+
+    // if(res) {
+
+    //     Notiflix.Report.success('삭제 성공!', '공정 데이터를 삭제하였습니다.', '확인', () => {
+    //       if(Number(page) === 1){
+    //         LoadBasic(1).then(() => {
+    //           Notiflix.Loading.remove()
+    //         })
+    //       }else{
+    //         if(keyword){
+    //           router.push(`/mes/basic/process?page=1&keyword=${keyword}&opt=${option}`)
+    //         }else{
+    //           router.push(`/mes/basic/process?page=1`)
+    //         }
+    //       }
+    //     })
+
+    // }
   }
 
   const LoadBasic = async (page?: number) => {
@@ -257,6 +341,8 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
         cleanUpData(res)
       }
     }
+
+    setSelectList(new Set())
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -283,6 +369,8 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const changeRow = (row: any) => {
@@ -470,6 +558,15 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
         break;
       case 5:
+
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+        }
+        
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{DeleteBasic()},
           ()=>{}
@@ -478,6 +575,25 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
         break;
 
     }
+  }
+
+  const competeProcess = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+    
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null)){
+        return Notiflix.Report.warning(
+          '공정명 경고',
+          `중복된 공정명을 입력할 수 없습니다`,
+          '확인'
+        );
+      }
+    }
+
+    setBasicRow(rows)
   }
 
   return (
@@ -518,11 +634,13 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
-          setBasicRow(e)
+          // setBasicRow(e)
+          competeProcess(e)
         }}
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
+        setSelectRow={setSelectRow}
         loadEvent={LoadBasic}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />

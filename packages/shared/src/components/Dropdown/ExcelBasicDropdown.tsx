@@ -12,17 +12,19 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
+// 부 : 0
+// 여 : 1
+// 스페어 : 0
+// 기본 : 1
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
 
-
-  console.log(row,'rowrowrowrowrow')
 
   const cleanValue = (type?:string) => {
     switch(type){
       case "spare":
         // 22/01/24 수정
-        // return row.setting == 1 ? "스페어" : "기본"
-        return row.setting
+        return row.setting == 0 ? "스페어" : row.setting == 1 ? "기본" : row.setting
+        // return row.spare
       case "setting" :
         return (row[column.key] === 1 || row[column.key] === "여") ? "여" : "부"
       default:
@@ -34,9 +36,9 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
     switch(value){
       case '여' :
         return 1
-      case '부' : 
+      case '부' :
         return 0
-      default : 
+      default :
         return value
     }
   }
@@ -97,10 +99,10 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
           if(column.key === "spare"){
             switch (event.target.value){
               case "스페어":
-                row.setting = 1;
+                row.setting = 0;
                 break ;
               case "기본" :
-                row.setting = 0;
+                row.setting = 1;
                 break ;
               case "여":
                 row.setting = 1;
@@ -117,6 +119,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
             //@ts-ignore
             ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
             [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
+            setting : event.target.value,
             // ...tmpData,
             isChange: true
           })
