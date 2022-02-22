@@ -74,7 +74,7 @@ const BasicProduct = ({page}: IProps) => {
 
   }
 
-  
+
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
@@ -254,15 +254,12 @@ const BasicProduct = ({page}: IProps) => {
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
     }
-
   }
-
-  console.log(basicRow,'basicRow')
 
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -293,9 +290,9 @@ const BasicProduct = ({page}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','productDelete', haveIdRows.map((row) => (
-          {...row , type : row.type_id} 
+          {...row , type : row.type_id}
       )))
     }
 
@@ -303,42 +300,6 @@ const BasicProduct = ({page}: IProps) => {
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
-
-
-
-
-    // Notiflix.Loading.circle();
-    // let selectCheck = false;
-    // let data:any[] = [];
-
-    // basicRow.map((value,index)=>{
-    //   if(selectList.has(value.id) && value.product_id !== undefined && value.product_id !== null){
-    //     selectCheck = true;
-    //     let tmpRow = {...value};
-    //     tmpRow.type = value.type_id;
-    //     data.push(tmpRow);
-    //   }
-    // })
-
-    // if(selectCheck){
-    //   Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-    //       async()=>{
-    //         await RequestMethod("delete", "productDelete", data)
-    //             .then((res) => {
-    //               Notiflix.Loading.remove(300);
-    //               Notiflix.Report.success("삭제되었습니다.","","확인", () =>LoadBasic(1))
-    //             })
-    //             .catch((err) => {
-    //               Notiflix.Loading.remove(300);
-    //             })
-    //       },
-    //       ()=>{}
-    //   )
-    // }else{
-    //   Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
-    // }
-
-
   }
 
 
@@ -598,14 +559,44 @@ const BasicProduct = ({page}: IProps) => {
     setBasicRow(rows)
   }
 
+  const handleBarcode = async (dataurl : string , id : string) => {
 
+    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
+                {
+                  "id":id,
+                  "functions":
+                  {"func0":{"checkLabelStatus":[]},
+                    "func1":{"clearBuffer":[]},
+                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+                    "func3":{"printBuffer":[]}
+                  }
+                },
+                {
+                  headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                  }
+                }
+    ).catch((error) => {
 
+      if(error){
+        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        return false
+      }
+    })
+  }
+
+  const handleModal = (open:boolean) => {
+
+    setBarcodeOpen(!open)
+
+  }
 
   React.useEffect(()=>{
-    return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
 
+    if(selectList.size > 1){
+      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
+    }
   },[selectList.size])
-
 
 
   return (
@@ -658,6 +649,15 @@ const BasicProduct = ({page}: IProps) => {
             setPageInfo({...pageInfo,page:page})
           }}
         />
+
+        <BarcodeModal
+              title={'바코드 미리보기'}
+              handleBarcode={handleBarcode}
+              handleModal={handleModal}
+              isOpen={barcodeOpen}
+              type={'product'}
+              data={selectRow}
+              />
 
       {/* <ExcelDownloadModal
         isOpen={excelOpen}

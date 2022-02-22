@@ -166,7 +166,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     pauseBasicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -198,16 +198,15 @@ const BasicPause = ({page, keyword, option}: IProps) => {
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})      
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
       await RequestMethod('delete','pauseDelete', haveIdRows)
 
     }
 
     Notiflix.Report.success('삭제되었습니다.','','확인');
     selectedRows.forEach((nRow)=>{map.delete(nRow.id)})
-    setPauseBasicRow(Array.from(map.values()).map((data,index)=>({...data, index : index + 1})))  
+    setPauseBasicRow(Array.from(map.values()).map((data,index)=>({...data, index : index + 1})))
     setSelectList(new Set())
-    
   }
 
   const buttonEvents = async(index:number) => {
@@ -274,7 +273,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         '확인',
         );
         }
-        
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           () => DeleteBasic()
           // async()=>{
