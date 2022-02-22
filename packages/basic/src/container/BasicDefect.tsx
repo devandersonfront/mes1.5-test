@@ -100,6 +100,8 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
     }else{
       Notiflix.Loading.remove(300);
     }
+
+    setSelectList(new Set())
   }
 
   const LoadBasic = async () => {
@@ -141,9 +143,9 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove(300);
       }
       setProcessColumn(tmpColumn);
-      setProcessBasicRow([...tmpRow.map((row: any) => {
+      setProcessBasicRow([...tmpRow.map((row: any, index) => {
         return {
-          ...row,
+          ...row, onClicked: index === 0 ? true : false
         }
       })])
     }
@@ -155,6 +157,53 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
       tmpSelectList.push(selectList.has(row.id))
     })
     excelDownload(pauseColumn, pauseBasicRow, `공정별 불량유형 등록`, '공정별 불량유형 등록', tmpSelectList)
+  }
+
+  const convertDataToMap = () => {
+    const map = new Map()
+    pauseBasicRow.map((v)=>map.set(v.id , v))
+    return map 
+  }
+
+  const filterSelectedRows = () => {
+    return pauseBasicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  console.log(pauseBasicRow,'pauseBasicRowpauseBasicRowpauseBasicRow')
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.pdr_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
+      }
+    })
+
+    return [normalRows , haveIdRows]
+  }
+
+  const DeleteBasic = async () => {
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})      
+      await RequestMethod('delete','defectDelete', haveIdRows)
+
+    }
+
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+    setPauseBasicRow(Array.from(map.values()).map((data,index)=>({...data, index : index + 1})))
+    setSelectList(new Set())
   }
 
 
@@ -189,6 +238,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         return
       case 3 :
         // let validation = true;
+
         Notiflix.Loading.standard();
         let savePauseBasicRow:any[] = [];
         pauseBasicRow.map((value, i)=>{
@@ -213,43 +263,43 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         return
 
       case 4 :
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          async()=>{
-            const idList = [];
-            // const spliceArray:number[] = [];
 
-            pauseBasicRow.map((v,i)=> {
-              if(selectList.has(v.id)){
-                // spliceArray.push(i);
-                idList.push(v)
-              }
-            })
-
-            const tmpPauseBasicRow = [...pauseBasicRow];
-            // spliceArray.reverse();
-            // spliceArray.map((value, index)=>{
-            //   tmpPauseBasicRow.splice(value, 1);
-            // })
-
-            const res = await RequestMethod("delete", `defectDelete`, idList );
-
-            if(res){
-              Notiflix.Report.success("삭제되었습니다.","","확인", () => {
-                sortObject(tmpPauseBasicRow);
-                LoadPauseList(processBasicRow[selectRow].process_id);
-              });
-            }
-          },
-          ()=>{
-              const idList = [];
-            pauseBasicRow.map((v,i)=> {
-              if(selectList.has(v.id)){
-                // spliceArray.push(i);
-                idList.push(v)
-              }
-            })
-          }
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
         );
+        }
+
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          () => DeleteBasic()
+          // async()=>{
+          //   const idList = [];
+          //   const spliceArray:number[] = [];
+
+          //   pauseBasicRow.map((v)=> {
+          //     if(selectList.has(v.id)){
+          //       idList.push(v)
+          //     }
+          //   })
+
+          //   const tmpPauseBasicRow = [...pauseBasicRow];
+          //   spliceArray.reverse();
+          //   spliceArray.map((value, index)=>{
+          //     tmpPauseBasicRow.splice(value, 1);
+          //   })
+
+          //   const res = await RequestMethod("delete", `pauseDelete`, idList );
+
+          //   if(res){
+          //     Notiflix.Report.success("삭제되었습니다.",""," 확인", () => {
+          //       sortObject(tmpPauseBasicRow);
+          //       LoadPauseList(processBasicRow[selectRow].process_id);
+          //     });
+          //   }else{
+          //     No
+        )
 
 
     }
@@ -288,6 +338,8 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
       setState(false);
     }
   },[pauseBasicRow])
+
+
   return (
     <div>
       <PageHeader title={"공정별 자주검사 항목 등록"} />
@@ -298,7 +350,17 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         ]}
         row={processBasicRow}
         setRow={setProcessBasicRow}
-        setSelectRow={setSelectRow}
+        setSelectRow={(e) => {
+          const clickedList = processBasicRow.map((data, index) => {
+            if (e === index) {
+              return { ...data, onClicked: true }
+            } else {
+              return { ...data, onClicked: false }
+            }
+          })
+          setProcessBasicRow(clickedList)
+          setSelectRow(e)
+        }}
         width={1576}
         height={300}
       />

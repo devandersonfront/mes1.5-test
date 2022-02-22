@@ -12,7 +12,11 @@ import {HeaderButton} from '../../../../styles/styledComponents'
 import ItemManageBox from '../../../../component/ItemManage/ItemManageBox'
 //@ts-ignore
 import Notiflix from "notiflix";
-import {RequestMethod} from "shared";
+import {RequestMethod, RootState} from "shared";
+import {useDispatch, useSelector} from "react-redux";
+// import { getUserInfoAction } from '../../../../reducer/userInfo'
+import { useRouter } from 'next/router'
+import cookie from 'react-cookies'
 
 interface IProps {
   children?: any
@@ -45,7 +49,7 @@ export const getServerSideProps = async (ctx: any) => {
         }
       case 'machine':
         return {
-          title: '기계 기본정보',
+          title: '기계 기준정보',
           code: 'ROLE_BASE_04'
         }
       case 'product':
@@ -55,17 +59,17 @@ export const getServerSideProps = async (ctx: any) => {
         }
       case 'rawmaterial':
         return {
-          title: '원자재 기본정보',
+          title: '원자재 기준정보',
           code: 'ROLE_BASE_06'
         }
       case 'submaterial':
         return {
-          title: '부자재 기본정보',
+          title: '부자재 기준정보',
           code: 'ROLE_BASE_13'
         }
       case 'mold':
         return {
-          title: '금형 기본정보',
+          title: '금형 기준정보',
           code: 'ROLE_BASE_07'
         }
       case 'model':
@@ -75,7 +79,7 @@ export const getServerSideProps = async (ctx: any) => {
         }
       case 'factory' :
         return {
-          title:"공장 기본정보",
+          title:"공장 기준정보",
           code: "ROLE_BASE_11"
         }
       case 'rawin':
@@ -109,10 +113,10 @@ export const getServerSideProps = async (ctx: any) => {
           code:"ROLE_BASE_12"
         }
       case "tool" :
-        return {
-          title: "공구 관리",
-          code: "ROLE_BASE_14"
-        }
+          return {
+            title: "공구 관리",
+            code: "ROLE_BASE_14"
+          }
     }
   }
 
@@ -134,9 +138,19 @@ let unitData = [
 ]
 
 const ItemManagePage = ({title, type, code}: IProps) => {
+
+  const dispatch = useDispatch()
+  const user = useSelector((state : RootState)=> state.mainUserInfo)
+  const router = useRouter();
   const [baseItem, setBaseItem] = useState<IItemMenuType[]>([])
   const [addiItem, setAddiItem] = useState<IItemMenuType[]>([])
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set())
+  let userInfo = cookie.load('userInfo')
+
+
+  const checkValidation = () => {
+    return userInfo.ca_id.name === 'MASTER' ?? undefined
+  }
 
   const listItem = async (code: string) => {
     const res =  await RequestMethod('get', 'itemList', {
@@ -238,6 +252,17 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   useEffect(() => {
     Notiflix.Loading.standard();
     listItem(code)
+    if(checkValidation()){
+
+    }else{
+      Notiflix.Report.failure(
+        '권한 오류',
+        '관리자만 항목관리가 가능합니다.',
+        '확인', () => {
+          router.back()
+        }
+      )
+    }
   }, [])
 
   return (
@@ -250,6 +275,10 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         />
         <div style={{width: 1570}}>
           <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
+            {/*<HeaderButton onClick={() => {*/}
+            {/*  console.log(baseItem)*/}
+            {/*  console.log(columnlist[type])*/}
+            {/*}} key={`btnCreate`}>초기화</HeaderButton>*/}
             <HeaderButton onClick={() => saveItem(code, baseItem)} key={`btnCreate`}>저장</HeaderButton>
           </div>
           <ItemManageBox title={title} items={baseItem} setItems={setBaseItem} type={'base'}/>

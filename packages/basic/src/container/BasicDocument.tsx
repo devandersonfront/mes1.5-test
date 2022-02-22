@@ -89,7 +89,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                                     uuid:file.file_uuid
                                 }
                             }).then((response) => {
-
                                     window.open(response.url)
                             })
                         }
@@ -161,15 +160,20 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                     Notiflix.Report.warning("경고", "데이터를 선택해주시기 바랍니다.", "확인",)
                     return
                 }else{
-                    selectFile().map((value,index) =>{
+
+                    const files = selectFile()
+                    let haveFolder;
+
+                    files.map((value,index) =>{
                         if(value.type === "폴더"){
                             Notiflix.Report.warning("경고", "파일을 선택해주시기 바랍니다.", "확인");
-                            return
-                        }else{
-                            // 문서 다운로드시 hwp는 다운로드가 안됨..
-                            DocumentDownLoad();
+                            haveFolder = true
                         }
                     })
+
+                    if(!haveFolder){
+                        DocumentDownLoad();
+                    }
                 }
                 return
             case 3:

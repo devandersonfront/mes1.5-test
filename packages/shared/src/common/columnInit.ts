@@ -59,6 +59,7 @@ import {ToolInfoModal} from "../components/Modal/ToolInfoModal";
 import {ToolListModal} from "../components/Modal/ToolListModal";
 import {MidrangeFrameButton} from "../components/Buttons/MidrangeFrameButton";
 import {UnderLineContainer} from '../components/Formatter/UnderLineContainer'
+import { OnClickContainer } from '../components/InputBox/OnClickContainer'
 
 
 export const columnlist: any = {
@@ -76,7 +77,7 @@ export const columnlist: any = {
   ],
   factory: [
     {key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력'},
-    {key: 'address', name: '공장 주소', width: 480, formatter: DaumAddressModal},
+    {key: 'address', name: '공장 주소', width: 480, editor: TextEditor},
     {key: 'manager', name: '담당자', width: 120, formatter: SearchModalTest, type: 'user'},
     {key: 'appointment', name: '직책', width: 120, formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: 'telephone', name: '전화번호', width: 120, formatter: PlaceholderBox, placeholder: '자동 입력'},
@@ -90,7 +91,7 @@ export const columnlist: any = {
     {key: 'telephone', editor: TextEditor},
     {key: 'cellphone', editor: TextEditor},
     {key: 'fax', editor: TextEditor},
-    {key: 'address', formatter: DaumAddressModal},
+    {key: 'address', editor: TextEditor},
     {key: 'crn', editor: TextEditor},
     {key: 'photo', formatter: FileEditer},
   ],
@@ -488,7 +489,7 @@ export const columnlist: any = {
     {key: 'title', editor: TextEditor, name: "기본 항목명"},
   ],
   pause: [
-    {key: 'name'}
+    {key: 'name' , formatter : OnClickContainer}
   ],
   pauseReason: [
     {key: 'index', name:"순번", width:130},

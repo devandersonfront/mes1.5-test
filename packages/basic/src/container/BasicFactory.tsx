@@ -29,14 +29,12 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([
-    {name: "", id: ""},
-    // {name: "드랑금속", id: "", address: '인천시 연수구 송도미래로125 송도타워 123동 11-10호', manager: '차지훈', appointment: '실장', cellphone: '02)777-1235',},
-  ])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["factory"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['공장명','주소', '담당자명', '담당자 직책', '담당자 휴대폰 번호'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [selectRow , setSelectRow] = useState<number>(0);
 
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -100,14 +98,26 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       }
     })
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
+      setColumn([...res.map(v=> {
+        return {
+          ...v,
+          name: v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     })
-    // }
   }
 
   const SaveBasic = async () => {
+
+    if(selectList.size === 0){
+      return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+    }
+
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -153,8 +163,9 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
           }
 
           }
-        }).filter((v) => v))
-
+      }).filter((v) => v)).catch((error)=>{
+          return error.data && Notiflix.Notify.failure(error.data.message);
+      })
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인');
@@ -170,58 +181,124 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const DeleteBasic = async () => {
+  const setAdditionalData = () => {
 
-    const res = await RequestMethod('delete', `factoryDelete`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
-
-            if(v.type === 'additional'){
-              additional.push(v)
+    const addtional = []
+    basicRow.map((row)=>{     
+      if(selectList.has(row.id)){
+        column.map((v) => {
+          if(v.type === 'additional'){
+              addtional.push(v)
             }
           })
-          if(row.factory_id){
-            return {
-              ...row,
-              manager: row.user,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
-          }
-
-        }
-      }).filter((v) => v))
-
-    if(res) {
-      Notiflix.Report.success('삭제되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
       }
+    })
+
+    return addtional;
+  }
+
+  const convertDataToMap = () => {
+    const map = new Map()
+    basicRow.map((v)=>map.set(v.id , v))
+    return map 
+  }
+
+  const filterSelectedRows = () => {
+    return basicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.factory_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
+      }
+    })
+
+    return [normalRows , haveIdRows]
+  }
+
+
+  const DeleteBasic = async () => {
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const additional = setAdditionalData()
+
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{map.delete(nRow.id)})
+      
+      await RequestMethod('delete','factoryDelete', haveIdRows.map((row) => (
+          {...row , manager: row.user , additional : [...additional.map(v => {
+            if(row[v.name]) {
+              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
+            }
+          }).filter(v => v)
+          ]}
+      )))
+
     }
 
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((row)=>{ map.delete(row.id)})
+    setBasicRow(Array.from(map.values()))
+    setSelectList(new Set())
+
+
+    // const res = await RequestMethod('delete', `factoryDelete`,
+    //   basicRow.map((row, i) => {
+    //     if(selectList.has(row.id)){
+    //       let selectKey: string[] = []
+    //       let additional:any[] = []
+    //       column.map((v) => {
+    //         if(v.selectList){
+    //           selectKey.push(v.key)
+    //         }
+
+    //         if(v.type === 'additional'){
+    //           additional.push(v)
+    //         }
+    //       })
+    //       if(row.factory_id){
+    //         return {
+    //           ...row,
+    //           manager: row.user,
+    //           additional: [
+    //             ...additional.map(v => {
+    //               if(row[v.name]) {
+    //                 return {
+    //                   id: v.id,
+    //                   title: v.name,
+    //                   value: row[v.name],
+    //                   unit: v.unit
+    //                 }
+    //               }
+    //             }).filter((v) => v)
+    //           ]
+    //         }
+
+    //       }
+
+    //     }
+    //   }).filter((v) => v))
+
+    // Notiflix.Report.success('삭제되었습니다.','','확인');
+    //   if(keyword){
+    //     SearchBasic(keyword, option, page).then(() => {
+    //       Notiflix.Loading.remove()
+    //     })
+    //   }else{
+    //     LoadBasic(page).then(() => {
+    //       Notiflix.Loading.remove()
+    //     })
+    //   }
   }
 
   const LoadBasic = async (page?: number) => {
@@ -241,6 +318,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       cleanUpData(res)
     }
 
+    setSelectList(new Set())
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -268,6 +346,8 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
       })
       cleanUpData(res)
     }
+
+    setSelectList(new Set())
   }
 
   const cleanUpData = (res: any) => {
@@ -425,10 +505,39 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         SaveBasic();
         break;
       case 5:
-        DeleteBasic();
+
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+            '경고',
+            '선택된 정보가 없습니다.',
+            '확인',
+            );
+        }
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소", ()=> DeleteBasic())
         break;
     }
   }
+
+  const competefactory = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined)
+
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '공장명 경고',
+          `중복된 공장명을 입력할 수 없습니다`,
+          '확인'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
+
 
   return (
     <div>
@@ -468,11 +577,12 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow([...e])
+            competefactory(e)
           }}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
 
         />
@@ -491,8 +601,8 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

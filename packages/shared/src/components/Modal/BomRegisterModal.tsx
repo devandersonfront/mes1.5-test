@@ -46,6 +46,8 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const dispatch = useDispatch()
   const selector = useSelector((state:RootState) => state.infoModal)
 
+  
+
   const [bomDummy, setBomDummy] = useState<any[]>([
     // {customer: '-', model: '-', code: 'SU-20210701-3', name:'SU900-1', type: 'type', unit: 'EA'},
   ])
@@ -58,6 +60,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const [tabs, setTabs] = useState<string[]>([])
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
+  
   useEffect(() => {
     if(isOpen) {
       if(row.bom_root_id){
@@ -174,8 +177,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
         if(res){
           let searchList = changeRow(res)
-
-          dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
+          // dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
           setSearchList([...searchList])
         }else{
           Notiflix.Report.warning("BOM 정보가 없습니다.", "", "확인", () => setIsOpen(false))
@@ -184,8 +186,9 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
       }else{
         res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
         if(res){
+          console.log('여기 몇번동작..??')
           let searchList = changeRow(res)
-          dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
+          // dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
           setSearchList([...searchList])
         }else{
           Notiflix.Report.warning("BOM 정보가 없습니다.", "", "확인", () => setIsOpen(false))
