@@ -288,7 +288,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         })
         data.map((rowData, index) => {
             let tmpRow:any = {};
-            tmpRow.unit = rowData.unitPK;
+            tmpRow.unit = rowData.unit;
             tmpRow.tool_id = rowData?.tool_id;
             tmpRow.code = rowData.code;
             tmpRow.name = rowData.name;
@@ -314,6 +314,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     }
 
     const SaveBasic = async() => {
+
         const res = await RequestMethod("post", "toolSave",SaveCleanUpData(SelectData()))
 
         if(res){
@@ -364,8 +365,6 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         const map = convertDataToMap()
         const selectedRows = filterSelectedRows()
         const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
-
-
 
         if(haveIdRows.length > 0){
 
@@ -457,7 +456,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     
         setBasicRow(rows)
         
-      }
+    }
 
     useEffect(() => {
         // setOptionIndex(option)
