@@ -159,24 +159,32 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           ...childData,
         }: null,
         parent:v.parent,
-        setting:v.setting === 0 ? "기본" : "스페어"
+        setting:v.setting === 1 ? "기본" : "스페어"
       }
     })
+
+    console.log('tmpData : ' , tmpData)
+
     return tmpData
   }
 
   const SearchBasic = async (selectKey?:string) => {
+
     Notiflix.Loading.circle()
     let res;
     if(selectKey){
       res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
+
+
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       setSearchList([...searchList])
 
     }else{
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
+
       let searchList = changeRow(res)
+
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       setSearchList(searchList.length > 0 ? searchList : [])
     }
@@ -184,23 +192,48 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
 
   // tab : 0 -> 원자재
-  // tab : 1 -> 부자재 
+  // tab : 1 -> 부자재
   // tab : 2 => 제품
-  
-  // 무조건 1개의 기본은 가지고 있어야한다.
+  // 이 로직을 좀더 간단한게 할수 있을것 같은데..
   const haveBasicValidation = () => {
-    
-    let haveRawMaterialBasic = false ;
-    let haveSubMaterialBasic = false ;
-    let haveProductBasic = false ;
 
-    searchList.forEach((value)=>{
-      if(value.setting === '기본' && value.tab === 0) return haveRawMaterialBasic = true
-      else if(value.setting === '기본' && value.tab === 1) return haveSubMaterialBasic = true
-      else if(value.setting === '기본' && value.tab === 2) return haveProductBasic = true
+    let rawMaterialBasic = [] ;
+    let subMaterialBasic = [] ;
+    let productBasic = [];
+
+    let haveRawMaterialBasic;
+    let haveSubMaterialBasic;
+    let haveProductBasic;
+
+    searchList.map((list)=>{
+      if(list.tab === 0){
+        rawMaterialBasic.push({type : list.setting})
+      }else if(list.tab === 1){
+        subMaterialBasic.push({type : list.setting})
+      }else if(list.tab === 2){
+        productBasic.push({type : list.setting})
+      }
     })
 
-    if(haveRawMaterialBasic || haveSubMaterialBasic || haveProductBasic){
+    if(rawMaterialBasic.length !== 0){
+      haveRawMaterialBasic = rawMaterialBasic.some((v) => v.type === '기본')
+    }else{
+      haveRawMaterialBasic = true
+    }
+
+    if(subMaterialBasic.length !== 0){
+      haveSubMaterialBasic = subMaterialBasic.some((v) => v.type === '기본')
+    }else{
+      haveSubMaterialBasic = true
+    }
+
+    if(productBasic.length !== 0){
+      haveProductBasic = productBasic.some((v) => v.type === '기본')
+    }else{
+      haveProductBasic = true
+    }
+
+    if(haveRawMaterialBasic && haveSubMaterialBasic && haveProductBasic){
       return true
     }
     return false
@@ -209,7 +242,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   // 데이터 유무 판단
   const haveDataValidation = () => {
-    
     let dataCheck = true
 
     searchList.map((v,i)=>{
@@ -227,10 +259,16 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         seq: i+1,
         parent: {
           ...row,
+          additional: row.additional ?? [],
           process: row.processArray,
-          type: row.type_id ?? row.type,
-          product_id:row.product_id ?? row.productId,
+          // type: row.type_id ?? row.type,
+          // product_id:row.product_id ?? row.productId,
+          // code: row.code,
+          model: row.model === '' ? null : row.model,
+          type: row.type_id ?? row.type === '완제품' ? 2 : 1,
+          product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
           code: row.code,
+          customer: row.customer === '' ? null : row.customer
         },
         child_product: v.tab === 2 ? {
           ...v.product
@@ -244,7 +282,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         } : null,
         type: v.tab,
         key: row.bom_root_id,
-        setting: v.setting === "기본" ? 0 : 1,
+        setting: v.setting === "기본" ? 1 : 0,
         usage: v.usage,
         version: v.version
       }
@@ -253,20 +291,20 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const executeValidation = () => {
 
-    let isValidation = false 
-    const haveList = searchList.length === 0  
+    let isValidation = false
+    const haveList = searchList.length === 0
     const haveData = haveDataValidation()
     const haveBasic = haveBasicValidation()
 
     if(haveList){
       isValidation = true
-      return Notiflix.Report.warning("경고","BOM은 하나라도 등록이 되어야합니다.","확인",)
+      Notiflix.Report.warning("경고","BOM은 하나라도 등록이 되어야합니다.","확인",)
     }else if(!haveData){
       isValidation = true
-      return Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
+      Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
     }else if(!haveBasic){
       isValidation = true
-      return Notiflix.Report.warning("경고","기본설정은 최소 한개 이상 필요합니다.","확인",)
+      Notiflix.Report.warning("경고","품목별 기본설정은 최소 한개 이상 필요합니다.","확인",)
     }
 
     return isValidation
@@ -325,9 +363,13 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             padding: '3.5px 0px 0px 3.5px',
             width: '100%'
           }}>
-            <UploadButton 
+            <UploadButton
             onClick={() => {
-              setIsOpen(true)
+              if(row.code){
+                setIsOpen(true)
+              }else{
+                Notiflix.Report.warning("경고","BOM을 등록하시려면 CODE가 입력 되어야합니다.","확인",)
+              }
             }}>
               <p>BOM 등록</p>
             </UploadButton>
@@ -514,34 +556,38 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>행 추가</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-                if(selectRow === 0 || selectRow === undefined){
-                  return
+
+                if(selectRow === null || selectRow === 0){
+                  return;
+                }else{
+
+                  let tmpRow = searchList
+
+                  let tmp = tmpRow[selectRow]
+                  tmpRow[selectRow] = tmpRow[selectRow - 1]
+                  tmpRow[selectRow - 1] = tmp
+
+                  setSearchList([...tmpRow.map((v, i) => {
+                    if(!searchList[selectRow-1].border){
+                        searchList.map((v,i)=>{
+                          v.border = false;
+                        })
+                        searchList[selectRow-1].border = true
+                        setSearchList([...searchList])
+                    }
+                    setSelectRow(selectRow -1)
+                    return {
+                      ...v,
+                      seq: i+1
+                    }
+                  })])
                 }
-                let tmpRow = searchList
 
-                let tmp = tmpRow[selectRow]
-                tmpRow[selectRow] = tmpRow[selectRow - 1]
-                tmpRow[selectRow - 1] = tmp
-
-                setSearchList([...tmpRow.map((v, i) => {
-                  if(!searchList[selectRow-1].border){
-                    searchList.map((v,i)=>{
-                      v.border = false;
-                    })
-                    searchList[selectRow-1].border = true
-                    setSearchList([...searchList])
-                  }
-                  setSelectRow(selectRow -1)
-                  return {
-                    ...v,
-                    seq: i+1
-                  }
-                })])
               }}>
                 <p>위로</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-                if(selectRow === searchList.length-1 || selectRow === undefined){
+                if(selectRow === searchList.length-1 || selectRow === null){
                   return
                 }
                 let tmpRow = searchList
@@ -568,7 +614,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>아래로</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-                
                 if(selectRow === null){
                   return Notiflix.Report.warning(
                     '경고',
@@ -581,7 +626,10 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 if(selectRow !== undefined && selectRow !== null){
                   tmpRow.splice(selectRow, 1)
 
-                  setSearchList([...tmpRow])
+                  const filterRow = tmpRow.map((v , i)=>{
+                    return {...v , seq : i + 1}
+                  })
+                  setSearchList(filterRow)
                   setSelectRow(undefined)
                 }
 

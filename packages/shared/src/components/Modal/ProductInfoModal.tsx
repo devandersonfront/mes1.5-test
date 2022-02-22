@@ -33,6 +33,7 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      console.log("여기")
       cleanUpData();
     }
   }, [isOpen, searchKeyword])
@@ -51,25 +52,27 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
+
   const cleanUpData = () => {
+      console.log("row : ", row, column)
     if(row.product_id){
       switch(column.type){
         case "mold" :
-              let moldArray = [];
-              row?.product_id.map((data)=>{
-                let result:any = {...data};
-                result.customerData = data?.customer;
-                result.customer = data?.customer?.name;
-                result.modelData = data?.model;
-                result.model = data?.model?.model;
-                result.type_id = data.type;
-                result.product_type = cleanType(data.type);
-                result.unit = data.unit;
-                result.stock = data.stock;
+          let moldArray = [];
+          row?.product_id.map((data)=>{
+            let result:any = {...data};
+            result.customerData = data?.customer;
+            result.customer = data?.customer?.name;
+            result.modelData = data?.model;
+            result.model = data?.model?.model;
+            result.type_id = data.type;
+            result.product_type = cleanType(data.type);
+            result.unit = data.unit;
+            result.stock = data.stock;
 
-                moldArray.push(result);
-              })
-              setSearchList(moldArray);
+            moldArray.push(result);
+          })
+          setSearchList(moldArray);
 
 
           return
@@ -92,10 +95,30 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
           setSearchList(machineArray);
           return
 
+        case "tool" :
+          let toolArray = [];
+          row?.product_id?.map((data)=>{
+            let result:any = {...data};
+            result.customerData = data?.customer;
+            result.customer = data?.customer?.name;
+            result.modelData = data?.model;
+            result.model = data?.model?.model;
+            result.type_id = data?.type;
+            result.product_type = cleanType(data?.type);
+            result.unit = data?.unit;
+            result.stock = data?.stock;
+
+
+            toolArray.push(result);
+          })
+          setSearchList(toolArray);
+
+          return
         default :
           break;
       }
     }else{
+      console.log("아하 : ", row)
       if(row?.products){
         let productArray = [];
         row?.products?.map((data) => {
@@ -117,27 +140,31 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
       }
     }
   }
+
+
   const settingTitle = (index:number, inindex?:number) => {
     if(column.type === "mold" && index === 0 ? 450 : 144)
-    switch(column.type){
-      case "mold":
-        let width ;
-        if(index === 0){
-          // width = 450;
-          return 450;
-        }else{
-          // width = 144
-          return 144;
-        }
+      switch(column.type){
+        case "mold":
+          let width ;
+          if(index === 0){
+            // width = 450;
+            return 450;
+          }else{
+            // width = 144
+            return 144;
+          }
 
-      case "machine":
-        if(index === 0 && inindex === 1){
-          return 755;
-        }else{
-          return 144;
-        }
-        return
-    }
+        case "machine":
+          if(index === 0 && inindex === 1){
+            return 755;
+          }else{
+            return 144;
+          }
+          return
+        case "tool" :
+          return 450
+      }
   }
 
 
@@ -147,11 +174,11 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
         padding: '3.5px 0px 0px 3.5px',
         width: '100%'
       }}>
-      <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
-        setIsOpen(true)
-      }}>
-        <p style={{color: 'white', textDecoration: 'underline'}}>품목 보기</p>
-      </UploadButton>
+        <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
+          setIsOpen(true)
+        }}>
+          <p style={{color: 'white', textDecoration: 'underline'}}>품목 보기</p>
+        </UploadButton>
       </div>
     </>)
   }
@@ -167,135 +194,183 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   return (
-    <SearchModalWrapper >
-      { ModalContents() }
-      <Modal isOpen={isOpen} style={{
-        content: {
-          top: '50%',
-          left: '50%',
-          right: 'auto',
-          bottom: 'auto',
-          marginRight: '-50%',
-          transform: 'translate(-50%, -50%)',
-          padding: 0
-        },
-        overlay: {
-          background: 'rgba(0,0,0,.6)',
-          zIndex: 5
-        }
-      }}>
-        <div style={{
-          width: 1776,
-          height: 816,
-          display:'flex', flexDirection:"column", justifyContent:"space-between"
+      <SearchModalWrapper >
+        { ModalContents() }
+        <Modal isOpen={isOpen} style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            padding: 0
+          },
+          overlay: {
+            background: 'rgba(0,0,0,.6)',
+            zIndex: 5
+          }
         }}>
-          <div style={{}}>
+          <div style={{
+            width: 1776,
+            height: 816,
+            display:'flex', flexDirection:"column", justifyContent:"space-between"
+          }}>
+            <div style={{}}>
 
-            <div style={{
-              margin: '24px 16px 16px',
-              display: 'flex',
-              justifyContent: 'space-between'
-            }}>
-              <p style={{
-                color: 'black',
-                fontSize: 22,
-                fontWeight: 'bold',
-                margin: 0,
-              }}>생산 품목 정보</p>
-              <div style={{display: 'flex'}}>
-                {/*<Button>*/}
-                {/*  <p>엑셀로 받기</p>*/}
-                {/*</Button>*/}
-                <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
-                  setIsOpen(false)
-                }}>
-                  <img style={{width: 20, height: 20}} src={IcX}/>
+              <div style={{
+                margin: '24px 16px 16px',
+                display: 'flex',
+                justifyContent: 'space-between'
+              }}>
+                <p style={{
+                  color: 'black',
+                  fontSize: 22,
+                  fontWeight: 'bold',
+                  margin: 0,
+                }}>생산 품목 정보</p>
+                <div style={{display: 'flex'}}>
+                  {/*<Button>*/}
+                  {/*  <p>엑셀로 받기</p>*/}
+                  {/*</Button>*/}
+                  <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
+                    setIsOpen(false)
+                  }}>
+                    <img style={{width: 20, height: 20}} src={IcX}/>
+                  </div>
                 </div>
               </div>
-            </div>
-            {column.headerType.map((header,index)=>{
-            // {machineType.map((header,index)=>{
-              return (
-                  <HeaderTable>
-                    {Object.keys(header).map((value,i)=> {
-                      cleanUp(row,  value)
-                      return (
-                          <>
-                            <HeaderTableTitle>
-                              <HeaderTableText style={{fontWeight: 'bold'}}>{header[value]}</HeaderTableText>
-                            </HeaderTableTitle>
-                            <HeaderTableTextInput style={{width: settingTitle(index, i)}}>
-                              {/*<HeaderTableText>{typeof row[value] === "boolean" ? row[value] ? "유" : "무" : row[value]}</HeaderTableText>*/}
-                              <HeaderTableText>{cleanUp(row, value)}</HeaderTableText>
-                            </HeaderTableTextInput>
-                          </>
+              {column.headerType.map((header,index)=>{
+                // {machineType.map((header,index)=>{
+                return (
+                    <HeaderTable>
+                      {Object.keys(header).map((value,i)=> {
+                        cleanUp(row,  value)
+                        return (
+                            <>
+                              <HeaderTableTitle>
+                                <HeaderTableText style={{fontWeight: 'bold'}}>{header[value]}</HeaderTableText>
+                              </HeaderTableTitle>
+                              <HeaderTableTextInput style={{width: settingTitle(index, i)}}>
+                                {/*<HeaderTableText>{typeof row[value] === "boolean" ? row[value] ? "유" : "무" : row[value]}</HeaderTableText>*/}
+                                <HeaderTableText>{cleanUp(row, value)}</HeaderTableText>
+                              </HeaderTableTextInput>
+                            </>
+                        )}
                       )}
-                    )}
-                  </HeaderTable>
-              )
-            })}
+                    </HeaderTable>
+                )
+              })}
+              {column.type !== "tool" &&
+              <div style={{display: 'flex', justifyContent: 'flex-start', margin: '24px 0 8px 16px'}}>
+                <Button style={{backgroundColor: '#19B9DF'}}
+                    // onClick={() => {
+                    //   let tmp = searchList
+                    //   setSearchList([
+                    //     ...searchList,
+                    //     {
+                    //       seq: searchList.length+1
+                    //     }
+                    //   ])
+                    // }}
+                >
+                  <p style={{fontWeight: 'bold'}}>반·완제품</p>
+                </Button>
+              </div>
+              }
 
-            <div style={{padding: '0 16px', width: 1776}}>
-              <ExcelTable
-                headerList={searchModalList.productInfo}
-                row={searchList}
-                setRow={(e) => {
+              <div style={{padding: '0 16px', width: 1776}}>
+                <ExcelTable
+                    // headerList={searchModalList.productInfo}
+                    headerList={row.products ? searchModalList.productToolInfo : searchModalList.productInfo}
+                    // row={row.products ?? row.product_id ?? [{}]}
+                    row={searchList}
+                    setRow={(e) => setSearchList([...e])}
+                    width={1746}
+                    rowHeight={32}
+                    height={591}
+                    // setSelectRow={(e) => {
+                    //   setSelectRow(e)
+                    // }}
+                    setSelectRow={(e) => {
+                      // if(!searchList[e].border){
+                      //   searchList.map((v,i)=>{
+                      //     v.border = false;
+                      //   })
+                      //   searchList[e].border = true
+                      //   setSearchList([...searchList])
+                      // }
+                      setSelectRow(e)
+                    }}
+                    type={'searchModal'}
+                    headerAlign={'center'}
+                />
+              </div>
+            </div>
 
-                  setSearchList([...e])
-                }}
-                width={1746}
-                rowHeight={32}
-                height={591}
-                setSelectRow={(e) => {
-                  setSelectRow(e)
-                }}
-                type={'searchModal'}
-                headerAlign={'center'}
-              />
-            </div>
-          </div>
-
-          {column.readonly? <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
-            <div
-                onClick={() => {
-                  setIsOpen(false)
-                }}
-                style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p>취소</p>
-            </div>
-            <div
-                onClick={() => {
-                  if(selectRow !== undefined && selectRow !== null){
-                    onRowChange({
-                      ...row,
-                      ...searchList[selectRow],
-                      name: row.name,
-                      isChange: true
-                    })
-                  }
-                  setIsOpen(false)
-                }}
-                style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p>등록하기</p>
-            </div>
-          </div>
-          :
-              <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
+            {column.type !== "tool" ?
+              <div style={{height: 84, display: 'flex', alignItems: 'flex-end'}}>
                 <div
                     onClick={() => {
                       setIsOpen(false)
                     }}
-                    style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                    style={{
+                      width: 888,
+                      height: 40,
+                      backgroundColor: '#b3b3b3',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}
                 >
-                  <p>확인</p>
+                  <p>취소</p>
+                </div>
+                <div
+                    onClick={() => {
+                      if (selectRow !== undefined && selectRow !== null) {
+                        onRowChange({
+                          ...row,
+                          ...searchList[selectRow],
+                          name: row.name,
+                          isChange: true
+                        })
+                      }
+                      setIsOpen(false)
+                    }}
+                    style={{
+                      width: 888,
+                      height: 40,
+                      backgroundColor: POINT_COLOR,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}
+                >
+                  <p>등록하기</p>
                 </div>
               </div>
-          }
-        </div>
-      </Modal>
-    </SearchModalWrapper>
+            :
+                <div style={{height: 84, display: 'flex', alignItems: 'flex-end'}}>
+                  <div
+                      onClick={() => {
+                        setIsOpen(false)
+                      }}
+                      style={{
+                        width: "100%",
+                        height: 40,
+                        backgroundColor: '#b3b3b3',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                  >
+                    <p>확인</p>
+                  </div>
+                </div>
+            }
+          </div>
+        </Modal>
+      </SearchModalWrapper>
   )
 }
 
@@ -316,7 +391,7 @@ const Button = styled.button`
     justify-content:center;
     align-items:center;
     cursor:pointer;
-
+    
 `;
 
 const HeaderTable = styled.div`
@@ -347,7 +422,7 @@ const HeaderTableText = styled.p`
 const HeaderTableTitle = styled.div`
   width: 99px;
   padding: 0 8px;
-  display: flex;
+  display: flex; 
   align-items: center;
 `
 

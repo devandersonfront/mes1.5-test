@@ -15,5 +15,6 @@ export {BasicProduct} from './container/BasicProduct'
 export {BasicUser} from './container/BasicUser'
 export {BasicDocument} from "./container/BasicDocument"
 export {BasicDocumentLogs} from "./container/BasicDocumentLogs"
+export {BasicTool} from "./container/BasicTool"
 
 

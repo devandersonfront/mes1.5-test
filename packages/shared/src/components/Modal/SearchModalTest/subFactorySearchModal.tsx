@@ -282,6 +282,9 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 height={632}
                                 setRow={()=>{}}
                                 setSelectRow={(e) => {
+
+                                    console.log(e,'eeee')
+
                                     if(!searchList[e].border){
                                         searchList.map((v,i)=>{
                                             v.border = false;
@@ -299,6 +302,9 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         <FooterButton
                             onClick={() => {
                                 setIsOpen(false)
+                                setOptionIndex(0)
+                                setSelectRow(undefined)
+                                setKeyword('')
                             }}
                             style={{backgroundColor: '#E7E9EB'}}
                         >
@@ -306,6 +312,21 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         </FooterButton>
                         <FooterButton
                             onClick={() => {
+                                if(selectRow !== undefined){
+
+                                    console.log(searchList[selectRow],'searchList[selectRow]searchList[selectRow]')
+                                    onRowChange({
+                                        ...row,
+                                        // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
+                                        // name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
+                                        // tab: column.type === 'bom' ? tab : undefined,
+                                        // type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
+                                        // version: row.version,
+                                        subFactory: searchList[selectRow],
+                                        affiliated_id: searchList[selectRow]?.name,
+                                        isChange:true
+                                    })
+                                }
                                 setIsOpen(false)
                                 if(selectRow === 0 && selectRow !== undefined){
                                     onRowChange({
