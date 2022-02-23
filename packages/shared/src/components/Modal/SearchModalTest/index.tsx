@@ -127,14 +127,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
     if(res){
 
-        
-
         if(res.page !== 1){
-          setSearchList([...searchList,...SearchResultSort(filterList(res.info_list), searchModalInit.excelColumnType)])
+          setSearchList([...searchList,...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({...pageInfo, total:res.totalPages});
           Notiflix.Loading.remove()
         }else{
-          setSearchList([...SearchResultSort(filterList(res.info_list), searchModalInit.excelColumnType)])
+          setSearchList([...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({...pageInfo, total:res.totalPages});
           Notiflix.Loading.remove()
         }
