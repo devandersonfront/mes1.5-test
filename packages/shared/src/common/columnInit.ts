@@ -422,12 +422,12 @@ export const columnlist: any = {
     {key: 'date', name: '입고일', width: 118},
     {key: 'lot_number', name: '원자재 LOT 번호', width: 118},
     {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',width: 118},
-    {key: 'exhaustion', formatter: DropDownEditor, headerRenderer: HeaderFilter, width: 118,
-      options:[{status:0, name:"재고 현황"},{status:1, name:"사용 가능"}],
-      selectList: [
-        {pk: false, name: '-'},
-        {pk: true, name: '사용완료'}
-      ]},
+    // {key: 'exhaustion', formatter: PlaceholderBox, headerRenderer: HeaderFilter, width: 118,
+    //   options:[{status:0, name:"재고 현황"},{status:1, name:"사용 가능"}],
+    //   selectList: [
+    //     {pk: false, name: '-'},
+    //     {pk: true, name: '사용완료'}
+    //   ]},
     {key: 'customer_id', name: '거래처', width: 118},
     {key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118},
   ],
@@ -445,6 +445,12 @@ export const columnlist: any = {
     {key: 'warehousing',name: '입고량', editor: TextEditor, formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', width: 118},
     {key: 'date', name: '입고일', formatter: CalendarBox, width: 118},
     {key: 'lot_number', name: '원자재 LOT 번호', editor: TextEditor, width: 118},
+    {key: 'exhaustion', formatter: DropDownEditor, headerRenderer: HeaderFilter, width: 118,
+      options:[{status:0, name:"재고 현황"},{status:1, name:"사용 가능"}],
+      selectList: [
+        {pk: false, name: '-'},
+        {pk: true, name: '사용완료'}
+      ]},
   ],
 
   subinV1u: [
@@ -452,7 +458,7 @@ export const columnlist: any = {
     {key: 'name', name:'부자재 품명', frozen: true, formatter: PlaceholderBox, placeholder:'자동 입력'},
     {key: 'unit', name:'단위', formatter: PlaceholderBox, placeholder:'자동 입력'},
     {key: 'customer_id', name:'거래처', formatter: PlaceholderBox, placeholder:'자동 입력' },
-    {key: 'amount', name:'입고량', editor: TextEditor,formatter: UnitContainer, unitData: '', placeholder: '0'},
+    {key: 'stock', name:'입고량', editor: TextEditor,formatter: UnitContainer, unitData: '', placeholder: '0'},
     {key: 'date', name:'입고일', formatter: CalendarBox},
     {key: 'lot_number', name:'부자재 LOT 번호', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'LOT 입력'},
   ],
@@ -934,8 +940,8 @@ export const columnlist: any = {
     {key:"stock", name:"재고량", width: 118},
   ],
   orderRegister: [
-    {key:"date", name:"수주 날짜", formatter: CalendarBox, width: 118},
-    {key:"deadline", name:"납품 기한", formatter: CalendarBox, width: 118},
+    {key:"date", name:"수주 날짜", formatter: CalendarBox, width: 118, type:"date"},
+    {key:"deadline", name:"납품 기한", formatter: CalendarBox, width: 118, type:"deadline"},
     {key:"customer_id", name:"거래처", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     {key:"cm_id", name:"모델", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     {key:"product_id", name:"CODE", width: 118, formatter: SearchModalTest, type: 'product' },
@@ -1206,7 +1212,7 @@ export const columnlist: any = {
     {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "customer", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 압력'},
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   toolWarehousingList:[

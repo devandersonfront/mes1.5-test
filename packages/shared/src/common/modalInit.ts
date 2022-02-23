@@ -152,7 +152,6 @@ export const searchModalList: any = {
     // {key: 'slideHeight', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
   ],
   toolSearch: [
-    {key: 'seq', name: '번호', textAlign: 'center', width:30, formatter: LineBorderContainer},
     {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
     {key: 'name', name: '공구 품명', /*formatter: SearchModalTest,*/ type: 'mold', modalType: true },
     {key: 'unit', name: '단위', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},

@@ -170,6 +170,8 @@ export {ProfileHeader} from "./components/Profile/ProfileHeader"
 
 export {BarcodeModal} from "./components/Modal/BarcodeModal"
 
+export {MidrangeFormReviewModal} from "./components/Modal/MidrangeFormReviewModal"
+
 export {rootReducer} from "./reducer"
 
 type RootState = ReturnType<typeof rootReducer>

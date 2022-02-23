@@ -29,7 +29,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [total, setTotal] = useState<number>(0)
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -38,8 +38,10 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
-    if(isOpen) SearchBasic()
-  }, [row])
+    if(isOpen) {
+      SearchBasic()
+    }
+  }, [row, isOpen])
   // useEffect(() => {
   //   if(pageInfo.total > 1){
   //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -50,7 +52,6 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const changeRow = (row: any, index: number) => {
     let total = 0
-
     row.lots.map(v => {
       if(v.amount) total += v.amount
     })
@@ -62,7 +63,6 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
       date: row.date,
       total
     }
-
     setTotal(total)
 
     return tmpData
@@ -97,7 +97,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         <div onClick={() => {
           setIsOpen(true)
         }}>
-          <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{total}</p>
+          <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{row.shipment_amount}</p>
         </div>
       </div>
     </>

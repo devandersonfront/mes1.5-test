@@ -50,7 +50,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       setSelectRow(null)
       // if(row.bom_root_id){
 
-      if(row.process_id){
+      if(row.process_id || row.processId){
         SearchBasic().then(() => {
           Notiflix.Loading.remove()
         })
@@ -142,6 +142,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         type: v.type,
         tab: v.type,
         type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? "submaterial" : "product"),
+        name: childData.name,
         unit: childData.unit ?? type,
         usage: v.usage,
         version: v.version,
@@ -175,7 +176,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     if(selectKey){
       res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
 
-
+      console.log("res : ", res)
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       setSearchList([...searchList])
@@ -710,6 +711,8 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                         Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
                       }
                   }
+                }else{
+                  setIsOpen(false)
                 }
                 }
               }

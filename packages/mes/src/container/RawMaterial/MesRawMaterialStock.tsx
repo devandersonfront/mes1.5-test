@@ -87,7 +87,6 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
       if(v.selectList && v.selectList.length === 0){
         let tmpKey = v.key
 
-
         let res: any
         res = await RequestMethod('get', `${tmpKey}List`,{
           path: {
@@ -375,7 +374,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
       }).filter((v) => v))
       .catch((error) => {
         if(error.status === 409){
-          Notiflix.Notify.warning(error.data.message)
+          Notiflix.Report.warning("경고", error.data.message, "확인",)
           return true
         }
         return false
@@ -485,8 +484,9 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
       case 1:
         if(selectList.size === 0) {
           return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
+        }else{
+          Notiflix.Confirm.show("경고","데이터를 삭제하시겠습니까?", "확인", "취소", () => DeleteBasic())
         }
-        DeleteBasic()
         break;
     }
   }

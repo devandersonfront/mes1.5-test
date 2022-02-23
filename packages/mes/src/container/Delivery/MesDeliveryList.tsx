@@ -335,7 +335,11 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
       })
 
       const reducer = (accumulator, curr) => {
-        return accumulator.amount + curr.amount;
+        if(typeof accumulator === "object"){
+          return accumulator.amount + curr.amount;
+        }else if(typeof accumulator === "number"){
+          return accumulator + curr.amount;
+        }
       }
 
       let random_id = Math.random()*1000;

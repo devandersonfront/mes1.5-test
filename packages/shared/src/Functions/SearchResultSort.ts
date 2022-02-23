@@ -1,4 +1,5 @@
 import {TransferCodeToValue} from '../common/TransferFunction'
+import {LineBorderContainer} from "../components/Formatter/LineBorderContainer";
 
 export const SearchResultSort = (infoList, type: string) => {
   switch(type) {
@@ -97,6 +98,15 @@ export const SearchResultSort = (infoList, type: string) => {
           type:TransferCodeToValue(v.type, "machine"),
           weldingType_id:v.weldingType,
           weldingType:TransferCodeToValue(v.weldingType, "welding")
+        }
+      })
+    }
+    case 'tool' : {
+      return infoList.map((v) => {
+        return {
+          ...v,
+          customer: v.customer?.name,
+          customerArray: v.customer,
         }
       })
     }
@@ -204,9 +214,9 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
     }
     case "process": {
       return {
-         process:selectData,
-         process_id: selectData.name,
-         version: selectData.version
+        process:selectData,
+        process_id: selectData.name,
+        version: selectData.version
       }
     }
     case 'rawmaterial': {

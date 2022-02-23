@@ -623,9 +623,7 @@ const BasicProduct = ({page}: IProps) => {
   }
 
   const handleModal = (open:boolean) => {
-
     setBarcodeOpen(!open)
-
   }
 
 

@@ -99,6 +99,13 @@ const MES_MENUS: IMenuType[] = [
     ]
   },
   {
+    title: '공구 관리', url: '',
+    subMenu: [
+      {title: '공구 입고 등록', url: '/mes/tool/register'},
+      {title: '공구 재고 현황', url: '/mes/tool/list'},
+    ]
+  },
+  {
     title: '품질 관리', url: '',
     subMenu: [
       // {title: '불량 통계', url: '/mes/quality/defect'},
@@ -107,13 +114,6 @@ const MES_MENUS: IMenuType[] = [
       {title: '작업 표준서 관리', url: '/mes/quality/work/standardlist'},
       {title: '변경점 정보 등록', url: '/mes/quality/product/change/register'},
       {title: '변경점 정보 리스트', url: '/mes/quality/product/change/list'},
-    ]
-  },
-  {
-    title: '공구 관리', url: '',
-    subMenu: [
-      {title: '공구 입고 등록', url: '/mes/tool/register'},
-      {title: '공구 재고 현황', url: '/mes/tool/list'},
     ]
   },
   {

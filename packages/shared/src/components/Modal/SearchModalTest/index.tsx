@@ -117,9 +117,11 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    console.log(res,'resresresres')
+    console.log(res,'resresresres', searchList)
 
     if(res){
+      console.log("YESYES : ", SearchResultSort(res.info_list, searchModalInit.excelColumnType))
+      console.log("YESYES : ", res)
         if(res.page !== 1){
           setSearchList([...searchList,...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({...pageInfo, total:res.totalPages});
@@ -304,6 +306,11 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <ExcelTable
               headerList={searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
               row={searchList ?? []}
+              // row={[{tool_id: 2, code: 'G-CASE', name: '갤럭시S22 베젤', unit: 'EA',},
+              //   {tool_id: 5, code: 'tew', name: 'tewS22 베젤', unit: 'ml',},
+              //   {tool_id: 3, code: 'TEST', name: 'TEST 품명', unit: 'EA',},
+              //   {tool_id: 6, code: 'G-CASE12', name: 'G-CASE 베젤', unit: 'kg',},
+              //   {tool_id: 11, code: '444', name: null, unit: 'EA', customer: null}] ?? []}
               setRow={() => {}}
               width={1744}
               rowHeight={32}

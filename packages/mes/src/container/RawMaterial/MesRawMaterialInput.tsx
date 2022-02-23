@@ -24,13 +24,6 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawinV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
 
   useEffect(() => {
     getMenus()
@@ -81,7 +74,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
-    if(basicRow.length === 0) {
+    if(selectList.size <= 0) {
       return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
     }
 
@@ -141,7 +134,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
               ...selectData,
               warehousing: row.amount,
               type: row.type_id,
-              raw_material: {...row.raw_material, type:row.raw_material.type_id},
+              raw_material: {...row.raw_material, type:row.raw_material?.type_id},
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
