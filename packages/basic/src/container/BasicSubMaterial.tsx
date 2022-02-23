@@ -599,7 +599,7 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow].code && row.code !== undefined)
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow].code && row.code !== undefined && row.code !== '')
 
     if(spliceRow){
       if(isCheck){

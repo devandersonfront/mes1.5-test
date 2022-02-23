@@ -442,7 +442,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         const tempRow = [...rows]
         const spliceRow = [...rows]
         spliceRow.splice(selectRow, 1)
-        const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow].code && row.code !== undefined)
+        const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow].code && row.code !== undefined && row.code !== '')
     
         if(spliceRow){
             if(isCheck){
@@ -470,7 +470,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     return (
         <div>
             <PageHeader
-                title={"공구 기본정보"}
+                title={"공구 기준정보"}
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {

@@ -584,7 +584,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     spliceRow.splice(selectRow, 1)
     
     if(spliceRow){
-      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null)){
+      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null && row.name !== '')){
         return Notiflix.Report.warning(
           '공정명 경고',
           `중복된 공정명을 입력할 수 없습니다`,
