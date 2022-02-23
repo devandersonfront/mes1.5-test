@@ -30,12 +30,14 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : '기본'}])
+  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+
+  console.log(row,'moldmoldrowrowrowrow')
 
   useEffect(() => {
     if(isOpen) {
@@ -43,7 +45,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         setSearchList(row.molds.map((v,i) => {
           return {
             ...v,
-            ...v.mold.mold,
+            ...v.mold,
             seq: i+1
           }
         }))
@@ -55,7 +57,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const haveBasicValidation = () => {
 
     if(searchList.length > 0){
-        return searchList.some((list)=>list.setting === '기본')
+        return searchList.some((list)=>list.setting === 1)
     }
 
     return true;
@@ -225,7 +227,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               setSearchList([
                 ...searchList,
                 {
-                  setting: '기본',
+                  setting: 1,
                   seq: searchList.length+1
                 }
               ])
@@ -365,6 +367,15 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 const isValidation = executeValidation()
                 if(!isValidation){
                   if(selectRow !== undefined && selectRow !== null){
+                    // onRowChange({
+                    //   ...row,
+                    //   molds: searchList.map((v,i)=>({
+                    //       sequence : i , 
+                    //       setting : v.setting, 
+                    //       mold : {...v , setting : v.setting }
+                    //   })),
+                    //   isChange: true
+                    // })
                     onRowChange({
                       ...row,
                       molds: searchList.map((v, i) => {
