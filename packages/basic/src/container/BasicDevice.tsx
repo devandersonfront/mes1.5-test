@@ -132,6 +132,9 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
 
+
+    const existence = valueExistence()
+
     if(selectList.size === 0){
       return Notiflix.Report.warning(
         '경고',
@@ -140,6 +143,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
         );
     }
 
+    if(!existence){
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -239,6 +243,13 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       }
 
     }
+  }else{
+    return Notiflix.Report.warning(
+      '경고',
+      `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+      '확인',
+    );
+  }
   }
 
 
@@ -506,7 +517,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     Notiflix.Report.success('삭제되었습니다.','','확인');
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setBasicRow(Array.from(map.values()))
-setSelectList(new Set())
+    setSelectList(new Set())
 
 
 
@@ -649,6 +660,24 @@ setSelectList(new Set())
         )
         break;
     }
+  }
+
+  const valueExistence = () => {
+
+    const selectedRows = filterSelectedRows()
+    
+    if(selectedRows.length > 0){ 
+
+      const nameCheck = selectedRows.every((data)=> data.mfrCode)
+  
+      if(!nameCheck){
+        return '제조 번호'
+      }
+
+    }
+
+    return false;
+    
   }
 
   const competeDevice = (rows) => {

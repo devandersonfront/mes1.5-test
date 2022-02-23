@@ -96,6 +96,13 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }, [isOpen, searchModalInit, pageInfo.page])
 
+
+  const filterList = (result) => {
+  return result.map((list)=>(
+      {...list , customer : list.customer?.name}
+    ))
+  }
+
   const LoadBasic = async (page?:number) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`,{
@@ -117,15 +124,17 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    console.log(res,'resresresres')
 
     if(res){
+
+        
+
         if(res.page !== 1){
-          setSearchList([...searchList,...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
+          setSearchList([...searchList,...SearchResultSort(filterList(res.info_list), searchModalInit.excelColumnType)])
           setPageInfo({...pageInfo, total:res.totalPages});
           Notiflix.Loading.remove()
         }else{
-          setSearchList([...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
+          setSearchList([...SearchResultSort(filterList(res.info_list), searchModalInit.excelColumnType)])
           setPageInfo({...pageInfo, total:res.totalPages});
           Notiflix.Loading.remove()
         }

@@ -315,16 +315,26 @@ const BasicTool = ({page, keyword, option}: IProps) => {
 
     const SaveBasic = async() => {
 
-        const res = await RequestMethod("post", "toolSave",SaveCleanUpData(SelectData()))
+        const existence = valueExistence()
 
-        if(res){
-            Notiflix.Loading.remove(300)
-            Notiflix.Report.success("저장되었습니다.","","확인",() => {
-                LoadBasic();
-            })
+        if(!existence){
+            const res = await RequestMethod("post", "toolSave",SaveCleanUpData(SelectData()))
+    
+            if(res){
+                Notiflix.Loading.remove(300)
+                Notiflix.Report.success("저장되었습니다.","","확인",() => {
+                    LoadBasic();
+                })
+            }else{
+                Notiflix.Loading.remove(300)
+                Notiflix.Report.failure("에러입니다.","","확인",)
+            }
         }else{
-            Notiflix.Loading.remove(300)
-            Notiflix.Report.failure("에러입니다.","","확인",)
+            return Notiflix.Report.warning(
+                '경고',
+                `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+                '확인',
+              );
         }
     }
 
@@ -435,6 +445,24 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                 break;
         }
     }
+
+    const valueExistence = () => {
+
+        const selectedRows = filterSelectedRows()
+        
+        if(selectedRows.length > 0){ 
+    
+          const nameCheck = selectedRows.every((data)=> data.code)
+      
+          if(!nameCheck){
+            return '공구 CODE'
+          }
+    
+        }
+    
+        return false;
+        
+      }
 
 
     const competeTool = (rows) => {

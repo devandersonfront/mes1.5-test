@@ -110,6 +110,9 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
 
+
+    const existence = valueExistence()
+
     if(selectList.size === 0){
       return Notiflix.Report.warning(
         '경고',
@@ -118,66 +121,75 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         );
     }
 
-    const searchAiID = (rowAdditional:any[], index:number) => {
-      let result:number = undefined;
-      rowAdditional.map((addi, i)=>{
-        if(index === i){
-          result = addi.ai_id;
-        }
-      })
+    if(!existence){
 
-      return result;
-    }
-
-    let res: any
-    res = await RequestMethod('post', `factorySave`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
-          return {
-            ...row,
-            id: row.tmpId,
-            authority: row.authorityPK,
-            manager: row.user,
-            version: row.version ?? null,
-            additional: [
-              ...additional.map((v, index)=>{
-                if(!row[v.colName]) return undefined;
-                // result.push(
-                return {
-                  mi_id: v.id,
-                  title: v.name,
-                  value: row[v.colName] ?? "",
-                  unit: v.unit,
-                  ai_id: searchAiID(row.additional, index) ?? undefined,
-                  version:row.additional[index]?.version ?? undefined
-                }
-                // )
-              }).filter((v) => v)
-            ]
+      const searchAiID = (rowAdditional:any[], index:number) => {
+        let result:number = undefined;
+        rowAdditional.map((addi, i)=>{
+          if(index === i){
+            result = addi.ai_id;
           }
-
-          }
-      }).filter((v) => v)).catch((error)=>{
-          return error.data && Notiflix.Notify.failure(error.data.message);
-      })
-
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
         })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
+
+        return result;
       }
+
+      let res: any
+      res = await RequestMethod('post', `factorySave`,
+        basicRow.map((row, i) => {
+          if(selectList.has(row.id)){
+            let additional:any[] = []
+            column.map((v) => {
+              if(v.type === 'additional'){
+                additional.push(v)
+              }
+            })
+            return {
+              ...row,
+              id: row.tmpId,
+              authority: row.authorityPK,
+              manager: row.user,
+              version: row.version ?? null,
+              additional: [
+                ...additional.map((v, index)=>{
+                  if(!row[v.colName]) return undefined;
+                  // result.push(
+                  return {
+                    mi_id: v.id,
+                    title: v.name,
+                    value: row[v.colName] ?? "",
+                    unit: v.unit,
+                    ai_id: searchAiID(row.additional, index) ?? undefined,
+                    version:row.additional[index]?.version ?? undefined
+                  }
+                  // )
+                }).filter((v) => v)
+              ]
+            }
+
+            }
+        }).filter((v) => v)).catch((error)=>{
+            return error.data && Notiflix.Notify.failure(error.data.message);
+        })
+
+      if(res){
+        Notiflix.Report.success('저장되었습니다.','','확인');
+        if(keyword){
+          SearchBasic(keyword, option, page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }else{
+          LoadBasic(page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+      }
+    }else{
+      return Notiflix.Report.warning(
+        '경고',
+        `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+        '확인',
+      );
     }
   }
 
@@ -516,6 +528,24 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소", ()=> DeleteBasic())
         break;
     }
+  }
+
+  const valueExistence = () => {
+
+    const selectedRows = filterSelectedRows()
+    
+    if(selectedRows.length > 0){ 
+
+      const nameCheck = selectedRows.every((data)=> data.name)
+  
+      if(!nameCheck){
+        return '공장명'
+      }
+
+    }
+
+    return false;
+    
   }
 
   const competefactory = (rows) => {
