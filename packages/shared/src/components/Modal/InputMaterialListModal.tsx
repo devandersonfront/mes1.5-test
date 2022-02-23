@@ -523,6 +523,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                       onRowChange({
                         ...row,
                         bom: bomList,
+                        quantity: bomList[0].lot.amount,
                         good_quantity: bomList[0].lot.amount
                       })
                       setIsOpen(false)

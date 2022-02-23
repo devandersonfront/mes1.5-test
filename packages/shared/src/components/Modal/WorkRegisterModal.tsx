@@ -290,8 +290,8 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 setSearchList([...tmp.map(v => {
                   return {
                     ...v,
-                    good_quantity: Number(v.good_quantity ?? 0)-Number(v.poor_quantity ?? 0),
-                    sum: Number(v.good_quantity ?? 0)
+                    good_quantity: Number(v.quantity ?? 0)-Number(v.poor_quantity ?? 0),
+                    sum: Number(v.quantity ?? 0)
                   }
                 })])
               }}

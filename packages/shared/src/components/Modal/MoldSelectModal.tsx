@@ -293,7 +293,6 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 if(selectRow !== undefined && selectRow !== null){
-                  console.log(searchList.map(v=> v.spare))
                   const visibleSpare = searchList.map(v=> v.spare)
                   onRowChange({
                     ...row,
