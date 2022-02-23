@@ -315,22 +315,15 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             {
               column.type !== 'readonly' && <div
                   onClick={() => {
+                    console.log(searchList)
                     onRowChange({
                       ...row,
                       poor_quantity: 0,
-                      defect_reasons: [
-                        ...searchList.map(v => ({
-                          amount: 0,
-                        }))
-                      ],
+                      defect_reasons: undefined,
                       isChange: true
                     })
-                    setSearchList([...row.defect_reasons.map(v => {
-                      return ({
-                        ...v,
-                        amount: 0,
-                      })
-                    })])
+                    setSearchList([])
+                    setTotalCount(0)
                     setIsOpen(false)
                   }}
                   style={{width: "50%", height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
@@ -340,7 +333,11 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             }
             <div
               onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
+                if(row.good_quantity < totalCount){
+                  Notiflix.Report.warning("경고", "생산한 수량보다 적게 입력해주세요.", "확인",)
+                  return
+                }
+                if(selectRow !== undefined && selectRow !== null ){
                   onRowChange({
                     ...row,
                     poor_quantity: totalCount,

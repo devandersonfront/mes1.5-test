@@ -115,7 +115,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   const changeRow = (tmpRow: any, parent?:any) => {
     let tmpData = []
-
+    let row_good_quantity = row.good_quantity
     setSummaryData({
       // ...res.parent
       identification: row.identification,
@@ -192,7 +192,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         }: null,
         parent:v.parent,
         setting:v.setting === 0 ? "기본" : "스페어",
-        disturbance: 0
+        disturbance: row_good_quantity ?? 0
       }
     })
     return tmpData
@@ -513,13 +513,22 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                       disturbance += 1
                     }
                   })
+                  const disturbanceArray = searchList.map((v)=>{return v.disturbance})
+                  const allEqual = arr => arr.every( v => v === arr[0] )
 
                   if(disturbance === 0){
-                    onRowChange({
-                      ...row,
-                      bom: bomList
-                    })
-                    setIsOpen(false)
+                    if(disturbanceArray.includes(0)){
+                      Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
+                    }else if(allEqual(disturbanceArray)){
+                      onRowChange({
+                        ...row,
+                        bom: bomList,
+                        good_quantity: bomList[0].lot.amount
+                      })
+                      setIsOpen(false)
+                    }else {
+                      Notiflix.Report.warning(`각 BOM의 생산량을 일치시켜 주세요.`, '', '확인')
+                    }
                   }else{
                     Notiflix.Report.warning(`소요량과 생산량 합계를 일치시켜 주세요`, '', '확인')
                   }

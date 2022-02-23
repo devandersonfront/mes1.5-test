@@ -119,7 +119,9 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
               })]
             })
           }else{
-            console.log(row)
+            if(row.stock === 0){
+              return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
+            }
             loadMaterialLot(row.tab)
           }
         }else {

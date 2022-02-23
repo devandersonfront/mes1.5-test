@@ -41,6 +41,7 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
 
     const SaveBasic = async (result:any, selectList:Set<any>) => {
         let res: any
+
         res = await RequestMethod('post', `sheetSave`,
             result.map((row, i) => {
                 if(selectList.has(row.id)){
@@ -83,16 +84,7 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
                     return {
                         ...row,
                         ...selectData,
-                        os_id:undefined,
-                        input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
-                            // return {
-                            //   ...bom,
-                            //   setting:bom.setting === "여" || bom.setting === 1 ? 1 : 0
-                            // }
-                            bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
-                            return {...bom}
-                        })] ?? [],
-                        status: 1,
+                        status: result[0].status === '작업 중' ? 0 : 1,
                         additional: [
                             ...additional.map(v => {
                                 if(row[v.name]) {
