@@ -130,7 +130,29 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     })
   }
 
+  const valueExistence = () => {
+
+    const selectedRows = filterSelectedRows()
+    
+    if(selectedRows.length > 0){ 
+
+      const nameCheck = selectedRows.every((data)=> data.mfrCode)
+  
+      if(!nameCheck){
+        return '제조 번호'
+      }
+
+    }
+
+    return false;
+    
+  }
+
   const SaveBasic = async () => {
+
+    const existence = valueExistence()
+
+    if(!existence){
 
     if(selectList.size === 0){
       return Notiflix.Report.warning(
@@ -239,6 +261,13 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
       }
 
     }
+  }else{
+    return Notiflix.Report.warning(
+      '경고',
+      `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+      '확인',
+    );
+  }
   }
 
 
@@ -656,7 +685,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined)
+    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined && row.mfrCode !== '')
 
     if(spliceRow){
       if(isCheck){
