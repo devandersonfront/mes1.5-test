@@ -55,7 +55,29 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     }
   }, [page, keyword, option])
 
+  const valueExistence = () => {
+
+    const selectedRows = filterSelectedRows()
+    
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함 
+    if(selectedRows.length > 0){ 
+
+      const nameCheck = selectedRows.every((data)=> data.name)
+  
+      if(!nameCheck){
+        return '거래처명'
+      }
+
+    }
+
+    return false;
+    
+  }
+
+
   const SaveBasic = async () => {
+
+    const existence = valueExistence()
 
     if(selectList.size === 0){
       return Notiflix.Report.warning(
@@ -64,6 +86,8 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
         '확인',
         );
     }
+
+    if(!existence){
 
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
@@ -148,6 +172,13 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
         })
       }
     }
+  }else{
+    return Notiflix.Report.warning(
+      '경고',
+      `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+      '확인',
+    );
+  }
   }
 
   console.log(basicRow,'basicRowbasicRowbasicRow')
@@ -594,7 +625,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null)
+    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null && row.name !== '')
 
     if(spliceRow){
       if(isCheck){

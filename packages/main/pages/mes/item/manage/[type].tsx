@@ -140,11 +140,48 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   const [baseItem, setBaseItem] = useState<IItemMenuType[]>([])
   const [addiItem, setAddiItem] = useState<IItemMenuType[]>([])
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set())
+  const [selectRow , setSelectRow] = useState<number>(0);
   let userInfo = cookie.load('userInfo')
 
 
   const checkValidation = () => {
     return userInfo.ca_id.name === 'MASTER' ?? undefined
+  }
+
+  const valueExistence = () => {
+
+    if(addiItem.length > 0){ 
+
+      const nameCheck = addiItem.every((data)=> data.title)
+
+      if(!nameCheck){
+        return '추가 항목명'
+      }
+
+    }
+
+    return false;
+
+  }
+
+  const competeAddtion = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.title === tempRow[selectRow].title && row.title !== undefined && row.title !== '')
+
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '경고',
+          `중복된 추가 항목명을 입력할 수 없습니다`,
+          '확인'
+        );
+      }
+    }
+
+    setAddiItem(rows)
   }
 
   const listItem = async (code: string) => {
@@ -350,6 +387,10 @@ const ItemManagePage = ({title, type, code}: IProps) => {
               <>
                 <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
                   <HeaderButton onClick={() => {
+
+                    const existence = valueExistence()
+                    if(!existence){
+
                     const resultArray = [];
                     baseItem.map((value)=>{
                       resultArray.push({...value})
@@ -358,6 +399,13 @@ const ItemManagePage = ({title, type, code}: IProps) => {
                       resultArray.push({...value, unit:value.unit_id ?? value.unit, moddable: value.moddablePK === "1" ? false : true})
                     })
                     saveItem(code, resultArray, 'additional')
+                  }else{
+                    return Notiflix.Report.warning(
+                      '경고',
+                      `"${existence}"을 입력 해주세요`,
+                      '확인',
+                    );
+                  }
                   }} key={`btnCreate`}>추가항목 저장</HeaderButton>
                   <HeaderButton onClick={() => {
                     const random_id = Math.random() * 1000;
@@ -379,9 +427,11 @@ const ItemManagePage = ({title, type, code}: IProps) => {
                   ]}
                   row={addiItem}
                   height={240}
-                  setRow={setAddiItem}
+                  // setRow={setAddiItem}
                   selectList={selectList}
                   setSelectList={setSelectList}
+                  setRow={(e) => competeAddtion(e)}
+                  setSelectRow={setSelectRow}
                 />
               </>
           }

@@ -117,7 +117,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    console.log(res,'resresresres')
 
     if(res){
         if(res.page !== 1){

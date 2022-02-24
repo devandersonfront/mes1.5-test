@@ -15,6 +15,7 @@ const ItemBox = ({item,setItems}: IProps) => {
     <Item
       style={{backgroundColor: !item.hide  ? POINT_COLOR : undefined,}}
       onClick={() => {
+        if(item.mi_id){
         if(item.moddable){
           setItems({
             ...item,
@@ -23,6 +24,7 @@ const ItemBox = ({item,setItems}: IProps) => {
         }else{
           Notiflix.Notify.warning('필수인 항목은 숨기기가 불가능합니다.')
         }
+      }
       }}
     >
       <p style={{color: 'white'}}>{item.title}</p>
