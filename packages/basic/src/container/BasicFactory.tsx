@@ -169,7 +169,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
             version: row.version ?? null,
             additional: [
               ...additional.map((v, index)=>{
-                if(!row[v.colName]) return undefined;
+                //if(!row[v.colName]) return undefined;
                 // result.push(
                 return {
                   mi_id: v.id,
