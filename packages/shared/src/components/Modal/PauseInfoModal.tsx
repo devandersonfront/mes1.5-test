@@ -48,7 +48,6 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    console.log(row.pause_reasons)
     if(row['pause_reasons'] && row['pause_reasons'].length){
       let total = 0
       setSearchList([...row.pause_reasons.map(v => {

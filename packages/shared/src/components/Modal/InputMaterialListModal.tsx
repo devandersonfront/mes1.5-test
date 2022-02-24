@@ -94,10 +94,9 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen && row.modify){
-      modifyLoadRecordGroup(row.bom_root_id)
-      console.log(row)
+      modifyLoadRecordGroup(row.osId, row.bom_root_id)
     }else {
-      loadRecordGroup(row.bom_root_id)
+      // loadRecordGroup(row.bom_root_id)
     }
   },[isOpen])
 
@@ -115,11 +114,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
-  const modifyLoadRecordGroup = async (product_id: any) => {
+  const modifyLoadRecordGroup = async (os_id: number | string, key: string) => {
     // Notiflix.Loading.circle()
     const res = await RequestMethod('get', `sheetBomLoad`,{
       path: {
-        product_id: product_id,
+        os_id: os_id,
+        bom: 'bom',
+        key: key,
       },
     })
 
@@ -162,7 +163,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         }
       }).filter(v=>v)
     }else{
-      row = [{...tmpRow}]
+      row = tmpRow
     }
 
     tmpData = row.map((v, i) => {
@@ -213,7 +214,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         parent:v.parent,
         setting:v.setting === 0 ? "기본" : "스페어",
         disturbance: row_good_quantity ?? 0,
-        real_disturbance: row_good_quantity * v.usage ?? 0
+        real_disturbance: isNaN(row_good_quantity * v.usage) ? 0 : row_good_quantity * v.usage
       }
     })
     return tmpData
@@ -268,6 +269,9 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     setBomDummy([...tmp])
   }
 
+  React.useEffect(()=>{
+    console.log(searchList)
+  },[searchList])
   const getSummaryInfo = (info) => {
     return summaryData[info.key] ?? '-'
   }
