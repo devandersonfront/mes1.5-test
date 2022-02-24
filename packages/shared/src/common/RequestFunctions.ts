@@ -177,6 +177,8 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
           Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
         }else if(error.response.status === 500){
           Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        }else if(error.reponse.status === 403){
+          Notiflix.Report.failure('실패', '권한이 존재 하지 않습니다.', '확인')
         }
       })
   }else if( apiType === 'excelFormatDownload'){

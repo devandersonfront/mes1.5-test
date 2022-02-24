@@ -68,17 +68,17 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
     return result;
   }
+
   const haveBasicValidation = () => {
 
     if(searchList.length > 0){
-        return searchList.some((list)=> list.setting === 1)
+        return searchList.some((list)=>list.setting === 1)
     }
 
     return true;
-} 
-
-  // 데이터 유무 판단
-const haveDataValidation = () => {
+  }
+  
+  const haveDataValidation = () => {
 
     let dataCheck = true
 
@@ -89,9 +89,9 @@ const haveDataValidation = () => {
     })
 
     return dataCheck
-}
+  }
 
-const executeValidation = () => {
+  const executeValidation = () => {
 
     let isValidation = false
     // const haveList = searchList.length === 0
@@ -108,7 +108,7 @@ const executeValidation = () => {
 
     return isValidation
 
-}
+  }
 
   useEffect(() => {
     if(isOpen) {
@@ -158,6 +158,28 @@ const executeValidation = () => {
       }
       // }
     }
+
+    const competeMachine = (rows) => {
+
+      const tempRow = [...rows]
+      const spliceRow = [...rows]
+      spliceRow.splice(selectRow, 1)
+  
+      const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow]?.name && row.name !==undefined && row.name !=='')
+  
+      if(spliceRow){
+        if(isCheck){
+          return Notiflix.Report.warning(
+            '경고',
+            `중복된 기계가 존재합니다.`,
+            '확인'
+          );
+        }
+      }
+  
+      setSearchList(rows)
+    } 
+  
 
   return (
     <SearchModalWrapper >
@@ -338,8 +360,7 @@ const executeValidation = () => {
               if(selectRow === -1){
                 return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
               }
-            
-              let tmpRow = [...searchList]
+                let tmpRow = [...searchList]
                 tmpRow.splice(selectRow, 1)
                 setSearchList([...tmpRow.map((v, i) => {
                   return {
@@ -347,8 +368,7 @@ const executeValidation = () => {
                     seq: i+1
                   }
                 })])
-              setSelectRow(-1)
-              
+                setSelectRow(-1)
             }}>
               <p>삭제</p>
             </Button>
@@ -358,14 +378,19 @@ const executeValidation = () => {
               headerList={searchModalList.machineInfo}
               row={searchList }
               setRow={(e) => {
-                setSearchList([...e.map((machine) => {
+
+                console.log(e,'eeee')
+
+                const filterList = [...e.map((machine) => {
                   if(typeof machine.type !== "string"){
                     return {...machine, type_id:machine.type, type:selectMachineType(machine.type)}
                   }else{
                     return {...machine}
 
                   }
-                })])
+                })]
+
+                competeMachine(filterList)
               }}
               width={1746}
               rowHeight={32}
@@ -408,9 +433,10 @@ const executeValidation = () => {
                       machines: searchList.map((v, i) => {
                         return {
                           sequence: i+1,
-                          machine: v
+                          machine: v,
+                          setting : v.setting
                         }
-                      }),
+                      }).filter((v)=> v.machine?.mfrCode),
                       isChange: true
                     })
                   }
@@ -418,6 +444,7 @@ const executeValidation = () => {
                 }}
               }
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              
             >
               <p>등록하기</p>
             </div>

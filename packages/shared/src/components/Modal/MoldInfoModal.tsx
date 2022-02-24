@@ -37,7 +37,8 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     total: 1
   })
 
-  console.log(row,'moldmoldrowrowrowrow')
+
+  console.log(searchList,'searchListsearchListsearchList')
 
   useEffect(() => {
     if(isOpen) {
@@ -46,7 +47,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           return {
             ...v,
             ...v.mold,
-            seq: i+1
+            sequence: i+1
           }
         }))
       }
@@ -95,7 +96,29 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     return isValidation
 
   }
-  
+
+  const competeMold = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
+
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '경고',
+          `중복된 금형이 존재합니다.`,
+          '확인'
+        );
+      }
+    }
+
+    setSearchList(rows)
+  } 
+
+
   const ModalContents = () => {
     // if(row?.molds){
       if(row?.molds?.length){
@@ -228,7 +251,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 ...searchList,
                 {
                   setting: 1,
-                  seq: searchList.length+1
+                  sequence: searchList.length+1
                 }
               ])
             }}>
@@ -262,7 +285,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               setSearchList([...tmpRow.map((v, i) => {
                 return {
                   ...v,
-                  seq: i+1
+                  sequence: i+1
                 }
               })])
             }}>
@@ -295,7 +318,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 setSearchList([...tmpRow.map((v, i) => {
                   return {
                     ...v,
-                    seq: i+1
+                    sequence: i+1
                   }
                 })])
 
@@ -312,17 +335,15 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               if(selectRow === -1){
                 return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
               }
-            
-              let tmpRow = [...searchList]
-              tmpRow.splice(selectRow, 1)
-              setSearchList([...tmpRow.map((v, i) => {
+                let tmpRow = [...searchList]
+                tmpRow.splice(selectRow, 1)
+                setSearchList([...tmpRow.map((v, i) => {
                   return {
                     ...v,
-                    seq: i+1
+                    sequence: i+1
                   }
-              })])
-              setSelectRow(-1)
-              
+                })])
+                setSelectRow(-1)
             }}>
               <p>삭제</p>
             </Button>
@@ -331,7 +352,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             <ExcelTable
               headerList={searchModalList.moldInfo}
               row={searchList ?? [{}]}
-              setRow={(e) => setSearchList([...e])}
+              setRow={(e) => competeMold([...e])}
               width={1746}
               rowHeight={32}
               height={552}
@@ -362,32 +383,44 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <p>취소</p>
             </div>
             <div
+
+            
               onClick={() => {
 
                 const isValidation = executeValidation()
                 if(!isValidation){
                   if(selectRow !== undefined && selectRow !== null){
-                    // onRowChange({
-                    //   ...row,
-                    //   molds: searchList.map((v,i)=>({
-                    //       sequence : i , 
-                    //       setting : v.setting, 
-                    //       mold : {...v , setting : v.setting }
-                    //   })),
-                    //   isChange: true
-                    // })
-                    onRowChange({
-                      ...row,
-                      molds: searchList.map((v, i) => {
-  
-                        return {
-                          sequence: i+1,
-                          mold: v
-                        }
-                      }).filter((v)=> v.mold?.mold_id),
-                      name: row.name,
-                      isChange: true
-                    })
+
+                    if(column.name === '금형'){
+                      onRowChange({
+                        ...row,
+                        molds: searchList.map((v, i) => {
+    
+                          return {
+                            sequence: i+1,
+                            setting : v.setting,
+                            mold: v
+                          }
+                        }),
+                        name: row.name,
+                        isChange: true
+                      })
+                    }else{
+
+                      onRowChange({
+                        ...row,
+                        molds: searchList.map((v, i) => {
+    
+                          return {
+                            sequence: i+1,
+                            mold: {mold: {...v}}
+                          }
+                        }),
+                        name: row.name,
+                        isChange: true
+                      })
+                    }
+
                   }
                   setIsOpen(false)
                 }

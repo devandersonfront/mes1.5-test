@@ -181,7 +181,12 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
     }
   }
 
+
   const saveAppointmentAuthorityDetails = async () => {
+
+    if(row[selectIndex].name === ''){
+        return Notiflix.Report.warning('오류', '권한명은 필수적으로 들어가야하는 값 입니다.', '확인')
+    }
     Notiflix.Loading.hourglass('권한을 저장하고 있습니다..')
     new Promise( async (resolve) => {
       if (selectIndex !== -1 && row[selectIndex].ca_id) {
@@ -200,7 +205,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
       const tempRow = [...rows]
       const spliceRow = [...rows]
       spliceRow.splice(selectIndex, 1)
-      const isCheck = spliceRow.some((row)=> row.name === tempRow[selectIndex].name && row.name !== undefined)
+      const isCheck = spliceRow.some((row)=> row.name === tempRow[selectIndex].name && row.name !== undefined && row.name !== '')
 
       if(spliceRow){
         if(isCheck){

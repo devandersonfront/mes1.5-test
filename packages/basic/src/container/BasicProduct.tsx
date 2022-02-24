@@ -193,23 +193,42 @@ const BasicProduct = ({page, option}: IProps) => {
           customer_id: undefined,
           model: row.modelArray,
           // standard_uph: row.uph,
-          molds:[...row?.molds?.map((mold)=>{
-            return {...mold, setting:mold.mold.setting}
-          }).filter((mold) => mold.mold.mold_id) ?? []],
-          machines:[
-            ...row?.machines?.map((machine)=>{
-              return {
-                ...machine,
-                setting:machine.machine.setting,
-                machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
-              }
-            }).filter((machine) => machine.machine.machine_id)?? []
-          ],
+          molds:row?.molds?.map((mold)=>{
+            return { setting:mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
+          }).filter((mold) => mold.mold.mold_id) ?? [],
           tools:[
             ...row?.tools?.map((tool) => {
-              // return {...tool, tool:{...tool.tool, seq:undefined, customer:tool.tool.customerData}, setting:tool.tool.setting}
               return {...tool, tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional}, setting:tool.tool.setting}
-            })
+            }).filter((tool) => tool.tool.tool_id) ?? [],
+          ],
+          machines:[
+            ...row?.machines?.map((machine)=>{
+              // console.log(machine,'machinemachine')
+              return {
+                sequence : machine.sequence,
+                setting: machine.setting,
+                // machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
+                machine : {
+                  machine_id : machine.machine.machine_id,
+                  mfrName : machine.machine.mfrName,
+                  name : machine.machine.name,
+                  type : machine.machine.type_id,
+                  weldingType : machine.machine.weldingType_id,
+                  madeAt:machine.machine.madeAt,
+                  mfrCode:machine.machine.mfrCode,
+                  manager:machine.machine.manager,
+                  photo:machine.machine.photo,
+                  capacity:machine.machine.capacity,
+                  qualify:machine.machine.qualify,
+                  guideline:machine.machine.guideline,
+                  interwork:machine.machine.interwork,
+                  devices:machine.machine.devices,
+                  factory:machine.machine.factory,
+                  subFactory:machine.machine.subFactory,
+                  additional :machine.machine.additional,
+                }
+              }
+            }).filter((machine) => machine.machine.machine_id)?? []
           ],
           type:row.type_id ?? row.typeId ?? row.typePK,
           additional: [
