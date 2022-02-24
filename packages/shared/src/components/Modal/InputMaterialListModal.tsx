@@ -93,7 +93,10 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   // }, [isOpen, searchKeyword])
 
   useEffect(() => {
-    if(isOpen){
+    if(isOpen && row.modify){
+      modifyLoadRecordGroup(row.bom_root_id)
+      console.log(row)
+    }else {
       loadRecordGroup(row.bom_root_id)
     }
   },[isOpen])
@@ -111,6 +114,21 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       setSearchList([...tmpSearchList])
     }
   }
+
+  const modifyLoadRecordGroup = async (product_id: any) => {
+    // Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `sheetBomLoad`,{
+      path: {
+        product_id: product_id,
+      },
+    })
+
+    if(res){
+      let tmpSearchList = changeRow(res,row)
+      setSearchList([...tmpSearchList])
+    }
+  }
+
 
 
   const changeRow = (tmpRow: any, parent?:any) => {

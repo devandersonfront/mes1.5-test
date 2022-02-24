@@ -253,7 +253,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <MoldInfoModal column={column} row={row} onRowChange={ModalUpdate} modify/>
+              {/*<MoldInfoModal column={column} row={row} onRowChange={ModalUpdate} modify/>*/}
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>

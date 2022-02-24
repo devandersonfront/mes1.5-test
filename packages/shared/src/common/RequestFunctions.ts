@@ -399,6 +399,8 @@ const ApiList = {
   bomLoad: `/api/v1/bom`,
   bomSave: `/api/v1/bom/save`,
 
+  sheetBomLoad: `/api/v1/sheet`,
+
   anonymousLoad: `/anonymous/load`,
 
   //전력사용량 list

@@ -255,5 +255,7 @@ const ApiList = {
   excelUpload: `${SF_ENDPOINT_EXCEL}/api/v1/format/upload`,
 
   bomLoad: `/api/v1/bom`,
-  bomSave: `/api/v1/bom/save`
+  bomSave: `/api/v1/bom/save`,
+
+  sheetBomLoad: `/api/v1/sheet`
 }
