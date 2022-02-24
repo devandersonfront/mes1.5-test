@@ -371,16 +371,16 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     onRowChange({
                       ...row,
                       molds: searchList.map((v, i) => {
+  
                         return {
                           sequence: i+1,
-                          mold: v
+                          mold: {mold: {...v}}
                         }
-                      }).filter((v)=> v.mold?.mold_id),
+                      }),
                       name: row.name,
                       isChange: true
                     })
                   }
-                  setIsOpen(false)
                 }
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}

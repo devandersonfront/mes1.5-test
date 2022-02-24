@@ -141,9 +141,10 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
-  React.useEffect(()=>{
-    console.log(searchList)
-  },[searchList])
+  const ModalUpdate = (e:any) => {
+    onRowChange(e)
+    setIsOpen(false)
+  }
 
   const ModalContents = () => {
     return <>
@@ -252,7 +253,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <MoldInfoModal column={column} row={row} onRowChange={(e)=> updateMold(e.molds)} modify/>
+              <MoldInfoModal column={column} row={row} onRowChange={ModalUpdate} modify/>
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
@@ -292,7 +293,6 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 if(selectRow !== undefined && selectRow !== null){
-                  console.log(searchList.map(v=> v.spare))
                   const visibleSpare = searchList.map(v=> v.spare)
                   onRowChange({
                     ...row,
