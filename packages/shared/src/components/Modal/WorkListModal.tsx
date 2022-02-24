@@ -55,7 +55,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   // const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -64,13 +64,13 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-    // if(isOpen && row.os_id) {
-      // SearchBasic()
-    // }
-    if(row.os_id){
+    if(isOpen && row.os_id) {
       SearchBasic()
     }
-  }, [row.os_id])
+    // if(row.os_id){
+    //   SearchBasic()
+    // }
+  }, [isOpen,row.os_id])
 
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpRes = []
@@ -127,14 +127,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       tmpRes = [{...tmpRow}]
     }
 
-    onRowChange({
-      ...row,
-      defect_reasons: defectReasons,
-      total_good_quantity: Number(totalGood),
-      total_poor_quantity: Number(totalPoor),
-      total_counter: totalGood + totalPoor,
-    })
-
     return tmpRes?.map((v, i) => {
       return {
         ...v,
@@ -150,8 +142,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     // setOptionIndex(option)
     const res = await RequestMethod('get', `recordAll`,{
       params: {
-        identification:row.os_id
-        // sheetIds: row.os_id
+        sheetIds: row.os_id
       }
     })
     // const res = await RequestMethod('get', `recordSearch`,{

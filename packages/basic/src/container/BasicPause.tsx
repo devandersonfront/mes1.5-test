@@ -207,6 +207,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
     selectedRows.forEach((nRow)=>{map.delete(nRow.id)})
     setPauseBasicRow(Array.from(map.values()).map((data,index)=>({...data, index : index + 1})))
     setSelectList(new Set())
+
   }
 
   const buttonEvents = async(index:number) => {
@@ -280,7 +281,6 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         '확인',
         );
         }
-
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           () => DeleteBasic()
           // async()=>{

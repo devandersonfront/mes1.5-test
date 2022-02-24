@@ -150,7 +150,6 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     }
   }
 
-
   const setAdditionalData = () => {
     const addtional = []
     basicRow.map((row)=>{
@@ -204,7 +203,6 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-
       await RequestMethod('delete','customerDelete', haveIdRows.map((row) => (
           {...row , additional : [...additional.map(v => {
             if(row[v.name]) {
@@ -505,7 +503,6 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   }
 
   const competeCustom = (rows) => {
-
 
     const tempRow = [...rows]
     const spliceRow = [...rows]

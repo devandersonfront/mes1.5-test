@@ -85,7 +85,6 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
     if(selectList.size <= 0) {
       return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
     }
-
     basicRow.map((v)=> {
       if(selectList.has(v.id)) {
         if (v.sm_id === undefined) {
@@ -99,7 +98,6 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
     let res: any
     res = await RequestMethod('post', `lotSmSave`,
       basicRow.map((row, i) => {
-        console.log("row : ", row)
         if(selectList.has(row.id)){
           let selectKey: string[] = []
           let additional:any[] = []

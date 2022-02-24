@@ -241,6 +241,7 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         ...selectData,
         rm_id: selectData.code,
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
+        type_name:"원자재",
         customer_id: selectData.customerArray?.name,
         unit:unitResult(),
         raw_material: {

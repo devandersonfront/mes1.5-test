@@ -260,6 +260,7 @@ const BasicProduct = ({page}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
+
     return map
   }
 

@@ -241,6 +241,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             ...res,
             first:true,
             contract_id: "-",
+            code: res.product.code,
             date: res?.data === undefined ? moment().format("YYYY-MM-DD") : res.date,
             deadline: res?.deadline === undefined ? moment().format("YYYY-MM-DD") : res.deadline,
             customer:res.product.customer,
@@ -274,15 +275,15 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       let tmp: Set<any> = selectList
       setSelectList(new Set())
       setBomCheck(false)
-      if(codeCheck) {
-        Notiflix.Report.warning("알림", "최근 작업지시서가 없어 BOM기준으로 불러왔습니다.", "확인")
-      }
+      // if(codeCheck) {
+      //   Notiflix.Report.warning("알림", "최근 작업지시서가 없어 BOM기준으로 불러왔습니다.", "확인")
+      // }
       return [{
         ...object,
         contract_id: codeCheck ? "-" : object.contract_id,
         goal: codeCheck ? 0 : object.contract.amount,
         cm_id: object.cm_id ?? '-',
-        process_id: object.process_id ?? '-',
+        process_id: object.product?.process?.name ?? '-',
         name: object.product_name ?? '-',
         date: object?.date ?? moment().format('YYYY-MM-DD'),
         deadline: object?.deadline ?? moment().format('YYYY-MM-DD'),
@@ -317,15 +318,15 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = async(index: number) => {
     switch(index){
       case 0:
-        if(selectList.size === 1) {
-          if (basicRow[0].product.product_id) {
-            const data = await loadGraphSheet(basicRow[0].product.product_id, basicRow[0]).then(value => value)
-            setBasicRow(data);
-            setBomCheck(false)
-          }
-        }else{
-          Notiflix.Report.warning("경고","한개의 데이터만 선택해 주시기 바랍니다.","확인");
-        }
+        // if(selectList.size === 1) {
+        //   if (basicRow[0].product.product_id) {
+        //     const data = await loadGraphSheet(basicRow[0].product.product_id, basicRow[0]).then(value => value)
+        //     setBasicRow(data);
+        //     setBomCheck(false)
+        //   }
+        // }else{
+        //   Notiflix.Report.warning("경고","한개의 데이터만 선택해 주시기 바랍니다.","확인");
+        // }
         break;
       case 2:
         SaveBasic(basicRow, selectList)
@@ -375,7 +376,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             }])}}
             code={codeCheck}
             title={"작업지시서 등록"}
-            buttons={[bomCheck ? 'BOM 기준으로 보기' : '', '', '저장하기', '삭제']}
+            buttons={['', '', '저장하기', '삭제']}
             buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
@@ -401,13 +402,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               if(eData.length <= 0){
                 setBasicRow([...e])
               }else{
-                if(codeCheck) {
-                  const resultData = await loadLatestSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
-                  setBasicRow([...resultData])
-                }else{
+                // if(codeCheck) {
+                //   const resultData = await loadLatestSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
+                //   setBasicRow([...resultData])
+                // }else{
                   const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
                   setBasicRow([...resultData])
-                }
+                // }
               }
               let tmp: Set<any> = selectList;
               e.map(v => {

@@ -238,7 +238,6 @@ const BasicMachineV1u = ({ option}: IProps) => {
     setSelectList(new Set())
   }
 
-
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))

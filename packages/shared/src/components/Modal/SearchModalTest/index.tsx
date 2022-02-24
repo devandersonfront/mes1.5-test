@@ -117,11 +117,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    console.log(res,'resresresres', searchList)
 
     if(res){
-      console.log("YESYES : ", SearchResultSort(res.info_list, searchModalInit.excelColumnType))
-      console.log("YESYES : ", res)
         if(res.page !== 1){
           setSearchList([...searchList,...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({...pageInfo, total:res.totalPages});

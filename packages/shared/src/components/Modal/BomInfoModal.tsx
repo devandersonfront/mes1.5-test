@@ -29,9 +29,10 @@ interface IProps {
   row: any
   onRowChange: (e: any) => void
   modify?: boolean
+  update?: (e:boolean) => void
 }
 
-const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
+const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
   const tabRef = useRef(null)
   const tabStore = useSelector((rootState: RootState) => rootState.infoModal)
   const dispatch = useDispatch();
@@ -176,7 +177,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     if(selectKey){
       res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
 
-      console.log("res : ", res)
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
       setSearchList([...searchList])
@@ -237,6 +237,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     if(haveRawMaterialBasic && haveSubMaterialBasic && haveProductBasic){
       return true
     }
+
     return false
 
   }
@@ -262,9 +263,6 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           ...row,
           additional: row.additional ?? [],
           process: row.processArray,
-          // type: row.type_id ?? row.type,
-          // product_id:row.product_id ?? row.productId,
-          // code: row.code,
           model: row.model === '' ? null : row.model,
           type: row.type_id ?? row.type === '완제품' ? 2 : 1,
           product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
@@ -324,6 +322,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       if(body.length !== 0){
         const res = await RequestMethod('post', `bomSave`, body)
         if(res) {
+          modify && update(true)
             Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
         }
       }
@@ -711,7 +710,7 @@ const BomInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                         Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
                       }
                   }
-                }else{
+                }else {
                   setIsOpen(false)
                 }
                 }

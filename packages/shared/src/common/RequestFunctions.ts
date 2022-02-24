@@ -361,6 +361,7 @@ const ApiList = {
   electicPowerList : `/api/v2/statistics/press/electric-power`,
   productUphList: `/cnc/api/v1/kpi/product/uph/list`,
   productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
+  sheetDefectList: `/api/v1/sheet/defect`,
 
   //search
   memberSearch: `/api/v1/member/search`,

@@ -272,52 +272,54 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={searchModalList.workRegister}
-              row={searchList ?? [{}]}
-              setRow={(e) => {
-                let tmp = e.map((v, index) => {
-                  if(v.newTab === true){
-                    const newTabIndex = bomDummy.length+1
-                    addNewTab(newTabIndex)
-                    setFocusIndex(newTabIndex-1)
-                  }
+                headerList={searchModalList.workRegister}
+                row={searchList ?? [{}]}
+                setRow={(e) => {
+                  let tmp = e.map((v, index) => {
+                    if(v.newTab === true){
+                      const newTabIndex = bomDummy.length+1
+                      addNewTab(newTabIndex)
+                      setFocusIndex(newTabIndex-1)
+                    }
 
-                  return {
-                    ...v,
-                    newTab: false
-                  }
-                })
-                setSearchList([...tmp.map(v => {
-                  return {
-                    ...v,
-                    sum: Number(v.good_quantity ?? 0)+Number(v.poor_quantity ?? 0)
-                  }
-                })])
-              }}
-              width={1746}
-              rowHeight={32}
-              height={552}
-              // setSelectRow={(e) => {
-              //   setSelectRow(e)
-              // }}
-              setSelectRow={(e) => {
-                // setSearchList([...searchList.map((v,i)=>{
-                //   if(i === e){
-                //     return {
-                //       ...v,
-                //       border: !v.border
-                //     }
-                //   }else{
-                //     return {
-                //       ...v,
-                //       border: false
-                //     }
-                //   }
-                // })])
-                setSelectRow(e)
-              }}
-              type={'searchModal'}
-              headerAlign={'center'}
+                    return {
+                      ...v,
+                      newTab: false
+                    }
+                  })
+                  console.log("tmp : ", tmp)
+                  setSearchList([...tmp.map(v => {
+                    return {
+                      ...v,
+                      good_quantity: Number(v.quantity ?? 0)-Number(v.poor_quantity ?? 0),
+                      sum: Number(v.quantity ?? 0)
+                    }
+                  })])
+                }}
+                width={1746}
+                rowHeight={32}
+                height={552}
+                // setSelectRow={(e) => {
+                //   setSelectRow(e)
+                // }}
+                setSelectRow={(e) => {
+                  // setSearchList([...searchList.map((v,i)=>{
+                  //   if(i === e){
+                  //     return {
+                  //       ...v,
+                  //       border: !v.border
+                  //     }
+                  //   }else{
+                  //     return {
+                  //       ...v,
+                  //       border: false
+                  //     }
+                  //   }
+                  // })])
+                  setSelectRow(e)
+                }}
+                type={'searchModal'}
+                headerAlign={'center'}
             />
           </div>
           <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>

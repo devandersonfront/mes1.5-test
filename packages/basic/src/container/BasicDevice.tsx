@@ -440,7 +440,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -458,7 +458,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -491,7 +491,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','deviceDelete', haveIdRows.map((row) => (
           {...row , type : row.type_id, additional : [...additional.map(v => {
             if(row[v.name]) {
@@ -506,7 +506,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     Notiflix.Report.success('삭제되었습니다.','','확인');
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setBasicRow(Array.from(map.values()))
-setSelectList(new Set())
+    setSelectList(new Set())
 
 
 
@@ -642,7 +642,7 @@ setSelectList(new Set())
         '확인',
         );
         }
-        
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{DeleteBasic()},
           ()=>{}

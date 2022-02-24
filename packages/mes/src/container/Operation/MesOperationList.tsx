@@ -342,23 +342,23 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         contract_id: row.contract?.identification ?? '-' ,
         bom_root_id: row.product?.bom_root_id,
         // operation_sheet: row.
+        total_counter: row.total_good_quantity+row.total_poor_quantity,
         customer_id: row.product.customer?.name ?? '-',
         cm_id: row.product.model?.model ?? '-',
         product_id: row.product.code ?? '-',
         code: row.product.code ?? '-',
         name: row.product.name ?? '-',
-        type: TransferCodeToValue(row.product.type, 'material'),
+        type: TransferCodeToValue(row.product.type, 'product'),
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? '-',
         id: `sheet_${random_id}`,
-        total_counter:"-",
-        total_good_quantity:"-"
       }
     })
 
     Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
   }
+
 
   return (
     <div>

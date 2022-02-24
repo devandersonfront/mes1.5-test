@@ -50,7 +50,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -67,7 +67,8 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             mold: {
               ...v.mold
             },
-            setting: v.spare === '여' ? 0 : 1
+            setting: v.spare === '여' ? 0 : 1,
+            spare: v.spare === '여' ? 0 : 1
           }
         }
       }) ?? []
@@ -140,6 +141,11 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
+  const ModalUpdate = (e:any) => {
+    onRowChange(e)
+    setIsOpen(false)
+  }
+
   const ModalContents = () => {
     return <>
       <div style={{
@@ -165,6 +171,12 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
 
   const getSummaryInfo = (info) => {
     return row[info.key] ?? '-'
+  }
+
+  const updateMold = (moldInfo) => {
+    const moldUpdateList = moldInfo.map((v)=>{return v.mold})
+
+    setSearchList(moldUpdateList)
   }
 
   return (
@@ -237,11 +249,11 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-                <p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 금형 리스트 (여려금형을 동시에 선택하여 사용할 수 있습니다)</p>
+                <p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 금형 리스트 (여러금형을 동시에 선택하여 사용할 수 있습니다)</p>
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <MoldInfoModal column={column} row={row} onRowChange={onRowChange} modify/>
+              <MoldInfoModal column={column} row={row} onRowChange={ModalUpdate} modify/>
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
@@ -281,6 +293,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 if(selectRow !== undefined && selectRow !== null){
+                  const visibleSpare = searchList.map(v=> v.spare)
                   onRowChange({
                     ...row,
                     name: row.name,

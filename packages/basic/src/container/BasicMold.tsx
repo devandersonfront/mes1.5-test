@@ -227,8 +227,6 @@ const BasicMold = ({}: IProps) => {
 
   }
 
-  console.log(basicRow,'basicRow')
-
   const setAdditionalData = () => {
 
     const addtional = []
@@ -291,6 +289,7 @@ const BasicMold = ({}: IProps) => {
           }).filter(v => v)
           ]}
       )))
+
     }
 
     Notiflix.Report.success('삭제되었습니다.','','확인');
@@ -584,7 +583,6 @@ const BasicMold = ({}: IProps) => {
 
         break;
       case 5:
-        DeleteBasic()
 
         if(selectList.size === 0){
           return Notiflix.Report.warning(

@@ -313,8 +313,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         <FooterButton
                             onClick={() => {
                                 if(selectRow !== undefined){
-
-                                    console.log(searchList[selectRow],'searchList[selectRow]searchList[selectRow]')
                                     onRowChange({
                                         ...row,
                                         // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
@@ -328,19 +326,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                     })
                                 }
                                 setIsOpen(false)
-                                if(selectRow === 0 && selectRow !== undefined){
-                                    onRowChange({
-                                        ...row,
-                                        // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
-                                        // name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
-                                        // tab: column.type === 'bom' ? tab : undefined,
-                                        // type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
-                                        // version: row.version,
-                                        subFactory: searchList[selectRow],
-                                        affiliated_id: searchList[selectRow].name,
-                                        isChange:true
-                                    })
-                                }
                             }}
                             style={{backgroundColor: POINT_COLOR}}
                         >
