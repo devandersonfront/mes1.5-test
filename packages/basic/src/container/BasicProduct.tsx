@@ -194,17 +194,16 @@ const BasicProduct = ({page}: IProps) => {
           model: row.modelArray,
           // standard_uph: row.uph,
           molds:row?.molds?.map((mold)=>{
-            return { setting:mold.mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
+            return { setting:mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
           }).filter((mold) => mold.mold.mold_id) ?? [],
           machines:[
             ...row?.machines?.map((machine)=>{
               // console.log(machine,'machinemachine')
               return {
                 sequence : machine.sequence,
-                setting:machine.machine.setting,
+                setting: machine.setting,
                 // machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
                 machine : {
-                  ...machine.machine,
                   machine_id : machine.machine.machine_id,
                   mfrName : machine.machine.mfrName,
                   name : machine.machine.name,

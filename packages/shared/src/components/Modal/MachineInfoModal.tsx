@@ -433,7 +433,8 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                       machines: searchList.map((v, i) => {
                         return {
                           sequence: i+1,
-                          machine: v
+                          machine: v,
+                          setting : v.setting
                         }
                       }).filter((v)=> v.machine?.mfrCode),
                       isChange: true

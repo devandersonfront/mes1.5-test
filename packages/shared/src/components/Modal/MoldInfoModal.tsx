@@ -37,8 +37,8 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     total: 1
   })
 
-  console.log(column,'columncolumn')
-  console.log(row,'rowrow')
+
+  console.log(searchList,'searchListsearchListsearchList')
 
   useEffect(() => {
     if(isOpen) {
@@ -398,6 +398,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     
                           return {
                             sequence: i+1,
+                            setting : v.setting,
                             mold: v
                           }
                         }),
