@@ -30,7 +30,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([])
+  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -51,6 +51,48 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
   }, [isOpen, searchKeyword])
 
+
+  const haveBasicValidation = () => {
+
+    if(searchList.length > 0){
+        return searchList.some((list)=>list.setting === 1)
+    }
+
+    return true;
+} 
+
+  // 데이터 유무 판단
+  const haveDataValidation = () => {
+
+    let dataCheck = true
+
+    searchList.map((v,i)=>{
+      if(!v.mold_id){
+        dataCheck = false
+      }
+    })
+
+    return dataCheck
+  }
+
+  const executeValidation = () => {
+
+    let isValidation = false
+    // const haveList = searchList.length === 0
+    const haveData = haveDataValidation()
+    const haveBasic = haveBasicValidation()
+
+    if(!haveData){
+      isValidation = true
+      Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
+    }else if(!haveBasic){
+      isValidation = true
+      Notiflix.Report.warning("경고","기본설정은 최소 한개 이상 필요합니다.","확인",)
+    }
+
+    return isValidation
+
+  }
 
 
   const ModalContents = () => {
@@ -184,7 +226,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               setSearchList([
                 ...searchList,
                 {
-                  setting: 0,
+                  setting: 1,
                   sequence: searchList.length+1
                 }
               ])
@@ -319,22 +361,27 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <p>취소</p>
             </div>
             <div
-              onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
-                  onRowChange({
-                    ...row,
-                    molds: searchList.map((v, i) => {
 
-                      return {
-                        sequence: i+1,
-                        mold: v
-                      }
-                    }).filter((v)=> v.mold?.mold_id),
-                    name: row.name,
-                    isChange: true
-                  })
+            
+              onClick={() => {
+
+                const isValidation = executeValidation()
+                if(!isValidation){
+                  if(selectRow !== undefined && selectRow !== null){
+                    onRowChange({
+                      ...row,
+                      molds: searchList.map((v, i) => {
+                        return {
+                          sequence: i+1,
+                          mold: v
+                        }
+                      }).filter((v)=> v.mold?.mold_id),
+                      name: row.name,
+                      isChange: true
+                    })
+                  }
+                  setIsOpen(false)
                 }
-                setIsOpen(false)
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >

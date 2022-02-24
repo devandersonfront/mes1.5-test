@@ -29,12 +29,14 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+
+  console.log(searchList,'searchListsearchListsearchList')
 
   const selectMachineType = (value:number) => {
     let result = "";
@@ -65,6 +67,47 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         break;
     }
     return result;
+  }
+
+  const haveBasicValidation = () => {
+
+    if(searchList.length > 0){
+        return searchList.some((list)=>list.setting === 1)
+    }
+
+    return true;
+  }
+  
+  const haveDataValidation = () => {
+
+    let dataCheck = true
+
+    searchList.map((v,i)=>{
+        if(!v.machine_id){
+            dataCheck = false
+        }
+    })
+
+    return dataCheck
+  }
+
+  const executeValidation = () => {
+
+    let isValidation = false
+    // const haveList = searchList.length === 0
+    const haveData = haveDataValidation()
+    const haveBasic = haveBasicValidation()
+
+    if(!haveData){
+        isValidation = true
+        Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
+    }else if(!haveBasic){
+        isValidation = true
+        Notiflix.Report.warning("경고","기본설정은 최소 한개 이상 필요합니다.","확인",)
+    }
+
+    return isValidation
+
   }
 
   useEffect(() => {
@@ -215,7 +258,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               setSearchList([
                 ...searchList,
                 {
-                  setting:0,
+                  setting:1,
                   seq: searchList.length+1
                 }
               ])
@@ -315,6 +358,10 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               headerList={searchModalList.machineInfo}
               row={searchList }
               setRow={(e) => {
+
+
+                console.log(e,'eeeeeeeee')
+
                 setSearchList([...e.map((machine) => {
                   if(typeof machine.type !== "string"){
                     return {...machine, type_id:machine.type, type:selectMachineType(machine.type)}
@@ -355,21 +402,27 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             </div>
             <div
               onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
-                  onRowChange({
-                    ...row,
-                    machines: searchList.map((v, i) => {
-                      return {
-                        sequence: i+1,
-                        machine: v
-                      }
-                    }).filter((v)=> v.machine?.mfrCode),
-                    isChange: true
-                  })
-                }
-                setIsOpen(false)
-              }}
+
+                const isValidation = executeValidation()
+                if(!isValidation){
+
+                  if(selectRow !== undefined && selectRow !== null){
+                    onRowChange({
+                      ...row,
+                      machines: searchList.map((v, i) => {
+                        return {
+                          sequence: i+1,
+                          machine: v
+                        }
+                      }).filter((v)=> v.machine?.mfrCode),
+                      isChange: true
+                    })
+                  }
+                  setIsOpen(false)
+                }}
+              }
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              
             >
               <p>등록하기</p>
             </div>
