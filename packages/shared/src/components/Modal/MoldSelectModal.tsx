@@ -58,46 +58,50 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
-    let tmpMolds
-    if(!row.molds || !row.molds.length){
-      tmpMolds = row.product?.molds.map((v, index) => {
-        return {
-          mold: {
-            sequence: index+1,
-            mold: {
-              ...v.mold
-            },
-            setting: v.spare === '여' ? 0 : 1,
-            spare: v.spare === '여' ? 0 : 1
-          }
-        }
-      }) ?? []
-
-      onRowChange({
-        ...row,
-        name: row.name,
-        molds: tmpMolds,
-        isChange: true
-      })
-    } else {
-      tmpMolds = row.molds.map(v => {
-        return {
-          ...v,
-          ...v.mold
-        }
-      })
+    if(isOpen){
+      LoadBasic(row.productId)
     }
 
-    if(isOpen) {
-      setSearchList([...tmpMolds.map((v, index) => {
-        return {
-          ...v.mold,
-          ...v.mold.mold,
-          sequence: index+1,
-          spare: v.setting === 0 ? '여' : '부',
-        }
-      })])
-    }
+    // let tmpMolds
+    // if(!row.molds || !row.molds.length){
+    //   tmpMolds = row.product?.molds.map((v, index) => {
+    //     return {
+    //       mold: {
+    //         sequence: index+1,
+    //         mold: {
+    //           ...v.mold
+    //         },
+    //         setting: v.spare === '여' ? 0 : 1,
+    //         spare: v.spare === '여' ? 0 : 1
+    //       }
+    //     }
+    //   }) ?? []
+    //
+    //   onRowChange({
+    //     ...row,
+    //     name: row.name,
+    //     molds: tmpMolds,
+    //     isChange: true
+    //   })
+    // } else {
+    //   tmpMolds = row.molds.map(v => {
+    //     return {
+    //       ...v,
+    //       ...v.mold
+    //     }
+    //   })
+    // }
+    //
+    // if(isOpen) {
+    //   setSearchList([...tmpMolds.map((v, index) => {
+    //     return {
+    //       ...v.mold,
+    //       ...v.mold.mold,
+    //       sequence: index+1,
+    //       spare: v.setting === 0 ? '여' : '부',
+    //     }
+    //   })])
+    // }
   }, [isOpen, searchKeyword])
 
   const changeRow = (row: any, key?: string) => {
@@ -111,33 +115,22 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
+  const LoadBasic = async (productId) => {
     Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
+    const res = await RequestMethod('get', `moldPrdMoldLinkLoad`,{
       path: {
-        page: page,
-        renderItem: 18,
+        productId: productId
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
+    if(res){
+      setSearchList([...res].map((v, index) => {
+            return {
+              ...v,
+              sequence: index+1,
+              spare: v.setting === 0 ? '여' : '부',
+            }
+          }))
     }
   }
 
@@ -253,7 +246,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <MoldInfoModal column={column} row={row} onRowChange={ModalUpdate} modify/>
+              {/*<MoldInfoModal column={column} row={row} onRowChange={ModalUpdate} modify/>*/}
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>

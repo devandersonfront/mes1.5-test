@@ -63,6 +63,9 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         return {
           ...v,
           ...v.pause_reason,
+          hour: hour,
+          minute: min,
+          second: sec,
           amount: `${hour >= 10 ? hour : '0' + hour}:${min >= 10 ? min : '0' + min}:${sec >= 10 ? sec : '0' + sec}`
         }
       })])
