@@ -122,6 +122,12 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
     return row[info.key] ?? '-'
   }
 
+  const ModalUpdate = (e:any) => {
+    onRowChange(e)
+    setIsOpen(false)
+  }
+
+
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -199,7 +205,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <MachineInfoModal column={column} row={row} onRowChange={onRowChange} modify/>
+              <MachineInfoModal column={column} row={row} onRowChange={ModalUpdate} modify/>
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>

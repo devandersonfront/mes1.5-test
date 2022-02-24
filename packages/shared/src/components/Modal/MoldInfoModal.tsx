@@ -327,9 +327,9 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
                       return {
                         sequence: i+1,
-                        mold: v
+                        mold: {mold: {...v}}
                       }
-                    }).filter((v)=> v.mold?.mold_id),
+                    }),
                     name: row.name,
                     isChange: true
                   })
