@@ -142,7 +142,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
               ...selectData,
               additional: [
                 ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
+                  //if(!row[v.colName]) return undefined;
                   // result.push(
                   return {
                     mi_id: v.id,
@@ -525,6 +525,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
           [v.mi_id]: v.value
         }
       })
+
       let random_id = Math.random()*1000;
       return {
         ...row,

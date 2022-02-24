@@ -221,7 +221,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
                     version: row.version ?? null,
                     additional: [
                     ...additional.map((v, index)=>{
-                      if(!row[v.colName]) return undefined;
+                      //if(!row[v.colName]) return undefined;
                       return {
                           mi_id: v.id,
                           title: v.name,
