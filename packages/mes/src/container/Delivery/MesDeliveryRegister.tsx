@@ -28,19 +28,9 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     date: moment().format('YYYY-MM-DD'),
     // limit_date: moment().format('YYYY-MM-DD')
   }])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["deliveryRegister"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["deliveryIdentificationRegister"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  // const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
-  // const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
-  });
-
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
+  const [codeCheck, setCodeCheck] = useState<boolean>(false)
 
   useEffect(() => {
     getMenus().then((res) => {
@@ -88,7 +78,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     })
 
     if(res){
-      let tmpColumn = columnlist["deliveryRegister"]
+      let tmpColumn = codeCheck ? columnlist["deliveryCodeRegister"] : columnlist['deliveryIdentificationRegister']
       tmpColumn = tmpColumn.map((column: any) => {
         let menuData: object | undefined;
         res.bases && res.bases.map((menu: any) => {
@@ -199,7 +189,11 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         ])
         break;
       case 1:
-        SaveBasic()
+        if(selectList.size <= 0){
+          Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
+        }else{
+          SaveBasic()
+        }
 
         break;
       case 2:
@@ -224,6 +218,16 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   return (
       <div>
         <PageHeader
+            isCode
+            code={codeCheck}
+            onChangeCode={(value)=> {
+              setCodeCheck(value)
+              setBasicRow([{
+                date: moment().format('YYYY-MM-DD'),
+              }])
+              setSelectList(new Set())
+              setColumn(value ? columnlist.deliveryCodeRegister : columnlist.deliveryIdentificationRegister)
+            }}
             title={"납품 정보 등록"}
             buttons={
               [ '행추가', '저장하기', '삭제']

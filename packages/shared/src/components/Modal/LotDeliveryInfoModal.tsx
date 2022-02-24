@@ -135,9 +135,11 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         renderItem: 18,
       },
     })
-    if(res){
+    if(res && res.info_list.length <= 0){
+      Notiflix.Report.warning("경고","해당 품목의 재고가 없습니다.","확인", () => setIsOpen(false))
+      return
+    }else if(res){
       const searchList = changeRow(res.info_list)
-
       setPageInfo({
         ...pageInfo,
         page: res.page,
