@@ -127,14 +127,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       tmpRes = [{...tmpRow}]
     }
 
-    onRowChange({
-      ...row,
-      defect_reasons: defectReasons,
-      total_good_quantity: Number(totalGood),
-      total_poor_quantity: Number(totalPoor),
-      total_counter: totalGood + totalPoor,
-    })
-
     return tmpRes?.map((v, i) => {
       return {
         ...v,

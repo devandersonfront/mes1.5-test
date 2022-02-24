@@ -342,6 +342,7 @@ const ApiList = {
   recordGroupList: `/api/v1/record/groups`,
   stockAdminList: '/api/v1/stock/admin/summary',
   electicPowerList : `/api/v2/statistics/press/electric-power`,
+  sheetDefectList: `/api/v1/sheet/defect`,
 
   //search
   memberSearch: `/api/v1/member/search`,
