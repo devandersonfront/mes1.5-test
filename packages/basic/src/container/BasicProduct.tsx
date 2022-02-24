@@ -184,7 +184,7 @@ const BasicProduct = ({page}: IProps) => {
             }
           }
         })
-
+        
         return {
           ...row,
           ...selectData,
@@ -193,14 +193,14 @@ const BasicProduct = ({page}: IProps) => {
           customer_id: undefined,
           model: row.modelArray,
           // standard_uph: row.uph,
-          molds:[...row?.molds?.map((mold)=>{
-            return {...mold, setting:mold.mold.setting}
-          }).filter((mold) => mold.mold.mold_id) ?? []],
+          molds:row?.molds?.map((mold)=>{
+            return { setting:mold.mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
+          }).filter((mold) => mold.mold.mold_id) ?? [],
           machines:[
             ...row?.machines?.map((machine)=>{
-              console.log(machine,'machinemachine')
+              // console.log(machine,'machinemachine')
               return {
-                ...machine,
+                sequence : machine.sequence,
                 setting:machine.machine.setting,
                 // machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
                 machine : {
@@ -611,8 +611,8 @@ const BasicProduct = ({page}: IProps) => {
     if(spliceRow){
       if(isCheck){
         return Notiflix.Report.warning(
-          '코드 경고',
-          `중복된 코드를 입력할 수 없습니다`,
+          '경고',
+          `중복된 코드가 존재합니다.`,
           '확인'
         );
       }
@@ -661,6 +661,9 @@ const BasicProduct = ({page}: IProps) => {
           row={basicRow}
           // setRow={setBasicRow}
           setRow={(e) => {
+
+            console.log(e,'eeeeee')
+
             let tmp: Set<any> = selectList
             e.map(v => {
               if(v.isChange) tmp.add(v.id)

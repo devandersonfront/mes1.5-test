@@ -400,6 +400,27 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     return result;
   }
 
+  const competeBom = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
+
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '경고',
+          `중복된 BOM이 존재합니다.`,
+          '확인'
+        );
+      }
+    }
+
+    setSearchList(rows)
+  } 
+
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -653,7 +674,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                   }
                 })
                 // typeCheck(tmp)
-                setSearchList([...tmp])
+                competeBom(tmp)
               }}
               width={1746}
               rowHeight={32}

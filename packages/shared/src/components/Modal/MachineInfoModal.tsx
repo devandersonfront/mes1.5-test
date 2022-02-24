@@ -159,6 +159,28 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       // }
     }
 
+    const competeMachine = (rows) => {
+
+      const tempRow = [...rows]
+      const spliceRow = [...rows]
+      spliceRow.splice(selectRow, 1)
+  
+      const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow]?.name && row.name !==undefined && row.name !=='')
+  
+      if(spliceRow){
+        if(isCheck){
+          return Notiflix.Report.warning(
+            '경고',
+            `중복된 기계가 존재합니다.`,
+            '확인'
+          );
+        }
+      }
+  
+      setSearchList(rows)
+    } 
+  
+
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -338,7 +360,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               if(selectRow === -1){
                 return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
               }
-              if(selectRow){
                 let tmpRow = [...searchList]
                 tmpRow.splice(selectRow, 1)
                 setSearchList([...tmpRow.map((v, i) => {
@@ -348,7 +369,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   }
                 })])
                 setSelectRow(-1)
-              }
             }}>
               <p>삭제</p>
             </Button>
@@ -359,17 +379,18 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               row={searchList }
               setRow={(e) => {
 
+                console.log(e,'eeee')
 
-                console.log(e,'eeeeeeeee')
-
-                setSearchList([...e.map((machine) => {
+                const filterList = [...e.map((machine) => {
                   if(typeof machine.type !== "string"){
                     return {...machine, type_id:machine.type, type:selectMachineType(machine.type)}
                   }else{
                     return {...machine}
 
                   }
-                })])
+                })]
+
+                competeMachine(filterList)
               }}
               width={1746}
               rowHeight={32}
