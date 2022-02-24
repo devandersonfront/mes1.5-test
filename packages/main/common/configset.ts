@@ -83,7 +83,7 @@ export const AUTHORITY_LIST = [
       { title: "생산 관리", show: false, checkable: true, check: false, child: [
           { title: "작업지시서 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_01" },
           { title: "작업지시서 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_02" },
-          { title: "작업일보 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_04" },
+          { title: "작업일보 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_08" },
           { title: "작업완료 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_PROD_06" },
         ] },
       { title: "원자재 관리", show: false, checkable: true, check: false, child: [
@@ -102,10 +102,10 @@ export const AUTHORITY_LIST = [
 
       { title: "품질 관리", show: false, checkable: true, check: false, child: [
           { title: "불량 통계 (자주검사 관리)", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_01" },
-          { title: "초중종 검사 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_01" },
-          { title: "작업 표준서 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_01" },
-          { title: "제품 변경점 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_01" },
-          { title: "제품 변경점 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_01" },
+          { title: "초중종 검사 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_02" },
+          { title: "작업 표준서 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_03" },
+          { title: "제품 변경점 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_04" },
+          { title: "제품 변경점 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_QA_05" },
         ] },
       { title: "재고 관리", show: false, checkable: true, check: false, child: [
           { title: "재고 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_STK_01" },

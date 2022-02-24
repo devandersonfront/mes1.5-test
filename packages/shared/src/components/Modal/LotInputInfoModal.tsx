@@ -320,6 +320,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                   headerList={column.type === 'readonly' ? searchModalList.InputListReadonly : searchModalList.InputList}
                   row={searchList ?? [{}]}
                   setRow={(e) => {
+                    console.log("???? : ", e)
                     let tmp = e.map((v, index) => {
                       if(v.newTab === true){
                         const newTabIndex = bomDummy.length+1
@@ -327,12 +328,21 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                         setFocusIndex(newTabIndex-1)
                       }
 
-                      if(v.lotList){
+                      // if(v.lotList){
+                      //   setSelectProduct(v.code)
+                      //   setLotList([...v.lotList.map((v,i) => ({
+                      //     ...v,
+                      //     seq: i+1
+                      //   }))])
+                      // }
+
+                      if(v.bom){
                         setSelectProduct(v.code)
-                        setLotList([...v.lotList.map((v,i) => ({
-                          ...v,
-                          seq: i+1
-                        }))])
+                          setLotList([...v.bom.map((v,i) => ({
+                            ...v.lot,
+                            lot_number: v.lot.child_lot_rm.lot_number,
+                            seq: i+1
+                          }))])
                       }
 
                       return {

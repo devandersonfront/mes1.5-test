@@ -248,16 +248,13 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                     <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
                         <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                             <div style={{ display: 'flex', width: 1200}}>
-                                <p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 기계 리스트</p>
+                                <p style={{fontSize: 22, padding: 0, margin: 0}}>사용 가능 공구 리스트</p>
                             </div>
-                        </div>
-                        <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-                            <MachineInfoModal column={column} row={row} onRowChange={onRowChange} modify/>
                         </div>
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
                         <ExcelTable
-                            headerList={searchModalList.machineUse}
+                            headerList={searchModalList.toolUse}
                             row={searchList ?? [{}]}
                             setRow={(e) => {
                                 const count = e.reduce((cnt, element) => cnt + (element.spare === '여'), 0)

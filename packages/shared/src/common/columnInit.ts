@@ -913,6 +913,7 @@ export const columnlist: any = {
     {key:"uph", name:"UPH", width: 118},
     {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, type: 'readonly'},
     {key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit},
+    {key: 'tool_id', name: '공구', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit},
     {key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit},
   ],
   cncRecordListV2: [

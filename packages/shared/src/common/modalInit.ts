@@ -216,6 +216,13 @@ export const searchModalList: any = {
         {pk: 'spare', name: '부'},
       ], type: 'Modal'},
   ],
+  toolUse: [
+    {key: 'sequence', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: '-', type: 'Modal' },
+    {key: 'name', name: '공구명', width: 160, formatter: LineBorderContainer, placeholder: '-', type: 'Modal', textAlign: 'center' },
+    {key: 'customer', name: '거래처', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
+    {key: 'type', name: '생산량', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
+  ],
   moldList: [
     {key: 'sequence', name: '번호', width: 64, textAlign: 'center', formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },

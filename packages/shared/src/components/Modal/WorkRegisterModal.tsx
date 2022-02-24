@@ -54,16 +54,9 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   ])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{sequence: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
