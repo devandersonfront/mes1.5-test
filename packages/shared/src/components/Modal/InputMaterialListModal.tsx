@@ -115,7 +115,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   const changeRow = (tmpRow: any, parent?:any) => {
     let tmpData = []
-    let row_good_quantity = row.good_quantity
+    const bom_info = row.bom_info
+    const row_good_quantity = row.good_quantity
     setSummaryData({
       // ...res.parent
       identification: row.identification,
@@ -169,6 +170,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
       return {
         ...childData,
+        bom_info: bom_info !== undefined ? bom_info[i] : null,
         seq: i+1,
         code: childData.code,
         type: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? "submaterial" : "product"),
@@ -192,7 +194,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         }: null,
         parent:v.parent,
         setting:v.setting === 0 ? "기본" : "스페어",
-        disturbance: row_good_quantity ?? 0
+        disturbance: row_good_quantity ?? 0,
+        real_disturbance: row_good_quantity * v.usage ?? 0
       }
     })
     return tmpData
@@ -427,7 +430,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
                 let selectTmp = searchList.map((v)=>{
                   if(v.code === selectProduct){
-                    return {...v, disturbance: allAmount}
+                    return {...v, disturbance: allAmount, real_disturbance: allAmount * v.usage}
                   }else{
                     return v
                   }
@@ -481,33 +484,62 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                 }else{
                   let bomList = []
                   let disturbance = 0
+
                   searchList.map((bom, index) => {
                     let totalAmount = 0
-                    bom.lots?.map(lot => {
-                      if(Number(lot.amount)){
-                        totalAmount += Number(lot.amount)
+                    if(bom.lots !== undefined) {
+                      bom.lots?.map(lot => {
+                        if (Number(lot.amount)) {
+                          totalAmount += Number(lot.amount)
 
-                        if(Number(lot.amount) > lot.current){
-                          Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
-                        }
+                          if (Number(lot.amount) > lot.current) {
+                            Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
+                          }
 
-                        bomList.push({
-                          record_id: row.record_id,
-                          ...row.input_bom[index],
-                          lot: {
-                            elapsed: lot.elapsed,
-                            type: bom.tab,
-                            child_lot_rm: bom.tab === 0 ? {...lot} : null,
-                            child_lot_sm: bom.tab === 1 ? {...lot} : null,
-                            child_lot_record: bom.tab === 2 ? {...lot} : null,
-                            warehousing: lot.warehousing,
-                            date: lot.date,
-                            current: lot.current,
-                            amount: Number(lot.amount) > lot.current ? 0 : lot.amount
+                          bomList.push({
+                            record_id: row.record_id,
+                            ...row.input_bom[index],
+                            lot: {
+                              elapsed: lot.elapsed,
+                              type: bom.tab,
+                              child_lot_rm: bom.tab === 0 ? {...lot} : null,
+                              child_lot_sm: bom.tab === 1 ? {...lot} : null,
+                              child_lot_record: bom.tab === 2 ? {...lot} : null,
+                              warehousing: lot.warehousing,
+                              date: lot.date,
+                              current: lot.current,
+                              amount: Number(lot.amount) > lot.current ? 0 : lot.amount
+                             }
+                            })
+                          }
+                         })
+                      }else {
+                        bom.bom_info?.map(lot => {
+                          if (Number(lot.amount)) {
+                            totalAmount += Number(lot.amount)
+
+                            if (Number(lot.amount) > lot.current) {
+                              Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
+                            }
+
+                            bomList.push({
+                              record_id: row.record_id,
+                              ...row.input_bom[index],
+                              lot: {
+                                elapsed: lot.elapsed,
+                                type: bom.tab,
+                                child_lot_rm: bom.tab === 0 ? {...lot} : null,
+                                child_lot_sm: bom.tab === 1 ? {...lot} : null,
+                                child_lot_record: bom.tab === 2 ? {...lot} : null,
+                                warehousing: lot.warehousing,
+                                date: lot.date,
+                                current: lot.current,
+                                amount: Number(lot.amount) > lot.current ? 0 : lot.amount
+                              }
+                            })
                           }
                         })
                       }
-                    })
 
                     if(totalAmount !== bom.disturbance){
                       disturbance += 1
@@ -520,9 +552,12 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                     if(disturbanceArray.includes(0)){
                       Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
                     }else if(allEqual(disturbanceArray)){
+                      const bomLotInfo = searchList.map((v)=> {return v.lots})
+
                       onRowChange({
                         ...row,
                         bom: bomList,
+                        bom_info: bomLotInfo,
                         quantity: bomList[0].lot.amount,
                         good_quantity: bomList[0].lot.amount
                       })
