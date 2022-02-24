@@ -30,6 +30,7 @@ export interface IExcelHeaderType {
   summaryType?: any
   modalType?: boolean
   readonly?: boolean
+  load?: string
   title?: string
   url?: string
   headerType?:any[]

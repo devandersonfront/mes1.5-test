@@ -70,6 +70,8 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         if(isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount ) === -1) {
           loadDefectList()
         }
+      }else if(column.load === 'sheet'){
+        setTotalCount(row.total_poor_quantity)
       }
     }
   }, [isOpen, searchKeyword, row['defect_reasons']])
@@ -85,71 +87,16 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
-    }
-  }
-
-  const addNewTab = (index: number) => {
-    let tmp = bomDummy
-    tmp.push({code: 'SU-20210701-'+index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
-    setBomDummy([...tmp])
-  }
-
-  const deleteTab = (index: number) => {
-    if(bomDummy.length - 1 === focusIndex){
-      setFocusIndex(focusIndex-1)
-    }
-    if(bomDummy.length === 1) {
-      return setIsOpen(false)
+  const changeRowSheet = (row: any, key?: string) => {
+    let tmpData = {
+      ...row,
+      process_name: row.pdr.process_name,
+      reason: row.pdr.reason
     }
 
-    let tmp = bomDummy
-    tmp.splice(index, 1)
-    setBomDummy([...tmp])
+    return tmpData
   }
 
-  const AddComma = (number:number) => {
-    //후방탐색 부정형은 TV, 아이폰에서 현재 지원을 안함
-    // let regexp = /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g
-    return number.toLocaleString()
-  }
-
-  const totalDefect = () => {
-    let total = 0
-    searchList.map(v => {
-      if(v.amount){
-        total += Number(v.amount)
-      }
-    })
-
-    return AddComma(total)
-  }
 
   const loadDefectList = async () => {
     Notiflix.Loading.circle()
@@ -163,6 +110,23 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     if(res){
       let searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
+      })
+
+      setSearchList([...searchList])
+    }
+  }
+
+  const loadDefectSheet = async () => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `sheetDefectList`,{
+      path: {
+        os_id: row.os_id
+      }
+    })
+
+    if(res){
+      let searchList = res.map((row: any, index: number) => {
+        return changeRowSheet(row)
       })
 
       setSearchList([...searchList])
@@ -185,6 +149,9 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           background:row.border ? "#19B9DF80" : column.type === 'Modal' ? "white" : '#0000',
         }} onClick={() => {
           setIsOpen(true)
+          if(column.load === 'sheet'){
+            loadDefectSheet()
+          }
         }}>
           <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>{totalCount}</p>
         </div>
