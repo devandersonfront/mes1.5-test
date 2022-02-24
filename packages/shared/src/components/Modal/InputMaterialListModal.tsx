@@ -413,14 +413,15 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               row={lotList ?? [{}]}
               setRow={(e) => {
                 let allAmount = 0
+                const usageArray = searchList.map((v)=> {return v.usage})
 
-                const error = e.map((v)=> {
-                  if (v.current < v.amount) {
+                const error = e.map((v,i)=> {
+                  if (v.current < v.amount * usageArray[i]) {
                     return 1
                   }
                 }).filter(v=>v)
                 if(error.includes(1)){
-                  return   Notiflix.Report.warning("경고", "LOT 재고량 보다 생산량이 많습니다.", "확인");
+                  return   Notiflix.Report.warning("경고", "LOT 재고량 보다 소요량이 많습니다.", "확인");
                 }
 
                 e.filter((v=>v.amount)).map((v)=> {
