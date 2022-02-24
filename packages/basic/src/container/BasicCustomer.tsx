@@ -57,6 +57,9 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
 
   const SaveBasic = async () => {
 
+
+    const existence = valueExistence()
+
     if(selectList.size === 0){
       return Notiflix.Report.warning(
         '경고',
@@ -65,88 +68,97 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
         );
     }
 
-    const searchAiID = (rowAdditional:any[], index:number) => {
-      let result:number = undefined;
-      rowAdditional.map((addi, i)=>{
-        if(index === i){
-          result = addi.ai_id;
-        }
-      })
-      return result;
-    }
+    if(!existence){
 
-
-    let res: any
-    res = await RequestMethod('post', `customerSave`,
-      basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let selectKey: string[] = []
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-            })
-
-            return {
-              ...row,
-              ...selectData,
-              additional: [
-                ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
-                  // result.push(
-                  return {
-                    mi_id: v.id,
-                    title: v.name,
-                    value: row[v.colName] ?? "",
-                    unit: v.unit,
-                    ai_id: searchAiID(row.additional, index) ?? undefined,
-                    version:row.additional[index]?.version ?? undefined
-                  }
-                  // )
-                }).filter((v) => v)
-              ]
-            }
-
+      const searchAiID = (rowAdditional:any[], index:number) => {
+        let result:number = undefined;
+        rowAdditional.map((addi, i)=>{
+          if(index === i){
+            result = addi.ai_id;
           }
-        }).filter((v) => v))
-
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
         })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
+        return result;
       }
+
+
+      let res: any
+      res = await RequestMethod('post', `customerSave`,
+        basicRow.map((row, i) => {
+            if(selectList.has(row.id)){
+              let selectKey: string[] = []
+              let additional:any[] = []
+              column.map((v) => {
+                if(v.type === 'additional'){
+                  additional.push(v)
+                }
+              })
+
+              let selectData: any = {}
+
+              Object.keys(row).map(v => {
+                if(v.indexOf('PK') !== -1) {
+                  selectData = {
+                    ...selectData,
+                    [v.split('PK')[0]]: row[v]
+                  }
+                }
+
+                if(v === 'unitWeight') {
+                  selectData = {
+                    ...selectData,
+                    unitWeight: Number(row['unitWeight'])
+                  }
+                }
+
+                if(v === 'tmpId') {
+                  selectData = {
+                    ...selectData,
+                    id: row['tmpId']
+                  }
+                }
+              })
+
+              return {
+                ...row,
+                ...selectData,
+                additional: [
+                  ...additional.map((v, index)=>{
+                    if(!row[v.colName]) return undefined;
+                    // result.push(
+                    return {
+                      mi_id: v.id,
+                      title: v.name,
+                      value: row[v.colName] ?? "",
+                      unit: v.unit,
+                      ai_id: searchAiID(row.additional, index) ?? undefined,
+                      version:row.additional[index]?.version ?? undefined
+                    }
+                    // )
+                  }).filter((v) => v)
+                ]
+              }
+
+            }
+          }).filter((v) => v))
+
+      if(res){
+        Notiflix.Report.success('저장되었습니다.','','확인');
+        if(keyword){
+          SearchBasic(keyword, option, page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }else{
+          LoadBasic(page).then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+      }
+    }else{
+      return Notiflix.Report.warning(
+        '경고',
+        `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+        '확인',
+      );
     }
   }
 
@@ -587,14 +599,31 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const competeCustom = (rows) => {
+  const valueExistence = () => {
 
-    console.log(rows,'rowsrowsrowsrows')
+    const selectedRows = filterSelectedRows()
+    
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함 
+    if(selectedRows.length > 0){ 
+
+      const nameCheck = selectedRows.every((data)=> data.name)
+  
+      if(!nameCheck){
+        return '거래처명'
+      }
+
+    }
+
+    return false;
+    
+  }
+
+  const competeCustom = (rows) => {
 
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null)
+    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null && row.name !== '')
 
     if(spliceRow){
       if(isCheck){

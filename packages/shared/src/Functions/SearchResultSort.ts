@@ -100,6 +100,16 @@ export const SearchResultSort = (infoList, type: string) => {
         }
       })
     }
+    case 'tool' : {
+      return infoList.map((v) => {
+        return {
+          ...v,
+          customer: v.customer?.name,
+          customerArray: v.customer,
+        }
+      })
+    }
+
     default : {
       return infoList
     }

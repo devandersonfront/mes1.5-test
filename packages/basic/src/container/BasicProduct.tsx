@@ -205,6 +205,12 @@ const BasicProduct = ({page, option}: IProps) => {
               }
             }).filter((machine) => machine.machine.machine_id)?? []
           ],
+          tools:[
+            ...row?.tools?.map((tool) => {
+              // return {...tool, tool:{...tool.tool, seq:undefined, customer:tool.tool.customerData}, setting:tool.tool.setting}
+              return {...tool, tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional}, setting:tool.tool.setting}
+            })
+          ],
           type:row.type_id ?? row.typeId ?? row.typePK,
           additional: [
             ...additional.map((v, index)=>{
@@ -259,7 +265,7 @@ const BasicProduct = ({page, option}: IProps) => {
 
   }
 
-  console.log(basicRow,'basicRow')
+  console.log('제품 등록 관리' , basicRow)
 
   const convertDataToMap = () => {
     const map = new Map()
@@ -594,7 +600,7 @@ const BasicProduct = ({page, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined)
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
 
     if(spliceRow){
       if(isCheck){
