@@ -130,8 +130,8 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          color: column.type === 'Modal' && '#0D0D0D',
-          background:row.border ? "#19B9DF80" : column.type === 'Modal' ? "white" : '#0000',
+          color: column.modalType && '#0D0D0D',
+          background:row.border ? "#19B9DF80" : column.modalType ? "white" : '#0000',
         }} onClick={() => {
           setIsOpen(true)
         }}>

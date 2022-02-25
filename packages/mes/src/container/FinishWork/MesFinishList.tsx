@@ -29,16 +29,14 @@ let now = moment().format('YYYY-MM-DD');
 const MesFinishList = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
-  const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
   const [basicRow, setBasicRow] = useState<Array<any>>([{id: '',}])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["finishListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['지시고유번호', '거래처', '모델', 'code',  '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD'),
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
+    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    to: moment().format('YYYY-MM-DD')
   });
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -54,6 +52,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
           Notiflix.Loading.remove()
         })
       }else{
+
         LoadBasic(pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
@@ -149,9 +148,9 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
     Notiflix.Loading.circle()
-    // if(!isPaging){
-    //   setOptionIndex(option)
-    // }
+    if(!isPaging){
+      setOptionIndex(option)
+    }
     const res = await RequestMethod('get', `operationSearch`,{
       path: {
         page: isPaging ?? 1,
@@ -159,7 +158,10 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       },
       params: {
         keyword: keyword ?? '',
-        opt: optionIndex ?? 0
+        opt: optionIndex ?? 0,
+        status : 2,
+        from: selectDate.from,
+        to: selectDate.to,
       }
     })
 
@@ -270,6 +272,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
+        total_counter: row.total_good_quantity + row.total_poor_quantity ?? '-',
         contract_id: row.contract?.identification ?? '-' ,
         customer_id: row.product?.customer?.name ?? '-',
         cm_id: row.product?.model?.model ?? '-',
@@ -282,6 +285,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       }
     })
 
+    Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
   }
 
@@ -290,8 +294,9 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       <PageHeader
         isSearch
         isCalendar
-        searchKeyword={""}
+        searchKeyword={keyword}
         searchOptionList={optionList}
+        optionIndex={option}
         onChangeSearchKeyword={(keyword) => {
           setSearchKeyword(keyword)
           setPageInfo({page:1, total:1})
@@ -305,13 +310,6 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectDate={(date) => setSelectDate(date)}
         title={"작업 완료 리스트"}
-        buttons={
-          ['']
-        }
-        buttonsOnclick={
-          () => {}
-          // onClickHeaderButton
-        }
       />
       <ExcelTable
         editable
@@ -361,16 +359,16 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         }}
 
       />
-      <ExcelDownloadModal
+      {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}
-      />
+      /> */}
     </div>
   );
 }

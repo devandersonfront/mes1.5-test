@@ -63,6 +63,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                     ...row,
                     [column.key+'Path']: null,
                     [column.key]: null,
+                    isChange:true
                   })
               }}
               src={Icon_X} style={{borderRadius:"4px", width:"24px", height:"24px", marginRight:"4px", marginLeft: '4px'}} />

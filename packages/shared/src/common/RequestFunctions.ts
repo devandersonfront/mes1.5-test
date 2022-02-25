@@ -34,29 +34,29 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
         }
       }
       return Axios.get(tmpUrl, token && {'headers': {'Authorization': token}, responseType: contentsType})
-        .then((result) => {
-          // if(result.data.status !== 200){
-          //   Notiflix.Report.failure('불러올 수 없습니다.', result.data.message, '확인')
-          //   return false
-          // }
-          Notiflix.Loading.remove(300)
-          return result.data
-        })
-        .catch((error) => {
-          if(error.response?.status === 406 || error.response?.status === 403) {
+          .then((result) => {
+            // if(result.data.status !== 200){
+            //   Notiflix.Report.failure('불러올 수 없습니다.', result.data.message, '확인')
+            //   return false
+            // }
             Notiflix.Loading.remove(300)
-            Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
-            return false
-          }else if (error.response?.status === 401){
-            Notiflix.Loading.remove(300)
-            Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
-            return false
-          }else if(error.response?.status === 500){
-            Notiflix.Loading.remove(300)
-            Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-            return false
-          }
-        })
+            return result.data
+          })
+          .catch((error) => {
+            if(error.response?.status === 406 || error.response?.status === 403) {
+              Notiflix.Loading.remove(300)
+              Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
+              return false
+            }else if (error.response?.status === 401){
+              Notiflix.Loading.remove(300)
+              Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
+              return false
+            }else if(error.response?.status === 500){
+              Notiflix.Loading.remove(300)
+              Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+              return false
+            }
+          })
     case 'post':
       let postUrl:string = ''
       if(url.indexOf('http://') !== -1){
@@ -79,88 +79,88 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
       }
 
       return Axios.post(postUrl, data, token && {'headers': {'Authorization': token}, responseType: contentsType})
-        .then((result) => {
-          Notiflix.Loading.remove(300)
-          if(result.data){
-            return result.data
-          }else{
-            return true
-          }
-        })
-        .catch((error) => {
-          Notiflix.Loading.remove(300)
-          if(error.response.status === 400) {
-            Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
-          }else if(error.response.status === 500){
-            Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-          }else if(error.response.status === 404){
-            Notiflix.Report.failure('에러', error.response.data.message, '확인')
-          }
-          throw error.response
-        })
-    case 'put':
-      return Axios.put(ENDPOINT+url, data,token && {'headers': {'Authorization': token}, responseType: contentsType})
-        .then((result) => {
-          Notiflix.Loading.remove(300)
-          if(result.data.status !== 200){
-            Notiflix.Report.failure('저장할 수 없습니다.', result.data.message, '확인')
-            return false
-          }
-          return result
-        })
-        .catch((error: AxiosError) => {
-          Notiflix.Loading.remove(300)
-          return false
-        })
-    case 'delete':
-        if(data.path){
-          let tmpUrl = `${ENDPOINT}${url}`
-
-          Object.values(data.path).map(v => {
-            if(v){
-              tmpUrl += `/${v}`
+          .then((result) => {
+            Notiflix.Loading.remove(300)
+            if(result.data){
+              return result.data
+            }else{
+              return true
             }
           })
-          return Axios.delete(tmpUrl, token && {'headers': {'Authorization': token}, responseType: contentsType})
-              .then((result) => {
-                // if(result.data.status !== 200){
-                //   Notiflix.Report.failure('불러올 수 없습니다.', result.data.message, '확인')
-                //   return false
-                // }
+          .catch((error) => {
+            Notiflix.Loading.remove(300)
+            if(error.response.status === 400) {
+              Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
+            }else if(error.response.status === 500){
+              Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+            }else if(error.response.status === 404){
+              Notiflix.Report.failure('에러', error.response.data.message, '확인')
+            }
+            throw error.response
+          })
+    case 'put':
+      return Axios.put(ENDPOINT+url, data,token && {'headers': {'Authorization': token}, responseType: contentsType})
+          .then((result) => {
+            Notiflix.Loading.remove(300)
+            if(result.data.status !== 200){
+              Notiflix.Report.failure('저장할 수 없습니다.', result.data.message, '확인')
+              return false
+            }
+            return result
+          })
+          .catch((error: AxiosError) => {
+            Notiflix.Loading.remove(300)
+            return false
+          })
+    case 'delete':
+      if(data.path){
+        let tmpUrl = `${ENDPOINT}${url}`
+
+        Object.values(data.path).map(v => {
+          if(v){
+            tmpUrl += `/${v}`
+          }
+        })
+        return Axios.delete(tmpUrl, token && {'headers': {'Authorization': token}, responseType: contentsType})
+            .then((result) => {
+              // if(result.data.status !== 200){
+              //   Notiflix.Report.failure('불러올 수 없습니다.', result.data.message, '확인')
+              //   return false
+              // }
+              Notiflix.Loading.remove(300)
+              return true
+            })
+            .catch((error) => {
+              if(error.response.status === 406 || error.response.status === 403) {
                 Notiflix.Loading.remove(300)
-                return true
-              })
-              .catch((error) => {
-                if(error.response.status === 406 || error.response.status === 403) {
-                  Notiflix.Loading.remove(300)
-                  Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
-                  return false
-                }else if (error.response.status === 401){
-                  Notiflix.Loading.remove(300)
-                  Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
-                  return false
-                }else if(error.response.status === 500){
-                  Notiflix.Loading.remove(300)
-                  Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-                  return false
-                }
-              })
-        }
+                Notiflix.Report.failure('권한 에러', '올바르지 않은 권한입니다.', '확인', () => Router.back())
+                return false
+              }else if (error.response.status === 401){
+                Notiflix.Loading.remove(300)
+                Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
+                return false
+              }else if(error.response.status === 500){
+                Notiflix.Loading.remove(300)
+                Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+                return false
+              }
+            })
+      }
       return Axios.delete(ENDPOINT+url, token && {
         'headers': {'Authorization': token}, responseType: contentsType,
         data: data
       })
-        .then((result) => {
-          Notiflix.Loading.remove(300)
-          return true
-        })
-        .catch((error) => {
-          Notiflix.Loading.remove(300)
-          if(error.response.status === 400) {
-            Notiflix.Report.failure('삭제할 수 없습니다.', '입력값을 확인해주세요', '확인')
-          }
-          return false
-        })
+          .then((result) => {
+            Notiflix.Loading.remove(300)
+            return true
+          })
+          .catch((error) => {
+            Notiflix.Loading.remove(300)
+            if(error.response.status === 400) {
+              Notiflix.Report.failure('삭제할 수 없습니다.', '입력값을 확인해주세요', '확인')
+            }
+            return false
+          })
   }
 }
 
@@ -169,16 +169,16 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
 
   if(apiType === 'excelDownload'){
     return Axios.post(ApiList[apiType], data, tokenData && {'headers': {'Authorization': tokenData}, responseType: responseType})
-      .then((result) => {
-        return result.data
-      })
-      .catch((error) => {
-        if(error.response.status === 400) {
-          Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
-        }else if(error.response.status === 500){
-          Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-        }
-      })
+        .then((result) => {
+          return result.data
+        })
+        .catch((error) => {
+          if(error.response.status === 400) {
+            Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
+          }else if(error.response.status === 500){
+            Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+          }
+        })
   }else if( apiType === 'excelFormatDownload'){
 
     let tmpUrl = ApiList[apiType]
@@ -194,7 +194,7 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
       if(data.params){
         Object.keys(data.params).map((v, i) => {
           if(i === 0) {
-          tmpUrl += `?${v}=${data.params[v]}`
+            tmpUrl += `?${v}=${data.params[v]}`
           }else{
             tmpUrl += `&${v}=${data.params[v]}`
           }
@@ -203,17 +203,17 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
     }
 
     return Axios.get(tmpUrl, tokenData && {'headers': {'Authorization': tokenData}, responseType: responseType})
-      .then((result) => {
-        return result.data
-      })
-      .catch((error) => {
-        if(error.response.status === 400) {
-          Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
-        }else if(error.response.status === 500){
-          Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-        }
-        return false
-      })
+        .then((result) => {
+          return result.data
+        })
+        .catch((error) => {
+          if(error.response.status === 400) {
+            Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
+          }else if(error.response.status === 500){
+            Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+          }
+          return false
+        })
   } else {
     const response = await requestApi(MethodType, ApiList[apiType], data, tokenData, responseType, params, path)
     return response
@@ -246,7 +246,7 @@ const ApiList = {
   productprocessSave: `/api/v1/product/process/save`,
   stockSummarySave: `/api/v1/stock/summary`,
   operationSave: `/api/v1/sheet/save`,
-  recordSave: `/api/v1/record/save`,
+  recordSave: `/cnc/api/v1/record/save`,
   factorySave: `/api/v1/factory/save`,
   deviceSave: `/api/v1/device/save`,
   rawMaterialSave: `/api/v1/raw-material/save`,
@@ -276,6 +276,8 @@ const ApiList = {
   recordInspectFrame: `/cnc/api/v1/record/inspect/frame`,
   documentLoad: `/cnc/api/v1/document/load`,
   productChangeLoad: `/cnc/api/v1/product-changes/load`,
+  moldPrdMoldLinkLoad: `/api/v1/mold/prd-mold-link/load`,
+  machinePrdMachineLinkLoad: `/api/v1/machine/prd-machine-link/load`,
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -287,7 +289,7 @@ const ApiList = {
   modelDelete: `/api/v1/model/delete`,
   processDelete: `/api/v1/process/delete`,
   machineDelete: `/api/v1/machine/delete`,
-  productDelete: `/api/v1/product/delete`,
+  productDelete: `/cnc/api/v1/product/delete`,
   rawmaterialDelete: `/api/v1/rawmaterial/delete`,
   rawMaterialDelete: `/api/v1/raw-material/delete`,
   subMaterialDelete: `/api/v1/sub-material/delete`,
@@ -331,7 +333,7 @@ const ApiList = {
   operactionList: `/api/v1/operation/list`,
   defectList: `/api/v1/quality/statistics/defect`,
   productChangeList: `/cnc/api/v1/product-changes/list`,
-  recordList: `/api/v1/record/list`,
+  recordList: `/cnc/api/v1/record/list`,
   cncRecordList: `/cnc/api/v1/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
   factoryList: `/api/v1/factory/list`,
@@ -361,6 +363,7 @@ const ApiList = {
   electicPowerList : `/api/v2/statistics/press/electric-power`,
   productUphList: `/cnc/api/v1/kpi/product/uph/list`,
   productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
+  sheetDefectList: `/api/v1/sheet/defect`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -398,13 +401,13 @@ const ApiList = {
   itemDelete: `/menu/delete`,
   deviceSearch: `/api/v1/device/search`,
   toolSearch: `/cnc/api/v1/tool/search`,
+  toolProductSearch: `/cnc/api/v1/tool/prd-tool-link/load`,
   lotToolSearch: `/cnc/api/v1/lot-tool/search`,
   qualityRecordInspectSearch: '/cnc/api/v1/quality/record/inspect/search',
   productChangeSearch: `/cnc/api/v1/product-changes/search`,
-
   //all
   authorityAll: `/api/v1/auth/all`,
-  recordAll: `/api/v1/record/all`,
+  recordAll: `/cnc/api/v1/record/all`,
   shipmentAll:`/api/v1/shipment/all`,
   documentAll: `/cnc/api/v1/document/all`,
 
@@ -419,6 +422,8 @@ const ApiList = {
 
   bomLoad: `/api/v1/bom`,
   bomSave: `/api/v1/bom/save`,
+
+  sheetBomLoad: `/api/v1/sheet`,
 
   anonymousLoad: `/anonymous/load`,
 

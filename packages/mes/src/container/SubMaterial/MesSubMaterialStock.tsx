@@ -40,7 +40,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
     code: 'SUS-111', name: 'SUS360', texture: 'SUS360', depth: '1.2', width: 3000, height: 3000, type: 'COIL', amount: 1000,
     number: `${dummyDate.format('YYMMDD')}-01-01`, current: 1000, customer: '한국상사',
   }])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawstockV1u"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["substockV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['부자재 CODE', '부자재 품명',  '부자재 LOT 번호', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -51,8 +51,8 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   })
 
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment().startOf('isoWeek').format('YYYY-MM-DD'),
-    to: moment().endOf('isoWeek').format('YYYY-MM-DD')
+    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    to: moment().format('YYYY-MM-DD')
   });
 
   const [nzState, setNzState] = useState<boolean>(false);
@@ -135,13 +135,15 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       },
-      params:first ?
+      params:
+          // first ?
+          // {
+          //   nz:nzState,
+          //   from:"2000-01-01",
+          //   to:moment().format("yyyy-MM-DD")
+          // }
+          // :
           {
-            nz:nzState,
-            from:"2000-01-01",
-            to:moment().format("yyyy-MM-DD")
-          }
-          :{
               nz:nzState,
                   from:selectDate.from,
                   to:selectDate.to
@@ -379,6 +381,9 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         router.push(`/mes/item/manage/mold`)
         break;
       case 1:
+        if(selectList.size === 0) {
+          return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
+        }
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소", () => {
           DeleteBasic()
         }, () =>{})
@@ -454,8 +459,8 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

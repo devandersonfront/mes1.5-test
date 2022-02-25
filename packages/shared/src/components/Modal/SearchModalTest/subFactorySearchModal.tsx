@@ -15,6 +15,7 @@ import {RequestMethod} from '../../../common/RequestFunctions'
 import {MoldRegisterModal} from '../MoldRegisterModal'
 import Notiflix from 'notiflix'
 import {Select} from '@material-ui/core'
+import {SearchInit} from './SearchModalInit'
 
 
 interface IProps {
@@ -38,6 +39,12 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
     // useEffect(() => {
     // }, [column.type, tab])
 
+
+    useEffect(() => {
+        setSearchModalInit(SearchInit[column.type])
+    }, [column.type, tab])
+
+
     useEffect(() => {
         if(isOpen ){
             if(row.factory?.factory_id){
@@ -46,7 +53,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 Notiflix.Report.failure("경고","공장을 먼저 선택하시기 바랍니다.","확인", () => setIsOpen(false))
             }
         }
-    }, [isOpen, searchModalInit, keyword, optionIndex])
+    }, [isOpen, searchModalInit])
 
     const getContents = () => {
         // if(row[`${column.key}`]){
@@ -69,6 +76,22 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
         }
     }
 
+    const optionFilter = (optionIndex : number) => {
+
+        // front option [0 = 공장명 , 1 = 담당자명, 2 = 담당자 휴대폰 번호]
+        // back option [0 = 공장명 , 2 = 담당자명 , 3 = 담당자 직책 , 4 = 담당자 휴대폰 번호]
+        switch(optionIndex){
+            case 0 :
+                return 0
+            case 1 :
+                return 2
+            case 2 :
+                return 4
+            default :
+                return undefined
+        }
+    }
+
     const LoadBasic = async (page?: number) => {
         Notiflix.Loading.circle()
 
@@ -80,7 +103,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
             },
             params:{
                 keyword:keyword,
-                opt:optionIndex
+                opt:optionFilter(optionIndex)
             }
         }).then((res) => {
             // setSearchList([...SearchResultSort(res.info_list, "subFactory")])
@@ -88,14 +111,16 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
             res.info_list.map((value)=>{
                 const tmpValue = {...value};
                 tmpValue.manager_info = value.manager;
-                tmpValue.manager = value.manager.name;
-                tmpValue.telephone = value.manager.telephone;
+                tmpValue.manager = value.manager?.name;
+                tmpValue.telephone = value.manager?.telephone;
                 tempData.push(tmpValue)
             })
-            setSearchList(tempData);
             Notiflix.Loading.remove()
+            return setSearchList(tempData);
         }).catch((err) => {
-            Notiflix.Report.failure("경고","공장을 선택해주시기 바랍니다.","확인",() => {setIsOpen(false)})
+            if(err){
+                Notiflix.Report.failure("경고","공장을 선택해주시기 바랍니다.","확인",() => {setIsOpen(false)})
+            }
         })
 
 
@@ -199,6 +224,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 <select
                                     defaultValue={'-'}
                                     onChange={(e) => {
+
                                         setOptionIndex(Number(e.target.value))
                                         // SearchBasic('', Number(e.target.value))
                                     }}
@@ -227,6 +253,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 onKeyDown={(e) => {
                                     if(e.key === 'Enter'){
                                         // SearchBasic(keyword, optionIndex)
+                                        LoadBasic(1);
                                     }
                                 }}
                                 style={{
@@ -255,6 +282,9 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 height={632}
                                 setRow={()=>{}}
                                 setSelectRow={(e) => {
+
+                                    console.log(e,'eeee')
+
                                     if(!searchList[e].border){
                                         searchList.map((v,i)=>{
                                             v.border = false;
@@ -272,6 +302,9 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         <FooterButton
                             onClick={() => {
                                 setIsOpen(false)
+                                setOptionIndex(0)
+                                setSelectRow(undefined)
+                                setKeyword('')
                             }}
                             style={{backgroundColor: '#E7E9EB'}}
                         >
@@ -279,18 +312,20 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         </FooterButton>
                         <FooterButton
                             onClick={() => {
+                                if(selectRow !== undefined){
+                                    onRowChange({
+                                        ...row,
+                                        // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
+                                        // name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
+                                        // tab: column.type === 'bom' ? tab : undefined,
+                                        // type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
+                                        // version: row.version,
+                                        subFactory: searchList[selectRow],
+                                        affiliated_id: searchList[selectRow]?.name,
+                                        isChange:true
+                                    })
+                                }
                                 setIsOpen(false)
-                                onRowChange({
-                                    ...row,
-                                    // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
-                                    // name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
-                                    // tab: column.type === 'bom' ? tab : undefined,
-                                    // type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
-                                    // version: row.version,
-                                    subFactory: searchList[selectRow],
-                                    affiliated_id: searchList[selectRow].name,
-                                    isChange:true
-                                })
                             }}
                             style={{backgroundColor: POINT_COLOR}}
                         >

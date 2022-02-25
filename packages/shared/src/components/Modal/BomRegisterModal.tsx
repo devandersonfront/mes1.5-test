@@ -46,6 +46,8 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const dispatch = useDispatch()
   const selector = useSelector((state:RootState) => state.infoModal)
 
+
+
   const [bomDummy, setBomDummy] = useState<any[]>([
     // {customer: '-', model: '-', code: 'SU-20210701-3', name:'SU900-1', type: 'type', unit: 'EA'},
   ])
@@ -57,6 +59,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     [{}])
   const [tabs, setTabs] = useState<string[]>([])
   const [focusIndex, setFocusIndex] = useState<number>(0)
+
 
   useEffect(() => {
     if(isOpen) {
@@ -102,12 +105,13 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
       tmpRows = [{...tmpRow}]
     }
 
-
     tmpData = tmpRows.map((v, i) => {
       let childData: any = {}
+      let rmType
       switch(v.type){
         case 0:{
           childData = v.child_rm
+          rmType = childData.type === 1 ? 'kg' : '장'
           break;
         }
         case 1:{
@@ -141,7 +145,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         type: TransferCodeToValue(v.type, 'material'),
         tab: v.type,
         type_name: TransferCodeToValue(v.type, 'material'),
-        unit: childData.unit ?? "-",
+        unit: v.type === 0 ? rmType : childData.unit ?? "-",
         parent: v.parent,
         usage: v.usage,
         version: v.version,
@@ -174,7 +178,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
         if(res){
           let searchList = changeRow(res)
-
           dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
           setSearchList([...searchList])
         }else{
@@ -185,7 +188,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
         if(res){
           let searchList = changeRow(res)
-          dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
+          // dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
           setSearchList([...searchList])
         }else{
           Notiflix.Report.warning("BOM 정보가 없습니다.", "", "확인", () => setIsOpen(false))
@@ -335,7 +338,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <BomInfoModal column={column} row={row} onRowChange={onRowChange} modify/>
+              <BomInfoModal column={column} row={row} onRowChange={onRowChange} modify update={(e)=> e ? SearchBasic() : ''}/>
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>

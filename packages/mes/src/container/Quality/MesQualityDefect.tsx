@@ -51,8 +51,8 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
   const [headerStatus, setHeaderStatus] = useState<number | string>("");
 
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf('isoWeek').format('YYYY-MM-DD'),
-    to: moment(new Date()).endOf('isoWeek').format('YYYY-MM-DD')
+    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    to: moment().format('YYYY-MM-DD')
   });
   const changeSelectDate = (from:string, to:string) => {
 

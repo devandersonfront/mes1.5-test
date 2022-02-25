@@ -32,15 +32,13 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
     const [moveFile, setMoveFile] = useState<number>();
     const [selectList, setSelectList] = useState<Set<number>>(new Set());
 
-    console.log(basicRow,'basicRowbasicRow')
-
     // 해당 리스트의 데이터를 받아오는 함수
     const LoadBasic = async() => {
 
         const res = await RequestMethod("get", "documentList",{ path: { docId : doc_id ?? null}})
 
         if(res){
-            const convertData = res.map((v)=>({...v , id : v.doc_id, type : v.type === "dir" ? "폴더" : v.type , date : moment().format("YYYY-MM-DD")})) 
+            const convertData = res.map((v)=>({...v , id : v.doc_id, type : v.type === "dir" ? "폴더" : v.type , date : moment(v.created).format("YYYY-MM-DD")}))
             const classfyData = res.filter(v => v.type === 'dir')
 
             setBasicRow(convertData)
@@ -89,7 +87,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                                     uuid:file.file_uuid
                                 }
                             }).then((response) => {
-
                                     window.open(response.url)
                             })
                         }
@@ -161,15 +158,20 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                     Notiflix.Report.warning("경고", "데이터를 선택해주시기 바랍니다.", "확인",)
                     return
                 }else{
-                    selectFile().map((value,index) =>{
+
+                    const files = selectFile()
+                    let haveFolder;
+
+                    files.map((value,index) =>{
                         if(value.type === "폴더"){
                             Notiflix.Report.warning("경고", "파일을 선택해주시기 바랍니다.", "확인");
-                            return
-                        }else{
-                            // 문서 다운로드시 hwp는 다운로드가 안됨..
-                            DocumentDownLoad();
+                            haveFolder = true
                         }
                     })
+
+                    if(!haveFolder){
+                        DocumentDownLoad();
+                    }
                 }
                 return
             case 3:
@@ -207,8 +209,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                 return
         }
     }
-
-    console.log('selectList : ' , selectList)
 
     const moveFolder = (id: string) => {
 

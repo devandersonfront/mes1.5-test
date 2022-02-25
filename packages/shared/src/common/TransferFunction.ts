@@ -1,4 +1,4 @@
-type TransferType = "productType" | "material" | "rawmaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "submaterial" | null
+type TransferType = "productType" | "material" | "rawmaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "submaterial" | "welding" | null
 
 interface CodeType {
   code: number
@@ -36,6 +36,12 @@ const MACHINE_TYPE: Array<CodeType> = [
   {code: 5, value: "선반"},
   {code: 6, value: "탭핑기"},
 ]
+const WELDING_TYPE : Array<CodeType> = [
+  {code: 0, value: '선택없음'},
+  {code: 1, value: '아르곤'},
+  {code: 2, value: '스팟'},
+  {code: 3, value: '통합'},
+]
 
 export const TransferCodeToValue = (code: number, type:TransferType) => {
   let value = "";
@@ -66,11 +72,12 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
       break;
     }
     case 'rawmaterial': {
-      RAW_MATERIAL_TYPE_CODE.map(v => {
-        if(v.code === code){
-          value = v.value;
-        }
-      })
+      value = "원자재"
+      // RAW_MATERIAL_TYPE_CODE.map(v => {
+      //   if(v.code === code){
+      //     value = v.value;
+      //   }
+      // })
       break;
     }
     case 'rawMaterialType': {
@@ -95,6 +102,14 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
     }
     case 'machine': {
       MACHINE_TYPE.map(v => {
+        if(v.code === code){
+          value = v.value;
+        }
+      })
+      break
+    }
+    case 'welding': {
+      WELDING_TYPE.map(v => {
         if(v.code === code){
           value = v.value;
         }

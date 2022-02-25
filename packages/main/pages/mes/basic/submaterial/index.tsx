@@ -20,7 +20,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
       <MenuNavigation pageType={'BASIC'}/>
       <div style={{paddingBottom: 40}}>
         <ProfileHeader/>
-        <BasicSubMaterial page={page} keyword={keyword} option={option}/>
+        <BasicSubMaterial page={page} search={keyword} option={option}/>
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
+const optionList = ['제조사','장치 이름','제조 번호','담당자명']
 
 const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)

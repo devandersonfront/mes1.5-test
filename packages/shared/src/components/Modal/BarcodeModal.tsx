@@ -76,7 +76,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
 
             return [
                 {id : '1', title : '거래처' , value : data?.customer_id ?? '-'},
-                {id : '2' , title : '모델', value : data?.model.model ?? '-'},
+                {id : '2' , title : '모델', value : data?.model?.model ?? '-'},
                 {id : '3' , title : 'CODE', value :data?.code ?? '-'},
                 {id : '4' , title : '품명', value : data?.name ?? '-'},
                 {id : '5' , title : '품목종류', value : data?.type ?? '-'}

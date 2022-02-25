@@ -22,7 +22,6 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   const selector = useSelector((state:RootState) => state.MachineSelectReducer);
 
   useEffect(() => {
-    // console.log(row, column)
   }, [row])
 
   return (
@@ -31,15 +30,22 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
       className={'editCell'}
       ref={autoFocusAndSelect}
       value={row[column.key]}
+      type={column.type === "number" ? "number" : "text"}
       onFocus={() => {
         if(column.searchType === 'record' && row.osd_id){
           onClose(true)
-          Notiflix.Report.warning('수정할 수 없습니다.', '작업지시 고유 번호가 있으면 수정할 수 없습니다.', '확인', )
+          Notiflix.Report.warning('수정할 수 없습니다.', '작업지시 고유 번호가 있으면 수정할 수 없습니다.', '확인')
         }else if(column.key === 'tmpId' && row[column.key]){
+          if(!row.isChange || row.user_id){
+            onClose(true)
+            return Notiflix.Report.warning('수정할 수 없습니다.', '아이디는 수정할 수 없습니다.', '확인')
+          }
+        }else if(column.key === 'amount' && row.setting){
           onClose(true)
-          Notiflix.Report.warning('수정할 수 없습니다.', '아이디는 수정할 수 없습니다.', '확인', )
+          Notiflix.Report.warning('수정할 수 없습니다.', '사용여부가 부 입니다.', '확인')
         }
       }}
+
       onChange={(event) => {
         if(column.key === 'mold_name') {
           onRowChange({

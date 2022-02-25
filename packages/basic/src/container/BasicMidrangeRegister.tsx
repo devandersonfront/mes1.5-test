@@ -82,6 +82,7 @@ const BasicMidrangeRegister = () => {
 
     const addRowButton = (type : 'legendary' | 'item') => {
         if( type === 'legendary' && legendaryBasicRow.length < 11) {
+
             let items = {}
             let random_id = Math.random() * 1000;
             legendaryColumn.map((value) => {
@@ -132,6 +133,24 @@ const BasicMidrangeRegister = () => {
         }
     }
 
+    const deleteRowButton = (type : 'legendary' | 'item') => {
+
+        if(type === 'legendary' && legendaryBasicRow.length > 1) {
+
+            const tmpRow = [...legendaryBasicRow]
+            tmpRow.splice(-1,1)
+            setLegendaryBasicRow(tmpRow)
+
+        }else if(type === 'item' && itemBasicRow.length > 1) {
+
+            const tmpRow = [...itemBasicRow]
+            tmpRow.splice(-1,1)
+            setItemBasicRow(tmpRow)
+
+        }
+
+    }
+
     return (
         <div>
             <PageHeader title={"초ㆍ중ㆍ종 검사항목"} buttons={['검사 양식 검토', '저장하기']} buttonsOnclick={buttonEvents}/>
@@ -160,7 +179,6 @@ const BasicMidrangeRegister = () => {
                 setRow={(e) => {
                     let tmp: Set<any> = sampleSelectList
                     setSampleSelectList(tmp)
-                    console.log(e)
                     setSampleBasicRow(e)
                 }}
                 selectList={sampleSelectList}
@@ -184,9 +202,14 @@ const BasicMidrangeRegister = () => {
                 setSelectList={setLegendarySelectList}
                 height={legendaryBasicRow.length * 40 >= 40*18+56 ? 40*19 : legendaryBasicRow.length * 40 + 40}
             />
-            <MidrangeButton onClick={()=>addRowButton('legendary')}>
-                +범례 추가
-            </MidrangeButton>
+            <div style={{display : 'flex'}}>
+                <MidrangeButton onClick={()=>deleteRowButton('legendary')} style={{backgroundColor :'#98999B'}}>
+                    -범례 삭제
+                </MidrangeButton>
+                <MidrangeButton onClick={()=>addRowButton('legendary')}>
+                    +범례 추가
+                </MidrangeButton>
+            </div>
             <ExcelTable
                 editable
                 headerList={[
@@ -204,9 +227,14 @@ const BasicMidrangeRegister = () => {
                 setSelectList={setItemSelectList}
                 height={itemBasicRow.length * 40 >= 40*18+56 ? 40*19 : itemBasicRow.length * 40 + 40}
             />
-            <MidrangeButton onClick={()=>addRowButton('item')}>
-                +검사 항목 추가
-            </MidrangeButton>
+            <div style={{display : 'flex'}}>
+                <MidrangeButton onClick={()=>deleteRowButton('item')} style={{backgroundColor :'#98999B'}}>
+                    -검사 항목 삭제
+                </MidrangeButton>
+                <MidrangeButton onClick={()=>addRowButton('item')}>
+                    +검사 항목 추가
+                </MidrangeButton>
+            </div>
             <MidrangeFormReviewModal formReviewData={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
         </div>
     );

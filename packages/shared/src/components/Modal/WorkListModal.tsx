@@ -53,9 +53,9 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
+  // const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -65,10 +65,12 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen && row.os_id) {
-      SearchBasic(searchKeyword, optionIndex, 1)
+      SearchBasic()
     }
-    // SearchBasic(searchKeyword, optionIndex, 1)
-  }, [isOpen, /*searchKeyword*/])
+    // if(row.os_id){
+    //   SearchBasic()
+    // }
+  }, [isOpen,row.os_id])
 
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpRes = []
@@ -76,7 +78,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     let totalPoor:number = 0
     let defectReasons = []
     let tmpRowArray = []
-
     if(typeof tmpRow === 'string'){
 
       tmpRowArray = tmpRow.split('\n')
@@ -126,14 +127,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       tmpRes = [{...tmpRow}]
     }
 
-    onRowChange({
-      ...row,
-      defect_reasons: defectReasons,
-      total_good_quantity: Number(totalGood),
-      total_poor_quantity: Number(totalPoor),
-      total_counter: totalGood + totalPoor,
-    })
-
     return tmpRes?.map((v, i) => {
       return {
         ...v,
@@ -144,13 +137,12 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     })
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    setKeyword(keyword)
-    setOptionIndex(option)
+  const SearchBasic = async () => {
+    // setKeyword(keyword)
+    // setOptionIndex(option)
     const res = await RequestMethod('get', `recordAll`,{
       params: {
-        identification:row.os_id
-        // sheetIds: row.os_id
+        sheetIds: row.os_id
       }
     })
     // const res = await RequestMethod('get', `recordSearch`,{
@@ -164,8 +156,8 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     //   }
     // })
     if(res){
-
       let tmpList = changeRow(res)
+      console.log("tmpList : ", tmpList)
 
       setSearchList([...tmpList?.map(v => {
         return {

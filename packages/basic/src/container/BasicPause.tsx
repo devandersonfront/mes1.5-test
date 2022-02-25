@@ -94,6 +94,8 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           setPauseBasicRow([...tmpRow]);
 
         })
+
+        setSelectList(new Set())
   }
 
   const LoadBasic = async () => {
@@ -135,9 +137,9 @@ const BasicPause = ({page, keyword, option}: IProps) => {
               Notiflix.Loading.remove(300);
             }
             setProcessColumn(tmpColumn);
-            setProcessBasicRow([...tmpRow.map((row: any) => {
+            setProcessBasicRow([...tmpRow.map((row: any,index) => {
               return {
-                ...row,
+                ...row, onClicked: index === 0 ? true : false
               }
             })])
             Notiflix.Loading.remove(300);
@@ -156,6 +158,55 @@ const BasicPause = ({page, keyword, option}: IProps) => {
     })
 
     excelDownload(pauseColumn, pauseBasicRow, `일시정지 유형 등록`, '일시정지 유형 등록', tmpSelectList)
+  }
+
+
+
+  const convertDataToMap = () => {
+    const map = new Map()
+    pauseBasicRow.map((v)=>map.set(v.id , v))
+    return map
+  }
+
+  const filterSelectedRows = () => {
+    return pauseBasicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.ppr_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
+      }
+    })
+
+    return [normalRows , haveIdRows]
+  }
+
+
+  const DeleteBasic = async () => {
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+      await RequestMethod('delete','pauseDelete', haveIdRows)
+
+    }
+
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((nRow)=>{map.delete(nRow.id)})
+    setPauseBasicRow(Array.from(map.values()).map((data,index)=>({...data, index : index + 1})))
+    setSelectList(new Set())
+
   }
 
   const buttonEvents = async(index:number) => {
@@ -188,6 +239,14 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         return
 
       case 3 :
+
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+        }
         Notiflix.Loading.standard();
         let savePauseBasicRow:any[] = [];
         pauseBasicRow.map((value,index)=>{
@@ -214,35 +273,44 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         return
 
       case 4 :
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+        }
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          async()=>{
-            const idList = [];
-            const spliceArray:number[] = [];
+          () => DeleteBasic()
+          // async()=>{
+          //   const idList = [];
+          //   const spliceArray:number[] = [];
 
-            pauseBasicRow.map((v)=> {
-              if(selectList.has(v.id)){
-                idList.push(v)
-              }
-            })
+          //   pauseBasicRow.map((v)=> {
+          //     if(selectList.has(v.id)){
+          //       idList.push(v)
+          //     }
+          //   })
 
-            const tmpPauseBasicRow = [...pauseBasicRow];
-            spliceArray.reverse();
-            spliceArray.map((value, index)=>{
-              tmpPauseBasicRow.splice(value, 1);
-            })
+          //   const tmpPauseBasicRow = [...pauseBasicRow];
+          //   spliceArray.reverse();
+          //   spliceArray.map((value, index)=>{
+          //     tmpPauseBasicRow.splice(value, 1);
+          //   })
 
-            const res = await RequestMethod("delete", `pauseDelete`, idList );
+          //   const res = await RequestMethod("delete", `pauseDelete`, idList );
 
-            if(res){
-              Notiflix.Report.success("삭제되었습니다.",""," 확인", () => {
-                sortObject(tmpPauseBasicRow);
-                LoadPauseList(processBasicRow[selectRow].process_id);
-              });
-            }else{
-              Notiflix.Report.success("에러가 발생했습니다.",""," 확인");
-            }
-          },
-          ()=>{}
+          //   if(res){
+          //     Notiflix.Report.success("삭제되었습니다.",""," 확인", () => {
+          //       sortObject(tmpPauseBasicRow);
+          //       LoadPauseList(processBasicRow[selectRow].process_id);
+          //     });
+          //   }else{
+          //     Notiflix.Report.success("에러가 발생했습니다.",""," 확인");
+          //   }
+          // },
+          // ()=>{}
         )
     }
   }
@@ -297,7 +365,17 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           ]}
           row={processBasicRow}
           setRow={setProcessBasicRow}
-          setSelectRow={setSelectRow}
+          setSelectRow={(e) => {
+            const clickedList = processBasicRow.map((data, index) => {
+              if (e === index) {
+                return { ...data, onClicked: true }
+              } else {
+                return { ...data, onClicked: false }
+              }
+            })
+            setProcessBasicRow(clickedList)
+            setSelectRow(e)
+          }}
           width={1576}
           height={280}
         />

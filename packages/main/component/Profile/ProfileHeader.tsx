@@ -28,7 +28,8 @@ const ProfileHeader = () => {
     let userInfo = cookie.load('userInfo')
     dispatch(setUserInfoAction({
       name: userInfo ? userInfo.name : "",
-      profile: userInfo ? userInfo.profilePath: ""
+      profile: userInfo ? userInfo.profilePath: "",
+      authority : userInfo ? userInfo.ca_id.name : ""
     }))
   }, [])
 

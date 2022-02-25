@@ -33,7 +33,7 @@ export const SearchInit: Record<string, SearchInitType> = {
   },
   subFactory: {
     title: "공장 세분화",
-    searchFilter:["공장명", "세분화명"],
+    searchFilter:["세분화명", "담당자명", "전화번호"],
     placeholder:"세분화명",
     excelColumnType:"subFactory"
   },
@@ -49,12 +49,17 @@ export const SearchInit: Record<string, SearchInitType> = {
   },
   tool: {
     title: '공구 검색',
-    searchFilter: ['거래처명', '대표자명', '사업자 번호', '모델명'],
+    searchFilter: ['공구CODE', '공구 품명', '거래처',],
     excelColumnType: 'tool'
+  },
+  searchToolModal: {
+    title: '공구 리스트',
+    searchFilter: ['공구CODE', '공구 품명', '거래처',],
+    excelColumnType: 'toolProduct'
   },
   customerModel: {
     title: "모델명 검색",
-    searchFilter: ['거래처명', '대표자명', '사업자 번호', '모델명'],
+    searchFilter: ['거래처명','사업자 번호', '모델명'],
     excelColumnType: 'model'
   },
   rawmaterial: {

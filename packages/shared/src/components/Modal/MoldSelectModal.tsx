@@ -50,7 +50,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -58,45 +58,50 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
-    let tmpMolds
-    if(!row.molds || !row.molds.length){
-      tmpMolds = row.product?.molds.map((v, index) => {
-        return {
-          mold: {
-            sequence: index+1,
-            mold: {
-              ...v.mold
-            },
-            setting: v.spare === '여' ? 0 : 1
-          }
-        }
-      }) ?? []
-
-      onRowChange({
-        ...row,
-        name: row.name,
-        molds: tmpMolds,
-        isChange: true
-      })
-    } else {
-      tmpMolds = row.molds.map(v => {
-        return {
-          ...v,
-          ...v.mold
-        }
-      })
+    if(isOpen){
+      LoadBasic(row.productId)
     }
 
-    if(isOpen) {
-      setSearchList([...tmpMolds.map((v, index) => {
-        return {
-          ...v.mold,
-          ...v.mold.mold,
-          sequence: index+1,
-          spare: v.setting === 0 ? '여' : '부',
-        }
-      })])
-    }
+    // let tmpMolds
+    // if(!row.molds || !row.molds.length){
+    //   tmpMolds = row.product?.molds.map((v, index) => {
+    //     return {
+    //       mold: {
+    //         sequence: index+1,
+    //         mold: {
+    //           ...v.mold
+    //         },
+    //         setting: v.spare === '여' ? 0 : 1,
+    //         spare: v.spare === '여' ? 0 : 1
+    //       }
+    //     }
+    //   }) ?? []
+    //
+    //   onRowChange({
+    //     ...row,
+    //     name: row.name,
+    //     molds: tmpMolds,
+    //     isChange: true
+    //   })
+    // } else {
+    //   tmpMolds = row.molds.map(v => {
+    //     return {
+    //       ...v,
+    //       ...v.mold
+    //     }
+    //   })
+    // }
+    //
+    // if(isOpen) {
+    //   setSearchList([...tmpMolds.map((v, index) => {
+    //     return {
+    //       ...v.mold,
+    //       ...v.mold.mold,
+    //       sequence: index+1,
+    //       spare: v.setting === 0 ? '여' : '부',
+    //     }
+    //   })])
+    // }
   }, [isOpen, searchKeyword])
 
   const changeRow = (row: any, key?: string) => {
@@ -110,34 +115,28 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
+  const LoadBasic = async (productId) => {
     Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
+    const res = await RequestMethod('get', `moldPrdMoldLinkLoad`,{
       path: {
-        page: page,
-        renderItem: 18,
+        productId: productId
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
     })
 
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
+    if(res){
+      setSearchList([...res].map((v, index) => {
+            return {
+              ...v,
+              sequence: index+1,
+              setting: '부',
+            }
+          }))
     }
+  }
+
+  const ModalUpdate = (e:any) => {
+    onRowChange(e)
+    setIsOpen(false)
   }
 
   const ModalContents = () => {
@@ -165,6 +164,12 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
 
   const getSummaryInfo = (info) => {
     return row[info.key] ?? '-'
+  }
+
+  const updateMold = (moldInfo) => {
+    const moldUpdateList = moldInfo.map((v)=>{return v.mold})
+
+    setSearchList(moldUpdateList)
   }
 
   return (
@@ -199,7 +204,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>금형 정보 (해당 제품을 만드는데 사용한 금형을 선택해주세요. 선택 가능 금형이 없으면 금형 수정 버튼을 눌러 금형 정보를 수정해주세요)</p>
+            }}>금형 정보 (해당 제품을 만드는데 사용한 금형을 선택해주세요.{/* 선택 가능 금형이 없으면 금형 수정 버튼을 눌러 금형 정보를 수정해주세요*/})</p>
             <div style={{display: 'flex'}}>
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
@@ -237,11 +242,11 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-                <p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 금형 리스트 (여려금형을 동시에 선택하여 사용할 수 있습니다)</p>
+                <p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 금형 리스트 {/*(여러금형을 동시에 선택하여 사용할 수 있습니다)*/}</p>
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <MoldInfoModal column={column} row={row} onRowChange={onRowChange} modify/>
+              {/*<MoldInfoModal column={column} row={row} onRowChange={ModalUpdate} modify/>*/}
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
@@ -280,7 +285,17 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
+                let settingUseArray = 0
+                searchList.map((v)=> {
+                  if(v.setting === 1) {
+                    settingUseArray += 1
+                  }
+                })
+                if(settingUseArray > 1) {
+                  return Notiflix.Report.warning("경고", "금형을 하나만 선택해주시기 바랍니다.", "확인");
+                }
                 if(selectRow !== undefined && selectRow !== null){
+                  const visibleSpare = searchList.map(v=> v.spare)
                   onRowChange({
                     ...row,
                     name: row.name,
@@ -328,7 +343,7 @@ const Button = styled.button`
     justify-content:center;
     align-items:center;
     cursor:pointer;
-    
+
 `;
 
 const HeaderTable = styled.div`
@@ -359,7 +374,7 @@ const HeaderTableText = styled.p`
 const HeaderTableTitle = styled.div`
   width: 110px;
   padding: 0 8px;
-  display: flex; 
+  display: flex;
   align-items: center;
 `
 

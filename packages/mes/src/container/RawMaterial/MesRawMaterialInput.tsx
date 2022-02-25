@@ -24,13 +24,6 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawinV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
 
   useEffect(() => {
     getMenus()
@@ -81,6 +74,29 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    if(selectList.size <= 0) {
+      return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
+    }
+
+    const error = basicRow.map((v)=> {
+      if(selectList.has(v.id)) {
+        if (v.rm_id === undefined) {
+          return 1
+        }
+        if (v.lot_number === undefined) {
+          return 2
+        }
+      }
+    })
+
+    if(error.includes(1)){
+      return Notiflix.Report.warning("경고", "원자재 CODE를 선택해 주시기 바랍니다.", "확인",)
+    }
+    if(error.includes(2)){
+      return Notiflix.Report.warning("경고", "원자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
+    }
+
+
     let res: any
     res = await RequestMethod('post', `lotRmSave`,
       basicRow.map((row, i) => {
@@ -126,7 +142,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
               ...selectData,
               warehousing: row.amount,
               type: row.type_id,
-              raw_material: {...row.raw_material, type:row.raw_material.type_id},
+              raw_material: {...row.raw_material, type:row.raw_material?.type_id},
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {
@@ -145,8 +161,8 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         }).filter((v) => v))
       .catch((error) => {
         if(error.status === 409){
-         Notiflix.Notify.warning(error.data.message)
-          return true
+         Notiflix.Report.warning('경고',error.data.message,'확인')
+          return false
         }
         return false
       })
@@ -173,6 +189,9 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         SaveBasic()
         break;
       case 2:
+        if(selectList.size === 0) {
+          return  Notiflix.Report.warning("경고","삭제할 행을 선택해주세요.","확인" )
+        }
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인", "취소", () => {
           const tmpRow = basicRow.filter(({id}, index) => !selectList.has(id))
           setBasicRow(tmpRow);
@@ -219,8 +238,8 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

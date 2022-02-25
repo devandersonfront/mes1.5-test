@@ -54,7 +54,7 @@ const machineType = [{pk: 0, name: "선택없음"},
 //         }
 //       case 'machine':
 //         return {
-//           title: '기계 기본정보',
+//           title: '기계 기준정보',
 //           optList: ['제조번호', '제조사명', '기계명', '공정명', '담당자명'],
 //         }
 //       case 'productprocess':
@@ -65,12 +65,12 @@ const machineType = [{pk: 0, name: "선택없음"},
 //         }
 //       case 'rawmaterial':
 //         return {
-//           title: '원자재 기본정보',
+//           title: '원자재 기준정보',
 //           optList: ['고객사명', '모델명', 'CODE', '품명', '재질'],
 //         }
 //       case 'mold':
 //         return {
-//           title: '금형 기본정보',
+//           title: '금형 기준정보',
 //           optList: ['고객사명','모델명', 'CODE', '품명', '재질'],
 //         }
 //       case 'model':

@@ -53,7 +53,6 @@ const MesKpiPowerUsage = () => {
         }
     }
 
-
     // 전력 사용량은 API 요청을 PMS 에서 해야해서 주석처리함..
 
     const RequestPowerUsageApi = async (productId: number) => {
@@ -107,7 +106,7 @@ const MesKpiPowerUsage = () => {
     React.useEffect(()=>{
 
         if(pauseBasicRow.length){
-            
+
             const rowLenth = pauseBasicRow.length;
             let sum = 0;
             if(rowLenth){
@@ -124,7 +123,6 @@ const MesKpiPowerUsage = () => {
 
     },[pauseBasicRow])
 
-
     return (
         <div>
             <PageHeader title={"전력 사용량(E)"} />
@@ -135,7 +133,7 @@ const MesKpiPowerUsage = () => {
                 ]}
                 row={[processBasicRow]}
                 setRow={(row) => {
-                    setProcessBasicRow({...processBasicRow, 
+                    setProcessBasicRow({...processBasicRow,
                         id : row[0].product.product_id,
                         customer_id : row[0].customer_id,
                         cm_id : row[0].cm_id,

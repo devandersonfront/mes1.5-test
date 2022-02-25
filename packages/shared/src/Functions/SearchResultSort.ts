@@ -1,4 +1,5 @@
 import {TransferCodeToValue} from '../common/TransferFunction'
+import {LineBorderContainer} from "../components/Formatter/LineBorderContainer";
 
 export const SearchResultSort = (infoList, type: string) => {
   switch(type) {
@@ -51,7 +52,8 @@ export const SearchResultSort = (infoList, type: string) => {
           customer: v.customer?.name ?? "",
           rawName: v.name,
           type: v.type === 2 ? "SHEET" : "COIL",
-          type_id:v.type
+          type_id:v.type,
+          type_name : v.type === 2 ? "SHEET" : "COIL",
         }
       })
     }
@@ -82,7 +84,7 @@ export const SearchResultSort = (infoList, type: string) => {
           model_name: v.product.model?.model,
           product_code: v.product.code,
           product_name: v.product.name,
-          product_type: TransferCodeToValue(v.product.type, 'material'),
+          product_type: TransferCodeToValue(v.product.type, 'product'),
           product_unit: v.product.unit,
         }
       }) : []
@@ -93,27 +95,51 @@ export const SearchResultSort = (infoList, type: string) => {
           ...v,
           factory_id: v.factory?.name,
           affiliated_id: v.subFactory?.name,
+          type_id : v.type,
+          type:TransferCodeToValue(v.type, "machine"),
+          weldingType_id:v.weldingType,
+          weldingType:TransferCodeToValue(v.weldingType, "welding")
         }
       })
     }
     case 'tool' : {
-      return infoList.map((v,index) => {
+      return infoList.map((v) => {
         return {
           ...v,
-          seq:index,
-          customerData:v.customer,
-          customer:v.customer?.name,
+          customer: v.customer?.name,
+          customerArray: v.customer,
         }
       })
     }
-    default : {
-      return infoList
+
+    case 'toolProduct' : {
+      return infoList.map((v) => {
+        return {
+          ...v,
+          customer: v.customer?.name,
+          customerArray: v.customer,
+          name: v?.name,
+          stock: v?.stock,
+        }
+      })
     }
+    case 'toolProductSearch' :{
+      return infoList.map((v) => {
+        console.log(v)
+        return {
+          ...v,
+          product_id:v.product_id
+        }
+      })
+
+    }
+    default :
+      return infoList
+
   }
 }
 
 export const SearchModalResult = (selectData, type: string , staticCalendar?: boolean) => {
-
 
   switch(type) {
     case 'user': {
@@ -135,6 +161,10 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         ...selectData,
         cm_id: selectData.model,
         customer: selectData.customerArray,
+        model : {
+          ...selectData,
+          customer: selectData.customerArray
+        },
         modelArray: {
           ...selectData,
           customer: selectData.customerArray
@@ -175,18 +205,18 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
       }:{
         code: selectData.code,
         name: selectData.name,
-        type: TransferCodeToValue(selectData.type, 'material'),
+        type: TransferCodeToValue(selectData.type, 'product'),
         customer: selectData.customer ? selectData.customer.name : '',
         customer_id: selectData.customer?.name,
         cm_id: selectData.model?.model,
         product_id: selectData.code,
         model: selectData.model ? selectData.model.model : '',
-        type_name: selectData.type_name ?? TransferCodeToValue(selectData.type, 'material'),
+        type_name: selectData.type_name ?? TransferCodeToValue(selectData.type, 'product'),
         unit: selectData.unit,
         usage: selectData.usage,
         process: selectData.process?.name ?? "-",
         product_name: selectData.name,
-        product_type: TransferCodeToValue(selectData.type, 'material'),
+        product_type: TransferCodeToValue(selectData.type, 'product'),
         product_unit: selectData.unit,
         product: {...selectData},
         bom_root_id: selectData.bom_root_id,
@@ -207,18 +237,18 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
     }
     case "process": {
       return {
-         process:selectData,
-         process_id: selectData.name,
-         version: selectData.version
+        process:selectData,
+        process_id: selectData.name,
+        version: selectData.version
       }
     }
     case 'rawmaterial': {
       const unitResult = () => {
         let result = "-";
         switch (selectData.type){
-          case "반재품" :
-            result = "EA";
-            break;
+          // case "반제품" :
+          //   result = "EA";
+          //   break;
           case "COIL" :
             result = "kg";
             break;
@@ -234,6 +264,7 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         ...selectData,
         rm_id: selectData.code,
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
+        type_name:"원자재",
         customer_id: selectData.customerArray?.name,
         unit:unitResult(),
         raw_material: {
@@ -247,7 +278,7 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         ...selectData,
         wip_id: selectData.code,
         customer_id: selectData.customerArray?.name,
-        // type:"부자재",
+        type:"부자재",
         type_name:"부자재",
         sub_material: {
           ...selectData,
@@ -257,12 +288,15 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
     }
     case 'factory': {
       return {
-        ...selectData,
+        // ...selectData,
         factory: {
           ...selectData,
           manager: selectData.managerArray,
         },
-        factory_id: selectData.name
+        affiliated_id:null,
+        factory_id: selectData.name,
+        subFactory:null,
+        subFactories:null,
       }
     }
     case 'customer': {
@@ -290,7 +324,7 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         product_id: selectData.product.code,
         product_name: selectData.product.name,
         name: selectData.product.name,
-        type: TransferCodeToValue(selectData.product.type, 'material'),
+        type: TransferCodeToValue(selectData.product.type, 'product'),
         unit: selectData.product.unit,
         process: selectData.product.process?.name,
         contract_id: selectData.identification
