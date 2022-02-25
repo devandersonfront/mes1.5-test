@@ -82,7 +82,7 @@ const BasicMidrangeRegister = () => {
 
     const addRowButton = (type : 'legendary' | 'item') => {
         if( type === 'legendary' && legendaryBasicRow.length < 11) {
-            
+
             let items = {}
             let random_id = Math.random() * 1000;
             legendaryColumn.map((value) => {
@@ -136,7 +136,7 @@ const BasicMidrangeRegister = () => {
     const deleteRowButton = (type : 'legendary' | 'item') => {
 
         if(type === 'legendary' && legendaryBasicRow.length > 1) {
-            
+
             const tmpRow = [...legendaryBasicRow]
             tmpRow.splice(-1,1)
             setLegendaryBasicRow(tmpRow)
@@ -149,7 +149,7 @@ const BasicMidrangeRegister = () => {
 
         }
 
-    } 
+    }
 
     return (
         <div>
@@ -179,7 +179,6 @@ const BasicMidrangeRegister = () => {
                 setRow={(e) => {
                     let tmp: Set<any> = sampleSelectList
                     setSampleSelectList(tmp)
-                    console.log(e)
                     setSampleBasicRow(e)
                 }}
                 selectList={sampleSelectList}

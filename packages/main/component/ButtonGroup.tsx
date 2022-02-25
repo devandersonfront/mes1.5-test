@@ -194,7 +194,7 @@ const PageHeader = ({buttons, typeList, buttonsOnclick, isSearch, style, leftBut
                                         style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center",borderRadius:"6px"}}
                                         onClick={() => {onChangeSearchKeyword && onChangeSearchKeyword(keyword ?? "")}}
                                     >
-                                        <img src={Search_icon} style={{width:"16.3px",height:"16.3px"}} />
+                                        <img src={Search_icon } style={{width:"16.3px",height:"16.3px"}} />
                                     </div>
                                 </div>
                             }

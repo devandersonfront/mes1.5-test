@@ -3,8 +3,6 @@ import MenuNavigation from "../../../../main/component/MenuNav/MenuNavigation";
 import {NextPageContext} from "next";
 import {MesToolList} from "mes";
 import ProfileHeader from "../../../component/Profile/ProfileHeader";
-// import {MesFinishList} from "../../../../mes";
-
 
 interface IProps {
     children?: any
@@ -12,7 +10,6 @@ interface IProps {
     keyword?: string
     option?: number
 }
-
 
 const ToolList = ({page, keyword, option}: IProps) => {
     return (

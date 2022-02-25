@@ -1,4 +1,5 @@
 import {TransferCodeToValue} from '../common/TransferFunction'
+import {LineBorderContainer} from "../components/Formatter/LineBorderContainer";
 
 export const SearchResultSort = (infoList, type: string) => {
   switch(type) {
@@ -94,8 +95,8 @@ export const SearchResultSort = (infoList, type: string) => {
           ...v,
           factory_id: v.factory?.name,
           affiliated_id: v.subFactory?.name,
-          type:TransferCodeToValue(v.type, "machine"),
           type_id : v.type,
+          type:TransferCodeToValue(v.type, "machine"),
           weldingType_id:v.weldingType,
           weldingType:TransferCodeToValue(v.weldingType, "welding")
         }
@@ -111,9 +112,30 @@ export const SearchResultSort = (infoList, type: string) => {
       })
     }
 
-    default : {
-      return infoList
+    case 'toolProduct' : {
+      return infoList.map((v) => {
+        return {
+          ...v,
+          customer: v.customer?.name,
+          customerArray: v.customer,
+          name: v?.name,
+          stock: v?.stock,
+        }
+      })
     }
+    case 'toolProductSearch' :{
+      return infoList.map((v) => {
+        console.log(v)
+        return {
+          ...v,
+          product_id:v.product_id
+        }
+      })
+
+    }
+    default :
+      return infoList
+
   }
 }
 
@@ -215,9 +237,9 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
     }
     case "process": {
       return {
-         process:selectData,
-         process_id: selectData.name,
-         version: selectData.version
+        process:selectData,
+        process_id: selectData.name,
+        version: selectData.version
       }
     }
     case 'rawmaterial': {
@@ -242,9 +264,9 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         ...selectData,
         rm_id: selectData.code,
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
+        type_name:"원자재",
         customer_id: selectData.customerArray?.name,
         unit:unitResult(),
-        type_name:"원자재",
         raw_material: {
           ...selectData,
           customer: selectData.customerArray

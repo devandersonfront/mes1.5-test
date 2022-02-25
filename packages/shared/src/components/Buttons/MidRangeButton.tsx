@@ -14,20 +14,20 @@ const MidRangeButton = ({row, column }: IProps) => {
     const router = useRouter()
 
     const contentCheck = () => {
-        
-        
+
+
 
         if(row.inspection_category !== null && row.inspection_category !== undefined){
             return (<>
-            <div style={{
-                padding: '3.5px 0px 0px 3.5px',
-                width: '100%'
-            }}>
-                <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}}  onClick={() => { router.push({pathname: '/mes/basic/productV1u/midrange/form/detail', query: { customer_id: row.customer_id, cm_id: row.cm_id, code: row.code, name: row.name, product_id: row.product_id, type: row.type} }) }}>
-                    <p style={{color: 'white', textDecoration: 'underline'}}>검사항목 보기</p>
-                </UploadButton>
-            </div>
-        </>)
+                <div style={{
+                    padding: '3.5px 0px 0px 3.5px',
+                    width: '100%'
+                }}>
+                    <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}}  onClick={() => { router.push({pathname: '/mes/basic/productV1u/midrange/form/detail', query: { customer_id: row.customer_id, cm_id: row.cm_id, code: row.code, name: row.name, product_id: row.product_id, type: row.type} }) }}>
+                        <p style={{color: 'white', textDecoration: 'underline'}}>검사항목 보기</p>
+                    </UploadButton>
+                </div>
+            </>)
         }else{
             return (<>
                 <div style={{
@@ -35,21 +35,21 @@ const MidRangeButton = ({row, column }: IProps) => {
                     width: '100%',
                     opacity : row.product_id ? 1 : .3
                 }}>
-                    <UploadButton  
-                    onClick={() => 
-                        { 
+                    <UploadButton
+                        onClick={() =>
+                        {
 
-                        if(row.product_id){
-                        
-                            router.push({pathname: '/mes/basic/productV1u/midrange/form/register',
-                            query: { customer_id: row.customer_id, cm_id: row.cm_id, code: row.code, name: row.name, product_id: row.product_id, type: row.type} }) 
-                        }else{
-                            Notiflix.Report.warning(
-                                '경고',
-                                '제품을 먼저 등록해 주시기 바랍니다.',
-                                'Okay',
-                            );
-                        }
+                            if(row.product_id){
+
+                                router.push({pathname: '/mes/basic/productV1u/midrange/form/register',
+                                    query: { customer_id: row.customer_id, cm_id: row.cm_id, code: row.code, name: row.name, product_id: row.product_id, type: row.type} })
+                            }else{
+                                Notiflix.Report.warning(
+                                    '경고',
+                                    '제품을 먼저 등록해 주시기 바랍니다.',
+                                    'Okay',
+                                );
+                            }
 
                         }}>
                         <p>검사항목 등록</p>
@@ -60,9 +60,9 @@ const MidRangeButton = ({row, column }: IProps) => {
     }
 
     return (
-       <>
-           {contentCheck()}
-       </>
+        <>
+            {contentCheck()}
+        </>
     );
 }
 

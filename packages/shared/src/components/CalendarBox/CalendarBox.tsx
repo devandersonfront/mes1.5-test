@@ -21,9 +21,7 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [select, setSelect] = useState<Date>(moment().toDate())
   const ref = useOnclickOutside(() => setIsOpen(false))
-
   React.useEffect(() => {
-      console.log("column : ", column);
     if(isOpen){
       if(row[column.key]) setSelect(moment(row[column.key]).toDate())
       else setSelect(moment().toDate())
@@ -68,7 +66,8 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
           <BoxWrap style={{backgroundColor: 'white', flexDirection: 'row', display: 'flex'}}>
             <div  style={{display: 'inline-block', float: 'left', flex: 1, marginRight: 20}}>
               <Calendar
-                maxDate={column.maxDate ? new Date() : moment('2999-12-31').subtract(1, 'days').toDate() }
+                maxDate={column.type === "date" ? moment(row.deadline).subtract(1, 'days').toDate() : moment('2999-12-31').subtract(1, 'days').toDate() }
+                minDate={column.type === "deadline" ? moment(row.date).subtract(1, 'days').toDate() : moment('2000-01-01').subtract(1, 'days').toDate()}
                 onChange={(date) => {
                   setSelect(date)
                 }}

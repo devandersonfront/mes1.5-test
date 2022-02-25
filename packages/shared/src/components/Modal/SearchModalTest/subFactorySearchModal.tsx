@@ -313,8 +313,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         <FooterButton
                             onClick={() => {
                                 if(selectRow !== undefined){
-                                    
-                                    console.log(searchList[selectRow],'searchList[selectRow]searchList[selectRow]')
                                     onRowChange({
                                         ...row,
                                         // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),

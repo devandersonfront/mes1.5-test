@@ -51,7 +51,7 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [keyword, setKeyword] = useState<string>('')
     const [selectRow, setSelectRow] = useState<number>()
-    const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+    const [searchList, setSearchList] = useState<any[]>([])
     const [searchKeyword, setSearchKeyword] = useState<string>('')
     const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
         page: 1,
@@ -59,44 +59,30 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
     })
 
     useEffect(() => {
-        let tmpMachines
-        if(!row.machines || !row.machines.length){
-            tmpMachines = row.product?.machines.map((v, index) => {
-                return {
-                    machine: {
-                        sequence: index+1,
-                        machine: {
-                            ...v.machine
-                        },
-                        setting: v.spare === '여' ? 0 : 1
-                    }
-                }
-            }) ?? []
-
-            onRowChange({
-                ...row,
-                name: row.name,
-                machines: tmpMachines,
-                isChange: true
-            })
-        }else{
-            tmpMachines = row.machines.map(v => {
-                return {
-                    ...v,
-                    ...v.machine
-                }
-            })
-        }
+        console.log("Tool Modal Row : ", row);
 
         if(isOpen) {
-            setSearchList([...tmpMachines.map((v, index) => {
-                return {
-                    ...v.machine,
-                    ...v.machine.machine,
-                    sequence: index+1,
-                    spare: v.setting === 0 ? '여' : '부',
-                }
-            })])
+            if(row?.tools){
+                console.log("이런 씨발 : ", row.tools)
+                const tools = []
+                row.tools.map(({tool}) => {
+                    console.log(tool)
+                    let toolObject:any = {}
+                    toolObject.sequence = tool.sequence
+                    toolObject.code = tool.tool.code
+                    toolObject.name = tool.tool.name
+                    toolObject.customer = tool.tool.customer
+                    toolObject.customerArray = tool.tool.customerArray
+                    toolObject.product_id = tool.tool.product_id
+                    toolObject.stock = tool.tool.stock
+                    toolObject.version = tool.tool.version
+                    console.log("toolObject : " ,toolObject)
+                    tools.push(toolObject)
+                })
+                setSearchList(tools)
+            }else{
+                setSearchList([{sequence: 1, product_id:row.productId}])
+            }
         }
     }, [isOpen, searchKeyword])
     // useEffect(() => {
@@ -134,6 +120,7 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
         })
 
         if(res && res.status === 200){
+
             let searchList = res.results.info_list.map((row: any, index: number) => {
                 return changeRow(row)
             })
@@ -248,27 +235,45 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                     <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
                         <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                             <div style={{ display: 'flex', width: 1200}}>
-                                <p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 기계 리스트</p>
+                                <p style={{fontSize: 22, padding: 0, margin: 0}}>사용 가능 공구 리스트</p>
                             </div>
                         </div>
-                        <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-                            <MachineInfoModal column={column} row={row} onRowChange={onRowChange} modify/>
+                        <div style={{width:"250px", display: "flex", justifyContent: "space-between", margin: "24px 48px 8px 0px"}}>
+                            <Button onClick={() => {
+                                setSearchList([
+                                    ...searchList,
+                                    {
+                                        sequence: searchList.length + 1,
+                                        product_id:row.productId
+                                    }
+                                ])
+                            }}>
+                                <p>행 추가</p>
+                            </Button>
+                            <Button onClick={() => {
+                                let tmp = searchList
+                                tmp.splice(tmp.length-1, 1)
+                                setSearchList([
+                                    ...tmp
+                                ])
+                            }}>
+                                <p>행 삭제</p>
+                            </Button>
                         </div>
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
                         <ExcelTable
-                            headerList={searchModalList.machineUse}
+                            headerList={searchModalList.toolUse}
                             row={searchList ?? [{}]}
                             setRow={(e) => {
-                                const count = e.reduce((cnt, element) => cnt + (element.spare === '여'), 0)
-
-                                if(count > 1) {
-                                    const findIndex = searchList.findIndex((v) => v.spare === '여')
-
-                                    e[findIndex].spare = '부'
-                                }
-
-                                setSearchList([...e])
+                                console.log("e : ", e)
+                                const tmpData = [...e]
+                                tmpData.map((data, index) => {
+                                    data.sequence = index+1
+                                    data.product_id = row.productId
+                                })
+                                console.log("tmpData : ", tmpData)
+                                setSearchList([...tmpData])
                             }}
                             width={1746}
                             rowHeight={32}
@@ -304,14 +309,13 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                 if(selectRow !== undefined && selectRow !== null){
                                     onRowChange({
                                         ...row,
-                                        machines: searchList.map(v => {
+                                        tools: searchList.map(v => {
                                             return {
-                                                machine: {
+                                                tool: {
                                                     sequence: v.sequence,
-                                                    machine: {
+                                                    tool: {
                                                         ...v
                                                     },
-                                                    setting: v.spare === '여' ? 0 : 1
                                                 }
                                             }
                                         }),

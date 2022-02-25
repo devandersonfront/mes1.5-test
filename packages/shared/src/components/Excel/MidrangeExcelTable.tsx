@@ -34,7 +34,7 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
             })
 
             const legendary_list = formReviewData.legendary.map((v) => {
-                    return v.legendary ?? ''
+                return v.legendary ?? ''
             })
 
             const reviewData = {
@@ -188,20 +188,20 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
     const formItemHeader = (inspection_info: InspectionInfo[]) => {
         return (
             inspection_info && inspection_info.map((v,i)=>
-            <div style={{display: "flex"}} key={v.samples+'~'+i}>
-                <CellDefault style={{width: '144px', height: '40px', borderBottom: 0, borderRight: 0, textAlign: "center" }}>
-                    {(v.name !== undefined ? v.name : '')+`(${v.unit})`}
-                </CellDefault>
-                <CellDefault style={{width: '120px', height: '40px', flexDirection: "column", borderBottom: 0  }}>
-                    <div>
-                        {v.standard}
-                    </div>
-                    <div style={{fontSize: '11px'}}>
-                        ({v.error_minimum}~{v.error_maximum})
-                    </div>
-                </CellDefault>
-            </div>
-        ))
+                <div style={{display: "flex"}} key={v.samples+'~'+i}>
+                    <CellDefault style={{width: '144px', height: '40px', borderBottom: 0, borderRight: 0, textAlign: "center" }}>
+                        {(v.name !== undefined ? v.name : '')+`(${v.unit})`}
+                    </CellDefault>
+                    <CellDefault style={{width: '120px', height: '40px', flexDirection: "column", borderBottom: 0  }}>
+                        <div>
+                            {v.standard}
+                        </div>
+                        <div style={{fontSize: '11px'}}>
+                            ({v.error_minimum}~{v.error_maximum})
+                        </div>
+                    </CellDefault>
+                </div>
+            ))
     }
 
     const formItemResult = (inspection_infoType: InspectionInfo[], type: 'beginning' | 'middle' | 'end') => {

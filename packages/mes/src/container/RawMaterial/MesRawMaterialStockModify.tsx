@@ -7,7 +7,6 @@ import {
     Header as PageHeader,
     IExcelHeaderType,
     MAX_VALUE,
-    PaginationComponent,
     RequestMethod,
     RootState,
     setModifyInitData
@@ -40,34 +39,10 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawstockModify"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처'])
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
-
-  const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment().startOf('isoWeek').format('YYYY-MM-DD'),
-    to: moment().endOf('isoWeek').format('YYYY-MM-DD')
-  });
-
-  // useEffect(() => {
-  //   setOptionIndex(option)
-  //   if(keyword){
-  //     SearchBasic(keyword, option, page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }else{
-  //     LoadBasic(page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [page, keyword, option])
 
   useEffect(() => {
     if(selector && selector.modifyInfo){
+      console.log(selector)
       setBasicRow([
         ...selector.modifyInfo
       ])
@@ -171,6 +146,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
+            current: row.exhaustion ? 0 : row.current,
             additional: [
               ...additional.map(v => {
                 if(row[v.name]) {
@@ -213,8 +189,6 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
       case 0:
         SaveBasic()
         break;
-      case 1:
-        break;
     }
   }
 
@@ -223,7 +197,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
       <PageHeader
         title={"원자재 입고 (수정)"}
         buttons={
-          ['저장하기', '삭제']
+          ['저장하기']
         }
         buttonsOnclick={
           // () => {}
@@ -252,23 +226,13 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/mold?page=${page}`)
-          }
-        }}
-      />
+
       <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

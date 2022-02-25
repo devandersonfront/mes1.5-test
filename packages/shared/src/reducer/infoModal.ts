@@ -7,6 +7,7 @@ interface ModalType {
     title:string
     code:string
     data:any
+    product_id:number
   }[]
 }
 
@@ -32,7 +33,7 @@ export const insert_summary_info = (payload: {code:string, title:string, data:an
   }
 }
 
-export const add_summary_info = (payload:{code:string, title:string, index:number}) => ({
+export const add_summary_info = (payload:{code:string, title:string, index:number, product_id:number}) => ({
   type: ADD_SUMMARY_INFO,
   payload: payload
 })
@@ -129,13 +130,14 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
   switch (type){
     case INSERT_SUMMARY_INFO :
       const insertState = {...state};
-      const insertPayload = payload as {code:string, title:string, data:any[], headerData:any};
+      const insertPayload = payload as {code:string, title:string, data:any[], headerData:any, product_id:number};
 
       insertState.datas.push({
         title: insertPayload.title,
         code: insertPayload.code,
         data: insertPayload.data,
-        headerData: insertPayload.headerData
+        headerData: insertPayload.headerData,
+        product_id: insertPayload.product_id
       })
       // insertState.datas[0].code = insertPayload.code;
       // insertState.datas[0].data = insertPayload.data;
@@ -145,12 +147,13 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
 
     case ADD_SUMMARY_INFO:
       const addState = {...state};
-      const addPayload = payload as {code:string, title:string, index:number};
+      const addPayload = payload as {code:string, title:string, index:number, product_id:number};
       const addDataObject:any = {};
       // addState.datas[addPayload.index].title = addPayload.title;
       // addState.datas[addPayload.index].code = addPayload.code;
         addDataObject.title = addPayload.title;
         addDataObject.code = addPayload.code;
+        addDataObject.product_id = addPayload.product_id;
 
       // addState.code.push(addPayload.code);
       addState.index = addPayload.index;
@@ -163,7 +166,6 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
       const changeIndexState = {...state};
       const changeIndexPayload = payload as number;
       changeIndexState.index = changeIndexPayload;
-
       return changeIndexState;
 
     case RESET_SUMMARY_INFO :

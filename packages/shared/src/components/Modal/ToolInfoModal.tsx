@@ -65,30 +65,30 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
     const ModalContents = () => {
         // if(row?.tools){
-            if(row.tools?.length){
-                return <div style={{
-                        padding: '3.5px 0px 0px 3.5px',
-                        width: 112
-                    }}>
-                        <Button onClick={() => {
-                            setIsOpen(true)
-                        }}>
-                            <p>공구 수정</p>
-                        </Button>
-                    </div>
+        if(row.tools?.length){
+            return <div style={{
+                padding: '3.5px 0px 0px 3.5px',
+                width: 112
+            }}>
+                <Button onClick={() => {
+                    setIsOpen(true)
+                }}>
+                    <p>공구 수정</p>
+                </Button>
+            </div>
 
-            }else{
-                return <div style={{
-                        padding: '3.5px 0px 0px 3.5px',
-                        width: '100%'
-                    }}>
-                        <UploadButton onClick={() => {
-                            setIsOpen(true)
-                        }}>
-                            <p>공구 등록</p>
-                        </UploadButton>
-                    </div>
-            }
+        }else{
+            return <div style={{
+                padding: '3.5px 0px 0px 3.5px',
+                width: '100%'
+            }}>
+                <UploadButton onClick={() => {
+                    setIsOpen(true)
+                }}>
+                    <p>공구 등록</p>
+                </UploadButton>
+            </div>
+        }
         // }
     }
 
@@ -363,7 +363,9 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                         <ExcelTable
                             headerList={searchModalList.toolInfo}
                             row={searchList ?? [{}]}
-                            setRow={(e) => setSearchList([...e])}
+                            setRow={(e) => {
+                                setSearchList([...e])
+                            }}
                             width={1746}
                             rowHeight={32}
                             height={552}

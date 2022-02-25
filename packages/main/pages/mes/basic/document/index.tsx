@@ -14,6 +14,7 @@ interface IProps {
 
 const BasicContainer = ({page, keyword, option, doc_id}: IProps) => {
 
+
     return (
         <div style={{display: 'flex', }}>
             <MenuNavigation pageType={'BASIC'}/>

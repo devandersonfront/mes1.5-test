@@ -32,15 +32,13 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
     const [moveFile, setMoveFile] = useState<number>();
     const [selectList, setSelectList] = useState<Set<number>>(new Set());
 
-    console.log(basicRow,'basicRowbasicRow')
-
     // 해당 리스트의 데이터를 받아오는 함수
     const LoadBasic = async() => {
 
         const res = await RequestMethod("get", "documentList",{ path: { docId : doc_id ?? null}})
 
         if(res){
-            const convertData = res.map((v)=>({...v , id : v.doc_id, type : v.type === "dir" ? "폴더" : v.type , date : moment().format("YYYY-MM-DD")})) 
+            const convertData = res.map((v)=>({...v , id : v.doc_id, type : v.type === "dir" ? "폴더" : v.type , date : moment(v.created).format("YYYY-MM-DD")}))
             const classfyData = res.filter(v => v.type === 'dir')
 
             setBasicRow(convertData)
@@ -211,8 +209,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                 return
         }
     }
-
-    console.log('selectList : ' , selectList)
 
     const moveFolder = (id: string) => {
 

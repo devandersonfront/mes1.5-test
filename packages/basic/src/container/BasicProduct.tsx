@@ -27,7 +27,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicProduct = ({page, option}: IProps) => {
+const BasicProduct = ({page}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -47,11 +47,10 @@ const BasicProduct = ({page, option}: IProps) => {
     total: 1
   })
 
+
   const [buttonList , setButtonList ] = useState<string[]>([])
 
   useEffect(() => {
-    
-    setOptionIndex(option)
     if(keyword){
       SearchBasic(keyword, optionIndex, page).then(() => {
         Notiflix.Loading.remove()
@@ -76,7 +75,7 @@ const BasicProduct = ({page, option}: IProps) => {
 
   }
 
-  
+
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
@@ -230,6 +229,18 @@ const BasicProduct = ({page, option}: IProps) => {
               }
             }).filter((machine) => machine.machine.machine_id)?? []
           ],
+          // tools:[
+          //     ...row.tools?.map((tool)=>{
+          //       return {
+          //         ...tool,
+          //         setting:tool.tool.setting,
+          //         tool:{
+          //           ...tool.tool,
+          //           customer:tool.tool.customerArray
+          //         }
+          //       }
+          //     })
+          // ],
           type:row.type_id ?? row.typeId ?? row.typePK,
           additional: [
             ...additional.map((v, index)=>{
@@ -250,13 +261,10 @@ const BasicProduct = ({page, option}: IProps) => {
     }).filter((v) => v)
 
 
-
-
     if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
       let res = await RequestMethod('post', `productSave`,result).catch((error)=>{
         return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
       })
-
 
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');
@@ -288,12 +296,11 @@ const BasicProduct = ({page, option}: IProps) => {
 
   }
 
-  console.log('제품 등록 관리' , basicRow)
-
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -324,9 +331,9 @@ const BasicProduct = ({page, option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','productDelete', haveIdRows.map((row) => (
-          {...row , type : row.type_id} 
+          {...row , type : row.type_id}
       )))
     }
 
@@ -555,15 +562,6 @@ const BasicProduct = ({page, option}: IProps) => {
 
   const onClickHeaderButton = (index: number) => {
     switch(buttonList[index]){
-      case '바코드 미리보기':
-        if(selectList.size === 0){
-          return Notiflix.Report.failure('선택을 하셔야 합니다.',
-          '선택을 하셔야지 바코드를 보실수 있습니다.',
-          'Okay',)
-        }
-        setBarcodeOpen(true)
-        selectedData()
-        break;
       case '항목관리':
         router.push(`/mes/item/manage/product`)
         break;
@@ -628,8 +626,8 @@ const BasicProduct = ({page, option}: IProps) => {
     if(spliceRow){
       if(isCheck){
         return Notiflix.Report.warning(
-          '코드 경고',
-          `중복된 코드를 입력할 수 없습니다`,
+          '경고',
+          `중복된 코드가 존재합니다.`,
           '확인'
         );
       }
@@ -661,16 +659,13 @@ const BasicProduct = ({page, option}: IProps) => {
         Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
         return false
       }
-
     })
   }
 
-
   const handleModal = (open:boolean) => {
-
     setBarcodeOpen(!open)
-
   }
+
 
   React.useEffect(()=>{
 
@@ -684,7 +679,6 @@ const BasicProduct = ({page, option}: IProps) => {
     return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
 
   },[selectList.size])
-
 
 
   return (
@@ -717,6 +711,8 @@ const BasicProduct = ({page, option}: IProps) => {
           row={basicRow}
           // setRow={setBasicRow}
           setRow={(e) => {
+
+
             let tmp: Set<any> = selectList
             e.map(v => {
               if(v.isChange) tmp.add(v.id)
@@ -742,7 +738,7 @@ const BasicProduct = ({page, option}: IProps) => {
               title={'바코드 미리보기'}
               handleBarcode={handleBarcode}
               handleModal={handleModal}
-              isOpen={barcodeOpen}  
+              isOpen={barcodeOpen}
               type={'product'}
               data={selectRow}
               />

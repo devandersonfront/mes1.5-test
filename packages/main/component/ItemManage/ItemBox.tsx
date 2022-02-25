@@ -24,7 +24,7 @@ const ItemBox = ({item,setItems}: IProps) => {
           }else{
             Notiflix.Notify.warning('필수인 항목은 숨기기가 불가능합니다.')
           }
-        }
+      }
       }}
     >
       <p style={{color: 'white'}}>{item.title}</p>
