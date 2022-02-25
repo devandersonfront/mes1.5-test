@@ -95,6 +95,7 @@ export const SearchResultSort = (infoList, type: string) => {
           factory_id: v.factory?.name,
           affiliated_id: v.subFactory?.name,
           type:TransferCodeToValue(v.type, "machine"),
+          type_id : v.type,
           weldingType_id:v.weldingType,
           weldingType:TransferCodeToValue(v.weldingType, "welding")
         }
@@ -223,9 +224,9 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
       const unitResult = () => {
         let result = "-";
         switch (selectData.type){
-          case "반재품" :
-            result = "EA";
-            break;
+          // case "반제품" :
+          //   result = "EA";
+          //   break;
           case "COIL" :
             result = "kg";
             break;
@@ -243,6 +244,7 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
         customer_id: selectData.customerArray?.name,
         unit:unitResult(),
+        type_name:"원자재",
         raw_material: {
           ...selectData,
           customer: selectData.customerArray

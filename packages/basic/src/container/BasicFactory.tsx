@@ -152,7 +152,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
               version: row.version ?? null,
               additional: [
                 ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
+                  //if(!row[v.colName]) return undefined;
                   // result.push(
                   return {
                     mi_id: v.id,
@@ -169,8 +169,9 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
 
             }
         }).filter((v) => v)).catch((error)=>{
-            return error.data && Notiflix.Notify.failure(error.data.message);
+          return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
         })
+  
 
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');

@@ -221,7 +221,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
                     version: row.version ?? null,
                     additional: [
                     ...additional.map((v, index)=>{
-                      if(!row[v.colName]) return undefined;
+                      //if(!row[v.colName]) return undefined;
                       return {
                           mi_id: v.id,
                           title: v.name,
@@ -236,10 +236,9 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       
                 }
               }).filter((v) => v)).catch((error)=>{
-                if(error.status === 409) {
-                  return Notiflix.Report.failure('저장할 수 없습니다.', error?.data.message, '확인')
-                }
+                return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
               })
+        
             if(res){
               Notiflix.Report.success('저장되었습니다.','','확인');
               if(keyword){
