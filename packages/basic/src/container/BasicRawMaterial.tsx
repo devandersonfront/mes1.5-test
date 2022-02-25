@@ -172,7 +172,7 @@ const BasicRawMaterial = ({}: IProps) => {
           // customer: row.customerArray,
           additional: [
             ...additional.map((v, index)=>{
-              if(!row[v.colName]) return undefined;
+              //if(!row[v.colName]) return undefined;
               return {
                 mi_id: v.id,
                 title: v.name,
@@ -199,7 +199,9 @@ const BasicRawMaterial = ({}: IProps) => {
     }
 
     if(selectCheck && codeCheck){
-      let res = await RequestMethod('post', `rawMaterialSave`, result)
+      let res = await RequestMethod('post', `rawMaterialSave`, result).catch((error)=>{
+        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+      })
 
       if (res) {
         Notiflix.Report.success('저장되었습니다.', '', '확인');
@@ -391,7 +393,6 @@ const BasicRawMaterial = ({}: IProps) => {
     })
     excelDownload(column, basicRow, `mold`, "mold", tmpSelectList)
   }
-
 
 
   const setAdditionalData = () => {

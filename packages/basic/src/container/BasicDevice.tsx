@@ -228,7 +228,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
                 subFactory: row?.subFactory ? {...row?.subFactory, manager:row?.subFactory?.manager_info} : undefined,
                 additional: [
                   ...additional.map((v, index)=>{
-                    if(!row[v.colName]) return undefined;
+                    //if(!row[v.colName]) return undefined;
                     return {
                       mi_id: v.id,
                       title: v.name,
@@ -243,7 +243,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
 
             }
           }).filter((v) => v)).catch((error)=>{
-            return error.data && Notiflix.Notify.failure(error.data.message);
+            return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
           })
 
 

@@ -262,7 +262,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     const ButtonEvents = (index:number) => {
         switch(index) {
             case 0:
-                if(selectList.size > 0){
+                if(selectList && selectList.size > 0){
                     // @ts-ignore
                     dispatch(setToolDataAdd(basicRow.filter((row)=>selectList.has(row.id))));
                     router.push("/mes/tool/update")

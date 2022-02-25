@@ -72,11 +72,12 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
       break;
     }
     case 'rawmaterial': {
-      RAW_MATERIAL_TYPE_CODE.map(v => {
-        if(v.code === code){
-          value = v.value;
-        }
-      })
+      value = "원자재"
+      // RAW_MATERIAL_TYPE_CODE.map(v => {
+      //   if(v.code === code){
+      //     value = v.value;
+      //   }
+      // })
       break;
     }
     case 'rawMaterialType': {

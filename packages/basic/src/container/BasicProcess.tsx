@@ -175,7 +175,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
               ...selectData,
               additional: [
                 ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
+                  //if(!row[v.colName]) return undefined;
                   return {
                     mi_id: v.id,
                     title: v.name,
@@ -216,7 +216,6 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     );
   }
   }
-
 
   const setAdditionalData = () => {
 
@@ -272,6 +271,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+
       await RequestMethod('delete','processDelete', haveIdRows.map((row) => (
           {...row , customer: row.customerArray, additional : [...additional.map(v => {
             if(row[v.name]) {
@@ -282,10 +282,12 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       )))
 
     }
+
     Notiflix.Report.success('삭제되었습니다.','','확인');
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
+
 
     // const res = await RequestMethod('delete', `processDelete`,
 

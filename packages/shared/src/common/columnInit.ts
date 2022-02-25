@@ -956,7 +956,7 @@ export const columnlist: any = {
     {key: 'route_record_list', name: '작업 이력', formatter: WorkListModal, width: 118, modalInitData: BomRegisterInit },
     {key: 'total_counter', name: '총 카운터', width: 118 },
     {key: 'total_good_quantity', name: '총 양품 수량', width: 118 },
-    {key: 'total_poor_quantity', name: '총 불량 수량', width: 118, formatter: DefectInfoModal},
+    {key: 'total_poor_quantity', name: '총 불량 수량', width: 118, formatter: DefectInfoModal, type: 'readonly' ,load: 'sheet'},
     {key:"total_uph", name:"총 UPH", width: 118},
   ],
   stockV2: [

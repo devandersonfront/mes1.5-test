@@ -165,7 +165,7 @@ const BasicMold = ({}: IProps) => {
           ...selectData,
           additional: [
             ...additional.map((v, index)=>{
-              if(!row[v.colName]) return undefined;
+              //if(!row[v.colName]) return undefined;
               return {
                 mi_id: v.id,
                 title: v.name,
@@ -181,7 +181,9 @@ const BasicMold = ({}: IProps) => {
       }
     }).filter((v) => v)
     if(selectCheck && codeCheck){
-      res = await RequestMethod('post', `moldSave`, result)
+      res = await RequestMethod('post', `moldSave`, result).catch((error)=>{
+        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+      })
 
       if(res){
           Notiflix.Report.success('저장되었습니다.','','확인');

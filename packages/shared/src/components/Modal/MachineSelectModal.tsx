@@ -55,7 +55,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen){
-    LoadBasic(row.productId)
+      LoadBasic(row.productId)
     }
     // let tmpMachines
     // if(!row.machines || !row.machines.length){
@@ -111,7 +111,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
         return {
           ...v,
           sequence: index+1,
-          spare: v.setting === 0 ? '여' : '부',
+          setting: '부',
         }
       }))
     }
@@ -276,6 +276,16 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
+                let settingUseArray = 0
+                searchList.map((v)=> {
+                  if(v.setting === 1) {
+                    settingUseArray += 1
+                  }
+                })
+                if(settingUseArray > 1) {
+                  return Notiflix.Report.warning("경고", "금형을 하나만 선택해주시기 바랍니다.", "확인");
+                }
+
                 if(selectRow !== undefined && selectRow !== null){
                   onRowChange({
                     ...row,

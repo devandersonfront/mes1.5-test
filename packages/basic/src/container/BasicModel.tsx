@@ -202,7 +202,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
               customer: row.customerArray ?? row.customer,
               additional: [
                 ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
+                  //if(!row[v.colName]) return undefined;
                   // result.push(
                   return {
                     mi_id: v.id,
@@ -219,9 +219,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
 
           }
         }).filter((v) => v)).catch((error)=>{
-          if(error.status === 409) {
-            return Notiflix.Report.failure('저장할 수 없습니다.', error?.data.message, '확인')
-          }
+          return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
         })
 
 

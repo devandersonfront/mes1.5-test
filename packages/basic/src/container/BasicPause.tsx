@@ -280,6 +280,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         '확인',
         );
         }
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           () => DeleteBasic()
           // async()=>{

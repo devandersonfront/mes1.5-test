@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import {
-    columnlist,
-    ExcelDownloadModal,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    RequestMethod,
-    TextEditor
+  columnlist,
+  ExcelDownloadModal,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  MAX_VALUE, PaginationComponent,
+  RequestMethod,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -255,6 +255,7 @@ const MesStockList = ({page, keyword, option}: IProps) => {
         cm_id: row.model?.model ?? '-',
         product_id: row.code ?? '-',
         productId: row.product_id ?? '-',
+        process_id: row.processId ?? '-' ,
         name: row.name ?? '-',
         type: !Number.isNaN(row.type) ? TransferCodeToValue(row.type, 'productType') : '-',
         unit: row.unit ?? '-',
@@ -311,6 +312,17 @@ const MesStockList = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+      />
+      <PaginationComponent
+          currentPage={pageInfo.page}
+          totalPage={pageInfo.total}
+          setPage={(page) => {
+            if(keyword){
+              router.push(`/mes/stockV2/list?page=${page}&keyword=${keyword}&opt=${option}`)
+            }else{
+              router.push(`/mes/stockV2/list?page=${page}`)
+            }
+          }}
       />
       <ExcelDownloadModal
         isOpen={excelOpen}

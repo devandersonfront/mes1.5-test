@@ -114,6 +114,8 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
         ca_id: undefined,
         name: data.name,
         authorities: addedAuthorities
+      }).catch((error)=>{
+        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
       })
 
       if (res){

@@ -58,12 +58,12 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   const valueExistence = () => {
 
     const selectedRows = filterSelectedRows()
-    
-    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함 
-    if(selectedRows.length > 0){ 
+
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
+    if(selectedRows.length > 0){
 
       const nameCheck = selectedRows.every((data)=> data.name)
-  
+
       if(!nameCheck){
         return '거래처명'
       }
@@ -71,7 +71,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     }
 
     return false;
-    
+
   }
 
 
@@ -142,7 +142,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
               ...selectData,
               additional: [
                 ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
+                  //if(!row[v.colName]) return undefined;
                   // result.push(
                   return {
                     mi_id: v.id,
@@ -158,7 +158,9 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v))
+        }).filter((v) => v)).catch((error)=>{
+          return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+        })
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인');
@@ -234,6 +236,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+
       await RequestMethod('delete','customerDelete', haveIdRows.map((row) => (
           {...row , additional : [...additional.map(v => {
             if(row[v.name]) {
@@ -440,6 +443,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
           [v.mi_id]: v.value
         }
       })
+
       let random_id = Math.random()*1000;
       return {
         ...row,
