@@ -156,8 +156,8 @@ const BasicMachineV1u = ({ option}: IProps) => {
             Notiflix.Report.success("저장되었습니다.","","확인");
             LoadBasic(pageInfo.page);
           })
-          .catch((err) => {
-            Notiflix.Report.failure("경고", err.data.message, "확인");
+          .catch((error)=>{
+            return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
           })
 
 

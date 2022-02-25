@@ -248,7 +248,9 @@ const BasicProduct = ({page}: IProps) => {
 
 
     if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
-      let res = await RequestMethod('post', `productSave`,result)
+      let res = await RequestMethod('post', `productSave`,result).catch((error)=>{
+        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+      })
 
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');
