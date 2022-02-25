@@ -255,6 +255,7 @@ const MesStockList = ({page, keyword, option}: IProps) => {
         cm_id: row.model?.model ?? '-',
         product_id: row.code ?? '-',
         productId: row.product_id ?? '-',
+        process_id: row.processId ?? '-' ,
         name: row.name ?? '-',
         type: !Number.isNaN(row.type) ? TransferCodeToValue(row.type, 'productType') : '-',
         unit: row.unit ?? '-',
