@@ -376,7 +376,7 @@ export const searchModalList: any = {
     {key: 'good_quantity', name: '양품 수량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 250, type: 'readonly'},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, textAlign: 'center',  type: 'Modal'},
+    {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, textAlign: 'center',  type: 'readonly', modalType: true },
     {key: 'mold', name: '금형', formatter: MoldListModal, textAlign: 'center', type: 'Modal'},
     {key: 'machine', name: '기계', formatter: MachineListModal, textAlign: 'center', type: 'Modal'},
   ],
