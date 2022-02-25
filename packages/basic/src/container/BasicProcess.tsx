@@ -202,7 +202,6 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
   }
 
-  console.log(basicRow,'basicRowbasicRow')
 
   const setAdditionalData = () => {
 

@@ -30,7 +30,6 @@ const MesToolUpdate = () => {
 
     const SaveCleanUpData = (data:any[]) => {
         let resultData = [];
-        console.log("data : ", data)
         data.map((rowData, index) => {
             let tmpRow:any = {};
             let toolObject:any = {};

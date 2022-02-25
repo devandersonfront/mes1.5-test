@@ -45,8 +45,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
   const [headerData, setHeaderData] = useState<any>();
 
-  console.log(searchList,'searchListsearchList')
-  console.log(column.type,'column.typecolumn.type')
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
@@ -176,7 +174,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       }
     })
 
-    console.log('tmpData : ' , tmpData)
 
     return tmpData
   }

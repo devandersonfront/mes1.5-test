@@ -42,7 +42,6 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     if(selector && selector.modifyInfo){
-      console.log(selector)
       setBasicRow([
         ...selector.modifyInfo
       ])

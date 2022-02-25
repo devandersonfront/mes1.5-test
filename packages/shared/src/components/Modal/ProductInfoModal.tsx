@@ -33,7 +33,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log("여기")
       cleanUpData();
     }
   }, [isOpen, searchKeyword])
@@ -54,7 +53,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
 
   const cleanUpData = () => {
-      console.log("row : ", row, column)
     if(row.product_id){
       switch(column.type){
         case "mold" :
@@ -118,7 +116,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
           break;
       }
     }else{
-      console.log("아하 : ", row)
       if(row?.products){
         let productArray = [];
         row?.products?.map((data) => {

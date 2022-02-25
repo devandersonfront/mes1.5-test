@@ -50,7 +50,6 @@ const BasicProduct = ({page}: IProps) => {
 
   const [buttonList , setButtonList ] = useState<string[]>([])
 
-  console.log(basicRow,'basicRow')
 
   useEffect(() => {
     if(keyword){
