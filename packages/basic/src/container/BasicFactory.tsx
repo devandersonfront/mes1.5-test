@@ -186,7 +186,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
 
           }
       }).filter((v) => v)).catch((error)=>{
-          return error.data && Notiflix.Notify.failure(error.data.message);
+        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
       })
 
     if(res){
