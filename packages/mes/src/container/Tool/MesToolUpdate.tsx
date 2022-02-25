@@ -19,11 +19,8 @@ const MesToolUpdate = () => {
 
     const cleanUpData = () => {
         let cleanData = [...toolStore];
-
         cleanData.map((value) => {
             value.code = value.tool_id;
-            // rowData.name = value.name;
-            // rowData.unit = value.unit;
             value.customer = value.customer_id;
 
             return value
@@ -33,6 +30,7 @@ const MesToolUpdate = () => {
 
     const SaveCleanUpData = (data:any[]) => {
         let resultData = [];
+        console.log("data : ", data)
         data.map((rowData, index) => {
             let tmpRow:any = {};
             let toolObject:any = {};
@@ -49,20 +47,21 @@ const MesToolUpdate = () => {
             tmpRow.date = rowData.date;
             tmpRow.warehousing = rowData.warehousing;
             tmpRow.lot_tool_id = rowData.lot_tool_id;
-
+            tmpRow.version = rowData.version
             resultData.push(tmpRow);
         })
+
         return resultData;
     }
 
     const SaveBasic = async(data:any) => {
-        const res = await RequestMethod("post", "lotToolSave", data)
-
-        if(res){
-            Notiflix.Report.success("저장되었습니다.","","확인", () => router.push("/mes/tool/list"))
-        }else{
-            Notiflix.Report.failure("에러가 발생했습니다. 관리자에게 문의해주시기 바랍니다.","","확인")
-        }
+        await RequestMethod("post", "lotToolSave", data)
+            .then((res) => {
+                Notiflix.Report.success("저장되었습니다.","","확인", () => router.push("/mes/tool/list"))
+            })
+            .catch((err) => {
+                Notiflix.Report.failure("에러가 발생했습니다. 관리자에게 문의해주시기 바랍니다.","","확인")
+            })
     }
     const buttonEvents = (number:number) => {
         switch(number) {
@@ -73,7 +72,6 @@ const MesToolUpdate = () => {
                 //result 값 가지고 save
                 SaveCleanUpData(result)
                 SaveBasic(SaveCleanUpData(result));
-                router.push("/mes/tool/list");
 
                 return
             case 1:
@@ -89,9 +87,9 @@ const MesToolUpdate = () => {
 
     useEffect(() => {
         if(toolStore?.data === ''){
-            // Notiflix.Report.warning("수정할 데이터가 없습니다.","","확인",() =>
-            router.back()
-            // )
+            Notiflix.Report.warning("수정할 데이터가 없습니다.","","확인",() =>
+                router.back()
+            )
         }
         cleanUpData();
     },[])
