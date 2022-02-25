@@ -46,14 +46,14 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
   const [headerData, setHeaderData] = useState<any>();
 
 
-  console.log(searchList,'searchListsearchListsearchList')
+  console.log(column.name,'searchListsearchListsearchList')
 
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
       // if(row.bom_root_id){
 
-      if(column.name ==='생산 공정'){
+      if(column.name ==='BOM'){
         if(row.product_id){
           SearchBasic().then(() => {
             Notiflix.Loading.remove()
@@ -582,7 +582,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 setSearchList([
                   ...searchList,
                   {
-                    setting: '기본',
+                    setting: 1,
                     seq: searchList.length+1
                   }
                 ])
