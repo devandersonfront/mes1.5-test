@@ -38,16 +38,22 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
             const legendaryArray: string[] = legendaryValue.map((v,i)=>{
                 return v
             })
-
+            let machineName
             const processName = row.product.process === null ? '-' : row.product.process.name
-            const machineName = row.machines.length === 0 ? '-' : row.machines.length > 1 ? row.machines[0].machine.machine.name +' 외'+`${row.machines.length-1} 개` : row.machines[0].machine.machine.name
-
+            if(row.machines !== null) {
+                machineName = row.machines.length === 0 ? '-' : row.machines.length > 1 ? row.machines[0].machine.machine.name + ' 외' + `${row.machines.length - 1} 개` : row.machines[0].machine.machine.name
+            }else {
+                machineName = '-'
+            }
             setExcelInfo({sic_id: res.sic_id, record_id: row.record_id ,basic: [{osd_id: row.identification, lot_number: row.lot_number, code: row.product.code, material_name: row.product.name, type: row.type , process_id: processName, worker_name: row.user.name, name: machineName}], samples: [{samples: res.samples}], legendary: legendaryArray, inspection_info: res.inspection_info})
             setModalOpen(true)
         }else {
             Notiflix.Report.warning('검사 항목을 등록해주세요.','','확인');
         }
     }
+    React.useEffect(()=>{
+        console.log(modalOpen)
+    },[modalOpen])
 
     const midrangeRecordInspectResultLoad = () => {
 

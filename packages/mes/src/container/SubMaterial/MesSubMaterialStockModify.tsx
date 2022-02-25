@@ -144,6 +144,7 @@ const MesSubMaterialStockModify = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
+            current: row.warehousing,
             additional: [
               ...additional.map(v => {
                 if(row[v.name]) {
@@ -159,7 +160,17 @@ const MesSubMaterialStockModify = ({page, keyword, option}: IProps) => {
           }
 
         }
-      }).filter((v) => v))
+      }).filter((v) => v)).catch((error) => {
+
+      if(error.status === 409){
+        Notiflix.Report.warning("경고", error.data.message, "확인",)
+        return true
+      }else if(error.status === 422){
+        Notiflix.Report.warning("경고", error.data.message, "확인",)
+        return true
+      }
+      return false
+    })
 
 
     if(res){

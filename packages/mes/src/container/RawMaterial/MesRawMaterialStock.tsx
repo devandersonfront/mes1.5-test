@@ -63,9 +63,13 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
   });
 
   const [nzState, setNzState] = useState<boolean>(false);
-
+  const [expState, setExpState] = useState<boolean>(false);
   const changeNzState = (value:boolean) => {
     setNzState(value);
+  }
+
+  const changeExpState = (value:boolean) => {
+    setExpState(value);
   }
 
   useEffect(() => {
@@ -79,7 +83,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, nzState, selectDate])
+  }, [page, keyword, nzState, selectDate, expState])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -151,6 +155,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
           // }
           // :
               {
+            exp: expState,
             nz:nzState,
             from:selectDate.from,
             to:selectDate.to
@@ -183,6 +188,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         keyword: keyword ?? '',
         opt: option ?? 0,
         nz:nzState,
+        exp: expState,
         from:selectDate.from,
         to:selectDate.to
       }
@@ -495,8 +501,11 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
     <div>
       <PageHeader
         isNz
+        isExp
         nz={nzState}
+        exp={expState}
         onChangeNz={changeNzState}
+        onChangeExp={changeExpState}
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
