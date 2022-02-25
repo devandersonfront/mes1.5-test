@@ -58,7 +58,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       case 5 :
         result = "선반";
           break ;
-      case 5 :
+      case 6 :
         result = "탭핑기";
         break ;
       default:
@@ -378,7 +378,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               row={searchList }
               setRow={(e) => {
 
-
                 const filterList = [...e.map((machine) => {
                   if(typeof machine.type !== "string"){
                     return {...machine, type_id:machine.type, type:selectMachineType(machine.type)}
@@ -442,7 +441,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 }}
               }
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-
             >
               <p>등록하기</p>
             </div>

@@ -157,14 +157,14 @@ export const searchModalList: any = {
   toolProductSearch: [
     {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
     {key: 'name', name: '공구 품명', /*formatter: SearchModalTest,*/ type: 'mold', modalType: true },
-    {key: 'unit', name: '단위', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
     {key: 'customer', name: '거래처'},
+    {key: 'stock', name: '재고량', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
   ],
   toolSearch: [
     {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
     {key: 'name', name: '공구 품명', /*formatter: SearchModalTest,*/ type: 'mold', modalType: true },
-    {key: 'unit', name: '단위', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
     {key: 'customer', name: '거래처'},
+    {key: 'stock', name: '재고량', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
   ],
   machineInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},

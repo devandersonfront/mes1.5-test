@@ -152,8 +152,6 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
 
     const existence = valueExistence()
 
-    if(!existence){
-
     if(selectList.size === 0){
       return Notiflix.Report.warning(
         '경고',
@@ -162,6 +160,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
         );
     }
 
+    if(!existence){
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -245,6 +244,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
           }).filter((v) => v)).catch((error)=>{
             return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
           })
+
 
 
       if(res){
@@ -678,6 +678,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
         break;
     }
   }
+
 
   const competeDevice = (rows) => {
 

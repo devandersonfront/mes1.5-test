@@ -289,7 +289,7 @@ const ApiList = {
   modelDelete: `/api/v1/model/delete`,
   processDelete: `/api/v1/process/delete`,
   machineDelete: `/api/v1/machine/delete`,
-  productDelete: `/api/v1/product/delete`,
+  productDelete: `/cnc/api/v1/product/delete`,
   rawmaterialDelete: `/api/v1/rawmaterial/delete`,
   rawMaterialDelete: `/api/v1/raw-material/delete`,
   subMaterialDelete: `/api/v1/sub-material/delete`,

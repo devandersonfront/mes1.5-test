@@ -13,6 +13,7 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {UploadButton} from '../../styles/styledComponents'
 import {TransferCodeToValue} from '../../common/TransferFunction'
+import Notiflix from 'notiflix'
 
 interface IProps {
     column: IExcelHeaderType
@@ -40,7 +41,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     const [keyword, setKeyword] = useState<string>('')
     const [summaryData, setSummaryData] = useState<any>({})
     const [selectRow, setSelectRow] = useState<number>()
-    const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+    const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 1}])
     const [searchKeyword, setSearchKeyword] = useState<string>('')
     const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
         page: 1,
@@ -90,6 +91,49 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         }
         // }
     }
+
+    const haveBasicValidation = () => {
+
+        if(searchList.length > 0){
+            return searchList.some((list)=> list.setting === 1)
+        }
+
+        return true;
+    } 
+    
+      // 데이터 유무 판단
+    const haveDataValidation = () => {
+    
+        let dataCheck = true
+    
+        searchList.map((v,i)=>{
+            if(!v.tool_id){
+                dataCheck = false
+            }
+        })
+    
+        return dataCheck
+    }
+
+    const executeValidation = () => {
+
+        let isValidation = false
+        // const haveList = searchList.length === 0
+        const haveData = haveDataValidation()
+        const haveBasic = haveBasicValidation()
+    
+        if(!haveData){
+            isValidation = true
+            Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
+        }else if(!haveBasic){
+            isValidation = true
+            Notiflix.Report.warning("경고","기본설정은 최소 한개 이상 필요합니다.","확인",)
+        }
+    
+        return isValidation
+    
+    }
+
     return (
         <SearchModalWrapper >
             { ModalContents() }
@@ -216,6 +260,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                             setSearchList([
                                 ...searchList,
                                 {
+                                    setting: 1,
                                     seq: searchList.length+1
                                 }
                             ])
@@ -223,49 +268,93 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                             <p>행 추가</p>
                         </Button>
                         <Button style={{marginLeft: 16}} onClick={() => {
-                            if(selectRow === 0){
+                             if(selectRow === 0 || selectRow === undefined){
                                 return
-                            }
-                            let tmpRow = searchList
-
-                            let tmp = tmpRow[selectRow]
-                            tmpRow[selectRow] = tmpRow[selectRow - 1]
-                            tmpRow[selectRow - 1] = tmp
-
-                            setSearchList([...tmpRow.map((v, i) => {
+                              }
+                              let tmpRow = [...searchList]
+                
+                              let tmp = tmpRow[selectRow]
+                              tmpRow[selectRow] = tmpRow[selectRow - 1]
+                              tmpRow[selectRow - 1] = tmp
+                
+                              // setSearchList([...tmpRow.map((v, i) => {
+                              //   if(!searchList[selectRow-1].border){
+                              //     searchList.map((v,i)=>{
+                              //       v.border = false;
+                              //     })
+                              //     searchList[selectRow-1].border = true
+                              //     setSearchList([...searchList])
+                              //   }
+                              //   setSelectRow(selectRow -1)
+                              //   return {
+                              //     ...v,
+                              //     seq: i+1
+                              //   }
+                              // })])
+                              setSelectRow((prevSelectRow)=> prevSelectRow - 1)
+                              setSearchList([...tmpRow.map((v, i) => {
                                 return {
-                                    ...v,
-                                    seq: i+1
+                                  ...v,
+                                  seq: i+1
                                 }
-                            })])
+                              })])
                         }}>
                             <p>위로</p>
                         </Button>
                         <Button style={{marginLeft: 16}} onClick={() => {
-                            if(selectRow === searchList.length-1){
+                            if(selectRow === searchList.length-1 || selectRow === undefined){
                                 return
+                              }
+                              let tmpRow = [...searchList]
+                              let tmp = tmpRow[selectRow]
+                              tmpRow[selectRow] = tmpRow[selectRow + 1]
+                              tmpRow[selectRow + 1] = tmp
+                
+                              // setSearchList([...tmpRow.map((v, i) => {
+                              //   if(!searchList[selectRow+1].border){
+                              //     searchList.map((v,i)=>{
+                              //       v.border = false;
+                              //     })
+                              //     searchList[selectRow+1].border = true
+                              //     setSearchList([...searchList])
+                              //   }
+                              //   setSelectRow(selectRow +1)
+                              //   return {
+                              //     ...v,
+                              //     seq: i+1
+                              //   }
+                              // })])
+                              setSelectRow((prevSelectRow)=> prevSelectRow + 1)
+                                setSearchList([...tmpRow.map((v, i) => {
+                                  return {
+                                    ...v,
+                                    seq: i+1
+                                  }
+                                })])
+                
+                            }}>
+                              <p>아래로</p>
+                        </Button>
+                        <Button style={{marginLeft: 16}} onClick={() => {
+                            // let tmpRow = [...searchList]
+
+                            // tmpRow.splice(selectRow, 1)
+
+                            // setSearchList([...tmpRow])
+                            if(selectRow === -1){
+                                return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
                             }
-                            let tmpRow = searchList
-
-                            let tmp = tmpRow[selectRow]
-                            tmpRow[selectRow] = tmpRow[selectRow + 1]
-                            tmpRow[selectRow + 1] = tmp
-
+                              
+                            let tmpRow = [...searchList]
+                            tmpRow.splice(selectRow, 1)
                             setSearchList([...tmpRow.map((v, i) => {
                                 return {
                                     ...v,
                                     seq: i+1
-                                }
+                                  }
                             })])
-                        }}>
-                            <p>아래로</p>
-                        </Button>
-                        <Button style={{marginLeft: 16}} onClick={() => {
-                            let tmpRow = [...searchList]
-
-                            tmpRow.splice(selectRow, 1)
-
-                            setSearchList([...tmpRow])
+                            setSelectRow(-1)
+                              
                         }}>
                             <p>삭제</p>
                         </Button>
@@ -308,20 +397,24 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                         </div>
                         <div
                             onClick={() => {
-                                if(selectRow !== undefined && selectRow !== null){
-                                    onRowChange({
-                                        ...row,
-                                        tools: searchList.map((v, i) => {
-                                            return {
-                                                sequence: i+1,
-                                                tool: v
-                                            }
-                                        }),
-                                        name: row.name,
-                                        isChange: true
-                                    })
+
+                                const isValidation = executeValidation()
+                                if(!isValidation){
+                                    if(selectRow !== undefined && selectRow !== null){
+                                        onRowChange({
+                                            ...row,
+                                            tools: searchList.map((v, i) => {
+                                                return {
+                                                    sequence: i+1,
+                                                    tool: v
+                                                }
+                                            }),
+                                            name: row.name,
+                                            isChange: true
+                                        })
+                                    }
+                                    setIsOpen(false)
                                 }
-                                setIsOpen(false)
                             }}
                             style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >

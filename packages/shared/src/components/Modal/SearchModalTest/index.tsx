@@ -96,6 +96,13 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }, [isOpen, searchModalInit, pageInfo.page])
 
+
+  const filterList = (result) => {
+  return result.map((list)=>(
+      {...list , customer : list.customer?.name}
+    ))
+  }
+
   const LoadBasic = async (page?:number) => {
     Notiflix.Loading.circle();
     const selectType = () => {

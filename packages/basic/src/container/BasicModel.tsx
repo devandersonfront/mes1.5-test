@@ -120,9 +120,9 @@ const BasicModel = ({page, keyword, option}: IProps) => {
   const valueExistence = () => {
 
     const selectedRows = filterSelectedRows()
-    
-    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함 
-    if(selectedRows.length > 0){ 
+
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
+    if(selectedRows.length > 0){
 
       const nameCheck = selectedRows.every((data)=> data.customer_id)
       const modelCheck = selectedRows.every((data)=> data.model)
@@ -136,9 +136,9 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     }
 
     return false;
-    
+
   }
-  
+
   const SaveBasic = async () => {
 
     const existence = valueExistence()
@@ -150,7 +150,11 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         '확인',
         );
     }
+
+
+
     if(!existence){
+
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -223,6 +227,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         })
 
 
+
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인');
       if(keyword){
@@ -246,7 +251,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -262,7 +267,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -296,7 +301,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','modelDelete', haveIdRows.map((row) => (
           {...row , customer: row.customerArray, additional : [...additional.map(v => {
             if(row[v.name]) {
@@ -307,12 +312,12 @@ const BasicModel = ({page, keyword, option}: IProps) => {
       )))
 
     }
-      
+
     Notiflix.Report.success('삭제되었습니다.','','확인');
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
-    
+
     // const res = await RequestMethod('delete', `modelDelete`,
     //   basicRow.map((row, i) => {
     //     if(selectList.has(row.id)){
@@ -639,7 +644,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         SaveBasic()
         break;
       case 5:
-        
+
         if(selectList.size === 0){
           return Notiflix.Report.warning(
         '경고',
@@ -658,6 +663,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
 
     }
   }
+
 
   const competeModel = (rows) => {
 

@@ -118,6 +118,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
         return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
       })
 
+
       if (res){
         await new Promise((resolve) => {
           changeListToAuth(addedAuthorities)

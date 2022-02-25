@@ -195,8 +195,14 @@ const BasicProduct = ({page}: IProps) => {
           molds:row?.molds?.map((mold)=>{
             return { setting:mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
           }).filter((mold) => mold.mold.mold_id) ?? [],
+          tools:[
+            ...row?.tools?.map((tool) => {
+              return {...tool, tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional}, setting:tool.tool.setting}
+            }).filter((tool) => tool.tool.tool_id) ?? [],
+          ],
           machines:[
             ...row?.machines?.map((machine)=>{
+              // console.log(machine,'machinemachine')
               return {
                 sequence : machine.sequence,
                 setting: machine.setting,
@@ -272,6 +278,7 @@ const BasicProduct = ({page}: IProps) => {
           })
         }
       }
+
     }else if(!selectCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
@@ -288,7 +295,6 @@ const BasicProduct = ({page}: IProps) => {
     }
 
   }
-
 
   const convertDataToMap = () => {
     const map = new Map()
