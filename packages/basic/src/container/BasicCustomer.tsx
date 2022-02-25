@@ -58,12 +58,12 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   const valueExistence = () => {
 
     const selectedRows = filterSelectedRows()
-    
-    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함 
-    if(selectedRows.length > 0){ 
+
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
+    if(selectedRows.length > 0){
 
       const nameCheck = selectedRows.every((data)=> data.name)
-  
+
       if(!nameCheck){
         return '거래처명'
       }
@@ -71,7 +71,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     }
 
     return false;
-    
+
   }
 
 
@@ -183,12 +183,11 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   }
   }
 
-  console.log(basicRow,'basicRowbasicRowbasicRow')
 
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -204,7 +203,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -239,7 +238,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','customerDelete', haveIdRows.map((row) => (
           {...row , additional : [...additional.map(v => {
             if(row[v.name]) {
@@ -255,7 +254,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
-    
+
     // const res = await RequestMethod('delete', `customerDelete`,
     //   basicRow.map((row, i) => {
     //     if(selectList.has(row.id)){
@@ -326,7 +325,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     //       })
     //     }
     //   })
-    // }  
+    // }
     // if(keyword){
     //   SearchBasic(keyword, option, page).then(() => {
     //     Notiflix.Loading.remove()
@@ -603,7 +602,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
 
         break;
       case 5:
-        
+
         if(selectList.size === 0){
           return Notiflix.Report.warning(
         '경고',
@@ -641,7 +640,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     }
 
     setBasicRow(rows)
-    
+
   }
 
   return (

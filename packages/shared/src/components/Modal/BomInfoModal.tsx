@@ -419,7 +419,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     }
 
     setSearchList(rows)
-  } 
+  }
 
   return (
     <SearchModalWrapper >

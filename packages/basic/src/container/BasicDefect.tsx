@@ -162,14 +162,13 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     pauseBasicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
     return pauseBasicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
   }
 
-  console.log(pauseBasicRow,'pauseBasicRowpauseBasicRowpauseBasicRow')
 
   const classfyNormalAndHave = (selectedRows) => {
 
@@ -195,7 +194,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})      
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
       await RequestMethod('delete','defectDelete', haveIdRows)
 
     }

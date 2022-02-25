@@ -128,7 +128,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             return {
               ...v,
               sequence: index+1,
-              spare: v.setting === 0 ? '여' : '부',
+              setting: '부',
             }
           }))
     }
@@ -204,7 +204,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>금형 정보 (해당 제품을 만드는데 사용한 금형을 선택해주세요. 선택 가능 금형이 없으면 금형 수정 버튼을 눌러 금형 정보를 수정해주세요)</p>
+            }}>금형 정보 (해당 제품을 만드는데 사용한 금형을 선택해주세요.{/* 선택 가능 금형이 없으면 금형 수정 버튼을 눌러 금형 정보를 수정해주세요*/})</p>
             <div style={{display: 'flex'}}>
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
@@ -242,7 +242,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
-                <p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 금형 리스트 (여러금형을 동시에 선택하여 사용할 수 있습니다)</p>
+                <p style={{fontSize: 22, padding: 0, margin: 0}}>선택 가능 금형 리스트 {/*(여러금형을 동시에 선택하여 사용할 수 있습니다)*/}</p>
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
@@ -285,6 +285,15 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
+                let settingUseArray = 0
+                searchList.map((v)=> {
+                  if(v.setting === 1) {
+                    settingUseArray += 1
+                  }
+                })
+                if(settingUseArray > 1) {
+                  return Notiflix.Report.warning("경고", "금형을 하나만 선택해주시기 바랍니다.", "확인");
+                }
                 if(selectRow !== undefined && selectRow !== null){
                   const visibleSpare = searchList.map(v=> v.spare)
                   onRowChange({
@@ -334,7 +343,7 @@ const Button = styled.button`
     justify-content:center;
     align-items:center;
     cursor:pointer;
-    
+
 `;
 
 const HeaderTable = styled.div`
@@ -365,7 +374,7 @@ const HeaderTableText = styled.p`
 const HeaderTableTitle = styled.div`
   width: 110px;
   padding: 0 8px;
-  display: flex; 
+  display: flex;
   align-items: center;
 `
 
