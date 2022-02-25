@@ -14,6 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
+//@ts-ignore
 import moment from 'moment'
 
 interface IProps {
@@ -22,7 +23,6 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
@@ -93,78 +93,80 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    let checkPoint = true;
     searchList.map((row) => {
       if(!row.lot_number){
         Notiflix.Report.warning("경고","LOT번호를 입력해주시기 바랍니다.","확인",)
-        return;
+        return checkPoint = false;
       }else if(!row.manager){
         Notiflix.Report.warning("경고","작업자를 선택해주시기 바랍니다.","확인",)
-        return;
+        return checkPoint = false;
       }else if(!row.good_quantity){
         Notiflix.Report.warning("경고","양품 수량을 입력해주시기 바랍니다.","확인",)
-        return;
+        return checkPoint = false;
       }
     })
-    console.log(searchList)
-    let res = await RequestMethod('post', `recordSave`,
-      searchList.map((v, i) => {
-        let selectData: any = {}
+    if(checkPoint){
+      let res = await RequestMethod('post', `recordSave`,
+          searchList.map((v, i) => {
+            let selectData: any = {}
 
-        Object.keys(v).map(v => {
-          if(v.indexOf('PK') !== -1) {
-            selectData = {
-              ...selectData,
-              [v.split('PK')[0]]: v[v]
-            }
-          }
-
-          if(v === 'unitWeight') {
-            selectData = {
-              ...selectData,
-              unitWeight: Number(v['unitWeight'])
-            }
-          }
-
-          if(v === 'tmpId') {
-            selectData = {
-              ...selectData,
-              id: v['tmpId']
-            }
-          }
-        })
-
-        return {
-          ...v,
-          ...selectData,
-          operation_sheet: {
-            ...row,
-            status: row.status_no
-          },
-          tools:[...v.tools.map((tool) => {
-            console.log("Tool : ", {...tool.tool})
-            return{
-              ...tool,
-              tool:{
-                ...tool.tool,
-                tool: {
-                  ...tool.tool.tool,
-                  customer: tool.tool.tool.customerArray
+            Object.keys(v).map(v => {
+              if(v.indexOf('PK') !== -1) {
+                selectData = {
+                  ...selectData,
+                  [v.split('PK')[0]]: v[v]
                 }
-              }}
-          })],
-          // input_bom: [],
-          status: 0,
-        }
-      }).filter((v) => v))
+              }
+
+              if(v === 'unitWeight') {
+                selectData = {
+                  ...selectData,
+                  unitWeight: Number(v['unitWeight'])
+                }
+              }
+
+              if(v === 'tmpId') {
+                selectData = {
+                  ...selectData,
+                  id: v['tmpId']
+                }
+              }
+            })
+
+            return {
+              ...v,
+              ...selectData,
+              operation_sheet: {
+                ...row,
+                status: row.status_no
+              },
+              tools:v?.tools?.map((tool) => {
+                return{
+                  ...tool,
+                  tool:{
+                    ...tool.tool,
+                    tool: {
+                      ...tool.tool.tool,
+                      customer: tool.tool.tool.customerArray
+                    }
+                  }}
+              }),
+              // input_bom: [],
+              status: 0,
+            }
+          }).filter((v) => v))
 
 
-    if(res){
-      onRowChange({
-        ...row,
-        update: true
-      })
-      Notiflix.Report.success('저장되었습니다.','','확인');
+      if(res){
+        onRowChange({
+          ...row,
+          update: true
+        })
+        Notiflix.Report.success('저장되었습니다.','','확인');
+      }
     }
+
   }
 
   const ModalContents = () => {
