@@ -36,7 +36,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     total: 1
   })
 
-  console.log(searchList,'searchListsearchListsearchList')
 
   const selectMachineType = (value:number) => {
     let result = "";

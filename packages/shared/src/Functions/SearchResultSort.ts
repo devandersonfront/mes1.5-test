@@ -224,9 +224,9 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
       const unitResult = () => {
         let result = "-";
         switch (selectData.type){
-          case "반재품" :
-            result = "EA";
-            break;
+          // case "반제품" :
+          //   result = "EA";
+          //   break;
           case "COIL" :
             result = "kg";
             break;
@@ -244,6 +244,7 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
         customer_id: selectData.customerArray?.name,
         unit:unitResult(),
+        type_name:"원자재",
         raw_material: {
           ...selectData,
           customer: selectData.customerArray

@@ -38,8 +38,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   })
 
 
-  console.log(searchList,'searchListsearchListsearchList')
-
   useEffect(() => {
     if(isOpen) {
       if(row?.molds && row?.molds.length > 0){

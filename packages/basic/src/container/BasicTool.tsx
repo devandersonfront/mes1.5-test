@@ -318,7 +318,10 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         const existence = valueExistence()
 
         if(!existence){
-            const res = await RequestMethod("post", "toolSave",SaveCleanUpData(SelectData()))
+            const res = await RequestMethod("post", "toolSave",SaveCleanUpData(SelectData())).catch((error)=>{
+                return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+            })
+        
     
             if(res){
                 Notiflix.Loading.remove(300)

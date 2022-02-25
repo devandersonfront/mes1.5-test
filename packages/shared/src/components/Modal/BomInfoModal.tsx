@@ -142,7 +142,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         code: childData.code,
         type: v.type,
         tab: v.type,
-        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? "submaterial" : "product"),
+        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawmaterial" : v.type === 1 ? "submaterial" : "product"),
         unit: childData.unit ?? type,
         usage: v.usage,
         version: v.version,
@@ -400,6 +400,28 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     return result;
   }
 
+  // 중복되는거 없는지 판단하자..
+  const competeBom = (rows) => {
+
+      const tempRow = [...rows]
+      const spliceRow = [...rows]
+      spliceRow.splice(selectRow, 1)
+  
+      const isCheck = spliceRow.some((row)=> row.rm_id === tempRow[selectRow]?.rm_id && row.rm_id !==undefined && row.rm_id !=='')
+  
+      if(spliceRow){
+        if(isCheck){
+          return Notiflix.Report.warning(
+            '경고',
+            `중복된 BOM이 존재합니다.`,
+            '확인'
+          );
+        }
+      }
+  
+      setSearchList(rows)
+    } 
+
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -653,7 +675,8 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                   }
                 })
                 // typeCheck(tmp)
-                setSearchList([...tmp])
+                competeBom([...tmp])
+                // setSearchList([...tmp])
               }}
               width={1746}
               rowHeight={32}

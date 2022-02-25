@@ -233,7 +233,7 @@ const BasicProduct = ({page, option}: IProps) => {
           type:row.type_id ?? row.typeId ?? row.typePK,
           additional: [
             ...additional.map((v, index)=>{
-              if(!row[v.colName]) return undefined;
+              //if(!row[v.colName]) return undefined;
               return {
                 mi_id: v.id,
                 title: v.name,
@@ -253,7 +253,10 @@ const BasicProduct = ({page, option}: IProps) => {
 
 
     if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
-      let res = await RequestMethod('post', `productSave`,result)
+      let res = await RequestMethod('post', `productSave`,result).catch((error)=>{
+        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+      })
+
 
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');
@@ -267,6 +270,7 @@ const BasicProduct = ({page, option}: IProps) => {
           })
         }
       }
+
     }else if(!selectCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
