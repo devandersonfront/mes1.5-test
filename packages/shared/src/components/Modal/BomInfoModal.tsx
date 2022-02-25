@@ -142,7 +142,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         code: childData.code,
         type: v.type,
         tab: v.type,
-        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterialType" : v.type === 1 ? "submaterial" : "product"),
+        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawmaterial" : v.type === 1 ? "submaterial" : "product"),
         unit: childData.unit ?? type,
         usage: v.usage,
         version: v.version,
