@@ -55,6 +55,9 @@ interface IProps {
   isNz?: boolean
   onChangeNz?: (nz:boolean) => void
   nz?: boolean
+  isExp?: boolean
+  onChangeExp?: (exp:boolean) => void
+  exp?: boolean
   isCode?: boolean
   onChangeCode?: (code:boolean) => void
   code?: boolean
@@ -152,7 +155,7 @@ const lightTheme = createMuiTheme({
 const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnclick, isSearch, style, leftButton, onClickMenu, menuIndex,
                       searchKeyword, onChangeSearchKeyword, searchOptionList, onChangeSearchOption, filterList, onChangeFilter,
                       serviceFilterButton, onClickServiceButton, leftButtonOnClick, basicMachineType, typeListOnClick, isCalendar, onChangeSelectDate,
-                      calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz, isCode, onChangeCode, code}: IProps) => {
+                      calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code}: IProps) => {
 
   const [machineCheck, setMachineCheck] = React.useState<any>({
     all: true,
@@ -232,6 +235,39 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
                       }
 
                       <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>수주번호로 등록</p>
+                    </div>
+                  </label>
+                </div>
+              }
+              {
+                isExp && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
+                  <input id='expTrue' name={'exp'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                    onChangeExp && onChangeExp(true)
+                  }}/>
+                  <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>사용 기준일 초과</p>
+                  <label htmlFor="expTrue">
+                    <div style={{display:"flex", alignItems:"center",}}>
+                      {
+                        exp
+                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
+                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
+                      }
+
+                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>초과</p>
+                    </div>
+                  </label>
+                  <input id='expFalse' name={'exp'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                    onChangeExp && onChangeExp(false)
+                  }}/>
+                  <label htmlFor="expFalse">
+                    <div style={{display:"flex", alignItems:"center",}}>
+                      {
+                        !exp
+                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
+                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
+                      }
+
+                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>전체</p>
                     </div>
                   </label>
                 </div>
