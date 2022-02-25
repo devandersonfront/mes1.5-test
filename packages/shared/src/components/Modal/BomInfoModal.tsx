@@ -45,9 +45,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
   const [headerData, setHeaderData] = useState<any>();
 
-
-  console.log(column.name,'searchListsearchListsearchList')
-
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
@@ -173,11 +170,10 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
           ...childData,
         }: null,
         parent:v.parent,
-        setting:v.setting === 1 ? "기본" : "스페어"
+        setting:v.setting
       }
     })
 
-    console.log('tmpData : ' , tmpData)
 
     return tmpData
   }
@@ -293,7 +289,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         } : null,
         type: v.tab,
         key: row.bom_root_id,
-        setting: v.setting === "기본" ? 1 : 0,
+        setting: v.setting,
         usage: v.usage,
         version: v.version
       }
@@ -479,7 +475,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData ? headerData.customer.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
+              <HeaderTableText>{headerData ? headerData.customer?.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
               {/*<HeaderTableText>{tabStore.datas[tabStore.index]?.headerData ? tabStore.datas[tabStore.index].headerData.customerArray.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>*/}
             </HeaderTableTextInput>
             <HeaderTableTitle>

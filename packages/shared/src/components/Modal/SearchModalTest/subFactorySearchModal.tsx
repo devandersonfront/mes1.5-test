@@ -283,7 +283,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 setRow={()=>{}}
                                 setSelectRow={(e) => {
 
-                                    console.log(e,'eeee')
 
                                     if(!searchList[e].border){
                                         searchList.map((v,i)=>{

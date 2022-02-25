@@ -21,7 +21,6 @@ const MesToolRegister = () => {
 
 
     const SaveCleanUpData = (data:any[]) => {
-        console.log("data1 : ", data)
         let resultData = [];
         data.map((rowData, index) => {
             let tmpRow:any = {};
@@ -44,7 +43,6 @@ const MesToolRegister = () => {
     }
 
     const SaveBasic = async(data:any) => {
-        console.log("data2 : ", data)
         const res = await RequestMethod("post", "lotToolSave", data)
 
         if(res){

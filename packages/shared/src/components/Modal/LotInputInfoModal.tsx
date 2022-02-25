@@ -320,7 +320,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                   headerList={column.type === 'readonly' ? searchModalList.InputListReadonly : searchModalList.InputList}
                   row={searchList ?? [{}]}
                   setRow={(e) => {
-                    console.log("???? : ", e)
                     let tmp = e.map((v, index) => {
                       if(v.newTab === true){
                         const newTabIndex = bomDummy.length+1

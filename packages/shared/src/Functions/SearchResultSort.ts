@@ -125,7 +125,6 @@ export const SearchResultSort = (infoList, type: string) => {
     }
     case 'toolProductSearch' :{
       return infoList.map((v) => {
-        console.log(v)
         return {
           ...v,
           product_id:v.product_id

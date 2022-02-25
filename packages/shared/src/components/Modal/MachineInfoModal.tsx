@@ -37,6 +37,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   })
 
 
+
   const selectMachineType = (value:number) => {
     let result = "";
     switch(value) {

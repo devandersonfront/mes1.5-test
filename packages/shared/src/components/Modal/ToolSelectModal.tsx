@@ -204,13 +204,11 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                             headerList={searchModalList.toolUse}
                             row={searchList ?? [{}]}
                             setRow={(e) => {
-                                console.log("e : ", e)
                                 const tmpData = [...e]
                                 tmpData.map((data, index) => {
                                     data.sequence = index+1
                                     data.product_id = row.productId
                                 })
-                                console.log("tmpData : ", tmpData)
                                 setSearchList([...tmpData])
                             }}
                             width={1746}

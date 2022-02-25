@@ -285,7 +285,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 headerList={searchModalList.workRegister}
                 row={searchList ?? [{}]}
                 setRow={(e) => {
-                  console.log("searchList : ", searchList)
                   let tmp = e.map((v, index) => {
                     if(v.newTab === true){
                       const newTabIndex = bomDummy.length+1
@@ -298,7 +297,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                       newTab: false
                     }
                   })
-                  console.log("tmp : ", tmp)
                   setSearchList([...tmp.map(v => {
                     return {
                       ...v,

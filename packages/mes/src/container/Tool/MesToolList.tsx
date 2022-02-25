@@ -280,7 +280,6 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     }
 
     useEffect(()=>{
-        console.log("도착!!!!")
         if(keyword){
             SearchBasic()
         }else{

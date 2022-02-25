@@ -50,6 +50,7 @@ const BasicProduct = ({page}: IProps) => {
 
   const [buttonList , setButtonList ] = useState<string[]>([])
 
+
   useEffect(() => {
     if(keyword){
       SearchBasic(keyword, optionIndex, page).then(() => {
@@ -259,7 +260,6 @@ const BasicProduct = ({page}: IProps) => {
 
       }
     }).filter((v) => v)
-
 
     if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
       let res = await RequestMethod('post', `productSave`,result).catch((error)=>{
