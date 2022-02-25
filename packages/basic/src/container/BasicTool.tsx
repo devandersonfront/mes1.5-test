@@ -460,7 +460,6 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             SearchBasic();
         }else{
             LoadBasic();
-            console.log("과연??????@??!?!?!? : ", basicRow)
         }
     }, [keyword])
 

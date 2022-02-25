@@ -108,7 +108,27 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     })
   }
 
+  const valueExistence = () => {
+
+    const selectedRows = filterSelectedRows()
+    
+    if(selectedRows.length > 0){ 
+
+      const nameCheck = selectedRows.every((data)=> data.name)
+  
+      if(!nameCheck){
+        return '공장명'
+      }
+
+    }
+
+    return false;
+    
+  }
+
   const SaveBasic = async () => {
+
+    const existence = valueExistence()
 
     if(selectList.size === 0){
       return Notiflix.Report.warning(
@@ -117,6 +137,8 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         '확인',
         );
     }
+
+    if(!existence){
 
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
@@ -179,6 +201,13 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
         })
       }
     }
+  }else{
+    return Notiflix.Report.warning(
+      '경고',
+      `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+      '확인',
+    );
+  }
   }
 
   const setAdditionalData = () => {
@@ -522,7 +551,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined)
+    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined && row.name !== '')
 
     if(spliceRow){
       if(isCheck){

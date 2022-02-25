@@ -95,6 +95,7 @@ export const SearchResultSort = (infoList, type: string) => {
           ...v,
           factory_id: v.factory?.name,
           affiliated_id: v.subFactory?.name,
+          type_id : v.type,
           type:TransferCodeToValue(v.type, "machine"),
           weldingType_id:v.weldingType,
           weldingType:TransferCodeToValue(v.weldingType, "welding")
@@ -110,9 +111,31 @@ export const SearchResultSort = (infoList, type: string) => {
         }
       })
     }
-    default : {
-      return infoList
+    case 'toolProduct' : {
+      console.log("??? infoList : ", infoList)
+      return infoList.map((v) => {
+        console.log(v)
+        return {
+          ...v,
+          customer: v.customer?.name,
+          customerArray: v.customer,
+          name: v?.name,
+          stock: v?.stock,
+        }
+      })
     }
+    case 'toolProductSearch' :{
+      return infoList.map((v) => {
+        console.log(v)
+        return {
+          ...v,
+          product_id:v.product_id
+        }
+      })
+    }
+    default :
+      return infoList
+
   }
 }
 

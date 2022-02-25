@@ -274,7 +274,9 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                         <ExcelTable
                             headerList={searchModalList.toolInfo}
                             row={searchList ?? [{}]}
-                            setRow={(e) => setSearchList([...e])}
+                            setRow={(e) => {
+                                setSearchList([...e])
+                            }}
                             width={1746}
                             rowHeight={32}
                             height={552}

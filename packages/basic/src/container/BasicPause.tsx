@@ -160,7 +160,6 @@ const BasicPause = ({page, keyword, option}: IProps) => {
     excelDownload(pauseColumn, pauseBasicRow, `일시정지 유형 등록`, '일시정지 유형 등록', tmpSelectList)
   }
 
-  console.log(pauseBasicRow,'pauseBasicRowpauseBasicRowpauseBasicRow')
 
 
   const convertDataToMap = () => {

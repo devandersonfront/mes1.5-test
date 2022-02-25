@@ -163,6 +163,27 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     return result;
   }
   
+  const competeDevice = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow]?.mfrCode && row.mfrCode !==undefined && row.mfrCode !=='')
+
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '경고',
+          `중복된 주변장치가 존재합니다.`,
+          '확인'
+        );
+      }
+    }
+
+    setSearchList(rows)
+  } 
+
 
   return (
     <SearchModalWrapper >
@@ -336,7 +357,9 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
                   row.type_id = settingTypeId(row.type)
                   row.type = Number(row.type) ? deviceList[row.type]?.name : row.type
                 })
-                setSearchList([...e])
+                
+                // setSearchList([...e])
+                competeDevice(e)
               }}
               width={1746}
               rowHeight={32}

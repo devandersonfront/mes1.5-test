@@ -62,6 +62,8 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       setSearchList([{
+        modify: true,
+        osId: row.os_id,
         sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
         start: moment().format('YYYY-MM-DD HH:mm:00'),
         end: moment().format('YYYY-MM-DD HH:mm:00'),
@@ -103,6 +105,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         return;
       }
     })
+    console.log(searchList)
     let res = await RequestMethod('post', `recordSave`,
       searchList.map((v, i) => {
         let selectData: any = {}
@@ -137,6 +140,18 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
             ...row,
             status: row.status_no
           },
+          tools:[...v.tools.map((tool) => {
+            console.log("Tool : ", {...tool.tool})
+            return{
+              ...tool,
+              tool:{
+                ...tool.tool,
+                tool: {
+                  ...tool.tool.tool,
+                  customer: tool.tool.tool.customerArray
+                }
+              }}
+          })],
           // input_bom: [],
           status: 0,
         }
@@ -268,6 +283,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 headerList={searchModalList.workRegister}
                 row={searchList ?? [{}]}
                 setRow={(e) => {
+                  console.log("searchList : ", searchList)
                   let tmp = e.map((v, index) => {
                     if(v.newTab === true){
                       const newTabIndex = bomDummy.length+1

@@ -38,7 +38,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [tab, setTab] = useState<number>(0)
   const [searchModalInit, setSearchModalInit] = useState<any>()
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -98,29 +98,57 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   const LoadBasic = async (page?:number) => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`,{
-      path: column.type === "customerModel" ?
-          {
+    const selectType = () => {
+      switch(column.type){
+        case "customerModel":
+          return {
+            keyword:keyword,
+            opt:optionIndex,
+            customer_id: row.product?.customerId ?? null
+          }
+        case "searchToolModal":
+          return {}
+        default:
+          return {
+            keyword:keyword,
+            opt:optionIndex,
+          }
+      }
+    }
+    const searchToolInProduct = (row:any) => {
+      switch(column.type){
+        case "searchToolModal":
+          return {
+            product_id:row.product_id
+          }
+        case "customerModel":
+          return {
             page:  page ?? pageInfo.page,
             renderItem: 22,
             customer_id: row.customer?.customer_id ?? null
           }
-          :
-          {
+        default :
+          return {
             page: page ?? pageInfo.page,
             renderItem: 22,
           }
-      ,
-      params:{
-        keyword:keyword,
-        opt:optionIndex
       }
+    }
+    const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`,{
+      path: searchToolInProduct(row)
+      ,
+      params: selectType()
     })
 
 
     if(res){
+      if(searchModalInit.excelColumnType === "toolProduct"){
+        setSearchList([...SearchResultSort(res, searchModalInit.excelColumnType)])
+        setPageInfo({...pageInfo, total:res.totalPages});
+        Notiflix.Loading.remove()
+      }else
         if(res.page !== 1){
-          setSearchList([...searchList,...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
+          setSearchList([ ...searchList,...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({...pageInfo, total:res.totalPages});
           Notiflix.Loading.remove()
         }else{
@@ -201,6 +229,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               marginTop: 24,
               marginLeft: 16,
               marginRight: 16,
+              marginBottom: 12,
               display: 'flex',
               justifyContent: 'space-between'
             }}>
@@ -236,78 +265,75 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 </div>
               </div>
             </div>
-            <div style={{
-              width: '100%', height: 32, margin: '16px 0 16px 16px',
-              display: 'flex',
-            }}>
+            {column.type !== "searchToolModal" &&
               <div style={{
-                width: 120, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                backgroundColor: '#F4F6FA', border: '0.5px solid #B3B3B3',
-                borderRight: 'none'
+                width: '100%', height: 32, margin: '16px 0 16px 16px',
+                display: 'flex',
               }}>
-                <select
-                  defaultValue={'-'}
+                <div style={{
+                  width: 120, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                  backgroundColor: '#F4F6FA', border: '0.5px solid #B3B3B3',
+                  borderRight: 'none',
+                }}>
+                  <select
+                    defaultValue={'-'}
+                    onChange={(e) => {
+                      const option = switchOption(Number(e.target.value))
+                      setOptionIndex(option)
+                      // SearchBasic('', Number(e.target.value))
+                    }}
+                    style={{
+                      color: 'black',
+                      backgroundColor: '#00000000',
+                      border: 0,
+                      height: 32,
+                      width: 120,
+                      fontSize:15,
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {
+                      searchModalInit && searchModalInit.searchFilter.map((v, i) => {
+                        return (<option value={i}>{v}</option>)
+                      })
+                    }
+                  </select>
+                </div>
+                <input
+                  value={keyword ?? ""}
+                  type={"text"}
+                  placeholder="검색어를 입력해주세요."
                   onChange={(e) => {
-                    const option = switchOption(Number(e.target.value))
-                    setOptionIndex(option)
-                    // SearchBasic('', Number(e.target.value))
+                    setKeyword(e.target.value)
+                    // setPageInfo({...pageInfo, page:1});
+                  }}
+                  onKeyDown={(e) => {
+                    if(e.key === 'Enter'){
+                      // setPageInfo({...pageInfo, page:1});
+                      LoadBasic(1);
+                    }
                   }}
                   style={{
-                    color: 'black',
-                    backgroundColor: '#00000000',
-                    border: 0,
-                    height: 32,
-                    width: 120,
-                    fontSize:15,
-                    fontWeight: 'bold'
+                    width:1592,
+                    height:"32px",
+                    paddingLeft:"10px",
+                    border:"0.5px solid #B3B3B3",
+                    backgroundColor: 'rgba(0,0,0,0)'
+                  }}
+                />
+                <div
+                  style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
+                  onClick={() => {
+                    LoadBasic();
                   }}
                 >
-                  {
-                    searchModalInit && searchModalInit.searchFilter.map((v, i) => {
-                      return (<option value={i}>{v}</option>)
-                    })
-                  }
-                </select>
+                  <img src={Search_icon} style={{width:"16px",height:"16px"}} />
+                </div>
               </div>
-              <input
-                value={keyword ?? ""}
-                type={"text"}
-                placeholder="검색어를 입력해주세요."
-                onChange={(e) => {
-                  setKeyword(e.target.value)
-                  // setPageInfo({...pageInfo, page:1});
-                }}
-                onKeyDown={(e) => {
-                  if(e.key === 'Enter'){
-                    // setPageInfo({...pageInfo, page:1});
-                    LoadBasic(1);
-                  }
-                }}
-                style={{
-                  width:1592,
-                  height:"32px",
-                  paddingLeft:"10px",
-                  border:"0.5px solid #B3B3B3",
-                  backgroundColor: 'rgba(0,0,0,0)'
-                }}
-              />
-              <div
-                style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
-                onClick={() => {
-                  LoadBasic();
-                }}
-              >
-                <img src={Search_icon} style={{width:"16px",height:"16px"}} />
-              </div>
-            </div>
+            }
             <ExcelTable
               headerList={searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
               row={searchList ?? []}
-              // row={[{tool_id: 2, code: 'G-CASE', name: '갤럭시S22 베젤', unit: 'EA',},
-              //   {tool_id: 5, code: 'tew', name: 'tewS22 베젤', unit: 'ml',},
-              //   {tool_id: 3, code: 'TEST', name: 'TEST 품명', unit: 'EA',},
-              //   {tool_id: 6, code: 'G-CASE12', name: 'G-CASE 베젤', unit: 'kg',},
-              //   {tool_id: 11, code: '444', name: null, unit: 'EA', customer: null}] ?? []}
               setRow={() => {}}
               width={1744}
               rowHeight={32}
@@ -380,6 +406,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                           contract_id: null
                         }
                     )
+                  }else if(column.type === "searchToolModal"){
+                    console.log("여기는 어디?row : ",row, searchList)
+                    onRowChange(searchList[selectRow])
                   }else {
                     onRowChange(
                         {
@@ -406,7 +435,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       </Modal>
     </SearchModalWrapper>
   )
-
 
 }
 

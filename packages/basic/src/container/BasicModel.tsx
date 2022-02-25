@@ -117,7 +117,31 @@ const BasicModel = ({page, keyword, option}: IProps) => {
     // }
   }
 
+  const valueExistence = () => {
+
+    const selectedRows = filterSelectedRows()
+    
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함 
+    if(selectedRows.length > 0){ 
+
+      const nameCheck = selectedRows.every((data)=> data.customer_id)
+      const modelCheck = selectedRows.every((data)=> data.model)
+
+      if(!nameCheck){
+        return '거래처명'
+      }else if(!modelCheck){
+        return '모델'
+      }
+
+    }
+
+    return false;
+    
+  }
+  
   const SaveBasic = async () => {
+
+    const existence = valueExistence()
 
     if(selectList.size === 0){
       return Notiflix.Report.warning(
@@ -126,7 +150,7 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         '확인',
         );
     }
-
+    if(!existence){
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -213,6 +237,13 @@ const BasicModel = ({page, keyword, option}: IProps) => {
         })
       }
     }
+  }else{
+    return Notiflix.Report.warning(
+      '경고',
+      `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+      '확인',
+    );
+  }
   }
   const setAdditionalData = () => {
 
