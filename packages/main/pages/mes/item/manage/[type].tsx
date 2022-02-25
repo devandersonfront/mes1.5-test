@@ -184,7 +184,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   }
 
   const saveItem = async (code: string, items: IItemMenuType[], type?: 'additional') => {
-    const res =  await RequestMethod('post', 'itemSave',items
+    const res =  await RequestMethod('post', 'itemSave',items.map((item,index)=>({...item, sequence : index}))
         // {
         //   tab: code,
         //   menus: type ? items.map(v => {
@@ -199,52 +199,69 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         ,undefined , undefined ,undefined,code)
     if(res !== null || res !== undefined) {
       listItem(code)
-      Notiflix.Notify.success("저장되었습니다.")
+      Notiflix.Report.success(
+        '성공',
+        '저장되었습니다.',
+        'Okay',
+        );
     }
   }
 
+  const convertDataToMap = () => {
+    const map = new Map()
+    addiItem.map((v)=>map.set(v.id , v))
+    return map 
+  }
+
+  const filterSelectedRows = () => {
+    return addiItem.map((row : any)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.mi_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
+      }
+    })
+
+    return [normalRows , haveIdRows]
+  }
+
   const deleteItem = async (code: string, items: IItemMenuType[]) => {
-    let idList:IItemMenuType[] = [];
-    const spliceArray:number[] = [];
-    items.map((v,i)=> {
-      if(selectList.has(v.id as number)){
-        spliceArray.push(i);
-        idList.push(v)
-      }
-    })
-
-    idList = idList.filter(value => value);
-
-    const tmpPauseBasicRow = [...items];
-    spliceArray.reverse();
-    spliceArray.map((value, index)=>{
-      tmpPauseBasicRow.splice(value, 1);
-    })
-
-    if(idList.length > 0) {
-      const res = await RequestMethod('delete', 'itemDelete',
-          // {
-          //         tab: code,
-          //         menus: idList
-          //       }
-          idList
-      )
-
-      if (res) {
-        Notiflix.Report.success("삭제되었습니다.", "", "확인");
-      }
-
-    }else{
-      Notiflix.Report.success("삭제되었습니다.", "", "확인");
+    if(selectList.size === 0){
+      return Notiflix.Report.warning(
+      '경고',
+      '선택된 정보가 없습니다.',
+      '확인',
+      );
     }
 
-    setAddiItem([...tmpPauseBasicRow]);
+    Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+      async() => {
 
-    // type ? items.map(v => {
-    //   if(selectList.has(v.id as number)) {
-    //     return v.mi_id
-    //   }
-    // }).filter(v => v) : type
+        const map = convertDataToMap()
+        const selectedRows = filterSelectedRows()
+        const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    
+        if(haveIdRows.length > 0){
+    
+          if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+          await RequestMethod('delete','itemDelete', haveIdRows.map((row,index)=>({...row, seq : index})))
+        }
+    
+        Notiflix.Report.success('삭제되었습니다.','','확인');
+        selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+        setAddiItem(Array.from(map.values()))
+        setSelectList(new Set())
+
+      }
+    )
 
 
   }
