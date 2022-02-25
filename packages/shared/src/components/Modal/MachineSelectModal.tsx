@@ -55,7 +55,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen){
-    LoadBasic(row.productId)
+      LoadBasic(row.productId)
     }
     // let tmpMachines
     // if(!row.machines || !row.machines.length){
