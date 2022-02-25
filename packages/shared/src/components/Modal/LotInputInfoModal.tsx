@@ -227,8 +227,8 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          color: 'white',
-          background: '#353B48'
+          color: column.type === 'Modal' && '#0D0D0D',
+          background:row.border ? "#19B9DF80" : column.type === 'Modal' ? "white" : '#0000',
         }} onClick={() => {
           setIsOpen(true)
         }}>
