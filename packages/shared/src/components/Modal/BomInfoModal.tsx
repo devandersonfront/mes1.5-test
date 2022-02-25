@@ -46,16 +46,28 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
   const [headerData, setHeaderData] = useState<any>();
 
 
+  console.log(column.name,'searchListsearchListsearchList')
+
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
       // if(row.bom_root_id){
 
-      if(row.process_id || row.processId){
-        SearchBasic().then(() => {
-          Notiflix.Loading.remove()
-        })
+      if(column.name ==='BOM'){
+        if(row.product_id){
+          SearchBasic().then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+      }else{
+
+        if(row.process_id || row.processId){
+          SearchBasic().then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
       }
+
 
       // } else {
       //   setIsOpen(false)
@@ -217,19 +229,19 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     })
 
     if(rawMaterialBasic.length !== 0){
-      haveRawMaterialBasic = rawMaterialBasic.some((v) => v.type === '기본')
+      haveRawMaterialBasic = rawMaterialBasic.some((v) => v.type === 1)
     }else{
       haveRawMaterialBasic = true
     }
 
     if(subMaterialBasic.length !== 0){
-      haveSubMaterialBasic = subMaterialBasic.some((v) => v.type === '기본')
+      haveSubMaterialBasic = subMaterialBasic.some((v) => v.type === 1)
     }else{
       haveSubMaterialBasic = true
     }
 
     if(productBasic.length !== 0){
-      haveProductBasic = productBasic.some((v) => v.type === '기본')
+      haveProductBasic = productBasic.some((v) => v.type === 1)
     }else{
       haveProductBasic = true
     }
@@ -570,7 +582,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 setSearchList([
                   ...searchList,
                   {
-                    setting: '기본',
+                    setting: 1,
                     seq: searchList.length+1
                   }
                 ])
