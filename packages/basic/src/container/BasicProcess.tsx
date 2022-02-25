@@ -119,9 +119,9 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   const valueExistence = () => {
 
     const selectedRows = filterSelectedRows()
-    
-    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함 
-    if(selectedRows.length > 0){ 
+
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
+    if(selectedRows.length > 0){
 
       const nameCheck = selectedRows.every((data)=> data.name)
 
@@ -132,9 +132,9 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     }
 
     return false;
-    
+
   }
-  
+
   const SaveBasic = async () => {
 
     const existence = valueExistence()
@@ -217,12 +217,12 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   }
   }
 
-  console.log(basicRow,'basicRowbasicRow')
+
 
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -238,7 +238,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -273,7 +273,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','processDelete', haveIdRows.map((row) => (
           {...row , customer: row.customerArray, additional : [...additional.map(v => {
             if(row[v.name]) {
@@ -284,12 +284,12 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
       )))
 
     }
-      
+
     Notiflix.Report.success('삭제되었습니다.','','확인');
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
-    
+
 
     // const res = await RequestMethod('delete', `processDelete`,
 
@@ -596,7 +596,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
         '확인',
         );
         }
-        
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{DeleteBasic()},
           ()=>{}
@@ -612,7 +612,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    
+
     if(spliceRow){
       if(spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null && row.name !== '')){
         return Notiflix.Report.warning(

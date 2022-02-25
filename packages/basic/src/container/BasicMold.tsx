@@ -227,12 +227,12 @@ const BasicMold = ({}: IProps) => {
 
   }
 
-  console.log(basicRow,'basicRow')
+
 
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -248,7 +248,7 @@ const BasicMold = ({}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -282,7 +282,7 @@ const BasicMold = ({}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','moldDelete', haveIdRows.map((row) => (
           {...row , additional : [...additional.map(v => {
             if(row[v.name]) {

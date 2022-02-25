@@ -36,7 +36,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     total: 1
   })
 
-  console.log(searchList,'searchListsearchListsearchList')
+
 
   const selectMachineType = (value:number) => {
     let result = "";
@@ -77,7 +77,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
     return true;
   }
-  
+
   const haveDataValidation = () => {
 
     let dataCheck = true
@@ -164,9 +164,9 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       const tempRow = [...rows]
       const spliceRow = [...rows]
       spliceRow.splice(selectRow, 1)
-  
+
       const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow]?.name && row.name !==undefined && row.name !=='')
-  
+
       if(spliceRow){
         if(isCheck){
           return Notiflix.Report.warning(
@@ -176,10 +176,10 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           );
         }
       }
-  
+
       setSearchList(rows)
-    } 
-  
+    }
+
 
   return (
     <SearchModalWrapper >
@@ -444,7 +444,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 }}
               }
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-              
+
             >
               <p>등록하기</p>
             </div>
