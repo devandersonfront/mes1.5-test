@@ -47,7 +47,7 @@ const BasicProduct = ({page}: IProps) => {
     total: 1
   })
 
-  console.log(basicRow,'basicRowbasicRowbasicRowbasicRow')
+
 
   const [buttonList , setButtonList ] = useState<string[]>([])
 
@@ -76,7 +76,7 @@ const BasicProduct = ({page}: IProps) => {
 
   }
 
-  
+
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
@@ -184,7 +184,7 @@ const BasicProduct = ({page}: IProps) => {
             }
           }
         })
-        
+
         return {
           ...row,
           ...selectData,
@@ -279,12 +279,12 @@ const BasicProduct = ({page}: IProps) => {
 
   }
 
-  console.log(basicRow,'basicRow')
+
 
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -315,9 +315,9 @@ const BasicProduct = ({page}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','productDelete', haveIdRows.map((row) => (
-          {...row , type : row.type_id} 
+          {...row , type : row.type_id}
       )))
     }
 
