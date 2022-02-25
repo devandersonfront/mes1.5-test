@@ -37,10 +37,9 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingList)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().subtract(7, "days").format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
+    const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().subtract(1, "month").format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [pageInfo, setPageInfo] = useState<{page:number, totalPage:number}>({page:page, totalPage:1});
-    const [isFirst, setIsFirst] = useState<boolean>(true);
 
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {
@@ -217,7 +216,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
                 renderItem:22
             },
             params:{
-                from:isFirst ? "2000-01-12" : selectDate.from,
+                from: selectDate.from,
                 to: selectDate.to
             }
         })
@@ -225,7 +224,6 @@ const MesToolList = ({page, keyword, option}: IProps) => {
         if(res){
             setPageInfo({...pageInfo, totalPage: res.totalPages })
             cleanUpData(res);
-            setIsFirst(false);
         }
     }
 
@@ -236,7 +234,7 @@ const MesToolList = ({page, keyword, option}: IProps) => {
                 renderItem:22
             },
             params:{
-                from:isFirst ? "2000-01-01" : selectDate.from,
+                from:selectDate.from,
                 to: selectDate.to,
                 keyword:keyword,
                 opt:optionIndex
@@ -245,7 +243,6 @@ const MesToolList = ({page, keyword, option}: IProps) => {
         if(res){
             setPageInfo({...pageInfo, totalPage: res.totalPages })
             cleanUpData(res);
-            setIsFirst(false);
         }
     }
 
@@ -283,12 +280,12 @@ const MesToolList = ({page, keyword, option}: IProps) => {
     }
 
     useEffect(()=>{
+        console.log("도착!!!!")
         if(keyword){
             SearchBasic()
         }else{
             LoadBasic()
         }
-        setIsFirst(false)
 
     },[selectDate, keyword])
 

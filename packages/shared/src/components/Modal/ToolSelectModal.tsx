@@ -47,26 +47,14 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 
 const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
-    const [title, setTitle] = useState<string>('공구')
-    const [optionIndex, setOptionIndex] = useState<number>(0)
-    const [keyword, setKeyword] = useState<string>('')
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<any[]>([])
-    const [searchKeyword, setSearchKeyword] = useState<string>('')
-    const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-        page: 1,
-        total: 1
-    })
 
     useEffect(() => {
-        console.log("Tool Modal Row : ", row);
-
         if(isOpen) {
             if(row?.tools){
-                console.log("이런 씨발 : ", row.tools)
                 const tools = []
                 row.tools.map(({tool}) => {
-                    console.log(tool)
                     let toolObject:any = {}
                     toolObject.sequence = tool.sequence
                     toolObject.code = tool.tool.code
@@ -76,7 +64,6 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                     toolObject.product_id = tool.tool.product_id
                     toolObject.stock = tool.tool.stock
                     toolObject.version = tool.tool.version
-                    console.log("toolObject : " ,toolObject)
                     tools.push(toolObject)
                 })
                 setSearchList(tools)
@@ -84,56 +71,7 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                 setSearchList([{sequence: 1, product_id:row.productId}])
             }
         }
-    }, [isOpen, searchKeyword])
-    // useEffect(() => {
-    //   if(pageInfo.total > 1){
-    //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-    //       Notiflix.Loading.remove()
-    //     })
-    //   }
-    // }, [pageInfo.page])
-
-    const changeRow = (row: any, key?: string) => {
-        let tmpData = {
-            ...row,
-            machine_id: row.name,
-            machine_idPK: row.machine_id,
-            manager: row.manager ? row.manager.name : null
-        }
-
-        return tmpData
-    }
-
-    const SearchBasic = async (keyword: any, option: number, page: number) => {
-        Notiflix.Loading.circle()
-        setKeyword(keyword)
-        setOptionIndex(option)
-        const res = await RequestMethod('get', `machineSearch`,{
-            path: {
-                page: page,
-                renderItem: 18,
-            },
-            params: {
-                keyword: keyword ?? '',
-                opt: option ?? 0
-            }
-        })
-
-        if(res && res.status === 200){
-
-            let searchList = res.results.info_list.map((row: any, index: number) => {
-                return changeRow(row)
-            })
-
-            setPageInfo({
-                ...pageInfo,
-                page: res.results.page,
-                total: res.results.totalPages,
-            })
-
-            setSearchList([...searchList])
-        }
-    }
+    }, [isOpen, ])
 
     const ModalContents = () => {
         return <>
