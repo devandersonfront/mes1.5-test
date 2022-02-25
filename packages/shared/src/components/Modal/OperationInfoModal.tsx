@@ -65,7 +65,7 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
       code: row.operation_sheet.product.code,
       name: row.operation_sheet.product.name,
       type: (row.operation_sheet.product.type || row.operation_sheet.product.type === 0) ? TransferCodeToValue(Number(row.operation_sheet.product.type), 'productType') : '-',
-      process: row.operation_sheet.product.process.name,
+      process: row.operation_sheet.product.process?.name,
     }
 
     return tmpData

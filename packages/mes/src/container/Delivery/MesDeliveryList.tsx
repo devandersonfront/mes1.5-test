@@ -335,7 +335,11 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
       })
 
       const reducer = (accumulator, curr) => {
-        return accumulator.amount + curr.amount;
+        if(typeof accumulator === "object"){
+          return accumulator.amount + curr.amount;
+        }else if(typeof accumulator === "number"){
+          return accumulator + curr.amount;
+        }
       }
 
       let random_id = Math.random()*1000;
@@ -472,8 +476,8 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

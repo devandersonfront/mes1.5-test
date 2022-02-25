@@ -53,11 +53,21 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       setSelectRow(null)
       // if(row.bom_root_id){
 
-      if(row.product_id){
-        SearchBasic().then(() => {
-          Notiflix.Loading.remove()
-        })
+      if(column.name ==='생산 공정'){
+        if(row.product_id){
+          SearchBasic().then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+      }else{
+
+        if(row.process_id || row.processId){
+          SearchBasic().then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
       }
+
 
       // } else {
       //   setIsOpen(false)
@@ -144,6 +154,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         code: childData.code,
         type: v.type,
         tab: v.type,
+        name: childData.name,
         type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawmaterial" : v.type === 1 ? "submaterial" : "product"),
         unit: childData.unit ?? type,
         usage: v.usage,
@@ -177,7 +188,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     let res;
     if(selectKey){
       res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
-
 
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
@@ -246,7 +256,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
   // 데이터 유무 판단
   const haveDataValidation = () => {
-
     let dataCheck = true
 
     searchList.map((v,i)=>{
@@ -408,9 +417,9 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       const tempRow = [...rows]
       const spliceRow = [...rows]
       spliceRow.splice(selectRow, 1)
-  
+
       const isCheck = spliceRow.some((row)=> row.rm_id === tempRow[selectRow]?.rm_id && row.rm_id !==undefined && row.rm_id !=='')
-  
+
       if(spliceRow){
         if(isCheck){
           return Notiflix.Report.warning(
@@ -420,9 +429,9 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
           );
         }
       }
-  
+
       setSearchList(rows)
-    } 
+    }
 
   return (
     <SearchModalWrapper >
@@ -639,7 +648,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 <p>아래로</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-
                 if(selectRow === null){
                   return Notiflix.Report.warning(
                     '경고',

@@ -155,23 +155,12 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/mold?page=${page}`)
-          }
-        }}
-      />
       <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

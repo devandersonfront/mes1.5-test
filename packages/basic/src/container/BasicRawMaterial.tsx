@@ -203,7 +203,6 @@ const BasicRawMaterial = ({}: IProps) => {
         return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
       })
 
-
       if (res) {
         Notiflix.Report.success('저장되었습니다.', '', '확인');
         if (keyword) {
@@ -396,12 +395,10 @@ const BasicRawMaterial = ({}: IProps) => {
   }
 
 
-  console.log(basicRow,'basicRow')
-
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -417,7 +414,7 @@ const BasicRawMaterial = ({}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -450,7 +447,7 @@ const BasicRawMaterial = ({}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','rawMaterialDelete', haveIdRows.map((row) => (
           {...row , customer: row.customerArray, additional : [...additional.map(v => {
             if(row[v.name]) {
@@ -648,44 +645,12 @@ const BasicRawMaterial = ({}: IProps) => {
 
   }
 
-  const handleBarcode = async (dataurl , id) => {
-
-    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
-                {
-                  "id":id,
-                  "functions":
-                  {"func0":{"checkLabelStatus":[]},
-                    "func1":{"clearBuffer":[]},
-                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
-                    "func3":{"printBuffer":[]}
-                  }
-                },
-                {
-                  headers : {
-                    'Content-Type' : 'application/x-www-form-urlencoded'
-                  }
-                }
-    ).catch((error) => {
-
-      if(error){
-        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-        return false
-      }
-
-    })
-  }
 
 
 
   React.useEffect(()=>{
 
-    if(selectList.size > 1){
-
-      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
-
-    }
-
-    return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
+     return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
 
   },[selectList.size])
 
@@ -708,7 +673,32 @@ const BasicRawMaterial = ({}: IProps) => {
     setBasicRow(rows)
   }
 
+  const handleBarcode = async (dataurl , id) => {
 
+    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
+        {
+          "id":id,
+          "functions":
+              {"func0":{"checkLabelStatus":[]},
+                "func1":{"clearBuffer":[]},
+                "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+                "func3":{"printBuffer":[]}
+              }
+        },
+        {
+          headers : {
+            'Content-Type' : 'application/x-www-form-urlencoded'
+          }
+        }
+    ).catch((error) => {
+
+      if(error){
+        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        return false
+      }
+
+    })
+  }
 
   return (
     <div>

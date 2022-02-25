@@ -1,7 +1,7 @@
 import React from 'react';
 import MenuNavigation from "../../../../../../component/MenuNav/MenuNavigation";
 import ProfileHeader from "../../../../../../component/Profile/ProfileHeader";
-import {BasicMidrangeRegister} from "../../../../../../../basic";
+import {BasicMidrangeRegister} from "basic";
 
 const BasicContainer = () => {
     return (

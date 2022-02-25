@@ -30,14 +30,6 @@ const MesProductChangeRegister = () => {
         ]
     )
 
-
-    const fileChange = (fileInfo: ChangeProductFileInfo, index: number) => {
-        const temp = files
-        temp[index] = fileInfo
-        setFiles([...temp])
-    }
-
-
     const productChangeSave = async () => {
         const filesFilter = files.filter((v)=> v.name !== '')
 
@@ -65,6 +57,12 @@ const MesProductChangeRegister = () => {
         }
     }
 
+    const fileChange = (fileInfo: ChangeProductFileInfo, index: number) => {
+        const temp = files
+        temp[index] = fileInfo
+        setFiles([...temp])
+    }
+
     return (
         <div>
             <PageHeader
@@ -87,7 +85,6 @@ const MesProductChangeRegister = () => {
                     e.map(v => {
                         if(v.isChange) tmp.add(v.id)
                     })
-
                     setBasicRow(e.map(v => ({...v, name: v.product_name})))
                 }}
                 selectList={selectList}

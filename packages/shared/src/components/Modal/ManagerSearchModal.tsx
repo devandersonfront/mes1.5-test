@@ -54,17 +54,18 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
   }, [pageInfo.page])
 
   const changeRow = (row: any, key?: string) => {
-    let tmpData: any = {
+
+    let tmpData: any = {  
       ...row,
       user_id: row.name,
       user_idPK: row.user_id,
-      // name:"",
       id:row.id,
+      // name:"",
       appointment: row.appointment,
       telephone: row.telephone,
       authority: row.ca_id.name,
       authorityPK: row.authority,
-
+      manager : row
     }
 
     if(column.searchType === 'list'){
@@ -303,7 +304,7 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
               <div
                 onClick={() => {
                   if(selectRow !== undefined && selectRow !== null){
-                    onRowChange({...row, manager_info: searchList[selectRow], appointment: searchList[selectRow].appointment, isChange: true})
+                    onRowChange({...row, manager: searchList[selectRow].manager , appointment : searchList[selectRow].appointment , telephone : searchList[selectRow].telephone})
                   }
                   setIsOpen(false)
                 }}

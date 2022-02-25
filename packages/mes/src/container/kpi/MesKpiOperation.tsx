@@ -84,7 +84,7 @@ const MesKpiOperation = () => {
                     paused_time: 0,
                     good_quantity: v.good_quantity,
                     poor_quantity: v.poor_quantity,
-                    operation : v.standardUph ? ((v.good_quantity/(v.standardUph * v.workTime)) * 100).toFixed(1) : '0'                   
+                    operation : v.standardUph ? ((v.good_quantity/(v.standardUph * v.workTime)) * 100).toFixed(1) : '0'
                 }
             })
             setPauseBasicRow(filterResponse)
@@ -102,7 +102,7 @@ const MesKpiOperation = () => {
     React.useEffect(()=>{
 
         if(pauseBasicRow.length){
-            
+
             const rowLenth = pauseBasicRow.length;
             let sum = 0;
             if(rowLenth){
@@ -119,7 +119,6 @@ const MesKpiOperation = () => {
 
     },[pauseBasicRow])
 
-
     return (
         <div>
             <PageHeader title={"설비가동률(P)"} />
@@ -130,7 +129,7 @@ const MesKpiOperation = () => {
                 ]}
                 row={[processBasicRow]}
                 setRow={(row) => {
-                    setProcessBasicRow({...processBasicRow, 
+                    setProcessBasicRow({...processBasicRow,
                         id : row[0].machine_id,
                         mfrName : row[0].mfrName,
                         name : row[0].name,

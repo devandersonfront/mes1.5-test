@@ -103,7 +103,7 @@ const MesWorkStandardList = ({page, keyword, option}: IProps)=> {
         let tmpRow = []
         tmpRow = res.info_list.map((v,i)=>{
             return {
-                customer: v.customer.name,
+                customer: v.customer?.name,
                 model: v.model === null ? '-' : v.model.model,
                 code: v.code,
                 material_name: v.name === null ? '-' : v.name,

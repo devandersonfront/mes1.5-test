@@ -21,6 +21,7 @@ const MesToolRegister = () => {
 
 
     const SaveCleanUpData = (data:any[]) => {
+        console.log("data1 : ", data)
         let resultData = [];
         data.map((rowData, index) => {
             let tmpRow:any = {};
@@ -28,9 +29,9 @@ const MesToolRegister = () => {
             toolObject.tool_id = rowData?.tool_id;
             toolObject.code = rowData.code;
             toolObject.name = rowData.name;
-            toolObject.unit = rowData.unitPK;
-            toolObject.stock = rowData?.stock;
-            toolObject.customer = rowData.customerData;
+            toolObject.unit = rowData.unitPK ?? rowData.unit;
+            toolObject.stock = rowData?.warehousing;
+            toolObject.customer = rowData.customerArray ?? rowData.customer;
             toolObject.additional = rowData?.additional ?? [];
             toolObject.version = rowData?.version ?? undefined;
 
@@ -43,6 +44,7 @@ const MesToolRegister = () => {
     }
 
     const SaveBasic = async(data:any) => {
+        console.log("data2 : ", data)
         const res = await RequestMethod("post", "lotToolSave", data)
 
         if(res){
@@ -66,12 +68,14 @@ const MesToolRegister = () => {
                 const result = basicRow.filter((row) => {
                     if (selectList.has(row.id)) return row
                 })
+                if(selectList.size < 0 ) return Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
                 //result 값 가지고 save
                 SaveCleanUpData(result)
                 SaveBasic(SaveCleanUpData(result));
 
                 return
             case 2:
+                if(selectList.size < 0 ) return Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인", "취소", () => {
                     const tmpRow = basicRow.filter(({id}, index) => !selectList.has(id))
                     setBasicRow(tmpRow);

@@ -113,10 +113,10 @@ export const getServerSideProps = async (ctx: any) => {
           code:"ROLE_BASE_12"
         }
       case "tool" :
-          return {
-            title: "공구 관리",
-            code: "ROLE_BASE_14"
-          }
+        return {
+          title: "공구 관리",
+          code: "ROLE_BASE_14"
+        }
     }
   }
 
@@ -200,17 +200,17 @@ const ItemManagePage = ({title, type, code}: IProps) => {
     if(res !== null || res !== undefined) {
       listItem(code)
       Notiflix.Report.success(
-        '성공',
-        '저장되었습니다.',
-        'Okay',
-        );
+          '성공',
+          '저장되었습니다.',
+          'Okay',
+      );
     }
   }
 
   const convertDataToMap = () => {
     const map = new Map()
     addiItem.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -236,31 +236,31 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   const deleteItem = async (code: string, items: IItemMenuType[]) => {
     if(selectList.size === 0){
       return Notiflix.Report.warning(
-      '경고',
-      '선택된 정보가 없습니다.',
-      '확인',
+          '경고',
+          '선택된 정보가 없습니다.',
+          '확인',
       );
     }
 
     Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-      async() => {
+        async() => {
 
-        const map = convertDataToMap()
-        const selectedRows = filterSelectedRows()
-        const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
-    
-        if(haveIdRows.length > 0){
-    
-          if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-          await RequestMethod('delete','itemDelete', haveIdRows.map((row,index)=>({...row, seq : index})))
+          const map = convertDataToMap()
+          const selectedRows = filterSelectedRows()
+          const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+
+          if(haveIdRows.length > 0){
+
+            if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+            await RequestMethod('delete','itemDelete', haveIdRows.map((row,index)=>({...row, seq : index})))
+          }
+
+          Notiflix.Report.success('삭제되었습니다.','','확인');
+          selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+          setAddiItem(Array.from(map.values()))
+          setSelectList(new Set())
+
         }
-    
-        Notiflix.Report.success('삭제되었습니다.','','확인');
-        selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-        setAddiItem(Array.from(map.values()))
-        setSelectList(new Set())
-
-      }
     )
 
 
@@ -273,11 +273,11 @@ const ItemManagePage = ({title, type, code}: IProps) => {
 
     }else{
       Notiflix.Report.failure(
-        '권한 오류',
-        '관리자만 항목관리가 가능합니다.',
-        '확인', () => {
-          router.back()
-        }
+          '권한 오류',
+          '관리자만 항목관리가 가능합니다.',
+          '확인', () => {
+            router.back()
+          }
       )
     }
   }, [])
@@ -285,10 +285,10 @@ const ItemManagePage = ({title, type, code}: IProps) => {
 
   const valueExistence = () => {
 
-    if(addiItem.length > 0){ 
+    if(addiItem.length > 0){
 
       const nameCheck = addiItem.every((data)=> data.title)
-  
+
       if(!nameCheck){
         return '추가 항목명'
       }
@@ -296,7 +296,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
     }
 
     return false;
-    
+
   }
 
   const competeAddtion = (rows) => {
@@ -309,9 +309,9 @@ const ItemManagePage = ({title, type, code}: IProps) => {
     if(spliceRow){
       if(isCheck){
         return Notiflix.Report.warning(
-          '경고',
-          `중복된 추가 항목명을 입력할 수 없습니다`,
-          '확인'
+            '경고',
+            `중복된 추가 항목명을 입력할 수 없습니다`,
+            '확인'
         );
       }
     }
@@ -321,67 +321,67 @@ const ItemManagePage = ({title, type, code}: IProps) => {
 
 
   return (
-    <div style={{display: 'flex', height: 1500}}>
-      <MenuNavigation/>
-      <div>
-        <ProfileHeader/>
-        <PageHeader
-          title={`${title} 항목관리`}
-        />
-        <div style={{width: 1570}}>
-          <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
-            {/*<HeaderButton onClick={() => {*/}
-            {/*  console.log(baseItem)*/}
-            {/*  console.log(columnlist[type])*/}
-            {/*}} key={`btnCreate`}>초기화</HeaderButton>*/}
-            <HeaderButton onClick={() => saveItem(code, baseItem)} key={`btnCreate`}>저장</HeaderButton>
-          </div>
-          <ItemManageBox title={title} items={baseItem} setItems={setBaseItem} type={'base'}/>
-          <ExcelTable
-            headerList={columnlist.baseItem}
-            row={baseItem}
-            height={240}
-            setRow={setBaseItem}
+      <div style={{display: 'flex', height: 1500}}>
+        <MenuNavigation/>
+        <div>
+          <ProfileHeader/>
+          <PageHeader
+              title={`${title} 항목관리`}
           />
-          <br/><br/>
-          {code !== "ROLE_STK_01" &&
-              <>
-                <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
-                  <HeaderButton onClick={() => {
+          <div style={{width: 1570}}>
+            <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
+              {/*<HeaderButton onClick={() => {*/}
+              {/*  console.log(baseItem)*/}
+              {/*  console.log(columnlist[type])*/}
+              {/*}} key={`btnCreate`}>초기화</HeaderButton>*/}
+              <HeaderButton onClick={() => saveItem(code, baseItem)} key={`btnCreate`}>저장</HeaderButton>
+            </div>
+            <ItemManageBox title={title} items={baseItem} setItems={setBaseItem} type={'base'}/>
+            <ExcelTable
+                headerList={columnlist.baseItem}
+                row={baseItem}
+                height={240}
+                setRow={setBaseItem}
+            />
+            <br/><br/>
+            {code !== "ROLE_STK_01" &&
+            <>
+              <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
+                <HeaderButton onClick={() => {
 
-                    const existence = valueExistence()
+                  const existence = valueExistence()
 
-                    if(!existence){
-                      const resultArray = [];
-                      baseItem.map((value)=>{
-                        resultArray.push({...value})
-                      })
-                      addiItem.map((value)=>{
-                        resultArray.push({...value, unit:value.unit_id ?? value.unit, moddable: value.moddablePK === "1" ? false : true})
-                      })
-                      saveItem(code, resultArray, 'additional')
-                    }else{
-                      return Notiflix.Report.warning(
+                  if(!existence){
+                    const resultArray = [];
+                    baseItem.map((value)=>{
+                      resultArray.push({...value})
+                    })
+                    addiItem.map((value)=>{
+                      resultArray.push({...value, unit:value.unit_id ?? value.unit, moddable: value.moddablePK === "1" ? false : true})
+                    })
+                    saveItem(code, resultArray, 'additional')
+                  }else{
+                    return Notiflix.Report.warning(
                         '경고',
                         `"${existence}"을 입력 해주세요`,
                         '확인',
-                      );
-                    }
-                  }} key={`btnCreate`}>추가항목 저장</HeaderButton>
-                  <HeaderButton onClick={() => {
-                    const random_id = Math.random() * 1000;
-                    setAddiItem([...addiItem, {
-                      id: `item_${random_id}`,
-                      width: 118,
-                      sequence:baseItem.length,
-                      tab:baseItem[0].tab
-                    }])
+                    );
+                  }
+                }} key={`btnCreate`}>추가항목 저장</HeaderButton>
+                <HeaderButton onClick={() => {
+                  const random_id = Math.random() * 1000;
+                  setAddiItem([...addiItem, {
+                    id: `item_${random_id}`,
+                    width: 118,
+                    sequence:baseItem.length,
+                    tab:baseItem[0].tab
+                  }])
 
-                  }} key={`btnCreate`}>행 추가</HeaderButton>
-                  <HeaderButton onClick={() => deleteItem(code, addiItem)} key={`btnCreate`}>삭제</HeaderButton>
-                </div>
-                <ItemManageBox title={title} items={addiItem} setItems={setAddiItem} type={'additional'}/>
-                <ExcelTable
+                }} key={`btnCreate`}>행 추가</HeaderButton>
+                <HeaderButton onClick={() => deleteItem(code, addiItem)} key={`btnCreate`}>삭제</HeaderButton>
+              </div>
+              <ItemManageBox title={title} items={addiItem} setItems={setAddiItem} type={'additional'}/>
+              <ExcelTable
                   headerList={[
                     SelectColumn,
                     ...columnlist.additionalItem
@@ -393,12 +393,12 @@ const ItemManagePage = ({title, type, code}: IProps) => {
                   setSelectList={setSelectList}
                   setRow={(e) => competeAddtion(e)}
                   setSelectRow={setSelectRow}
-                />
-              </>
-          }
+              />
+            </>
+            }
+          </div>
         </div>
       </div>
-    </div>
   );
 }
 

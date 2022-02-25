@@ -207,7 +207,7 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -223,7 +223,7 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -256,7 +256,6 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
       await RequestMethod('delete','subMaterialDelete', haveIdRows.map((row) => (
           {...row , customer: row.customerArray, additional : [...additional.map(v => {
             if(row[v.name]) {
@@ -272,97 +271,6 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
-
-
-    // let selectCheck = false
-    // const result =  basicRow.map((row, i) => {
-    //   if(selectList.has(row.id)){
-    //     selectCheck = true
-    //     let selectKey: string[] = []
-    //     let additional:any[] = []
-    //     column.map((v) => {
-    //       if(v.selectList){
-    //         selectKey.push(v.key)
-    //       }
-
-    //       if(v.type === 'additional'){
-    //         additional.push(v)
-    //       }
-    //     })
-
-    //     let selectData: any = {}
-
-    //     Object.keys(row).map(v => {
-    //       if(v.indexOf('PK') !== -1) {
-    //         selectData = {
-    //           ...selectData,
-    //           [v.split('PK')[0]]: row[v]
-    //         }
-    //       }
-
-    //       if(v === 'unitWeight') {
-    //         selectData = {
-    //           ...selectData,
-    //           unitWeight: Number(row['unitWeight'])
-    //         }
-    //       }
-
-    //       if(v === 'tmpId') {
-    //         selectData = {
-    //           ...selectData,
-    //           id: row['tmpId']
-    //         }
-    //       }
-    //     })
-    //     if(row.sm_id){
-    //       return {
-    //         ...row,
-    //         ...selectData,
-    //         // customer: row.customerArray,
-    //         additional: [
-    //           ...additional.map(v => {
-    //             if(row[v.name]) {
-    //               return {
-    //                 id: v.id,
-    //                 title: v.name,
-    //                 value: row[v.name],
-    //                 unit: v.unit
-    //               }
-    //             }
-    //           }).filter((v) => v)
-    //         ]
-    //       }
-    //     }
-    //   }
-    // }).filter((v) => v)
-
-    // if(selectCheck){
-    //   Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-    //       async()=>{
-    //         const res = await RequestMethod('delete', `subMaterialDelete`, result)
-
-    //         if(res) {
-    //           Notiflix.Report.success('삭제되었습니다.','','확인', () =>{
-    //             if(keyword){
-    //               SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-    //                 Notiflix.Loading.remove()
-    //               })
-    //             }else{
-    //               LoadBasic(pageInfo.page).then(() => {
-    //                 Notiflix.Loading.remove()
-    //               })
-    //             }
-    //           });
-    //         }
-
-    //       },
-    //       ()=>{}
-    //   )
-    // }else{
-    //   Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인");
-    // }
-
-
   }
 
 

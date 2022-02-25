@@ -130,8 +130,25 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     })
   }
 
-  const SaveBasic = async () => {
+  const valueExistence = () => {
 
+    const selectedRows = filterSelectedRows()
+
+    if(selectedRows.length > 0){
+
+      const nameCheck = selectedRows.every((data)=> data.mfrCode)
+
+      if(!nameCheck){
+        return '제조 번호'
+      }
+
+    }
+
+    return false;
+
+  }
+
+  const SaveBasic = async () => {
 
     const existence = valueExistence()
 
@@ -227,7 +244,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
           }).filter((v) => v)).catch((error)=>{
             return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
           })
-    
+
 
 
       if(res){
@@ -452,7 +469,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -465,12 +482,11 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     return addtional;
   }
 
-  console.log(basicRow,'basicRowbasicRowbasicRow')
 
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -503,7 +519,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','deviceDelete', haveIdRows.map((row) => (
           {...row , type : row.type_id, additional : [...additional.map(v => {
             if(row[v.name]) {
@@ -654,7 +670,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
         '확인',
         );
         }
-        
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{DeleteBasic()},
           ()=>{}
@@ -663,23 +679,6 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const valueExistence = () => {
-
-    const selectedRows = filterSelectedRows()
-    
-    if(selectedRows.length > 0){ 
-
-      const nameCheck = selectedRows.every((data)=> data.mfrCode)
-  
-      if(!nameCheck){
-        return '제조 번호'
-      }
-
-    }
-
-    return false;
-    
-  }
 
   const competeDevice = (rows) => {
 

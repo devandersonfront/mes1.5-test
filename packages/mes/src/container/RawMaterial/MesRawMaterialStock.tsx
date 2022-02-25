@@ -58,8 +58,8 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
 
 
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment().startOf('isoWeek').format('YYYY-MM-DD'),
-    to: moment().endOf('isoWeek').format('YYYY-MM-DD')
+    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    to: moment().format('YYYY-MM-DD')
   });
 
   const [nzState, setNzState] = useState<boolean>(false);
@@ -86,7 +86,6 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
         let tmpKey = v.key
-
 
         let res: any
         res = await RequestMethod('get', `${tmpKey}List`,{
@@ -143,13 +142,15 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       },
-      params:first ?
-          {
-            nz:nzState,
-            from:"2000-01-01",
-            to:moment().format("yyyy-MM-DD")
-          }
-          :{
+      params:
+          // first ?
+          // {
+          //   nz:nzState,
+          //   from:"2000-01-01",
+          //   to:moment().format("yyyy-MM-DD")
+          // }
+          // :
+              {
             nz:nzState,
             from:selectDate.from,
             to:selectDate.to
@@ -373,7 +374,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
       }).filter((v) => v))
       .catch((error) => {
         if(error.status === 409){
-          Notiflix.Notify.warning(error.data.message)
+          Notiflix.Report.warning("경고", error.data.message, "확인",)
           return true
         }
         return false
@@ -476,12 +477,16 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         }))
         router.push('/mes/rawmaterialV1u/modify')
         break;
+      // case 1:
+      //   // router.push(`/mes/item/manage/mold`)
+      //   SaveBasic()
+      //   break;
       case 1:
-        // router.push(`/mes/item/manage/mold`)
-        SaveBasic()
-        break;
-      case 2:
-        DeleteBasic()
+        if(selectList.size === 0) {
+          return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
+        }else{
+          Notiflix.Confirm.show("경고","데이터를 삭제하시겠습니까?", "확인", "취소", () => DeleteBasic())
+        }
         break;
     }
   }
@@ -514,7 +519,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         setSelectDate={setSelectDate}
         title={"원자재 재고 현황"}
         buttons={
-          [ '수정하기', '저장하기', '삭제']
+          [ '수정하기', '삭제']
         }
         buttonsOnclick={
           // (e) => {
@@ -563,8 +568,8 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}

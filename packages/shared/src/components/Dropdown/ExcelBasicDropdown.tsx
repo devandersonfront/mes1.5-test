@@ -12,10 +12,10 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-// 부 : 0
-// 여 : 1
-// 스페어 : 0
-// 기본 : 1
+// 부 0
+// 여 1
+// 스페어 0
+// 기본 1
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
 
 
@@ -124,6 +124,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
             ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
             [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
             setting : filterValue(event.target.value),
+
             // ...tmpData,
             isChange: true
           })

@@ -26,7 +26,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     const router = useRouter();
     const [column, setColumn] = useState<any>(columnlist.toolRegister)
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
-    const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:0, total:0});
+    const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:22});
     // const [keyword, setKeyword] = useState<string>("");
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -201,7 +201,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     const LoadBasic = async() => {
         const res = await RequestMethod("get", "toolList", {
             path:{
-                page:page,
+                page:page ?? 1,
                 renderItem:18
             },
             params:{
@@ -245,8 +245,6 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             }
         })
 
-        // console.log(res,'resresresresresresres')
-
         if(res){
 
             const productIdArrayList = [];
@@ -271,7 +269,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             setPageInfo({...pageInfo, total:res.totalPages});
 
             // const resultData = cleanUpData(res);
-            // console.log(resultData,'resultData')            
+            // console.log(resultData,'resultData')
             // setBasicRow(resultData);
         }
     }
@@ -296,15 +294,15 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             tmpRow.customer = rowData.customer;
             tmpRow.additional = [
                 ...additional.map((v, index)=>{
-                if(!rowData[v.colName]) return undefined;
-                return {
-                    mi_id: v.id,
-                    title: v.name,
-                    value: rowData[v.colName] ?? "",
-                    unit: v.unit,
-                    version:rowData.additional[index]?.version ?? undefined
-                }
-            }).filter((v) => v)
+                    if(!rowData[v.colName]) return undefined;
+                    return {
+                        mi_id: v.id,
+                        title: v.name,
+                        value: rowData[v.colName] ?? "",
+                        unit: v.unit,
+                        version:rowData.additional[index]?.version ?? undefined
+                    }
+                }).filter((v) => v)
             ];
             tmpRow.version = rowData?.version ?? undefined;
 
@@ -321,8 +319,8 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             const res = await RequestMethod("post", "toolSave",SaveCleanUpData(SelectData())).catch((error)=>{
                 return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
             })
-        
-    
+
+
             if(res){
                 Notiflix.Loading.remove(300)
                 Notiflix.Report.success("저장되었습니다.","","확인",() => {
@@ -341,33 +339,31 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         }
     }
 
-    console.log(basicRow,'basicRowbasicRow')
-
     const convertDataToMap = () => {
         const map = new Map()
         basicRow.map((v)=>map.set(v.id , v))
-        return map 
-      }
-    
-      const filterSelectedRows = () => {
+        return map
+    }
+
+    const filterSelectedRows = () => {
         return basicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
-      }
-    
-      const classfyNormalAndHave = (selectedRows) => {
-    
+    }
+
+    const classfyNormalAndHave = (selectedRows) => {
+
         const normalRows = []
         const haveIdRows = []
-    
+
         selectedRows.map((row : any)=>{
-          if(row.tool_id){
-            haveIdRows.push(row)
-          }else{
-            normalRows.push(row)
-          }
+            if(row.tool_id){
+                haveIdRows.push(row)
+            }else{
+                normalRows.push(row)
+            }
         })
-    
+
         return [normalRows , haveIdRows]
-      }
+    }
 
 
 
@@ -393,7 +389,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         setSelectList(new Set())
 
 
-    
+
     }
 
     const buttonsEvent = (index:number) => {
@@ -423,27 +419,27 @@ const BasicTool = ({page, keyword, option}: IProps) => {
             case 2:
                 if(selectList.size === 0){
                     return Notiflix.Report.warning(
-                    '경고',
-                    '선택된 정보가 없습니다.',
-                    '확인',
-                );
+                        '경고',
+                        '선택된 정보가 없습니다.',
+                        '확인',
+                    );
                 }
                 SaveBasic()
                 return
             case 3:
                 if(selectList.size === 0){
                     return Notiflix.Report.warning(
-                    '경고',
-                    '선택된 정보가 없습니다.',
-                    '확인',
-                );
+                        '경고',
+                        '선택된 정보가 없습니다.',
+                        '확인',
+                    );
                 }
-          
+
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
                     ()=>{DeleteBasic()}
                     ,()=>{}
                 )
-                  break;
+                break;
             default:
                 break;
         }
@@ -452,29 +448,30 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     const valueExistence = () => {
 
         const selectedRows = filterSelectedRows()
-        
-        if(selectedRows.length > 0){ 
-    
+
+        if(selectedRows.length > 0){
+
           const nameCheck = selectedRows.every((data)=> data.code)
-      
+
           if(!nameCheck){
             return '공구 CODE'
           }
-    
+
         }
-    
+
         return false;
-        
+
       }
 
 
     const competeTool = (rows) => {
-    
+
         const tempRow = [...rows]
         const spliceRow = [...rows]
         spliceRow.splice(selectRow, 1)
+
         const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow].code && row.code !== undefined && row.code !== '')
-    
+
         if(spliceRow){
             if(isCheck){
                 return Notiflix.Report.warning(
@@ -484,9 +481,9 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                 );
             }
         }
-    
+
         setBasicRow(rows)
-        
+
     }
 
     useEffect(() => {
@@ -543,4 +540,3 @@ const BasicTool = ({page, keyword, option}: IProps) => {
 }
 
 export {BasicTool}
-

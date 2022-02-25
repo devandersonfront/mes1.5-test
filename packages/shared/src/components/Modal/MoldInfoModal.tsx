@@ -37,7 +37,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     total: 1
   })
 
-
   useEffect(() => {
     if(isOpen) {
       if(row?.molds && row?.molds.length > 0){
@@ -60,7 +59,8 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
 
     return true;
-} 
+}
+
 
   // 데이터 유무 판단
   const haveDataValidation = () => {
@@ -114,7 +114,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
 
     setSearchList(rows)
-  } 
+  }
 
 
   const ModalContents = () => {
@@ -382,7 +382,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             </div>
             <div
 
-            
               onClick={() => {
 
                 const isValidation = executeValidation()
@@ -393,7 +392,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                       onRowChange({
                         ...row,
                         molds: searchList.map((v, i) => {
-    
+
                           return {
                             sequence: i+1,
                             setting : v.setting,
@@ -408,7 +407,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                       onRowChange({
                         ...row,
                         molds: searchList.map((v, i) => {
-    
                           return {
                             sequence: i+1,
                             mold: {mold: {...v}}
