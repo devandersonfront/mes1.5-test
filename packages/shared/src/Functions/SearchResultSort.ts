@@ -97,7 +97,6 @@ export const SearchResultSort = (infoList, type: string) => {
           affiliated_id: v.subFactory?.name,
           type_id : v.type,
           type:TransferCodeToValue(v.type, "machine"),
-          type_id : v.type,
           weldingType_id:v.weldingType,
           weldingType:TransferCodeToValue(v.weldingType, "welding")
         }
@@ -268,7 +267,6 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         type_name:"원자재",
         customer_id: selectData.customerArray?.name,
         unit:unitResult(),
-        type_name:"원자재",
         raw_material: {
           ...selectData,
           customer: selectData.customerArray

@@ -229,18 +229,18 @@ const BasicProduct = ({page}: IProps) => {
               }
             }).filter((machine) => machine.machine.machine_id)?? []
           ],
-          tools:[
-              ...row.tools?.map((tool)=>{
-                return {
-                  ...tool,
-                  setting:tool.tool.setting,
-                  tool:{
-                    ...tool.tool,
-                    customer:tool.tool.customerArray
-                  }
-                }
-              })
-          ],
+          // tools:[
+          //     ...row.tools?.map((tool)=>{
+          //       return {
+          //         ...tool,
+          //         setting:tool.tool.setting,
+          //         tool:{
+          //           ...tool.tool,
+          //           customer:tool.tool.customerArray
+          //         }
+          //       }
+          //     })
+          // ],
           type:row.type_id ?? row.typeId ?? row.typePK,
           additional: [
             ...additional.map((v, index)=>{
