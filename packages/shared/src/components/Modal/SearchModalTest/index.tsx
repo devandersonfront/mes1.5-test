@@ -414,7 +414,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         }
                     )
                   }else if(column.type === "searchToolModal"){
-                    console.log("여기는 어디?row : ",row, searchList)
                     onRowChange(searchList[selectRow])
                   }else {
                     onRowChange(

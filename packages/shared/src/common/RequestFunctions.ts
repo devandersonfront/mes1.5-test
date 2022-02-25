@@ -269,7 +269,7 @@ const ApiList = {
 
   //load
   authorityLoad: `/api/v1/member/auth/load`,
-  productLoad: `/api/v1/product/load`,
+  productLoad: `/cnc/api/v1/product/load`,
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/product/inspect/category/load`,

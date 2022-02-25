@@ -262,7 +262,6 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
           [v.title]: v.value
         }
       })
-      console.log("row : ", row)
       let random_id = Math.random()*1000;
       return {
         ...row,
