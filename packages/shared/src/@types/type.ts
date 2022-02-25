@@ -97,15 +97,15 @@ export type InspectionFinalDataResult = {
 }
 
 export type InspectionInfo = {
-    name: string
-    unit: string
-    type: number
-    error_minimum: string
-    error_maximum: string
-    standard: string
-    samples: number
-    data_result: InspectionDataResult[]
-  }
+  name: string
+  unit: string
+  type: number
+  error_minimum: string
+  error_maximum: string
+  standard: string
+  samples: number
+  data_result: InspectionDataResult[]
+}
 
 
 

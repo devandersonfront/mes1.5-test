@@ -1,7 +1,7 @@
 import React from 'react'
 import MenuNavigation from '../../../../component/MenuNav/MenuNavigation'
 import ProfileHeader from '../../../../component/Profile/ProfileHeader'
-import {BasicDevice, BasicTool} from 'basic'
+import {BasicTool} from 'basic'
 import {NextPageContext} from 'next'
 
 interface IProps {

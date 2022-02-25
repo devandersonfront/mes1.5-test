@@ -12,10 +12,10 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-// 부 : 0
-// 여 : 1
-// 스페어 : 0
-// 기본 : 1
+// 부 0
+// 여 1
+// 스페어 0
+// 기본 1
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
 
 
@@ -23,7 +23,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
     switch(type){
       case "spare":
         // 22/01/24 수정
-        return row.setting == 0 ? "스페어" : row.setting == 1 ? "기본" : row.setting
+        return row.setting === 0 ? "스페어" : row.setting === 1 ? "기본" : row.setting
         // return row.spare
       case "setting" :
         return (row[column.key] === 1 || row[column.key] === "여") ? "여" : "부"
@@ -37,6 +37,10 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
       case '여' :
         return 1
       case '부' :
+        return 0
+      case '기본' :
+        return 1
+      case '스페어':
         return 0
       default :
         return value
@@ -119,7 +123,8 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
             //@ts-ignore
             ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
             [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
-            setting : event.target.value,
+            setting : filterValue(event.target.value),
+
             // ...tmpData,
             isChange: true
           })

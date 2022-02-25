@@ -23,7 +23,6 @@ interface IReqType {
 
 const LoginPage: NextPage<IProps> = ({children, data, setData }) => {
   const router = useRouter()
-
   const dispatch = useDispatch()
 
 

@@ -26,11 +26,6 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["orderRegister"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
-
   useEffect(() => {
     getMenus()
     Notiflix.Loading.remove()
@@ -58,7 +53,8 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable:menu.moddable
             }
           } else if(menu.colName === 'id' && column.key === 'tmpId'){
             menuData = {
@@ -66,7 +62,8 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable:menu.moddable
             }
           }
         })
@@ -77,60 +74,94 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
             ...menuData,
           }
         }
+
       }).filter((v:any) => v)
 
-      setColumn([...tmpColumn])
+      setColumn([...tmpColumn.map(v=> {
+        return {
+          ...v,
+          name: !v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     }
   }
 
   const SaveBasic = async () => {
     let res: any
+    let checkValue = true;
+
+    if(selectList.size <= 0) {
+      Notiflix.Report.warning("경고", "데이터를 선택해주세요.", "확인")
+      return
+    }
+    basicRow.map((row) => {
+      if(selectList.has(row.id) && !row.code){
+        Notiflix.Report.warning("경고","CODE를 입력해주세요.","확인")
+        return
+      }else if(!Number(row.amount)){
+        Notiflix.Report.warning("경고","수주량을 정확히 입력해주세요.","확인")
+        return
+      }
+    })
+    // else{
+    //   basicRow.map((row) => {
+    //     if(!Number(row.amount) && row.amount !== "0"){
+    //       Notiflix.Report.warning("경고", "정확한 수주량을 입력해주세요.", "확인", )
+    //       checkValue = false;
+    //       return;
+    //     }
+    //   })
+    // }
+
+    if(!checkValue) return
+
     res = await RequestMethod('post', `contractSave`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
-
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
-
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
+        basicRow.map((row, i) => {
+          if(selectList.has(row.id)){
+            let selectKey: string[] = []
+            let additional:any[] = []
+            column.map((v) => {
+              if(v.selectList){
+                selectKey.push(v.key)
               }
-            }
-          })
 
-          return {
-            ...row,
-            ...selectData,
-            customer: row.customerArray,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
-                  }
+              if(v.type === 'additional'){
+                additional.push(v)
+              }
+            })
+
+            let selectData: any = {}
+
+            Object.keys(row).map(v => {
+              if(v.indexOf('PK') !== -1) {
+                selectData = {
+                  ...selectData,
+                  [v.split('PK')[0]]: row[v]
                 }
-              }).filter((v) => v)
-            ]
-          }
+              }
+            })
 
-        }
-      }).filter((v) => v))
+            return {
+              ...row,
+              ...selectData,
+              customer: row.customerArray,
+              amount: row.amount ?? 0,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
+                  }
+                }).filter((v) => v)
+              ]
+            }
+
+          }
+        }).filter((v) => v))
 
 
     if(res){
@@ -157,59 +188,72 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
 
         break;
       case 2:
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{},
-          ()=>{}
-        )
+        if(selectList.size <= 0){
+          Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
+        }else{
+          Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+              ()=>{
+                const filter = basicRow.filter((row, index) => !selectList.has(row.id))
+                setBasicRow([...filter])
+                setSelectList(new Set())
+              },
+              ()=>{}
+          )
+        }
         break;
     }
   }
 
   return (
-    <div>
-      <PageHeader
-        title={"수주 정보 등록"}
-        buttons={
-          ['행추가', '저장하기', '삭제']
-        }
-        buttonsOnclick={
-          // () => {}
-          onClickHeaderButton
-        }
-      />
-      <ExcelTable
-        editable
-        resizable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList
-          e.map(v => {
-            if(v.isChange) tmp.add(v.id)
-          })
-          setSelectList(tmp)
-          setBasicRow(e.map(v => ({...v, name: v.product_name, date:v?.date ?? moment().format("YYYY-MM-DD"), deadline:v?.deadline ?? moment().format("YYYY-MM-DD")})))
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
-      />
-    </div>
+      <div>
+        <PageHeader
+            title={"수주 정보 등록"}
+            buttons={
+              ['행추가', '저장하기', '삭제']
+            }
+            buttonsOnclick={
+              // () => {}
+              onClickHeaderButton
+            }
+        />
+        <ExcelTable
+            editable
+            headerList={[
+              SelectColumn,
+              ...column
+            ]}
+            row={basicRow}
+            // setRow={setBasicRow}
+            setRow={(e) => {
+              let tmp: Set<any> = selectList
+              e.map(v => {
+                if(v.isChange) tmp.add(v.id)
+              })
+              setSelectList(tmp)
+              setBasicRow(e.map((v, index) => ({
+                ...v,
+                name: v.product_name,
+                date:v?.date ?? basicRow[index]?.date,
+                deadline:v?.deadline ?? basicRow[index]?.deadline,
+                amount:v?.amount ?? basicRow[index]?.amount
+              })))
+            }}
+            selectList={selectList}
+            //@ts-ignore
+            setSelectList={setSelectList}
+            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        />
+        <ExcelDownloadModal
+            isOpen={excelOpen}
+            column={column}
+            basicRow={basicRow}
+            filename={`금형기준정보`}
+            sheetname={`금형기준정보`}
+            selectList={selectList}
+            tab={'ROLE_BASE_07'}
+            setIsOpen={setExcelOpen}
+        />
+      </div>
   );
 }
 

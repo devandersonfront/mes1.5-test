@@ -1,9 +1,7 @@
 import React from "react";
 import MenuNavigation from "../../../component/MenuNav/MenuNavigation";
-import {MesToolRegister} from "mes";
-import {NextPageContext} from "next";
 import ProfileHeader from "../../../component/Profile/ProfileHeader";
-import {MesToolUpdate} from "../../../../mes/src/container/Tool/MesToolUpdate";
+import {MesToolUpdate} from "mes";
 
 const ToolUpdate = () => {
     return (

@@ -32,13 +32,13 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["cncRecordListV2"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["recordListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['수주번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
+    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    to: moment().format('YYYY-MM-DD')
   });
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -112,7 +112,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
 
   const SearchBasic = async (keyword, opt, page?: number) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `cncRecordSearch`,{
+    const res = await RequestMethod('get', `recordSearch`,{
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
@@ -138,7 +138,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `cncRecordList`,{
+    const res = await RequestMethod('get', `recordList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
@@ -232,7 +232,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
   }
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["cncRecordListV2"];
+    let tmpColumn = columnlist["recordListV2"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
@@ -336,7 +336,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         identification: row.operation_sheet?.identification ?? '-',
         product_id: row.operation_sheet?.product?.code ?? '-',
         name: row.operation_sheet?.product?.name ?? '-',
-        type: row.operation_sheet?.product?.type ? TransferCodeToValue(row.operation_sheet.product.type, 'material') : '-',
+        type: row.operation_sheet?.product?.type !== null ? TransferCodeToValue(row.operation_sheet.product.type, 'material') : '-',
         unit: row.operation_sheet?.product?.unit,
         process_id: row.operation_sheet?.product?.process?.name ?? '-',
         user: row.worker,
@@ -377,14 +377,17 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
           (e) => {
             switch(e) {
               case 1: {
-                if(selectList.size > 0) {
+                if(selectList.size === 1) {
                   setExcelOpen(true)
                 }else{
-                  Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
+                  Notiflix.Report.warning("경고","작업일보는 한 개씩만 수정 가능합니다.","확인")
                 }
                 break
               }
               case 2: {
+                if(selectList.size === 0) {
+                  return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
+                }
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",()=>DeleteBasic())
                 break
               }
@@ -444,7 +447,8 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
             // })
           }else{
             LoadBasic(page).then(() => {
-              Notiflix.Loading.remove()
+              Notiflix.Loading.remove();
+              setSelectList(new Set())
             })
           }}
         }

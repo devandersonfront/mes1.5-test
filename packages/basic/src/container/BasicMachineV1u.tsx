@@ -156,11 +156,12 @@ const BasicMachineV1u = ({ option}: IProps) => {
             Notiflix.Report.success("저장되었습니다.","","확인");
             LoadBasic(pageInfo.page);
           })
+          .catch((error)=>{
+            return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+          })
           .catch((err) => {
             Notiflix.Report.failure("경고", err.data.message, "확인");
           })
-
-
   }
 
 
@@ -234,12 +235,10 @@ const BasicMachineV1u = ({ option}: IProps) => {
     setSelectList(new Set())
   }
 
-  
-
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -273,7 +272,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','machineDelete', filterData)
 
     }
@@ -282,42 +281,6 @@ const BasicMachineV1u = ({ option}: IProps) => {
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
-
-
-
-
-    // let result = [];
-    // basicRow.map((value, index)=>{
-    //   if(selectList.has(value.id)){
-    //     cleanForRegister(value)
-    //     if(value.machine_id){
-    //       result.push(cleanForRegister(value))
-    //     }
-    //   }
-    // })
-    // if(result.length === 0){
-    //   Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인", )
-    //   return
-    // } Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-    //     ()=>{
-    //       RequestMethod("delete", "machineDelete", result)
-    //           .then((res) => {
-    //             Notiflix.Report.success( "삭제되었습니다.", "", "확인");
-    //             if(keyword){
-    //               SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-    //                 Notiflix.Loading.remove()
-    //               })
-    //             }else{
-    //               LoadBasic(pageInfo.page).then(() => {
-    //                 Notiflix.Loading.remove()
-    //               })
-    //             }
-    //           })
-
-    //     },
-    //     ()=>{}
-    // )
-
   }
 
   const cleanUpData = (res: any) => {
@@ -564,7 +527,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
 
-    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined)
+    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined && row.mfrCode !== '')
 
     if(spliceRow){
       if(isCheck){

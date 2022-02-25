@@ -21,6 +21,16 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
+const deviceList = [
+  {pk: 0, name: "선택없음"},
+  {pk: 1, name: "미스피드 검출장치"},
+  {pk: 2, name: "하사점 검출장치"},
+  {pk: 3, name: "로드모니터"},
+  {pk: 4, name: "앵글시퀀서"},
+  {pk: 5, name: "엔코더"},
+  {pk: 6, name: "통관센서"},
+  {pk: 7, name: "유틸리티 센서"},
+]
 
 const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -28,34 +38,27 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+
   useEffect(() => {
     if(isOpen) {
-      // SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-      //   Notiflix.Loading.remove()
-      // })
       if(row.devices !== undefined && row.devices !== null && row.devices.length > 0){
         const rowDevices = [];
         row.devices.map((device, index)=>{
-          rowDevices.push({...device, seq:index+1, manager:device.manager?.name ?? "", manager_data:device.manager});
-
+          rowDevices.push({...device, seq:index+1, manager:device.manager?.name ?? "", manager_data:device.manager, type:deviceList[device.type]?.name ?? device.type});
         })
         setSearchList(rowDevices);
       }
+    }else{
+      setSearchList([]);
     }
   }, [isOpen, searchKeyword])
-  // useEffect(() => {
-  //   if(pageInfo.total > 1){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page])
+
 
   const changeRow = (row: any, key?: string) => {
     let tmpData = {
@@ -110,6 +113,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
             }}>
               <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
                 setIsOpen(true)
+                setSelectRow(undefined)
               }}>
                 <p style={{color: 'white', textDecoration: 'underline'}}>주변장치 보기</p>
               </UploadButton>
@@ -137,18 +141,49 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     if(row.manager){
       switch (typeof row.manager){
         case "string":
-
           return row.manager;
         case "object":
-
-
           return row.manager.name;
         default:
            return ""
       }
-
     }
   }
+
+  const settingTypeId = (type:string | number) => {
+    let result:number = 0;
+    if(typeof type === "number"){
+      return type
+    }
+    deviceList.map((value) => {
+      if(type === value.name){
+        result = value.pk;
+      }
+    })
+    return result;
+  }
+  
+  const competeDevice = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow]?.mfrCode && row.mfrCode !==undefined && row.mfrCode !=='')
+
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '경고',
+          `중복된 주변장치가 존재합니다.`,
+          '확인'
+        );
+      }
+    }
+
+    setSearchList(rows)
+  } 
+
 
   return (
     <SearchModalWrapper >
@@ -246,8 +281,6 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
             <Button onClick={() => {
-              let tmp = searchList
-
               setSearchList([
                 ...searchList,
                 {
@@ -261,12 +294,12 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               if(selectRow === 0){
                 return
               }
-              let tmpRow = searchList
+              let tmpRow = [...searchList]
 
               let tmp = tmpRow[selectRow]
               tmpRow[selectRow] = tmpRow[selectRow - 1]
               tmpRow[selectRow - 1] = tmp
-
+              setSelectRow((prevSelectRow)=> prevSelectRow - 1)
               setSearchList([...tmpRow.map((v, i) => {
                 return {
                   ...v,
@@ -281,7 +314,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
                 return
               }
               let tmpRow = searchList
-
+              setSelectRow((prevSelectRow)=> prevSelectRow + 1)
               let tmp = tmpRow[selectRow]
               tmpRow[selectRow] = tmpRow[selectRow + 1]
               tmpRow[selectRow + 1] = tmp
@@ -295,18 +328,42 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
             }}>
               <p>아래로</p>
             </Button>
+            <Button style={{marginLeft: 16}}  onClick={() => {
+              
+              if(selectRow === undefined){
+                return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
+              }
+
+              searchList.splice(selectRow, 1);
+              setSelectRow(undefined)
+              setSearchList([...searchList.map((v, i) => {
+                  return {
+                    ...v,
+                    seq: i+1
+                  }
+              })])
+
+              }}>
+              <p>삭제</p>
+            </Button>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
               headerList={searchModalList.deviceInfo}
               row={searchList ?? [{}]}
               setRow={(e) => {
-                searchList[selectRow].device =
-                setSearchList([...e])
+                // searchList[selectRow].device =
+                e.map((row) => {
+                  row.type_id = settingTypeId(row.type)
+                  row.type = Number(row.type) ? deviceList[row.type]?.name : row.type
+                })
+                
+                // setSearchList([...e])
+                competeDevice(e)
               }}
               width={1746}
               rowHeight={32}
-              height={560}
+              height={526}
               // setSelectRow={(e) => {
               //   setSelectRow(e)
               // }}
@@ -335,21 +392,21 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
+                // if(selectRow !== undefined && selectRow !== null){
                   onRowChange({
                     ...row,
                     // ...searchList[selectRow],
                     machine_idPK:row.machine_id,
                     name: row.name,
                     devices:searchList.map((device)=>{
-                      const tmpDevice = {...device};
-                      tmpDevice.manager = device.manager_data;
-
-                      return tmpDevice
-                    }),
+                      // const tmpDevice = {...device};
+                      // tmpDevice.manager = device.manager_data;
+                      // return tmpDevice
+                      return {...device , border : false ,manager : device.manager_data}
+                    }).filter(v => v.mfrCode !== undefined),
                     isChange: true,
-                  })
-                }
+                    })
+                // }
                 setIsOpen(false)
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}

@@ -162,14 +162,12 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     pauseBasicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
     return pauseBasicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
   }
-
-  console.log(pauseBasicRow,'pauseBasicRowpauseBasicRowpauseBasicRow')
 
   const classfyNormalAndHave = (selectedRows) => {
 
@@ -195,7 +193,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})      
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
       await RequestMethod('delete','defectDelete', haveIdRows)
 
     }
@@ -273,37 +271,49 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          async()=>{
+            const idList = [];
+            // const spliceArray:number[] = [];
+
+            pauseBasicRow.map((v,i)=> {
+              if(selectList.has(v.id)){
+                // spliceArray.push(i);
+                idList.push(v)
+              }
+            })
+
+            const tmpPauseBasicRow = [...pauseBasicRow];
+            // spliceArray.reverse();
+            // spliceArray.map((value, index)=>{
+            //   tmpPauseBasicRow.splice(value, 1);
+            // })
+
+            const res = await RequestMethod("delete", `defectDelete`, idList );
+
+            if(res){
+              Notiflix.Report.success("삭제되었습니다.","","확인", () => {
+                sortObject(tmpPauseBasicRow);
+                LoadPauseList(processBasicRow[selectRow].process_id);
+              });
+            }
+          },
+          ()=>{
+              const idList = [];
+            pauseBasicRow.map((v,i)=> {
+              if(selectList.has(v.id)){
+                // spliceArray.push(i);
+                idList.push(v)
+              }
+            })
+          }
+        );
+        }
+
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           () => DeleteBasic()
-          // async()=>{
-          //   const idList = [];
-          //   const spliceArray:number[] = [];
-
-          //   pauseBasicRow.map((v)=> {
-          //     if(selectList.has(v.id)){
-          //       idList.push(v)
-          //     }
-          //   })
-
-          //   const tmpPauseBasicRow = [...pauseBasicRow];
-          //   spliceArray.reverse();
-          //   spliceArray.map((value, index)=>{
-          //     tmpPauseBasicRow.splice(value, 1);
-          //   })
-
-          //   const res = await RequestMethod("delete", `pauseDelete`, idList );
-
-          //   if(res){
-          //     Notiflix.Report.success("삭제되었습니다.",""," 확인", () => {
-          //       sortObject(tmpPauseBasicRow);
-          //       LoadPauseList(processBasicRow[selectRow].process_id);
-          //     });
-          //   }else{
-          //     No
         )
-
-
     }
-  }
+
 
   const sortObject = (object:any) => {
     const  compare_qty = (a:any, b:any) => {

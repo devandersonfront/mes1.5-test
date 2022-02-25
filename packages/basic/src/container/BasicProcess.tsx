@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import {
-    columnlist,
-    excelDownload,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    PaginationComponent,
-    RequestMethod,
-    TextEditor
+  columnlist,
+  excelDownload,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  PaginationComponent,
+  RequestMethod,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -117,61 +117,68 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   }
   const SaveBasic = async () => {
 
+
+    const existence = valueExistence()
+
     if(selectList.size === 0){
       return Notiflix.Report.warning(
-        '경고',
-        '선택된 정보가 없습니다.',
-        '확인',
-        );
+          '경고',
+          '선택된 정보가 없습니다.',
+          '확인',
+      );
     }
 
-    const searchAiID = (rowAdditional:any[], index:number) => {
-      let result:number = undefined;
-      rowAdditional?.map((addi, i)=>{
-        if(index === i){
-          result = addi.ai_id;
-        }
-      })
-      return result;
-    }
-    let res = await RequestMethod('post', `processSave`,
-      basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
 
-            let additional:any[] = []
-            column.map((v) => {
+    if(!existence){
 
-              if(v.type === "additional"){
-                additional.push(v)
-              }
-            })
-            let selectData: any = {}
-
-            return {
-              ...row,
-              ...selectData,
-              additional: [
-                ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
-                  return {
-                    mi_id: v.id,
-                    title: v.name,
-                    value: row[v.colName] ?? "",
-                    unit: v.unit,
-                    ai_id: searchAiID(row.additional, index) ?? undefined,
-                    version:row?.additional[index]?.version ?? undefined
-                  }
-                }).filter((v) => v)
-              ],
-            }
-
+      const searchAiID = (rowAdditional:any[], index:number) => {
+        let result:number = undefined;
+        rowAdditional?.map((addi, i)=>{
+          if(index === i){
+            result = addi.ai_id;
           }
-        }).filter((v) => v)
-    ).catch((error)=>{
-      return error.data && Notiflix.Notify.failure(error.data.message);
-    })
+        })
+        return result;
+      }
+      let res = await RequestMethod('post', `processSave`,
+          basicRow.map((row, i) => {
+            if(selectList.has(row.id)){
 
-    if(res){
+              let additional:any[] = []
+              column.map((v) => {
+
+                if(v.type === "additional"){
+                  additional.push(v)
+                }
+              })
+              let selectData: any = {}
+
+              return {
+                ...row,
+                ...selectData,
+                additional: [
+                  ...additional.map((v, index)=>{
+                    //if(!row[v.colName]) return undefined;
+                    return {
+                      mi_id: v.id,
+                      title: v.name,
+                      value: row[v.colName] ?? "",
+                      unit: v.unit,
+                      ai_id: searchAiID(row.additional, index) ?? undefined,
+                      version:row?.additional[index]?.version ?? undefined
+                    }
+                  }).filter((v) => v)
+                ],
+              }
+
+            }
+          }).filter((v) => v)
+      ).catch((error)=>{
+        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+      })
+
+
+      if(res){
 
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
@@ -184,7 +191,15 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
           })
         }
 
+      }
+    }else{
+      return Notiflix.Report.warning(
+          '경고',
+          `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+          '확인',
+      );
     }
+
   }
 
   console.log(basicRow,'basicRowbasicRow')
@@ -192,13 +207,13 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
-              addtional.push(v)
-            }
-          })
+            addtional.push(v)
+          }
+        })
       }
     })
 
@@ -208,7 +223,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -243,23 +258,23 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     if(haveIdRows.length > 0){
 
       if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
+
       await RequestMethod('delete','processDelete', haveIdRows.map((row) => (
           {...row , customer: row.customerArray, additional : [...additional.map(v => {
-            if(row[v.name]) {
-              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
-            }
-          }).filter(v => v)
-          ]}
+              if(row[v.name]) {
+                return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
+              }
+            }).filter(v => v)
+            ]}
       )))
 
     }
-      
+
     Notiflix.Report.success('삭제되었습니다.','','확인');
     selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
     setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
-    
+
 
     // const res = await RequestMethod('delete', `processDelete`,
 
@@ -561,15 +576,15 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
         if(selectList.size === 0){
           return Notiflix.Report.warning(
-        '경고',
-        '선택된 정보가 없습니다.',
-        '확인',
-        );
+              '경고',
+              '선택된 정보가 없습니다.',
+              '확인',
+          );
         }
-        
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{DeleteBasic()},
-          ()=>{}
+            ()=>{DeleteBasic()},
+            ()=>{}
         )
 
         break;
@@ -577,18 +592,37 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const valueExistence = () => {
+
+    const selectedRows = filterSelectedRows()
+
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
+    if(selectedRows.length > 0){
+
+      const nameCheck = selectedRows.every((data)=> data.name)
+
+      if(!nameCheck){
+        return '공정명'
+      }
+
+    }
+
+    return false;
+
+  }
+
   const competeProcess = (rows) => {
 
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    
+
     if(spliceRow){
-      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null)){
+      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null && row.name !== '')){
         return Notiflix.Report.warning(
-          '공정명 경고',
-          `중복된 공정명을 입력할 수 없습니다`,
-          '확인'
+            '공정명 경고',
+            `중복된 공정명을 입력할 수 없습니다`,
+            '확인'
         );
       }
     }
@@ -597,65 +631,65 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   }
 
   return (
-    <div>
-      <PageHeader
-        isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          if(keyword){
-            router.push(`/mes/basic/process?page=1&keyword=${keyword}&opt=${optionIndex}`)
-          }else{
-            router.push(`/mes/basic/process?page=1&keyword=`)
-          }
-        }}
-        searchOptionList={optionList}
-        onChangeSearchOption={(option) => {
-          setOptionIndex(option)
-        }}
-        title={title}
-        buttons={['','', '항목관리', '행 추가', '저장하기', '삭제']}
-        buttonsOnclick={onClickHeaderButton}
-      />
-      <ExcelTable
-        editable
-        resizable
-        pageInfo={pageInfo}
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
-        top={top}
-        setTop={setTop}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList
-          e.map(v => {
-            if(v.isChange) tmp.add(v.id)
-          })
-          setSelectList(tmp)
-          // setBasicRow(e)
-          competeProcess(e)
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        setSelectRow={setSelectRow}
-        loadEvent={LoadBasic}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/process?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/process?page=${page}`)
-          }
-        }}
-      />
-    </div>
+      <div>
+        <PageHeader
+            isSearch
+            searchKeyword={keyword}
+            onChangeSearchKeyword={(keyword) => {
+              if(keyword){
+                router.push(`/mes/basic/process?page=1&keyword=${keyword}&opt=${optionIndex}`)
+              }else{
+                router.push(`/mes/basic/process?page=1&keyword=`)
+              }
+            }}
+            searchOptionList={optionList}
+            onChangeSearchOption={(option) => {
+              setOptionIndex(option)
+            }}
+            title={title}
+            buttons={['','', '항목관리', '행 추가', '저장하기', '삭제']}
+            buttonsOnclick={onClickHeaderButton}
+        />
+        <ExcelTable
+            editable
+            resizable
+            pageInfo={pageInfo}
+            headerList={[
+              SelectColumn,
+              ...column
+            ]}
+            top={top}
+            setTop={setTop}
+            row={basicRow}
+            // setRow={setBasicRow}
+            setRow={(e) => {
+              let tmp: Set<any> = selectList
+              e.map(v => {
+                if(v.isChange) tmp.add(v.id)
+              })
+              setSelectList(tmp)
+              // setBasicRow(e)
+              competeProcess(e)
+            }}
+            selectList={selectList}
+            //@ts-ignore
+            setSelectList={setSelectList}
+            setSelectRow={setSelectRow}
+            loadEvent={LoadBasic}
+            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        />
+        <PaginationComponent
+            currentPage={pageInfo.page}
+            totalPage={pageInfo.total}
+            setPage={(page) => {
+              if(keyword){
+                router.push(`/mes/basic/process?page=${page}&keyword=${keyword}&opt=${option}`)
+              }else{
+                router.push(`/mes/basic/process?page=${page}`)
+              }
+            }}
+        />
+      </div>
   );
 }
 

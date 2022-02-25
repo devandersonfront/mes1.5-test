@@ -54,21 +54,16 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   ])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{sequence: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
     if(isOpen) {
       setSearchList([{
+        modify: true,
+        osId: row.os_id,
         sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
         start: moment().format('YYYY-MM-DD HH:mm:00'),
         end: moment().format('YYYY-MM-DD HH:mm:00'),
@@ -110,6 +105,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         return;
       }
     })
+    console.log(searchList)
     let res = await RequestMethod('post', `recordSave`,
       searchList.map((v, i) => {
         let selectData: any = {}
@@ -144,6 +140,18 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
             ...row,
             status: row.status_no
           },
+          tools:[...v.tools.map((tool) => {
+            console.log("Tool : ", {...tool.tool})
+            return{
+              ...tool,
+              tool:{
+                ...tool.tool,
+                tool: {
+                  ...tool.tool.tool,
+                  customer: tool.tool.tool.customerArray
+                }
+              }}
+          })],
           // input_bom: [],
           status: 0,
         }
@@ -272,52 +280,55 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={searchModalList.workRegister}
-              row={searchList ?? [{}]}
-              setRow={(e) => {
-                let tmp = e.map((v, index) => {
-                  if(v.newTab === true){
-                    const newTabIndex = bomDummy.length+1
-                    addNewTab(newTabIndex)
-                    setFocusIndex(newTabIndex-1)
-                  }
+                headerList={searchModalList.workRegister}
+                row={searchList ?? [{}]}
+                setRow={(e) => {
+                  console.log("searchList : ", searchList)
+                  let tmp = e.map((v, index) => {
+                    if(v.newTab === true){
+                      const newTabIndex = bomDummy.length+1
+                      addNewTab(newTabIndex)
+                      setFocusIndex(newTabIndex-1)
+                    }
 
-                  return {
-                    ...v,
-                    newTab: false
-                  }
-                })
-                setSearchList([...tmp.map(v => {
-                  return {
-                    ...v,
-                    sum: Number(v.good_quantity ?? 0)+Number(v.poor_quantity ?? 0)
-                  }
-                })])
-              }}
-              width={1746}
-              rowHeight={32}
-              height={552}
-              // setSelectRow={(e) => {
-              //   setSelectRow(e)
-              // }}
-              setSelectRow={(e) => {
-                // setSearchList([...searchList.map((v,i)=>{
-                //   if(i === e){
-                //     return {
-                //       ...v,
-                //       border: !v.border
-                //     }
-                //   }else{
-                //     return {
-                //       ...v,
-                //       border: false
-                //     }
-                //   }
-                // })])
-                setSelectRow(e)
-              }}
-              type={'searchModal'}
-              headerAlign={'center'}
+                    return {
+                      ...v,
+                      newTab: false
+                    }
+                  })
+                  console.log("tmp : ", tmp)
+                  setSearchList([...tmp.map(v => {
+                    return {
+                      ...v,
+                      good_quantity: Number(v.quantity ?? 0)-Number(v.poor_quantity ?? 0),
+                      sum: Number(v.quantity ?? 0)
+                    }
+                  })])
+                }}
+                width={1746}
+                rowHeight={32}
+                height={552}
+                // setSelectRow={(e) => {
+                //   setSelectRow(e)
+                // }}
+                setSelectRow={(e) => {
+                  // setSearchList([...searchList.map((v,i)=>{
+                  //   if(i === e){
+                  //     return {
+                  //       ...v,
+                  //       border: !v.border
+                  //     }
+                  //   }else{
+                  //     return {
+                  //       ...v,
+                  //       border: false
+                  //     }
+                  //   }
+                  // })])
+                  setSelectRow(e)
+                }}
+                type={'searchModal'}
+                headerAlign={'center'}
             />
           </div>
           <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>

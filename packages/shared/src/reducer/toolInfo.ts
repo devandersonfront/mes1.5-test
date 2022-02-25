@@ -3,7 +3,7 @@ export const TEST_TOOL = "TEST_TOOL";
 
 
 export interface ToolUploadInterface {
- data:string
+    data:string
 }
 
 

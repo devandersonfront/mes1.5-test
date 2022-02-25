@@ -36,7 +36,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-
+  const [selectRow , setSelectRow] = useState<number>(0);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -375,6 +375,28 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const competeSubMaterial = (rows) => {
+
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+
+
+    if(spliceRow){
+      if(spliceRow.some((row)=> row.code === tempRow[selectRow].code)){
+        return Notiflix.Report.warning(
+          '코드 경고',
+          `중복된 코드를 입력할 수 없습니다`,
+          '확인'
+        );
+      }
+    }
+
+    setBasicRow(rows)
+  }
+
+
+
   return (
     <div>
         <PageHeader
@@ -392,7 +414,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"부자재 기본정보"}
+          title={"부자재 기준정보"}
           buttons={
             ['', '', '항목관리', '행추가', '저장하기', '삭제']
           }
@@ -416,11 +438,13 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
               if(v.isChange) tmp.add(v.id)
             })
             setSelectList(tmp)
-            setBasicRow(e)
+
+            competeSubMaterial(e)
           }}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent
@@ -438,8 +462,8 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
-        filename={`금형기본정보`}
-        sheetname={`금형기본정보`}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
         selectList={selectList}
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}
