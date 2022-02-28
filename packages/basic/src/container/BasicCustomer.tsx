@@ -23,7 +23,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicCustomer = ({page, keyword, option}: IProps) => {
+const BasicCustomer = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -34,8 +34,8 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["customer"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처명', '대표자명', '담당자명', '전화 번호','휴대폰 번호', '팩스 번호', '주소', '사업자 번호'])
-  const [optionIndex, setOptionIndex] = useState<number>(option)
-
+  const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -44,17 +44,17 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       }).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword])
 
   const SaveBasic = async () => {
 
@@ -149,11 +149,11 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
-          LoadBasic(page).then(() => {
+          LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }
@@ -648,11 +648,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
             isSearch
             searchKeyword={keyword}
             onChangeSearchKeyword={(keyword) => {
-              if(keyword){
-                router.push(`/mes/basic/customer?page=1&keyword=${keyword}&opt=${optionIndex}`)
-              }else{
-                router.push(`/mes/basic/customer?page=1&keyword=`)
-              }
+              setKeyword(keyword)
             }}
             searchOptionList={optionList}
             onChangeSearchOption={(option) => {
@@ -693,11 +689,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
             currentPage={pageInfo.page}
             totalPage={pageInfo.total}
             setPage={(page) => {
-              if(keyword){
-                router.push(`/mes/basic/customer?page=${page}&keyword=${keyword}&opt=${option}`)
-              }else{
-                router.push(`/mes/basic/customer?page=${page}`)
-              }
+              setPageInfo({...pageInfo,page:page})
             }}
         />
       </div>

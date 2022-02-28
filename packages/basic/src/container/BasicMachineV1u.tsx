@@ -594,11 +594,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            if(keyword){
-              router.push(`/mes/basic/machine?page=${page}&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/machine?page=${page}`)
-            }
+            setPageInfo({...pageInfo,page:page})
           }}
         />
       <ExcelDownloadModal
