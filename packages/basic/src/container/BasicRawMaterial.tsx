@@ -647,6 +647,13 @@ const BasicRawMaterial = ({}: IProps) => {
 
   React.useEffect(()=>{
 
+
+    if(selectList.size > 1){
+
+      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
+
+    }
+
     return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
 
   },[selectList.size])

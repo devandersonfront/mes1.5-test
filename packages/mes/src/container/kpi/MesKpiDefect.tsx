@@ -35,7 +35,8 @@ const MesKpiDefect = () => {
             params: {
                 productIds: productId,
                 from: selectDate.from,
-                to: selectDate.to
+                to: selectDate.to,
+                rangeNeeded: true
             },
         })
 
@@ -111,7 +112,7 @@ const MesKpiDefect = () => {
     React.useEffect(()=>{
 
         if(pauseBasicRow.length){
-            
+
             const rowLenth = pauseBasicRow.length;
             let toalNumber = 0;
             let totalDefectNumber = 0;
@@ -120,10 +121,10 @@ const MesKpiDefect = () => {
                     toalNumber += row.total_quantity
                     totalDefectNumber += row.poor_quantity
                 })
-                    
-                setProcessBasicRow({...processBasicRow , 
+
+                setProcessBasicRow({...processBasicRow ,
                     total_number : toalNumber,
-                    total_defectNumber : `${totalDefectNumber}`, 
+                    total_defectNumber : `${totalDefectNumber}`,
                     defectiveRate_average : `${((totalDefectNumber/toalNumber)*100).toFixed(1)}`})
             }
         }else{
@@ -145,7 +146,7 @@ const MesKpiDefect = () => {
                 ]}
                 row={[processBasicRow]}
                 setRow={(row) => {
-                    setProcessBasicRow({...processBasicRow, 
+                    setProcessBasicRow({...processBasicRow,
                         id : row[0].product.product_id,
                         customer_id : row[0].customer_id,
                         cm_id : row[0].cm_id,

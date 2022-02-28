@@ -65,7 +65,8 @@ const MesKpiOperation = () => {
                 productIds: productId,
                 from: selectDate.from,
                 sorts : 'date',
-                to: selectDate.to
+                to: selectDate.to,
+                rangeNeeded: true
             },
         })
 
