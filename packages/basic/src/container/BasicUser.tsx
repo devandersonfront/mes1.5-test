@@ -27,7 +27,7 @@ export interface IProps {
 const title = '유저 관리'
 const optList = ['성명', '이메일', '직책명', '전화번호',]
 
-const BasicUser = ({page, keyword, option}: IProps) => {
+const BasicUser = ({}: IProps) => {
   const router = useRouter()
 
   const [excelDownOpen, setExcelDownOpen] = useState<boolean>(false)
@@ -44,7 +44,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(optList)
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectRow , setSelectRow] = useState<number>(0);
-
+  const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -52,11 +52,11 @@ const BasicUser = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     if(keyword){
-      SearchBasic(keyword, option, page)
+      SearchBasic(keyword, optionIndex, pageInfo.page)
     }else{
-      LoadBasic(page).then(() => {})
+      LoadBasic(pageInfo.page).then(() => {})
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword, ])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -241,11 +241,11 @@ const BasicUser = ({page, keyword, option}: IProps) => {
             if(res){
               Notiflix.Report.success('저장되었습니다.','','확인');
               if(keyword){
-                SearchBasic(keyword, option, page).then(() => {
+                SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
                   Notiflix.Loading.remove()
                 })
               }else{
-                LoadBasic(page).then(() => {
+                LoadBasic(pageInfo.page).then(() => {
                   Notiflix.Loading.remove()
                 })
               }
@@ -703,11 +703,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          if(keyword){
-            router.push(`/mes/basic/user?page=1&keyword=${keyword}&opt=${optionIndex}`)
-          }else{
-            router.push(`/mes/basic/user?page=1&keyword=`)
-          }
+          setKeyword(keyword)
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
@@ -749,11 +745,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         currentPage={pageInfo.page}
         totalPage={pageInfo.total}
         setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/user?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/user?page=${page}`)
-          }
+          setPageInfo({...pageInfo,page:page})
         }}
       />
       {/* <ExcelDownloadModal

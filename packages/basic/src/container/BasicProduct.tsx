@@ -27,7 +27,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicProduct = ({page}: IProps) => {
+const BasicProduct = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -53,7 +53,7 @@ const BasicProduct = ({page}: IProps) => {
 
   useEffect(() => {
     if(keyword){
-      SearchBasic(keyword, optionIndex, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{

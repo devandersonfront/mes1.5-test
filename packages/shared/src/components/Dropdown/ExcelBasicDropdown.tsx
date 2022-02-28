@@ -44,7 +44,9 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
   }
 
   return (
-    <select
+    <>
+    {
+      (column.name !== '용접 종류' || row.type ==='용접기') && <select
       className={'editDropdown'}
       style={{
         appearance: 'none',
@@ -115,14 +117,30 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
             }
           }
 
-          return onRowChange({
-            //@ts-ignore
-            ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
-            [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
-            // setting : event.target.value,
-            // ...tmpData,
-            isChange: true
-          })
+          if(column.name === '기계 종류' && event.target.value !=='용접기'){
+
+            return onRowChange({
+              //@ts-ignore
+              ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
+              [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
+              setting : filterValue(event.target.value),
+              // ...tmpData,
+              isChange: true,
+              weldingType: null,
+              weldingTypePK: null,
+              weldingType_id: null
+            })
+
+          }else{
+            return onRowChange({
+              //@ts-ignore
+              ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
+              [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
+              setting : filterValue(event.target.value),
+              // ...tmpData,
+              isChange: true
+            })
+          }
         }
       }}
     >
@@ -132,6 +150,9 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         </option>)
       })}
     </select>
+    }
+    </>
+    
   );
 }
 
