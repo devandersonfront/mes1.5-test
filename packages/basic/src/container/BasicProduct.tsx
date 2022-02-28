@@ -47,8 +47,6 @@ const BasicProduct = ({page}: IProps) => {
     total: 1
   })
 
-  console.log(basicRow,'basicRowbasicRow')
-
 
   const [buttonList , setButtonList ] = useState<string[]>([])
 
