@@ -9,7 +9,7 @@ interface IProps {
     contents: string[]
     value: string
     onChange: (e: ChangeEvent<HTMLSelectElement>) => void
-    readOnly :boolean
+    readOnly?:boolean
 }
 
 const MidrangeExcelDropdown = ({contents,value,onChange, readOnly}: IProps) => {
