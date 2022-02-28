@@ -174,7 +174,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
     })
 
 
-    if(res){MO
+    if(res){
       Notiflix.Report.success('수정되었습니다.','','확인', () => {
         dispatch(setModifyInitData({
           modifyInfo: [],
