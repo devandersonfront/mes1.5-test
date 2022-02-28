@@ -85,12 +85,11 @@ const MesToolUpdate = () => {
     }
 
     useEffect(() => {
-        if(toolStore?.data === ''){
-            Notiflix.Report.warning("수정할 데이터가 없습니다.","","확인",() =>
-                router.back()
-            )
+        if(toolStore.data === ""){
+            router.push("/mes/tool/list")
+        }else{
+            cleanUpData();
         }
-        cleanUpData();
     },[])
 
     return (
