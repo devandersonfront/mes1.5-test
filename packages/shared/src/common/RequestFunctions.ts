@@ -307,6 +307,7 @@ const ApiList = {
   contractDelete: `/api/v1/contract/delete`,
   sheetDelete: `/api/v1/sheet/delete`,
   recodeDelete: `/api/v1/record/delete`,
+  cncRecordeDelete: `/cnc/api/v1/record/delete`,
   toolDelete: `/cnc/api/v1/tool/delete`,
   lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
   documentDelete: `/cnc/api/v1/document/delete`,
