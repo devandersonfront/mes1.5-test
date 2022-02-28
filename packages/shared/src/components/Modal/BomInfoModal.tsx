@@ -45,8 +45,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
   const [headerData, setHeaderData] = useState<any>();
 
-  console.log(searchList,'searchListsearchList')
-
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
@@ -66,12 +64,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
           })
         }
       }
-
-
-      // } else {
-      //   setIsOpen(false)
-      //   Notiflix.Report.warning("데이터를 저장해주시기 바랍니다.", "", "확인",)
-      // }
     }else{
       dispatch(reset_summary_info());
     }
@@ -175,7 +167,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         setting:v.setting
       }
     })
-
 
     return tmpData
   }
@@ -357,8 +348,8 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       if(column.type === 'readonly'){
         return <>
           <div style={{
-            padding: '3.5px 0px 0px 3.5px',
-            width: '100%'
+            // padding: '3.5px 0px 0px 3.5px',
+            width: '100%',
           }}>
             <div onClick={() => {
               setIsOpen(true)
@@ -370,8 +361,8 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       }else{
         return <>
           <div style={{
-            padding: '3.5px 0px 0px 3.5px',
-            width: '100%'
+            // padding: '3.5px 0px 0px 3.5px',
+            width: '100%',
           }}>
             <UploadButton
             onClick={() => {
@@ -746,8 +737,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 }else {
                   setIsOpen(false)
                 }
-                }
-              }
+              }}
               style={{width: column.type === 'readonly' ? '100%' : '50%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>{column.type !== 'readonly' && tabStore.index === 0 ? '등록하기' : '확인'}</p>

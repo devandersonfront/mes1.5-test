@@ -308,23 +308,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 width={1746}
                 rowHeight={32}
                 height={552}
-                // setSelectRow={(e) => {
-                //   setSelectRow(e)
-                // }}
                 setSelectRow={(e) => {
-                  // setSearchList([...searchList.map((v,i)=>{
-                  //   if(i === e){
-                  //     return {
-                  //       ...v,
-                  //       border: !v.border
-                  //     }
-                  //   }else{
-                  //     return {
-                  //       ...v,
-                  //       border: false
-                  //     }
-                  //   }
-                  // })])
                   setSelectRow(e)
                 }}
                 type={'searchModal'}

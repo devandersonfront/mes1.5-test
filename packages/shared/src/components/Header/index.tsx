@@ -240,20 +240,19 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
                 </div>
               }
               {
-                isExp && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
+                isExp && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 30 }}>
                   <input id='expTrue' name={'exp'} type={'radio'} style={{display: 'none'}} onClick={() => {
                     onChangeExp && onChangeExp(true)
                   }}/>
-                  <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>사용 기준일 초과</p>
+                  <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12,marginRight: 20}}>사용 기준일</p>
                   <label htmlFor="expTrue">
                     <div style={{display:"flex", alignItems:"center",}}>
+                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>초과</p>
                       {
                         exp
                             ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
                             : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
                       }
-
-                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>초과</p>
                     </div>
                   </label>
                   <input id='expFalse' name={'exp'} type={'radio'} style={{display: 'none'}} onClick={() => {
@@ -261,13 +260,12 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
                   }}/>
                   <label htmlFor="expFalse">
                     <div style={{display:"flex", alignItems:"center",}}>
+                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>전체</p>
                       {
                         !exp
                             ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
                             : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
                       }
-
-                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>전체</p>
                     </div>
                   </label>
                 </div>
