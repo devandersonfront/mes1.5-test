@@ -564,6 +564,17 @@ const BasicProduct = ({page}: IProps) => {
 
   const onClickHeaderButton = (index: number) => {
     switch(buttonList[index]){
+
+      case '바코드 미리보기' :
+        case '바코드 미리보기':
+        if(selectList.size === 0){
+          return Notiflix.Report.warning('오류',
+          '선택을 하셔야 합니다.',
+          'Okay',)
+        }
+        setBarcodeOpen(true)
+        selectedData()
+        break;
       case '항목관리':
         router.push(`/mes/item/manage/product`)
         break;
