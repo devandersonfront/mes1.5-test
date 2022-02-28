@@ -53,11 +53,10 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
     }
     React.useEffect(()=>{
     },[modalOpen])
-
     const midrangeRecordInspectResultLoad = () => {
 
-        const processName = row.product.process === null ? '-' : row.product.process.name
-        const machineName = row.machines.length === 0 ? '-' : row.machines.length > 1 ? row.machines[0].machine.machine.name +' 외'+`${row.machines.length-1} 개` : row.machines[0].machine.machine.name
+        const processName = row.product?.process === null ? '-' : row.product.process.name
+        const machineName = row.machines.length === 0 ? '-' : row.machines.length > 1 ? row.machines[0].machine.machine.name +' 외'+`${row?.machines.length-1} 개` : row?.machines[0].machine.machine.name
 
         setExcelInfo({writer: row.inspection_category.writer,version: row.inspection_category.version, sic_id: row.inspection_category.sic_id, record_id: row.record_id, basic: [{osd_id: row.identification, lot_number: row.lot_number, code: row.product.code, material_name: row.product.name, type: row.type , process_id: processName, worker_name: row.user.name, name: machineName}], samples: [{samples: row.inspection_category.inspection_info.beginning[0].samples}], legendary: row.inspection_category.legendary_list, inspection_info: row.inspection_category.inspection_info, inspection_time: row.inspection_category.inspection_time, inspection_result: row.inspection_category.inspection_result})
         setModalOpen(true)

@@ -18,16 +18,16 @@ import moment from "moment";
 export interface IProps {
     children?: any
     page?: number
-    keyword?: string
+    search?: string
     option?: number
 }
 
-const BasicTool = ({page, keyword, option}: IProps) => {
+const BasicTool = ({page, search, option}: IProps) => {
     const router = useRouter();
     const [column, setColumn] = useState<any>(columnlist.toolRegister)
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:22});
-    // const [keyword, setKeyword] = useState<string>("");
+    const [keyword, setKeyword] = useState<string>("");
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [selectRow , setSelectRow] = useState<number>(0);
@@ -201,7 +201,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     const LoadBasic = async() => {
         const res = await RequestMethod("get", "toolList", {
             path:{
-                page:page ?? 1,
+                page:pageInfo.page ?? 1,
                 renderItem:18
             },
             params:{
@@ -235,7 +235,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
     const SearchBasic = async() => {
         const res = await RequestMethod("get", "toolSearch",{
             path:{
-                page:page,
+                page:pageInfo.page,
                 renderItem:18
             },
             params:{
@@ -493,7 +493,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
         }else{
             LoadBasic();
         }
-    }, [keyword])
+    }, [pageInfo.page,keyword])
 
     return (
         <div>
@@ -502,11 +502,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
-                    if(keyword){
-                        router.push(`/mes/basic/tool?page=1&keyword=${keyword}&opt=${optionIndex}`);
-                    }else{
-                        router.push(`/mes/basic/tool?page=1&keyword=`);
-                    }
+                    setKeyword(keyword)
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(option) => {
@@ -533,6 +529,7 @@ const BasicTool = ({page, keyword, option}: IProps) => {
                 //@ts-ignore
                 setSelectList={setSelectList}
                 setSelectRow={setSelectRow}
+                height={700}
             />
             <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => setPageInfo({...pageInfo, page:page})} />
         </div>

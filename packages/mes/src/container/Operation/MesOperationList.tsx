@@ -21,13 +21,13 @@ import {useDispatch} from 'react-redux'
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
 let now = moment().format('YYYY-MM-DD')
 
-const MesOperationList = ({page, keyword, option}: IProps) => {
+const MesOperationList = ({page, search, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -46,7 +46,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
 
 
 
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -56,8 +56,8 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
   }
 
   useEffect(() => {
-    if(searchKeyword){
-      SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+    if(keyword){
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -65,7 +65,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, option, selectDate, order])
+  }, [pageInfo.page, keyword, selectDate, order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -124,7 +124,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `sheetList`,{
       path: {
-        page: page ?? 1,
+        page: pageInfo.page ?? 1,
         renderItem: 22,
       },
       params: order == 0 ?
@@ -162,8 +162,8 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     }
     const res = await RequestMethod('get', `operationSearch`,{
       path: {
-        page: isPaging ?? 1,
-        renderItem: 22,
+        page: pageInfo.page ?? 1,
+        renderItem: 18,
       },
 
       params: order == 0 ?
@@ -397,16 +397,17 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         onChangeSearchKeyword={(keyword) => {
-          // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)
-          setSearchKeyword(keyword);
+          setKeyword(keyword);
           setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
-          // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)
           setOptionIndex(option)
         }}
         //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
+        setSelectDate={(date) => {
+          setSelectDate(date as {from:string, to:string })
+          setPageInfo({page:1, total:1})
+        }}
         title={"작업지시서 리스트"}
         buttons={
           ['', '수정하기', '삭제']
@@ -464,7 +465,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
           if(v.isChange) tmp.add(v.id)
           if(v.update || v.finish){
             if(keyword){
-              SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+              SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
               })
             }else{

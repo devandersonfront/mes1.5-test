@@ -46,7 +46,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
     }
   }
 
-  //  
+  //
 
   return (
     <>
@@ -121,9 +121,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
                 break;
             }
           }
-          
-          console.log(column.name,'column.namecolumn.name')
-          console.log(row.type,'row.typerow.type')
+
 
           if(column.name === '기계 종류' && event.target.value !=='용접기'){
 
@@ -161,7 +159,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
     </select>
     }
     </>
-    
+
   );
 }
 

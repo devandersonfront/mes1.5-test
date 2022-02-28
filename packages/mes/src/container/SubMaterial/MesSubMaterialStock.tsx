@@ -23,13 +23,13 @@ import {useDispatch} from 'react-redux'
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
 const dummyDate = moment().subtract(10, 'days')
 
-const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
+const MesSubMaterialStock = ({page, search, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -40,6 +40,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['부자재 CODE', '부자재 품명',  '부자재 LOT 번호', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [keyword, setKeyword] = useState<string>()
   const [order, setOrder] = useState<number>(0);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -61,17 +62,16 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   }
 
   useEffect(() => {
-    setOptionIndex(option)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option, nzState, selectDate, order])
+  }, [pageInfo.page, keyword, option, nzState, selectDate, order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -163,9 +163,6 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
     Notiflix.Loading.circle()
-    if(!isPaging){
-      setOptionIndex(option)
-    }
     const res = await RequestMethod('get', `lotSmSearch`,{
       path: {
         page: isPaging ?? 1,
@@ -347,11 +344,11 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
       Notiflix.Loading.remove(200)
       Notiflix.Report.success('삭제되었습니다.','','확인',()=>{
         if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
-          LoadBasic(page).then(() => {
+          LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }
@@ -411,15 +408,12 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          if(keyword){
-            router.push(`/mes/submaterialV1u/stock?page=1&keyword=${keyword}&opt=${optionIndex}`)
-          }else{
-            router.push(`/mes/submaterialV1u/stock?page=1&keyword=`)
-          }
+          setKeyword(keyword)
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
+          setPageInfo({page:1, total:1})
         }}
         calendarTitle={'입고일'}
         optionIndex={optionIndex}
@@ -427,7 +421,10 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={setSelectDate}
+        setSelectDate={(date) => {
+          setSelectDate(date as {from:string, to:string})
+          setPageInfo({page:1, total:1})
+        }}
         title={"부자재 재고 현황"}
         buttons={
           ['수정하기', '삭제']
@@ -454,15 +451,11 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/submaterialV1u/stock?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/submaterialV1u/stock?page=${page}`)
+        scrollEnd={(value) => {
+          if(value){
+            if(pageInfo.total > pageInfo.page){
+              setPageInfo({...pageInfo, page:pageInfo.page+1})
+            }
           }
         }}
       />

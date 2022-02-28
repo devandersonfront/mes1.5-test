@@ -198,8 +198,8 @@ const BasicProduct = ({}: IProps) => {
           }).filter((mold) => mold.mold.mold_id) ?? [],
           tools:[
             ...row?.tools?.map((tool) => {
-              return {...tool, 
-                tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional}, 
+              return {...tool,
+                tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional},
                 setting:tool.setting}
             }).filter((tool) => tool.tool.tool_id) ?? [],
           ],
@@ -400,7 +400,6 @@ const BasicProduct = ({}: IProps) => {
       cleanUpData(res)
     }
     setSelectList(new Set())
-
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -524,7 +523,6 @@ const BasicProduct = ({}: IProps) => {
     })
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-
       let appendAdditional: any = {}
 
       row.additional && row.additional.map((v: any) => {

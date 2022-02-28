@@ -16,6 +16,7 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
+import moment from "moment"
 
 export interface IProps {
   children?: any
@@ -56,8 +57,6 @@ const BasicMachineV1u = ({ option}: IProps) => {
     page: 1,
     total: 1
   })
-
-  console.log(basicRow,'basicRowbasicRowbasicRow')
 
   const [typesState, setTypesState] = useState<number>(null);
   const [selectRow , setSelectRow] = useState<number>(0);
@@ -426,6 +425,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
         weldingPK = welding.pk;
       }
     })
+    tempData.madeAt = value.madeAt ?? moment().format("YYYY-MM-DD")
     tempData.machine_id =  value.machine_idPK ?? value.machine_id;
     tempData.type = value.type_id;
     tempData.manager = value.user ?? value.manager;
