@@ -24,7 +24,7 @@ export interface IProps {
     option?: number
 }
 
-const BasicFactory = ({page, keyword, option}: IProps) => {
+const BasicFactory = ({}: IProps) => {
     const router = useRouter()
 
     const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -35,7 +35,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     const [optionList, setOptionList] = useState<string[]>(['공장명','주소', '담당자명', '담당자 직책', '담당자 휴대폰 번호'])
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [selectRow , setSelectRow] = useState<number>(0);
-
+    const [keyword, setKeyword] = useState<string>();
     const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
         page: 1,
         total: 1
@@ -43,15 +43,15 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
     useEffect(() => {
         // setOptionIndex(option)
         if(keyword){
-            SearchBasic(keyword, option, page).then(() => {
+            SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
             })
         }else{
-            LoadBasic(page).then(() => {
+            LoadBasic(pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
             })
         }
-    }, [page, keyword, option])
+    }, [pageInfo.page, keyword])
 
 
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -176,11 +176,11 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
             if(res){
                 Notiflix.Report.success('저장되었습니다.','','확인');
                 if(keyword){
-                    SearchBasic(keyword, option, page).then(() => {
+                    SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
                         Notiflix.Loading.remove()
                     })
                 }else{
-                    LoadBasic(page).then(() => {
+                    LoadBasic(pageInfo.page).then(() => {
                         Notiflix.Loading.remove()
                     })
                 }
@@ -576,11 +576,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
-                    if(keyword){
-                        router.push(`/mes/basic/factory?page=1&keyword=${keyword}&opt=${optionIndex}`)
-                    }else{
-                        router.push(`/mes/basic/factory?page=1&keyword=`)
-                    }
+                    setKeyword(keyword)
                 }}
                 searchOptionList={optionList}
                 onChangeSearchOption={(option) => {
@@ -621,11 +617,7 @@ const BasicFactory = ({page, keyword, option}: IProps) => {
                 currentPage={pageInfo.page}
                 totalPage={pageInfo.total}
                 setPage={(page) => {
-                    if(keyword){
-                        router.push(`/mes/basic/factory?page=${page}&keyword=${keyword}&opt=${option}`)
-                    }else{
-                        router.push(`/mes/basic/factory?page=${page}`)
-                    }
+                    setPageInfo({...pageInfo,page:page})
                 }}
             />
             <ExcelDownloadModal

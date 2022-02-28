@@ -24,31 +24,23 @@ import {useDispatch} from 'react-redux'
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
-const dummyDate = moment().subtract(10, 'days')
-
-const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
+const MesRawMaterialStock = ({page, search, option}: IProps) => {
   const router = useRouter()
 
   const dispatch = useDispatch()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([
-      // {
-    // date: dummyDate.format('YYYY-MM-DD'), useDate: 10,
-    // code: 'SUS-111', name: 'SUS360', texture: 'SUS360', depth: '1.2', width: 3000, height: 3000, type: 'COIL', amount: 1000,
-    // number: `${dummyDate.format('YYMMDD')}-01-01`, current: 1000, customer: '한국상사',
-  // }
-  ])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawstockV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-
+  const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -63,7 +55,9 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
   });
 
   const [nzState, setNzState] = useState<boolean>(false);
+  const [order, setOrder] = useState<number>(0);
   const [expState, setExpState] = useState<boolean>(false);
+
   const changeNzState = (value:boolean) => {
     setNzState(value);
   }
@@ -72,18 +66,22 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
     setExpState(value);
   }
 
+  const changeOrder = (value:number) => {
+    setOrder(value);
+  }
+
   useEffect(() => {
     // setOptionIndex(option)
     if(keyword){
-      SearchBasic(keyword, optionIndex, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, nzState, selectDate, expState])
+  }, [pageInfo.page, keyword, nzState, selectDate, expState,order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -123,7 +121,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
           return {
             ...v,
             pk: v.unit_id,
-            result: changeNzState
+            result: changeOrder
           }
         }else{
           return v
@@ -147,14 +145,17 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         renderItem: 18,
       },
       params:
-          // first ?
-          // {
-          //   nz:nzState,
-          //   from:"2000-01-01",
-          //   to:moment().format("yyyy-MM-DD")
-          // }
-          // :
+          order == 0 ?
+          {
+            exp: expState,
+            nz:nzState,
+            from:selectDate.from,
+            to:selectDate.to
+          }
+          :
               {
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC',
             exp: expState,
             nz:nzState,
             from:selectDate.from,
@@ -184,14 +185,27 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 18,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0,
-        nz:nzState,
-        exp: expState,
-        from:selectDate.from,
-        to:selectDate.to
-      }
+      params:
+          order == 0 ?
+              {
+                exp: expState,
+                nz:nzState,
+                from:selectDate.from,
+                to:selectDate.to,
+                keyword: keyword ?? '',
+                opt: option ?? 0,
+              }
+              :
+              {
+                sorts: 'date',
+                order: order == 1 ? 'ASC' : 'DESC',
+                exp: expState,
+                nz:nzState,
+                from:selectDate.from,
+                to:selectDate.to,
+                keyword: keyword ?? '',
+                opt: option ?? 0,
+              }
     })
 
     if(res){
@@ -390,11 +404,11 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
         if(keyword){
-          SearchBasic(keyword, optionIndex, page).then(() => {
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
-          LoadBasic(page).then(() => {
+          LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }
@@ -441,11 +455,11 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
     if(res) {
       Notiflix.Report.success('삭제되었습니다.','','확인', () => {
         if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
+          SearchBasic(keyword, option, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
-          LoadBasic(page).then(() => {
+          LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }
@@ -509,11 +523,8 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          if(keyword){
-            router.push(`/mes/rawmaterialV1u/stock?page=1&keyword=${keyword}&opt=${optionIndex}`)
-          }else{
-            router.push(`/mes/rawmaterialV1u/stock?page=1&keyword=`)
-          }
+          setKeyword(keyword)
+          setPageInfo({page:1, total:1})
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
@@ -525,7 +536,10 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={setSelectDate}
+        setSelectDate={(date) => {
+          setSelectDate(date as {from:string, to:string})
+          setPageInfo({page:1, total:1})
+        }}
         title={"원자재 재고 현황"}
         buttons={
           [ '수정하기', '삭제']
@@ -561,15 +575,11 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/rawmaterialV1u/stock?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/rawmaterialV1u/stock?page=${page}`)
+        scrollEnd={(value) => {
+          if(value){
+            if(pageInfo.total > pageInfo.page){
+              setPageInfo({...pageInfo, page:pageInfo.page+1})
+            }
           }
         }}
       />

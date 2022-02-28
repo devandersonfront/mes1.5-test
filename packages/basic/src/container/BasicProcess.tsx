@@ -24,7 +24,7 @@ export interface IProps {
 
 const title = '공정 종류 관리'
 const optList = ['공정명']
-const BasicProcess = ({page, keyword, option}: IProps) => {
+const BasicProcess = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -36,24 +36,24 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(optList)
   const [optionIndex, setOptionIndex] = useState<number>(0)
-  // const [keyword, setKeyword] = useState<string>('')
+  const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: page,
+    page: 1,
     total: 1
   })
   const [selectRow , setSelectRow] = useState<number>(0);
 
   useEffect(() => {
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -182,11 +182,11 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
-          LoadBasic(page).then(() => {
+          LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }
@@ -634,11 +634,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
             isSearch
             searchKeyword={keyword}
             onChangeSearchKeyword={(keyword) => {
-              if(keyword){
-                router.push(`/mes/basic/process?page=1&keyword=${keyword}&opt=${optionIndex}`)
-              }else{
-                router.push(`/mes/basic/process?page=1&keyword=`)
-              }
+              setKeyword(keyword)
             }}
             searchOptionList={optionList}
             onChangeSearchOption={(option) => {
@@ -680,11 +676,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
             currentPage={pageInfo.page}
             totalPage={pageInfo.total}
             setPage={(page) => {
-              if(keyword){
-                router.push(`/mes/basic/process?page=${page}&keyword=${keyword}&opt=${option}`)
-              }else{
-                router.push(`/mes/basic/process?page=${page}`)
-              }
+              setPageInfo({...pageInfo,page:page})
             }}
         />
       </div>

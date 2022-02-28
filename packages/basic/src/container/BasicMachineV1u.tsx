@@ -16,6 +16,7 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
+import moment from "moment"
 
 export interface IProps {
   children?: any
@@ -424,6 +425,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
         weldingPK = welding.pk;
       }
     })
+    tempData.madeAt = value.madeAt ?? moment().format("YYYY-MM-DD")
     tempData.machine_id =  value.machine_idPK ?? value.machine_id;
     tempData.type = value.type_id;
     tempData.manager = value.user ?? value.manager;
@@ -594,11 +596,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            if(keyword){
-              router.push(`/mes/basic/machine?page=${page}&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/machine?page=${page}`)
-            }
+            setPageInfo({...pageInfo,page:page})
           }}
         />
       <ExcelDownloadModal

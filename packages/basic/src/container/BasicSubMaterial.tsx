@@ -24,7 +24,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicSubMaterial = ({page, search, option}: IProps) => {
+const BasicSubMaterial = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)

@@ -19,11 +19,11 @@ import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
-const MesStockList = ({page, keyword, option}: IProps) => {
+const MesStockList = ({page, search, option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -37,24 +37,23 @@ const MesStockList = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처', '모델', 'CODE', '품명', /*'품목종류'*/])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-
+  const [keyword, setKeyword] = useState<string>()
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
 
   useEffect(() => {
-    // setOptionIndex(option)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword, ])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -129,12 +128,9 @@ const MesStockList = ({page, keyword, option}: IProps) => {
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
     Notiflix.Loading.circle()
-    if(!isPaging){
-      setOptionIndex(option)
-    }
     const res = await RequestMethod('get', `stockSearch`,{
       path: {
-        page: isPaging ?? 1,
+        page: pageInfo.page ?? 1,
         renderItem: 18,
       },
       params: {
@@ -266,24 +262,15 @@ const MesStockList = ({page, keyword, option}: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          if(keyword){
-            router.push(`/mes/stockV2/list?page=1&keyword=${keyword}&opt=${optionIndex}`)
-          }else{
-            router.push(`/mes/stockV2/list?page=1&keyword=`)
-          }
+          setKeyword(keyword)
+          setPageInfo({page:1, total:1})
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
         }}
+        optionIndex={optionIndex}
         title={"재고 현황"}
-        buttons={
-          ['']
-        }
-        buttonsOnclick={
-          () => {}
-          // onClickHeaderButton
-        }
       />
       <ExcelTable
         editable
@@ -306,18 +293,15 @@ const MesStockList = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-          currentPage={pageInfo.page}
-          totalPage={pageInfo.total}
-          setPage={(page) => {
-            if(keyword){
-              router.push(`/mes/stockV2/list?page=${page}&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/stockV2/list?page=${page}`)
+        scrollEnd={(value) => {
+          if(value){
+            if(pageInfo.total > pageInfo.page){
+              setPageInfo({...pageInfo, page:pageInfo.page+1})
             }
-          }}
+          }
+        }}
       />
+
       <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
