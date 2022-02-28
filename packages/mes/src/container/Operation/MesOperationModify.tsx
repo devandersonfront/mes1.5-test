@@ -137,10 +137,13 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
     }
 
     useEffect(() => {
-        if(selector && selector.modifyInfo){
+        if(selector && selector.type && selector.modifyInfo){
+            console.log(selector)
             setBasicRow([
                 ...selector.modifyInfo
             ])
+        }else{
+            router.push('/mes/operationV1u/list')
         }
     }, [selector])
 

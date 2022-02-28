@@ -40,10 +40,12 @@ const MesSubMaterialStockModify = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
   useEffect(() => {
-    if(selector && selector.modifyInfo){
+    if(selector && selector.modifyInfo && selector.type){
       setBasicRow([
         ...selector.modifyInfo
       ])
+    }else{
+      router.push("/mes/submaterialV1u/stock")
     }
   }, [selector])
 

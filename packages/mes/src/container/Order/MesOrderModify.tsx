@@ -49,7 +49,11 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
-    setBasicRow([...selector.modifyInfo])
+    if(selector && selector.type && selector.modifyInfo){
+      setBasicRow([...selector.modifyInfo])
+    }else{
+      router.push('/mes/order/list')
+    }
   }, [selector])
 
   const SaveBasic = async () => {
