@@ -565,14 +565,14 @@ const BasicRawMaterial = ({}: IProps) => {
 
     switch(buttonList[index]){
       case '바코드 미리보기':
-
-        if(selectList.size === 0){
-          return Notiflix.Report.failure('선택을 하셔야 합니다.',
-          '선택을 하셔야지 바코드를 보실수 있습니다.',
-          'Okay')
-        }
-        setBarcodeOpen(true)
-        selectedData()
+        case '바코드 미리보기':
+          if(selectList.size === 0){
+            return Notiflix.Report.warning('오류',
+            '선택을 하셔야 합니다.',
+            'Okay',)
+          }
+          setBarcodeOpen(true)
+          selectedData()
         break;
 
       case '항목관리':
@@ -645,12 +645,9 @@ const BasicRawMaterial = ({}: IProps) => {
 
   }
 
-
-
-
   React.useEffect(()=>{
 
-     return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
+    return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
 
   },[selectList.size])
 

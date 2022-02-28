@@ -406,11 +406,13 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                                             tools: searchList.map((v, i) => {
                                                 return {
                                                     sequence: i+1,
-                                                    tool: v
+                                                    tool: v,
+                                                    setting : v.setting
                                                 }
                                             }),
                                             name: row.name,
                                             isChange: true
+                                            
                                         })
                                     }
                                     setIsOpen(false)

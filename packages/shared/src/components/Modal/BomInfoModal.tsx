@@ -45,7 +45,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
   const [headerData, setHeaderData] = useState<any>();
 
-
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
@@ -165,7 +164,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
           ...childData,
         }: null,
         parent:v.parent,
-        setting:v.setting === 1 ? "기본" : "스페어"
+        setting:v.setting
       }
     })
 
@@ -283,7 +282,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         } : null,
         type: v.tab,
         key: row.bom_root_id,
-        setting: v.setting === "기본" ? 1 : 0,
+        setting: v.setting,
         usage: v.usage,
         version: v.version
       }
@@ -408,7 +407,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       const spliceRow = [...rows]
       spliceRow.splice(selectRow, 1)
 
-      const isCheck = spliceRow.some((row)=> row.rm_id === tempRow[selectRow]?.rm_id && row.rm_id !==undefined && row.rm_id !=='')
+      const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
 
       if(spliceRow){
         if(isCheck){

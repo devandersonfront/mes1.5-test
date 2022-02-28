@@ -50,6 +50,7 @@ const BasicProduct = ({page}: IProps) => {
 
   const [buttonList , setButtonList ] = useState<string[]>([])
 
+
   useEffect(() => {
     if(keyword){
       SearchBasic(keyword, optionIndex, page).then(() => {
@@ -197,7 +198,9 @@ const BasicProduct = ({page}: IProps) => {
           }).filter((mold) => mold.mold.mold_id) ?? [],
           tools:[
             ...row?.tools?.map((tool) => {
-              return {...tool, tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional}, setting:tool.tool.setting}
+              return {...tool, 
+                tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional}, 
+                setting:tool.setting}
             }).filter((tool) => tool.tool.tool_id) ?? [],
           ],
           machines:[
@@ -259,7 +262,6 @@ const BasicProduct = ({page}: IProps) => {
 
       }
     }).filter((v) => v)
-
 
     if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
       let res = await RequestMethod('post', `productSave`,result).catch((error)=>{
@@ -562,6 +564,17 @@ const BasicProduct = ({page}: IProps) => {
 
   const onClickHeaderButton = (index: number) => {
     switch(buttonList[index]){
+
+      case '바코드 미리보기' :
+        case '바코드 미리보기':
+        if(selectList.size === 0){
+          return Notiflix.Report.warning('오류',
+          '선택을 하셔야 합니다.',
+          'Okay',)
+        }
+        setBarcodeOpen(true)
+        selectedData()
+        break;
       case '항목관리':
         router.push(`/mes/item/manage/product`)
         break;
