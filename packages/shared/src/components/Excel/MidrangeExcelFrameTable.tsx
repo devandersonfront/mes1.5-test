@@ -10,9 +10,10 @@ import cookie from "react-cookies";
 interface IProps {
     formReviewData: any
     inspectFrameData: (e) => void
+    midrangeUpdate: boolean
 }
 
-const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps)  => {
+const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUpdate }: IProps)  => {
 
     const [testData, setTestData] = React.useState<any>({
         legendary_list: [],
@@ -268,12 +269,13 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                                 <input style={{ width: '100%', height: '100%', border: "none", zIndex: 10, display: "flex", alignItems: "center", textAlign: "center"}} type={"number"}
                                        value={inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ? value.data_result[i].value : '' : '-'}
                                        key={type+'input'+index+'static'+i}
+                                       readOnly={midrangeUpdate}
                                        placeholder={inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ? value.data_result[i].value : '0' : '-'}
                                        onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } onChange={(e)=>itemDataResultTextChange(type,e,index,i)}/>
                                 :
                                 inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ?
-                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={value.data_result[i].value} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> :
-                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> : <p>-</p>
+                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={value.data_result[i].value} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)} readOnly={midrangeUpdate}/> :
+                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)} readOnly={midrangeUpdate}/> : <p>-</p>
                             }
                         </ExampleNumber>
                     )}
@@ -288,9 +290,9 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 <ExampleNumber>
                     {inspection_info[0].samples > i ?
                         inspection_result[i] !== undefined ?
-                            <MidrangeExcelDropdown contents={['합격', '불합격']} onChange={(e)=>dataResultDropdownChange(type,e,i)} value={inspection_result[i].pass ? '합격' : '불합격'}/>
+                            <MidrangeExcelDropdown contents={['합격', '불합격']} onChange={(e)=>dataResultDropdownChange(type,e,i)} value={inspection_result[i].pass ? '합격' : '불합격'} readOnly={midrangeUpdate}/>
                             :
-                            <MidrangeExcelDropdown contents={['합격', '불합격']} onChange={(e)=>dataResultDropdownChange(type,e,i)} value={''}/>
+                            <MidrangeExcelDropdown contents={['합격', '불합격']} onChange={(e)=>dataResultDropdownChange(type,e,i)} value={''} readOnly={midrangeUpdate}/>
                         :
                         '-'
                     }
@@ -360,7 +362,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            <MidrangeDatetimePickerBox value={testData.inspection_time.middle} onDateChange={(date)=>setTestData({...testData, inspection_time: {middle: date.format("YYYY.MM.DD HH:mm")}})}/>
+                            <MidrangeDatetimePickerBox value={testData.inspection_time.middle} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, middle: date.format("YYYY.MM.DD HH:mm")}})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.middle)}
@@ -385,7 +387,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData }: IProps) 
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            <MidrangeDatetimePickerBox value={testData.inspection_time.end} onDateChange={(date)=>setTestData({...testData, inspection_time: {end: date.format("YYYY.MM.DD HH:mm")}})}/>
+                            <MidrangeDatetimePickerBox value={testData.inspection_time.end} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, end: date.format("YYYY.MM.DD HH:mm")}})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.end)}

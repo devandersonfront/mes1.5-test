@@ -20,8 +20,8 @@ const MesMidrangeList = ({option}:IProps) => {
     const [optionList, setOptionList] = useState<string[]>([ '수주 번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자' ])
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-        from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-        to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
+        from: moment().subtract(1,"months").format("YYYY-MM-DD") ,
+        to:  moment().format('YYYY-MM-DD')
     });
 
     const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -31,7 +31,6 @@ const MesMidrangeList = ({option}:IProps) => {
     })
 
     useEffect(() => {
-        // setOptionIndex(option)
         if(searchKeyword){
             searchQualityRecordInspect(searchKeyword, option, pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
@@ -66,7 +65,9 @@ const MesMidrangeList = ({option}:IProps) => {
             })
 
             const data = res.info_list.map((v)=>{
+                const randomId = Math.random()* 1000;
                 return {
+                    id:"midrange_"+randomId,
                     record_id: v.record_id,
                     identification: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
                     contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
@@ -87,6 +88,7 @@ const MesMidrangeList = ({option}:IProps) => {
                     inspection_category: v.inspection_category,
                 }
             })
+
             if(pageInfo.page > 1) {
                 const basicAddResponseData = basicRow.concat(data)
                 setBasicRow([...basicAddResponseData])
@@ -118,26 +120,30 @@ const MesMidrangeList = ({option}:IProps) => {
             })
 
             const data = res.info_list.map((v)=>{
-                return {
-                    record_id: v.record_id,
-                    identification: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
-                    contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
-                    osId: v.operation_sheet.identification ?? '-',
-                    lot_number:  v.lot_number ?? '-',
-                    code: v.operation_sheet.product.code ?? '-',
-                    name: v.operation_sheet.product.name ?? '-',
-                    product: v.operation_sheet.product,
-                    machines: v.machines,
-                    user: v.worker,
-                    type: column[4].selectList[v.operation_sheet.product.type].name,
-                    unit: v.operation_sheet.product.unit ?? '-',
-                    process_id: v.operation_sheet.product.process === null ? '-' : v.operation_sheet.product.process.name ,
-                    ln_id: v.lot_number ?? '-',
-                    worker: v.worker.name,
-                    start: v.start,
-                    end: v.end,
-                    inspection_category: v.inspection_category,
-                }
+                const randomId = Math.random()* 1000;
+                // if(v.machines) {
+                    return {
+                        id:"midrange_"+randomId,
+                        record_id: v.record_id,
+                        identification: v.operation_sheet.contract ? v.operation_sheet.contract.identification : '-',
+                        contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification : '-',
+                        osId: v.operation_sheet.identification ?? '-',
+                        lot_number: v.lot_number ?? '-',
+                        code: v.operation_sheet.product.code ?? '-',
+                        name: v.operation_sheet.product.name ?? '-',
+                        product: v.operation_sheet.product,
+                        machines: v.machines,
+                        user: v.worker,
+                        type: column[4].selectList[v.operation_sheet.product.type].name,
+                        unit: v.operation_sheet.product.unit ?? '-',
+                        process_id: v.operation_sheet.product.process === null ? '-' : v.operation_sheet.product.process.name,
+                        ln_id: v.lot_number ?? '-',
+                        worker: v.worker.name,
+                        start: v.start,
+                        end: v.end,
+                        inspection_category: v.inspection_category,
+                    }
+                // }
             })
             if(pageInfo.page > 1) {
                 const basicAddResponseData = basicRow.concat(data)
