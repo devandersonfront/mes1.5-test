@@ -17,7 +17,7 @@ const ToolList = ({page, keyword, option}: IProps) => {
             <MenuNavigation pageType={'MES'}/>
             <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
-                <MesToolList page={page} keyword={keyword} option={option} />
+                <MesToolList page={page} search={keyword} option={option} />
             </div>
         </div>
     );
