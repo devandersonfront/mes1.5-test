@@ -68,7 +68,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     return () => {
       dispatch(delete_delivery_identification());
     }
-  }, [])
+  }, [codeCheck])
 
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
@@ -88,7 +88,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable
             }
           } else if(menu.colName === 'id' && column.key === 'tmpId'){
             menuData = {
@@ -96,7 +97,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable
             }
           }
         })
@@ -109,7 +111,12 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         }
       }).filter((v:any) => v)
 
-      setColumn([...tmpColumn])
+      setColumn([...tmpColumn.map(v=> {
+        return {
+          ...v,
+          name: !v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
       return true
     }else {
       return false

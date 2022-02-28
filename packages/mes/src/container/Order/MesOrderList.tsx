@@ -42,6 +42,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['수주 번호', '거래처명', '모델', 'CODE', '품명', /*지시 고유 번호*/])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [order, setOrder] = useState(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
     to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
@@ -54,6 +55,11 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
   })
 
 
+
+  const changeSetOrder = (value:number) => {
+    setOrder(value);
+  }
+
   useEffect(() => {
     if(searchKeyword){
       SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
@@ -65,7 +71,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       })
     }
 
-  }, [pageInfo.page, searchKeyword, option, selectDate])
+  }, [pageInfo.page, searchKeyword, option, selectDate, order])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -104,7 +110,8 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeSetOrder
           }
         }else{
           return v
@@ -127,13 +134,15 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       params: {
         from: selectDate.from,
         to: selectDate.to,
+        sorts: order < 3 ? 'date' : 'deadline',
+        order: order % 2 ? 'DESC' : 'ASC'
       }
     })
     if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
-        total: res.totalPages
+        total: res.totalPages,
       })
       cleanUpData(res)
     }else if (res === 401) {
@@ -159,6 +168,8 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         opt: option ?? 0,
         from: selectDate.from,
         to: selectDate.to,
+        sorts: order < 3 ? 'date' : 'deadline',
+        order: order % 2 ? 'ASC' : 'DESC'
       }
     })
 
