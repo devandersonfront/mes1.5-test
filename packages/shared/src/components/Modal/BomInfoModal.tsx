@@ -45,6 +45,8 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
   const [headerData, setHeaderData] = useState<any>();
 
+  console.log(searchList,'searchListsearchList')
+
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
@@ -414,7 +416,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       const spliceRow = [...rows]
       spliceRow.splice(selectRow, 1)
 
-      const isCheck = spliceRow.some((row)=> row.rm_id === tempRow[selectRow]?.rm_id && row.rm_id !==undefined && row.rm_id !=='')
+      const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow]?.name && row.name !==undefined && row.name !=='')
 
       if(spliceRow){
         if(isCheck){
