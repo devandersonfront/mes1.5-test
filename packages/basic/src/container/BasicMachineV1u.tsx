@@ -57,6 +57,8 @@ const BasicMachineV1u = ({ option}: IProps) => {
     total: 1
   })
 
+  console.log(basicRow,'basicRowbasicRowbasicRow')
+
   const [typesState, setTypesState] = useState<number>(null);
   const [selectRow , setSelectRow] = useState<number>(0);
 
