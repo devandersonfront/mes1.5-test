@@ -162,7 +162,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
                         />
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
-                        <MidrangeExcelFrameTable formReviewData={formReviewData}  inspectFrameData={(e)=>setMidrangeData(e)}/>
+                        <MidrangeExcelFrameTable formReviewData={formReviewData}  inspectFrameData={(e)=>setMidrangeData(e)} midrangeUpdate={!midrangeUpdate}/>
                     </div>
                 </div>
                 {modify ?

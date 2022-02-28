@@ -25,13 +25,11 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
     const [execlInfo, setExcelInfo] = React.useState<{writer?: string,version?: number, sic_id: string, record_id: number, basic: {osd_id: string, lot_number: number, code: string, material_name: string, type: number , process_id: string, worker_name: string, name: string}[] | [], samples: {samples: number}[], legendary: string[], inspection_info: {}, inspection_time?: {}, inspection_result?: []}>({sic_id: '',record_id: 0,basic: [], samples:[], legendary: [], inspection_info: {}})
 
     const midrangeRecordInspectLoad = async () => {
-
         const res = await RequestMethod('get', `recordInspectFrame`,{
             path: {
                 product_id: row.product.product_id
             }
         })
-
         if(res){
             const legendaryValue : string[] = Object.values(res.legendary_list)
 
