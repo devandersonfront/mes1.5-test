@@ -55,13 +55,19 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   });
 
   const [nzState, setNzState] = useState<boolean>(false);
+  const [order, setOrder] = useState<number>(0);
   const [expState, setExpState] = useState<boolean>(false);
+
   const changeNzState = (value:boolean) => {
     setNzState(value);
   }
 
   const changeExpState = (value:boolean) => {
     setExpState(value);
+  }
+
+  const changeOrder = (value:number) => {
+    setOrder(value);
   }
 
   useEffect(() => {
@@ -75,7 +81,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, keyword, nzState, selectDate, expState])
+  }, [pageInfo.page, keyword, nzState, selectDate, expState,order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -115,7 +121,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           return {
             ...v,
             pk: v.unit_id,
-            result: changeNzState
+            result: changeOrder
           }
         }else{
           return v
@@ -139,14 +145,17 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         renderItem: 18,
       },
       params:
-          // first ?
-          // {
-          //   nz:nzState,
-          //   from:"2000-01-01",
-          //   to:moment().format("yyyy-MM-DD")
-          // }
-          // :
+          order == 0 ?
+          {
+            exp: expState,
+            nz:nzState,
+            from:selectDate.from,
+            to:selectDate.to
+          }
+          :
               {
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC',
             exp: expState,
             nz:nzState,
             from:selectDate.from,
@@ -176,14 +185,27 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 18,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0,
-        nz:nzState,
-        exp: expState,
-        from:selectDate.from,
-        to:selectDate.to
-      }
+      params:
+          order == 0 ?
+              {
+                exp: expState,
+                nz:nzState,
+                from:selectDate.from,
+                to:selectDate.to,
+                keyword: keyword ?? '',
+                opt: option ?? 0,
+              }
+              :
+              {
+                sorts: 'date',
+                order: order == 1 ? 'ASC' : 'DESC',
+                exp: expState,
+                nz:nzState,
+                from:selectDate.from,
+                to:selectDate.to,
+                keyword: keyword ?? '',
+                opt: option ?? 0,
+              }
     })
 
     if(res){
@@ -433,11 +455,11 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     if(res) {
       Notiflix.Report.success('삭제되었습니다.','','확인', () => {
         if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
+          SearchBasic(keyword, option, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
-          LoadBasic(page).then(() => {
+          LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }

@@ -47,7 +47,8 @@ const MesKpiManHour = () => {
             params: {
                 productIds: productId,
                 from: selectDate.from,
-                to: selectDate.to
+                to: selectDate.to,
+                rangeNeeded: true
             },
         })
 

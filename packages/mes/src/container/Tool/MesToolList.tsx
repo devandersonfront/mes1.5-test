@@ -366,7 +366,6 @@ const MesToolList = ({page, search, option}: IProps) => {
                 setSelectList={setSelectList}
                 height={700}
                 scrollEnd={(e) => {
-                    console.log("e : ",e)
                     if(e && pageInfo.totalPage > pageInfo.page) setPageInfo({...pageInfo, page:pageInfo.page+1})
                 }}
             />

@@ -270,7 +270,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   React.useEffect(()=>{
-    console.log(searchList)
   },[searchList])
   const getSummaryInfo = (info) => {
     return summaryData[info.key] ?? '-'

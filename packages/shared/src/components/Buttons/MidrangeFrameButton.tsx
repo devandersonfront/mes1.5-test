@@ -53,7 +53,6 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
     }
     React.useEffect(()=>{
     },[modalOpen])
-    console.log("row : ", row, row.machines)
     const midrangeRecordInspectResultLoad = () => {
 
         const processName = row.product?.process === null ? '-' : row.product.process.name

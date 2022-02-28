@@ -45,11 +45,14 @@ const MesRecordList = ({page, search, option}: IProps) => {
     page: 1,
     total: 1
   })
+  const [order, setOrder] = useState<number>(0);
+  const changeOrder = (value:number) => {
+    setOrder(value);
+  }
 
   useEffect(() => {
-    // setOptionIndex(option)
     if(keyword){
-      SearchBasic(keyword, option, pageInfo.page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -57,7 +60,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, keyword, option, selectDate])
+  }, [pageInfo.page, keyword, selectDate,order])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -94,7 +97,8 @@ const MesRecordList = ({page, search, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeOrder
           }
         }else{
           return v
@@ -116,12 +120,23 @@ const MesRecordList = ({page, search, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
       },
-      params: {
-        keyword: keyword,
-        opt: optionIndex,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params:
+          order == 0 ?
+              {
+                keyword: keyword,
+                opt: optionIndex,
+                from: selectDate.from,
+                to: selectDate.to,
+              }
+              :
+              {
+                sorts: 'end',
+                order: order == 1 ? 'asc' : 'desc',
+                keyword: keyword,
+                opt: optionIndex,
+                from: selectDate.from,
+                to: selectDate.to,
+              }
     })
 
     if(res){
@@ -142,11 +157,20 @@ const MesRecordList = ({page, search, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
       },
-      params: {
-        // status: 2,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+
+      params:
+          order == 0 ?
+              {
+                from: selectDate.from,
+                to: selectDate.to,
+              }
+              :
+              {
+                sorts: 'end',
+                order: order == 1 ? 'asc' : 'desc',
+                from: selectDate.from,
+                to: selectDate.to,
+              }
     })
 
     if(res){
@@ -448,7 +472,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
             //   Notiflix.Loading.remove()
             // })
           }else{
-            LoadBasic(page).then(() => {
+            LoadBasic(pageInfo.page).then(() => {
               Notiflix.Loading.remove();
               setSelectList(new Set())
             })

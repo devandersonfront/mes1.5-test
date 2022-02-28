@@ -31,7 +31,7 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
-  const [order, setOrder] = useState(1)
+  const [order, setOrder] = useState(0)
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     name: "", id: "", start_date: moment().format('YYYY-MM-DD'),
     limit_date: moment().format('YYYY-MM-DD')
@@ -128,15 +128,22 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         page: pageInfo.page ?? 1,
         renderItem: 22,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-        sorts: 'date',
-        order: order == 1 ? 'ASC' : 'DESC'
-      }
+      params: order == 0 ?
+
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+        {
+          from: selectDate.from,
+          to: selectDate.to,
+          sorts: 'date',
+          order: order == 1 ? 'ASC' : 'DESC'
+        }
 
     })
-    console.log(order)
+
     if(res){
       setPageInfo({
         ...pageInfo,
@@ -162,12 +169,23 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 22,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params:order == 0 ?
+
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+            from: selectDate.from,
+            to: selectDate.to,
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC'
+          }
     })
 
     if(res){

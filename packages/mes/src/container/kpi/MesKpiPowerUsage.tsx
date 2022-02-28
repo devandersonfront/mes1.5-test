@@ -64,7 +64,8 @@ const MesKpiPowerUsage = () => {
                 productId: productId,
                 sorts : 'date',
                 from: selectDate.from,
-                to: selectDate.to
+                to: selectDate.to,
+                rangeNeeded: true
             },
             headers : {
                 Authorization : tokenData

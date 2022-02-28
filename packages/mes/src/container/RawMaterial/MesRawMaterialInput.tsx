@@ -48,7 +48,8 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable
             }
           } else if(menu.colName === 'id' && column.key === 'tmpId'){
             menuData = {
@@ -56,7 +57,8 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable
             }
           }
         })
@@ -67,9 +69,16 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
             ...menuData,
           }
         }
+
       }).filter((v:any) => v)
 
-      setColumn([...tmpColumn])
+
+      setColumn([...tmpColumn.map(v=> {
+        return {
+          ...v,
+          name: !v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     }
   }
 

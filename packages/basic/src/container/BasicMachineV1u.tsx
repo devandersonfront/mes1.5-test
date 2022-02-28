@@ -596,7 +596,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            setPageInfo({...pageInfo, page:page})
+            setPageInfo({...pageInfo,page:page})
           }}
         />
       <ExcelDownloadModal
