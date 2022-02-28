@@ -272,6 +272,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
+        total_counter: row.total_good_quantity + row.total_poor_quantity ?? '-',
         contract_id: row.contract?.identification ?? '-' ,
         customer_id: row.product?.customer?.name ?? '-',
         cm_id: row.product?.model?.model ?? '-',
