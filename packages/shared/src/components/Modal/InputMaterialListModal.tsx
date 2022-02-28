@@ -419,11 +419,54 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   headerAlign={'center'}
               />
             </div>
-            <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
-              <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
-                <div style={{ display: 'flex', width: 1200}}>
-                  <p style={{fontSize: 22, padding: 0, margin: 0}}>{selectType} LOT 리스트 ({selectProduct})</p>
-                </div>
+          </div>
+          <div style={{padding: '0 16px', width: 1776}}>
+            <ExcelTable
+              headerList={column.type === 'readonly' ? searchModalList.InputListReadonly : searchModalList.InputList}
+              row={searchList ?? [{}]}
+              setRow={(e) => {
+                let tmp = e.map((v, index) => {
+                  if(v.newTab === true){
+                    const newTabIndex = bomDummy.length+1
+                    addNewTab(newTabIndex)
+                    setFocusIndex(newTabIndex-1)
+                  }
+
+                  if(v.lotList){
+
+                    setSelectType(v.type === 'COIL' || v.type === 'SHEET' ? '원자재' : v.type)
+                    setSelectProduct(v.code)
+                    setLotList([...v.lotList.map((v,i) => ({
+                      ...v,
+                      seq: i+1
+                    }))])
+                  }
+
+                  return {
+                    ...v,
+                    lotList: undefined,
+                    newTab: false
+                  }
+                })
+                setSearchList([...tmp])
+              }}
+              width={1746}
+              rowHeight={32}
+              height={288}
+              // setSelectRow={(e) => {
+              //   setSelectRow(e)
+              // }}
+              setSelectRow={(e) => {
+                setSelectRow(e)
+              }}
+              type={'searchModal'}
+              headerAlign={'center'}
+            />
+          </div>
+          <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
+            <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
+              <div style={{ display: 'flex', width: 1200}}>
+                <p style={{fontSize: 22, padding: 0, margin: 0}}>{selectType} LOT 리스트 ({selectProduct})</p>
               </div>
               <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
 
@@ -545,6 +588,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                                 Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
                               }
 
+
                               bomList.push({
                                 record_id: row.record_id,
                                 ...row.input_bom[index],
@@ -563,7 +607,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                             }
                           })
                         }
-
                         if(totalAmount !== bom.disturbance){
                           disturbance += 1
                         }
