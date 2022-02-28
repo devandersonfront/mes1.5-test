@@ -162,7 +162,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
   }
 
   const DeleteBasic = async () => {
-    const res = await RequestMethod('delete', `recodeDelete`,
+    const res = await RequestMethod('delete', `cncRecordeDelete`,
       basicRow.map((row, i) => {
         if(selectList.has(row.id)){
           let selectKey: string[] = []
