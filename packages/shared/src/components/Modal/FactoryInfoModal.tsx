@@ -102,36 +102,19 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
   }
   const saveSubFactory = async () => {
     Notiflix.Loading.standard();
-    let result = [];
 
-    //row.factory_id
-    //seq
-    //name
-    //manager:{
-    // user_id : searchList.userId
-    // name : searchList.name
-    // appointment : searchList.appointment
-    // telephone: searchList.telephone
-    // email : searchList.email
-    // id : searchList..id
-    // additional : searchList.additional
-    //}
-    //description :
-
-    
-    // const filterList = searchList.map((list)=>{
-    //   if(!list.manager){
-    //     return {...list, manager : list.manager_info , managerId : list.manager_info?.user_id}
-    //   }else{
-    //     return list
-    //   }
-    // })
+    let nameCheck = true;
 
     const filterList = searchList.map((list)=>{
+      if(!list.name){
+        Notiflix.Report.warning("경고","세분화명을 입력해주세요.","확인")
+        nameCheck = false
+      }else{
         return {...list , factory_id : row.factory_id}
+      }
     })
 
-    if(filterList){
+    if(filterList && nameCheck){
       await RequestMethod("post", "subFactorySave", filterList)
           .then((res) => {
             onRowChange({...row, subFactories:filterList})
@@ -199,7 +182,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     //         });
     //       })
     //     })
-       
+
   }
   const ModalContents = () => {
     if(row.subFactories && row.subFactories.length > 0){
@@ -379,14 +362,14 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             }}>
               <p>위로</p>
             </Button>
-            
+
             <Button style={{marginLeft: 16}} onClick={() => {
 
               if(selectRow > -1){
                 if(selectRow === searchList.length-1){
                   return
                 }
-  
+
                 let tmpRow = [...searchList]
                 let tmp = tmpRow[selectRow]
                 tmpRow[selectRow] = tmpRow[selectRow + 1]
