@@ -95,39 +95,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
             })
     }
 
-    const cleanUpData = (datas:any[]) => {
-        let resultDatas = [];
-        let folderList = [];
-        datas.map((data) => {
-            const randomId = Math.random()*1000;
-            let result:any = {...data, id:"document_"+randomId};
-            result.type = data.type === "dir" ? "폴더" : data.type;
-            // result.date = data.created;
-            result.date = moment().format("YYYY-MM-DD");
-
-            if(data.type === "dir"){
-                folderList.push(data)
-                // folderList.push("fileParent")
-            }
-
-            resultDatas.push(result);
-        })
-
-        setBasicRow(resultDatas)
-        setFolderList(folderList);
-        settingFolderList();
-    }
-
-    const settingFolderList = async() => {
-        await RequestMethod("get", "documentAll",{
-            params:{
-                type:"dir"
-            }
-        })
-            .then((res) => {
-                setFolderList(res)
-            })
-    }
 
     const selectFile = () => {
         const data = basicRow.filter((row) => {

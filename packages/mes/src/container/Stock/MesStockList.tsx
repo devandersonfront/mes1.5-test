@@ -31,13 +31,7 @@ const MesStockList = ({page, keyword, option}: IProps) => {
     {
       customer: '진주상사', model: '한국차', code: 'SU-20210701-1', material_name: 'SU900',
       type: '완제품', unit: 'EA', stock: '10,000'
-    },{
-      customer: '-', model: '-', code: 'SU-20210701-2', material_name: 'SU900-2',
-      type: '완제품', unit: 'EA', stock: '0'
-    },{
-      customer: '-', model: '-', code: 'SU-20210701-3', material_name: 'SU900-1',
-      type: '완제품', unit: 'EA', stock: '55'
-    },
+    }
   ])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["stockV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())

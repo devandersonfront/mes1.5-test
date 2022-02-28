@@ -131,6 +131,24 @@ const BasicMidrangeModify = () => {
         }
     }
 
+    const deleteRowButton = (type : 'legendary' | 'item') => {
+
+        if(type === 'legendary' && legendaryBasicRow.length > 1) {
+
+            const tmpRow = [...legendaryBasicRow]
+            tmpRow.splice(-1,1)
+            setLegendaryBasicRow(tmpRow)
+
+        }else if(type === 'item' && itemBasicRow.length > 1) {
+
+            const tmpRow = [...itemBasicRow]
+            tmpRow.splice(-1,1)
+            setItemBasicRow(tmpRow)
+
+        }
+
+    }
+
     React.useEffect(()=>{
         const data = {
             customer: router.query.customer_id,
@@ -208,9 +226,14 @@ const BasicMidrangeModify = () => {
                 setSelectList={setLegendarySelectList}
                 height={legendaryBasicRow.length * 40 >= 40*18+56 ? 40*19 : legendaryBasicRow.length * 40 + 40}
             />
-            <MidrangeButton onClick={()=>addRowButton('legendary')}>
-                +범례 추가
-            </MidrangeButton>
+            <div style={{display : 'flex'}}>
+                <MidrangeButton onClick={()=>deleteRowButton('legendary')} style={{backgroundColor :'#98999B'}}>
+                    -범례 삭제
+                </MidrangeButton>
+                <MidrangeButton onClick={()=>addRowButton('legendary')}>
+                    +범례 추가
+                </MidrangeButton>
+            </div>
             <ExcelTable
                 editable
                 headerList={[
@@ -228,9 +251,14 @@ const BasicMidrangeModify = () => {
                 setSelectList={setItemSelectList}
                 height={itemBasicRow.length * 40 >= 40*18+56 ? 40*19 : itemBasicRow.length * 40 + 40}
             />
-            <MidrangeButton onClick={()=>addRowButton('item')}>
-                +검사 항목 추가
-            </MidrangeButton>
+            <div style={{display : 'flex'}}>
+                <MidrangeButton onClick={()=>deleteRowButton('item')} style={{backgroundColor :'#98999B'}}>
+                    -검사 항목 삭제
+                </MidrangeButton>
+                <MidrangeButton onClick={()=>addRowButton('item')}>
+                    +검사 항목 추가
+                </MidrangeButton>
+            </div>
             <MidrangeFormReviewModal formReviewData={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
         </div>
     );

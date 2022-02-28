@@ -52,7 +52,6 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
         }
     }
     React.useEffect(()=>{
-        console.log(modalOpen)
     },[modalOpen])
 
     const midrangeRecordInspectResultLoad = () => {

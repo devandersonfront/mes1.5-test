@@ -202,7 +202,6 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
   }
 
-
   const setAdditionalData = () => {
 
     const addtional = []

@@ -145,7 +145,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
-            current: row.exhaustion ? 0 : row.current,
+            current: row.exhaustion === "-" ? row.current : 0,
             additional: [
               ...additional.map(v => {
                 if(row[v.name]) {
