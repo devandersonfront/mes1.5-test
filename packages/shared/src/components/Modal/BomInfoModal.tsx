@@ -416,7 +416,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       const spliceRow = [...rows]
       spliceRow.splice(selectRow, 1)
 
-      const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow]?.name && row.name !==undefined && row.name !=='')
+      const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
 
       if(spliceRow){
         if(isCheck){

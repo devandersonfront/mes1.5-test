@@ -198,7 +198,9 @@ const BasicProduct = ({page}: IProps) => {
           }).filter((mold) => mold.mold.mold_id) ?? [],
           tools:[
             ...row?.tools?.map((tool) => {
-              return {...tool, tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional}, setting:tool.tool.setting}
+              return {...tool, 
+                tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional}, 
+                setting:tool.setting}
             }).filter((tool) => tool.tool.tool_id) ?? [],
           ],
           machines:[
