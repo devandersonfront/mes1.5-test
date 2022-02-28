@@ -42,7 +42,6 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     if(selector && selector.modifyInfo){
-      console.log(selector)
       setBasicRow([
         ...selector.modifyInfo
       ])
@@ -146,7 +145,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
-            current: row.exhaustion ? 0 : row.current,
+            current: row.exhaustion === "-" ? row.current : 0,
             additional: [
               ...additional.map(v => {
                 if(row[v.name]) {
@@ -175,7 +174,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
     })
 
 
-    if(res){
+    if(res){MO
       Notiflix.Report.success('수정되었습니다.','','확인', () => {
         dispatch(setModifyInitData({
           modifyInfo: [],

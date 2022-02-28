@@ -30,8 +30,6 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["operationModifyV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
-  const [optionIndex, setOptionIndex] = useState<number>(0)
     const selector = useSelector((state:RootState) => state.modifyInfo);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -176,17 +174,6 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/operationV1u/modify?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/operationV1u/modify?page=${page}`)
-          }
-        }}
       />
       <ExcelDownloadModal
         isOpen={excelOpen}

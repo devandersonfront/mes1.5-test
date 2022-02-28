@@ -18,7 +18,6 @@ interface IProps {
 // 기본 1
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
 
-
   const cleanValue = (type?:string) => {
     switch(type){
       case "spare":

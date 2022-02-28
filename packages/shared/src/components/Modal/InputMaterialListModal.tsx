@@ -381,7 +381,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               row={searchList ?? [{}]}
               setRow={(e) => {
                 let tmp = e.map((v, index) => {
-                  console.log("v : ", v)
                   if(v.newTab === true){
                     const newTabIndex = bomDummy.length+1
                     addNewTab(newTabIndex)
@@ -576,7 +575,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                       Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
                     }else if(allEqual(disturbanceArray)){
                       const bomLotInfo = searchList.map((v)=> {return v.lots})
-                      console.log("bomList : ", bomList)
                       let amount = 0
                           bomList.map((bom) => {
                             amount += Number(bom.lot.amount)

@@ -143,6 +143,7 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                     marginRight: '-50%',
                     transform: 'translate(-50%, -50%)',
                     padding: 0,
+                    overflow:""
                 },
                 overlay: {
                     background: 'rgba(0,0,0,.6)',
