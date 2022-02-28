@@ -9,9 +9,10 @@ interface IProps {
     contents: string[]
     value: string
     onChange: (e: ChangeEvent<HTMLSelectElement>) => void
+    readOnly :boolean
 }
 
-const MidrangeExcelDropdown = ({contents,value,onChange}: IProps) => {
+const MidrangeExcelDropdown = ({contents,value,onChange, readOnly}: IProps) => {
 
     return (
         <select
@@ -27,6 +28,7 @@ const MidrangeExcelDropdown = ({contents,value,onChange}: IProps) => {
             }}
             value={/*column.key === "type" ? selectType() :*/  value}
             onChange={onChange}
+            disabled={readOnly}
         >
             {contents.map((title,index) => {
                 return (<option key={title+'Midrange'+index} value={title} >
