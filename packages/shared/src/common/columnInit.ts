@@ -745,7 +745,7 @@ export const columnlist: any = {
         {pk: 'ml', name: 'ml'},
         {pk: 'L', name: 'L'},
       ]},
-    {key: 'standard', name: '점검 기준', width: 424, placeholder: '점검 기준 입력', editor: TextEditor, formatter: UnitContainer,},
+    {key: 'standard', name: '점검 기준', width: 424, placeholder: '점검 기준 입력', editor: TextEditor, formatter: PlaceholderBox,},
     {key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216, formatter: UnitContainer, placeholder: '최소값 입력',editor: TextEditor, type:"number"},
     {key: 'error_maximum', name: '최대값(오차범위 최대)', width: 216, formatter: UnitContainer, placeholder: '최대값 입력',editor: TextEditor, type:"number"},
     {key: 'type', name: '기록 방법', width: 120, formatter: DropDownEditor, selectList: [
@@ -1270,13 +1270,12 @@ export const columnlist: any = {
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   toolWarehousingList:[
-    {key: "elapsed", name: '경과일', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "tool_id", name: '공구 CODE', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "unit", name: '단위', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "warehousing", name: '입고량', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "date", name: '입고일', formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "code", name: '공구 CODE', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "name", name: '공구 품명', editor:TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
+    {key: "unit", name: '단위', formatter: PlaceholderBox,},
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '거래처 입력', type:"customer"},
+    {key: "stock", name: '공구 재고량', formatter: UnitContainer, unitData:"EA", },
+    // {key: "product_id", name: '생산 품목', formatter:ProductInfoModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
   ],
   toolWarehousingUpdate:[
     {key: "code", name: '공구 CODE', },

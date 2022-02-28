@@ -65,7 +65,7 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
                         ...v,
                         ...v.tool,
                         ...v.tool.tool,
-                        customer: v.tool.tool.customer.name
+                        customer: v.tool?.tool?.customer?.name
                     }
                 })])
             }else{

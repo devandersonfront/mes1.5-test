@@ -20,14 +20,13 @@ import {WorkModifyModal} from '../../../../shared/src/components/Modal/WorkModif
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
 let now = moment().format('YYYY-MM-DD')
 
-const MesRecordList = ({page, keyword, option}: IProps) => {
-  const router = useRouter()
+const MesRecordList = ({page, search, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
@@ -41,7 +40,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
     to: moment().format('YYYY-MM-DD')
   });
 
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -49,8 +48,8 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     // setOptionIndex(option)
-    if(searchKeyword){
-      SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
+    if(keyword){
+      SearchBasic(keyword, option, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -58,7 +57,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, option, selectDate])
+  }, [pageInfo.page, keyword, option, selectDate])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -355,20 +354,23 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
       <PageHeader
         isSearch
         isCalendar
-        searchKeyword={""}
+        searchKeyword={keyword}
         searchOptionList={optionList}
         onChangeSearchOption={(e) => {
           setOptionIndex(e)
         }}
         onChangeSearchKeyword={(keyword) =>{
-          setSearchKeyword(keyword)
-          // SearchBasic(keyword, option, 1)
+          setKeyword(keyword)
+          setPageInfo({page:1, total:1})
         }}
         calendarTitle={'종료일'}
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
+        setSelectDate={(date) => {
+          setSelectDate(date as {from:string, to:string})
+          setPageInfo({page:1, total:1})
+        }}
         title={"작업 일보 리스트"}
         buttons={
           ['', '수정하기', '삭제']

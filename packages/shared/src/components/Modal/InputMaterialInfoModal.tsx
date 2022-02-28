@@ -67,6 +67,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
     if(isOpen) {
       if(row.input_bom.length > 0) {
         changeRow(row.input_bom, row)
+        console.log("changeRow : " , changeRow(row.input_bom, row))
         setSummaryData({
           // ...res.parent
           customer: row.product.customer?.name,
@@ -105,6 +106,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
       //   return changeRow(row)
       // })
       let searchList = changeRow(res,row)
+      console.log("searchList : ", searchList)
       setSearchList([...searchList])
     }
   }

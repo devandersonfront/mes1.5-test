@@ -55,7 +55,6 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
   }
 
 
-
   useEffect(() => {
     // setOptionIndex(option)
     if(searchKeyword !== ""){
@@ -374,7 +373,11 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
     })
 
     Notiflix.Loading.remove()
-    setBasicRow([...tmpBasicRow])
+    if(pageInfo.page > 1){
+      setBasicRow([...basicRow,...tmpBasicRow])
+    }else{
+      setBasicRow([...tmpBasicRow])
+    }
   }
 
   return (
@@ -395,7 +398,10 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
+        setSelectDate={(date) => {
+          setSelectDate(date as {from:string, to:string})
+          setPageInfo({page:1, total:1})
+        }}
         title={"납품 현황"}
         buttons={
           ['', '수정하기', '삭제']

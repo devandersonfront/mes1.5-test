@@ -23,13 +23,11 @@ import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
-let now = moment().format('YYYY-MM-DD')
-
-const MesOrderList = ({page, keyword, option}: IProps) => {
+const MesOrderList = ({page, search, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -48,7 +46,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
     to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
   });
 
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -61,17 +59,18 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
   }
 
   useEffect(() => {
-    if(searchKeyword){
-      SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+    if(keyword){
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
+      console.log("PAGE : : :", pageInfo.page)
       LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
 
-  }, [pageInfo.page, searchKeyword, option, selectDate, order])
+  }, [pageInfo.page, keyword, option, selectDate, order])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -368,22 +367,23 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       <PageHeader
         isSearch
         isCalendar
-        searchKeyword={""}
+        searchKeyword={keyword}
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) => {
-          // SearchBasic(keyword, option, 1)
-          setSearchKeyword(keyword);
+          setKeyword(keyword);
           setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
-          // SearchBasic(keyword, option, 1)
           setOptionIndex(option)
         }}
         calendarTitle={'납품 기한'}
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
+        setSelectDate={(date) => {
+          setSelectDate(date as {from:string, to:string})
+          setPageInfo({page:1, total:1})
+        }}
         title={"수주 현황"}
         buttons={
           ['', '수정하기', '삭제']
@@ -481,26 +481,5 @@ export const getServerSideProps = (ctx: NextPageContext) => {
   }
 }
 
-const ExcelTableBox = styled.div`
-  height:720px;
-  overflow:scroll;
-::-webkit-scrollbar{
-    display:none;
-    width:${(props:any)=> props.theme};
-    height:8px;
-  }
-
-  ::-webkit-scrollbar-thumb{
-    background:#484848;
-  }
-
-  ::-webkit-scrollbar-track{
-    background:none;
-  }
-
-  ::-webkit-scrollbar-corner{
-    display:none;
-  }
-`;
 
 export {MesOrderList};
