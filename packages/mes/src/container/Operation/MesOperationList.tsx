@@ -38,6 +38,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['지시 고유 번호', '고객사명', '모델', 'CODE', '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [order, setOrder] = useState<number>(0);
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
@@ -50,7 +51,9 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     page: 1,
     total: 1
   })
-
+  const changeOrder = (value:number) => {
+    setOrder(value);
+  }
 
   useEffect(() => {
     if(searchKeyword){
@@ -62,7 +65,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, option, selectDate])
+  }, [pageInfo.page, searchKeyword, option, selectDate, order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -101,7 +104,8 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeOrder
           }
         }else{
           return v
@@ -123,11 +127,20 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         page: page ?? 1,
         renderItem: 22,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-        status: '0,1'
-      }
+      params: order == 0 ?
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+            status: '0,1'
+          }
+          :
+          {
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC',
+            from: selectDate.from,
+            to: selectDate.to,
+            status: '0,1'
+          }
     })
 
 
@@ -152,13 +165,25 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 22,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-        keyword: keyword ?? '',
-        status: '0,1',
-        opt: option ?? 0
-      }
+
+      params: order == 0 ?
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+            keyword: keyword ?? '',
+            status: '0,1',
+            opt: option ?? 0
+          }
+          :
+          {
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC',
+            from: selectDate.from,
+            to: selectDate.to,
+            keyword: keyword ?? '',
+            status: '0,1',
+            opt: option ?? 0
+          }
     })
 
     if(res){
