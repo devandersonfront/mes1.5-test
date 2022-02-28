@@ -50,7 +50,11 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
   })
 
   useEffect(() => {
-    setBasicRow([...selector.modifyInfo])
+    if(selector && selector.type && selector.modifyInfo){
+      setBasicRow([...selector.modifyInfo])
+    }else{
+      router.push('/mes/delivery/list')
+    }
   }, [selector])
 
   const SaveBasic = async () => {
