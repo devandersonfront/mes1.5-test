@@ -122,7 +122,10 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
             }
           }
           
-          if(column.name === '기계 종류' || row.type !=='용접기'){
+          console.log(column.name,'column.namecolumn.name')
+          console.log(row.type,'row.typerow.type')
+
+          if(column.name === '기계 종류' && event.target.value !=='용접기'){
 
             return onRowChange({
               //@ts-ignore
@@ -131,9 +134,9 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
               setting : filterValue(event.target.value),
               // ...tmpData,
               isChange: true,
-              weldingType : null,
+              weldingType: null,
               weldingTypePK: null,
-              weldingType_id: null,
+              weldingType_id: null
             })
 
           }else{
