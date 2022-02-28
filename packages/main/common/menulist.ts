@@ -10,8 +10,8 @@ export const menuSelect = (type: IMenu) => {
       return BASIC_MENUS
     case 'MES'    :
       return MES_MENUS
-    case 'PMS'    :
-      return PMS_MENUS
+    case 'CNC'    :
+      return CNC_MENUS
     case 'WMS'    :
       return []
     case 'UMS'    :
@@ -138,7 +138,7 @@ const MES_MENUS: IMenuType[] = [
   }
 ]
 
-const PMS_MENUS: IMenuType[] = [
+const CNC_MENUS: IMenuType[] = [
   {
     title: '설비 모니터링', url: '',
     subMenu: [

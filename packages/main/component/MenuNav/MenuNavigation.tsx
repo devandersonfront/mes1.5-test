@@ -17,6 +17,9 @@ import ic_wms from '../../public/images/ic_wms.png'
 //@ts-ignore
 import ic_ums from '../../public/images/ic_ums.png'
 //@ts-ignore
+import ic_cnc from '../../public/images/icon_CMS_WH_T.svg'
+
+//@ts-ignore
 import ic_setting from '../../public/images/ic_setting.png'
 import {useRouter} from 'next/router'
 import {useDispatch, useSelector} from 'react-redux'
@@ -99,11 +102,11 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
             <img src={ic_mes} style={{width: 30, height: 30, marginBottom: 5}}/>
             <MenuText>MES</MenuText>
           </MenuNavItem>
-          <MenuNavItem style={{backgroundColor: menuType === "PMS" ? POINT_COLOR : undefined}} onClick={() => {
-            changeMenuType("PMS")
+          <MenuNavItem style={{backgroundColor: menuType === "CNC" ? POINT_COLOR : undefined}} onClick={() => {
+            changeMenuType("CNC")
           }}>
-            <img src={ic_pms} style={{width: 30, height: 30, marginBottom: 5}}/>
-            <MenuText>PMS</MenuText>
+            <img src={ic_cnc} style={{width: 30, height: 30, marginBottom: 5}}/>
+            <MenuText>CNC</MenuText>
           </MenuNavItem>
           {/*<MenuNavItem style={{backgroundColor: menuType === "WMS" ? POINT_COLOR : undefined}} onClick={() => {*/}
           {/*  changeMenuType("WMS")*/}
