@@ -37,6 +37,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
   const tabStore = useSelector((rootState: RootState) => rootState.infoModal)
   const dispatch = useDispatch();
 
+
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [selectRow, setSelectRow] = useState<number>(null)
   const [searchList, setSearchList] = useState<any[]>([])
@@ -45,17 +46,28 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
   const [headerData, setHeaderData] = useState<any>();
 
-
+  console.log(searchList,'searchListsearchList')
+  console.log(column.name, 'name')
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
       // if(row.bom_root_id){
 
-      if(row.process_id){
-        SearchBasic().then(() => {
-          Notiflix.Loading.remove()
-        })
+      if(column.type ==='bomRegister'){
+        if(row.product_id){
+          SearchBasic().then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
+      }else{
+
+        if(row.process_id || row.processId){
+          SearchBasic().then(() => {
+            Notiflix.Loading.remove()
+          })
+        }
       }
+
 
       // } else {
       //   setIsOpen(false)
@@ -142,6 +154,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         code: childData.code,
         type: v.type,
         tab: v.type,
+        name: childData.name,
         type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawmaterial" : v.type === 1 ? "submaterial" : "product"),
         unit: childData.unit ?? type,
         usage: v.usage,
@@ -160,11 +173,10 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
           ...childData,
         }: null,
         parent:v.parent,
-        setting:v.setting === 1 ? "기본" : "스페어"
+        setting:v.setting
       }
     })
 
-    console.log('tmpData : ' , tmpData)
 
     return tmpData
   }
@@ -175,7 +187,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     let res;
     if(selectKey){
       res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
-
 
       let searchList = changeRow(res)
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
@@ -217,19 +228,19 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     })
 
     if(rawMaterialBasic.length !== 0){
-      haveRawMaterialBasic = rawMaterialBasic.some((v) => v.type === '기본')
+      haveRawMaterialBasic = rawMaterialBasic.some((v) => v.type === 1)
     }else{
       haveRawMaterialBasic = true
     }
 
     if(subMaterialBasic.length !== 0){
-      haveSubMaterialBasic = subMaterialBasic.some((v) => v.type === '기본')
+      haveSubMaterialBasic = subMaterialBasic.some((v) => v.type === 1)
     }else{
       haveSubMaterialBasic = true
     }
 
     if(productBasic.length !== 0){
-      haveProductBasic = productBasic.some((v) => v.type === '기본')
+      haveProductBasic = productBasic.some((v) => v.type === 1)
     }else{
       haveProductBasic = true
     }
@@ -244,7 +255,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
   // 데이터 유무 판단
   const haveDataValidation = () => {
-
     let dataCheck = true
 
     searchList.map((v,i)=>{
@@ -282,7 +292,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         } : null,
         type: v.tab,
         key: row.bom_root_id,
-        setting: v.setting === "기본" ? 1 : 0,
+        setting: v.setting,
         usage: v.usage,
         version: v.version
       }
@@ -400,26 +410,27 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     return result;
   }
 
+  // 중복되는거 없는지 판단하자..
   const competeBom = (rows) => {
 
-    const tempRow = [...rows]
-    const spliceRow = [...rows]
-    spliceRow.splice(selectRow, 1)
+      const tempRow = [...rows]
+      const spliceRow = [...rows]
+      spliceRow.splice(selectRow, 1)
 
-    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
+      const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
 
-    if(spliceRow){
-      if(isCheck){
-        return Notiflix.Report.warning(
-          '경고',
-          `중복된 BOM이 존재합니다.`,
-          '확인'
-        );
+      if(spliceRow){
+        if(isCheck){
+          return Notiflix.Report.warning(
+            '경고',
+            `중복된 BOM이 존재합니다.`,
+            '확인'
+          );
+        }
       }
-    }
 
-    setSearchList(rows)
-  }
+      setSearchList(rows)
+    }
 
   return (
     <SearchModalWrapper >
@@ -467,7 +478,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData ? headerData.customer.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
+              <HeaderTableText>{headerData ? headerData.customer?.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
               {/*<HeaderTableText>{tabStore.datas[tabStore.index]?.headerData ? tabStore.datas[tabStore.index].headerData.customerArray.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>*/}
             </HeaderTableTextInput>
             <HeaderTableTitle>
@@ -570,7 +581,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 setSearchList([
                   ...searchList,
                   {
-                    setting: '기본',
+                    setting: 1,
                     seq: searchList.length+1
                   }
                 ])
@@ -636,7 +647,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 <p>아래로</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-
                 if(selectRow === null){
                   return Notiflix.Report.warning(
                     '경고',
@@ -674,7 +684,8 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                   }
                 })
                 // typeCheck(tmp)
-                competeBom(tmp)
+                competeBom([...tmp])
+                // setSearchList([...tmp])
               }}
               width={1746}
               rowHeight={32}
