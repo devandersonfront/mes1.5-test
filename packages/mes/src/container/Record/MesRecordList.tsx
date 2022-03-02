@@ -246,7 +246,11 @@ const MesRecordList = ({page, search, option}: IProps) => {
     }).filter((v) => v)
     let res
       for(let i = 0; i < delete_array.length; i++ ){
-        res = await RequestMethod('delete', `cncRecordeDelete`, [delete_array[i]])
+        res = await RequestMethod('delete', `cncRecordeDelete`, delete_array[i])
+
+        if(!res){
+          break
+        }
       }
 
     if(res) {
@@ -255,6 +259,8 @@ const MesRecordList = ({page, search, option}: IProps) => {
           Notiflix.Loading.remove()
         })
       })
+    }else {
+      Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
     }
   }
 
