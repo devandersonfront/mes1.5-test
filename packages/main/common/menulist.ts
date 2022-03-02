@@ -102,6 +102,7 @@ const MES_MENUS: IMenuType[] = [
     title: '공구 관리', url: '',
     subMenu: [
       {title: '공구 입고 등록', url: '/mes/tool/register'},
+      {title: '공구 입고 리스트', url: '/mes/tool/warehousinglist'},
       {title: '공구 재고 현황', url: '/mes/tool/list'},
     ]
   },
