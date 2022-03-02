@@ -79,7 +79,10 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       if(row.operation_sheet && row.operation_sheet?.input_bom?.length > 0){
-        changeRow(row.operation_sheet.input_bom)
+        const ilter_nput_bom = row.operation_sheet.input_bom.map((v)=>{if(v.bom.setting === 1){
+          return {...v}
+        }}).filter((v)=>v)
+        changeRow(ilter_nput_bom)
       }else if(row.input_bom?.length > 0){
         changeRow(row.input_bom)
       }else{
