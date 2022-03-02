@@ -437,7 +437,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                     const usageArray = searchList.map((v)=> {return v.usage})
 
                     const error = e.map((v,i)=> {
-                      if (v.current < v.amount * usageArray[i]) {
+
+                      if (v.current < Number(v.amount) * (usageArray[i] ?? 1)) {
                         return 1
                       }
                     }).filter(v=>v)
@@ -570,7 +571,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                       const disturbanceArray = searchList.map((v)=>{return v.disturbance})
                       const allEqual = arr => arr.every( v => v === arr[0] )
 
-                      console.log(searchList, row)
+
                       if(disturbance === 0){
                         if(disturbanceArray.includes(0)){
                           Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
