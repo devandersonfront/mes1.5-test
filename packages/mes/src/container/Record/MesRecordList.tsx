@@ -246,7 +246,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
     }).filter((v) => v)
     let res
       for(let i = 0; i < delete_array.length; i++ ){
-        res = await RequestMethod('delete', `cncRecordeDelete`, delete_array[i])
+        res = await RequestMethod('delete', `cncRecordeDelete`, [delete_array[i]])
 
         if(!res){
           break
