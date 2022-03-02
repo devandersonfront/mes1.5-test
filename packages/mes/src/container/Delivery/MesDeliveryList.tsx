@@ -22,11 +22,11 @@ import {useDispatch} from 'react-redux'
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
-const MesDeliveryList = ({page, keyword, option}: IProps) => {
+const MesDeliveryList = ({page, search, option}: IProps) => {
   const dispatch = useDispatch()
   const router = useRouter()
 
@@ -41,8 +41,8 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(['납품 번호', '수주 번호', '거래처', '모델', 'CODE', '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
+    from: moment().subtract(1,"months").format("YYYY-MM-DD") ,
+    to:  moment().format('YYYY-MM-DD')
   });
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -66,7 +66,7 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, option, selectDate,order])
+  }, [pageInfo.page, searchKeyword, selectDate,order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
