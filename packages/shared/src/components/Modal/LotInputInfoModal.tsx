@@ -337,12 +337,22 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                       //     seq: i+1
                       //   }))])
                       // }
+                      const material_type_lot_number = (value) => {
+                        switch (value.lot.type) {
+                          case 0:
+                            return value.lot.child_lot_rm.lot_number;
+                          case 1:
+                            return value.lot.child_lot_sm.lot_number;
+                          case 2:
+                            return value.lot.child_lot_record.lot_number;
+                        }
+                      }
 
                       if(v.bom){
                         setSelectProduct(v.code)
                           setLotList([...v.bom.map((v,i) => ({
                             ...v.lot,
-                            lot_number: v.lot.child_lot_rm.lot_number,
+                            lot_number: /*v.lot.child_lot_rm.lot_number*/material_type_lot_number(v),
                             seq: i+1
                           }))])
                       }
