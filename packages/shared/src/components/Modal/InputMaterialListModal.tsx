@@ -506,7 +506,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                     }else{
                       let bomList = []
                       let disturbance = 0
-
+                      let quantity = 0
                       searchList.map((bom, index) => {
                         let totalAmount = 0
                         if(bom.lots !== undefined) {
@@ -566,6 +566,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                         if(totalAmount !== bom.disturbance){
                           disturbance += 1
                         }
+                        quantity = totalAmount
                       })
                       const disturbanceArray = searchList.map((v)=>{return v.disturbance})
                       const allEqual = arr => arr.every( v => v === arr[0] )
@@ -580,8 +581,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                             ...row,
                             bom: bomList,
                             bom_info: bomLotInfo,
-                            quantity: bomList[0].lot.amount,
-                            good_quantity: bomList[0].lot.amount
+                            quantity: quantity,
+                            good_quantity: quantity
                           })
                           setIsOpen(false)
                         }else {
