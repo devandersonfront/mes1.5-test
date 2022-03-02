@@ -42,8 +42,8 @@ const MesOrderList = ({page, search, option}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [order, setOrder] = useState(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
+    from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD') ,
+    to:  moment(new Date()).add(1,'month').format('YYYY-MM-DD')
   });
 
   const [keyword, setKeyword] = useState<string>("");
@@ -130,12 +130,19 @@ const MesOrderList = ({page, search, option}: IProps) => {
         page: pageInfo.page ?? 1,
         renderItem: 22,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-        sorts: order < 3 ? 'date' : 'deadline',
-        order: order % 2 ? 'DESC' : 'ASC'
-      }
+      params:
+      order == 0 ?
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+            sorts: order < 3 ? 'date' : 'deadline',
+            order: order % 2 ? 'DESC' : 'ASC'
+          }
     })
     if(res){
       setPageInfo({
@@ -162,7 +169,16 @@ const MesOrderList = ({page, search, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 22,
       },
-      params: {
+      params:
+          order == 0 ?
+              {
+                keyword: keyword ?? '',
+                opt: option ?? 0,
+                from: selectDate.from,
+                to: selectDate.to,
+              }
+              :
+              {
         keyword: keyword ?? '',
         opt: option ?? 0,
         from: selectDate.from,
