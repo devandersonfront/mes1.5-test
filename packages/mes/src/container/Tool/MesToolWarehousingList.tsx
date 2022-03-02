@@ -31,7 +31,7 @@ interface SelectParameter {
     to:string
 }
 
-const MesToolList = ({page, search, option}: IProps) => {
+const MesToolWarehousingList = ({page, search, option}: IProps) => {
     const router = useRouter();
     const dispatch = useDispatch();
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
@@ -40,11 +40,13 @@ const MesToolList = ({page, search, option}: IProps) => {
     const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().subtract(1, "month").format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [pageInfo, setPageInfo] = useState<{page:number, totalPage:number}>({page:1, totalPage:1});
-    const [keyword, setKeyword] = useState<string>();
+    const [keyword, setKeyword] = useState<string>()
+
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {
             if(v.selectList && v.selectList.length === 0){
                 let tmpKey = v.key
+
 
                 let res: any
                 res = await RequestMethod('get', `${tmpKey}List`,{
@@ -94,7 +96,7 @@ const MesToolList = ({page, search, option}: IProps) => {
     }
 
     const cleanUpData = (info_list:any) => {
-        let tmpColumn = columnlist["toolList"];
+        let tmpColumn = columnlist["toolWarehousingList"];
         let tmpRow:Array<any> = []
         tmpColumn = tmpColumn.map((column: any) => {
             let menuData: object | undefined;
@@ -199,46 +201,42 @@ const MesToolList = ({page, search, option}: IProps) => {
                 id: `tool_${random_id}`,
                 tool_id:row?.tool?.code,
                 elapsed: row?.elapsed  === 0 ? "0" : row?.elapsed,
-                name: row?.name,
-                unit:row?.unit,
-                customer_id:row?.customer?.name,
+                name: row?.tool?.name,
+                unit:row?.tool?.unit,
+                customer_id:row?.tool?.customer?.name,
             }
         })
-        if(pageInfo.page > 1){
-            setBasicRow([...basicRow,...tmpBasicRow])
-        }else{
-            setBasicRow([...tmpBasicRow])
-        }
+        setBasicRow([...tmpBasicRow])
 
     }
 
     const LoadBasic = async() => {
-        const res = await RequestMethod("get", "toolList",{
+        const res = await RequestMethod("get", "lotToolList",{
             path:{
                 page:pageInfo.page,
-                renderItem:18
+                renderItem:22
             },
-            // params:{
-            //     from: selectDate.from,
-            //     to: selectDate.to
-            // }
+            params:{
+                from: selectDate.from,
+                to: selectDate.to
+            }
         })
 
-        if(res){console.log(res)
+        if(res){
             setPageInfo({...pageInfo, totalPage: res.totalPages })
             cleanUpData(res);
         }
     }
 
     const SearchBasic = async() => {
-        const res = await RequestMethod("get", "toolSearch", {
+        const res = await RequestMethod("get", "lotToolSearch", {
             path:{
                 page:pageInfo.page,
-                renderItem:18
+                renderItem:22
             },
             params:{
-                // from:selectDate.from,
-                // to: selectDate.to,
+                from:selectDate.from,
+                to: selectDate.to,
                 keyword:keyword,
                 opt:optionIndex
             }
@@ -289,59 +287,36 @@ const MesToolList = ({page, search, option}: IProps) => {
             LoadBasic()
         }
 
-    },[pageInfo.page, selectDate, keyword])
+    },[selectDate, keyword])
 
     return (
         <div>
-            {/*<PageHeader*/}
-            {/*    title={"공구 입고 현황"}*/}
-            {/*    // buttons={*/}
-            {/*    //     ["수정 하기", '삭제']*/}
-            {/*    // }*/}
-            {/*    buttonsOnclick={ButtonEvents}*/}
-            {/*    isCalendar*/}
-            {/*    calendarTitle={"입고일"}*/}
-            {/*    calendarType={"period"}*/}
-            {/*    selectDate={selectDate}*/}
-            {/*    setSelectDate={(date) => {*/}
-            {/*        setSelectDate(date as SelectParameter)*/}
-            {/*    }}*/}
-            {/*    dataLimit*/}
-            {/*    isSearch*/}
-            {/*    searchKeyword={keyword}*/}
-            {/*    onChangeSearchKeyword={(setKeyword) => {*/}
-            {/*        router.push(`/mes/tool/list?keyword=${setKeyword}&&option=${optionIndex}`)*/}
-            {/*    }}*/}
-            {/*    searchOptionList={["공구 CODE", "공구 품명", "거래처"]}*/}
-            {/*    onChangeSearchOption={(index) => {*/}
-            {/*        setOptionIndex(index);*/}
-            {/*    }}*/}
-            {/*/>*/}
             <PageHeader
-                title={"공구 재고 현황"}
+                title={"공구 입고 리스트"}
+                buttons={
+                    ["수정 하기", '삭제']
+                }
+                buttonsOnclick={ButtonEvents}
                 isCalendar
                 calendarTitle={"입고일"}
                 calendarType={"period"}
                 selectDate={selectDate}
                 setSelectDate={(date) => {
                     setSelectDate(date as SelectParameter)
-                    setPageInfo({page:1, totalPage:1})
                 }}
                 dataLimit
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
                     setKeyword(keyword)
-                    setPageInfo({page:1, totalPage:1})
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
-                onChangeSearchOption={(option) => {
-                    setOptionIndex(option);
+                onChangeSearchOption={(index) => {
+                    setOptionIndex(index);
                 }}
-                optionIndex={optionIndex}
             />
             <ExcelTable
-                headerList={column}
+                headerList={[SelectColumn,...column]}
                 row={basicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
@@ -355,22 +330,13 @@ const MesToolList = ({page, search, option}: IProps) => {
                     //@ts-ignore
                     setSelectList(selectedRows)
                 }}
+                scrollEnd={(e) => {
+                    if(e && pageInfo.totalPage > pageInfo.page) setPageInfo({...pageInfo, page:pageInfo.page+1})
+                }}
             />
             {/*<PaginationComponent totalPage={} currentPage={} setPage={} />*/}
-            {/*<ExcelTable*/}
-            {/*    resizable*/}
-            {/*    headerList={column}*/}
-            {/*    row={basicRow}*/}
-            {/*    selectList={selectList}*/}
-            {/*    //@ts-ignore*/}
-            {/*    setSelectList={setSelectList}*/}
-            {/*    height={700}*/}
-            {/*    scrollEnd={(e) => {*/}
-            {/*        if(e && pageInfo.totalPage > pageInfo.page) setPageInfo({...pageInfo, page:pageInfo.page+1})*/}
-            {/*    }}*/}
-            {/*/>*/}
         </div>
     )
 }
 
-export {MesToolList};
+export {MesToolWarehousingList};
