@@ -130,12 +130,19 @@ const MesOrderList = ({page, search, option}: IProps) => {
         page: pageInfo.page ?? 1,
         renderItem: 22,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-        sorts: order < 3 ? 'date' : 'deadline',
-        order: order % 2 ? 'DESC' : 'ASC'
-      }
+      params:
+      order == 0 ?
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+            sorts: order < 3 ? 'date' : 'deadline',
+            order: order % 2 ? 'DESC' : 'ASC'
+          }
     })
     if(res){
       setPageInfo({
@@ -162,7 +169,16 @@ const MesOrderList = ({page, search, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 22,
       },
-      params: {
+      params:
+          order == 0 ?
+              {
+                keyword: keyword ?? '',
+                opt: option ?? 0,
+                from: selectDate.from,
+                to: selectDate.to,
+              }
+              :
+              {
         keyword: keyword ?? '',
         opt: option ?? 0,
         from: selectDate.from,
