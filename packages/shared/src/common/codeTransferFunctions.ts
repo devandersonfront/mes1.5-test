@@ -105,6 +105,13 @@ export const processcodes = [
   {code: 5, name: '검수'},
 ]
 
+
+export const WORK_STATUS = [
+  {code: 0, name: '작업 중'},
+  {code: 1, name: '시작 전'},
+  {code: 2, name: '작업 종료'},
+]
+
 export const weldingcodes = [
   {code: 200, name: '아르곤'},
   {code: 201, name: '스팟'},
@@ -324,6 +331,12 @@ export const transferStringToCode = (type: string, value: any) => {
     })
   } else if (type === 'welding') {
     weldingcodes.forEach((v: { code: number, name: string }, i) => {
+      if (v.name === value) {
+        num = v.code
+      }
+    })
+  } else if (type === 'workStatus'){
+    WORK_STATUS.forEach((v: { code: number, name: string }, i) => {
       if (v.name === value) {
         num = v.code
       }

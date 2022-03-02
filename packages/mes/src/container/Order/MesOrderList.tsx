@@ -42,8 +42,8 @@ const MesOrderList = ({page, search, option}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [order, setOrder] = useState(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
+    from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD') ,
+    to:  moment(new Date()).add(1,'month').format('YYYY-MM-DD')
   });
 
   const [keyword, setKeyword] = useState<string>("");
