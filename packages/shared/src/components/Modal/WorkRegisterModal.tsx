@@ -16,6 +16,7 @@ import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 //@ts-ignore
 import moment from 'moment'
+import {transferStringToCode} from "../../common/codeTransferFunctions";
 
 interface IProps {
   column: IExcelHeaderType
@@ -139,7 +140,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
               ...selectData,
               operation_sheet: {
                 ...row,
-                status: row.status_no
+                status: typeof row.status_no === "string" ? transferStringToCode('workStatus', row.status_no) : row.status_no
               },
               tools:v?.tools?.map((tool) => {
                 return{
@@ -154,6 +155,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
               }),
               // input_bom: [],
               status: 0,
+              version: undefined
             }
           }).filter((v) => v))
 
