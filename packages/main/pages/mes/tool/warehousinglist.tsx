@@ -3,7 +3,6 @@ import MenuNavigation from "../../../../main/component/MenuNav/MenuNavigation";
 import {NextPageContext} from "next";
 import {MesToolWarehousingList} from "mes";
 import ProfileHeader from "../../../component/Profile/ProfileHeader";
-import {MesToolList} from "mes/src/container/Tool/MesToolList";
 
 interface IProps {
     children?: any
@@ -18,7 +17,7 @@ const ToolList = ({page, keyword, option}: IProps) => {
             <MenuNavigation pageType={'MES'}/>
             <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
-                <MesToolList page={page} search={keyword} option={option} />
+                <MesToolWarehousingList page={page} search={keyword} option={option} />
             </div>
         </div>
     );
