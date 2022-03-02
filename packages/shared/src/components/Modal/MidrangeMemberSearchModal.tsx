@@ -36,13 +36,14 @@ interface IProps {
         version: number
     }) => void
     value: string
+    readOnly?: boolean
 }
 
 const optionList = {
     member: ['성명', '직책', '권한'],
 }
 
-const MidrangeMemberSearchModal = ({onChangeManger,value}: IProps) => {
+const MidrangeMemberSearchModal = ({onChangeManger,value, readOnly}: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [title, setTitle] = useState<string>('작성자')
     const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -100,23 +101,27 @@ const MidrangeMemberSearchModal = ({onChangeManger,value}: IProps) => {
 
     return (
         <SearchModalWrapper >
-            <div style={{width: 'calc(100% - 40px)', height: 37, display: "flex", justifyContent: "center", alignItems: "center",backgroundColor: "white"}} onClick={() => {
-                setIsOpen(true)
+            <div style={{width: readOnly ? "100%" : 'calc(100% - 40px)', height: 37, display: "flex", justifyContent: "center", alignItems: "center",backgroundColor: "white"}} onClick={() => {
+                if(!readOnly){
+                    setIsOpen(true)
+                }
             }}>
                 {value}
             </div>
-            <div style={{
-                display: 'flex',
-                backgroundColor: POINT_COLOR,
-                width: 38,
-                height: 38,
-                justifyContent: 'center',
-                alignItems: 'center'
-            }} onClick={() => {
-                setIsOpen(true)
-            }}>
-                <img style={{width: 20, height: 20}} src={IcSearchButton}/>
-            </div>
+            {!readOnly &&
+                <div style={{
+                    display: 'flex',
+                    backgroundColor: POINT_COLOR,
+                    width: 38,
+                    height: 38,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }} onClick={() => {
+                    setIsOpen(true)
+                }}>
+                    <img style={{width: 20, height: 20}} src={IcSearchButton}/>
+                </div>
+            }
             <Modal isOpen={isOpen} style={{
                 content: {
                     top: '50%',
