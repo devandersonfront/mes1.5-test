@@ -94,6 +94,10 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
         setSearchList([...formReviewData.basic])
     },[formReviewData])
 
+    React.useEffect(() => {
+
+    },[])
+
     return (
         <SearchModalWrapper >
             <Modal isOpen={isOpen} style={{
@@ -162,7 +166,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
                         />
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
-                        <MidrangeExcelFrameTable formReviewData={formReviewData}  inspectFrameData={(e)=>setMidrangeData(e)} midrangeUpdate={!midrangeUpdate}/>
+                        <MidrangeExcelFrameTable formReviewData={formReviewData}  inspectFrameData={(e)=>setMidrangeData(e)} midrangeUpdate={modify && !midrangeUpdate}/>
                     </div>
                 </div>
                 {modify ?
