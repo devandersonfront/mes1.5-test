@@ -447,7 +447,6 @@ export const columnlist: any = {
   ],
 
   substockV1u: [
-    {key: 'elapsed', name: '경과일', formatter: UseDateCell, width: 118},
     {key: 'wip_id',name:'부자재 CODE', formatter: PlaceholderBox, placeholder: '부자재 CODE', width: 118},
     {key: 'name', name:'부자재 품명', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
     {key: 'unit', name:'단위', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
@@ -1282,12 +1281,12 @@ export const columnlist: any = {
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   toolWarehousingList:[
-    {key: 'elapsed', name: '경과일', formatter: UseDateCell, width: 118},
-    {key: "tool_id", name: '공구 CODE', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
-    {key: "name", name: '공구 품명', editor:TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
+    // {key: 'elapsed', name: '경과일', formatter: UseDateCell, width: 118},
+    {key: "tool_id", name: '공구 CODE',  formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox,},
     {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '거래처 입력', type:"customer"},
-    {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 압력'},
+    {key: "warehousing", name: '입고량', formatter: PlaceholderBox, placeholder: '입고량 압력'},
     {key: "date", name: '입고일', },
   ],
   toolWarehousingUpdate:[

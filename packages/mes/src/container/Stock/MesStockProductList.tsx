@@ -295,7 +295,7 @@ const MesStockProductList = ({page, keyword, option}) => {
       buttons={[""]}
       buttonsOnclick={buttonClickEvents}
       isSearch={true}
-      searchOptionList={["거래처", "모델", "CODE", "품명"]}
+      searchOptionList={["거래처", "모델",'',"품명"]}
       onChangeSearchOption={(option) => {
 
         setOptionIndex(option)
