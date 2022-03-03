@@ -45,20 +45,21 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
     to:  moment().format('YYYY-MM-DD')
   });
 
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
   const changeSetOrder = (value:number) => {
+    setPageInfo({page:1, total:1})
     setOrder(value);
   }
 
 
   useEffect(() => {
     // setOptionIndex(option)
-    if(searchKeyword !== ""){
-      SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+    if(keyword !== ""){
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -66,7 +67,7 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, selectDate,order])
+  }, [pageInfo.page, keyword, selectDate,order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -406,7 +407,7 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
         searchKeyword={""}
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) => {
-          setSearchKeyword(keyword);
+          setKeyword(keyword);
           setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {

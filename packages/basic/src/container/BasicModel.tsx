@@ -692,6 +692,7 @@ const BasicModel = ({}: IProps) => {
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
           setKeyword(keyword)
+          setPageInfo({page:1,total:1})
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {

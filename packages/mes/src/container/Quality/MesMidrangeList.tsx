@@ -24,15 +24,15 @@ const MesMidrangeList = ({option}:IProps) => {
         to:  moment().format('YYYY-MM-DD')
     });
 
-    const [searchKeyword, setSearchKeyword] = useState<string>("");
+    const [keyword, setKeyword] = useState<string>("");
     const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
         page: 1,
         total: 1
     })
 
     useEffect(() => {
-        if(searchKeyword){
-            searchQualityRecordInspect(searchKeyword, option, pageInfo.page).then(() => {
+        if(keyword){
+            searchQualityRecordInspect(keyword, optionIndex, pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
             })
         }else{
@@ -40,7 +40,7 @@ const MesMidrangeList = ({option}:IProps) => {
                 Notiflix.Loading.remove()
             })
         }
-    }, [pageInfo.page, searchKeyword, option, selectDate])
+    }, [pageInfo.page, keyword, selectDate])
 
     const searchQualityRecordInspect = async (keyword, opt, page?: number) => {
         Notiflix.Loading.circle()
@@ -164,7 +164,7 @@ const MesMidrangeList = ({option}:IProps) => {
                 searchKeyword={""}
                 searchOptionList={optionList}
                 onChangeSearchKeyword={(keyword) => {
-                    setSearchKeyword(keyword);
+                    setKeyword(keyword);
                     setPageInfo({page:1, total:1})
                 }}
                 onChangeSearchOption={(option) => {
@@ -174,7 +174,10 @@ const MesMidrangeList = ({option}:IProps) => {
                 calendarType={'period'}
                 selectDate={selectDate}
                 //@ts-ignore
-                setSelectDate={(date) => setSelectDate(date)}
+                setSelectDate={(date) => {
+                    setSelectDate(date as {from:string, to:string})
+                    setPageInfo({page:1, total:1})
+                }}
                 title={"초ㆍ중ㆍ종 검사 리스트"}
             />
             <ExcelTable
