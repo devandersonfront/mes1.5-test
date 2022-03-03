@@ -52,6 +52,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
     total: 1
   })
   const changeOrder = (value:number) => {
+    setPageInfo({page:1,total:1})
     setOrder(value);
   }
 

@@ -31,6 +31,9 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
     deadline: moment().format('YYYY-MM-DD'),first:true
   }])
+
+
+
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationCodeRegisterV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const getMenus = async () => {

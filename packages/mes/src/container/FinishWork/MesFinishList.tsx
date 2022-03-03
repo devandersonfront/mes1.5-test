@@ -42,7 +42,6 @@ const MesFinishList = ({page, search, option}: IProps) => {
     total: 1
   })
   useEffect(() => {
-    // setOptionIndex(option)
     if(getMenus()){
       if(keyword){
         SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {

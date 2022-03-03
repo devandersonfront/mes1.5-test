@@ -233,7 +233,7 @@ const BasicUser = ({}: IProps) => {
               }).filter((v) => v)).catch((error)=>{
                 return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
               })
-        
+
             if(res){
               Notiflix.Report.success('저장되었습니다.','','확인');
               if(keyword){
@@ -333,102 +333,10 @@ const BasicUser = ({}: IProps) => {
     setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
 
-    // if(keyword){
-    //   SearchBasic(keyword, option, page).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }else{
-    //   LoadBasic(page).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }
-
-
-    // const res = await RequestMethod('delete', `memberDelete`,
-    //   basicRow.map((row, i) => {
-    //     if(selectList.has(row.id)){
-    //       let additional:any[] = []
-    //       column.map((v) => {
-    //         if(v.type === 'additional'){
-    //           additional.push(v)
-    //         }
-    //       })
-    //       let selectData: any = {}
-    //       if(row.user_id){
-    //         return {
-    //           ...row,
-    //           ...selectData,
-    //           id: row.tmpId,
-    //           authority: row.authorityPK,
-              // additional: [
-              //   ...additional.map(v => {
-              //     if(row[v.name]) {
-              //       return {
-              //         id: v.id,
-              //         title: v.name,
-              //         value: row[v.name],
-              //         unit: v.unit
-              //       }
-              //     }
-              //   }).filter((v) => v)
-              // ]
-    //         }
-
-    //       }
-
-    //     }
-    //   }).filter((v) => v))
-
     Notiflix.Report.success('삭제되었습니다.','','확인');
     selectedRows.forEach((row)=>{ map.delete(row.id)})
     setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
-
-    // if(keyword){
-    //   SearchBasic(keyword, option, page).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }else{
-    //   LoadBasic(page).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }
-
-
-    // const res = await RequestMethod('delete', `memberDelete`,
-    //   basicRow.map((row, i) => {
-    //     if(selectList.has(row.id)){
-    //       let additional:any[] = []
-    //       column.map((v) => {
-    //         if(v.type === 'additional'){
-    //           additional.push(v)
-    //         }
-    //       })
-    //       let selectData: any = {}
-    //       if(row.user_id){
-    //         return {
-    //           ...row,
-    //           ...selectData,
-    //           id: row.tmpId,
-    //           authority: row.authorityPK,
-              // additional: [
-              //   ...additional.map(v => {
-              //     if(row[v.name]) {
-              //       return {
-              //         id: v.id,
-              //         title: v.name,
-              //         value: row[v.name],
-              //         unit: v.unit
-              //       }
-              //     }
-              //   }).filter((v) => v)
-              // ]
-    //         }
-
-    //       }
-
-    //     }
-    //   }).filter((v) => v))
 
   }
 
@@ -656,7 +564,7 @@ const BasicUser = ({}: IProps) => {
             items = {
               ...value.selectList[0],
               [value.key] : value.selectList[0].name,
-              [value.key+'PK'] : value.selectList[0].ca_id,//여기 봐야됨!
+              [value.key+'PK'] : value.selectList[0].ca_id,
               ...items,
             }
           }
@@ -751,6 +659,7 @@ const BasicUser = ({}: IProps) => {
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
           setKeyword(keyword)
+          setPageInfo({page:1, total:1})
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
@@ -760,7 +669,6 @@ const BasicUser = ({}: IProps) => {
         title={title}
         buttons={
           ["",'', '항목관리', '행 추가', '저장하기', '삭제']
-          // ["",'', '항목관리', '행 추가', '저장하기', '삭제']
         }
         buttonsOnclick={onClickHeaderButton}
       />

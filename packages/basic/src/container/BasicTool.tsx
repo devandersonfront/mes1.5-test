@@ -503,6 +503,7 @@ const BasicTool = ({page, search, option}: IProps) => {
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
                     setKeyword(keyword)
+                    setPageInfo({page:1,total:1})
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(option) => {

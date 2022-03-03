@@ -58,6 +58,7 @@ const BasicDevice = ({}: IProps) => {
   const [typesState, setTypesState] = useState<number>(null);
 
   const changeTypesState = (value:number) => {
+    setPageInfo({page:1, total:1})
     setTypesState(value);
   }
 
@@ -707,6 +708,7 @@ const BasicDevice = ({}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             setKeyword(keyword)
+            setPageInfo({page:1, total:1})
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {

@@ -16,6 +16,7 @@ import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import {
+  add_summary_info,
     change_summary_info_index,
     delete_summary_info,
     insert_summary_info,
@@ -37,9 +38,11 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
   const tabStore = useSelector((rootState: RootState) => rootState.infoModal)
   const dispatch = useDispatch();
 
+
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [selectRow, setSelectRow] = useState<number>(null)
   const [searchList, setSearchList] = useState<any[]>([])
+
 
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
@@ -51,6 +54,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       // if(row.bom_root_id){
 
       if(column.name ==='BOM'){
+        
         if(row.product_id){
           SearchBasic().then(() => {
             Notiflix.Loading.remove()
@@ -73,11 +77,12 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
      if(tabStore.datas.length <= 0){
         setIsOpen(false);
      }
-  },[tabStore, ])
+  },[tabStore])
 
   useEffect(() => {
     if(isOpen) {
-      if(row.process_id){
+
+      if(row.process_id || row.processId){
         getModalData()
       }
     }
@@ -257,36 +262,71 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
   }
 
   const filterList = () => {
-    return searchList.map((v, i) => (
-      {
-        seq: i+1,
-        parent: {
-          ...row,
-          additional: row.additional ?? [],
-          process: row.processArray,
-          model: row.model === '' ? null : row.model,
-          type: row.type_id ?? row.type === '완제품' ? 2 : 1,
-          product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
-          code: row.code,
-          customer: row.customer === '' ? null : row.customer
-        },
-        child_product: v.tab === 2 ? {
-          ...v.product
-        } : null,
-        child_rm: v.tab === 0 ? {
-          ...v.raw_material,
-          type:v.raw_material.type_id
-        } : null,
-        child_sm: v.tab === 1 ? {
-          ...v.sub_material
-        } : null,
-        type: v.tab,
-        key: row.bom_root_id,
-        setting: v.setting,
-        usage: v.usage,
-        version: v.version
+
+    if(row.id.includes('operation')){
+      return searchList.map((v, i) => (
+        {
+          seq: i+1,
+          parent: {
+            ...row,
+            additional: row.additional ?? [],
+            process: row.processArray,
+            model: row.model === '' ? null : row.modelData,
+            type: row.type_id ?? row.type === '완제품' ? 2 : 1,
+            product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
+            code: row.code,
+            customer: row.customer === '' ? null : row.customerData
+          },
+          child_product: v.tab === 2 ? {
+            ...v.product
+          } : null,
+          child_rm: v.tab === 0 ? {
+            ...v.raw_material,
+            type:v.raw_material.type_id
+          } : null,
+          child_sm: v.tab === 1 ? {
+            ...v.sub_material
+          } : null,
+          type: v.tab,
+          key: row.bom_root_id,
+          setting: v.setting,
+          usage: v.usage,
+          version: v.version
+        }
+      ))
+
+    }else{
+      return searchList.map((v, i) => (
+        {
+          seq: i+1,
+          parent: {
+            ...row,
+            additional: row.additional ?? [],
+            process: row.processArray,
+            model: row.model === '' ? null : row.model,
+            type: row.type_id ?? row.type === '완제품' ? 2 : 1,
+            product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
+            code: row.code,
+            customer: row.customer === '' ? null : row.customer
+          },
+          child_product: v.tab === 2 ? {
+            ...v.product
+          } : null,
+          child_rm: v.tab === 0 ? {
+            ...v.raw_material,
+            type:v.raw_material.type_id
+          } : null,
+          child_sm: v.tab === 1 ? {
+            ...v.sub_material
+          } : null,
+          type: v.tab,
+          key: row.bom_root_id,
+          setting: v.setting,
+          usage: v.usage,
+          version: v.version
+        }
+      ))
       }
-    ))
   }
 
   const executeValidation = () => {
@@ -319,6 +359,8 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     if(isValidation){
       return undefined;
     }else{
+
+
       const body = filterList()
       if(body.length !== 0){
         const res = await RequestMethod('post', `bomSave`, body)
@@ -352,7 +394,14 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
             width: '100%',
           }}>
             <div onClick={() => {
-              setIsOpen(true)
+
+              if (row.bom_root_id) {
+                setIsOpen(true)
+              } else {
+                Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
+                })
+              }
+              
             }}>
               <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>
             </div>
@@ -517,6 +566,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
             <HeaderTableTextInput style={{width: 144}}>
               <HeaderTableText>{headerData ? headerData.unit : row.unit ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
+            
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
