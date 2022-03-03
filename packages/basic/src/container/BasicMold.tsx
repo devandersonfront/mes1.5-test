@@ -632,11 +632,7 @@ const BasicMold = ({}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             setKeyword(keyword)
-            // if(keyword){
-            //   router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            // }else{
-            //   router.push(`/mes/basic/moldV1u?page=1&keyword=`)
-            // }
+            setPageInfo({page:1,total:1})
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {

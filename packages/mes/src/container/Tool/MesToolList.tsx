@@ -39,7 +39,7 @@ const MesToolList = ({page, search, option}: IProps) => {
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().subtract(1, "month").format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
     const [optionIndex, setOptionIndex] = useState<number>(0);
-    const [pageInfo, setPageInfo] = useState<{page:number, totalPage:number}>({page:1, totalPage:1});
+    const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:1});
     const [keyword, setKeyword] = useState<string>();
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {
@@ -224,8 +224,8 @@ const MesToolList = ({page, search, option}: IProps) => {
             // }
         })
 
-        if(res){console.log(res)
-            setPageInfo({...pageInfo, totalPage: res.totalPages })
+        if(res){
+            setPageInfo({...pageInfo, total: res.totalPages })
             cleanUpData(res);
         }
     }
@@ -244,7 +244,7 @@ const MesToolList = ({page, search, option}: IProps) => {
             }
         })
         if(res){
-            setPageInfo({...pageInfo, totalPage: res.totalPages })
+            setPageInfo({...pageInfo, total: res.totalPages })
             cleanUpData(res);
         }
     }
@@ -293,30 +293,6 @@ const MesToolList = ({page, search, option}: IProps) => {
 
     return (
         <div>
-            {/*<PageHeader*/}
-            {/*    title={"공구 입고 현황"}*/}
-            {/*    // buttons={*/}
-            {/*    //     ["수정 하기", '삭제']*/}
-            {/*    // }*/}
-            {/*    buttonsOnclick={ButtonEvents}*/}
-            {/*    isCalendar*/}
-            {/*    calendarTitle={"입고일"}*/}
-            {/*    calendarType={"period"}*/}
-            {/*    selectDate={selectDate}*/}
-            {/*    setSelectDate={(date) => {*/}
-            {/*        setSelectDate(date as SelectParameter)*/}
-            {/*    }}*/}
-            {/*    dataLimit*/}
-            {/*    isSearch*/}
-            {/*    searchKeyword={keyword}*/}
-            {/*    onChangeSearchKeyword={(setKeyword) => {*/}
-            {/*        router.push(`/mes/tool/list?keyword=${setKeyword}&&option=${optionIndex}`)*/}
-            {/*    }}*/}
-            {/*    searchOptionList={["공구 CODE", "공구 품명", "거래처"]}*/}
-            {/*    onChangeSearchOption={(index) => {*/}
-            {/*        setOptionIndex(index);*/}
-            {/*    }}*/}
-            {/*/>*/}
             <PageHeader
                 title={"공구 재고 현황"}
                 isCalendar
@@ -325,14 +301,14 @@ const MesToolList = ({page, search, option}: IProps) => {
                 selectDate={selectDate}
                 setSelectDate={(date) => {
                     setSelectDate(date as SelectParameter)
-                    setPageInfo({page:1, totalPage:1})
+                    setPageInfo({page:1, total:1})
                 }}
                 dataLimit
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
                     setKeyword(keyword)
-                    setPageInfo({page:1, totalPage:1})
+                    setPageInfo({page:1, total:1})
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(option) => {
@@ -356,19 +332,6 @@ const MesToolList = ({page, search, option}: IProps) => {
                     setSelectList(selectedRows)
                 }}
             />
-            {/*<PaginationComponent totalPage={} currentPage={} setPage={} />*/}
-            {/*<ExcelTable*/}
-            {/*    resizable*/}
-            {/*    headerList={column}*/}
-            {/*    row={basicRow}*/}
-            {/*    selectList={selectList}*/}
-            {/*    //@ts-ignore*/}
-            {/*    setSelectList={setSelectList}*/}
-            {/*    height={700}*/}
-            {/*    scrollEnd={(e) => {*/}
-            {/*        if(e && pageInfo.totalPage > pageInfo.page) setPageInfo({...pageInfo, page:pageInfo.page+1})*/}
-            {/*    }}*/}
-            {/*/>*/}
         </div>
     )
 }

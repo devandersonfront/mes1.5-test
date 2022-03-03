@@ -42,7 +42,7 @@ const weldingType = [
   {pk:3, name: "스팟"},
 ]
 
-const BasicMachineV1u = ({ option}: IProps) => {
+const BasicMachineV1u = ({option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -63,12 +63,12 @@ const BasicMachineV1u = ({ option}: IProps) => {
 
   const changeSetTypesState = (value:number) => {
     setTypesState(value);
+    setPageInfo({page:1, total:1})
   }
 
 
 
   useEffect(() => {
-    // setOptionIndex(option)
     if(keyword){
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
@@ -551,12 +551,8 @@ const BasicMachineV1u = ({ option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            // if(keyword){
-              setKeyword(keyword)
-              // router.push(`/mes/basic/machine?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            // }else{
-            //   router.push(`/mes/basic/machine?page=1&keyword=`)
-            // }
+            setKeyword(keyword)
+            setPageInfo({page:1,total:1})
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {

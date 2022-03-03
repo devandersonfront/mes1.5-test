@@ -409,11 +409,11 @@ const MesSubMaterialStock = ({page, search, option}: IProps) => {
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
           setKeyword(keyword)
+          setPageInfo({page:1, total:1})
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
-          setPageInfo({page:1, total:1})
         }}
         calendarTitle={'입고일'}
         optionIndex={optionIndex}

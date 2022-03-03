@@ -52,9 +52,8 @@ const MesOrderList = ({page, search, option}: IProps) => {
     total: 1
   })
 
-
-
   const changeSetOrder = (value:number) => {
+    setPageInfo({page:1, total:1})
     setOrder(value);
   }
 
@@ -64,13 +63,12 @@ const MesOrderList = ({page, search, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }else{
-      console.log("PAGE : : :", pageInfo.page)
       LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
 
-  }, [pageInfo.page, keyword, option, selectDate, order])
+  }, [pageInfo.page, keyword, selectDate, order])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -496,6 +494,5 @@ export const getServerSideProps = (ctx: NextPageContext) => {
     }
   }
 }
-
 
 export {MesOrderList};
