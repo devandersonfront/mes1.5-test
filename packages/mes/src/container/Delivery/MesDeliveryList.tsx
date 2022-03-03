@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react'
 import {
-  columnlist,
-  ExcelDownloadModal,
-  ExcelTable,
-  Header as PageHeader,
-  IExcelHeaderType,
-  MAX_VALUE,
-  RequestMethod,
-  setModifyInitData,
-  TextEditor
+    columnlist,
+    ExcelDownloadModal,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType,
+    MAX_VALUE,
+    RequestMethod,
+    setModifyInitData,
+    TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -135,12 +135,12 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
             to: selectDate.to,
           }
           :
-          {
-            from: selectDate.from,
-            to: selectDate.to,
-            sorts: 'date',
-            order: order == 1 ? 'ASC' : 'DESC'
-          }
+        {
+          from: selectDate.from,
+          to: selectDate.to,
+          sorts: 'date',
+          order: order == 1 ? 'ASC' : 'DESC'
+        }
 
     })
 
@@ -200,64 +200,64 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
 
   const DeleteBasic = async () => {
     const res = await RequestMethod('delete', 'shipmentDelete',
-        basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let selectKey: string[] = []
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
-
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-            })
-            return {
-              ...row,
-              ...selectData,
-              type: row.type_id,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
+      basicRow.map((row, i) => {
+        if(selectList.has(row.id)){
+          let selectKey: string[] = []
+          let additional:any[] = []
+          column.map((v) => {
+            if(v.selectList){
+              selectKey.push(v.key)
             }
 
+            if(v.type === 'additional'){
+              additional.push(v)
+            }
+          })
+
+          let selectData: any = {}
+
+          Object.keys(row).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
+              }
+            }
+
+            if(v === 'unitWeight') {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(row['unitWeight'])
+              }
+            }
+
+            if(v === 'tmpId') {
+              selectData = {
+                ...selectData,
+                id: row['tmpId']
+              }
+            }
+          })
+          return {
+            ...row,
+            ...selectData,
+            type: row.type_id,
+            additional: [
+              ...additional.map(v => {
+                if(row[v.name]) {
+                  return {
+                    id: v.id,
+                    title: v.name,
+                    value: row[v.name],
+                    unit: v.unit
+                  }
+                }
+              }).filter((v) => v)
+            ]
           }
-        }).filter((v) => v))
+
+        }
+      }).filter((v) => v))
 
     if(res) {
       Notiflix.Report.success('삭제 성공!', '', '확인', () => {
@@ -399,120 +399,120 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
   }
 
   return (
-      <div>
-        <PageHeader
-            isSearch
-            isCalendar
-            searchKeyword={""}
-            searchOptionList={optionList}
-            onChangeSearchKeyword={(keyword) => {
-              setSearchKeyword(keyword);
-              setPageInfo({page:1, total:1})
-            }}
-            onChangeSearchOption={(option) => {
-              setOptionIndex(option)
-            }}
-            calendarTitle={'납품 날짜'}
-            calendarType={'period'}
-            selectDate={selectDate}
-            //@ts-ignore
-            setSelectDate={(date) => {
-              setSelectDate(date as {from:string, to:string})
-              setPageInfo({page:1, total:1})
-            }}
-            title={"납품 현황"}
-            buttons={
-              ['', '수정하기', '삭제']
-            }
-            buttonsOnclick={
-              (e) => {
-                switch(e){
-                  case 1:
-                    Notiflix.Loading.standard();
-                    let check = false;
-                    basicRow.map((v) => {
-                      if(selectList.has(v.id)){
-                        check = true;
+    <div>
+      <PageHeader
+        isSearch
+        isCalendar
+        searchKeyword={""}
+        searchOptionList={optionList}
+        onChangeSearchKeyword={(keyword) => {
+          setSearchKeyword(keyword);
+          setPageInfo({page:1, total:1})
+        }}
+        onChangeSearchOption={(option) => {
+          setOptionIndex(option)
+        }}
+        calendarTitle={'납품 날짜'}
+        calendarType={'period'}
+        selectDate={selectDate}
+        //@ts-ignore
+        setSelectDate={(date) => {
+          setSelectDate(date as {from:string, to:string})
+          setPageInfo({page:1, total:1})
+        }}
+        title={"납품 현황"}
+        buttons={
+          ['', '수정하기', '삭제']
+        }
+        buttonsOnclick={
+          (e) => {
+            switch(e){
+              case 1:
+                Notiflix.Loading.standard();
+                let check = false;
+                basicRow.map((v) => {
+                  if(selectList.has(v.id)){
+                    check = true;
+                  }
+                })
+                if(check) {
+                  dispatch(setModifyInitData({
+                    modifyInfo: basicRow.map(v => {
+                      if (selectList.has(v.id)) {
+                        return v
                       }
-                    })
-                    if(check) {
-                      dispatch(setModifyInitData({
-                        modifyInfo: basicRow.map(v => {
-                          if (selectList.has(v.id)) {
-                            return v
-                          }
-                        }).filter(v => v),
-                        type: 'delivery'
-                      }))
-                      Notiflix.Loading.remove(300);
-                      router.push('/mes/delivery/modify')
-                    }else{
-                      Notiflix.Loading.remove(300);
-                      Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
-                    }
-                    break;
-                  case 2:
-                    Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-                        ()=> DeleteBasic(),
-                        ()=>{}
-                    )
-                    break;
+                    }).filter(v => v).map((v)=>{return {...v, amount: 0}}),
+                    type: 'delivery',
+                  }))
+                  Notiflix.Loading.remove(300);
+                  router.push('/mes/delivery/modify')
+                }else{
+                  Notiflix.Loading.remove(300);
+                  Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
                 }
-              }
-              // onClickHeaderButton
+                break;
+              case 2:
+                Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+                  ()=> DeleteBasic(),
+                  ()=>{}
+                )
+                break;
             }
-        />
-        <ExcelTable
-            editable
-            // resizable
-            headerList={[
-              SelectColumn,
-              ...column
-            ]}
-            row={basicRow}
-            // setRow={setBasicRow}
-            setRow={(e) => {
-              let tmp: Set<any> = selectList
-              e.map(v => {
-                if(v.isChange) tmp.add(v.id)
-              })
-              setSelectList(tmp)
-              setBasicRow(e)
-            }}
-            selectList={selectList}
-            //@ts-ignore
-            setSelectList={setSelectList}
-            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-            scrollEnd={(value) => {
-              if(value){
-                if(pageInfo.total > pageInfo.page){
-                  setPageInfo({...pageInfo, page:pageInfo.page+1})
-                }
-              }
-            }}
-        />
-        {/*<PaginationComponent*/}
-        {/*  currentPage={pageInfo.page}*/}
-        {/*  totalPage={pageInfo.total}*/}
-        {/*  setPage={(page) => {*/}
-        {/*    if(keyword){*/}
-        {/*      router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)*/}
-        {/*    }else{*/}
-        {/*      router.push(`/mes/basic/mold?page=${page}`)*/}
-        {/*    }*/}
-        {/*  }}*/}
-        {/*/>*/}
-        <ExcelDownloadModal
-            isOpen={excelOpen}
-            column={column}
-            basicRow={basicRow}
-            filename={`금형기준정보`}
-            sheetname={`금형기준정보`}
-            selectList={selectList}
-            tab={'ROLE_BASE_07'}
-            setIsOpen={setExcelOpen}
-        />
-      </div>
+          }
+          // onClickHeaderButton
+        }
+      />
+      <ExcelTable
+        editable
+        // resizable
+        headerList={[
+          SelectColumn,
+          ...column
+        ]}
+        row={basicRow}
+        // setRow={setBasicRow}
+        setRow={(e) => {
+          let tmp: Set<any> = selectList
+          e.map(v => {
+            if(v.isChange) tmp.add(v.id)
+          })
+          setSelectList(tmp)
+          setBasicRow(e)
+        }}
+        selectList={selectList}
+        //@ts-ignore
+        setSelectList={setSelectList}
+        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        scrollEnd={(value) => {
+          if(value){
+            if(pageInfo.total > pageInfo.page){
+              setPageInfo({...pageInfo, page:pageInfo.page+1})
+            }
+          }
+        }}
+      />
+      {/*<PaginationComponent*/}
+      {/*  currentPage={pageInfo.page}*/}
+      {/*  totalPage={pageInfo.total}*/}
+      {/*  setPage={(page) => {*/}
+      {/*    if(keyword){*/}
+      {/*      router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)*/}
+      {/*    }else{*/}
+      {/*      router.push(`/mes/basic/mold?page=${page}`)*/}
+      {/*    }*/}
+      {/*  }}*/}
+      {/*/>*/}
+      <ExcelDownloadModal
+        isOpen={excelOpen}
+        column={column}
+        basicRow={basicRow}
+        filename={`금형기준정보`}
+        sheetname={`금형기준정보`}
+        selectList={selectList}
+        tab={'ROLE_BASE_07'}
+        setIsOpen={setExcelOpen}
+      />
+    </div>
   );
 }
 
