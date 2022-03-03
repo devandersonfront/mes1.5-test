@@ -39,7 +39,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().subtract(1, "month").format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
     const [optionIndex, setOptionIndex] = useState<number>(0);
-    const [pageInfo, setPageInfo] = useState<{page:number, totalPage:number}>({page:1, totalPage:1});
+    const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:1});
     const [keyword, setKeyword] = useState<string>()
 
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -223,7 +223,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         })
 
         if(res){
-            setPageInfo({...pageInfo, totalPage: res.totalPages })
+            setPageInfo({...pageInfo, total: res.totalPages })
             cleanUpData(res);
         }
     }
@@ -242,7 +242,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
             }
         })
         if(res){
-            setPageInfo({...pageInfo, totalPage: res.totalPages })
+            setPageInfo({...pageInfo, total: res.totalPages })
             cleanUpData(res);
         }
     }
@@ -309,10 +309,12 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
                     setKeyword(keyword)
+                    setPageInfo({page:1,total:1})
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(index) => {
                     setOptionIndex(index);
+                    setPageInfo({page:1,total:1})
                 }}
             />
             <ExcelTable
@@ -331,7 +333,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                     setSelectList(selectedRows)
                 }}
                 scrollEnd={(e) => {
-                    if(e && pageInfo.totalPage > pageInfo.page) setPageInfo({...pageInfo, page:pageInfo.page+1})
+                    if(e && pageInfo.total > pageInfo.page) setPageInfo({...pageInfo, page:pageInfo.page+1})
                 }}
             />
             {/*<PaginationComponent totalPage={} currentPage={} setPage={} />*/}

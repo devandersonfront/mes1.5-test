@@ -46,7 +46,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     total: 1
   })
 
-  const [first, setFirst] = useState<boolean>(true);
+  // const [first, setFirst] = useState<boolean>(true);
 
 
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
@@ -68,10 +68,10 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   const changeOrder = (value:number) => {
     setOrder(value);
+    setPageInfo({page:1,total:1})
   }
 
   useEffect(() => {
-    // setOptionIndex(option)
     if(keyword){
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
@@ -164,7 +164,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     })
 
     if(res){
-      setFirst(false);
+      // setFirst(false);
       setPageInfo({
         ...pageInfo,
         page: res.page,

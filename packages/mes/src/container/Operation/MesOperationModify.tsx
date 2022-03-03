@@ -138,7 +138,6 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
 
     useEffect(() => {
         if(selector && selector.type && selector.modifyInfo){
-            console.log(selector)
             setBasicRow([
                 ...selector.modifyInfo
             ])

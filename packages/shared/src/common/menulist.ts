@@ -32,7 +32,7 @@ const BASIC_MENUS: IMenuType[] = [
     title: '사용자 권한 관리', url: '',
     subMenu: [
       {title: '권한 관리', url: '/mes/basic/authority/member'},
-      {title: '유저 관리', url: '/mes/basic/user?page=1'},
+      {title: '유저 관리', url: '/mes/basic/user'},
     ]
   },
   {title: '공장 기준정보', url: '/mes/basic/factory'},
