@@ -5,6 +5,8 @@ import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelect
 import ButtonGroup from "../../../../main/component/ButtonGroup";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
+import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
+import Notiflix from "notiflix";
 
 
 interface SelectParameter {
@@ -60,6 +62,9 @@ const MesKpiOperation = () => {
     }
 
     const RequestOperationApi = async (productId: number) => {
+        if(moment(selectDate.from).add(3,'month') < moment(selectDate.to)){
+            return Notiflix.Report.warning("경고", "최대 검색 기간을 초과하였습니다.", "확인",)
+        }
         const res = await RequestMethod('get', `productCapacityUtilizationList`,{
             params: {
                 productIds: productId,
@@ -148,14 +153,14 @@ const MesKpiOperation = () => {
                 {
                     processBasicRow.id
                         ? <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            작업이력별 설비가동률
+                            작업이력별 설비가동률 (검색 기간은 최대 3개월 입니다.)
                         </span>
                         : <span style={{color:"#ffffff58", fontSize:22, fontWeight:"bold"}}>
                             제품을 선택해주세요
                         </span>
                 }
                 <div style={{display: 'flex', }}>
-                    <PeriodSelectCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={false} />
+                    <DateRangeCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={false} />
                     <ButtonGroup buttons={['']} buttonsOnclick={buttonEvents}/>
                 </div>
             </div>
