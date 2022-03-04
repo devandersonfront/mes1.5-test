@@ -442,8 +442,8 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
                       if (selectList.has(v.id)) {
                         return v
                       }
-                    }).filter(v => v),
-                    type: 'delivery'
+                    }).filter(v => v).map((v)=>{return {...v, amount: 0}}),
+                    type: 'delivery',
                   }))
                   Notiflix.Loading.remove(300);
                   router.push('/mes/delivery/modify')
