@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {ExcelTable, Header as PageHeader, PaginationComponent, RequestMethod} from "shared";
 import {columnlist} from "shared";
@@ -18,6 +18,62 @@ const MesToolRegister = () => {
     }]);
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingRegister);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
+
+    useEffect(() => {
+        getMenus()
+    }, [])
+
+    const getMenus = async () => {
+        let res = await RequestMethod('get', `loadMenu`, {
+            path: {
+                tab: 'ROLE_TOOL_01'
+            }
+        })
+
+        if(res){
+            let tmpColumn = columnlist["toolWarehousingRegister"]
+
+            tmpColumn = tmpColumn.map((column: any) => {
+                let menuData: object | undefined;
+                res.bases && res.bases.map((menu: any) => {
+                    if(menu.colName === column.key){
+                        menuData = {
+                            id: menu.id,
+                            name: menu.title,
+                            width: menu.width,
+                            tab:menu.tab,
+                            unit:menu.unit,
+                            moddable: menu.moddable,
+                        }
+                    } else if(menu.colName === 'id' && column.key === 'tmpId'){
+                        menuData = {
+                            id: menu.id,
+                            name: menu.title,
+                            width: menu.width,
+                            tab:menu.tab,
+                            unit:menu.unit,
+                            moddable: menu.moddable,
+                        }
+                    }
+                })
+
+                if(menuData){
+                    return {
+                        ...column,
+                        ...menuData,
+                    }
+                }
+            }).filter((v:any) => v)
+
+            // setColumn([...tmpColumn])
+            setColumn([...tmpColumn.map(v=> {
+                return {
+                    ...v,
+                    name: !v.moddable ? v.name+'(필수)' : v.name
+                }
+            })])
+        }
+    }
 
 
     const SaveCleanUpData = (data:any[]) => {

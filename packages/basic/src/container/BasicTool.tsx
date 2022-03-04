@@ -26,7 +26,7 @@ const BasicTool = ({page, search, option}: IProps) => {
     const router = useRouter();
     const [column, setColumn] = useState<any>(columnlist.toolRegister)
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
-    const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:22});
+    const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:1});
     const [keyword, setKeyword] = useState<string>("");
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -109,6 +109,7 @@ const BasicTool = ({page, search, option}: IProps) => {
                 selectKey = v.key
             }
         })
+
 
         additionalMenus.map((v: any) => {
             if(v.type === 'additional'){
@@ -193,7 +194,12 @@ const BasicTool = ({page, search, option}: IProps) => {
 
         // if(type !== 'productprocess'){
         Promise.all(tmpColumn).then(res => {
-            setColumn([...res])
+            setColumn([...res.map(v=> {
+                return {
+                    ...v,
+                    name: v.moddable ? v.name+'(필수)' : v.name
+                }
+            })])
         })
         // }
     }
