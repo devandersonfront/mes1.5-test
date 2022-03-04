@@ -5,6 +5,7 @@ import moment from "moment";
 import useOnclickOutside from "react-cool-onclickoutside";
 import 'react-calendar/dist/Calendar.css'
 import '@wojtekmaj/react-daterange-picker/dist/DateRangePicker.css'
+//@ts-ignore
 import DateRangePicker from '@wojtekmaj/react-daterange-picker/dist/entry.nostyle'
 
 interface ValueType {
