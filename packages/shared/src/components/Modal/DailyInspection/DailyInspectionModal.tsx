@@ -1,52 +1,57 @@
 import React, {useEffect, useState} from "react"
-import {LineBorderContainer} from "../../Formatter/LineBorderContainer";
-import {POINT_COLOR} from "../../../common/configset";
 //@ts-ignore
 import IcSearchButton from "../../../../public/images/ic_search.png";
-import {IExcelHeaderType} from "../../../common/@types/type";
 import Modal from "react-modal";
 //@ts-ignore
 import IcX from "../../../../public/images/ic_x.png";
 //@ts-ignore
 import Search_icon from "../../../../public/images/btn_search.png";
 import {ExcelTable} from "../../Excel/ExcelTable";
-import {searchModalList} from "../../../common/modalInit";
-import {PaginationComponent} from "../../Pagination/PaginationComponent";
-import Notiflix from "notiflix";
 import styled from "styled-components";
 import {columnlist} from "../../../common/columnInit";
 import DefaultImageProfile from "../../ImageProfile/DefaultImageProfile";
-import {DailyInspection} from "../../../../../basic/src/container/BasicDailyInspectionInfo";
-import {TextEditor} from "../../InputBox/ExcelBasicInputBox";
+// import {DailyInspection} from "../../../../../basic/src/container/BasicDailyInspectionInfo";
+import {TransferCodeToValue} from "../../../common/TransferFunction";
 
 
 interface IProps {
     isOpen:boolean
     setIsOpen:(value:boolean) => void
-    basicRow:DailyInspection
+    basicRow:any
+    setBasicRow:(value:any) => void
     modalSelectOption?: { seq?: number, legendary?: string, content?: string, }[]
 }
 
-const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, modalSelectOption}:IProps) => {
-
+const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalSelectOption}:IProps) => {
     const changeSelectOption = () => {
         let options = columnlist.dailyInspectionCheckList;
         if(modalSelectOption){
             options.map((column) => {
 
                 if(column.key === "type"){
-                // column.formatter = TextEditor
+                    // console.log(basicRow.check_list)
+                    // basicRow.check_list.map((check) => {
+                    //     if(typeof check.type === "string") column.formatter = TextEditor
+                    // })
                     let changedOption = [];
-                    modalSelectOption.map((option, index) => {
-                        changedOption.push({pk:index, name:option.legendary, content:option.content})
+                    modalSelectOption.map(({legendary, content, seq}, index) => {
+                        if(legendary && content){
+                            changedOption.push({pk:index, name:legendary, content:content})
+                        }
                     })
                     column.selectList = changedOption
                 }
             })
         }
     }
+    //[basicRow.machine]
+    const prettyMachineData =  (machine:any) => {
+        machine.type = TransferCodeToValue(machine?.type, "machine");
+        return [machine]
+    }
     useEffect(() => {
         if(isOpen) changeSelectOption()
+        console.log(basicRow)
     },[isOpen])
 
     return (
@@ -92,17 +97,29 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, modalSelectOption}:I
                     <BorderBox>
                         <Title>일상 점검 리스트</Title>
                         <ContentBox>
-                            <ExcelTable headerList={columnlist.dailyInspectionModal} row={[""]} setRow={() => {}} type={"searchModal"} width={"100%"} height={80}/>
+                            <ExcelTable headerList={columnlist.dailyInspectionModal} row={prettyMachineData(basicRow.machine)}
+                                        setRow={(e) => {
+                                            console.log("e : " ,e, basicRow)
+                                            setBasicRow({...basicRow, machine:e[0]})
+                                        }}
+                                        type={"searchModal"} width={"100%"} height={80}/>
                             <ImageTable>
-                                <DefaultImageProfile  title={"타이틀"} style={{width:592, display:"flex", justifyContent:"center", alignItems:"center"}}/>
+                                <DefaultImageProfile  title={"타이틀"} image={
+                                    "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"+basicRow.inspection_photo.machinePicture?.uuid
+                                } style={{width:592, height: 366,display:"flex", justifyContent:"center", alignItems:"center"}}/>
                                 <ImageGrid>
-                                    {Object.values(basicRow.inspection_photo).map((value, index) =>
-                                        <DefaultImageProfile title={`부위0${index+1}`} image={value.uuid ?
-                                            "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"+value.uuid
-                                            :
-                                            ""
-                                        } style={{width:168, height:119, display:"flex", justifyContent:"center", alignItems:"center"}}/>
-                                        )}
+                                    {Object.values(basicRow.inspection_photo).map((value, index) =>{
+                                        console.log("value : ", value, index)
+                                        if(index){
+                                            return(
+                                                <DefaultImageProfile title={`부위0${index}`} image={value.uuid ?
+                                                    "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"+value.uuid
+                                                    :
+                                                    ""
+                                                } style={{width:168, height:119, display:"flex", justifyContent:"center", alignItems:"center"}}/>
+                                            )
+                                        }
+                                        })}
                                 </ImageGrid>
                                 <NoteBox>
                                     <LegendaryBox>
@@ -110,12 +127,12 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, modalSelectOption}:I
                                         <div style={{display:"flex", justifyContent:"space-between", width:"100%"}}>
                                             <div style={{width:"50%", marginLeft:"15px"}}>
                                                 {Object.values(basicRow.legendary_list).map((value, index) => {
-                                                    if (index <= 4) return <span style={{display: "block"}}>{value["legendary"]} : {value["content"]}</span>
+                                                    if (index <= 4 && value["legendary"] !== "" && value["content"] !== "") return <span style={{display: "block"}}>{value["legendary"]} : {value["content"]}</span>
                                                 })}
                                             </div>
                                             <div style={{width:"50%", marginLeft:"15px"}}>
                                                 {Object.values(basicRow.legendary_list).map((value, index) => {
-                                                    if(index > 5) return <span style={{display: "block"}}>{value["legendary"]} : {value["content"]}</span>
+                                                    if(index > 4 && value["legendary"] !== "" && value["content"] !== "") return <span style={{display: "block"}}>{value["legendary"]} : {value["content"]}</span>
 
                                                 })}
                                             </div>
@@ -123,13 +140,39 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, modalSelectOption}:I
                                     </LegendaryBox>
                                     <ETCBox>
                                         <div style={{width:"100%", height:40, fontWeight:"bold", background:"#F4F6FA", display:"flex",justifyContent:"center", alignItems:"center"}}>기타 사항</div>
-                                        <div>
+                                        <div style={{width:"100%", overflow:"auto", height:"100%", textOverflow:"ellipsis"}}>
+                                            {console.log(basicRow)}
                                             {basicRow?.etc[0]?.etc ?? "-"}
                                         </div>
                                     </ETCBox>
                                 </NoteBox>
                             </ImageTable>
-                            <ExcelTable headerList={columnlist.dailyInspectionCheckList} row={basicRow.check_list} width={"100%"} setRow={() => {}} type={"searchModal"}/>
+                            <div style={{display:"flex",}}>
+                                <ExcelTable
+                                    headerList={columnlist.dailyInspectionCheckList}
+                                    row={basicRow.check_list}
+                                    width={"1104px"}
+                                    height={basicRow.check_list.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list.length * 40 + 40}
+                                    setRow={(e) => {
+                                        console.log("e : ", e)
+                                    }}
+                                    type={"searchModal"}/>
+                                <ExcelTable
+                                    headerList={columnlist.dailyInspectionManagement}
+                                    row={[basicRow]}
+                                    height={basicRow.check_list.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list.length * 40 + 40}
+                                    setRow={(e) => {
+                                        console.log("YEAH !!! : ", e)
+                                        console.log(basicRow)
+                                        basicRow.writer= e[0].worker;
+                                        setBasicRow(basicRow)
+                                    }}
+                                    width={"553px"}
+                                    type={"searchModal"}
+                                    scrollOnOff
+                                />
+                            </div>
+
                         </ContentBox>
                     </BorderBox>
                 </div>

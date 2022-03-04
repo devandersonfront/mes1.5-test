@@ -39,8 +39,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     total: 1
   })
 
-  console.log(selectList,'selectListselectListselectList')
-
   useEffect(() => {
     if(isOpen) {
       if(!row.factory_id){
@@ -127,7 +125,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-   
+
 
     if(filterList){
       await RequestMethod("post", "subFactorySave", filterList)

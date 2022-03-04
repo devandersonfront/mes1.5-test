@@ -5,7 +5,6 @@ import {CellButtonComponent} from '../components/Buttons/CellButtom'
 import {UnitContainer} from '../components/Unit/UnitContainer'
 import {MoveButtons} from "../components/MoveButtons";
 import {FileEditer} from '../components/FileUpload/ExcelBasicFileUpload'
-import {TitleFileUpload} from '../components/FileUpload/TitleFileUpload'
 import {MemberSearchModal} from '../components/Modal/MemeberSearchModal'
 import {ProductSearchModal} from '../components/Modal/ProductSearchModal'
 import {CustomerSearchModal} from '../components/Modal/CustomerSearchModal'
@@ -56,6 +55,9 @@ import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFact
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
 import placeholder from "lodash/fp/placeholder";
 import {OnClickContainer} from '../components/InputBox/OnClickContainer'
+import InputInfoModal from "../components/Modal/InfoModal/InputInfoModal";
+import {LineBorderContainer} from "../components/Formatter/LineBorderContainer";
+import {MultiTypeInputEditor} from "../components/InputBox/multiTypeInputBox";
 
 
 export const columnlist: any = {
@@ -170,7 +172,7 @@ export const columnlist: any = {
     {key: 'volt', name: '사용 전압',editor: TextEditor, formatter: UnitContainer, unitData: 'V', width: 118},
     {key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory',},
     {key: 'affiliated_id',name: '공장 세분화명', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory',},
-      {key: 'check',name: '일상 점검', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory',},
+    {key: 'form_id',name: '일상 점검', width: 118, formatter: CellButtonComponent /*FactoryInfoModal*/, type: 'inspection',},
     {key: 'product_id',name: '생산 품목', width: 118, formatter: ProductInfoModal, type:"machine", headerType:[{name: "기계명"}]},
   ],
   device: [
@@ -312,13 +314,13 @@ export const columnlist: any = {
     {key: 'slideHeight', name: '슬라이드 위치',editor: TextEditor,formatter: PlaceholderBox, placeholder: '0'},
     {key: 'limit', name: '최대타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
     {key: 'inspect', name: '점검타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
-    // {key: 'inspect', name: '점검주기', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
     {key: 'current', name: '현재타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
     {key: 'product_id', name: '생산품목', formatter: ProductInfoModal, type:"mold", headerType:[  {code:"CODE", name:"금형명"},
                                                                                                  {cavity:"캐비티", spm:"SPM", slideHeight:"슬라이드 위치"},
                                                                                                  {limit:"최대 타수", inspect:"점검 타수", current:"현재 타수"},
                                                                                               ]
     },
+    {key: 'form_id',name: '일상 점검', width: 118, formatter: CellButtonComponent /*FactoryInfoModal*/, type: 'inspection'},
     // {key: 'product_id', name: '생산품목', formatter: InfoModal, type: 'productInfo', summaryType: 'mold'},
   ],
   productprocess: [
@@ -1035,13 +1037,13 @@ export const columnlist: any = {
   ],
 
   dailyInspectionMachine: [
-    {key: "customer_id", name: '기계 제조사', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168, type: 'autoInput'},
-    {key: "cm_id", name: '기계 이름',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput'},
-    {key: "code", name: '제조 번호', formatter: PlaceholderBox, width: 480, type: 'autoInput'},
-    {key: "name", name:"기계 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
-    {key: "name", name:"용접 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
-    {key: "name", name:"제조 연원일", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
-    {key: "name", name:"담당자", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
+    {key: "mfrName", name: '기계 제조사', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168, type: 'autoInput'},
+    {key: "name", name: '기계 이름',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput'},
+    {key: "mfrCode", name: '제조 번호', formatter: PlaceholderBox, width: 480, type: 'autoInput'},
+    {key: "type", name:"기계 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
+    {key: "weldingType", name:"용접 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
+    {key: "madeAt", name:"제조 연원일", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
+    {key: "manager", name:"담당자", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
   ],
   dailyInspectionMachinePicture: [
     {key: "machinePicture", name: '기계 사진', formatter: FileEditer,  width: 300, type: 'image'},
@@ -1056,7 +1058,7 @@ export const columnlist: any = {
     {key: "photo9", name:"점검사항 부위09", formatter: FileEditer, type: 'image'},
   ],
   dailyInspectionMachineLegendary: [
-    {key: "seq", name: '구분', formatter: PlaceholderBox, placeholder: '자동 입력', width: 48,},
+    {key: "sequence", name: '구분', formatter: PlaceholderBox, placeholder: '자동 입력', width: 48,},
     {key: "legendary", name: '범례',formatter: PlaceholderBox, editor: TextEditor, placeholder: '범례 입력',},
     {key: "content", name: '범례 설명',formatter: PlaceholderBox, editor: TextEditor, placeholder: '범례 설명 입력',},
   ],
@@ -1076,24 +1078,35 @@ export const columnlist: any = {
     {key: "etc", name: '기타 사항', formatter: PlaceholderBox, editor: TextEditor, placeholder: '기타 사항 입력'},
   ],
   dailyInspectionModal: [
-    {key: "date", name: '점검 날짜', formatter: PlaceholderBox, editor: CalendarBox,width:304},
-    {key: "name", name: '기계 이름', formatter: PlaceholderBox, width:360},
-    {key: "code", name: '제조 번호', formatter: PlaceholderBox, width:880},
-    {key: "type", name: '기계 종류', formatter: PlaceholderBox, },
+    {key: "date", name: '점검 날짜',  formatter: CalendarBox, width:304, type:"Modal"},
+    {key: "name", name: '기계 이름', formatter:LineBorderContainer,  width:360},
+    {key: "mfrCode", name: '제조 번호', formatter:LineBorderContainer,  width:880},
+    {key: "type", name: '기계 종류', formatter:LineBorderContainer,  },
   ],
   dailyInspectionCheckList: [
+    // {key:"contract_id", name:"수주 번호", formatter: SearchModalTest, type: 'order', placeholder: '검색', disableType:"true"  },
     {key: "sequence", name: 'NO.', width:40},
     {key: "title", name: '점검 항목', width:256},
     {key: "standard", name: '점검 기준', width:368},
     {key: "method", name: '점검 방법', width:256 },
-    {key: "type", name: '결과', width:144 ,formatter: DropDownEditor, selectList: [
+    {key: "type", name: '결과', width:144 ,formatter: MultiTypeInputEditor, selectList: [
         {pk: 0, name: "범례 적용"},
         {pk: 1, name: "수치 입력"},
       ], type:"Modal"},
-    {key: "", name: '작성자 확인', width:240},
-    {key: "", name: '관리자 확인', width:240 },
-    {key: "", name: '문제 사항', width:120},
   ],
+  dailyInspectionManagement:[
+    {key: "writer", name: '작성자 확인', formatter:SearchModalTest, type:"worker",  },
+    {key: "manager", name: '관리자 확인', formatter:SearchModalTest, type:"user",  },
+    {key: "problem_info", name: '문제 사항', formatter:InputInfoModal, title:"기계 정보", subTitle:"문제 사항", headerItems:[
+        [
+          {title: '기계 이름', infoWidth: 144, key: 'name'},
+          {title: '제조 번호', infoWidth: 144, key: 'mfrCode'},
+          {title: '기계 종류', infoWidth: 144, key: 'type'},
+          {title: '날짜', infoWidth: 144, key: 'date'},
+        ]
+      ],  width:120},
+  ],
+
   test: [
     {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},
     {key: 'customerSearchModal', name: '거래처 검색', formatter: SearchModalTest, type: 'customer', width: 118,},

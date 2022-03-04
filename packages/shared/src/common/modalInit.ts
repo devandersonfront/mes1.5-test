@@ -543,6 +543,12 @@ export const searchModalList: any = {
     {key: 'process_id', name: '생산 공정', width: 120},
     {key: 'worker_name', name: '작업자', width: 120},
     {key: 'name', name: '기계 이름 (CODE)', width: 240}
+  ],
+  dailyInspectionProblemInfo: [
+    {key: 'seq', name: '번호', width: 64},
+    {key: 'details', name: '문제 내역', formatter: LineBorderContainer, editor:TextEditor, width: 480, placeholder:"문제 내역을 입력해주세요.", textType: 'Modal'},
+    {key: 'reason', name: '문제 원인', formatter: LineBorderContainer, editor:TextEditor, width: 560, placeholder:"문제 원인을 입력해주세요.", textType: 'Modal'},
+    {key: 'action', name: '대책 및 조치사항', formatter: LineBorderContainer, editor:TextEditor, placeholder:"대책 및 조치사항을 입력해주세요.", textType: 'Modal'},
   ]
 }
 

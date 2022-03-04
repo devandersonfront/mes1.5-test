@@ -9,6 +9,8 @@ import Modal from 'react-modal'
 import styled from 'styled-components'
 //@ts-ignore
 import calendarWhite from '../../../public/images/calendar_icon_white.png'
+//@ts-ignore
+import calendarBlack from '../../../public/images/calendar_icon_black.png'
 import {POINT_COLOR} from '../../common/configset'
 
 interface IProps {
@@ -33,10 +35,10 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
       <Background onClick={() => {
         setIsOpen(true)
       }}>
-        <p style={{padding: 0, margin: 0, color: row[column.key] ? '#ffffff' : '#ffffff4d', textAlign: 'center', width: '100%' }}>
+        <p style={{padding: 0, margin: 0, color: column.type === "Modal" ? 'black' : row[column.key] ? '#ffffff' : '#ffffff4d', textAlign: 'center', width: '100%' }}>
           {row[column.key] ? row[column.key] : moment().format("YYYY-MM-DD")}
         </p>
-        <img src={calendarWhite} style={{width: 24, height: 24}}/>
+        <img src={column.type !== "Modal" ? calendarWhite : calendarBlack} style={{width: 24, height: 24}}/>
       </Background>
       <Modal
         isOpen={isOpen}

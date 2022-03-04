@@ -31,10 +31,12 @@ export interface IExcelHeaderType {
   modalType?: boolean
   readonly?: boolean
   title?: string
+  subTitle?:string
   url?: string
   headerType?:any[]
   callback?: (data : any) => void
   idx?:number
+  headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][]
 }
 
 export interface IResponseType {

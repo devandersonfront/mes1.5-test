@@ -420,6 +420,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
     tempData.devices = value?.devices?.map((device) => {
       return {...device, type: device.type_id}
     })
+    tempData.photo = value.photo.uuid;
     tempData.additional =[
       ...additional.map((v, index)=>{
           if(!value[v.colName]) return undefined;
@@ -504,7 +505,6 @@ const BasicMachineV1u = ({ option}: IProps) => {
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
 
-    console.log(spliceRow,'spliceRowspliceRowspliceRow')
     const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined)
 
     if(spliceRow){
@@ -579,16 +579,16 @@ const BasicMachineV1u = ({ option}: IProps) => {
             }
           }}
         />
-      <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`기계기준정보`}
-        sheetname={`기계기준정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
-      />
+      {/*<ExcelDownloadModal*/}
+      {/*  isOpen={excelOpen}*/}
+      {/*  column={column}*/}
+      {/*  basicRow={basicRow}*/}
+      {/*  filename={`기계기준정보`}*/}
+      {/*  sheetname={`기계기준정보`}*/}
+      {/*  selectList={selectList}*/}
+      {/*  tab={'ROLE_BASE_07'}*/}
+      {/*  setIsOpen={setExcelOpen}*/}
+      {/*/>*/}
     </div>
   );
 }
