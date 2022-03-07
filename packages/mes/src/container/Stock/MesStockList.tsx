@@ -111,6 +111,9 @@ const MesStockList = ({page, search, option}: IProps) => {
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
+      },
+      params: {
+        sorts: 'modified'
       }
     })
 
@@ -135,7 +138,8 @@ const MesStockList = ({page, search, option}: IProps) => {
       },
       params: {
         keyword: keyword ?? '',
-        opt: optionIndex ?? 0
+        opt: optionIndex ?? 0,
+        sorts: 'modified'
       }
     })
 

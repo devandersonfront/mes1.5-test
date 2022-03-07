@@ -457,12 +457,6 @@ export const columnlist: any = {
       selectList: [{status:0, name:"입고일"},{status:1, name:"오름차순"},{status:2, name:"내림차순"}],},
     {key: 'lot_number', name: '부자재 LOT 번호', width: 118},
     {key: 'current', name: 'LOT 재고량', width: 118},
-    {key: 'exhaustion', formatter: DropDownEditor, headerRenderer: HeaderFilter, width: 118,
-      options:[{status:0, name:"재고 현황"},{status:1, name:"사용 가능"}],
-      selectList: [
-        {pk: false, name: '-'},
-        {pk: true, name: '사용완료'}
-      ]},
   ],
 
   substockModify: [
