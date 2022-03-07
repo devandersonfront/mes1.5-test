@@ -81,8 +81,8 @@ const MesToolRegister = () => {
         data.map((rowData, index) => {
             let tmpRow:any = {};
             let toolObject:any = {};
-            toolObject.tool_id = rowData?.tool_id;
-            toolObject.code = rowData.code;
+            toolObject.tool_id = rowData?.tool_id_save;
+            toolObject.code = rowData.code_save;
             toolObject.name = rowData.name;
             toolObject.unit = rowData.unitPK ?? rowData.unit;
             toolObject.stock = rowData?.warehousing;
@@ -92,8 +92,10 @@ const MesToolRegister = () => {
 
             tmpRow.tool = toolObject;
             tmpRow.date = rowData.date;
-            tmpRow.warehousing = rowData.warehousing;
+            tmpRow.warehousing = rowData.amount;
+            // tmpRow.amount = rowData.amount;
             resultData.push(tmpRow);
+            console.log("tmpRow : ", tmpRow)
         })
         return resultData;
     }
@@ -159,11 +161,23 @@ const MesToolRegister = () => {
                 row={basicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
-                    e.map(v => {
+                    let tmpBasicRow = [...e]
+                    e.map((v, index) => {
                         if(v.isChange) tmp.add(v.id)
+                        if(v.code) {
+
+                            tmpBasicRow[index].tool_id_save = v.tool_id
+                            tmpBasicRow[index].code_save = v.code
+                            tmpBasicRow[index].code = v.tool_id_save
+                            tmpBasicRow[index].tool_id = v.code_save
+                        }
+                        if(v.customer) {
+                            tmpBasicRow[index].customer_id = v.customer
+                        }
                     })
+                    console.log("e : ", e)
                     setSelectList(tmp)
-                    setBasicRow(e)
+                    setBasicRow(tmpBasicRow)
                 }}
                 selectList={selectList}
                 //@ts-ignore

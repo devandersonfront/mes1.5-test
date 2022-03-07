@@ -1273,11 +1273,11 @@ export const columnlist: any = {
     {key: "product_id", name: '생산 품목', formatter:ProductInfoModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
   ],
   toolWarehousingRegister:[
-    {key: "code", name: '공구 CODE', formatter: SearchModalTest, type:"tool", placeholder: 'CODE 입력'},
+    {key: "tool_id", name: '공구 CODE', formatter: SearchModalTest, type:"tool", placeholder: 'CODE 입력'},
     {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: "customer", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 압력'},
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
+    {key: "amount", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 압력'},
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   toolWarehousingList:[
