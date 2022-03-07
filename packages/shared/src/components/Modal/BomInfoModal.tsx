@@ -53,7 +53,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       setSelectRow(null)
       // if(row.bom_root_id){
 
-      if(column.name ==='BOM'){
+      if(column.type ==='bomRegister'){
         
         if(row.product_id){
           SearchBasic().then(() => {
