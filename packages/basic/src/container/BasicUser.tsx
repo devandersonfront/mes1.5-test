@@ -333,11 +333,6 @@ const BasicUser = ({}: IProps) => {
     setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
 
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((row)=>{ map.delete(row.id)})
-    setBasicRow(Array.from(map.values()))
-    setSelectList(new Set())
-
   }
 
   const LoadBasic = async (page?: number) => {
