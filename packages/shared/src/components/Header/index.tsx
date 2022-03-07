@@ -55,6 +55,12 @@ interface IProps {
   isNz?: boolean
   onChangeNz?: (nz:boolean) => void
   nz?: boolean
+  isExp?: boolean
+  onChangeExp?: (exp:boolean) => void
+  exp?: boolean
+  isCode?: boolean
+  onChangeCode?: (code:boolean) => void
+  code?: boolean
 }
 
 const useStyles = makeStyles(_ => {
@@ -149,7 +155,7 @@ const lightTheme = createMuiTheme({
 const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnclick, isSearch, style, leftButton, onClickMenu, menuIndex,
                       searchKeyword, onChangeSearchKeyword, searchOptionList, onChangeSearchOption, filterList, onChangeFilter,
                       serviceFilterButton, onClickServiceButton, leftButtonOnClick, basicMachineType, typeListOnClick, isCalendar, onChangeSelectDate,
-                      calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz}: IProps) => {
+                      calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code}: IProps) => {
 
   const [machineCheck, setMachineCheck] = React.useState<any>({
     all: true,
@@ -202,25 +208,89 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
             }
             <ButtonWrapper style={{marginTop: 20 }}>
               {
+                isCode && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
+                  <input id='codeTrue' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                    onChangeCode && onChangeCode(true)
+                  }}/>
+                  <label htmlFor="codeTrue">
+                    <div style={{display:"flex", alignItems:"center",}}>
+                      {
+                        code
+                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
+                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
+                      }
+
+                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>CODE로 등록</p>
+                    </div>
+                  </label>
+                  <input id='codeFalse' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                    onChangeCode && onChangeCode(false)
+                  }}/>
+                  <label htmlFor="codeFalse">
+                    <div style={{display:"flex", alignItems:"center",}}>
+                      {
+                        !code
+                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
+                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
+                      }
+
+                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>수주번호로 등록</p>
+                    </div>
+                  </label>
+                </div>
+              }
+              {
+                isExp && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 30 }}>
+                  <input id='expTrue' name={'exp'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                    onChangeExp && onChangeExp(true)
+                  }}/>
+                  <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12,marginRight: 15}}>사용 기준일</p>
+                  <label htmlFor="expTrue">
+                    <div style={{display:"flex", alignItems:"center",}}>
+                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>초과</p>
+                      {
+                        exp
+                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
+                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
+                      }
+                    </div>
+                  </label>
+                  <input id='expFalse' name={'exp'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                    onChangeExp && onChangeExp(false)
+                  }}/>
+                  <label htmlFor="expFalse">
+                    <div style={{display:"flex", alignItems:"center",}}>
+                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>전체</p>
+                      {
+                        !exp
+                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
+                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
+                      }
+                    </div>
+                  </label>
+                </div>
+              }
+              {
                 isNz && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
                     <input id='nzTrue' name={'nz'} type={'radio'} style={{display: 'none'}} onClick={() => {
                       onChangeNz && onChangeNz(true)
                     }}/>
-                    <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>재고 0</p>
+                    <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12,marginRight: 15}}>사용 완료</p>
                     <label htmlFor="nzTrue">
                         <div style={{display:"flex", alignItems:"center",}}>
+                          <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>숨김</p>
                           {
                             nz
                               ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
                               : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
                           }
 
-                            <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>숨김</p>
                         </div>
                     </label>
                     <input id='nzFalse' name={'nz'} type={'radio'} style={{display: 'none'}} onClick={() => {
                       onChangeNz && onChangeNz(false)
                     }}/>
+                  <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>표시</p>
                     <label htmlFor="nzFalse">
                         <div style={{display:"flex", alignItems:"center",}}>
                           {
@@ -228,8 +298,6 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
                               ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
                               : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
                           }
-
-                            <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>표시</p>
                         </div>
                     </label>
                 </div>

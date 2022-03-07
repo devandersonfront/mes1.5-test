@@ -7,7 +7,6 @@ import {
     Header as PageHeader,
     IExcelHeaderType,
     MAX_VALUE,
-    PaginationComponent,
     RequestMethod,
     RootState,
     setModifyInitData
@@ -40,37 +39,14 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawstockModify"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처'])
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
-
-  const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment().startOf('isoWeek').format('YYYY-MM-DD'),
-    to: moment().endOf('isoWeek').format('YYYY-MM-DD')
-  });
-
-  // useEffect(() => {
-  //   setOptionIndex(option)
-  //   if(keyword){
-  //     SearchBasic(keyword, option, page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }else{
-  //     LoadBasic(page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [page, keyword, option])
 
   useEffect(() => {
-    if(selector && selector.modifyInfo){
+    if(selector && selector.modifyInfo && selector.type){
       setBasicRow([
         ...selector.modifyInfo
       ])
+    }else{
+      router.push("/mes/rawmaterialV1u/stock")
     }
   }, [selector])
 
@@ -171,7 +147,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
-            current: row.exhaustion ? 0 : row.current,
+            current: row.exhaustion === "-" ? row.current : 0,
             additional: [
               ...additional.map(v => {
                 if(row[v.name]) {
@@ -187,7 +163,17 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
           }
 
         }
-      }).filter((v) => v))
+      }).filter((v) => v)).catch((error) => {
+
+      if(error.status === 409){
+        Notiflix.Report.warning("경고", error.data.message, "확인",)
+        return true
+      }else if(error.status === 422){
+        Notiflix.Report.warning("경고", error.data.message, "확인",)
+        return true
+      }
+      return false
+    })
 
 
     if(res){
@@ -251,17 +237,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/rawmaterialV1u/modify?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/rawmaterialV1u/modify?page=${page}`)
-          }
-        }}
-      />
+
       <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}

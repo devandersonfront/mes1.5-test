@@ -97,15 +97,15 @@ export type InspectionFinalDataResult = {
 }
 
 export type InspectionInfo = {
-    name: string
-    unit: string
-    type: number
-    error_minimum: string
-    error_maximum: string
-    standard: string
-    samples: number
-    data_result: InspectionDataResult[]
-  }
+  name: string
+  unit: string
+  type: number
+  error_minimum: string
+  error_maximum: string
+  standard: string
+  samples: number
+  data_result: InspectionDataResult[]
+}
 
 
 
@@ -121,3 +121,35 @@ export type ChangeProductFileInfo = {
   sequence: number
 }
 
+
+export type MidrangeRecordRegister = {
+  inspection_time: {
+    beginning: string
+    middle: string
+    end: string
+  } | {}
+  inspection_result: {
+    beginning: InspectionFinalDataResult[]
+    middle: InspectionFinalDataResult[]
+    end: InspectionFinalDataResult[]
+  } | {}
+  legendary_list: string[]
+  inspection_info: {
+    beginning: {
+      data_result: InspectionDataResult[]
+      error_maximum: string
+      error_minimum: string
+      name: string
+      samples: number
+      standard: string
+      type: number
+      unit: string
+    }[]
+    middle: string
+    end: string
+  } | {}
+  sic_id: string
+  record_id: string
+  writer: string
+  version?: number
+}

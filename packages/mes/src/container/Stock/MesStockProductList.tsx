@@ -192,7 +192,7 @@ const MesStockProductList = ({page, keyword, option}) => {
       let random_id = Math.random()*1000;
       return {
         ...row,
-        customer_id: row.product?.model?.customer?.name ?? "-",
+        customer_id: row.product?.customer?.name ?? "-",
         cm_id:row.product?.model?.model ?? "-",
         model:row.product?.model?.model ?? "-",
         code:row.product?.code ?? "-",
@@ -295,7 +295,7 @@ const MesStockProductList = ({page, keyword, option}) => {
       buttons={[""]}
       buttonsOnclick={buttonClickEvents}
       isSearch={true}
-      searchOptionList={["거래처", "모델", "CODE", "품명"]}
+      searchOptionList={["거래처", "모델",'',"품명"]}
       onChangeSearchOption={(option) => {
 
         setOptionIndex(option)

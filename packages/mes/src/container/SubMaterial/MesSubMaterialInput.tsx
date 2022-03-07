@@ -82,17 +82,14 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
 
 
   const SaveBasic = async () => {
-
-    if(basicRow.length === 0) {
+    if(selectList.size <= 0) {
       return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
     }
-
     basicRow.map((v)=> {
       if(selectList.has(v.id)) {
-        if (v.rm_id === undefined) {
+        if (v.sm_id === undefined) {
           return Notiflix.Report.warning("경고", "부자재 CODE를 선택해 주시기 바랍니다.", "확인",)
-        }
-        if (v.lot_number === undefined) {
+        }else if (v.lot_number === undefined) {
           return Notiflix.Report.warning("경고", "부자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
         }
       }
@@ -142,8 +139,8 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
-            current: row.amount,
-            warehousing: row.amount,
+            current: row.warehousing,
+            warehousing: row.warehousing,
             customer: row.customerArray,
             additional: [
               ...additional.map(v => {
@@ -163,7 +160,7 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
       }).filter((v) => v))
       .catch((error) => {
         if(error.status === 409){
-          Notiflix.Notify.warning(error.data.message)
+          Notiflix.Report.warning("경고", error.data.message, "확인",)
           return true
         }
         return false

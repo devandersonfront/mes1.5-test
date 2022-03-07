@@ -27,6 +27,7 @@ const MultiTypeInputEditor = ({ row, column, onRowChange, onClose }: IProps) => 
     }, [row])
 
     const typeCheck = () => {
+        console.log("?!?!?!!??!!?!?!?", row, row.columnType)
         switch (row.columnType){
             case "text":
                 console.log("TEXT!!!!!")

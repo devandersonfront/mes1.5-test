@@ -135,10 +135,7 @@ const MesProductChangeModify = () => {
             />
             <ExcelTable
                 editable
-                headerList={[
-                    SelectColumn,
-                    ...column
-                ]}
+                headerList={column}
                 row={basicRow}
                 // setRow={setBasicRow}
                 setRow={(e) => {

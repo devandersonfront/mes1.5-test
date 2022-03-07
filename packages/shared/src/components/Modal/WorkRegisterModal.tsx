@@ -14,7 +14,9 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
+//@ts-ignore
 import moment from 'moment'
+import {transferStringToCode} from "../../common/codeTransferFunctions";
 
 interface IProps {
   column: IExcelHeaderType
@@ -22,7 +24,6 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
@@ -54,21 +55,16 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   ])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{sequence: 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
     if(isOpen) {
       setSearchList([{
+        modify: true,
+        osId: row.os_id,
         sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
         start: moment().format('YYYY-MM-DD HH:mm:00'),
         end: moment().format('YYYY-MM-DD HH:mm:00'),
@@ -98,65 +94,81 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const SaveBasic = async () => {
+    let checkPoint = true;
     searchList.map((row) => {
       if(!row.lot_number){
         Notiflix.Report.warning("경고","LOT번호를 입력해주시기 바랍니다.","확인",)
-        return;
+        return checkPoint = false;
       }else if(!row.manager){
         Notiflix.Report.warning("경고","작업자를 선택해주시기 바랍니다.","확인",)
-        return;
+        return checkPoint = false;
       }else if(!row.good_quantity){
         Notiflix.Report.warning("경고","양품 수량을 입력해주시기 바랍니다.","확인",)
-        return;
+        return checkPoint = false;
       }
     })
-    let res = await RequestMethod('post', `recordSave`,
-      searchList.map((v, i) => {
-        let selectData: any = {}
+    if(checkPoint){
+      let res = await RequestMethod('post', `recordSave`,
+          searchList.map((v, i) => {
+            let selectData: any = {}
 
-        Object.keys(v).map(v => {
-          if(v.indexOf('PK') !== -1) {
-            selectData = {
-              ...selectData,
-              [v.split('PK')[0]]: v[v]
-            }
-          }
+            Object.keys(v).map(v => {
+              if(v.indexOf('PK') !== -1) {
+                selectData = {
+                  ...selectData,
+                  [v.split('PK')[0]]: v[v]
+                }
+              }
 
-          if(v === 'unitWeight') {
-            selectData = {
-              ...selectData,
-              unitWeight: Number(v['unitWeight'])
-            }
-          }
+              if(v === 'unitWeight') {
+                selectData = {
+                  ...selectData,
+                  unitWeight: Number(v['unitWeight'])
+                }
+              }
 
-          if(v === 'tmpId') {
-            selectData = {
+              if(v === 'tmpId') {
+                selectData = {
+                  ...selectData,
+                  id: v['tmpId']
+                }
+              }
+            })
+
+            return {
+              ...v,
               ...selectData,
-              id: v['tmpId']
+              operation_sheet: {
+                ...row,
+                status: typeof row.status_no === "string" ? transferStringToCode('workStatus', row.status_no) : row.status_no
+              },
+              tools:v?.tools?.map((tool) => {
+                return{
+                  ...tool,
+                  tool:{
+                    ...tool.tool,
+                    tool: {
+                      ...tool.tool.tool,
+                      customer: tool.tool.tool.customerArray
+                    }
+                  }}
+              }),
+              // input_bom: [],
+              status: 0,
+              version: undefined
             }
-          }
+          }).filter((v) => v))
+
+
+      if(res){
+        onRowChange({
+          ...row,
+          update: true
         })
-
-        return {
-          ...v,
-          ...selectData,
-          operation_sheet: {
-            ...row,
-            status: row.status_no
-          },
-          // input_bom: [],
-          status: 0,
-        }
-      }).filter((v) => v))
-
-
-    if(res){
-      onRowChange({
-        ...row,
-        update: true
-      })
-      Notiflix.Report.success('저장되었습니다.','','확인');
+        Notiflix.Report.success('저장되었습니다.','','확인');
+      }
     }
+
   }
 
   const ModalContents = () => {
@@ -253,71 +265,56 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 <p style={{fontSize: 22, padding: 0, margin: 0}}>작업이력</p>
               </div>
             </div>
-            <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <Button onClick={() => {
-                let tmp = searchList
+            {/*<div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>*/}
+            {/*  <Button onClick={() => {*/}
+            {/*    let tmp = searchList*/}
 
-                setSearchList([
-                  ...searchList,
-                  {
-                    sequence: searchList.length+1,
-                    start: moment().format('YYYY-MM-DD'),
-                    end: moment().format('YYYY-MM-DD'),
-                  }
-                ])
-              }}>
-                <p>행 추가</p>
-              </Button>
-            </div>
+            {/*    setSearchList([*/}
+            {/*      ...searchList,*/}
+            {/*      {*/}
+            {/*        sequence: searchList.length+1,*/}
+            {/*        start: moment().format('YYYY-MM-DD'),*/}
+            {/*        end: moment().format('YYYY-MM-DD'),*/}
+            {/*      }*/}
+            {/*    ])*/}
+            {/*  }}>*/}
+            {/*    <p>행 추가</p>*/}
+            {/*  </Button>*/}
+            {/*</div>*/}
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={searchModalList.workRegister}
-              row={searchList ?? [{}]}
-              setRow={(e) => {
-                let tmp = e.map((v, index) => {
-                  if(v.newTab === true){
-                    const newTabIndex = bomDummy.length+1
-                    addNewTab(newTabIndex)
-                    setFocusIndex(newTabIndex-1)
-                  }
+                headerList={searchModalList.workRegister}
+                row={searchList ?? [{}]}
+                setRow={(e) => {
+                  let tmp = e.map((v, index) => {
+                    if(v.newTab === true){
+                      const newTabIndex = bomDummy.length+1
+                      addNewTab(newTabIndex)
+                      setFocusIndex(newTabIndex-1)
+                    }
 
-                  return {
-                    ...v,
-                    newTab: false
-                  }
-                })
-                setSearchList([...tmp.map(v => {
-                  return {
-                    ...v,
-                    sum: Number(v.good_quantity ?? 0)+Number(v.poor_quantity ?? 0)
-                  }
-                })])
-              }}
-              width={1746}
-              rowHeight={32}
-              height={552}
-              // setSelectRow={(e) => {
-              //   setSelectRow(e)
-              // }}
-              setSelectRow={(e) => {
-                // setSearchList([...searchList.map((v,i)=>{
-                //   if(i === e){
-                //     return {
-                //       ...v,
-                //       border: !v.border
-                //     }
-                //   }else{
-                //     return {
-                //       ...v,
-                //       border: false
-                //     }
-                //   }
-                // })])
-                setSelectRow(e)
-              }}
-              type={'searchModal'}
-              headerAlign={'center'}
+                    return {
+                      ...v,
+                      newTab: false
+                    }
+                  })
+                  setSearchList([...tmp.map(v => {
+                    return {
+                      ...v,
+                      good_quantity: Number(v.quantity ?? 0)-Number(v.poor_quantity ?? 0),
+                      sum: Number(v.quantity ?? 0)
+                    }
+                  })])
+                }}
+                width={1746}
+                rowHeight={32}
+                height={552}
+                setSelectRow={(e) => {
+                  setSelectRow(e)
+                }}
+                type={'searchModal'}
+                headerAlign={'center'}
             />
           </div>
           <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>

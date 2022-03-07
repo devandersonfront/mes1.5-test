@@ -14,6 +14,8 @@ import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelect
 import ButtonGroup from "../../../../main/component/ButtonGroup";
 import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
 import {DatetimePickerBox} from "shared/src/components/CalendarBox/DatetimePickerBox";
+import Notiflix from "notiflix";
+import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
 
 interface SelectParameter {
     from:string
@@ -34,16 +36,20 @@ const MesLeadtimeManufacture = () => {
     const [headerStatus, setHeaderStatus] = useState<number | string>("");
 
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-        from: moment(new Date()).startOf('isoWeek').format('YYYY-MM-DD'),
-        to: moment(new Date()).endOf('isoWeek').format('YYYY-MM-DD')
+        from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD'),
+        to: moment(new Date()).format('YYYY-MM-DD')
     });
 
     const productLeadTimeListLoad = async (productId: number) => {
+        if(moment(selectDate.from).add(3,'month') < moment(selectDate.to)){
+            return Notiflix.Report.warning("경고", "최대 검색 기간을 초과하였습니다.", "확인",)
+        }
         const res = await RequestMethod('get', `productLeadTimeList`,{
             params: {
                 productIds: productId,
                 from: selectDate.from,
-                to: selectDate.to
+                to: selectDate.to,
+                rangeNeeded: true
             },
         })
 
@@ -146,14 +152,14 @@ const MesLeadtimeManufacture = () => {
                 {
                     processBasicRow?.id
                         ? <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            작업이력별 제조리드타임
+                            작업이력별 제조리드타임 (검색 기간은 최대 3개월 입니다.)
                         </span>
                         : <span style={{color:"#ffffff58", fontSize:22, fontWeight:"bold"}}>
                             제품을 선택해주세요
                         </span>
                 }
                 <div style={{display: 'flex', }}>
-                    <PeriodSelectCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={false} />
+                    <DateRangeCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={false} />
                     <ButtonGroup buttons={['']} buttonsOnclick={buttonEvents}/>
                 </div>
             </div>

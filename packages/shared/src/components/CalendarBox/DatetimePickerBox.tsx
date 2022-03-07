@@ -87,6 +87,8 @@ const DatetimePickerBox = ({ row, column, onRowChange, onClose }: IProps) => {
           onChange={onDateChange}
           format={'yyyy-MM-DD HH:mm:ss'}
           InputProps={{ className: classes.input, disableUnderline: true}}
+          maxDate={column.type === "date" && row.end}
+          minDate={column.type === "deadline" && row.start}
         />
       </MuiPickersUtilsProvider>
       </ThemeProvider>

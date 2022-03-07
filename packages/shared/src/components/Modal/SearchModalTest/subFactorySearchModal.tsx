@@ -111,14 +111,16 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
             res.info_list.map((value)=>{
                 const tmpValue = {...value};
                 tmpValue.manager_info = value.manager;
-                tmpValue.manager = value.manager.name;
-                tmpValue.telephone = value.manager.telephone;
+                tmpValue.manager = value.manager?.name;
+                tmpValue.telephone = value.manager?.telephone;
                 tempData.push(tmpValue)
             })
-            setSearchList(tempData);
             Notiflix.Loading.remove()
+            return setSearchList(tempData);
         }).catch((err) => {
-            Notiflix.Report.failure("경고","공장을 선택해주시기 바랍니다.","확인",() => {setIsOpen(false)})
+            if(err){
+                Notiflix.Report.failure("경고","공장을 선택해주시기 바랍니다.","확인",() => {setIsOpen(false)})
+            }
         })
 
 
@@ -297,6 +299,9 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         <FooterButton
                             onClick={() => {
                                 setIsOpen(false)
+                                setOptionIndex(0)
+                                setSelectRow(undefined)
+                                setKeyword('')
                             }}
                             style={{backgroundColor: '#E7E9EB'}}
                         >
@@ -304,8 +309,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         </FooterButton>
                         <FooterButton
                             onClick={() => {
-                                setIsOpen(false)
-                                if(selectRow === 0 && selectRow !== undefined){
+                                if(selectRow !== undefined){
                                     onRowChange({
                                         ...row,
                                         // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
@@ -314,10 +318,11 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                         // type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
                                         // version: row.version,
                                         subFactory: searchList[selectRow],
-                                        affiliated_id: searchList[selectRow].name,
+                                        affiliated_id: searchList[selectRow]?.name,
                                         isChange:true
                                     })
                                 }
+                                setIsOpen(false)
                             }}
                             style={{backgroundColor: POINT_COLOR}}
                         >

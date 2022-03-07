@@ -20,14 +20,11 @@ import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
-let now = moment().format('YYYY-MM-DD');
-
-const MesFinishList = ({page, keyword, option}: IProps) => {
-  const router = useRouter()
+const MesFinishList = ({page, search, option}: IProps) => {
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{id: '',}])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["finishListV2"])
@@ -39,16 +36,15 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
     to: moment().format('YYYY-MM-DD')
   });
 
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
   useEffect(() => {
-    // setOptionIndex(option)
     if(getMenus()){
-      if(searchKeyword){
-        SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+      if(keyword){
+        SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }else{
@@ -58,7 +54,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         })
       }
     }
-  }, [pageInfo.page, searchKeyword, selectDate])
+  }, [pageInfo.page, keyword, selectDate])
 
 
   const getMenus = async () => {
@@ -125,7 +121,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `sheetList`,{
       path: {
-        page: (page || page !== 0) ? page : 1,
+        page: pageInfo.page ?? 1,
         renderItem: 22,
       },
       params: {
@@ -272,6 +268,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
+        total_counter: row.total_good_quantity + row.total_poor_quantity ?? '-',
         contract_id: row.contract?.identification ?? '-' ,
         customer_id: row.product?.customer?.name ?? '-',
         cm_id: row.product?.model?.model ?? '-',
@@ -285,7 +282,11 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
     })
 
     Notiflix.Loading.remove()
-    setBasicRow([...tmpBasicRow])
+    if(pageInfo.total > pageInfo.page){
+      setBasicRow([...basicRow,...tmpBasicRow])
+    }else{
+      setBasicRow([...tmpBasicRow])
+    }
   }
 
   return (
@@ -295,9 +296,9 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         isCalendar
         searchKeyword={keyword}
         searchOptionList={optionList}
-        optionIndex={option}
+        optionIndex={optionIndex}
         onChangeSearchKeyword={(keyword) => {
-          setSearchKeyword(keyword)
+          setKeyword(keyword)
           setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
@@ -307,7 +308,10 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
+        setSelectDate={(date) => {
+          setSelectDate(date as { from:string, to:string })
+          setPageInfo({page:1, total:1})
+        }}
         title={"작업 완료 리스트"}
       />
       <ExcelTable
@@ -325,7 +329,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
             if(v.isChange) tmp.add(v.id)
             if(v.update || v.finish){
               if(keyword){
-                SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
+                SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
                   Notiflix.Loading.remove()
                 })
               }else{

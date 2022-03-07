@@ -5,6 +5,8 @@ import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelect
 import ButtonGroup from "../../../../main/component/ButtonGroup";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
+import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
+import Notiflix from "notiflix";
 
 interface SelectParameter {
     from:string
@@ -26,16 +28,21 @@ const MesKpiDefect = () => {
     const [headerStatus, setHeaderStatus] = useState<number | string>("");
 
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-        from: moment(new Date()).startOf('isoWeek').format('YYYY-MM-DD'),
-        to: moment(new Date()).endOf('isoWeek').format('YYYY-MM-DD')
+        from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD'),
+        to: moment(new Date()).format('YYYY-MM-DD')
     });
 
     const DefectLoad = async (productId: number) => {
+        if(moment(selectDate.from).add(3,'month') < moment(selectDate.to)){
+            return Notiflix.Report.warning("경고", "최대 검색 기간을 초과하였습니다.", "확인",)
+        }
+
         const res = await RequestMethod('get', `qualityDefectRateList`,{
             params: {
                 productIds: productId,
                 from: selectDate.from,
-                to: selectDate.to
+                to: selectDate.to,
+                rangeNeeded: true
             },
         })
 
@@ -111,7 +118,7 @@ const MesKpiDefect = () => {
     React.useEffect(()=>{
 
         if(pauseBasicRow.length){
-            
+
             const rowLenth = pauseBasicRow.length;
             let toalNumber = 0;
             let totalDefectNumber = 0;
@@ -120,10 +127,10 @@ const MesKpiDefect = () => {
                     toalNumber += row.total_quantity
                     totalDefectNumber += row.poor_quantity
                 })
-                    
-                setProcessBasicRow({...processBasicRow , 
+
+                setProcessBasicRow({...processBasicRow ,
                     total_number : toalNumber,
-                    total_defectNumber : `${totalDefectNumber}`, 
+                    total_defectNumber : `${totalDefectNumber}`,
                     defectiveRate_average : `${((totalDefectNumber/toalNumber)*100).toFixed(1)}`})
             }
         }else{
@@ -145,7 +152,7 @@ const MesKpiDefect = () => {
                 ]}
                 row={[processBasicRow]}
                 setRow={(row) => {
-                    setProcessBasicRow({...processBasicRow, 
+                    setProcessBasicRow({...processBasicRow,
                         id : row[0].product.product_id,
                         customer_id : row[0].customer_id,
                         cm_id : row[0].cm_id,
@@ -163,14 +170,14 @@ const MesKpiDefect = () => {
                 {
                     processBasicRow?.id
                         ? <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            작업이력별 불량률
+                            작업이력별 불량률 (검색 기간은 최대 3개월 입니다.)
                         </span>
                         : <span style={{color:"#ffffff58", fontSize:22, fontWeight:"bold"}}>
                             제품을 선택해주세요
                         </span>
                 }
                 <div style={{display: 'flex', }}>
-                    <PeriodSelectCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={false} />
+                    <DateRangeCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={false} />
                     <ButtonGroup buttons={['']} buttonsOnclick={buttonEvents}/>
                 </div>
             </div>

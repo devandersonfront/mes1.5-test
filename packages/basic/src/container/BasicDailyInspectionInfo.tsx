@@ -5,7 +5,7 @@ import Notiflix from "notiflix"
 import {NextPageContext} from "next";
 import {useRouter} from "next/router";
 import DailyInspectionModal from "../../../shared/src/components/Modal/DailyInspection/DailyInspectionModal";
-import {TransferCodeToValue} from "shared/src/common/TransferFunction";
+import {TransferCodeToValue, TransferValueToCode} from "shared/src/common/TransferFunction";
 
 export interface IProps {
     machine_id?: number
@@ -42,7 +42,6 @@ interface PictureInterface {
 // }
 
 const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
-    console.log(machine_id, mold_id)
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<any>(
         {
@@ -88,7 +87,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
             },
             sync: "machine75",
             tons: 0,
-            type: 1,
+            type: 0,
             version: 1,
             volt: 0,
             weldingType:0,
@@ -107,10 +106,9 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 {name:"", uuid:"", sequence:8},
                 {name:"", uuid:"", sequence:9},
             ],
-        legendary_list: [{}],
+        legendary_list: [{sequence:1, legendary:"", content:""}],
         check_list:[],
         etc:[""],
-        version:0
     }
     )
 
@@ -137,6 +135,16 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
     const [selectCheckListIndex, setSelectCheckListIndex] = useState<number>(null);
     const [selectLegendaryIndex, setSelectLegendaryIndex] = useState<number>(null);
 
+    const saveInspecMachine = async (data) => {
+        await RequestMethod("post", "inspecMachineSave", data)
+            .then((res) => {
+                console.log("res : ", res)
+            })
+            .catch((err) => {
+                console.log("err : ", err)
+            })
+    }
+
     const onClickHeaderButton = (index:number) => {
         switch(index){
             case 0:
@@ -145,6 +153,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
 
             case 1:
                 console.log("저장하기 : ", forSaveClean(basicRow, photoTitleList))
+                saveInspecMachine(forSaveClean(basicRow, photoTitleList))
                 return
 
             default:
@@ -155,10 +164,11 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
     const changeSetBasicRow = (basicRow:any) => {
         setBasicRow(basicRow);
     }
-    const forSaveClean = (basic:any, photoList:PictureInterface[]) => {
+
+    const forBindingClean = (basic:any, photoList:PictureInterface[]) => {
         const result = {...basic}
-        console.log("basic : ", basic, photoList)
-        result.etc = result.etc[0].etc ?? [""]
+        console.log("result : ", result)
+        // result.etc = result.etc[0].etc ?? [""]
         Object.values(photoList[0]).filter((photo) => {
             Object.keys(basicRow.inspection_photo).map((row, index) => {
                 if(photo.sequence === basicRow.inspection_photo[row].sequence){
@@ -166,12 +176,48 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 }
             })
         })
+        // let legendary = {}
+        // result.legendary_list.map((e) =>{
+        //     legendary[e.legendary] = e.content
+        // })
+        // if(result.legendary_list && result.legendary_list.length > 0){
+        //     // result.legendary_list = [{sequence:1, legendary:"", content:""}];
+        //     // result.legendary_list = [{}];
+        // }else{
+        //     // result.legendary_list = [legendary];
+        // }
+        return result;
+    }
+
+    const forSaveClean = (basic:any, photoList:PictureInterface[]) => {
+        const result = {...basic}
+        let inspection_photo = [];
+        //타입변경해라
+        console.log("result : ", result, photoList)
+        result.etc = result.etc[0].etc ?? ""
+        Object.values(photoList[0]).filter((photo) => {
+            Object.keys(basicRow.inspection_photo).map((row, index) => {
+                if(photo.uuid !== "" && photo.sequence === basicRow.inspection_photo[row].sequence){
+                    console.log("inspection Photos row : " , row, photo)
+                    inspection_photo.push(photo);
+                }
+                // if(photo.sequence === basicRow.inspection_photo[row].sequence){
+                //     result.inspection_photo[row] = (photo)
+                // }
+            })
+        })
+
         let legendary = {}
         result.legendary_list.map((e) =>{
             legendary[e.legendary] = e.content
         })
         result.legendary_list = legendary;
-        console.log("result : ", result)
+        result.inspection_photo = inspection_photo;
+
+        result.machine.type = TransferValueToCode(result.machine.type, "machine")
+        // console.log(TransferValueToCode(result.machine.type, "machine"))
+        result.version = undefined;
+        // result.form_id = undefined;
         return result;
     }
 
@@ -180,20 +226,33 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
         machineInfo.mfrName = machine?.mfrName;
         machineInfo.name = machine?.name;
         machineInfo.mfrCode = machine?.mfrCode;
-        machineInfo.type = TransferCodeToValue(machine?.type, "machine");
+        // machineInfo.type = TransferValueToCode(machine?.type, "machine");
         machineInfo.weldingType = TransferCodeToValue(machine?.weldingType, "welding");
         machineInfo.madeAt = machine?.madeAt;
-        machineInfo.manager = machine?.manager;
+        // machineInfo.manager = machine?.manager;
+        machineInfo.manager = machine?.manager?.name;
 
         return [machineInfo]
     }
 
     const cleanUpData = (data:any) => {
         const resultData = {...data}
-        console.log("data : ", data)
-        resultData.etc = resultData.etc ?? [""]
+        const resultInspectionPhoto = {};
+        let inspectionPhotoList = new Array(9).fill(null);
+
+        inspectionPhotoList.map((value, index) => {
+            resultData.inspection_photo.map((photo) => {
+                if(photo.sequence == index+1) resultInspectionPhoto["photo"+(index+1)] = photo
+                else resultInspectionPhoto["photo"+(index+1)] = {sequence:index+1, legendary:"", content:""}
+            })
+        })
+
+        resultData.etc = [resultData.etc] ?? [""]
         resultData.form_id = resultData.form_id ?? []
-        resultData.legendary_list = resultData.legendary_list ?? []
+        console.log("resultData.legendary_list : ", resultData.legendary_list)
+        resultData.legendary_list = Object(resultData.legendary_list).keys.length > 0 ? resultData.legendary_list : [{sequence:1, legendary:"", content:""}]
+        // resultData.manager = resultData.machine.manager.name
+        console.log("resultData.inspection_photo : ", resultData.inspection_photo, resultData.legendary_list)
         resultData.inspection_photo = resultData.inspection_photo.length === 0 ?
                 {
                     machinePicture: {name: "", uuid: resultData.machine.photo, sequence: 22},
@@ -208,10 +267,10 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                     photo9: {name:"", uuid:"", sequence:9},
                 }
             :
-            [{
-            machinePicture: {name:"", uuid:resultData.machine.photo, sequence:0},
-            ...resultData.inspection_photo[0]
-        }]
+            {
+            machinePicture: resultData.machine.photo,
+            resultInspectionPhoto
+        }
 
         setPhotoTitleList([{
             machinePicture: {name:"", uuid:resultData.machine.photo, sequence:0},
@@ -276,11 +335,8 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
             <ExcelTable headerList={columnlist.dailyInspectionMachine} row={settingMachineInfo(basicRow.machine)} setRow={() => {}} height={105}/>
 
             <ExcelTable headerList={columnlist.dailyInspectionMachinePicture} row={photoTitleList} setRow={(e) => {
-                // forSaveClean(basicRow, e)
-                console.log("e :", e, basicRow)
                 setPhotoTitleList(e)
-                // forSaveClean(basicRow, e)
-                setBasicRow(forSaveClean(basicRow, e))
+                setBasicRow(forBindingClean(basicRow, e))
                 // setBasicRow({...basicRow, inspection_photo:[...basicRow.inspection_photo,  ...Object.values(e[0])] })
             }} height={105}/>
 
@@ -314,7 +370,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                         if(basicRow.legendary_list.length > 9){
                             Notiflix.Report.warning("경고","최대 10개까지 설정 가능합니다.","확인")
                         }else{
-                            basicRow.legendary_list.push({sequence:basicRow.legendary_list.length+1, legendary:"", content:""});
+                            basicRow?.legendary_list?.push({sequence:basicRow.legendary_list.length+1, legendary:"", content:""});
                             setBasicRow({...basicRow})
                         }
                     }}>+범례 추가</AddButton>
@@ -327,13 +383,14 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                     setRow={(e) => {
                         let result = [];
                         e.map((row) => {
-                            if(row.type === "1") result.push({...row, type:1, columnType:"text"})
-                            else if(row.type === "0") result.push({...row, type:0, columnType:"dropdown"})
-                            else result.push({...row})
+                            if(row.type === "1" || row.typePK === 1) result.push({...row, type:"수치 입력", columnType:"text"})
+                            else if(row.type === "0" || row.typePK === 0) result.push({...row, type:"범례 적용", columnType:"dropdown"})
+                            else result.push({...row, type:0, columnType:"dropdown"})
                         })
+                        console.log("result : ", result)
                         basicRow.check_list = result;
-                        setBasicRow({...basicRow})
                         console.log("basicRow : ", basicRow)
+                        setBasicRow({...basicRow})
                         // setBasicRow({...result})
                     }}
                     setSelectRow={(index) => {

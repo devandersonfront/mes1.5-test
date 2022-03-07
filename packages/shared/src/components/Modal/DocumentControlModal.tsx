@@ -4,6 +4,7 @@ import styled from "styled-components";
 import FileUploader from "../Buttons/FileUploader";
 import {RequestMethod} from "../../common/RequestFunctions";
 import DropdownModal from "../Dropdown/DropdownModal";
+import Notiflix from 'notiflix'
 
 interface Props {
     isOpen:boolean
@@ -41,6 +42,17 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                             <Button
                                 style={{color:"#111319", background:"#19B9DF"}}
                                 onClick={async()=>{
+
+                                    const isCheck = folderList.some((folder)=> folder.name === fileInfo[0].name)
+
+                                    if(isCheck){
+                                        return Notiflix.Report.warning(
+                                                '경고',
+                                                '중복되는 폴더명이 있습니다.',
+                                                'Okay',
+                                        );
+                                    }
+
                                     await RequestMethod("post", "documentSave",
                                     [{...fileInfo[0], parent:parentData.name ==="표준 문서 관리" ? undefined : parentData}])
                                         .then((res) => {
@@ -131,6 +143,7 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                     marginRight: '-50%',
                     transform: 'translate(-50%, -50%)',
                     padding: 0,
+                    overflow:""
                 },
                 overlay: {
                     background: 'rgba(0,0,0,.6)',

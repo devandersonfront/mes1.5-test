@@ -8,6 +8,8 @@ import {SelectColumn} from "react-data-grid";
 import axios from 'axios'
 import { SF_ENDPOINT_PMS } from 'shared/src/common/configset';
 import cookie from 'react-cookies'
+import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
+import Notiflix from "notiflix";
 
 interface SelectParameter {
     from:string
@@ -28,8 +30,8 @@ const MesKpiPowerUsage = () => {
     const [headerStatus, setHeaderStatus] = useState<number | string>("");
 
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-        from: moment(new Date()).startOf('isoWeek').format('YYYY-MM-DD'),
-        to: moment(new Date()).endOf('isoWeek').format('YYYY-MM-DD')
+        from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD'),
+        to: moment(new Date()).format('YYYY-MM-DD')
     });
 
     const buttonEvents = async(index:number) => {
@@ -56,7 +58,9 @@ const MesKpiPowerUsage = () => {
     // 전력 사용량은 API 요청을 PMS 에서 해야해서 주석처리함..
 
     const RequestPowerUsageApi = async (productId: number) => {
-
+        if(moment(selectDate.from).add(3,'month') < moment(selectDate.to)){
+            return Notiflix.Report.warning("경고", "최대 검색 기간을 초과하였습니다.", "확인",)
+        }
         const tokenData = cookie.load('userInfo')?.token;
 
         const res = await axios.get(`${SF_ENDPOINT_PMS}/api/v2/statistics/press/electric-power`,{
@@ -64,7 +68,8 @@ const MesKpiPowerUsage = () => {
                 productId: productId,
                 sorts : 'date',
                 from: selectDate.from,
-                to: selectDate.to
+                to: selectDate.to,
+                rangeNeeded: true
             },
             headers : {
                 Authorization : tokenData
@@ -150,14 +155,14 @@ const MesKpiPowerUsage = () => {
                 {
                     processBasicRow?.product_id
                         ? <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            작업이력별 전력 사용량
+                            작업이력별 전력 사용량 (검색 기간은 최대 3개월 입니다.)
                         </span>
                         : <span style={{color:"#ffffff58", fontSize:22, fontWeight:"bold"}}>
                             제품을 선택해주세요
                         </span>
                 }
                 <div style={{display: 'flex', }}>
-                    <PeriodSelectCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={false} />
+                    <DateRangeCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={false} />
                     <ButtonGroup buttons={['']} buttonsOnclick={buttonEvents}/>
                 </div>
             </div>

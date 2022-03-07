@@ -20,14 +20,13 @@ import {WorkModifyModal} from '../../../../shared/src/components/Modal/WorkModif
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
 let now = moment().format('YYYY-MM-DD')
 
-const MesRecordList = ({page, keyword, option}: IProps) => {
-  const router = useRouter()
+const MesRecordList = ({page, search, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
@@ -41,16 +40,19 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
     to: moment().format('YYYY-MM-DD')
   });
 
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+  const [order, setOrder] = useState<number>(0);
+  const changeOrder = (value:number) => {
+    setOrder(value);
+  }
 
   useEffect(() => {
-    // setOptionIndex(option)
-    if(searchKeyword){
-      SearchBasic(searchKeyword, option, pageInfo.page).then(() => {
+    if(keyword){
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -58,7 +60,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, option, selectDate])
+  }, [pageInfo.page, keyword, selectDate,order])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -95,7 +97,8 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeOrder
           }
         }else{
           return v
@@ -117,12 +120,23 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
       },
-      params: {
-        keyword: keyword,
-        opt: optionIndex,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params:
+          order == 0 ?
+              {
+                keyword: keyword,
+                opt: optionIndex,
+                from: selectDate.from,
+                to: selectDate.to,
+              }
+              :
+              {
+                sorts: 'end',
+                order: order == 1 ? 'asc' : 'desc',
+                keyword: keyword,
+                opt: optionIndex,
+                from: selectDate.from,
+                to: selectDate.to,
+              }
     })
 
     if(res){
@@ -143,11 +157,20 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
       },
-      params: {
-        // status: 2,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+
+      params:
+          order == 0 ?
+              {
+                from: selectDate.from,
+                to: selectDate.to,
+              }
+              :
+              {
+                sorts: 'end',
+                order: order == 1 ? 'asc' : 'desc',
+                from: selectDate.from,
+                to: selectDate.to,
+              }
     })
 
     if(res){
@@ -162,65 +185,73 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
   }
 
   const DeleteBasic = async () => {
-    const res = await RequestMethod('delete', `recodeDelete`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
 
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
-
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
-              }
-            }
-
-            if(v === 'unitWeight') {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(row['unitWeight'])
-              }
-            }
-
-            if(v === 'tmpId') {
-              selectData = {
-                ...selectData,
-                id: row['tmpId']
-              }
-            }
-          })
-          return {
-            ...row,
-            ...selectData,
-            worker: row.user,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
-                  }
-                }
-              }).filter((v) => v)
-            ]
+    const delete_array = basicRow.map((row, i) => {
+      if(selectList.has(row.id)){
+        let selectKey: string[] = []
+        let additional:any[] = []
+        column.map((v) => {
+          if(v.selectList){
+            selectKey.push(v.key)
           }
 
+          if(v.type === 'additional'){
+            additional.push(v)
+          }
+        })
+
+        let selectData: any = {}
+
+        Object.keys(row).map(v => {
+          if(v.indexOf('PK') !== -1) {
+            selectData = {
+              ...selectData,
+              [v.split('PK')[0]]: row[v]
+            }
+          }
+
+          if(v === 'unitWeight') {
+            selectData = {
+              ...selectData,
+              unitWeight: Number(row['unitWeight'])
+            }
+          }
+
+          if(v === 'tmpId') {
+            selectData = {
+              ...selectData,
+              id: row['tmpId']
+            }
+          }
+        })
+        return {
+          ...row,
+          ...selectData,
+          worker: row.user,
+          additional: [
+            ...additional.map(v => {
+              if(row[v.name]) {
+                return {
+                  id: v.id,
+                  title: v.name,
+                  value: row[v.name],
+                  unit: v.unit
+                }
+              }
+            }).filter((v) => v)
+          ]
         }
-      }).filter((v) => v))
+
+      }
+    }).filter((v) => v)
+    let res
+      for(let i = 0; i < delete_array.length; i++ ){
+        res = await RequestMethod('delete', `cncRecordeDelete`, [delete_array[i]])
+
+        if(!res){
+          break
+        }
+      }
 
     if(res) {
       Notiflix.Report.success('삭제 성공!', '', '확인', () => {
@@ -228,6 +259,8 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
           Notiflix.Loading.remove()
         })
       })
+    }else {
+      Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
     }
   }
 
@@ -355,20 +388,23 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
       <PageHeader
         isSearch
         isCalendar
-        searchKeyword={""}
+        searchKeyword={keyword}
         searchOptionList={optionList}
         onChangeSearchOption={(e) => {
           setOptionIndex(e)
         }}
         onChangeSearchKeyword={(keyword) =>{
-          setSearchKeyword(keyword)
-          // SearchBasic(keyword, option, 1)
+          setKeyword(keyword)
+          setPageInfo({page:1, total:1})
         }}
         calendarTitle={'종료일'}
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
+        setSelectDate={(date) => {
+          setSelectDate(date as {from:string, to:string})
+          setPageInfo({page:1, total:1})
+        }}
         title={"작업 일보 리스트"}
         buttons={
           ['', '수정하기', '삭제']
@@ -446,8 +482,9 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
             //   Notiflix.Loading.remove()
             // })
           }else{
-            LoadBasic(page).then(() => {
-              Notiflix.Loading.remove()
+            LoadBasic(pageInfo.page).then(() => {
+              Notiflix.Loading.remove();
+              setSelectList(new Set())
             })
           }}
         }

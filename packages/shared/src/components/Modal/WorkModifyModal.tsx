@@ -76,7 +76,6 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
         good_quantity += v.good_quantity
         poor_quantity += v.poor_quantity
       })
-      console.log(row)
       setSummaryData({
         contract_id: row[0].operation_sheet?.contract?.identification,
         identification: row[0].operation_sheet?.identification,
@@ -96,7 +95,8 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
         total_poor_quantity: poor_quantity,
         // unit: row[0].operation_sheet?.product?.unit,
       })
-      setSearchList([...row])
+      const newList = row.map((v)=> {return {...v, bom_root_id: row[0].operation_sheet.product.bom_root_id, productId: row[0].product.product_id, modify: true} })
+      setSearchList([...newList])
     }
   }, [isOpen, searchKeyword])
 
@@ -266,7 +266,11 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
                 }
               })
               setSearchList([...tmp.map(v => {
-                return v
+                return {
+                  ...v,
+                  good_quantity: Number(v.quantity ?? 0)-Number(v.poor_quantity ?? 0),
+                  sum: Number(v.quantity ?? 0)
+                }
               })])
             }}
             width={1746}

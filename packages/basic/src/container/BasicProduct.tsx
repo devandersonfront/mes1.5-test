@@ -27,7 +27,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicProduct = ({page}: IProps) => {
+const BasicProduct = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -47,11 +47,13 @@ const BasicProduct = ({page}: IProps) => {
     total: 1
   })
 
+
   const [buttonList , setButtonList ] = useState<string[]>([])
+
 
   useEffect(() => {
     if(keyword){
-      SearchBasic(keyword, optionIndex, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -73,6 +75,8 @@ const BasicProduct = ({page}: IProps) => {
     setSelectRow(tmpSelectList[0])
 
   }
+
+
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
@@ -130,7 +134,7 @@ const BasicProduct = ({page}: IProps) => {
     let selectCheck = false
     let codeCheck = true
     let processCheck = true
-    let bomCheck = true
+    let bom = true
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -147,6 +151,7 @@ const BasicProduct = ({page}: IProps) => {
       if(selectList.has(row.id)){
         selectCheck = true;
         if(!row.code) codeCheck = false
+        if(!row.bom) bom = false
         if(!row.process_id) processCheck = false
         let additional:any[] = []
         column.map((v) => {
@@ -188,22 +193,61 @@ const BasicProduct = ({page}: IProps) => {
           customer_id: undefined,
           model: row.modelArray,
           // standard_uph: row.uph,
-          molds:[...row?.molds?.map((mold)=>{
-            return {...mold, setting:mold.mold.setting}
-          }).filter((mold) => mold.mold.mold_id) ?? []],
+          molds:row?.molds?.map((mold)=>{
+            return { setting:mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
+          }).filter((mold) => mold.mold.mold_id) ?? [],
+          tools:[
+            ...row?.tools?.map((tool) => {
+              return {...tool,
+                tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional},
+                setting:tool.setting}
+            }).filter((tool) => tool.tool.tool_id) ?? [],
+          ],
           machines:[
             ...row?.machines?.map((machine)=>{
+              // console.log(machine,'machinemachine')
               return {
-                ...machine,
-                setting:machine.machine.setting,
-                machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
+                sequence : machine.sequence,
+                setting: machine.setting,
+                // machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
+                machine : {
+                  machine_id : machine.machine.machine_id,
+                  mfrName : machine.machine.mfrName,
+                  name : machine.machine.name,
+                  type : machine.machine.type_id,
+                  weldingType : machine.machine.weldingType_id,
+                  madeAt:machine.machine.madeAt,
+                  mfrCode:machine.machine.mfrCode,
+                  manager:machine.machine.manager,
+                  photo:machine.machine.photo,
+                  capacity:machine.machine.capacity,
+                  qualify:machine.machine.qualify,
+                  guideline:machine.machine.guideline,
+                  interwork:machine.machine.interwork,
+                  devices:machine.machine.devices,
+                  factory:machine.machine.factory,
+                  subFactory:machine.machine.subFactory,
+                  additional :machine.machine.additional,
+                }
               }
             }).filter((machine) => machine.machine.machine_id)?? []
           ],
+          // tools:[
+          //     ...row.tools?.map((tool)=>{
+          //       return {
+          //         ...tool,
+          //         setting:tool.tool.setting,
+          //         tool:{
+          //           ...tool.tool,
+          //           customer:tool.tool.customerArray
+          //         }
+          //       }
+          //     })
+          // ],
           type:row.type_id ?? row.typeId ?? row.typePK,
           additional: [
             ...additional.map((v, index)=>{
-              if(!row[v.colName]) return undefined;
+              //if(!row[v.colName]) return undefined;
               return {
                 mi_id: v.id,
                 title: v.name,
@@ -219,8 +263,10 @@ const BasicProduct = ({page}: IProps) => {
       }
     }).filter((v) => v)
 
-    if(selectCheck && codeCheck && processCheck){
-      let res = await RequestMethod('post', `productSave`,result)
+    if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
+      let res = await RequestMethod('post', `productSave`,result).catch((error)=>{
+        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+      })
 
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');
@@ -234,50 +280,103 @@ const BasicProduct = ({page}: IProps) => {
           })
         }
       }
+
     }else if(!selectCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
     }else if(!codeCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인");
-    }else if(!processCheck){
+    }else if(!bom){
+      Notiflix.Loading.remove()
+      Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
+    }
+    else if(!processCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
     }
 
   }
 
-  const DeleteBasic = async() => {
-    // Notiflix.Loading.circle();
-    let selectCheck = false;
-    let data:any[] = [];
+  const convertDataToMap = () => {
+    const map = new Map()
+    basicRow.map((v)=>map.set(v.id , v))
 
-    basicRow.map((value,index)=>{
-      if(selectList.has(value.id) && value.product_id !== undefined && value.product_id !== null){
-        selectCheck = true;
-        let tmpRow = {...value};
-        tmpRow.type = value.type_id;
-        data.push(tmpRow);
+    return map
+  }
+
+  const filterSelectedRows = () => {
+    return basicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.product_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
       }
     })
 
-    if(selectCheck){
-      Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          async()=>{
-            await RequestMethod("delete", "productDelete", data)
-                .then((res) => {
-                  Notiflix.Loading.remove(300);
-                  Notiflix.Report.success("삭제되었습니다.","","확인", () =>LoadBasic(1))
-                })
-                .catch((err) => {
-                  Notiflix.Loading.remove(300);
-                })
-          },
-          ()=>{}
-      )
-    }else{
-      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
+    return [normalRows , haveIdRows]
+  }
+  const DeleteBasic = async() => {
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+
+      await RequestMethod('delete','productDelete', haveIdRows.map((row) => (
+          {...row , type : row.type_id}
+      )))
     }
+
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+    setBasicRow(Array.from(map.values()))
+    setSelectList(new Set())
+
+
+
+
+    // Notiflix.Loading.circle();
+    // let selectCheck = false;
+    // let data:any[] = [];
+
+    // basicRow.map((value,index)=>{
+    //   if(selectList.has(value.id) && value.product_id !== undefined && value.product_id !== null){
+    //     selectCheck = true;
+    //     let tmpRow = {...value};
+    //     tmpRow.type = value.type_id;
+    //     data.push(tmpRow);
+    //   }
+    // })
+
+    // if(selectCheck){
+    //   Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+    //       async()=>{
+    //         await RequestMethod("delete", "productDelete", data)
+    //             .then((res) => {
+    //               Notiflix.Loading.remove(300);
+    //               Notiflix.Report.success("삭제되었습니다.","","확인", () =>LoadBasic(1))
+    //             })
+    //             .catch((err) => {
+    //               Notiflix.Loading.remove(300);
+    //             })
+    //       },
+    //       ()=>{}
+    //   )
+    // }else{
+    //   Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
+    // }
 
 
   }
@@ -301,7 +400,6 @@ const BasicProduct = ({page}: IProps) => {
       cleanUpData(res)
     }
     setSelectList(new Set())
-
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -425,7 +523,6 @@ const BasicProduct = ({page}: IProps) => {
     })
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-
       let appendAdditional: any = {}
 
       row.additional && row.additional.map((v: any) => {
@@ -465,6 +562,17 @@ const BasicProduct = ({page}: IProps) => {
 
   const onClickHeaderButton = (index: number) => {
     switch(buttonList[index]){
+
+      case '바코드 미리보기' :
+        case '바코드 미리보기':
+        if(selectList.size === 0){
+          return Notiflix.Report.warning('오류',
+          '선택을 하셔야 합니다.',
+          'Okay',)
+        }
+        setBarcodeOpen(true)
+        selectedData()
+        break;
       case '항목관리':
         router.push(`/mes/item/manage/product`)
         break;
@@ -477,10 +585,12 @@ const BasicProduct = ({page}: IProps) => {
               ...value.selectList[0],
               [value.key] : value.selectList[0].name,
               [value.key+'PK'] : value.selectList[0].pk, //여기 봐야됨!
+              type_id : '0',
               ...items,
             }
           }
         })
+
 
         const random_id = Math.random()*1000
 
@@ -490,6 +600,7 @@ const BasicProduct = ({page}: IProps) => {
             id: `process_${random_id}`,
             name: null,
             additional: [],
+
           },
           ...basicRow
         ])
@@ -499,7 +610,18 @@ const BasicProduct = ({page}: IProps) => {
         SaveBasic()
         break;
       case '삭제':
-        DeleteBasic()
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+        }
+
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          ()=>{DeleteBasic()}
+          ,()=>{}
+        )
         break;
 
     }
@@ -510,14 +632,13 @@ const BasicProduct = ({page}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined)
-    console.log(spliceRow,'spliceRowspliceRow')
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
 
     if(spliceRow){
       if(isCheck){
         return Notiflix.Report.warning(
-          '코드 경고',
-          `중복된 코드를 입력할 수 없습니다`,
+          '경고',
+          `중복된 코드가 존재합니다.`,
           '확인'
         );
       }
@@ -526,15 +647,49 @@ const BasicProduct = ({page}: IProps) => {
     setBasicRow(rows)
   }
 
+  const handleBarcode = async (dataurl : string , id : string) => {
 
+    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
+                {
+                  "id":id,
+                  "functions":
+                  {"func0":{"checkLabelStatus":[]},
+                    "func1":{"clearBuffer":[]},
+                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+                    "func3":{"printBuffer":[]}
+                  }
+                },
+                {
+                  headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                  }
+                }
+    ).catch((error) => {
 
+      if(error){
+        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        return false
+      }
+    })
+  }
+
+  const handleModal = (open:boolean) => {
+    setBarcodeOpen(!open)
+  }
 
 
   React.useEffect(()=>{
-    return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
+
+
+    if(selectList.size > 1){
+
+      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
+
+    }
+
+    return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
 
   },[selectList.size])
-
 
 
   return (
@@ -544,6 +699,7 @@ const BasicProduct = ({page}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             setKeyword(keyword)
+            setPageInfo({page:1,total:1})
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -567,6 +723,8 @@ const BasicProduct = ({page}: IProps) => {
           row={basicRow}
           // setRow={setBasicRow}
           setRow={(e) => {
+
+
             let tmp: Set<any> = selectList
             e.map(v => {
               if(v.isChange) tmp.add(v.id)
@@ -587,6 +745,15 @@ const BasicProduct = ({page}: IProps) => {
             setPageInfo({...pageInfo,page:page})
           }}
         />
+
+        <BarcodeModal
+              title={'바코드 미리보기'}
+              handleBarcode={handleBarcode}
+              handleModal={handleModal}
+              isOpen={barcodeOpen}
+              type={'product'}
+              data={selectRow}
+              />
 
       {/* <ExcelDownloadModal
         isOpen={excelOpen}

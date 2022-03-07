@@ -24,7 +24,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicSubMaterial = ({page, search, option}: IProps) => {
+const BasicSubMaterial = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -164,7 +164,7 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
           // customer: row.customerArray,
           additional: [
             ...additional.map((v, index)=>{
-              if(!row[v.colName]) return undefined;
+              //if(!row[v.colName]) return undefined;
               return {
                 mi_id: v.id,
                 title: v.name,
@@ -181,7 +181,9 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
     }).filter((v) => v)
 
     if(selectCheck && codeCheck){
-      let res = await RequestMethod('post', `subMaterialSave`, result)
+      let res = await RequestMethod('post', `subMaterialSave`, result).catch((error)=>{
+        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+      })
 
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');
@@ -202,96 +204,73 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
     }
   }
 
-  const DeleteBasic = async () => {
-    let selectCheck = false
-    const result =  basicRow.map((row, i) => {
+  const setAdditionalData = () => {
+
+    const addtional = []
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
-        selectCheck = true
-        let selectKey: string[] = []
-        let additional:any[] = []
         column.map((v) => {
-          if(v.selectList){
-            selectKey.push(v.key)
-          }
-
           if(v.type === 'additional'){
-            additional.push(v)
-          }
-        })
-
-        let selectData: any = {}
-
-        Object.keys(row).map(v => {
-          if(v.indexOf('PK') !== -1) {
-            selectData = {
-              ...selectData,
-              [v.split('PK')[0]]: row[v]
+              addtional.push(v)
             }
-          }
-
-          if(v === 'unitWeight') {
-            selectData = {
-              ...selectData,
-              unitWeight: Number(row['unitWeight'])
-            }
-          }
-
-          if(v === 'tmpId') {
-            selectData = {
-              ...selectData,
-              id: row['tmpId']
-            }
-          }
-        })
-        if(row.sm_id){
-          return {
-            ...row,
-            ...selectData,
-            // customer: row.customerArray,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
-                  }
-                }
-              }).filter((v) => v)
-            ]
-          }
-        }
+          })
       }
-    }).filter((v) => v)
+    })
 
-    if(selectCheck){
-      Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          async()=>{
-            const res = await RequestMethod('delete', `subMaterialDelete`, result)
+    return addtional;
+  }
 
-            if(res) {
-              Notiflix.Report.success('삭제되었습니다.','','확인', () =>{
-                if(keyword){
-                  SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-                    Notiflix.Loading.remove()
-                  })
-                }else{
-                  LoadBasic(pageInfo.page).then(() => {
-                    Notiflix.Loading.remove()
-                  })
-                }
-              });
-            }
+  const convertDataToMap = () => {
+    const map = new Map()
+    basicRow.map((v)=>map.set(v.id , v))
+    return map
+  }
 
-          },
-          ()=>{}
-      )
-    }else{
-      Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인");
+  const filterSelectedRows = () => {
+    return basicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.sm_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
+      }
+    })
+
+    return [normalRows , haveIdRows]
+  }
+
+  const DeleteBasic = async () => {
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const additional = setAdditionalData()
+
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+      await RequestMethod('delete','subMaterialDelete', haveIdRows.map((row) => (
+          {...row , customer: row.customerArray, additional : [...additional.map(v => {
+            if(row[v.name]) {
+                return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
+              }
+            }).filter(v => v)]
+          }
+      )))
+
     }
 
-
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+    setBasicRow(Array.from(map.values()))
+    setSelectList(new Set())
   }
 
 
@@ -508,7 +487,18 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
 
         break;
       case 5:
-        DeleteBasic()
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+        }
+
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          ()=>{DeleteBasic()}
+          ,()=>{}
+        )
         break;
 
     }
@@ -519,8 +509,7 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow].code && row.code !== undefined)
-    console.log(spliceRow,'spliceRowspliceRow')
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow].code && row.code !== undefined && row.code !== '')
 
     if(spliceRow){
       if(isCheck){
@@ -541,6 +530,7 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             setKeyword(keyword);
+            setPageInfo({page:1,total:1})
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {

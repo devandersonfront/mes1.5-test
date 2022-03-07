@@ -46,6 +46,7 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalSe
     }
     //[basicRow.machine]
     const prettyMachineData =  (machine:any) => {
+        console.log("machine : ", machine)
         machine.type = TransferCodeToValue(machine?.type, "machine");
         return [machine]
     }
@@ -155,6 +156,8 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalSe
                                     height={basicRow.check_list.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list.length * 40 + 40}
                                     setRow={(e) => {
                                         console.log("e : ", e)
+                                        setBasicRow({...basicRow, check_list:e})
+
                                     }}
                                     type={"searchModal"}/>
                                 <ExcelTable

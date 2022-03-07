@@ -79,7 +79,10 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       if(row.operation_sheet && row.operation_sheet?.input_bom?.length > 0){
-        changeRow(row.operation_sheet.input_bom)
+        const ilter_nput_bom = row.operation_sheet.input_bom.map((v)=>{if(v.bom.setting === 1){
+          return {...v}
+        }}).filter((v)=>v)
+        changeRow(ilter_nput_bom)
       }else if(row.input_bom?.length > 0){
         changeRow(row.input_bom)
       }else{
@@ -111,9 +114,11 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     // if(tmpRows){
     tmpData = tmpRows?.map((v, i) => {
       let childData: any = {}
+      let type = ''
       switch(v.bom.type){
         case 0:{
           childData = v.bom.child_rm
+          type = v.bom.child_rm.type == "1" ? "kg" : v.bom.child_rm.type == "2" ? "장" : "-";
           break;
         }
         case 1:{
@@ -133,7 +138,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         type: TransferCodeToValue(v.bom.type, 'material'),
         tab: v.bom.type,
         type_name: TransferCodeToValue(v.bom.type, 'material'),
-        unit: childData.unit ?? "-",
+        unit: childData.unit ?? type,
         parent: v.bom.parent,
         usage: v.bom.usage,
         version: v.bom.version,
@@ -225,8 +230,8 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          color: 'white',
-          background: '#353B48'
+          color: column.type === 'Modal' && '#0D0D0D',
+          background:row.border ? "#19B9DF80" : column.type === 'Modal' ? "white" : '#0000',
         }} onClick={() => {
           setIsOpen(true)
         }}>
@@ -325,12 +330,31 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                         setFocusIndex(newTabIndex-1)
                       }
 
-                      if(v.lotList){
+                      // if(v.lotList){
+                      //   setSelectProduct(v.code)
+                      //   setLotList([...v.lotList.map((v,i) => ({
+                      //     ...v,
+                      //     seq: i+1
+                      //   }))])
+                      // }
+                      const material_type_lot_number = (value) => {
+                        switch (value.lot.type) {
+                          case 0:
+                            return value.lot.child_lot_rm.lot_number;
+                          case 1:
+                            return value.lot.child_lot_sm.lot_number;
+                          case 2:
+                            return value.lot.child_lot_record.lot_number;
+                        }
+                      }
+
+                      if(v.bom){
                         setSelectProduct(v.code)
-                        setLotList([...v.lotList.map((v,i) => ({
-                          ...v,
-                          seq: i+1
-                        }))])
+                          setLotList([...v.bom.map((v,i) => ({
+                            ...v.lot,
+                            lot_number: /*v.lot.child_lot_rm.lot_number*/material_type_lot_number(v),
+                            seq: i+1
+                          }))])
                       }
 
                       return {

@@ -23,13 +23,11 @@ import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
-let now = moment().format('YYYY-MM-DD')
-
-const MesOrderList = ({page, keyword, option}: IProps) => {
+const MesOrderList = ({page, search, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -42,21 +40,26 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['수주 번호', '거래처명', '모델', 'CODE', '품명', /*지시 고유 번호*/])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [order, setOrder] = useState(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
+    from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD') ,
+    to:  moment(new Date()).add(1,'month').format('YYYY-MM-DD')
   });
 
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
 
+  const changeSetOrder = (value:number) => {
+    setPageInfo({page:1, total:1})
+    setOrder(value);
+  }
 
   useEffect(() => {
-    if(searchKeyword){
-      SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+    if(keyword){
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -65,7 +68,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       })
     }
 
-  }, [pageInfo.page, searchKeyword, option, selectDate])
+  }, [pageInfo.page, keyword, selectDate, order])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -104,7 +107,8 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeSetOrder
           }
         }else{
           return v
@@ -124,16 +128,25 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         page: pageInfo.page ?? 1,
         renderItem: 22,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params:
+      order == 0 ?
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+            sorts: order < 3 ? 'date' : 'deadline',
+            order: order % 2 ? 'DESC' : 'ASC'
+          }
     })
     if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
-        total: res.totalPages
+        total: res.totalPages,
       })
       cleanUpData(res)
     }else if (res === 401) {
@@ -154,11 +167,22 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 22,
       },
-      params: {
+      params:
+          order == 0 ?
+              {
+                keyword: keyword ?? '',
+                opt: option ?? 0,
+                from: selectDate.from,
+                to: selectDate.to,
+              }
+              :
+              {
         keyword: keyword ?? '',
         opt: option ?? 0,
         from: selectDate.from,
         to: selectDate.to,
+        sorts: order < 3 ? 'date' : 'deadline',
+        order: order % 2 ? 'ASC' : 'DESC'
       }
     })
 
@@ -262,7 +286,6 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
           [v.title]: v.value
         }
       })
-
       let random_id = Math.random()*1000;
       return {
         ...row,
@@ -276,6 +299,7 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
         type: TransferCodeToValue(row.product.type, 'product'),
         unit: row.product.unit,
         processArray: row.process,
+        shipment_id:row.shipment_amount,
         id: `mold_${random_id}`,
       }
     })
@@ -357,22 +381,23 @@ const MesOrderList = ({page, keyword, option}: IProps) => {
       <PageHeader
         isSearch
         isCalendar
-        searchKeyword={""}
+        searchKeyword={keyword}
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) => {
-          // SearchBasic(keyword, option, 1)
-          setSearchKeyword(keyword);
+          setKeyword(keyword);
           setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
-          // SearchBasic(keyword, option, 1)
           setOptionIndex(option)
         }}
         calendarTitle={'납품 기한'}
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
+        setSelectDate={(date) => {
+          setSelectDate(date as {from:string, to:string})
+          setPageInfo({page:1, total:1})
+        }}
         title={"수주 현황"}
         buttons={
           ['', '수정하기', '삭제']
@@ -469,27 +494,5 @@ export const getServerSideProps = (ctx: NextPageContext) => {
     }
   }
 }
-
-const ExcelTableBox = styled.div`
-  height:720px;
-  overflow:scroll;
-::-webkit-scrollbar{
-    display:none;
-    width:${(props:any)=> props.theme};
-    height:8px;
-  }
-
-  ::-webkit-scrollbar-thumb{
-    background:#484848;
-  }
-
-  ::-webkit-scrollbar-track{
-    background:none;
-  }
-
-  ::-webkit-scrollbar-corner{
-    display:none;
-  }
-`;
 
 export {MesOrderList};

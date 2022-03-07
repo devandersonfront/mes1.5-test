@@ -16,6 +16,7 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
+import moment from "moment"
 
 export interface IProps {
   children?: any
@@ -41,7 +42,7 @@ const weldingType = [
   {pk:3, name: "스팟"},
 ]
 
-const BasicMachineV1u = ({ option}: IProps) => {
+const BasicMachineV1u = ({option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -62,12 +63,12 @@ const BasicMachineV1u = ({ option}: IProps) => {
 
   const changeSetTypesState = (value:number) => {
     setTypesState(value);
+    setPageInfo({page:1, total:1})
   }
 
 
 
   useEffect(() => {
-    // setOptionIndex(option)
     if(keyword){
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
@@ -156,8 +157,10 @@ const BasicMachineV1u = ({ option}: IProps) => {
             Notiflix.Report.success("저장되었습니다.","","확인");
             LoadBasic(pageInfo.page);
           })
+          .catch((error)=>{
+            return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+          })
           .catch((err) => {
-            console.log(err.data.message);
             Notiflix.Report.failure("경고", err.data.message, "확인");
           })
   }
@@ -233,39 +236,52 @@ const BasicMachineV1u = ({ option}: IProps) => {
     setSelectList(new Set())
   }
 
-  const DeleteBasic = async () => {
-    let result = [];
-    basicRow.map((value, index)=>{
-      if(selectList.has(value.id)){
-        cleanForRegister(value)
-        if(value.machine_id){
-          result.push(cleanForRegister(value))
-        }
+  const convertDataToMap = () => {
+    const map = new Map()
+    basicRow.map((v)=>map.set(v.id , v))
+    return map
+  }
+
+  const filterSelectedRows = () => {
+    return basicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.machine_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
       }
     })
-    if(result.length === 0){
-      Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인", )
-      return
-    } Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-        ()=>{
-          RequestMethod("delete", "machineDelete", result)
-              .then((res) => {
-                Notiflix.Report.success( "삭제되었습니다.", "", "확인");
-                if(keyword){
-                  SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-                    Notiflix.Loading.remove()
-                  })
-                }else{
-                  LoadBasic(pageInfo.page).then(() => {
-                    Notiflix.Loading.remove()
-                  })
-                }
-              })
 
-        },
-        ()=>{}
-    )
+    return [normalRows , haveIdRows]
+  }
 
+
+  const DeleteBasic = async () => {
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const filterData = haveIdRows.map((row)=>cleanForRegister(row))
+
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+
+      await RequestMethod('delete','machineDelete', filterData)
+
+    }
+
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+    setBasicRow(Array.from(map.values()))
+    setSelectList(new Set())
   }
 
   const cleanUpData = (res: any) => {
@@ -409,6 +425,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
         weldingPK = welding.pk;
       }
     })
+    tempData.madeAt = value.madeAt ?? moment().format("YYYY-MM-DD")
     tempData.machine_id =  value.machine_idPK ?? value.machine_id;
     tempData.type = value.type_id;
     tempData.manager = value.user ?? value.manager;
@@ -491,9 +508,17 @@ const BasicMachineV1u = ({ option}: IProps) => {
 
         break;
       case 5:
-        DeleteBasic()
+        if(selectList.size === 0){
+          return Notiflix.Report.warning(
+        '경고',
+        '선택된 정보가 없습니다.',
+        '확인',
+        );
+        }
 
-
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          () => DeleteBasic()
+        )
         break;
 
     }
@@ -505,7 +530,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
 
-    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined)
+    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined && row.mfrCode !== '')
 
     if(spliceRow){
       if(isCheck){
@@ -527,12 +552,8 @@ const BasicMachineV1u = ({ option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            // if(keyword){
-              setKeyword(keyword)
-              // router.push(`/mes/basic/machine?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            // }else{
-            //   router.push(`/mes/basic/machine?page=1&keyword=`)
-            // }
+            setKeyword(keyword)
+            setPageInfo({page:1,total:1})
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -572,11 +593,7 @@ const BasicMachineV1u = ({ option}: IProps) => {
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            if(keyword){
-              router.push(`/mes/basic/machine?page=${page}&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/machine?page=${page}`)
-            }
+            setPageInfo({...pageInfo,page:page})
           }}
         />
       {/*<ExcelDownloadModal*/}
