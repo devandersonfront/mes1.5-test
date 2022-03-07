@@ -207,6 +207,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
         console.log("checkList : ",basic.check_list)
         basic.check_list.map((check) => {
             //점검 항목 type 변경시키기
+            check.type = check.dropDown === "범례 적용" ? 1 : 0
         })
         let legendary = {}
         result.legendary_list.map((e) =>{
@@ -216,7 +217,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
         result.inspection_photo = inspection_photo;
         console.log(TransferValueToCode(result.machine.type, "machine"))
         result.machine.type = TransferValueToCode(result.machine.type, "machine")
-        result.version = undefined;
+        // result.version = undefined;
         // result.form_id = undefined;
         return result;
     }
