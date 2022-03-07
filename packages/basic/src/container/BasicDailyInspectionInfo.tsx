@@ -167,7 +167,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
 
     const forBindingClean = (basic:any, photoList:PictureInterface[]) => {
         const result = {...basic}
-        console.log("result : ", result)
         // result.etc = result.etc[0].etc ?? [""]
         Object.values(photoList[0]).filter((photo) => {
             Object.keys(basicRow.inspection_photo).map((row, index) => {
@@ -176,29 +175,28 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 }
             })
         })
-        // let legendary = {}
-        // result.legendary_list.map((e) =>{
-        //     legendary[e.legendary] = e.content
-        // })
-        // if(result.legendary_list && result.legendary_list.length > 0){
-        //     // result.legendary_list = [{sequence:1, legendary:"", content:""}];
-        //     // result.legendary_list = [{}];
-        // }else{
-        //     // result.legendary_list = [legendary];
-        // }
+        let legendary = {}
+        result.legendary_list.map((e) =>{
+            legendary[e.legendary] = e.content
+        })
+        if(result.legendary_list && result.legendary_list.length > 0){
+            // result.legendary_list = [{sequence:1, legendary:"", content:""}];
+            // result.legendary_list = [{}];
+        }else{
+            result.legendary_list = [legendary];
+        }
         return result;
     }
 
     const forSaveClean = (basic:any, photoList:PictureInterface[]) => {
         const result = {...basic}
         let inspection_photo = [];
-        //타입변경해라
-        console.log("result : ", result, photoList)
         result.etc = result.etc[0].etc ?? ""
         Object.values(photoList[0]).filter((photo) => {
             Object.keys(basicRow.inspection_photo).map((row, index) => {
-                if(photo.uuid !== "" && photo.sequence === basicRow.inspection_photo[row].sequence){
-                    console.log("inspection Photos row : " , row, photo)
+                console.log(basicRow)
+                if(row !== "machinePicture" && photo.uuid !== "" && photo.sequence === basicRow.inspection_photo[row].sequence){
+                    console.log(photo)
                     inspection_photo.push(photo);
                 }
                 // if(photo.sequence === basicRow.inspection_photo[row].sequence){
@@ -206,16 +204,18 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 // }
             })
         })
-
+        console.log("checkList : ",basic.check_list)
+        basic.check_list.map((check) => {
+            //점검 항목 type 변경시키기
+        })
         let legendary = {}
         result.legendary_list.map((e) =>{
             legendary[e.legendary] = e.content
         })
         result.legendary_list = legendary;
         result.inspection_photo = inspection_photo;
-
+        console.log(TransferValueToCode(result.machine.type, "machine"))
         result.machine.type = TransferValueToCode(result.machine.type, "machine")
-        // console.log(TransferValueToCode(result.machine.type, "machine"))
         result.version = undefined;
         // result.form_id = undefined;
         return result;
@@ -237,22 +237,29 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
 
     const cleanUpData = (data:any) => {
         const resultData = {...data}
-        const resultInspectionPhoto = {};
-        let inspectionPhotoList = new Array(9).fill(null);
+        const resultInspectionPhoto = {}
+        const resultLegendaryList = []
+        let inspectionPhotoList = new Array(9).fill(null)
+        Object.keys(resultData.legendary_list).map((key, index) => {
+            const oneLegendary:any = {}
+            oneLegendary.sequence = index+1
+            oneLegendary.legendary = key
+            oneLegendary.content = resultData.legendary_list[key]
+            resultLegendaryList.push(oneLegendary)
+        })
+        console.log(resultLegendaryList)
 
         inspectionPhotoList.map((value, index) => {
             resultData.inspection_photo.map((photo) => {
                 if(photo.sequence == index+1) resultInspectionPhoto["photo"+(index+1)] = photo
-                else resultInspectionPhoto["photo"+(index+1)] = {sequence:index+1, legendary:"", content:""}
+                // else resultInspectionPhoto["photo"+(index+1)] = {sequence:index+1, legendary:"", content:""}
             })
         })
 
-        resultData.etc = [resultData.etc] ?? [""]
+        resultData.etc = [{etc:resultData.etc}] ?? [{etc:""}]
+        resultData.manager = resultData.machine.manager.name
         resultData.form_id = resultData.form_id ?? []
-        console.log("resultData.legendary_list : ", resultData.legendary_list)
-        resultData.legendary_list = Object(resultData.legendary_list).keys.length > 0 ? resultData.legendary_list : [{sequence:1, legendary:"", content:""}]
-        // resultData.manager = resultData.machine.manager.name
-        console.log("resultData.inspection_photo : ", resultData.inspection_photo, resultData.legendary_list)
+        resultData.legendary_list =  resultLegendaryList
         resultData.inspection_photo = resultData.inspection_photo.length === 0 ?
                 {
                     machinePicture: {name: "", uuid: resultData.machine.photo, sequence: 22},
@@ -269,12 +276,12 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
             :
             {
             machinePicture: resultData.machine.photo,
-            resultInspectionPhoto
+            ...resultInspectionPhoto
         }
 
         setPhotoTitleList([{
-            machinePicture: {name:"", uuid:resultData.machine.photo, sequence:0},
-            // resultData.inspection_photo.
+            machinePicture: {name:"", uuid:resultData.machine.qualify, sequence:0},
+            ...resultInspectionPhoto
             // photo1: {name:"", uuid:"", sequence:1},
             // photo2: {name:"", uuid:"", sequence:2},
             // photo3: {name:"", uuid:"", sequence:3},
@@ -285,6 +292,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
             // photo8: {name:"", uuid:"", sequence:8},
             // photo9: {name:"", uuid:"", sequence:9},
         }])
+        console.log("resultData : ", resultData)
         setBasicRow(resultData)
     }
 
@@ -383,15 +391,15 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                     setRow={(e) => {
                         let result = [];
                         e.map((row) => {
-                            if(row.type === "1" || row.typePK === 1) result.push({...row, type:"수치 입력", columnType:"text"})
-                            else if(row.type === "0" || row.typePK === 0) result.push({...row, type:"범례 적용", columnType:"dropdown"})
-                            else result.push({...row, type:0, columnType:"dropdown"})
+                            console.log("row : ", row)
+                            if(row.type === 0 || row.setting === 0) result.push({...row, dropDown:"수치 입력", columnType:"text"})
+                            else if(row.type === 1 || row.setting === 1) result.push({...row, dropDown:"범례 적용", columnType:"dropdown"})
+                            else result.push({...row, columnType:"dropdown"})
                         })
                         console.log("result : ", result)
-                        basicRow.check_list = result;
+                        basicRow.check_list = result
                         console.log("basicRow : ", basicRow)
                         setBasicRow({...basicRow})
-                        // setBasicRow({...result})
                     }}
                     setSelectRow={(index) => {
                         setSelectCheckListIndex(index)

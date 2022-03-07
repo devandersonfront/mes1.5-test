@@ -139,11 +139,13 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
             })
 
           }else{
+            console.log(column.key, event.target.value)
             return onRowChange({
               //@ts-ignore
               ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
               [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
               setting : filterValue(event.target.value),
+              type: filterValue(event.target.value),
               // ...tmpData,
               isChange: true
             })
