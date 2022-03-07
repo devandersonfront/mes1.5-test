@@ -462,12 +462,6 @@ export const columnlist: any = {
       selectList: [{status:0, name:"입고일"},{status:1, name:"오름차순"},{status:2, name:"내림차순"}],},
     {key: 'lot_number', name: '부자재 LOT 번호', width: 118},
     {key: 'current', name: 'LOT 재고량', width: 118},
-    {key: 'exhaustion', formatter: DropDownEditor, headerRenderer: HeaderFilter, width: 118,
-      options:[{status:0, name:"재고 현황"},{status:1, name:"사용 가능"}],
-      selectList: [
-        {pk: false, name: '-'},
-        {pk: true, name: '사용완료'}
-      ]},
   ],
 
   substockModify: [
@@ -998,9 +992,9 @@ export const columnlist: any = {
       selectList:[{status: 0, name:"수주 날짜"}, {status: 1, name:"오름차순"},{status: 2, name:"내림차순"}],
     },
     {key:"deadline", name:"납품 기한", width: 118,
-      // headerRenderer: HeaderFilter,
-      // options: [{status: 3, name:"납품 기한"}, {status: 4, name: "오름차순"},{status: 5, name:"내림차순"}],
-      // selectList: [{status: 3, name:"납품 기한"}, {status: 4, name:"오름차순"},{status: 5, name:"내림차순"}],
+      headerRenderer: HeaderFilter,
+      options: [{status: 3, name:"납품 기한"}, {status: 4, name: "오름차순"},{status: 5, name:"내림차순"}],
+      selectList: [{status: 3, name:"납품 기한"}, {status: 4, name:"오름차순"},{status: 5, name:"내림차순"}],
     },
     {key:"customer_id", name:"거래처", width: 118 },
     {key:"cm_id", name:"모델", width: 118 },
@@ -1348,11 +1342,11 @@ export const columnlist: any = {
     {key: "product_id", name: '생산 품목', formatter:ProductInfoModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
   ],
   toolWarehousingRegister:[
-    {key: "code", name: '공구 CODE', formatter: SearchModalTest, type:"tool", placeholder: 'CODE 입력'},
+    {key: "tool_id", name: '공구 CODE', formatter: SearchModalTest, type:"tool", placeholder: 'CODE 입력'},
     {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: "customer", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
-    {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 압력'},
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
+    {key: "amount", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 압력'},
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   toolWarehousingList:[
