@@ -435,6 +435,16 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   setRow={(e) => {
                     let allAmount = 0
                     const usageArray = searchList.map((v)=> {return v.usage})
+                    const negativeNumberError = e.map((v,i)=> {
+
+                      if (Number(v.amount) * (usageArray[i] ?? 1) < 0) {
+                        return 2
+                      }
+                    }).filter(v=>v)
+                    if(negativeNumberError.includes(2)){
+                      return   Notiflix.Report.warning("경고", "소요량이 음수일 수 없습니다.", "확인");
+                    }
+
 
                     const error = e.map((v,i)=> {
 
