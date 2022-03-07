@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {ExcelTable, Header as PageHeader, PaginationComponent, RequestMethod} from "shared";
 import {columnlist} from "shared";
@@ -19,14 +19,70 @@ const MesToolRegister = () => {
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingRegister);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
+    useEffect(() => {
+        getMenus()
+    }, [])
+
+    const getMenus = async () => {
+        let res = await RequestMethod('get', `loadMenu`, {
+            path: {
+                tab: 'ROLE_TOOL_01'
+            }
+        })
+
+        if(res){
+            let tmpColumn = columnlist["toolWarehousingRegister"]
+
+            tmpColumn = tmpColumn.map((column: any) => {
+                let menuData: object | undefined;
+                res.bases && res.bases.map((menu: any) => {
+                    if(menu.colName === column.key){
+                        menuData = {
+                            id: menu.id,
+                            name: menu.title,
+                            width: menu.width,
+                            tab:menu.tab,
+                            unit:menu.unit,
+                            moddable: menu.moddable,
+                        }
+                    } else if(menu.colName === 'id' && column.key === 'tmpId'){
+                        menuData = {
+                            id: menu.id,
+                            name: menu.title,
+                            width: menu.width,
+                            tab:menu.tab,
+                            unit:menu.unit,
+                            moddable: menu.moddable,
+                        }
+                    }
+                })
+
+                if(menuData){
+                    return {
+                        ...column,
+                        ...menuData,
+                    }
+                }
+            }).filter((v:any) => v)
+
+            // setColumn([...tmpColumn])
+            setColumn([...tmpColumn.map(v=> {
+                return {
+                    ...v,
+                    name: !v.moddable ? v.name+'(필수)' : v.name
+                }
+            })])
+        }
+    }
+
 
     const SaveCleanUpData = (data:any[]) => {
         let resultData = [];
         data.map((rowData, index) => {
             let tmpRow:any = {};
             let toolObject:any = {};
-            toolObject.tool_id = rowData?.tool_id;
-            toolObject.code = rowData.code;
+            toolObject.tool_id = rowData?.tool_id_save;
+            toolObject.code = rowData.code_save;
             toolObject.name = rowData.name;
             toolObject.unit = rowData.unitPK ?? rowData.unit;
             toolObject.stock = rowData?.warehousing;
@@ -36,8 +92,10 @@ const MesToolRegister = () => {
 
             tmpRow.tool = toolObject;
             tmpRow.date = rowData.date;
-            tmpRow.warehousing = rowData.warehousing;
+            tmpRow.warehousing = rowData.amount;
+            // tmpRow.amount = rowData.amount;
             resultData.push(tmpRow);
+            console.log("tmpRow : ", tmpRow)
         })
         return resultData;
     }
@@ -103,11 +161,23 @@ const MesToolRegister = () => {
                 row={basicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
-                    e.map(v => {
+                    let tmpBasicRow = [...e]
+                    e.map((v, index) => {
                         if(v.isChange) tmp.add(v.id)
+                        if(v.code) {
+
+                            tmpBasicRow[index].tool_id_save = v.tool_id
+                            tmpBasicRow[index].code_save = v.code
+                            tmpBasicRow[index].code = v.tool_id_save
+                            tmpBasicRow[index].tool_id = v.code_save
+                        }
+                        if(v.customer) {
+                            tmpBasicRow[index].customer_id = v.customer
+                        }
                     })
+                    console.log("e : ", e)
                     setSelectList(tmp)
-                    setBasicRow(e)
+                    setBasicRow(tmpBasicRow)
                 }}
                 selectList={selectList}
                 //@ts-ignore

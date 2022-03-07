@@ -54,6 +54,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
                 // product_id: res.info_list[0].product.product_id,
                 customer_id: res.info_list[0].product.customer.name,
                 name: res.info_list[0].product.name,
+                product_name: res.info_list[0].product.name,
                 cm_id: res.info_list[0].product.model?.model,
                 product_id: res.info_list[0].product.code,
                 type: TransferCodeToValue(res.info_list[0].product.type, "product"),
@@ -112,9 +113,21 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
       }).filter((v:any) => v)
 
       setColumn([...tmpColumn.map(v=> {
-        return {
-          ...v,
-          name: !v.moddable ? v.name+'(필수)' : v.name
+        if(v.name === '수주 번호' && !codeCheck){
+          return {
+            ...v,
+            name:  v.name+'(필수)'
+          }
+        }else if(v.name === 'CODE' && codeCheck){
+          return {
+            ...v,
+            name: v.name+'(필수)'
+          }
+        }else {
+          return {
+            ...v,
+            name: !v.moddable ? v.name+'(필수)' : v.name
+          }
         }
       })])
       return true

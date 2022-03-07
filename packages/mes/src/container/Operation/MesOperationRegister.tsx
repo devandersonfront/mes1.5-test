@@ -55,7 +55,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable,
             }
           } else if(menu.colName === 'id' && column.key === 'tmpId'){
             menuData = {
@@ -63,7 +64,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable,
             }
           }
         })
@@ -75,7 +77,25 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           }
         }
       }).filter((v:any) => v)
-      setColumn([...tmpColumn])
+
+      setColumn([...tmpColumn.map(v=> {
+        if(v.name === '수주 번호' && !codeCheck){
+          return {
+            ...v,
+            name:  v.name+'(필수)'
+          }
+        }else if(v.name === 'CODE' && codeCheck){
+          return {
+            ...v,
+            name: v.name+'(필수)'
+          }
+        }else {
+          return {
+            ...v,
+            name: !v.moddable ? v.name+'(필수)' : v.name
+          }
+        }
+      })])
     }
   }
 
@@ -359,15 +379,9 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     getMenus()
-  }, [])
+  }, [codeCheck])
 
-  useEffect(()=>{
-    if(codeCheck) {
-      setColumn(columnlist["operationCodeRegisterV2"])
-    }else {
-      setColumn(columnlist["operationIdentificationRegisterV2"])
-    }
-  },[codeCheck])
+
 
   return (
       <div>

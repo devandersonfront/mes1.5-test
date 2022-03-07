@@ -57,8 +57,9 @@ const MesSubMaterialStock = ({page, search, option}: IProps) => {
   const changeNzState = (value:boolean) => {
     setNzState(value);
   }
-  const changeOrder = (value:number) => {
-    setOrder(value);
+  const changeOrder = (value: string) => {
+    setOrder(Number(value));
+    setPageInfo({page:1,total:1})
   }
 
   useEffect(() => {
