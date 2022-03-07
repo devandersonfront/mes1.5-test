@@ -295,14 +295,6 @@ const MesToolList = ({page, search, option}: IProps) => {
         <div>
             <PageHeader
                 title={"공구 재고 현황"}
-                isCalendar
-                calendarTitle={"입고일"}
-                calendarType={"period"}
-                selectDate={selectDate}
-                setSelectDate={(date) => {
-                    setSelectDate(date as SelectParameter)
-                    setPageInfo({page:1, total:1})
-                }}
                 dataLimit
                 isSearch
                 searchKeyword={keyword}
