@@ -40,7 +40,7 @@ const BasicProduct = ({}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(['거래처', '모델', '코드', '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [barcodeOpen , setBarcodeOpen] = useState<boolean>(false)
-  const [selectRow , setSelectRow ] = useState<any>(undefined)
+  const [selectRow , setSelectRow ] = useState<any>(0)
   const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
