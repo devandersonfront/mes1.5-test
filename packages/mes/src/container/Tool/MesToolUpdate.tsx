@@ -22,7 +22,7 @@ const MesToolUpdate = () => {
         cleanData.map((value) => {
             value.code = value.tool_id;
             value.customer = value.customer_id;
-
+            value.customerData = value.tool.customer;
             return value
         })
         setBasicRow([...cleanData]);
@@ -85,6 +85,7 @@ const MesToolUpdate = () => {
     }
 
     useEffect(() => {
+        console.log("toolStore : ",toolStore )
         if(toolStore.data === ""){
             router.push("/mes/tool/list")
         }else{
