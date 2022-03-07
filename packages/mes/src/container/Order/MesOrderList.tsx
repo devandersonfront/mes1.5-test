@@ -40,7 +40,7 @@ const MesOrderList = ({page, search, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['수주 번호', '거래처명', '모델', 'CODE', '품명', /*지시 고유 번호*/])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [order, setOrder] = useState(0)
+  const [order, setOrder] = useState([0,3])
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD') ,
     to:  moment(new Date()).add(1,'month').format('YYYY-MM-DD')
@@ -52,9 +52,17 @@ const MesOrderList = ({page, search, option}: IProps) => {
     total: 1
   })
 
-  const changeSetOrder = (value:number) => {
+  const changeSetOrder = (value:string) => {
     setPageInfo({page:1, total:1})
-    setOrder(value);
+    if(value === '0' || value === '1' || value === '2'){
+      let tmp = [...order]
+      tmp.splice(0,1,Number(value))
+      setOrder(tmp)
+    }else {
+      let tmp = [...order]
+      tmp.splice(1,1,Number(value))
+      setOrder(tmp)
+    }
   }
 
   useEffect(() => {
@@ -121,6 +129,64 @@ const MesOrderList = ({page, search, option}: IProps) => {
     })
   }
 
+  const load_basic_param_return = () => {
+      if(order[0] !== 0 && order[1] === 3){
+        return {
+          from: selectDate.from,
+          to: selectDate.to,
+          sorts: 'date',
+          order: order[0] === 1 ? 'ASC' : 'DESC'
+        }
+      }else if(order[0] === 0 && order[1] !== 3){
+        return {
+          from: selectDate.from,
+          to: selectDate.to,
+          sorts: 'deadline',
+          order: order[1] === 4 ? 'ASC' : 'DESC'
+        }
+      }else {
+        return {
+          from: selectDate.from,
+          to: selectDate.to,
+          sorts: 'date,deadline',
+          order: (order[0] === 1 ? 'ASC' : 'DESC')+(order[1] === 4 ? ',ASC' : ',DESC')
+        }
+      }
+  }
+
+  const search_basic_param_return = () => {
+    if(order[0] !== 0 && order[1] === 3){
+      return {
+        keyword: keyword ?? '',
+        opt: option ?? 0,
+        from: selectDate.from,
+        to: selectDate.to,
+        sorts: 'date',
+        order: order[0] === 1 ? 'ASC' : 'DESC'
+      }
+    }else if(order[0] === 0 && order[1] !== 3){
+      return {
+        keyword: keyword ?? '',
+        opt: option ?? 0,
+        from: selectDate.from,
+        to: selectDate.to,
+        sorts: 'deadline',
+        order: order[1] === 4 ? 'ASC' : 'DESC'
+      }
+    }else {
+      return {
+        keyword: keyword ?? '',
+        opt: option ?? 0,
+        from: selectDate.from,
+        to: selectDate.to,
+        sorts: 'date,deadline',
+        order: (order[0] === 1 ? 'ASC' : 'DESC')+(order[1] === 4 ? ',ASC' : ',DESC')
+      }
+    }
+  }
+
+
+
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `contractList`,{
@@ -129,18 +195,13 @@ const MesOrderList = ({page, search, option}: IProps) => {
         renderItem: 22,
       },
       params:
-      order == 0 ?
+      order[0] === 0 && order[1] === 3 ?
           {
             from: selectDate.from,
             to: selectDate.to,
           }
           :
-          {
-            from: selectDate.from,
-            to: selectDate.to,
-            sorts: order < 3 ? 'date' : 'deadline',
-            order: order % 2 ? 'DESC' : 'ASC'
-          }
+          load_basic_param_return()
     })
     if(res){
       setPageInfo({
@@ -168,7 +229,7 @@ const MesOrderList = ({page, search, option}: IProps) => {
         renderItem: 22,
       },
       params:
-          order == 0 ?
+          order[0] === 0 && order[1] === 3 ?
               {
                 keyword: keyword ?? '',
                 opt: option ?? 0,
@@ -176,14 +237,7 @@ const MesOrderList = ({page, search, option}: IProps) => {
                 to: selectDate.to,
               }
               :
-              {
-        keyword: keyword ?? '',
-        opt: option ?? 0,
-        from: selectDate.from,
-        to: selectDate.to,
-        sorts: order < 3 ? 'date' : 'deadline',
-        order: order % 2 ? 'ASC' : 'DESC'
-      }
+              search_basic_param_return()
     })
 
     if(res){
