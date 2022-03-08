@@ -49,7 +49,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         })
         break;
       case 2:
-        res = await RequestMethod('get', `recordSearch`, {
+        res = await RequestMethod('get', `cncRecordSearch`, {
           path:{
             page:1,
 

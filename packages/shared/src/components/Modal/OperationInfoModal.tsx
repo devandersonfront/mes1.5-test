@@ -73,7 +73,7 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const SearchBasic = async () => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `recordList`, {
+    const res = await RequestMethod('get', `cncRecordList`, {
       params: {
         contractIds: row.contract_id,
         nz: true
