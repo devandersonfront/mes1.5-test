@@ -342,52 +342,6 @@ const BasicUser = ({}: IProps) => {
     
     setSelectList(new Set())
 
-    // if(keyword){
-    //   SearchBasic(keyword, option, page).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }else{
-    //   LoadBasic(page).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }
-
-
-    // const res = await RequestMethod('delete', `memberDelete`,
-    //   basicRow.map((row, i) => {
-    //     if(selectList.has(row.id)){
-    //       let additional:any[] = []
-    //       column.map((v) => {
-    //         if(v.type === 'additional'){
-    //           additional.push(v)
-    //         }
-    //       })
-    //       let selectData: any = {}
-    //       if(row.user_id){
-    //         return {
-    //           ...row,
-    //           ...selectData,
-    //           id: row.tmpId,
-    //           authority: row.authorityPK,
-              // additional: [
-              //   ...additional.map(v => {
-              //     if(row[v.name]) {
-              //       return {
-              //         id: v.id,
-              //         title: v.name,
-              //         value: row[v.name],
-              //         unit: v.unit
-              //       }
-              //     }
-              //   }).filter((v) => v)
-              // ]
-    //         }
-
-    //       }
-
-    //     }
-    //   }).filter((v) => v))
-
   }
 
   const LoadBasic = async (page?: number) => {
