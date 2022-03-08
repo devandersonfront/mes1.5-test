@@ -357,18 +357,15 @@ const BasicTool = ({page, search, option}: IProps) => {
 
     const classfyNormalAndHave = (selectedRows) => {
 
-        const normalRows = []
         const haveIdRows = []
 
         selectedRows.map((row : any)=>{
             if(row.tool_id){
                 haveIdRows.push(row)
-            }else{
-                normalRows.push(row)
             }
         })
 
-        return [normalRows , haveIdRows]
+        return haveIdRows
     }
 
 
@@ -379,24 +376,19 @@ const BasicTool = ({page, search, option}: IProps) => {
 
         const map = convertDataToMap()
         const selectedRows = filterSelectedRows()
-        const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+        const haveIdRows = classfyNormalAndHave(selectedRows)
+        let deletable = true
 
         if(haveIdRows.length > 0){
-
-            const result = await RequestMethod('delete','toolDelete', SaveCleanUpData(haveIdRows))
-
-            if(result){
-                if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-                Notiflix.Report.success('삭제되었습니다.','','확인');
-                setBasicRow(Array.from(map.values()))
-            }
-
-        }else{
-            Notiflix.Report.success('삭제되었습니다.','','확인');
-            selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-            setBasicRow(Array.from(map.values()))
+            deletable = await RequestMethod('delete','toolDelete', SaveCleanUpData(haveIdRows))
         }
-        setSelectList(new Set())
+
+        if(deletable){
+            selectedRows.forEach((row)=>{ map.delete(row.id)})
+            Notiflix.Report.success('삭제되었습니다.','','확인');
+            setBasicRow(Array.from(map.values()))
+            setSelectList(new Set())
+        }
     }
 
     const buttonsEvent = (index:number) => {
