@@ -85,7 +85,7 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
       setColumn([...tmpColumn.map(v=> {
         return {
           ...v,
-          name: v.moddable ? v.name+'(필수)' : v.name
+          name: !v.moddable ? v.name+'(필수)' : v.name
         }
       })])
     }
