@@ -238,54 +238,46 @@ const BasicFactory = ({}: IProps) => {
 
   const classfyNormalAndHave = (selectedRows) => {
 
-    const normalRows = []
     const haveIdRows = []
 
     selectedRows.map((row : any)=>{
-      if(row.factory_id){
-        haveIdRows.push(row)
-      }else{
-        normalRows.push(row)
-      }
+        if(row.factory_id){
+            haveIdRows.push(row)
+        }
     })
 
-    return [normalRows , haveIdRows]
-  }
+    return haveIdRows
+}
 
 
-  const DeleteBasic = async () => {
+const DeleteBasic = async () => {
 
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
-    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const haveIdRows = classfyNormalAndHave(selectedRows)
     const additional = setAdditionalData()
+    let deletable = true
 
     if(haveIdRows.length > 0){
 
-      const result = await RequestMethod('delete','factoryDelete', haveIdRows.map((row) => (
-          {...row , manager: row.user , additional : [...additional.map(v => {
-            if(row[v.name]) {
-              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
-            }
-          }).filter(v => v)
-          ]}
-      )))
+        deletable = await RequestMethod('delete','factoryDelete', haveIdRows.map((row) => (
+            {...row , manager: row.user , additional : [...additional.map(v => {
+                    if(row[v.name]) {
+                        return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
+                    }
+                }).filter(v => v)
+                ]}
+        )))
+    }
 
-      if(result){
-        if(normalRows.length !== 0) selectedRows.forEach((row)=>{ map.delete(row.id)})
+    if(deletable){
+        selectedRows.forEach((row)=>{ map.delete(row.id)})
         Notiflix.Report.success('삭제되었습니다.','','확인');
         setBasicRow(Array.from(map.values()))
-      }
-
-    }else{
-      Notiflix.Report.success('삭제되었습니다.','','확인');
-      selectedRows.forEach((row)=>{ map.delete(row.id)})
-      setBasicRow(Array.from(map.values()))
+        setSelectList(new Set())
     }
-    
-    setSelectList(new Set())
 
-  }
+}
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
