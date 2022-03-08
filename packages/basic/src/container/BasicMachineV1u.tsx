@@ -272,51 +272,21 @@ const BasicMachineV1u = ({}: IProps) => {
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
-      await RequestMethod('delete','machineDelete', filterData)
+      const result = await RequestMethod('delete','machineDelete', filterData)
 
+      if(result){
+        if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+        Notiflix.Report.success('삭제되었습니다.','','확인');
+        setBasicRow(Array.from(map.values()))
+      }
+
+    }else{
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+      setBasicRow(Array.from(map.values()))
     }
-
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-    setBasicRow(Array.from(map.values()))
+    
     setSelectList(new Set())
-
-
-
-
-    // let result = [];
-    // basicRow.map((value, index)=>{
-    //   if(selectList.has(value.id)){
-    //     cleanForRegister(value)
-    //     if(value.machine_id){
-    //       result.push(cleanForRegister(value))
-    //     }
-    //   }
-    // })
-    // if(result.length === 0){
-    //   Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인", )
-    //   return
-    // } Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-    //     ()=>{
-    //       RequestMethod("delete", "machineDelete", result)
-    //           .then((res) => {
-    //             Notiflix.Report.success( "삭제되었습니다.", "", "확인");
-    //             if(keyword){
-    //               SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-    //                 Notiflix.Loading.remove()
-    //               })
-    //             }else{
-    //               LoadBasic(pageInfo.page).then(() => {
-    //                 Notiflix.Loading.remove()
-    //               })
-    //             }
-    //           })
-
-    //     },
-    //     ()=>{}
-    // )
 
   }
 

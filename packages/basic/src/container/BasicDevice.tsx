@@ -518,9 +518,7 @@ const BasicDevice = ({}: IProps) => {
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-
-      await RequestMethod('delete','deviceDelete', haveIdRows.map((row) => (
+      const result =  await RequestMethod('delete','deviceDelete', haveIdRows.map((row) => (
           {...row , type : row.type_id, additional : [...additional.map(v => {
             if(row[v.name]) {
               return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
@@ -528,94 +526,20 @@ const BasicDevice = ({}: IProps) => {
           }).filter(v => v)
           ]}
       )))
+      if(result){
+        if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+        Notiflix.Report.success('삭제되었습니다.','','확인');
+        setBasicRow(Array.from(map.values()))
+      }
 
+    }else{
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+      setBasicRow(Array.from(map.values()))
     }
-
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-    setBasicRow(Array.from(map.values()))
+    
     setSelectList(new Set())
 
-
-
-    // const res = await RequestMethod('delete', `deviceDelete`,
-    //   basicRow.map((row, i) => {
-    //     if(selectList.has(row.id)){
-    //       let selectKey: string[] = []
-    //       let additional:any[] = []
-    //       column.map((v) => {
-    //         if(v.selectList){
-    //           selectKey.push(v.key)
-    //         }
-
-    //         if(v.type === 'additional'){
-    //           additional.push(v)
-    //         }
-    //       })
-
-    //       let selectData: any = {}
-
-    //       Object.keys(row).map(v => {
-    //         if(v.indexOf('PK') !== -1) {
-    //           selectData = {
-    //             ...selectData,
-    //             [v.split('PK')[0]]: row[v]
-    //           }
-    //         }
-
-    //         if(v === 'unitWeight') {
-    //           selectData = {
-    //             ...selectData,
-    //             unitWeight: Number(row['unitWeight'])
-    //           }
-    //         }
-
-    //         if(v === 'tmpId') {
-    //           selectData = {
-    //             ...selectData,
-    //             id: row['tmpId']
-    //           }
-    //         }
-    //       })
-    //       if(row.device_id){
-    //         return {
-    //           ...row,
-    //           ...selectData,
-    //           type: row.type_id,
-    //           additional: [
-    //             ...additional.map(v => {
-    //               if(row[v.name]) {
-    //                 return {
-    //                   id: v.id,
-    //                   title: v.name,
-    //                   value: row[v.name],
-    //                   unit: v.unit
-    //                 }
-    //               }
-    //             }).filter((v) => v)
-    //           ]
-    //         }
-
-    //       }
-
-    //     }
-    //   }).filter((v) => v))
-
-    // if(res) {
-    //   Notiflix.Report.success('삭제 성공!', '', '확인', () => {
-    //     if(Number(page) === 1){
-    //       LoadBasic(1).then(() => {
-    //         Notiflix.Loading.remove()
-    //       })
-    //     }else{
-    //       // if(keyword){
-    //       //   router.push(`/mes/basic/customer?page=1&keyword=${keyword}&opt=${option}`)
-    //       // }else{
-    //       //   router.push(`/mes/basic/customer?page=1`)
-    //       // }
-    //     }
-    //   })
-    // }
   }
 
   const onClickHeaderButton = (index: number) => {
