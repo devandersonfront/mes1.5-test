@@ -32,10 +32,7 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [order, setOrder] = useState(0)
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", start_date: moment().format('YYYY-MM-DD'),
-    limit_date: moment().format('YYYY-MM-DD')
-  }])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["deliveryList"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['납품 번호', '수주 번호', '거래처', '모델', 'CODE', '품명'])

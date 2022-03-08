@@ -88,7 +88,11 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen){
-      loadRecordGroup(bomInfoList.datas[bomInfoList.index].product_id)
+      if(bomInfoList.index === -1) {
+        setIsOpen(false)
+      }else {
+        loadRecordGroup(bomInfoList.datas[bomInfoList.index].product_id)
+      }
     }
   },[bomInfoList.index])
 
