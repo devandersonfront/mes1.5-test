@@ -295,73 +295,36 @@ const BasicProduct = ({}: IProps) => {
 
   const classfyNormalAndHave = (selectedRows) => {
 
-    const normalRows = []
     const haveIdRows = []
 
     selectedRows.map((row : any)=>{
       if(row.product_id){
         haveIdRows.push(row)
-      }else{
-        normalRows.push(row)
       }
     })
 
-    return [normalRows , haveIdRows]
+    return haveIdRows
   }
   const DeleteBasic = async() => {
 
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
-    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const haveIdRows = classfyNormalAndHave(selectedRows)
+    let deletable = true
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-
-      await RequestMethod('delete','productDelete', haveIdRows.map((row) => (
+      deletable = await RequestMethod('delete','productDelete', haveIdRows.map((row) => (
           {...row , type : row.type_id}
       )))
     }
 
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-    setBasicRow(Array.from(map.values()))
-    setSelectList(new Set())
-
-
-
-
-    // Notiflix.Loading.circle();
-    // let selectCheck = false;
-    // let data:any[] = [];
-
-    // basicRow.map((value,index)=>{
-    //   if(selectList.has(value.id) && value.product_id !== undefined && value.product_id !== null){
-    //     selectCheck = true;
-    //     let tmpRow = {...value};
-    //     tmpRow.type = value.type_id;
-    //     data.push(tmpRow);
-    //   }
-    // })
-
-    // if(selectCheck){
-    //   Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-    //       async()=>{
-    //         await RequestMethod("delete", "productDelete", data)
-    //             .then((res) => {
-    //               Notiflix.Loading.remove(300);
-    //               Notiflix.Report.success("삭제되었습니다.","","확인", () =>LoadBasic(1))
-    //             })
-    //             .catch((err) => {
-    //               Notiflix.Loading.remove(300);
-    //             })
-    //       },
-    //       ()=>{}
-    //   )
-    // }else{
-    //   Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인")
-    // }
-
+    if(deletable){
+      selectedRows.forEach((row)=>{ map.delete(row.id)})
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      setBasicRow(Array.from(map.values()))
+      setSelectList(new Set())
+    }
 
   }
 
