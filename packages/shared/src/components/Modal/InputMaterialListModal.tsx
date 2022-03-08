@@ -270,7 +270,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   React.useEffect(()=>{
-    console.log(searchList)
   },[searchList])
   const getSummaryInfo = (info) => {
     return summaryData[info.key] ?? '-'
@@ -300,308 +299,328 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   return (
-    <SearchModalWrapper >
-      { ModalContents() }
-      <Modal isOpen={isOpen} style={{
-        content: {
-          top: '50%',
-          left: '50%',
-          right: 'auto',
-          bottom: 'auto',
-          marginRight: '-50%',
-          transform: 'translate(-50%, -50%)',
-          padding: 0
-        },
-        overlay: {
-          background: 'rgba(0,0,0,.6)',
-          zIndex: 5
-        }
-      }}>
-        <div style={{
-          width: 1776,
-          height: 800
+      <SearchModalWrapper >
+        { ModalContents() }
+        <Modal isOpen={isOpen} style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            padding: 0
+          },
+          overlay: {
+            background: 'rgba(0,0,0,.6)',
+            zIndex: 5
+          }
         }}>
           <div style={{
-            margin: '24px 16px 16px',
-            display: 'flex',
-            justifyContent: 'space-between'
+            width: 1776,
+            height: 800
           }}>
-            <p style={{
-              color: 'black',
-              fontSize: 22,
-              fontWeight: 'bold',
-              margin: 0,
-            }}>투입 자재 정보 (해당 제품을 만드는데 사용할 자재는 아래와 같습니다)</p>
-            <div style={{display: 'flex'}}>
+            <div style={{
+              margin: '24px 16px 16px',
+              display: 'flex',
+              justifyContent: 'space-between'
+            }}>
+              <p style={{
+                color: 'black',
+                fontSize: 22,
+                fontWeight: 'bold',
+                margin: 0,
+              }}>투입 자재 정보 (해당 제품을 만드는데 사용할 자재는 아래와 같습니다)</p>
+              <div style={{display: 'flex'}}>
 
-              <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
-                setIsOpen(false)
-              }}>
-                <img style={{width: 20, height: 20}} src={IcX}/>
-              </div>
-            </div>
-          </div>
-          {
-            headerWorkItems && headerWorkItems.map((infos, index) => {
-              return (
-                <HeaderTable>
-                  {
-                    infos.map(info => {
-                      return (
-                        <>
-                          <HeaderTableTitle>
-                            <HeaderTableText style={{fontWeight: 'bold'}}>{info.title}</HeaderTableText>
-                          </HeaderTableTitle>
-                          <HeaderTableTextInput style={{width: info.infoWidth}}>
-                            <HeaderTableText>
-                              {getSummaryInfo(info)}
-                            </HeaderTableText>
-                            {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
-                          </HeaderTableTextInput>
-                        </>
-                      )
-                    })
-                  }
-                </HeaderTable>
-              )
-            })
-          }
-          <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
-            <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
-              <div style={{ display: 'flex', width: 1200}}>
-                <p style={{fontSize: 22, padding: 0, margin: 0}}>투입 자재 리스트</p>
-              </div>
-            </div>
-            <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-
-            </div>
-          </div>
-          <div style={{padding: '0 16px', width: 1776}}>
-            <ExcelTable
-              headerList={column.type === 'readonly' ? searchModalList.InputListReadonly : searchModalList.InputList}
-              row={searchList ?? [{}]}
-              setRow={(e) => {
-                let tmp = e.map((v, index) => {
-                  if(v.newTab === true){
-                    const newTabIndex = bomDummy.length+1
-                    addNewTab(newTabIndex)
-                    setFocusIndex(newTabIndex-1)
-                  }
-
-                  if(v.lotList){
-
-                    setSelectType(v.type === 'COIL' || v.type === 'SHEET' ? '원자재' : v.type)
-                    setSelectProduct(v.code)
-                    setLotList([...v.lotList.map((v,i) => ({
-                      ...v,
-                      seq: i+1
-                    }))])
-                  }
-
-                  return {
-                    ...v,
-                    lotList: undefined,
-                    newTab: false
-                  }
-                })
-                setSearchList([...tmp])
-              }}
-              width={1746}
-              rowHeight={32}
-              height={288}
-              // setSelectRow={(e) => {
-              //   setSelectRow(e)
-              // }}
-              setSelectRow={(e) => {
-                setSelectRow(e)
-              }}
-              type={'searchModal'}
-              headerAlign={'center'}
-            />
-          </div>
-          <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
-            <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
-              <div style={{ display: 'flex', width: 1200}}>
-                <p style={{fontSize: 22, padding: 0, margin: 0}}>{selectType} LOT 리스트 ({selectProduct})</p>
-              </div>
-            </div>
-            <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-
-            </div>
-          </div>
-          <div style={{padding: '0 16px', width: 1776}}>
-            <ExcelTable
-              headerList={column.type === 'readonly' ? searchModalList.InputLotReadonlyInfo : searchModalList.InputLotInfo}
-              row={lotList ?? [{}]}
-              setRow={(e) => {
-                let allAmount = 0
-                const usageArray = searchList.map((v)=> {return v.usage})
-
-                const error = e.map((v,i)=> {
-                  if (v.current < v.amount * usageArray[i]) {
-                    return 1
-                  }
-                }).filter(v=>v)
-                if(error.includes(1)){
-                  return   Notiflix.Report.warning("경고", "LOT 재고량 보다 소요량이 많습니다.", "확인");
-                }
-
-                e.filter((v=>v.amount)).map((v)=> {
-                  allAmount += Number(v.amount)
-                })
-
-
-                let selectTmp = searchList.map((v)=>{
-                  if(v.code === selectProduct){
-                    return {...v, disturbance: allAmount, real_disturbance: allAmount * v.usage}
-                  }else{
-                    return v
-                  }
-                })
-                let tmp = e.map((v, index) => {
-                  if(v.newTab === true){
-                    const newTabIndex = bomDummy.length+1
-                    addNewTab(newTabIndex)
-                    setFocusIndex(newTabIndex-1)
-                  }
-
-                  return {
-                    ...v,
-                    // spare: '여',
-                    newTab: false
-                  }
-                })
-                let tmpSearchList = [...selectTmp]
-                if(selectRow >= 0) {
-
-                  tmpSearchList[selectRow] = {
-                    ...tmpSearchList[selectRow],
-                    lots: tmp
-                  }
-                }
-                setSearchList([...tmpSearchList])
-                setLotList([...tmp])
-              }}
-              width={1746}
-              rowHeight={32}
-              height={192}
-              type={'searchModal'}
-              headerAlign={'center'}
-            />
-          </div>
-          <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
-            {
-              column.type !== 'readonly' && <div
-                  onClick={() => {
-                    setIsOpen(false)
-                  }}
-                  style={{width: '50%', height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-              >
-                  <p>취소</p>
-              </div>
-            }
-            <div
-              onClick={() =>{
-                if(column.type === 'readonly'){
+                <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                   setIsOpen(false)
-                }else{
-                  let bomList = []
-                  let disturbance = 0
-
-                  searchList.map((bom, index) => {
-                    let totalAmount = 0
-                    if(bom.lots !== undefined) {
-                      bom.lots?.map(lot => {
-                        if (Number(lot.amount)) {
-                          totalAmount += Number(lot.amount)
-
-                          if (Number(lot.amount) > lot.current) {
-                            Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
-                          }
-
-                          bomList.push({
-                            record_id: row.record_id,
-                            ...row.input_bom[index],
-                            lot: {
-                              elapsed: lot.elapsed,
-                              type: bom.tab,
-                              child_lot_rm: bom.tab === 0 ? {...lot} : null,
-                              child_lot_sm: bom.tab === 1 ? {...lot} : null,
-                              child_lot_record: bom.tab === 2 ? {...lot} : null,
-                              warehousing: lot.warehousing,
-                              date: lot.date,
-                              current: lot.current,
-                              amount: Number(lot.amount) > lot.current ? 0 : lot.amount
-                             }
-                            })
-                          }
-                         })
-                      }else {
-                        bom.bom_info?.map(lot => {
-                          if (Number(lot.amount)) {
-                            totalAmount += Number(lot.amount)
-
-                            if (Number(lot.amount) > lot.current) {
-                              Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
-                            }
-
-                            bomList.push({
-                              record_id: row.record_id,
-                              ...row.input_bom[index],
-                              lot: {
-                                elapsed: lot.elapsed,
-                                type: bom.tab,
-                                child_lot_rm: bom.tab === 0 ? {...lot} : null,
-                                child_lot_sm: bom.tab === 1 ? {...lot} : null,
-                                child_lot_record: bom.tab === 2 ? {...lot} : null,
-                                warehousing: lot.warehousing,
-                                date: lot.date,
-                                current: lot.current,
-                                amount: Number(lot.amount) > lot.current ? 0 : lot.amount
-                              }
-                            })
-                          }
+                }}>
+                  <img style={{width: 20, height: 20}} src={IcX}/>
+                </div>
+              </div>
+            </div>
+            {
+              headerWorkItems && headerWorkItems.map((infos, index) => {
+                return (
+                    <HeaderTable>
+                      {
+                        infos.map(info => {
+                          return (
+                              <>
+                                <HeaderTableTitle>
+                                  <HeaderTableText style={{fontWeight: 'bold'}}>{info.title}</HeaderTableText>
+                                </HeaderTableTitle>
+                                <HeaderTableTextInput style={{width: info.infoWidth}}>
+                                  <HeaderTableText>
+                                    {getSummaryInfo(info)}
+                                  </HeaderTableText>
+                                  {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
+                                </HeaderTableTextInput>
+                              </>
+                          )
                         })
                       }
+                    </HeaderTable>
+                )
+              })
+            }
+            <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
+              <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
+                <div style={{ display: 'flex', width: 1200}}>
+                  <p style={{fontSize: 22, padding: 0, margin: 0}}>투입 자재 리스트</p>
+                </div>
+              </div>
+              <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
 
-                    if(totalAmount !== bom.disturbance){
-                      disturbance += 1
+              </div>
+            </div>
+            <div style={{padding: '0 16px', width: 1776}}>
+              <ExcelTable
+                  headerList={column.type === 'readonly' ? searchModalList.InputListReadonly : searchModalList.InputList}
+                  row={searchList ?? [{}]}
+                  setRow={(e) => {
+                    let tmp = e.map((v, index) => {
+                      if(v.newTab === true){
+                        const newTabIndex = bomDummy.length+1
+                        addNewTab(newTabIndex)
+                        setFocusIndex(newTabIndex-1)
+                      }
+
+                      if(v.lotList){
+
+                        setSelectType(v.type === 'COIL' || v.type === 'SHEET' ? '원자재' : v.type)
+                        setSelectProduct(v.code)
+                        setLotList([...v.lotList.map((v,i) => ({
+                          ...v,
+                          seq: i+1
+                        }))])
+                      }
+
+                      return {
+                        ...v,
+                        lotList: undefined,
+                        newTab: false
+                      }
+                    })
+                    setSearchList([...tmp])
+                  }}
+                  width={1746}
+                  rowHeight={32}
+                  height={288}
+                  // setSelectRow={(e) => {
+                  //   setSelectRow(e)
+                  // }}
+                  setSelectRow={(e) => {
+                    setSelectRow(e)
+                  }}
+                  type={'searchModal'}
+                  headerAlign={'center'}
+              />
+            </div>
+            <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
+              <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
+                <div style={{ display: 'flex', width: 1200}}>
+                  <p style={{fontSize: 22, padding: 0, margin: 0}}>{selectType} LOT 리스트 ({selectProduct})</p>
+                </div>
+              </div>
+              <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
+
+              </div>
+            </div>
+            <div style={{padding: '0 16px', width: 1776}}>
+              <ExcelTable
+                  headerList={column.type === 'readonly' ? searchModalList.InputLotReadonlyInfo : searchModalList.InputLotInfo}
+                  row={lotList ?? [{}]}
+                  setRow={(e) => {
+                    let allAmount = 0
+                    const usageArray = searchList.map((v)=> {return v.usage})
+                    const negativeNumberError = e.map((v,i)=> {
+
+                      if (Number(v.amount) * (usageArray[i] ?? 1) < 0) {
+                        return 2
+                      }
+                    }).filter(v=>v)
+                    if(negativeNumberError.includes(2)){
+                      return   Notiflix.Report.warning("경고", "소요량이 음수일 수 없습니다.", "확인");
                     }
-                  })
-                  const disturbanceArray = searchList.map((v)=>{return v.disturbance})
-                  const allEqual = arr => arr.every( v => v === arr[0] )
 
-                  if(disturbance === 0){
-                    if(disturbanceArray.includes(0)){
-                      Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
-                    }else if(allEqual(disturbanceArray)){
-                      const bomLotInfo = searchList.map((v)=> {return v.lots})
 
-                      onRowChange({
-                        ...row,
-                        bom: bomList,
-                        bom_info: bomLotInfo,
-                        quantity: bomList[0].lot.amount,
-                        good_quantity: bomList[0].lot.amount
-                      })
+                    const error = e.map((v,i)=> {
+
+                      if (v.current < Number(v.amount) * (usageArray[i] ?? 1)) {
+                        return 1
+                      }
+                    }).filter(v=>v)
+                    if(error.includes(1)){
+                      return   Notiflix.Report.warning("경고", "LOT 재고량 보다 소요량이 많습니다.", "확인");
+                    }
+
+                    e.filter((v=>v.amount)).map((v)=> {
+                      allAmount += Number(v.amount)
+                    })
+
+
+                    let selectTmp = searchList.map((v)=>{
+                      if(v.code === selectProduct){
+                        return {...v, disturbance: allAmount, real_disturbance: allAmount * v.usage}
+                      }else{
+                        return v
+                      }
+                    })
+                    let tmp = e.map((v, index) => {
+                      if(v.newTab === true){
+                        const newTabIndex = bomDummy.length+1
+                        addNewTab(newTabIndex)
+                        setFocusIndex(newTabIndex-1)
+                      }
+
+                      return {
+                        ...v,
+                        // spare: '여',
+                        newTab: false
+                      }
+                    })
+                    let tmpSearchList = [...selectTmp]
+                    if(selectRow >= 0) {
+
+                      tmpSearchList[selectRow] = {
+                        ...tmpSearchList[selectRow],
+                        lots: tmp
+                      }
+                    }
+                    setSearchList([...tmpSearchList])
+                    setLotList([...tmp])
+                  }}
+                  width={1746}
+                  rowHeight={32}
+                  height={192}
+                  type={'searchModal'}
+                  headerAlign={'center'}
+              />
+            </div>
+            <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
+              {
+                column.type !== 'readonly' && <div
+                    onClick={() => {
                       setIsOpen(false)
-                    }else {
-                      Notiflix.Report.warning(`각 BOM의 생산량을 일치시켜 주세요.`, '', '확인')
-                    }
-                  }else{
-                    Notiflix.Report.warning(`소요량과 생산량 합계를 일치시켜 주세요`, '', '확인')
-                  }
+                    }}
+                    style={{width: '50%', height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                >
+                  <p>취소</p>
+                </div>
+              }
+              <div
+                  onClick={() =>{
+                    if(column.type === 'readonly'){
+                      setIsOpen(false)
+                    }else{
+                      let bomList = []
+                      let disturbance = 0
+                      let quantity = 0
+                      searchList.map((bom, index) => {
+                        let totalAmount = 0
+                        if(bom.lots !== undefined) {
+                          bom.lots?.map(lot => {
+                            if (Number(lot.amount)) {
+                              totalAmount += Number(lot.amount)
 
-                }
-              }}
-              style={{width: column.type !== 'readonly' ? "50%" : '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p>{column.type !== 'readonly' ? '선택 완료' : '확인'}</p>
+                              if (Number(lot.amount) > lot.current) {
+                                Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
+                              }
+
+                              bomList.push({
+                                record_id: row.record_id,
+                                ...row.input_bom[index],
+                                lot: {
+                                  elapsed: lot.elapsed,
+                                  type: bom.tab,
+                                  child_lot_rm: bom.tab === 0 ? {...lot} : null,
+                                  child_lot_sm: bom.tab === 1 ? {...lot} : null,
+                                  child_lot_record: bom.tab === 2 ? {...lot} : null,
+                                  warehousing: lot.warehousing,
+                                  date: lot.date,
+                                  current: lot.current,
+                                  amount: Number(lot.amount) > lot.current ? 0 : lot.amount
+                                }
+                              })
+                            }
+                          })
+                        }else {
+                          bom.bom_info?.map(lot => {
+                            if (Number(lot.amount)) {
+                              totalAmount += Number(lot.amount)
+
+                              if (Number(lot.amount) > lot.current) {
+                                Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
+                              }
+
+                              bomList.push({
+                                record_id: row.record_id,
+                                ...row.input_bom[index],
+                                lot: {
+                                  elapsed: lot.elapsed,
+                                  type: bom.tab,
+                                  child_lot_rm: bom.tab === 0 ? {...lot} : null,
+                                  child_lot_sm: bom.tab === 1 ? {...lot} : null,
+                                  child_lot_record: bom.tab === 2 ? {...lot} : null,
+                                  warehousing: lot.warehousing,
+                                  date: lot.date,
+                                  current: lot.current,
+                                  amount: Number(lot.amount) > lot.current ? 0 : lot.amount
+                                }
+                              })
+                            }
+                          })
+                        }
+                        if(totalAmount !== bom.disturbance){
+                          disturbance += 1
+                        }
+                        quantity = totalAmount
+                      })
+                      const disturbanceArray = searchList.map((v)=>{return v.disturbance})
+                      const allEqual = arr => arr.every( v => v === arr[0] )
+
+
+                      if(disturbance === 0){
+                        if(disturbanceArray.includes(0)){
+                          Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
+                        }else if(allEqual(disturbanceArray)){
+                          let bomLotInfo
+                          if(searchList.map((v)=> {return v.lots}).filter(v=>v).length === 0){
+                            bomLotInfo = searchList.map((v) => {
+                              return v.bom_info
+                            })
+                          }else {
+                            bomLotInfo = searchList.map((v) => {
+                              return v.lots
+                            })
+                          }
+                          onRowChange({
+                            ...row,
+                            bom: bomList,
+                            bom_info: bomLotInfo,
+                            quantity: quantity,
+                            good_quantity: quantity
+                          })
+                          setIsOpen(false)
+                        }else {
+                          Notiflix.Report.warning(`각 BOM의 생산량을 일치시켜 주세요.`, '', '확인')
+                        }
+                      }else{
+                        Notiflix.Report.warning(`소요량과 생산량 합계를 일치시켜 주세요`, '', '확인')
+                      }
+
+                    }
+                  }}
+                  style={{width: column.type !== 'readonly' ? "50%" : '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              >
+                <p>{column.type !== 'readonly' ? '선택 완료' : '확인'}</p>
+              </div>
             </div>
           </div>
-        </div>
-      </Modal>
-    </SearchModalWrapper>
+        </Modal>
+      </SearchModalWrapper>
   )
 }
 

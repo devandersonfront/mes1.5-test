@@ -31,11 +31,8 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", start_date: moment().format('YYYY-MM-DD'),
-    limit_date: moment().format('YYYY-MM-DD')
-  }])
+  const [order, setOrder] = useState(0)
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["deliveryList"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['납품 번호', '수주 번호', '거래처', '모델', 'CODE', '품명'])
@@ -51,6 +48,10 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
+  const changeSetOrder = (value:number) => {
+    setPageInfo({page:1, total:1})
+    setOrder(value);
+  }
 
 
   useEffect(() => {
@@ -64,7 +65,7 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, option, selectDate])
+  }, [pageInfo.page, searchKeyword, option, selectDate,order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -103,7 +104,8 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeSetOrder
           }
         }else{
           return v
@@ -125,10 +127,18 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         page: pageInfo.page ?? 1,
         renderItem: 22,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params:order == 0 ?
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC'
+          }
 
     })
 
@@ -157,12 +167,22 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 22,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params: order == 0 ?
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+            from: selectDate.from,
+            to: selectDate.to,
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC'
+          }
     })
 
     if(res){

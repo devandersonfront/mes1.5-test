@@ -61,11 +61,21 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
     from: moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
   });
-
   const [nzState, setNzState] = useState<boolean>(false);
+  const [order, setOrder] = useState<number>(0);
+  const [expState, setExpState] = useState<boolean>(false);
 
   const changeNzState = (value:boolean) => {
     setNzState(value);
+  }
+
+  const changeExpState = (value:boolean) => {
+    setExpState(value);
+  }
+
+  const changeOrder = (value:number) => {
+    setOrder(value);
+    setPageInfo({page:1,total:1})
   }
 
   useEffect(() => {
@@ -79,7 +89,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, nzState, selectDate])
+  },  [pageInfo.page, keyword, nzState, selectDate, expState,order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -120,7 +130,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
           return {
             ...v,
             pk: v.unit_id,
-            result: changeNzState
+            result: changeOrder
           }
         }else{
           return v
@@ -144,18 +154,22 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         renderItem: 18,
       },
       params:
-          // first ?
-          // {
-          //   nz:nzState,
-          //   from:"2000-01-01",
-          //   to:moment().format("yyyy-MM-DD")
-          // }
-          // :
+          order == 0 ?
               {
-            nz:nzState,
-            from:selectDate.from,
-            to:selectDate.to
-          }
+                exp: expState,
+                nz:nzState,
+                from:selectDate.from,
+                to:selectDate.to
+              }
+              :
+              {
+                sorts: 'date',
+                order: order == 1 ? 'ASC' : 'DESC',
+                exp: expState,
+                nz:nzState,
+                from:selectDate.from,
+                to:selectDate.to
+              }
     })
 
     if(res){
@@ -180,13 +194,26 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 18,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0,
-        nz:nzState,
-        from:selectDate.from,
-        to:selectDate.to
-      }
+      params: order == 0 ?
+          {
+            exp: expState,
+            nz:nzState,
+            from:selectDate.from,
+            to:selectDate.to,
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+          }
+          :
+          {
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC',
+            exp: expState,
+            nz:nzState,
+            from:selectDate.from,
+            to:selectDate.to,
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+          }
     })
 
     if(res){
@@ -494,9 +521,12 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
   return (
     <div>
       <PageHeader
-        isNz
-        nz={nzState}
-        onChangeNz={changeNzState}
+          isNz
+          isExp
+          nz={nzState}
+          exp={expState}
+          onChangeNz={changeNzState}
+          onChangeExp={changeExpState}
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
