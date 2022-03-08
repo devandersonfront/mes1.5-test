@@ -513,7 +513,12 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         if(selectList.size === 0) {
           return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
         }
-        DeleteBasic()
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",() =>{
+          DeleteBasic()
+
+        }, () => {
+
+        })
         break;
     }
   }
