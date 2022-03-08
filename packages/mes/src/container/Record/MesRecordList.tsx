@@ -152,7 +152,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `recordList`,{
+    const res = await RequestMethod('get', `cncRecordList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
