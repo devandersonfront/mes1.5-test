@@ -162,6 +162,9 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           }else if(error.response.status === 422){
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('권한 에러', error.response.data.message, '확인', )
+          }else if(error.response.status === 500){
+            Notiflix.Loading.remove(300)
+            Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
           }
           return false
         })

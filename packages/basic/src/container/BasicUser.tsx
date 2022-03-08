@@ -319,9 +319,7 @@ const BasicUser = ({}: IProps) => {
     
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((row)=>{ map.delete(row.id)})
-      
-      await RequestMethod('delete','memberDelete', haveIdRows.map((row) => (
+      const result = await RequestMethod('delete','memberDelete', haveIdRows.map((row) => (
           {...row , id: row.tmpId , authority: row.authorityPK, additional : [...additional.map(v => {
             if(row[v.name]) {
               return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
@@ -330,11 +328,18 @@ const BasicUser = ({}: IProps) => {
           ]}
       )))
 
+      if(result){
+        if(normalRows.length !== 0) selectedRows.forEach((row)=>{ map.delete(row.id)})
+        Notiflix.Report.success('삭제되었습니다.','','확인');
+        setBasicRow(Array.from(map.values()))
+      }
+
+    }else{
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      selectedRows.forEach((row)=>{ map.delete(row.id)})
+      setBasicRow(Array.from(map.values()))
     }
     
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((row)=>{ map.delete(row.id)})
-    setBasicRow(Array.from(map.values()))
     setSelectList(new Set())
 
     // if(keyword){
