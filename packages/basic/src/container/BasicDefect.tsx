@@ -193,14 +193,20 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      await RequestMethod('delete','defectDelete', haveIdRows)
+      const result = await RequestMethod('delete','defectDelete', haveIdRows)
 
+      if(result){
+        if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+        Notiflix.Report.success('삭제되었습니다.','','확인');
+        setPauseBasicRow(Array.from(map.values()))
+      }
+
+    }else{
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+      setPauseBasicRow(Array.from(map.values()))
     }
-
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-    setPauseBasicRow(Array.from(map.values()).map((data,index)=>({...data, index : index + 1})))
+    
     setSelectList(new Set())
   }
 
