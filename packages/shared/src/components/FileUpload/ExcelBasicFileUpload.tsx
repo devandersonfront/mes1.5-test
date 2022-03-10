@@ -101,8 +101,8 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
           </div>
           : <>
             <UploadButton onClick={() => {
-              onClickImageUpload(column.key)
-            }}>
+                if(!column.readonly) onClickImageUpload(column.key)
+            }} style={column.readonly && {background:"#B3B3B3"}}>
               <p>파일 첨부하기</p>
             </UploadButton>
           </>
