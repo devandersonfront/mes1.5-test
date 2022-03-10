@@ -133,10 +133,7 @@ const MesWorkStandardList = ({page, keyword, option}: IProps)=> {
                 title={"작업 표준서 리스트"}
             />
             <ExcelTable
-                headerList={[
-                    SelectColumn,
-                    ...column
-                ]}
+                headerList={column}
                 row={basicRow}
                 setRow={setBasicRow}
                 // setRow={(e) => {
