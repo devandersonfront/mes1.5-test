@@ -190,7 +190,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 setSelectDate={(date) => setSelectDate(date)}
                 title={"변경점 정보 리스트"}
                 buttons={
-                    ['', '수정하기']
+                    ['', '자세히 보기']
                 }
                 buttonsOnclick={buttonEvents}
             />
