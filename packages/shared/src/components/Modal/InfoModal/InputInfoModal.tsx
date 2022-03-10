@@ -146,7 +146,7 @@ const InputInfoModal = ({column, row, onRowChange,}: IProps) =>{
                                                     </HeaderTableTitle>
                                                     <HeaderTableTextInput style={{width: info.infoWidth}}>
                                                         <HeaderTableText>
-                                                            {getSummaryInfo(info)}
+                                                            {/*{getSummaryInfo(info)}*/}
                                                         </HeaderTableText>
                                                         {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                                                     </HeaderTableTextInput>

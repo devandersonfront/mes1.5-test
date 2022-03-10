@@ -1140,11 +1140,17 @@ export const columnlist: any = {
   dailyInspectionMachineETC: [
     {key: "etc", name: '기타 사항', formatter: PlaceholderBox, editor: TextEditor, placeholder: '기타 사항 입력'},
   ],
-  dailyInspectionModal: [
+  dailyInspectionMachineModal: [
     {key: "date", name: '점검 날짜',  formatter: CalendarBox, width:304, type:"Modal"},
     {key: "name", name: '기계 이름', formatter:LineBorderContainer,  width:360},
     {key: "mfrCode", name: '제조 번호', formatter:LineBorderContainer,  width:880},
     {key: "type", name: '기계 종류', formatter:LineBorderContainer,  },
+  ],
+  dailyInspectionMoldModal: [
+    {key: "date", name: '점검 날짜',  formatter: CalendarBox, width:304, type:"Modal"},
+    {key: "name", name: '금형명', formatter:LineBorderContainer,  width:360},
+    {key: "code", name: 'CODE', formatter:LineBorderContainer,  width:880},
+    {key: "type", name: '금형 종류', formatter:LineBorderContainer,  },
   ],
   dailyInspectionCheckList: [
     // {key:"contract_id", name:"수주 번호", formatter: SearchModalTest, type: 'order', placeholder: '검색', disableType:"true"  },
@@ -1155,7 +1161,7 @@ export const columnlist: any = {
     {key: "type", name: '결과', width:144 ,formatter: MultiTypeInputEditor, selectList: [
         {pk: 0, name: "범례 적용"},
         {pk: 1, name: "수치 입력"},
-      ], type:"Modal"},
+      ], type:"Modal", textType:"black"},
   ],
   dailyInspectionManagement:[
     {key: "writer", name: '작성자 확인', formatter:SearchModalTest, type:"worker",  },
@@ -1168,6 +1174,10 @@ export const columnlist: any = {
           {title: '날짜', infoWidth: 144, key: 'date'},
         ]
       ],  width:120},
+  ],
+  dailyInspectionMold: [
+    {key: "code", name: 'CODE', formatter: PlaceholderBox, placeholder: '자동 입력', type: 'autoInput'},
+    {key: "name", name: '금형명',formatter: PlaceholderBox, placeholder: '자동 입력', type: 'autoInput'},
   ],
   kpiLeadtimeManufacture: [
     {key: "customer_id", name: '거래처', width: 120, formatter: PlaceholderBox ,placeholder: '자동 입력'},

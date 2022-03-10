@@ -145,7 +145,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
               ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
               [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
               setting : filterValue(event.target.value),
-              type: filterValue(event.target.value),
+              // type: filterValue(event.target.value),
               // ...tmpData,
               isChange: true
             })
@@ -155,10 +155,11 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
       }}
     >
       {column.selectList && column.selectList.map((title) => {
-        return (<option style={{background:column.type === "Modal" ? "white" : "#353B48"}} key={title.pk} value={title.name}>
+        return (<option style={{background:column.type === "Modal" ? "white" : "#353b48"}} key={title.pk} value={title.name}>
           {title.name}
         </option>)
       })}
+
     </select>
     }
     </>

@@ -19,22 +19,26 @@ interface IProps {
     setIsOpen:(value:boolean) => void
     basicRow:any
     setBasicRow:(value:any) => void
-    modalSelectOption?: { seq?: number, legendary?: string, content?: string, }[]
+    modalType:"machine" | "mold"
+    modalSelectOption?: { sequence?: number, legendary?: string, content?: string, }[]
 }
 
-const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalSelectOption}:IProps) => {
+const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalType, modalSelectOption}:IProps) => {
+
+    const [bindingBasicRow, setBindingBasicRow] = useState<any>(basicRow)
+
     const changeSelectOption = () => {
         let options = columnlist.dailyInspectionCheckList;
+        console.log("modalSelectOption : ",modalSelectOption)
         if(modalSelectOption){
             options.map((column) => {
-
                 if(column.key === "type"){
-                    // console.log(basicRow.check_list)
+                    console.log(basicRow.check_list)
                     // basicRow.check_list.map((check) => {
                     //     if(typeof check.type === "string") column.formatter = TextEditor
                     // })
                     let changedOption = [];
-                    modalSelectOption.map(({legendary, content, seq}, index) => {
+                    modalSelectOption.map(({legendary, content, sequence}, index) => {
                         if(legendary && content){
                             changedOption.push({pk:index, name:legendary, content:content})
                         }
@@ -43,16 +47,37 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalSe
                 }
             })
         }
+        console.log("options : ", options)
     }
     //[basicRow.machine]
-    const prettyMachineData =  (machine:any) => {
-        console.log("machine : ", machine)
-        machine.type = TransferCodeToValue(machine?.type, "machine");
-        return [machine]
+    const prettyMachineData =  (type:"machine" | "mold", basic:any) => {
+        switch(type){
+            case "machine":
+                console.log("machine : ", basic)
+                const machineBasic = {...basic}
+                machineBasic.machine.type = TransferCodeToValue(basic.machine?.type, "machine");
+                console.log(machineBasic)
+                setBindingBasicRow(machineBasic)
+                return
+            case "mold":
+                console.log("basic : ", basic)
+                const moldBasic = {...basic}
+
+                setBindingBasicRow(moldBasic)
+                return
+            default:
+                return
+
+        }
     }
+
     useEffect(() => {
-        if(isOpen) changeSelectOption()
-        console.log(basicRow)
+        if(isOpen) {
+            console.log("basicRow :" , basicRow)
+            changeSelectOption()
+            prettyMachineData(modalType, basicRow)
+
+        }
     },[isOpen])
 
     return (
@@ -98,9 +123,9 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalSe
                     <BorderBox>
                         <Title>일상 점검 리스트</Title>
                         <ContentBox>
-                            <ExcelTable headerList={columnlist.dailyInspectionModal} row={prettyMachineData(basicRow.machine)}
+                            <ExcelTable headerList={modalType === "machine" ? columnlist.dailyInspectionMachineModal : columnlist.dailyInspectionMoldModal}
+                                        row={[bindingBasicRow.machine ?? bindingBasicRow.mold]}
                                         setRow={(e) => {
-                                            console.log("e : " ,e, basicRow)
                                             setBasicRow({...basicRow, machine:e[0]})
                                         }}
                                         type={"searchModal"} width={"100%"} height={80}/>
@@ -110,7 +135,6 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalSe
                                 } style={{width:592, height: 366,display:"flex", justifyContent:"center", alignItems:"center"}}/>
                                 <ImageGrid>
                                     {Object.values(basicRow.inspection_photo).map((value, index) =>{
-                                        console.log("value : ", value, index)
                                         if(index){
                                             return(
                                                 <DefaultImageProfile title={`부위0${index}`} image={value.uuid ?
@@ -142,7 +166,6 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalSe
                                     <ETCBox>
                                         <div style={{width:"100%", height:40, fontWeight:"bold", background:"#F4F6FA", display:"flex",justifyContent:"center", alignItems:"center"}}>기타 사항</div>
                                         <div style={{width:"100%", overflow:"auto", height:"100%", textOverflow:"ellipsis"}}>
-                                            {console.log(basicRow)}
                                             {basicRow?.etc[0]?.etc ?? "-"}
                                         </div>
                                     </ETCBox>
@@ -151,13 +174,12 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalSe
                             <div style={{display:"flex",}}>
                                 <ExcelTable
                                     headerList={columnlist.dailyInspectionCheckList}
-                                    row={basicRow.check_list}
+                                    row={bindingBasicRow.check_list}
                                     width={"1104px"}
                                     height={basicRow.check_list.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list.length * 40 + 40}
                                     setRow={(e) => {
                                         console.log("e : ", e)
                                         setBasicRow({...basicRow, check_list:e})
-
                                     }}
                                     type={"searchModal"}/>
                                 <ExcelTable

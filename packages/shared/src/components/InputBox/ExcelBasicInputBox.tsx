@@ -26,7 +26,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
 
   return (
     <input
-      style={{textAlign: 'center', color: column.textType ? 'black' : 'white' }}
+      style={{textAlign: 'center', color: column.textType ? 'black' : 'white', border:"none" }}
       className={'editCell'}
       ref={autoFocusAndSelect}
       value={row[column.key]}

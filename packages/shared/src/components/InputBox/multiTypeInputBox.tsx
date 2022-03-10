@@ -22,19 +22,16 @@ const autoFocusAndSelect = (input: HTMLInputElement | null) => {
 const MultiTypeInputEditor = ({ row, column, onRowChange, onClose }: IProps) => {
     const dispatch = useDispatch();
     // const selector = useSelector((state:RootState) => state.MachineSelectReducer);
-    console.log("MultiTypeInputEditor : ", row)
     useEffect(() => {
     }, [row])
 
     const typeCheck = () => {
-        console.log("?!?!?!!??!!?!?!?", row, row.columnType)
         switch (row.columnType){
             case "text":
-                console.log("TEXT!!!!!")
                 return <TextEditor row={row} column={column} onRowChange={onRowChange} />
             case "dropdown":
-                console.log("DROPDOWN!!!!!")
                 return <DropDownEditor column={column} row={row} onRowChange={onRowChange}/>
+                // return <DropDownEditor column={{...column,selectList:Object.keys(row.selectList).map((name, index) => Object({name:name, pk:index})), }} row={row} onRowChange={onRowChange}/>
             default:
                 return <TextEditor row={row} column={column} onRowChange={onRowChange} />
         }
