@@ -60,6 +60,8 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const [tabs, setTabs] = useState<string[]>([])
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
+  console.log(searchList,'searchListsearchListsearchList')
+
 
   useEffect(() => {
     if(isOpen) {
@@ -91,17 +93,64 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   const haveBasicValidation = () => {
 
-    return searchList.some(v => v.setting === 1)
+    let rawMaterialBasic = [] ;
+    let subMaterialBasic = [] ;
+    let productBasic = [];
+
+    let haveRawMaterialBasic;
+    let haveSubMaterialBasic;
+    let haveProductBasic;
+
+    searchList.map((list)=>{
+      if(list.tab === 0){
+        rawMaterialBasic.push({type : list.setting})
+      }else if(list.tab === 1){
+        subMaterialBasic.push({type : list.setting})
+      }else if(list.tab === 2){
+        productBasic.push({type : list.setting})
+      }
+    })
+
+    if(rawMaterialBasic.length !== 0){
+      haveRawMaterialBasic = rawMaterialBasic.some((v) => v.type === 1)
+    }else{
+      haveRawMaterialBasic = true
+    }
+
+    if(subMaterialBasic.length !== 0){
+      haveSubMaterialBasic = subMaterialBasic.some((v) => v.type === 1)
+    }else{
+      haveSubMaterialBasic = true
+    }
+
+    if(productBasic.length !== 0){
+      haveProductBasic = productBasic.some((v) => v.type === 1)
+    }else{
+      haveProductBasic = true
+    }
+
+    if(haveRawMaterialBasic && haveSubMaterialBasic && haveProductBasic){
+      return true
+    }
+
+    return false
+
   }
+
+
 
   const executeValidation = () => {
 
     let isValidation = false
+    const haveList = searchList.length === 0
     const haveBasic = haveBasicValidation()
 
-    if(!haveBasic){
+    if(haveList){
       isValidation = true
-      Notiflix.Report.warning("경고","사용 여부의 '여'는 최소 한 개 이상 필요합니다.","확인",)
+      Notiflix.Report.warning("경고","BOM은 하나라도 등록이 되어야합니다.","확인",)
+    }else if(!haveBasic){
+      isValidation = true
+      Notiflix.Report.warning("경고",`자재 보기를 눌러 BOM 등록을 해주세요. 자재 종류별로 최소 한 개 이상은 사용해야 합니다.`,"확인",)
     }
 
     return isValidation
