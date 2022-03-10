@@ -681,7 +681,7 @@ export const columnlist: any = {
         {pk: '1', name: '재공품'},
         {pk: '2', name: '완제품'},
       ]},
-    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer, type:"image"},
+    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer, type:"image", readonly:true},
   ],
   midrange: [
     {key: 'samples', name: '시료 개수 선택 (최소 1 ~ 최대 10개)', formatter: DropDownEditor, selectList: [
