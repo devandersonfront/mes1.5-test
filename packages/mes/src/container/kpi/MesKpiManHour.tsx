@@ -41,7 +41,7 @@ const MesKpiManHour = () => {
 
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
         from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD'),
-        to: moment(new Date()).format('YYYY-MM-DD')
+        to: moment(new Date()).subtract(1,"day").format('YYYY-MM-DD')
     });
 
     const manDayCostLoad = async (productId: number) => {
@@ -61,6 +61,7 @@ const MesKpiManHour = () => {
         if(res){
             const filterResponse = res.map((v)=>{
                 return {
+                    ...v,
                     osd_id: v.operation_sheet.os_id,
                     code: v.operation_sheet.product.code,
                     name: v.operation_sheet.product.name,

@@ -27,12 +27,7 @@ const MesStockList = ({page, search, option}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
-  const [basicRow, setBasicRow] = useState<Array<any>>([
-    {
-      customer: '진주상사', model: '한국차', code: 'SU-20210701-1', material_name: 'SU900',
-      type: '완제품', unit: 'EA', stock: '10,000'
-    }
-  ])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["stockV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처', '모델', 'CODE', '품명', /*'품목종류'*/])
@@ -112,9 +107,6 @@ const MesStockList = ({page, search, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       },
-      params: {
-        sorts: 'modified'
-      }
     })
 
     if(res){
@@ -139,7 +131,6 @@ const MesStockList = ({page, search, option}: IProps) => {
       params: {
         keyword: keyword ?? '',
         opt: optionIndex ?? 0,
-        sorts: 'modified'
       }
     })
 

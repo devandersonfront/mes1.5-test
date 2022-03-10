@@ -31,7 +31,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["recordListV2"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["cncRecordListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['수주번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -115,7 +115,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
   const SearchBasic = async (keyword, opt, page?: number) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `recordSearch`,{
+    const res = await RequestMethod('get', `cncRecordSearch`,{
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
@@ -152,7 +152,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `recordList`,{
+    const res = await RequestMethod('get', `cncRecordList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
@@ -245,13 +245,13 @@ const MesRecordList = ({page, search, option}: IProps) => {
       }
     }).filter((v) => v)
     let res
-      for(let i = 0; i < delete_array.length; i++ ){
-        res = await RequestMethod('delete', `cncRecordeDelete`, [delete_array[i]])
+    for(let i = 0; i < delete_array.length; i++ ){
+      res = await RequestMethod('delete', `cncRecordeDelete`, [delete_array[i]])
 
-        if(!res){
-          break
-        }
+      if(!res){
+        break
       }
+    }
 
     if(res) {
       Notiflix.Report.success('삭제 성공!', '', '확인', () => {
@@ -263,7 +263,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
   }
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["recordListV2"];
+    let tmpColumn = columnlist["cncRecordListV2"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
