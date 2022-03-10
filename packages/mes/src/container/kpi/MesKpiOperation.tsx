@@ -37,7 +37,7 @@ const MesKpiOperation = () => {
 
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
         from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD'),
-        to: moment(new Date()).format('YYYY-MM-DD')
+        to: moment(new Date()).subtract(1,"day").format('YYYY-MM-DD')
     });
 
     const buttonEvents = async(index:number) => {
