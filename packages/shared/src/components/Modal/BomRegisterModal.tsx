@@ -89,6 +89,25 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
+  const haveBasicValidation = () => {
+
+    return searchList.some(v => v.setting === 1)
+  }
+
+  const executeValidation = () => {
+
+    let isValidation = false
+    const haveBasic = haveBasicValidation()
+
+    if(!haveBasic){
+      isValidation = true
+      Notiflix.Report.warning("경고","사용 여부의 '여'는 최소 한 개 이상 필요합니다.","확인",)
+    }
+
+    return isValidation
+
+  }
+
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpData = []
     let tmpRows = [];
@@ -392,32 +411,36 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-                onRowChange({
-                  ...row,
-                  input_bom: [
-                    ...searchList.map((v, i) => {
-                      // if(v.spare === '여'){
-                        return {
-                          bom: {
-                            seq: i+1,
-                            type: v.tab,
-                            parent: v.parent,
-                            child_product: v.tab === 2 ? {...v.product} : null,
-                            child_rm: v.tab === 0 ? {...v.raw_material} : null,
-                            child_sm: v.tab === 1 ? {...v.sub_material} : null,
-                            key: v.parent.bom_root_id,
-                            setting: v.setting,
-                            usage: v.usage,
+
+                const isValidation = executeValidation()
+                if(!isValidation){
+                  onRowChange({
+                    ...row,
+                    input_bom: [
+                      ...searchList.map((v, i) => {
+                        // if(v.spare === '여'){
+                          return {
+                            bom: {
+                              seq: i+1,
+                              type: v.tab,
+                              parent: v.parent,
+                              child_product: v.tab === 2 ? {...v.product} : null,
+                              child_rm: v.tab === 0 ? {...v.raw_material} : null,
+                              child_sm: v.tab === 1 ? {...v.sub_material} : null,
+                              key: v.parent.bom_root_id,
+                              setting: v.setting,
+                              usage: v.usage,
+                            }
                           }
-                        }
-                      // }
-                    }).filter(v=>v)
-                  ],
-                  name: row.name,
-                  isChange: true
-                })
-                dispatch(reset_summary_info())
-                setIsOpen(false)
+                        // }
+                      }).filter(v=>v)
+                    ],
+                    name: row.name,
+                    isChange: true
+                  })
+                  dispatch(reset_summary_info())
+                  setIsOpen(false)
+                }
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
