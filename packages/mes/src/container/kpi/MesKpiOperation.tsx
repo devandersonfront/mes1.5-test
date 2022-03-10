@@ -79,6 +79,7 @@ const MesKpiOperation = () => {
             const filterResponse = res.map((v)=>{
 
                 return {
+                    ...v,
                     osd_id: v.operation_sheet.os_id,
                     code: v.operation_sheet.product.code,
                     name: v.operation_sheet.product.name,
