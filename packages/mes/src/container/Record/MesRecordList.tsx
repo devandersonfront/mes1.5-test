@@ -186,65 +186,72 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
   const DeleteBasic = async () => {
 
-    const res = await RequestMethod('delete', `cncRecordeDelete`,
-        basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let selectKey: string[] = []
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
-
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-            })
-            return {
-              ...row,
-              ...selectData,
-              worker: row.user,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
+    const delete_array = basicRow.map((row, i) => {
+      if(selectList.has(row.id)){
+        let selectKey: string[] = []
+        let additional:any[] = []
+        column.map((v) => {
+          if(v.selectList){
+            selectKey.push(v.key)
           }
-        }).filter((v) => v))
+
+          if(v.type === 'additional'){
+            additional.push(v)
+          }
+        })
+
+        let selectData: any = {}
+
+        Object.keys(row).map(v => {
+          if(v.indexOf('PK') !== -1) {
+            selectData = {
+              ...selectData,
+              [v.split('PK')[0]]: row[v]
+            }
+          }
+
+          if(v === 'unitWeight') {
+            selectData = {
+              ...selectData,
+              unitWeight: Number(row['unitWeight'])
+            }
+          }
+
+          if(v === 'tmpId') {
+            selectData = {
+              ...selectData,
+              id: row['tmpId']
+            }
+          }
+        })
+        return {
+          ...row,
+          ...selectData,
+          worker: row.user,
+          additional: [
+            ...additional.map(v => {
+              if(row[v.name]) {
+                return {
+                  id: v.id,
+                  title: v.name,
+                  value: row[v.name],
+                  unit: v.unit
+                }
+              }
+            }).filter((v) => v)
+          ]
+        }
+
+      }
+    }).filter((v) => v)
+    let res
+    for(let i = 0; i < delete_array.length; i++ ){
+      res = await RequestMethod('delete', `cncRecordeDelete`, [delete_array[i]])
+
+      if(!res){
+        break
+      }
+    }
 
     if(res) {
       Notiflix.Report.success('삭제 성공!', '', '확인', () => {
@@ -414,6 +421,9 @@ const MesRecordList = ({page, search, option}: IProps) => {
               case 2: {
                 if(selectList.size === 0) {
                   return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
+                }
+                if(selectList.size > 1) {
+                  return  Notiflix.Report.warning("경고","한개의 데이터를 선택해 주시기 바랍니다.","확인" )
                 }
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",()=>DeleteBasic())
                 break
