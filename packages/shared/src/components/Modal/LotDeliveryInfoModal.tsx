@@ -35,7 +35,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      if (row.lots && row.lots.length) {
+      if (row.lots && row.lots.length && column.key === 'lot_number') {
         initData()
       }else if (row.product?.product_id) {
         SearchBasic()
@@ -135,9 +135,11 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         renderItem: 18,
       },
     })
-    if(res){
+    if(res && res.info_list.length <= 0){
+      Notiflix.Report.warning("경고","해당 품목의 재고가 없습니다.","확인", () => setIsOpen(false))
+      return
+    }else if(res){
       const searchList = changeRow(res.info_list)
-
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -358,6 +360,16 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               </div>
               <div
                 onClick={() => {
+                  const error = searchList.map((v)=> {
+                    if(v.amount > v.current) {
+                      return 1
+                    }
+                  })
+
+                  if(error.includes(1)){
+                    return Notiflix.Report.warning("경고", "납품 수량이 재고량보다 많습니다.", "확인",)
+                  }
+
                   let lot = searchList.map(v => {
                     return {
                       ...v,

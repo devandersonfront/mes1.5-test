@@ -9,17 +9,18 @@ import {BasicDailyInspectionInfo} from "basic";
 
 interface IProps {
     machine_id?: number
+    mold_id?: number
 }
 
 
-const BasicContainer = ({machine_id}: IProps) => {
+const BasicContainer = ({machine_id, mold_id}: IProps) => {
 
     return (
         <div style={{display: 'flex', }}>
             <MenuNavigation pageType={'BASIC'} subType={0}/>
             <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
-                <BasicDailyInspectionInfo machine_id={machine_id} />
+                <BasicDailyInspectionInfo machine_id={machine_id} mold_id={mold_id} />
             </div>
         </div>
     );
@@ -36,10 +37,11 @@ const BasicContainer = ({machine_id}: IProps) => {
 // }
 
 BasicContainer.getInitialProps = async ({ query }) => {
-  let { machine_id } = query
+  let { machine_id, mold_id } = query
   if (typeof machine_id === 'string')
       machine_id = parseInt(machine_id);
-  return { machine_id };
+      mold_id = parseInt(mold_id);
+  return { machine_id, mold_id };
 }
 
 export default BasicContainer;

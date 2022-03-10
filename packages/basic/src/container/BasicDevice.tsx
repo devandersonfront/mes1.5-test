@@ -36,7 +36,7 @@ const deviceList = [
   {pk: 7, name: "유틸리티 센서"},
 ]
 
-const BasicDevice = ({page, keyword, option}: IProps) => {
+const BasicDevice = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -49,7 +49,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(["장치 제조사", "장치 이름", "제조 번호", "담당자"])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectRow , setSelectRow] = useState<number>(0);
-
+  const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -58,21 +58,22 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
   const [typesState, setTypesState] = useState<number>(null);
 
   const changeTypesState = (value:number) => {
+    setPageInfo({page:1, total:1})
     setTypesState(value);
   }
 
   useEffect(() => {
     // setOptionIndex(option)
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, typesState])
+  }, [pageInfo.page, keyword, typesState])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -130,7 +131,27 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     })
   }
 
+  const valueExistence = () => {
+
+    const selectedRows = filterSelectedRows()
+
+    if(selectedRows.length > 0){
+
+      const nameCheck = selectedRows.every((data)=> data.mfrCode)
+
+      if(!nameCheck){
+        return '제조 번호'
+      }
+
+    }
+
+    return false;
+
+  }
+
   const SaveBasic = async () => {
+
+    const existence = valueExistence()
 
     if(selectList.size === 0){
       return Notiflix.Report.warning(
@@ -140,6 +161,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
         );
     }
 
+    if(!existence){
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
@@ -206,7 +228,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
                 subFactory: row?.subFactory ? {...row?.subFactory, manager:row?.subFactory?.manager_info} : undefined,
                 additional: [
                   ...additional.map((v, index)=>{
-                    if(!row[v.colName]) return undefined;
+                    //if(!row[v.colName]) return undefined;
                     return {
                       mi_id: v.id,
                       title: v.name,
@@ -221,24 +243,32 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
 
             }
           }).filter((v) => v)).catch((error)=>{
-            return error.data && Notiflix.Notify.failure(error.data.message);
+            return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
           })
+
 
 
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
-          LoadBasic(page).then(() => {
+          LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }
       }
 
     }
+  }else{
+    return Notiflix.Report.warning(
+      '경고',
+      `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+      '확인',
+    );
+  }
   }
 
 
@@ -437,85 +467,73 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     excelDownload(column, basicRow, `mold`, "mold", tmpSelectList)
   }
 
+  const setAdditionalData = () => {
+
+    const addtional = []
+    basicRow.map((row)=>{
+      if(selectList.has(row.id)){
+        column.map((v) => {
+          if(v.type === 'additional'){
+              addtional.push(v)
+            }
+          })
+      }
+    })
+
+    return addtional;
+  }
+
+
+  const convertDataToMap = () => {
+    const map = new Map()
+    basicRow.map((v)=>map.set(v.id , v))
+    return map
+  }
+
+  const filterSelectedRows = () => {
+    return basicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.device_id){
+        haveIdRows.push(row)
+      }
+    })
+
+    return haveIdRows
+  }
+
   const DeleteBasic = async () => {
-    const res = await RequestMethod('delete', `deviceDelete`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const haveIdRows = classfyNormalAndHave(selectedRows)
+    const additional = setAdditionalData()
+    let deletable = true
+
+    if(haveIdRows.length > 0){
+
+      deletable = await RequestMethod('delete','deviceDelete', haveIdRows.map((row) => (
+          {...row , type : row.type_id, additional : [...additional.map(v => {
+            if(row[v.name]) {
+              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
             }
-
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
-
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
-              }
-            }
-
-            if(v === 'unitWeight') {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(row['unitWeight'])
-              }
-            }
-
-            if(v === 'tmpId') {
-              selectData = {
-                ...selectData,
-                id: row['tmpId']
-              }
-            }
-          })
-          if(row.device_id){
-            return {
-              ...row,
-              ...selectData,
-              type: row.type_id,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
-          }
-
-        }
-      }).filter((v) => v))
-
-    if(res) {
-      Notiflix.Report.success('삭제 성공!', '', '확인', () => {
-        if(Number(page) === 1){
-          LoadBasic(1).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          // if(keyword){
-          //   router.push(`/mes/basic/customer?page=1&keyword=${keyword}&opt=${option}`)
-          // }else{
-          //   router.push(`/mes/basic/customer?page=1`)
-          // }
-        }
-      })
+          }).filter(v => v)
+          ]}
+      )))
     }
+
+    if(deletable){
+      selectedRows.forEach((row)=>{ map.delete(row.id)})
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      setBasicRow(Array.from(map.values()))
+      setSelectList(new Set())
+    }
+
   }
 
   const onClickHeaderButton = (index: number) => {
@@ -570,7 +588,7 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
         '확인',
         );
         }
-        
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{DeleteBasic()},
           ()=>{}
@@ -579,12 +597,13 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
     }
   }
 
+
   const competeDevice = (rows) => {
 
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined)
+    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow].mfrCode && row.mfrCode !== undefined && row.mfrCode !== '')
 
     if(spliceRow){
       if(isCheck){
@@ -605,11 +624,8 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            if(keyword){
-              router.push(`/mes/basic/device?page=1&keyword=${keyword}&opt=${optionIndex}`)
-            }else{
-              router.push(`/mes/basic/device?page=1&keyword=`)
-            }
+            setKeyword(keyword)
+            setPageInfo({page:1, total:1})
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -649,23 +665,19 @@ const BasicDevice = ({page, keyword, option}: IProps) => {
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            if(keyword){
-              router.push(`/mes/basic/device?page=${page}&keyword=${keyword}&opt=${option}`)
-            }else{
-              router.push(`/mes/basic/device?page=${page}`)
-            }
+            setPageInfo({...pageInfo,page:page})
           }}
         />
-      <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`금형기준정보`}
-        sheetname={`금형기준정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
-      />
+      {/*<ExcelDownloadModal*/}
+      {/*  isOpen={excelOpen}*/}
+      {/*  column={column}*/}
+      {/*  basicRow={basicRow}*/}
+      {/*  filename={`금형기준정보`}*/}
+      {/*  sheetname={`금형기준정보`}*/}
+      {/*  selectList={selectList}*/}
+      {/*  tab={'ROLE_BASE_07'}*/}
+      {/*  setIsOpen={setExcelOpen}*/}
+      {/*/>*/}
     </div>
   );
 }

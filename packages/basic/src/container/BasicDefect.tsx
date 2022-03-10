@@ -159,6 +159,50 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
     excelDownload(pauseColumn, pauseBasicRow, `공정별 불량유형 등록`, '공정별 불량유형 등록', tmpSelectList)
   }
 
+  const convertDataToMap = () => {
+    const map = new Map()
+    pauseBasicRow.map((v)=>map.set(v.id , v))
+    return map
+  }
+
+  const filterSelectedRows = () => {
+    return pauseBasicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.pdr_id){
+        haveIdRows.push(row)
+      }
+    })
+
+    return haveIdRows
+  }
+
+  const DeleteBasic = async () => {
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const haveIdRows = classfyNormalAndHave(selectedRows)
+    let deletable = true
+
+    if(haveIdRows.length > 0){
+
+      deletable = await RequestMethod('delete','defectDelete', haveIdRows)
+
+    }
+    
+    if(deletable){
+      selectedRows.forEach((row)=>{ map.delete(row.id)})
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      setPauseBasicRow(Array.from(map.values()))
+      setSelectList(new Set())
+    }
+  }
+
 
   const buttonEvents = async(index:number) => {
     switch (index) {
@@ -191,14 +235,6 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         return
       case 3 :
         // let validation = true;
-
-        if(selectList.size === 0){
-          return Notiflix.Report.warning(
-        '경고',
-        '선택된 정보가 없습니다.',
-        '확인',
-        );
-        }
 
         Notiflix.Loading.standard();
         let savePauseBasicRow:any[] = [];
@@ -270,10 +306,13 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
             })
           }
         );
+        }
 
-
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+          () => DeleteBasic()
+        )
     }
-  }
+
 
   const sortObject = (object:any) => {
     const  compare_qty = (a:any, b:any) => {

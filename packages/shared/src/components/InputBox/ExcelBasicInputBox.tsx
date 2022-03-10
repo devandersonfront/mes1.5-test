@@ -9,7 +9,7 @@ interface IProps {
   row: any
   column: IExcelHeaderType
   onRowChange: (e: any) => void
-  onClose: (state: boolean) => void
+  onClose?: (state: boolean) => void
 }
 
 const autoFocusAndSelect = (input: HTMLInputElement | null) => {
@@ -26,10 +26,11 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
 
   return (
     <input
-      style={{textAlign: 'center', color: column.textType ? 'black' : 'white' }}
+      style={{textAlign: 'center', color: column.textType ? 'black' : 'white', border:"none" }}
       className={'editCell'}
       ref={autoFocusAndSelect}
       value={row[column.key]}
+      type={column.type === "number" ? "number" : "text"}
       onFocus={() => {
         if(column.searchType === 'record' && row.osd_id){
           onClose(true)
@@ -39,8 +40,12 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
             onClose(true)
             return Notiflix.Report.warning('수정할 수 없습니다.', '아이디는 수정할 수 없습니다.', '확인')
           }
+        }else if(column.key === 'amount' && row.setting){
+          onClose(true)
+          Notiflix.Report.warning('수정할 수 없습니다.', '사용여부가 부 입니다.', '확인')
         }
       }}
+
       onChange={(event) => {
         if(column.key === 'mold_name') {
           onRowChange({
@@ -65,7 +70,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onRowChange({ ...row, [column.key]: event.target.value, isChange: true })
         }
       }}
-      onBlur={() => onClose(true)}
+      onBlur={() => onClose && onClose(true)}
     />
   );
 }

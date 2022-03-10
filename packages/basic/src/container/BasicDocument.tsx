@@ -87,7 +87,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                                     uuid:file.file_uuid
                                 }
                             }).then((response) => {
-
                                     window.open(response.url)
                             })
                         }
@@ -96,39 +95,6 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
             })
     }
 
-    const cleanUpData = (datas:any[]) => {
-        let resultDatas = [];
-        let folderList = [];
-        datas.map((data) => {
-            const randomId = Math.random()*1000;
-            let result:any = {...data, id:"document_"+randomId};
-            result.type = data.type === "dir" ? "폴더" : data.type;
-            // result.date = data.created;
-            result.date = moment().format("YYYY-MM-DD");
-
-            if(data.type === "dir"){
-                folderList.push(data)
-                // folderList.push("fileParent")
-            }
-
-            resultDatas.push(result);
-        })
-
-        setBasicRow(resultDatas)
-        setFolderList(folderList);
-        settingFolderList();
-    }
-
-    const settingFolderList = async() => {
-        await RequestMethod("get", "documentAll",{
-            params:{
-                type:"dir"
-            }
-        })
-            .then((res) => {
-                setFolderList(res)
-            })
-    }
 
     const selectFile = () => {
         const data = basicRow.filter((row) => {
@@ -159,15 +125,20 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                     Notiflix.Report.warning("경고", "데이터를 선택해주시기 바랍니다.", "확인",)
                     return
                 }else{
-                    selectFile().map((value,index) =>{
+
+                    const files = selectFile()
+                    let haveFolder;
+
+                    files.map((value,index) =>{
                         if(value.type === "폴더"){
                             Notiflix.Report.warning("경고", "파일을 선택해주시기 바랍니다.", "확인");
-                            return
-                        }else{
-                            // 문서 다운로드시 hwp는 다운로드가 안됨..
-                            DocumentDownLoad();
+                            haveFolder = true
                         }
                     })
+
+                    if(!haveFolder){
+                        DocumentDownLoad();
+                    }
                 }
                 return
             case 3:

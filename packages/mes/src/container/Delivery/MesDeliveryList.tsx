@@ -22,16 +22,16 @@ import {useDispatch} from 'react-redux'
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
-const MesDeliveryList = ({page, keyword, option}: IProps) => {
+const MesDeliveryList = ({page, search, option}: IProps) => {
   const dispatch = useDispatch()
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
+  const [order, setOrder] = useState(0)
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     name: "", id: "", start_date: moment().format('YYYY-MM-DD'),
     limit_date: moment().format('YYYY-MM-DD')
@@ -41,22 +41,25 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
   const [optionList, setOptionList] = useState<string[]>(['납품 번호', '수주 번호', '거래처', '모델', 'CODE', '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
+    from: moment().subtract(1,"months").format("YYYY-MM-DD") ,
+    to:  moment().format('YYYY-MM-DD')
   });
 
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
-
+  const changeSetOrder = (value:number) => {
+    setPageInfo({page:1, total:1})
+    setOrder(value);
+  }
 
 
   useEffect(() => {
     // setOptionIndex(option)
-    if(searchKeyword !== ""){
-      SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+    if(keyword !== ""){
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -64,7 +67,7 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, option, selectDate])
+  }, [pageInfo.page, keyword, selectDate,order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -103,7 +106,8 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeSetOrder
           }
         }else{
           return v
@@ -125,10 +129,19 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         page: pageInfo.page ?? 1,
         renderItem: 22,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params: order == 0 ?
+
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+        {
+          from: selectDate.from,
+          to: selectDate.to,
+          sorts: 'date',
+          order: order == 1 ? 'ASC' : 'DESC'
+        }
 
     })
 
@@ -157,12 +170,23 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 22,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params:order == 0 ?
+
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+            from: selectDate.from,
+            to: selectDate.to,
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC'
+          }
     })
 
     if(res){
@@ -335,7 +359,11 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
       })
 
       const reducer = (accumulator, curr) => {
-        return accumulator.amount + curr.amount;
+        if(typeof accumulator === "object"){
+          return accumulator.amount + curr.amount;
+        }else if(typeof accumulator === "number"){
+          return accumulator + curr.amount;
+        }
       }
 
       let random_id = Math.random()*1000;
@@ -364,7 +392,11 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
     })
 
     Notiflix.Loading.remove()
-    setBasicRow([...tmpBasicRow])
+    if(pageInfo.page > 1){
+      setBasicRow([...basicRow,...tmpBasicRow])
+    }else{
+      setBasicRow([...tmpBasicRow])
+    }
   }
 
   return (
@@ -375,7 +407,7 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         searchKeyword={""}
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) => {
-          setSearchKeyword(keyword);
+          setKeyword(keyword);
           setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
@@ -385,7 +417,10 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
+        setSelectDate={(date) => {
+          setSelectDate(date as {from:string, to:string})
+          setPageInfo({page:1, total:1})
+        }}
         title={"납품 현황"}
         buttons={
           ['', '수정하기', '삭제']
@@ -407,8 +442,8 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
                       if (selectList.has(v.id)) {
                         return v
                       }
-                    }).filter(v => v),
-                    type: 'delivery'
+                    }).filter(v => v).map((v)=>{return {...v, amount: 0}}),
+                    type: 'delivery',
                   }))
                   Notiflix.Loading.remove(300);
                   router.push('/mes/delivery/modify')

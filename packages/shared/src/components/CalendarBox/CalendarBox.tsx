@@ -9,6 +9,8 @@ import Modal from 'react-modal'
 import styled from 'styled-components'
 //@ts-ignore
 import calendarWhite from '../../../public/images/calendar_icon_white.png'
+//@ts-ignore
+import calendarBlack from '../../../public/images/calendar_icon_black.png'
 import {POINT_COLOR} from '../../common/configset'
 
 interface IProps {
@@ -33,10 +35,10 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
       <Background onClick={() => {
         setIsOpen(true)
       }}>
-        <p style={{padding: 0, margin: 0, color: row[column.key] ? '#ffffff' : '#ffffff4d', textAlign: 'center', width: '100%' }}>
+        <p style={{padding: 0, margin: 0, color: column.type === "Modal" ? 'black' : row[column.key] ? '#ffffff' : '#ffffff4d', textAlign: 'center', width: '100%' }}>
           {row[column.key] ? row[column.key] : moment().format("YYYY-MM-DD")}
         </p>
-        <img src={calendarWhite} style={{width: 24, height: 24}}/>
+        <img src={column.type !== "Modal" ? calendarWhite : calendarBlack} style={{width: 24, height: 24}}/>
       </Background>
       <Modal
         isOpen={isOpen}
@@ -67,7 +69,7 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
             <div  style={{display: 'inline-block', float: 'left', flex: 1, marginRight: 20}}>
               <Calendar
                 maxDate={column.type === "date" ? moment(row.deadline).subtract(1, 'days').toDate() : moment('2999-12-31').subtract(1, 'days').toDate() }
-                minDate={column.type === "deadline" ? moment(row.date).subtract(1, 'days').toDate() : moment('2000-01-01').subtract(1, 'days').toDate()}
+                minDate={column.type === "deadline" ? moment(row.date).subtract(1, 'days').toDate() : moment('1900-01-01').subtract(1, 'days').toDate()}
                 onChange={(date) => {
                   setSelect(date)
                 }}

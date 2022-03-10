@@ -16,18 +16,39 @@ const CellButtonComponent = ({ row, column, setRow}: IProps) => {
   const router = useRouter()
 
   useEffect(() => {
-    if(column.key === 'pp_id'){
-      if(row[column.key]){
-        setTitle('생산 공정 보기')
-      } else {
-        setTitle('생산 공정 등록')
-      }
+    switch(column.key){
+      case "pp_id":
+        if(row[column.key]){
+          setTitle('생산 공정 보기')
+        } else {
+          setTitle('생산 공정 등록')
+        }
+        break;
+      case "form_id" :
+          setTitle("일상점검")
+        break;
+      default :
+        break;
     }
   }, [column.key])
 
   return (
     <CellButton onClick={() => {
-      if(row.product_id){
+      if(column.type === "inspection"){
+        console.log(row, column)
+        router.push({
+          pathname: '/mes/basic/dailyInspection',
+          query:
+              row.machine_id ?
+                  {
+                    machine_id: row.machine_id,
+                  }
+              :
+                  {
+                    mold_id: row.mold_id,
+                  }
+        })
+      }else if(row.product_id){
         router.push({
           pathname: '/mes/basic/product/process',
           query: {

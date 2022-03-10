@@ -17,11 +17,13 @@ const DefaultImageProfile = ({title, image, direction, style, edit, onChangeFunc
             {direction === "top" && <div className={"title top"}>{title}</div>}
             {direction === "right" && <div className={"title right"}>{title}</div>}
             {direction === "bottom" && <div className={"title bottom"}>{title}</div>}
-            {image ?
-                <img className={"image"} style={style} src={image} />
-                :
-                <div className={"image"} style={style}>이미지 없음</div>
-            }
+            <ImgBox className={"image"} style={style}>
+                {image ?
+                    <img  style={{width:"100%", }} src={image} />
+                    :
+                    <div >사진 없음</div>
+                }
+            </ImgBox>
         </Frame>
     )
 }
@@ -30,14 +32,19 @@ const Frame = styled.div`
     display:grid;
     grid-template-columns: auto 1fr auto;
     grid-template-rows:auto 1fr auto;
-    grid-gap: 1px; 
-    
+    grid-gap: 1px ; 
+    border:1px solid #B3B3B3;
     .image{
+        color:rgba(0,0,0,0.5);
         grid-row: 2/2;
         grid-column:2/2;
+        border-left:1px solid #B3B3B3;
     }
     .title{
-        width:72px;
+        margin-left:5px;
+        min-width:59px;
+        font-size:14px;
+        font-weight:bold;
     }
     .top{
         grid-row: 1/1;
@@ -55,6 +62,10 @@ const Frame = styled.div`
         grid-row: 3/3;
         grid-column:2/2;
     }
+`
+const ImgBox = styled.div`
+    width:100%;
+    overflow:hidden;
 `
 
 export default DefaultImageProfile

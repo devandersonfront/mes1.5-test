@@ -41,7 +41,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage}/>
         {/*}*/}
       {
-        row[column.key] ?
+          (column.key === "photo" && row[column.key]) || row[column.key]?.uuid ?
           <div style={{
             width: "100%",
             height: "100%",
@@ -53,7 +53,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
               onClick={()=>{
                   onRowChange({
                     ...row,
-                    [column.key+'Path']: null,
+                    // [column.key+'Path']: null,
                     [column.key]: null,
                     isChange:true
                   })
@@ -66,18 +66,34 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                 whiteSpace:'nowrap'
               }}
               onClick={() => {
-                  RequestMethod("get", "anonymousLoad", {
-                      path:{
-                        uuid:row[column.key]
-                      }
-                  })
-                      .then((res) => {
-                          setImgUrl(res.url)
-                          setOnImage(true)
+                  if(typeof row[column.key] === "object"){
+                      RequestMethod("get", "anonymousLoad", {
+                          path:{
+                              uuid:row[column.key].uuid
+                          }
                       })
-                      .catch((err) => {
-                          Notiflix.Report.failure("에러","에러입니다.","확인")
+                          .then((res) => {
+                              setImgUrl(res.url)
+                              setOnImage(true)
+                          })
+                          .catch((err) => {
+                              Notiflix.Report.failure("에러","에러입니다.","확인")
+                          })
+                  }else{
+                      RequestMethod("get", "anonymousLoad", {
+                          path:{
+                              uuid:row[column.key]
+                          }
                       })
+                          .then((res) => {
+                              setImgUrl(res.url)
+                              setOnImage(true)
+                          })
+                          .catch((err) => {
+                              Notiflix.Report.failure("에러","에러입니다.","확인")
+                          })
+                  }
+
               }}
             >
                 {column.type === "image" ? "이미지 확인" : "파일 다운로드" }
@@ -99,7 +115,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         accept={column.type === "image" ? "image/png, image/jpeg" : "*"}
         hidden
         onChange={async (e) => {
-            console.log("e : ", e, e.target.files[0])
           if(e.target.files && e.target.files.length !== 0) {
               // Buffer.from(e.target.files[0]);
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
@@ -111,6 +126,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                               ...row[column.key],
                               name:e.target.files[0].name,
                               uuid: uploadImg.UUID,
+                              url:uploadImg.url,
                               sequence: column.idx
                           }
                       })

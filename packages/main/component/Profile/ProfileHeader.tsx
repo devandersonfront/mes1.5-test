@@ -23,12 +23,11 @@ const ProfileHeader = () => {
   //@ts-ignore
   const userInfo = useSelector(state => state.userInfo)
   const dispatch = useDispatch()
-
   useEffect(() => {
     let userInfo = cookie.load('userInfo')
     dispatch(setUserInfoAction({
       name: userInfo ? userInfo.name : "",
-      profile: userInfo ? userInfo.profilePath: "",
+      profile: userInfo ? userInfo.profile: "",
       authority : userInfo ? userInfo.ca_id.name : ""
     }))
   }, [])
@@ -36,7 +35,8 @@ const ProfileHeader = () => {
   return (
     <div style={{width: '100%', height: 50, display: 'flex', justifyContent: 'flex-end', paddingTop: 20}}>
       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-        <Profile src={userInfo.profile ? SF_ENDPOINT_RESOURCE+'/'+userInfo.profile : ic_profile}/>
+        {/*<Profile src={userInfo.profile ? SF_ENDPOINT_RESOURCE+'/'+userInfo.profile : ic_profile}/>*/}
+        <Profile src={userInfo.profile ? "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com"+'/'+userInfo.profile : ic_profile}/>
         <span className="p-bold" style={{
           fontSize: 18,
           marginRight: 32,

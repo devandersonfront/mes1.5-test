@@ -13,6 +13,7 @@ import calendarWhite from '../../../public/images/calendar_icon_black.png'
 interface IProps {
     onDateChange: (date? : Moment) => void
     value: Moment
+    readOnly?:boolean
 }
 
 const darkTheme = createMuiTheme({
@@ -25,7 +26,7 @@ const darkTheme = createMuiTheme({
 });
 
 
-const MidrangeDatetimePickerBox = ({ onDateChange, value }: IProps) => {
+const MidrangeDatetimePickerBox = ({ onDateChange, value, readOnly }: IProps) => {
 
     const useStyles = makeStyles((theme: Theme) =>
         createStyles({
@@ -57,11 +58,12 @@ const MidrangeDatetimePickerBox = ({ onDateChange, value }: IProps) => {
             <ThemeProvider theme={darkTheme}>
                 <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
                     <DateTimePicker
-                        clearable
                         value={value ?? moment().format("YYYY.MM.DD HH:mm")}
                         onChange={onDateChange}
                         format={'YYYY.MM.DD HH:mm'}
                         InputProps={{ className: classes.input, disableUnderline: true}}
+                        readOnly={readOnly}
+
                     />
                 </MuiPickersUtilsProvider>
             </ThemeProvider>

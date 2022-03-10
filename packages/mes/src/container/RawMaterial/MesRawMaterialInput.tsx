@@ -24,13 +24,6 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawinV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
 
   useEffect(() => {
     getMenus()
@@ -55,7 +48,8 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable
             }
           } else if(menu.colName === 'id' && column.key === 'tmpId'){
             menuData = {
@@ -63,7 +57,8 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable
             }
           }
         })
@@ -74,27 +69,42 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
             ...menuData,
           }
         }
+
       }).filter((v:any) => v)
 
-      setColumn([...tmpColumn])
+
+      setColumn([...tmpColumn.map(v=> {
+        return {
+          ...v,
+          name: !v.moddable ? v.name+'(필수)' : v.name
+        }
+      })])
     }
   }
 
   const SaveBasic = async () => {
-    if(basicRow.length === 0) {
+    if(selectList.size <= 0) {
       return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
     }
 
-    basicRow.map((v)=> {
+    const error = basicRow.map((v)=> {
       if(selectList.has(v.id)) {
         if (v.rm_id === undefined) {
-          return Notiflix.Report.warning("경고", "원자재 CODE를 선택해 주시기 바랍니다.", "확인",)
+          return 1
         }
         if (v.lot_number === undefined) {
-          return Notiflix.Report.warning("경고", "원자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
+          return 2
         }
       }
     })
+
+    if(error.includes(1)){
+      return Notiflix.Report.warning("경고", "원자재 CODE를 선택해 주시기 바랍니다.", "확인",)
+    }
+    if(error.includes(2)){
+      return Notiflix.Report.warning("경고", "원자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
+    }
+
 
     let res: any
     res = await RequestMethod('post', `lotRmSave`,
@@ -141,7 +151,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
               ...selectData,
               warehousing: row.amount,
               type: row.type_id,
-              raw_material: {...row.raw_material, type:row.raw_material.type_id},
+              raw_material: {...row.raw_material, type:row.raw_material?.type_id},
               additional: [
                 ...additional.map(v => {
                   if(row[v.name]) {

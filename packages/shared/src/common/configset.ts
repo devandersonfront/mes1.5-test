@@ -19,11 +19,14 @@ export const BUTTON_TEXT_COLOR: string = '#ffffff' as const
 export const BG_COLOR_SUB3: string = '#353b48' as const
 export const POINT_COLOR_3: string = '#e7e9eb' as const
 
+//본하이테크 주소
+export const SF_ADDRESS = "13.124.98.138"
+
 //CNC 주소
 // export const SF_ADDRESS = "3.36.78.194"
 
 //1.5v 주소
-export const SF_ADDRESS = "3.37.196.98"
+// export const SF_ADDRESS = "3.37.196.98"
 
 let hostname
 if (typeof window !== 'undefined') {
@@ -50,7 +53,7 @@ export const SF_PORT = ``
 
 export const SF_ENDPOINT_BARCODE = 'http://192.168.0.49:18080'
 
-export const SF_ENDPOINT_PMS = `http://211.208.115.66:18999`
+export const SF_ENDPOINT_PMS = `http://3.34.98.247:8999`
 
 export const AUTHORITY_LIST = [
   { title: "HOME", show: false, checkable: true, check: false, child: [

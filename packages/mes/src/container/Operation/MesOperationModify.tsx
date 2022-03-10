@@ -30,8 +30,6 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["operationModifyV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
-  const [optionIndex, setOptionIndex] = useState<number>(0)
     const selector = useSelector((state:RootState) => state.modifyInfo);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -41,6 +39,7 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
 
     const SaveBasic = async (result:any, selectList:Set<any>) => {
         let res: any
+
         res = await RequestMethod('post', `sheetSave`,
             result.map((row, i) => {
                 if(selectList.has(row.id)){
@@ -83,16 +82,7 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
                     return {
                         ...row,
                         ...selectData,
-                        os_id:undefined,
-                        input_bom: /*row?.input ??*/ [...row?.input_bom?.map((bom)=>{
-                            // return {
-                            //   ...bom,
-                            //   setting:bom.setting === "여" || bom.setting === 1 ? 1 : 0
-                            // }
-                            bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
-                            return {...bom}
-                        })] ?? [],
-                        status: 1,
+                        status: result[0].status === '작업 중' ? 0 : 1,
                         additional: [
                             ...additional.map(v => {
                                 if(row[v.name]) {
@@ -147,10 +137,12 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
     }
 
     useEffect(() => {
-        if(selector && selector.modifyInfo){
+        if(selector && selector.type && selector.modifyInfo){
             setBasicRow([
                 ...selector.modifyInfo
             ])
+        }else{
+            router.push('/mes/operationV1u/list')
         }
     }, [selector])
 
@@ -184,17 +176,6 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/mold?page=${page}`)
-          }
-        }}
       />
       <ExcelDownloadModal
         isOpen={excelOpen}

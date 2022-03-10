@@ -21,13 +21,13 @@ import {useDispatch} from 'react-redux'
 interface IProps {
   children?: any
   page?: number
-  keyword?: string
+  search?: string
   option?: number
 }
 
 let now = moment().format('YYYY-MM-DD')
 
-const MesOperationList = ({page, keyword, option}: IProps) => {
+const MesOperationList = ({page, search, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -38,6 +38,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['지시 고유 번호', '고객사명', '모델', 'CODE', '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [order, setOrder] = useState<number>(0);
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
@@ -45,16 +46,19 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
 
 
 
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
-
+  const changeOrder = (value:number) => {
+    setPageInfo({page:1,total:1})
+    setOrder(value);
+  }
 
   useEffect(() => {
-    if(searchKeyword){
-      SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+    if(keyword){
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -62,7 +66,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, option, selectDate])
+  }, [pageInfo.page, keyword, selectDate, order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -101,7 +105,8 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeOrder
           }
         }else{
           return v
@@ -120,14 +125,23 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `sheetList`,{
       path: {
-        page: page ?? 1,
+        page: pageInfo.page ?? 1,
         renderItem: 22,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-        status: '0,1'
-      }
+      params: order == 0 ?
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+            status: '0,1'
+          }
+          :
+          {
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC',
+            from: selectDate.from,
+            to: selectDate.to,
+            status: '0,1'
+          }
     })
 
 
@@ -149,16 +163,28 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     }
     const res = await RequestMethod('get', `operationSearch`,{
       path: {
-        page: isPaging ?? 1,
-        renderItem: 22,
+        page: pageInfo.page ?? 1,
+        renderItem: 18,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-        keyword: keyword ?? '',
-        status: '0,1',
-        opt: option ?? 0
-      }
+
+      params: order == 0 ?
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+            keyword: keyword ?? '',
+            status: '0,1',
+            opt: option ?? 0
+          }
+          :
+          {
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC',
+            from: selectDate.from,
+            to: selectDate.to,
+            keyword: keyword ?? '',
+            status: '0,1',
+            opt: option ?? 0
+          }
     })
 
     if(res){
@@ -342,23 +368,23 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         contract_id: row.contract?.identification ?? '-' ,
         bom_root_id: row.product?.bom_root_id,
         // operation_sheet: row.
+        total_counter: row.total_good_quantity+row.total_poor_quantity,
         customer_id: row.product.customer?.name ?? '-',
         cm_id: row.product.model?.model ?? '-',
         product_id: row.product.code ?? '-',
         code: row.product.code ?? '-',
         name: row.product.name ?? '-',
-        type: TransferCodeToValue(row.product.type, 'material'),
+        type: TransferCodeToValue(row.product.type, 'product'),
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? '-',
         id: `sheet_${random_id}`,
-        total_counter:"-",
-        total_good_quantity:"-"
       }
     })
 
     Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
   }
+
 
   return (
     <div>
@@ -372,16 +398,17 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         onChangeSearchKeyword={(keyword) => {
-          // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)
-          setSearchKeyword(keyword);
+          setKeyword(keyword);
           setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
-          // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)
           setOptionIndex(option)
         }}
         //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
+        setSelectDate={(date) => {
+          setSelectDate(date as {from:string, to:string })
+          setPageInfo({page:1, total:1})
+        }}
         title={"작업지시서 리스트"}
         buttons={
           ['', '수정하기', '삭제']
@@ -439,7 +466,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
           if(v.isChange) tmp.add(v.id)
           if(v.update || v.finish){
             if(keyword){
-              SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+              SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
               })
             }else{
