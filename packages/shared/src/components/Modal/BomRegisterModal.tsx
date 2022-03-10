@@ -142,13 +142,9 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const executeValidation = () => {
 
     let isValidation = false
-    const haveList = searchList.length === 0
     const haveBasic = haveBasicValidation()
 
-    if(haveList){
-      isValidation = true
-      Notiflix.Report.warning("경고","BOM은 하나라도 등록이 되어야합니다.","확인",)
-    }else if(!haveBasic){
+    if(!haveBasic){
       isValidation = true
       Notiflix.Report.warning("경고",`자재 보기를 눌러 BOM 등록을 해주세요. 자재 종류별로 최소 한 개 이상은 사용해야 합니다.`,"확인",)
     }
