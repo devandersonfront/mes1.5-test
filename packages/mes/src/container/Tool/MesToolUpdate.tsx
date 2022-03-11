@@ -85,7 +85,6 @@ const MesToolUpdate = () => {
     }
 
     useEffect(() => {
-        console.log("toolStore : ",toolStore )
         if(toolStore.data === ""){
             router.push("/mes/tool/list")
         }else{

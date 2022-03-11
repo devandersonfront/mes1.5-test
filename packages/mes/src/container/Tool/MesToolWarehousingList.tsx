@@ -269,7 +269,13 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 }
                 return
             case 1:
-                DeleteBasic()
+                if(selectList.size === 0) {
+                    return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
+                }
+                if(selectList.size > 1) {
+                    return  Notiflix.Report.warning("경고","한개의 데이터를 선택해 주시기 바랍니다.","확인" )
+                }
+                Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",()=>DeleteBasic())
 
                 return
             // case 2:

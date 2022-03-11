@@ -58,14 +58,14 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
   const changeRow = (row: any, key?: string) => {
     let tmpData = {
       ...row,
-      identification: row.operation_sheet.identification,
-      date: row.operation_sheet.date,
-      customer_id: row.operation_sheet.product.customer.name,
-      cm_id: row.operation_sheet.product.model.model,
-      code: row.operation_sheet.product.code,
-      name: row.operation_sheet.product.name,
-      type: (row.operation_sheet.product.type || row.operation_sheet.product.type === 0) ? TransferCodeToValue(Number(row.operation_sheet.product.type), 'productType') : '-',
-      process: row.operation_sheet.product.process?.name,
+      identification: row.identification ?? "-",
+      date: row.date ?? "-",
+      customer_id: row.product?.customer?.name ?? "-",
+      cm_id: row.product?.model?.model ?? "-",
+      code: row.product?.code ?? "-",
+      name: row.product?.name ?? "-",
+      type: (row.product?.type || row.product?.type === 0) ? TransferCodeToValue(Number(row.product?.type), 'productType') : '-',
+      process_id: row.product.process?.name ?? "-",
     }
 
     return tmpData
@@ -73,10 +73,10 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const SearchBasic = async () => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `cncRecordList`, {
+    const res = await RequestMethod('get', `sheetList`, {
       params: {
         contractIds: row.contract_id,
-        nz: true
+        // nz: true
       }
     })
 

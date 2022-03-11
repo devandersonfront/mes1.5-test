@@ -15,7 +15,7 @@ const BasicMidrangeModify = () => {
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<Array<any>>([{}])
     const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([{}])
-    const [legendaryBasicRow, setLegendaryBasicRow] = useState<Array<any>>([{}])
+    const [legendaryBasicRow, setLegendaryBasicRow] = useState<Array<any>>([])
     const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{}])
     const [productId, setProductId] = useState<number>()
     const [ isOpen, setIsOpen ] = useState<boolean>(false)
@@ -33,6 +33,12 @@ const BasicMidrangeModify = () => {
         legendaryBasicRow.map((v,i)=>{
             legendaryKeyValue[v.legendary] = v.LegendaryExplain
         })
+
+        if(Object.keys(legendaryKeyValue).includes('') || Object.keys(legendaryKeyValue).includes('undefined')){
+            return Notiflix.Report.warning('경고', '범례를 확인해주세요.', '확인')
+        }else if(Object.values(legendaryKeyValue).includes('') || Object.values(legendaryKeyValue).includes('undefined')){
+            return Notiflix.Report.warning('경고', '범례 설명을 확인해주세요.', '확인')
+        }
 
         const categoryInfo = itemBasicRow.map((v)=>{
             return {...v, type: v.type === "범례 적용" ? 1 : 0}
@@ -133,7 +139,7 @@ const BasicMidrangeModify = () => {
 
     const deleteRowButton = (type : 'legendary' | 'item') => {
 
-        if(type === 'legendary' && legendaryBasicRow.length > 1) {
+        if(type === 'legendary' && legendaryBasicRow.length > 0) {
 
             const tmpRow = [...legendaryBasicRow]
             tmpRow.splice(-1,1)

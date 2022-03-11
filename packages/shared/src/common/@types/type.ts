@@ -35,6 +35,7 @@ export interface IExcelHeaderType {
   subTitle?:string
   url?: string
   headerType?:any[]
+  toolType?: 'register'
   callback?: (data : any) => void
   idx?:number
   headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][]
