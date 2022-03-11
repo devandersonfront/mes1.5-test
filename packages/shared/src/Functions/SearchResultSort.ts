@@ -329,6 +329,13 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         contract_id: selectData.identification
       }
     }
+    case 'toolRegister': {
+      return {
+        ...selectData,
+        code: selectData.tool_id,
+        tool_id: selectData.code
+      }
+    }
     default : {
       return selectData
     }
