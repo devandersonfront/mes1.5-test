@@ -418,7 +418,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                   }else if(column.type === 'customer'){
                     onRowChange(
                       {
-                        ...row,   
+                        ...row,
                         ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
                         manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                         name: selectNameFunction(column.type),
@@ -449,6 +449,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                           // type_name: undefined,
                           version: row.version,
                           isChange: true,
+                          //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
+                          returnType:column.key
                         }
                     )
                   }

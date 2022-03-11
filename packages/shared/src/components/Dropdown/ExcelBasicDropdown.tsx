@@ -27,7 +27,6 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
       case "setting" :
         return (row[column.key] === 1 || row[column.key] === "여") ? "여" : "부"
       default:
-        console.log(row, column)
         return row[column.key] ? row[column.key] : "무"
     }
   }
@@ -139,7 +138,6 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
             })
 
           }else{
-            console.log(column.key, event.target.value)
             return onRowChange({
               //@ts-ignore
               ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,

@@ -49,7 +49,6 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
 
   const onePageHeight = 600;
   const rowKeyGetter = (row: any) => {
-    console.log("row : ", row)
     return row.id;
   }
 

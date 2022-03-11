@@ -6,6 +6,7 @@ import {NextPageContext} from "next";
 import {useRouter} from "next/router";
 import DailyInspectionModal from "../../../shared/src/components/Modal/DailyInspection/DailyInspectionModal";
 import {TransferCodeToValue, TransferValueToCode} from "shared/src/common/TransferFunction";
+import cookie from "react-cookies";
 
 export interface IProps {
     machine_id?: number
@@ -109,13 +110,12 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
 
     const [infoModalOpen, setInfoModalOpen] = useState<boolean>(false)
 
-    const [selectCheckListIndex, setSelectCheckListIndex] = useState<number>(null);
-    const [selectLegendaryIndex, setSelectLegendaryIndex] = useState<number>(null);
+    const [selectCheckListIndex, setSelectCheckListIndex] = useState<number>(null)
+    const [selectLegendaryIndex, setSelectLegendaryIndex] = useState<number>(null)
 
     const saveInspecMachine = async (data) => {
         await RequestMethod("post", "inspecMachineSave", data)
             .then((res) => {
-                console.log("res : ", res)
                 Notiflix.Report.success("저장되었습니다.","","확인", () => LoadInspecData("machine"))
             })
             .catch((err) => {
@@ -161,7 +161,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
     }
 
     const forBindingClean = (basic:any, photoList:PictureInterface[]) => {
-        console.log("photoList : ", photoList)
         const result = {...basic}
         let legendary = {}
         result.legendary_list.map((e) =>{
@@ -208,7 +207,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
     }
 
     const settingInfoData = (data ,type:"machine"|"mold") => {
-        console.log("type : ", type)
         let productInfo:any = {...data}
         if(type === "machine"){
             productInfo = {...data.machine}
@@ -224,19 +222,17 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
             productInfo = {...data.mold}
             productInfo.name = data.mold?.name
             productInfo.code = data.mold?.code
-
         }
-        console.log("productInfo : ", productInfo, data)
         return [productInfo]
     }
 
     const cleanUpData = (data:any) => {
-        console.log("data : ", data)
         const resultData = {...data}
+        const writeUser = cookie.load('userInfo');
         const resultLegendaryList = []
         if(machine_id){
             let inspectionPhotoList = {
-                machinePicture: {name: "", uuid: resultData?.machine?.qualify/*photo*/ ?? "", sequence: 0},
+                machinePicture: {name: "", uuid: resultData?.machine?.photo ?? "", sequence: 0},
                 photo1: {name:"", uuid:"", sequence:1},
                 photo2: {name:"", uuid:"", sequence:2},
                 photo3: {name:"", uuid:"", sequence:3},
@@ -257,7 +253,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 })
 
             }
-            console.log("inspectionPhotoList : ", inspectionPhotoList)
             Object.keys(inspectionPhotoList).map((value, index) => {
                 resultData.inspection_photo.map((photo) => {
                     if(photo.sequence == index) inspectionPhotoList[value] = photo
@@ -275,13 +270,12 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                                     })
 
             resultData.etc = [{etc:resultData.etc}] ?? [{etc:""}]
-            resultData.manager = resultData.machine?.manager?.name
+            // resultData.manager = resultData.machine?.manager?.name
             resultData.form_id = resultData.form_id ?? undefined
             resultData.legendary_list =  resultLegendaryList
             resultData.inspection_photo = inspectionPhotoList
 
             setModalSelectOption(resultLegendaryList)
-            console.log("inspectionPhotoList : ", inspectionPhotoList)
             setPhotoTitleList([{machinePicture: {name: "", uuid: resultData?.machine?.qualify/*photo*/, sequence: 22},...inspectionPhotoList}])
         }else if(mold_id){
             let inspectionPhotoList = {
@@ -306,7 +300,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 })
             }
 
-            console.log("inspectionPhotoList : ", inspectionPhotoList)
             Object.keys(inspectionPhotoList).map((value, index) => {
                 resultData.inspection_photo.map((photo) => {
                     if(photo.sequence == index) {
@@ -331,11 +324,13 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
             resultData.legendary_list =  resultLegendaryList
             resultData.inspection_photo = inspectionPhotoList
 
+
             setModalSelectOption(resultLegendaryList)
-            console.log("inspectionPhotoList : ", inspectionPhotoList)
             setPhotoTitleList([{...inspectionPhotoList}])
 
         }
+        resultData.writer = writeUser
+        console.log("resultData : ", resultData)
         setBasicRow(resultData)
     }
 
@@ -347,7 +342,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 }
             } )
                 .then((res) => {
-                    console.log("res : ", res)
                     cleanUpData(res)
                     // setBasicRow(res) //여기서 machine에 date를 넣어줘야한다.(점검 날짜)
                 })
@@ -361,7 +355,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 }
             } )
                 .then((res) => {
-                    console.log("res : ", res)
                     cleanUpData(res)
                 })
                 .catch((err) => {
@@ -391,7 +384,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
 
             <ExcelTable headerList={columnlist.dailyInspectionMachinePicture} row={photoTitleList} setRow={(e) => {
                 setPhotoTitleList(e)
-                console.log(e)
                 setBasicRow(forBindingClean(basicRow, e))
                 // setBasicRow({...basicRow, inspection_photo:[...basicRow.inspection_photo,  ...Object.values(e[0])] })
             }} height={105}/>
@@ -441,9 +433,13 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                         let result = [];
                         e.map((row) => {
                             // if(row.type === 0 || row.setting === 0) result.push({...row, dropDown:"수치 입력", columnType:"text"})
-                            if(row.dropDownPK === 0) result.push({...row, dropDown:"수치 입력", columnType:"text"})
+                            if(row.dropDownPK === 0) {
+                                result.push({...row, dropDown: "수치 입력", columnType: "text"})
+                            }
                             // else if(row.type === 1 || row.setting === 1) result.push({...row, dropDown:"범례 적용", columnType:"dropdown"})
-                            else if(row.dropDownPK === 1) result.push({...row, dropDown:"범례 적용", columnType:"dropdown"})
+                            else if(row.dropDownPK === 1) {
+                                result.push({...row, dropDown: "범례 적용", columnType: "dropdown"})
+                            }
                             else result.push({...row,})
                         })
                         basicRow.check_list = result

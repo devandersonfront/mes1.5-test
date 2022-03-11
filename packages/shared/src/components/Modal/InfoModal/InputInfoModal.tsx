@@ -83,7 +83,11 @@ const InputInfoModal = ({column, row, onRowChange,}: IProps) =>{
 
     const getSummaryInfo = (info) => {
         if(column.key.includes("problem")){
-            return row.machine[info.key] ?? '-'
+            if(row.machine){
+                return row.machine[info.key] ?? '-'
+            }else if(row.mold){
+                return row.mold[info.key] ?? '-'
+            }
         }else{
             return row[info.key] ?? "-"
         }
@@ -146,7 +150,7 @@ const InputInfoModal = ({column, row, onRowChange,}: IProps) =>{
                                                     </HeaderTableTitle>
                                                     <HeaderTableTextInput style={{width: info.infoWidth}}>
                                                         <HeaderTableText>
-                                                            {/*{getSummaryInfo(info)}*/}
+                                                            {getSummaryInfo(info)}
                                                         </HeaderTableText>
                                                         {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                                                     </HeaderTableTextInput>

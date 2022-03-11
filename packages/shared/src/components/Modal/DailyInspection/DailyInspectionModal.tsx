@@ -10,8 +10,8 @@ import {ExcelTable} from "../../Excel/ExcelTable";
 import styled from "styled-components";
 import {columnlist} from "../../../common/columnInit";
 import DefaultImageProfile from "../../ImageProfile/DefaultImageProfile";
-// import {DailyInspection} from "../../../../../basic/src/container/BasicDailyInspectionInfo";
 import {TransferCodeToValue} from "../../../common/TransferFunction";
+import cookie from "react-cookies";
 
 
 interface IProps {
@@ -26,14 +26,11 @@ interface IProps {
 const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalType, modalSelectOption}:IProps) => {
 
     const [bindingBasicRow, setBindingBasicRow] = useState<any>(basicRow)
-
     const changeSelectOption = () => {
         let options = columnlist.dailyInspectionCheckList;
-        console.log("modalSelectOption : ",modalSelectOption)
         if(modalSelectOption){
             options.map((column) => {
                 if(column.key === "type"){
-                    console.log(basicRow.check_list)
                     // basicRow.check_list.map((check) => {
                     //     if(typeof check.type === "string") column.formatter = TextEditor
                     // })
@@ -47,20 +44,16 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalTy
                 }
             })
         }
-        console.log("options : ", options)
     }
     //[basicRow.machine]
     const prettyMachineData =  (type:"machine" | "mold", basic:any) => {
         switch(type){
             case "machine":
-                console.log("machine : ", basic)
                 const machineBasic = {...basic}
                 machineBasic.machine.type = TransferCodeToValue(basic.machine?.type, "machine");
-                console.log(machineBasic)
                 setBindingBasicRow(machineBasic)
                 return
             case "mold":
-                console.log("basic : ", basic)
                 const moldBasic = {...basic}
 
                 setBindingBasicRow(moldBasic)
@@ -73,7 +66,6 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalTy
 
     useEffect(() => {
         if(isOpen) {
-            console.log("basicRow :" , basicRow)
             changeSelectOption()
             prettyMachineData(modalType, basicRow)
 
@@ -174,22 +166,31 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalTy
                             <div style={{display:"flex",}}>
                                 <ExcelTable
                                     headerList={columnlist.dailyInspectionCheckList}
-                                    row={bindingBasicRow.check_list}
+                                    row={basicRow.check_list}
                                     width={"1104px"}
                                     height={basicRow.check_list.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list.length * 40 + 40}
                                     setRow={(e) => {
-                                        console.log("e : ", e)
+                                        console.log("e : ", e, basicRow)
                                         setBasicRow({...basicRow, check_list:e})
                                     }}
                                     type={"searchModal"}/>
                                 <ExcelTable
-                                    headerList={columnlist.dailyInspectionManagement}
+                                    headerList={modalType === "machine" ? columnlist.dailyInspectionMachineManagement : columnlist.dailyInspectionMoldManagement}
                                     row={[basicRow]}
                                     height={basicRow.check_list.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list.length * 40 + 40}
                                     setRow={(e) => {
                                         console.log("YEAH !!! : ", e)
                                         console.log(basicRow)
-                                        basicRow.writer= e[0].worker;
+                                        switch(e[0].returnType){
+                                            case "manager":
+                                                basicRow.manager= e[0].user;
+                                                return
+                                            case "writer":
+                                                basicRow.writer= e[0].user;
+                                                return
+                                            default :
+                                                break
+                                        }
                                         setBasicRow(basicRow)
                                     }}
                                     width={"553px"}

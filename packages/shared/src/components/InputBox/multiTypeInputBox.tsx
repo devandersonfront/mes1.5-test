@@ -14,21 +14,16 @@ interface IProps {
     onClose?: (state: boolean) => void
 }
 
-const autoFocusAndSelect = (input: HTMLInputElement | null) => {
-    input?.focus()
-    input?.select()
-}
-
 const MultiTypeInputEditor = ({ row, column, onRowChange, onClose }: IProps) => {
-    const dispatch = useDispatch();
-    // const selector = useSelector((state:RootState) => state.MachineSelectReducer);
     useEffect(() => {
     }, [row])
 
     const typeCheck = () => {
         switch (row.columnType){
             case "text":
-                return <TextEditor row={row} column={column} onRowChange={onRowChange} />
+                return <TextEditor row={row} column={column} onRowChange={(e) => {
+                    onRowChange(e)
+                }} />
             case "dropdown":
                 return <DropDownEditor column={column} row={row} onRowChange={onRowChange}/>
                 // return <DropDownEditor column={{...column,selectList:Object.keys(row.selectList).map((name, index) => Object({name:name, pk:index})), }} row={row} onRowChange={onRowChange}/>
