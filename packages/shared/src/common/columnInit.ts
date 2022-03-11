@@ -1163,7 +1163,7 @@ export const columnlist: any = {
         {pk: 1, name: "수치 입력"},
       ], type:"Modal", textType:"black"},
   ],
-  dailyInspectionManagement:[
+  dailyInspectionMachineManagement:[
     {key: "writer", name: '작성자 확인', formatter:SearchModalTest, type:"worker",  },
     {key: "manager", name: '관리자 확인', formatter:SearchModalTest, type:"user",  },
     {key: "problem_info", name: '문제 사항', formatter:InputInfoModal, title:"기계 정보", subTitle:"문제 사항", headerItems:[
@@ -1171,6 +1171,18 @@ export const columnlist: any = {
           {title: '기계 이름', infoWidth: 144, key: 'name'},
           {title: '제조 번호', infoWidth: 144, key: 'mfrCode'},
           {title: '기계 종류', infoWidth: 144, key: 'type'},
+          {title: '날짜', infoWidth: 144, key: 'date'},
+        ]
+      ],  width:120},
+  ],
+  dailyInspectionMoldManagement:[
+    {key: "writer", name: '작성자 확인', formatter:SearchModalTest, type:"worker",  },
+    {key: "manager", name: '관리자 확인', formatter:SearchModalTest, type:"user",  },
+    {key: "problem_info", name: '문제 사항', formatter:InputInfoModal, title:"금형 정보", subTitle:"문제 사항", headerItems:[
+        [
+          {title: '금형명', infoWidth: 144, key: 'name'},
+          {title: 'CODE', infoWidth: 144, key: 'code'},
+          {title: '금형 종류', infoWidth: 144, key: 'type'},
           {title: '날짜', infoWidth: 144, key: 'date'},
         ]
       ],  width:120},

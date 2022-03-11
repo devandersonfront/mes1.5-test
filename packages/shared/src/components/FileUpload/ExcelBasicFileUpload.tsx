@@ -37,9 +37,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
       justifyContent: 'center',
       alignItems: 'center'
     }}>
-        {/*{onImage && */}
         <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage}/>
-        {/*}*/}
       {
           (column.key === "photo" && row[column.key]) || row[column.key]?.uuid ?
           <div style={{
