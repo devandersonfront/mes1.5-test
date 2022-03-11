@@ -1004,8 +1004,8 @@ export const columnlist: any = {
   ],
   orderModify: [
     {key:"identification", name:"수주 번호", width: 118},
-    {key:"date", name:"수주 날짜", formatter: CalendarBox, width: 118},
-    {key:"deadline", name:"납품 기한", formatter: CalendarBox, width: 118},
+    {key:"date", name:"수주 날짜", formatter: CalendarBox, width: 118, type:"date"},
+    {key:"deadline", name:"납품 기한", formatter: CalendarBox, width: 118, type:"deadline"},
     {key:"customer_id", name:"거래처", width: 118 },
     {key:"cm_id", name:"모델", width: 118 },
     {key:"product_id", name:"CODE", width: 118 },
@@ -1064,7 +1064,7 @@ export const columnlist: any = {
     {key:"type", name:"품목 종류", width: 118   },
     {key:"unit", name:"단위", width: 118   },
     {key:"date", name:"납품 날짜", width: 118, formatter:CalendarBox},
-    {key:"lots", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base' },
+    {key:"lot_number", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base' },
     {key:"amount", name:"총 납품 수량", width: 118   },
   ],
   productChangeRegister: [
@@ -1267,7 +1267,7 @@ export const columnlist: any = {
     {key: "product_id", name: '생산 품목', formatter:ProductInfoModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
   ],
   toolWarehousingRegister:[
-    {key: "tool_id", name: '공구 CODE', formatter: SearchModalTest, type:"tool", placeholder: 'CODE 입력'},
+    {key: "tool_id", name: '공구 CODE', formatter: SearchModalTest, type:"tool", placeholder: 'CODE 입력', toolType: 'register'},
     {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력'},
