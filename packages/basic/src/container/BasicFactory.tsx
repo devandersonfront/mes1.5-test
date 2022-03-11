@@ -570,16 +570,16 @@ const BasicFactory = ({}: IProps) => {
                     setPageInfo({...pageInfo,page:page})
                 }}
             />
-            <ExcelDownloadModal
-                isOpen={excelOpen}
-                column={column}
-                basicRow={basicRow}
-                filename={`금형기준정보`}
-                sheetname={`금형기준정보`}
-                selectList={selectList}
-                tab={'ROLE_BASE_07'}
-                setIsOpen={setExcelOpen}
-            />
+            {/*<ExcelDownloadModal*/}
+            {/*    isOpen={excelOpen}*/}
+            {/*    column={column}*/}
+            {/*    basicRow={basicRow}*/}
+            {/*    filename={`금형기준정보`}*/}
+            {/*    sheetname={`금형기준정보`}*/}
+            {/*    selectList={selectList}*/}
+            {/*    tab={'ROLE_BASE_07'}*/}
+            {/*    setIsOpen={setExcelOpen}*/}
+            {/*/>*/}
         </div>
     );
 }
