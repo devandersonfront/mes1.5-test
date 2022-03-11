@@ -95,7 +95,6 @@ const MesToolRegister = () => {
             tmpRow.warehousing = rowData.amount;
             // tmpRow.amount = rowData.amount;
             resultData.push(tmpRow);
-            console.log("tmpRow : ", tmpRow)
         })
         return resultData;
     }
@@ -174,7 +173,6 @@ const MesToolRegister = () => {
                             tmpBasicRow[index].customer_id = v.customer
                         }
                     })
-
                     setSelectList(tmp)
                     setBasicRow(tmpBasicRow)
                 }}

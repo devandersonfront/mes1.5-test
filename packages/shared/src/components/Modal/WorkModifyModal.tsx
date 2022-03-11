@@ -65,7 +65,6 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
-
     if(isOpen) {
       let total_count = 0
       let good_quantity = 0
@@ -268,8 +267,8 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
               setSearchList([...tmp.map(v => {
                 return {
                   ...v,
-                  good_quantity: Number(v.quantity ?? 0)-Number(v.poor_quantity ?? 0),
-                  sum: Number(v.quantity ?? 0)
+                  good_quantity: Number(v.good_quantity ?? 0)-Number(v.poor_quantity ?? 0),
+                  sum: Number(v.quantity ?? v.sum ?? 0)
                 }
               })])
             }}
