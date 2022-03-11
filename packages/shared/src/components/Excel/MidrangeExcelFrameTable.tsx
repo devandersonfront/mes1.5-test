@@ -337,7 +337,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            <MidrangeDatetimePickerBox readOnly={midrangeUpdate} value={testData.inspection_time.beginning} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, beginning: date.format("YYYY.MM.DD HH:mm") }})}/>
+                            <MidrangeDatetimePickerBox readOnly={midrangeUpdate} value={testData.inspection_time.beginning} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, beginning: date.format("YYYY-MM-DD[T]HH:mm:ss") }})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.beginning)}
@@ -362,7 +362,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            <MidrangeDatetimePickerBox readOnly={midrangeUpdate} value={testData.inspection_time.middle} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, middle: date.format("YYYY.MM.DD HH:mm")}})}/>
+                            <MidrangeDatetimePickerBox readOnly={midrangeUpdate} value={testData.inspection_time.middle} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, middle: date.format("YYYY-MM-DD[T]HH:mm:ss")}})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.middle)}
@@ -387,7 +387,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
                 <div style={{width: '432px'}}>
                     <div style={{display: "flex"}}>
                         <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            <MidrangeDatetimePickerBox readOnly={midrangeUpdate} value={testData.inspection_time.end} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, end: date.format("YYYY.MM.DD HH:mm")}})}/>
+                            <MidrangeDatetimePickerBox readOnly={midrangeUpdate} value={testData.inspection_time.end} onDateChange={(date)=>setTestData({...testData, inspection_time: {...testData.inspection_time, end: date.format("YYYY-MM-DD[T]HH:mm:ss")}})}/>
                         </CellDefault>
                         <div style={{display: "flex", flexDirection: "column"}}>
                             {formItemHeader(testData.inspection_info.end)}
