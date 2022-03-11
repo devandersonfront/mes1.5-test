@@ -559,7 +559,7 @@ export const searchModalList: any = {
     {key: 'code', name: 'CODE'},
     {key: 'name', name: '품명'},
     {key: 'type', name: '품목 종류'},
-    {key: 'process', name: '생산 공정'},
+    {key: 'process_id', name: '생산 공정'},
   ],
   deliveryInfo: [
     {key: 'seq', name: '번호', width: 32, textAlign: 'center'},

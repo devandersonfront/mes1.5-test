@@ -166,11 +166,11 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
     return row[info.key] ?? '-'
   }
 
-  const updateMold = (moldInfo) => {
-    const moldUpdateList = moldInfo.map((v)=>{return v.mold})
-
-    setSearchList(moldUpdateList)
-  }
+  // const updateMold = (moldInfo) => {
+  //   const moldUpdateList = moldInfo.map((v)=>{return v.mold})
+  //
+  //   setSearchList(moldUpdateList)
+  // }
 
   return (
     <SearchModalWrapper >
@@ -253,7 +253,9 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             <ExcelTable
               headerList={searchModalList.moldUse}
               row={searchList ?? [{}]}
-              setRow={(e) => setSearchList([...e])}
+              setRow={(e) => {
+                setSearchList([...e])
+              }}
               width={1746}
               rowHeight={32}
               height={552}
