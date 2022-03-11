@@ -262,7 +262,7 @@ const BasicSubMaterial = ({}: IProps) => {
           }
       )))
     }
-    
+
     if(deletable){
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');
@@ -582,16 +582,16 @@ const BasicSubMaterial = ({}: IProps) => {
             setPageInfo({...pageInfo, page:page})
           }}
         />
-      <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`금형기준정보`}
-        sheetname={`금형기준정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
-      />
+      {/*<ExcelDownloadModal*/}
+      {/*  isOpen={excelOpen}*/}
+      {/*  column={column}*/}
+      {/*  basicRow={basicRow}*/}
+      {/*  filename={`금형기준정보`}*/}
+      {/*  sheetname={`금형기준정보`}*/}
+      {/*  selectList={selectList}*/}
+      {/*  tab={'ROLE_BASE_07'}*/}
+      {/*  setIsOpen={setExcelOpen}*/}
+      {/*/>*/}
     </div>
   );
 }
