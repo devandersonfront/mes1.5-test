@@ -463,16 +463,16 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
           }}
         />
       </div>
-      <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`작업지시서리스트`}
-        sheetname={`작업지시서리스트`}
-        selectList={selectList}
-        tab={'ROLE_PROD_02'}
-        setIsOpen={setExcelOpen}
-      />
+      {/*<ExcelDownloadModal*/}
+      {/*  isOpen={excelOpen}*/}
+      {/*  column={column}*/}
+      {/*  basicRow={basicRow}*/}
+      {/*  filename={`작업지시서리스트`}*/}
+      {/*  sheetname={`작업지시서리스트`}*/}
+      {/*  selectList={selectList}*/}
+      {/*  tab={'ROLE_PROD_02'}*/}
+      {/*  setIsOpen={setExcelOpen}*/}
+      {/*/>*/}
     </div>
   );
 }
