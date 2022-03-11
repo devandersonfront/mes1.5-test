@@ -126,11 +126,11 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalTy
                                     "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"+basicRow.inspection_photo.machinePicture?.uuid
                                 } style={{width:592, height: 366,display:"flex", justifyContent:"center", alignItems:"center"}}/>
                                 <ImageGrid>
-                                    {Object.values(basicRow.inspection_photo).map((value, index) =>{
+                                    {Object.values(basicRow.inspection_photo).map((value:any, index) =>{
                                         if(index){
                                             return(
-                                                <DefaultImageProfile title={`부위0${index}`} image={value.uuid ?
-                                                    "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"+value.uuid
+                                                <DefaultImageProfile title={`부위0${index}`} image={value?.uuid ?
+                                                    "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"+value?.uuid
                                                     :
                                                     ""
                                                 } style={{width:168, height:119, display:"flex", justifyContent:"center", alignItems:"center"}}/>
