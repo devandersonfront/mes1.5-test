@@ -392,12 +392,22 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
                         setSelectType(v.type === 'COIL' || v.type === 'SHEET' ? '원자재' : v.type)
                         setSelectProduct(v.code)
-                        setLotList([...v.lotList.map((v,i) => ({
-                          ...v,
-                          // amount: v.lot_number === e[0].lotList[i].lot_number ? e[0][lotList[i]].amount : "0",
-                          amount: v.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
-                          seq: i+1
-                        }))])
+                        console.log("column : ", column, row)
+                        setLotList([...v.lotList.map((v,i) => (
+                            row?.bom ? {
+                              ...v,
+                              // amount: v.lot_number === e[0].lotList[i].lot_number ? e[0][lotList[i]].amount : "0",
+                              amount: v.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
+                              seq: i+1
+                            }
+                            :
+                                {
+                                  ...v,
+                                  // amount: v.lot_number === e[0].lotList[i].lot_number ? e[0][lotList[i]].amount : "0",
+                                  // amount: v.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
+                                  seq: i+1
+                                }
+                        ))])
                       }
 
                       return {
@@ -584,9 +594,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                       const disturbanceArray = searchList.map((v)=>{return v.disturbance})
                       const allEqual = arr => arr.every( v => v === arr[0] )
 
-
                       if(disturbance === 0){
-                        if(disturbanceArray.includes(0)){
+                        if(disturbanceArray.every((value) => value === 0)){
                           Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
                         }else if(allEqual(disturbanceArray)){
                           let bomLotInfo
