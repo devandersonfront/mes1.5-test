@@ -418,7 +418,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                   }else if(column.type === 'customer'){
                     onRowChange(
                       {
-                        ...row,   
+                        ...row,
                         ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
                         manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                         name: selectNameFunction(column.type),
@@ -440,7 +440,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     )
                   }else if(column.type === 'factory'){
                     onRowChange({
-                      ...row,   
+                      ...row,
                       ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
                       name: selectNameFunction(column.type),
                       tab: tab,
@@ -458,6 +458,19 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         version: null
                       }
                     })
+                  }else if(column.type === 'tool'){
+                    onRowChange(
+                        {
+                          ...row,
+                          ...SearchModalResult(searchList[selectRow], column.toolType === 'register' ? 'toolRegister' : searchModalInit.excelColumnType, column.staticCalendar),
+                          manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                          name: selectNameFunction(column.type),
+                          tab: tab,
+                          // type_name: undefined,
+                          version: row.version,
+                          isChange: true,
+                        }
+                    )
                   }else {
                     onRowChange(
                         {

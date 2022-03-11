@@ -34,6 +34,7 @@ export interface IExcelHeaderType {
   title?: string
   url?: string
   headerType?:any[]
+  toolType?: 'register'
   callback?: (data : any) => void
 }
 

@@ -81,8 +81,8 @@ const MesToolRegister = () => {
         data.map((rowData, index) => {
             let tmpRow:any = {};
             let toolObject:any = {};
-            toolObject.tool_id = rowData?.tool_id_save;
-            toolObject.code = rowData.code_save;
+            toolObject.tool_id = rowData.code;
+            toolObject.code = rowData?.tool_id;
             toolObject.name = rowData.name;
             toolObject.unit = rowData.unitPK ?? rowData.unit;
             toolObject.stock = rowData?.warehousing;
@@ -126,7 +126,6 @@ const MesToolRegister = () => {
                 })
                 if(selectList.size < 0 ) return Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
                 //result 값 가지고 save
-                SaveCleanUpData(result)
                 SaveBasic(SaveCleanUpData(result));
 
                 return
@@ -162,20 +161,20 @@ const MesToolRegister = () => {
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
                     let tmpBasicRow = [...e]
+
                     e.map((v, index) => {
                         if(v.isChange) tmp.add(v.id)
-                        if(v.code) {
-
-                            tmpBasicRow[index].tool_id_save = v.tool_id
-                            tmpBasicRow[index].code_save = v.code
-                            tmpBasicRow[index].code = v.tool_id_save
-                            tmpBasicRow[index].tool_id = v.code_save
-                        }
+                        // if(basicRow[index].amount == v.amount) {
+                            if (v.code) {
+                                tmpBasicRow[index].tool_id_save = v.tool_id
+                                tmpBasicRow[index].code_save = v.code
+                            }
+                        // }
                         if(v.customer) {
                             tmpBasicRow[index].customer_id = v.customer
                         }
                     })
-                    console.log("e : ", e)
+
                     setSelectList(tmp)
                     setBasicRow(tmpBasicRow)
                 }}
