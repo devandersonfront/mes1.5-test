@@ -1064,7 +1064,7 @@ export const columnlist: any = {
     {key:"type", name:"품목 종류", width: 118   },
     {key:"unit", name:"단위", width: 118   },
     {key:"date", name:"납품 날짜", width: 118, formatter:CalendarBox},
-    {key:"lots", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base' },
+    {key:"lot_number", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base' },
     {key:"amount", name:"총 납품 수량", width: 118   },
   ],
   productChangeRegister: [
