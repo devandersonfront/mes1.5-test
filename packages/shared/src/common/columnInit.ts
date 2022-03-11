@@ -1004,8 +1004,8 @@ export const columnlist: any = {
   ],
   orderModify: [
     {key:"identification", name:"수주 번호", width: 118},
-    {key:"date", name:"수주 날짜", formatter: CalendarBox, width: 118},
-    {key:"deadline", name:"납품 기한", formatter: CalendarBox, width: 118},
+    {key:"date", name:"수주 날짜", formatter: CalendarBox, width: 118, type:"date"},
+    {key:"deadline", name:"납품 기한", formatter: CalendarBox, width: 118, type:"deadline"},
     {key:"customer_id", name:"거래처", width: 118 },
     {key:"cm_id", name:"모델", width: 118 },
     {key:"product_id", name:"CODE", width: 118 },
