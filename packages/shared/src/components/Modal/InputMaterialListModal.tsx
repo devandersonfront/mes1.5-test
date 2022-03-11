@@ -100,19 +100,20 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     }
   },[isOpen])
 
-  const loadRecordGroup = async (product_id: any) => {
-    // Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `bomLoad`,{
-      path: {
-        product_id: product_id,
-      },
-    })
-
-    if(res){
-      let tmpSearchList = changeRow(res,row)
-      setSearchList([...tmpSearchList])
-    }
-  }
+  // const loadRecordGroup = async (product_id: any) => {
+  //   // Notiflix.Loading.circle()
+  //   const res = await RequestMethod('get', `bomLoad`,{
+  //     path: {
+  //       product_id: product_id,
+  //     },
+  //   })
+  //
+  //   if(res){
+  //     console.log("res : ", res)
+  //     let tmpSearchList = changeRow(res,row)
+  //     setSearchList([...tmpSearchList])
+  //   }
+  // }
 
   const modifyLoadRecordGroup = async (os_id: number | string, key: string) => {
     // Notiflix.Loading.circle()
@@ -220,35 +221,35 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
-    }
-  }
+  // const SearchBasic = async (keyword: any, option: number, page: number) => {
+  //   Notiflix.Loading.circle()
+  //   setKeyword(keyword)
+  //   setOptionIndex(option)
+  //   const res = await RequestMethod('get', `machineSearch`,{
+  //     path: {
+  //       page: page,
+  //       renderItem: 18,
+  //     },
+  //     params: {
+  //       keyword: keyword ?? '',
+  //       opt: option ?? 0
+  //     }
+  //   })
+  //
+  //   if(res && res.status === 200){
+  //     let searchList = res.results.info_list.map((row: any, index: number) => {
+  //       return changeRow(row)
+  //     })
+  //
+  //     setPageInfo({
+  //       ...pageInfo,
+  //       page: res.results.page,
+  //       total: res.results.totalPages,
+  //     })
+  //
+  //     setSearchList([...searchList])
+  //   }
+  // }
 
   const addNewTab = (index: number) => {
     let tmp = bomDummy
@@ -256,18 +257,18 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     setBomDummy([...tmp])
   }
 
-  const deleteTab = (index: number) => {
-    if(bomDummy.length - 1 === focusIndex){
-      setFocusIndex(focusIndex-1)
-    }
-    if(bomDummy.length === 1) {
-      return setIsOpen(false)
-    }
-
-    let tmp = bomDummy
-    tmp.splice(index, 1)
-    setBomDummy([...tmp])
-  }
+  // const deleteTab = (index: number) => {
+  //   if(bomDummy.length - 1 === focusIndex){
+  //     setFocusIndex(focusIndex-1)
+  //   }
+  //   if(bomDummy.length === 1) {
+  //     return setIsOpen(false)
+  //   }
+  //
+  //   let tmp = bomDummy
+  //   tmp.splice(index, 1)
+  //   setBomDummy([...tmp])
+  // }
 
   React.useEffect(()=>{
   },[searchList])
@@ -393,6 +394,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                         setSelectProduct(v.code)
                         setLotList([...v.lotList.map((v,i) => ({
                           ...v,
+                          // amount: v.lot_number === e[0].lotList[i].lot_number ? e[0][lotList[i]].amount : "0",
+                          amount: v.lot_number === row.bom[i].lot.child_lot_rm.lot_number ? row.bom[i].lot.amount : "0",
                           seq: i+1
                         }))])
                       }
