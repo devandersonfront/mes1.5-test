@@ -5,9 +5,11 @@ import moment from "moment";
 import useOnclickOutside from "react-cool-onclickoutside";
 import 'react-calendar/dist/Calendar.css'
 import '@wojtekmaj/react-daterange-picker/dist/DateRangePicker.css'
-//@ts-ignore
-import DateRangePicker from '@wojtekmaj/react-daterange-picker/dist/entry.nostyle'
+import dynamic from "next/dynamic";
 
+const DateRangePicker = dynamic(() => import("@wojtekmaj/react-daterange-picker/dist/entry.nostyle"), {
+    ssr: false,
+});
 interface ValueType {
     from:string
     to:string
@@ -29,6 +31,7 @@ const DateRangeCalendar = ({selectDate, onChangeSelectDate, dataLimit}:Props) =>
             <p>기간선택</p>
             <div onClick={()=>setOnCalendar(!onCalendar)} style={{position: "absolute", marginLeft: '80px' ,width: '200px', height: '30px', zIndex: 2}}>
             </div>
+            {/*@ts-ignore*/}
             <DateRangePicker value={[selectDate.from, selectDate.to]} maxDate={maxDate} onChange={(e)=>{
                 onChangeSelectDate({...selectDate,from: moment(e[0]).format("YYYY-MM-DD"),to: moment(e[1]).format("YYYY-MM-DD")})
             }}

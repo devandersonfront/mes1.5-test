@@ -43,7 +43,14 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
             }else {
                 machineName = '-'
             }
-            setExcelInfo({sic_id: res.sic_id, record_id: row.record_id ,basic: [{osd_id: row.identification, lot_number: row.lot_number, code: row.product.code, material_name: row.product.name, type: row.type , process_id: processName, worker_name: row.user.name, name: machineName}], samples: [{samples: res.samples}], legendary: legendaryArray, inspection_info: res.inspection_info})
+
+            let worker
+            if(typeof row.user === "object"){
+                worker = row.user.name
+            }else if (typeof row.user === 'string'){
+                worker = row.user
+            }
+            setExcelInfo({sic_id: res.sic_id, record_id: row.record_id ,basic: [{osd_id: row.identification, lot_number: row.lot_number, code: row.product.code, material_name: row.product.name, type: row.type , process_id: processName, worker_name: worker, name: machineName}], samples: [{samples: res.samples}], legendary: legendaryArray, inspection_info: res.inspection_info})
             setModalOpen(true)
         }else {
             Notiflix.Report.warning('검사 항목을 등록해주세요.','','확인');
@@ -65,8 +72,14 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
             processName = row.product?.process === null ? '-' : row.product.process.name
         }
 
+        let worker
+        if(typeof row.user === "object"){
+            worker = row.user.name
+        }else if (typeof row.user === 'string'){
+            worker = row.user
+        }
 
-        setExcelInfo({writer: row.inspection_category.writer,version: row.inspection_category.version, sic_id: row.inspection_category.sic_id, record_id: row.record_id, basic: [{osd_id: row.identification, lot_number: row.lot_number, code: row.product.code, material_name: row.product.name, type: row.type , process_id: processName, worker_name: row.user.name, name: machineName}], samples: [{samples: row.inspection_category.inspection_info.beginning[0].samples}], legendary: row.inspection_category.legendary_list, inspection_info: row.inspection_category.inspection_info, inspection_time: row.inspection_category.inspection_time, inspection_result: row.inspection_category.inspection_result})
+        setExcelInfo({writer: row.inspection_category.writer,version: row.inspection_category.version, sic_id: row.inspection_category.sic_id, record_id: row.record_id, basic: [{osd_id: row.identification, lot_number: row.lot_number, code: row.product.code, material_name: row.product.name, type: row.type , process_id: processName, worker_name: worker, name: machineName}], samples: [{samples: row.inspection_category.inspection_info.beginning[0].samples}], legendary: row.inspection_category.legendary_list, inspection_info: row.inspection_category.inspection_info, inspection_time: row.inspection_category.inspection_time, inspection_result: row.inspection_category.inspection_result})
         setModalOpen(true)
         setModify(true)
     }
