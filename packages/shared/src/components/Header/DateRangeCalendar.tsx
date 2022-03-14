@@ -5,9 +5,11 @@ import moment from "moment";
 import useOnclickOutside from "react-cool-onclickoutside";
 import 'react-calendar/dist/Calendar.css'
 import '@wojtekmaj/react-daterange-picker/dist/DateRangePicker.css'
-//@ts-ignore
-import DateRangePicker from '@wojtekmaj/react-daterange-picker/dist/entry.nostyle'
+import dynamic from "next/dynamic";
 
+const DateRangePicker = dynamic(() => import("@wojtekmaj/react-daterange-picker/dist/entry.nostyle"), {
+    ssr: false,
+});
 interface ValueType {
     from:string
     to:string
