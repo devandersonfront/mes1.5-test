@@ -177,7 +177,7 @@ export const columnlist: any = {
     {key: 'volt', name: '사용 전압',editor: TextEditor, formatter: UnitContainer, type:"number", unitData: 'V', width: 118},
     {key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory',},
     {key: 'affiliated_id',name: '공장 세분화명', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory',},
-    {key: 'form_id',name: '일상 점검', width: 118, formatter: CellButtonComponent /*FactoryInfoModal*/, type: 'inspection',},
+    {key: 'form_id',name: '양식 등록', width: 118, formatter: CellButtonComponent /*FactoryInfoModal*/, type: 'inspection',},
     {key: 'product_id',name: '생산 품목', width: 118, formatter: ProductInfoModal, type:"machine", headerType:[{name: "기계명"}]},
   ],
   device: [
@@ -1173,11 +1173,11 @@ export const columnlist: any = {
     {key: "type", name: '결과', width:144 ,formatter: MultiTypeInputEditor, selectList: [
         {pk: 0, name: "범례 적용"},
         {pk: 1, name: "수치 입력"},
-      ], type:"Modal", textType:"black"},
+      ], type:"Modal", textType:"black", readonly:true},
   ],
   dailyInspectionMachineManagement:[
-    {key: "writer", name: '작성자 확인', formatter:SearchModalTest, type:"worker",  },
-    {key: "manager", name: '관리자 확인', formatter:SearchModalTest, type:"user",  },
+    {key: "writer", name: '작성자 확인', type:"worker",  },
+    {key: "manager", name: '관리자 확인', type:"user",  },
     {key: "problem_info", name: '문제 사항', formatter:InputInfoModal, title:"기계 정보", subTitle:"문제 사항", headerItems:[
         [
           {title: '기계 이름', infoWidth: 144, key: 'name'},
@@ -1188,8 +1188,8 @@ export const columnlist: any = {
       ],  width:120},
   ],
   dailyInspectionMoldManagement:[
-    {key: "writer", name: '작성자 확인', formatter:SearchModalTest, type:"worker",  },
-    {key: "manager", name: '관리자 확인', formatter:SearchModalTest, type:"user",  },
+    {key: "writer", name: '작성자 확인', type:"worker",  },
+    {key: "manager", name: '관리자 확인', type:"user",  },
     {key: "problem_info", name: '문제 사항', formatter:InputInfoModal, title:"금형 정보", subTitle:"문제 사항", headerItems:[
         [
           {title: '금형명', infoWidth: 144, key: 'name'},

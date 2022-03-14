@@ -29,6 +29,18 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
   const changeSetOnImage = (value:boolean) => {
       setOnImage(value)
   }
+  const cleanText = () => {
+      switch(true){
+          case column.type === "image":
+              return "이미지 확인"
+          case column.readonly :
+              return "등록된 이미지가 없습니다."
+          default:
+              return "파일 다운로드"
+      }
+      {column.type === "image" ? "이미지 확인" : "파일 다운로드" }
+  }
+
   return (
     <div style={{
       width: "100%",
@@ -50,7 +62,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
               {!column.readonly &&
                 <img
                   onClick={()=>{
-                      console.log("row : ", row, column.key)
                       onRowChange({
                         ...row,
                         // [column.key+'Path']: null,
@@ -100,13 +111,18 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                 {column.type === "image" ? "이미지 확인" : "파일 다운로드" }
             </p>
           </div>
-          : <>
-            <UploadButton onClick={() => {
-                if(!column.readonly) onClickImageUpload(column.key)
-            }} style={column.readonly && {background:"#B3B3B3"}}>
-              <p>파일 첨부하기</p>
-            </UploadButton>
-          </>
+          : column.readonly ?
+              <>
+                 <p style={{color:"white", }}>등록된 이미지가 없습니다.</p>
+              </>
+              :
+              <>
+                  <UploadButton onClick={() => {
+                      if(!column.readonly) onClickImageUpload(column.key)
+                  }} style={column.readonly && {background:"#B3B3B3"}}>
+                      <p>파일 첨부하기</p>
+                  </UploadButton>
+              </>
       }
       <input
         key={`${column.key}`}
@@ -117,7 +133,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         hidden
         onChange={async (e) => {
           if(e.target.files && e.target.files.length !== 0) {
-              // Buffer.from(e.target.files[0]);
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
               if(uploadImg !== undefined){
                   if(column.key.includes("photo")){
@@ -141,7 +156,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                   }
               }
           }
-
         }}
       />
     </div>

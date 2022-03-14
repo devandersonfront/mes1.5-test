@@ -487,6 +487,7 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
         scrollEnd={(value) => {
           if(value){
             if(pageInfo.total > pageInfo.page){
+              setSelectList(new Set)
               setPageInfo({...pageInfo, page:pageInfo.page+1})
             }
           }

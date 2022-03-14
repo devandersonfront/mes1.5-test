@@ -24,8 +24,8 @@ interface IProps {
 }
 
 const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalType, modalSelectOption}:IProps) => {
-
     const [bindingBasicRow, setBindingBasicRow] = useState<any>(basicRow)
+    console.log(bindingBasicRow)
     const changeSelectOption = () => {
         let options = columnlist.dailyInspectionCheckList;
         if(modalSelectOption){
@@ -52,14 +52,14 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalTy
                 const machineBasic = {...basic}
                 machineBasic.machine.type = TransferCodeToValue(basic.machine?.type, "machine");
                 setBindingBasicRow(machineBasic)
-                return
+                break
             case "mold":
                 const moldBasic = {...basic}
-
+                moldBasic.mold.type = "금형"
                 setBindingBasicRow(moldBasic)
-                return
+                break
             default:
-                return
+                break
 
         }
     }
@@ -68,7 +68,6 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalTy
         if(isOpen) {
             changeSelectOption()
             prettyMachineData(modalType, basicRow)
-
         }
     },[isOpen])
 
@@ -172,13 +171,12 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalTy
                                     width={"1104px"}
                                     height={basicRow.check_list.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list.length * 40 + 40}
                                     setRow={(e) => {
-                                        console.log("e : ", e, basicRow)
                                         setBasicRow({...basicRow, check_list:e})
                                     }}
                                     type={"searchModal"}/>
                                 <ExcelTable
                                     headerList={modalType === "machine" ? columnlist.dailyInspectionMachineManagement : columnlist.dailyInspectionMoldManagement}
-                                    row={[basicRow]}
+                                    row={[modalType === "machine" ? {machine:bindingBasicRow.machine} : {mold:bindingBasicRow.mold}]}
                                     height={basicRow.check_list.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list.length * 40 + 40}
                                     setRow={(e) => {
                                         switch(e[0].returnType){

@@ -468,6 +468,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         scrollEnd={(value) => {
           if(value){
             if(pageInfo.total > pageInfo.page){
+              setSelectList(new Set)
               setPageInfo({...pageInfo, page:pageInfo.page+1})
             }
           }
@@ -480,7 +481,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
             return {
               ...v,
               worker: v.user,
-              worker_name: v.user.name,
+              worker_name: v.user,
               sum: v.poor_quantity+v.good_quantity,
               input_bom: v.operation_sheet.input_bom,
             }

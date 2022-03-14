@@ -127,7 +127,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
     const saveInspecMold = async (data) => {
         await RequestMethod("post", "inspecMoldSave", data)
             .then((res) => {
-                console.log("res : ", res)
                 Notiflix.Report.success("저장되었습니다.","","확인", () => LoadInspecData("mold"))
             })
             .catch((err) => {
@@ -143,7 +142,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 return
 
             case 1:
-                console.log("저장하기 : ", forSaveClean(basicRow, photoTitleList))
                 if(machine_id){
                     saveInspecMachine(forSaveClean(basicRow, photoTitleList))
                 }else{
@@ -308,7 +306,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
             Object.keys(inspectionPhotoList).map((value, index) => {
                 resultData.inspection_photo.map((photo) => {
                     if(photo.sequence == index) {
-                        console.log(`${value} === `, photo)
                         inspectionPhotoList[value] = photo
                     }
                 })
@@ -335,7 +332,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
 
         }
         resultData.writer = writeUser
-        console.log("resultData : ", resultData)
         setBasicRow(resultData)
     }
 
