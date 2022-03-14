@@ -161,11 +161,13 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
 
 
       if(res){
-        onRowChange({
-          ...row,
-          update: true
-        })
-        Notiflix.Report.success('저장되었습니다.','','확인');
+        setTimeout(() => {
+          onRowChange({
+            ...row,
+            update: true
+          })
+          Notiflix.Report.success('저장되었습니다.','','확인');
+        }, 1000)
       }
     }
 
