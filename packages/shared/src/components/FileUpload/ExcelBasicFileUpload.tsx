@@ -47,16 +47,19 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-            <img
-              onClick={()=>{
-                  onRowChange({
-                    ...row,
-                    // [column.key+'Path']: null,
-                    [column.key]: null,
-                    isChange:true
-                  })
-              }}
-              src={Icon_X} style={{borderRadius:"4px", width:"24px", height:"24px", marginRight:"4px", marginLeft: '4px'}} />
+              {!column.readonly &&
+                <img
+                  onClick={()=>{
+                      console.log("row : ", row, column.key)
+                      onRowChange({
+                        ...row,
+                        // [column.key+'Path']: null,
+                        [column.key]: null,
+                        isChange:true
+                      })
+                  }}
+                  src={Icon_X} style={{borderRadius:"4px", width:"24px", height:"24px", marginRight:"4px", marginLeft: '4px'}} />
+              }
             <p
               style={{
                 overflow: 'hidden',

@@ -1096,7 +1096,7 @@ export const columnlist: any = {
   productChangeModify: [
     {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168, type: 'autoInput'},
     {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput'},
-    {key: "code", name: 'CODE', formatter: SearchModalTest, type: 'product', width: 480},
+    {key: "code", name: 'CODE', width: 480},
     {key: "name", name:"품명", formatter: PlaceholderBox, placeholder: '자동입력',type: 'autoInput'},
   ],
   dailyInspectionMachine: [
@@ -1109,7 +1109,19 @@ export const columnlist: any = {
     {key: "manager", name:"담당자", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
   ],
   dailyInspectionMachinePicture: [
-    {key: "machinePicture", name: '기계 사진', formatter: FileEditer,  width: 300, type: 'image'},
+    {key: "machinePicture", name: '기계 사진', formatter: FileEditer,  width: 300, type: 'image', readonly:true},
+    {key: "photo1", name:'점검사항 부위01', formatter: FileEditer, type: 'image'},
+    {key: "photo2", name:'점검사항 부위02', formatter: FileEditer, type: 'image'},
+    {key: "photo3", name:"점검사항 부위03", formatter: FileEditer, type: 'image'},
+    {key: "photo4", name:"점검사항 부위04", formatter: FileEditer, type: 'image'},
+    {key: "photo5", name:"점검사항 부위05", formatter: FileEditer, type: 'image'},
+    {key: "photo6", name:"점검사항 부위06", formatter: FileEditer, type: 'image'},
+    {key: "photo7", name:"점검사항 부위07", formatter: FileEditer, type: 'image'},
+    {key: "photo8", name:"점검사항 부위08", formatter: FileEditer, type: 'image'},
+    {key: "photo9", name:"점검사항 부위09", formatter: FileEditer, type: 'image'},
+  ],
+  dailyInspectionMoldPicture: [
+    {key: "machinePicture", name: '금형 사진', formatter: FileEditer,  width: 300, type: 'image', readonly:true},
     {key: "photo1", name:'점검사항 부위01', formatter: FileEditer, type: 'image'},
     {key: "photo2", name:'점검사항 부위02', formatter: FileEditer, type: 'image'},
     {key: "photo3", name:"점검사항 부위03", formatter: FileEditer, type: 'image'},

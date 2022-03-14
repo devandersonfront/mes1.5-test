@@ -357,6 +357,16 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
       let random_id = Math.random()*1000;
 
+      let worker
+
+      if(typeof row.worker === 'string'){
+        worker = row.worker
+      }else if(typeof row.worker === "object"){
+        worker = row.worker?.name
+      }else {
+        worker = "-"
+      }
+
       return {
         ...row,
         ...appendAdditional,
@@ -372,7 +382,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         process_id: row.operation_sheet?.product?.process?.name ?? '-',
         user: row.worker,
         sic_id: row.inspection_category,
-        worker: row.worker?.name ?? '-',
+        worker: worker,
         id: `sheet_${random_id}`,
       }
     })

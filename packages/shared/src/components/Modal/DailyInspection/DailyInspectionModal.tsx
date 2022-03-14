@@ -123,14 +123,17 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalTy
                                         type={"searchModal"} width={"100%"} height={80}/>
                             <ImageTable>
                                 <DefaultImageProfile  title={"타이틀"} image={
-                                    "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"+basicRow.inspection_photo.machinePicture?.uuid
+                                    basicRow.inspection_photo?.machinePicture?.uuid ?
+                                        "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"+basicRow.inspection_photo.machinePicture?.uuid
+                                        :
+                                        ""
                                 } style={{width:592, height: 366,display:"flex", justifyContent:"center", alignItems:"center"}}/>
                                 <ImageGrid>
-                                    {Object.values(basicRow.inspection_photo).map((value:any, index) =>{
-                                        if(index){
+                                    {Object.values(basicRow.inspection_photo).map((photo:{uuid:string | null, sequence:number}, index) =>{
+                                        if(index !== 0 && index < 10){
                                             return(
-                                                <DefaultImageProfile title={`부위0${index}`} image={value?.uuid ?
-                                                    "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"+value?.uuid
+                                                <DefaultImageProfile title={`부위0${photo?.sequence ?? index}`} image={photo?.uuid ?
+                                                    "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"+photo?.uuid
                                                     :
                                                     ""
                                                 } style={{width:168, height:119, display:"flex", justifyContent:"center", alignItems:"center"}}/>
@@ -150,7 +153,6 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalTy
                                             <div style={{width:"50%", marginLeft:"15px"}}>
                                                 {Object.values(basicRow.legendary_list).map((value, index) => {
                                                     if(index > 4 && value["legendary"] !== "" && value["content"] !== "") return <span style={{display: "block"}}>{value["legendary"]} : {value["content"]}</span>
-
                                                 })}
                                             </div>
                                         </div>
@@ -179,8 +181,6 @@ const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalTy
                                     row={[basicRow]}
                                     height={basicRow.check_list.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list.length * 40 + 40}
                                     setRow={(e) => {
-                                        console.log("YEAH !!! : ", e)
-                                        console.log(basicRow)
                                         switch(e[0].returnType){
                                             case "manager":
                                                 basicRow.manager= e[0].user;

@@ -19,7 +19,7 @@ const DefaultImageProfile = ({title, image, direction, style, edit, onChangeFunc
             {direction === "bottom" && <div className={"title bottom"}>{title}</div>}
             <ImgBox className={"image"} style={style}>
                 {image ?
-                    <img  style={{width:"100%", }} src={image} />
+                    <img  style={{width:"100%", }} alt={"이미지 오류"} src={image} />
                     :
                     <div >사진 없음</div>
                 }

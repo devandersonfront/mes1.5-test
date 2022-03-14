@@ -35,8 +35,19 @@ const CellButtonComponent = ({ row, column, setRow}: IProps) => {
   return (
     <CellButton onClick={() => {
       if(column.type === "inspection"){
-        console.log(row, column)
-        router.push({
+        let typeID = "";
+        switch (true){
+          case row.machine_id !== undefined:
+            typeID = row.machine_id
+            break
+          case row.mold_id !== undefined :
+            typeID = row.mold_id
+            break
+          default :
+            Notiflix.Report.warning("기준정보를 등록해주세요.",``,"확인")
+            break
+        }
+        if(typeID !== "") router.push({
           pathname: '/mes/basic/dailyInspection',
           query:
               row.machine_id ?

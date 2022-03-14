@@ -102,12 +102,18 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
             <img src={ic_mes} style={{width: 30, height: 30, marginBottom: 5}}/>
             <MenuText>MES</MenuText>
           </MenuNavItem>
-          <MenuNavItem style={{backgroundColor: menuType === "CNC" ? POINT_COLOR : undefined}} onClick={() => {
-            changeMenuType("CNC")
+          <MenuNavItem style={{backgroundColor: menuType === "PMS" ? POINT_COLOR : undefined}} onClick={() => {
+            changeMenuType("PMS")
           }}>
-            <img src={ic_cnc} style={{width: 30, height: 30, marginBottom: 5}}/>
-            <MenuText>CNC</MenuText>
+            <img src={ic_pms} style={{width: 30, height: 30, marginBottom: 5}}/>
+            <MenuText>PMS</MenuText>
           </MenuNavItem>
+          {/*<MenuNavItem style={{backgroundColor: menuType === "CNC" ? POINT_COLOR : undefined}} onClick={() => {*/}
+          {/*  changeMenuType("CNC")*/}
+          {/*}}>*/}
+          {/*  <img src={ic_cnc} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
+          {/*  <MenuText>CNC</MenuText>*/}
+          {/*</MenuNavItem>*/}
           {/*<MenuNavItem style={{backgroundColor: menuType === "WMS" ? POINT_COLOR : undefined}} onClick={() => {*/}
           {/*  changeMenuType("WMS")*/}
           {/*}}>*/}
