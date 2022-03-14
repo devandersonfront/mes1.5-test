@@ -35,13 +35,12 @@ const InputInfoModal = ({column, row, onRowChange,}: IProps) =>{
 
     useEffect(() => {
         if(isOpen) {
-            console.log("??ASD?ASD?ASD?ASD?ASD?", row)
+            console.log(row)
         }
     }, [isOpen, searchKeyword])
 
 
     const saveSubFactory = async () => {
-        console.log("searchList : " ,searchList)
         onRowChange(searchList)
         setIsOpen(false)
     }
@@ -60,7 +59,7 @@ const InputInfoModal = ({column, row, onRowChange,}: IProps) =>{
                     <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
                         setIsOpen(true)
                     }}>
-                        <p style={{textDecoration: 'underline'}}>세분화 보기</p>
+                        <p style={{textDecoration: 'underline'}}>문제사항등록</p>
                     </UploadButton>
                 </div>
             </>)
@@ -165,34 +164,38 @@ const InputInfoModal = ({column, row, onRowChange,}: IProps) =>{
 
                     <div style={{display: 'flex', justifyContent: 'space-between', margin: '24px 48px 8px 16px'}}>
                         <div style={{fontSize:"22px"}}>{column.subTitle}</div>
-                        <div style={{display:"flex", justifyContent:"space-between", width:240}}>
-                            <Button onClick={() => {
-                                let random_id = Math.random()*1000;
-                                setSearchList([
-                                    ...searchList,
-                                    {
-                                        seq: searchList.length+1,
-                                        id: `modalId_${random_id}`,
-                                    }
-                                ])
-                            }}>
-                                <p>행 추가</p>
-                            </Button>
-                            <Button style={{marginLeft: 16}} onClick={() => {
-                                let tmp = searchList
+                        {/*<div style={{display:"flex", justifyContent:"space-between", width:240}}>*/}
+                        {/*    <Button onClick={() => {*/}
+                        {/*        let random_id = Math.random()*1000;*/}
+                        {/*        setSearchList([*/}
+                        {/*            ...searchList,*/}
+                        {/*            {*/}
+                        {/*                seq: searchList.length+1,*/}
+                        {/*                id: `modalId_${random_id}`,*/}
+                        {/*            }*/}
+                        {/*        ])*/}
+                        {/*    }}>*/}
+                        {/*        <p>행 추가</p>*/}
+                        {/*    </Button>*/}
+                        {/*    <Button style={{marginLeft: 16}} onClick={() => {*/}
+                        {/*        let tmp = searchList*/}
+                        {/*        console.log(selectList, selectRow)*/}
+                        {/*        tmp.splice(selectRow,1);*/}
+                        {/*        tmp.map((row, index) => {*/}
+                        {/*            if(index+1 > selectRow){*/}
+                        {/*                row.seq -= 1*/}
+                        {/*            }*/}
+                        {/*        })*/}
 
-                                deleteSubFactory()
-                                // setSearchList([
-                                //   ...searchList,
-                                //   {
-                                //     seq: searchList.length-1
-                                //   }
-                                // ])
-                            }}>
-                                <p>행 삭제</p>
-                            </Button>
+                        {/*        // deleteSubFactory()*/}
+                        {/*        setSearchList([*/}
+                        {/*          ...tmp,*/}
+                        {/*        ])*/}
+                        {/*    }}>*/}
+                        {/*        <p>행 삭제</p>*/}
+                        {/*    </Button>*/}
 
-                        </div>
+                        {/*</div>*/}
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
                         <ExcelTable
@@ -230,25 +233,15 @@ const InputInfoModal = ({column, row, onRowChange,}: IProps) =>{
                             headerAlign={'center'}
                         />
                     </div>
-                    <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+                    {/*<div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>*/}
                         <div
                             onClick={() => {
                                 setIsOpen(false)
-                                setSelectList(new Set())
                             }}
-                            style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                            style={{height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >
-                            <p>취소</p>
-                        </div>
-                        <div
-                            onClick={() => {
-                                saveSubFactory();
-                                setSelectList(new Set())
-                            }}
-                            style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                        >
-                            <p>등록하기</p>
-                        </div>
+                            <p>확인</p>
+                        {/*</div>*/}
                     </div>
                 </div>
             </Modal>

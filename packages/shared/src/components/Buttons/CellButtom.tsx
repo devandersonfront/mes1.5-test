@@ -25,7 +25,7 @@ const CellButtonComponent = ({ row, column, setRow}: IProps) => {
         }
         break;
       case "form_id" :
-          setTitle("일상점검")
+          setTitle("양식 등록")
         break;
       default :
         break;
@@ -71,8 +71,12 @@ const CellButtonComponent = ({ row, column, setRow}: IProps) => {
       }else{
         Notiflix.Report.failure('접근할 수 없습니다.', '품목을 선택해 주세요', '확인')
       }
-    }}>
-      {title}
+    }}
+      style={row.form_id && {
+        background:"none", color:"white", textDecoration:"underline"
+      }}
+    >
+      {row.form_id ? "양식 보기" : title}
     </CellButton>
   );
 }

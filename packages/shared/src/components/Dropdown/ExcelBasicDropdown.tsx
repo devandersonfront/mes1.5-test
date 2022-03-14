@@ -64,6 +64,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         backgroundColor: column.type === 'Modal' ? row.border ? '#19B9DF80' : 'white' : '#00000000'
       }}
       value={cleanValue(column.key)}
+      disabled={column.readonly}
       // value={selectType()}
       onChange={(event) => {
         let pk = "";

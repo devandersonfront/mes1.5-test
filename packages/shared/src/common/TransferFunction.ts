@@ -130,7 +130,6 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
 
 export const TransferValueToCode = (value: string, type:TransferType) => {
   let code = 0;
-  console.log("value : ", value, type)
   switch (type) {
     case "productType": {
       PRODUCT_TYPE.map(v => {
@@ -186,7 +185,6 @@ export const TransferValueToCode = (value: string, type:TransferType) => {
       break
     }
     case 'machine': {
-      console.log("여기 : ", value, code)
       MACHINE_TYPE.map(v => {
         if(v.value === value){
           code = v.code;

@@ -392,7 +392,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
                         setSelectType(v.type === 'COIL' || v.type === 'SHEET' ? '원자재' : v.type)
                         setSelectProduct(v.code)
-                        console.log("column : ", column, row)
                         setLotList([...v.lotList.map((v,i) => (
                             row?.bom ? {
                               ...v,
