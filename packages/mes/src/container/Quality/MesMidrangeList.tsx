@@ -69,7 +69,7 @@ const MesMidrangeList = ({option}:IProps) => {
                 return {
                     id:"midrange_"+randomId,
                     record_id: v.record_id,
-                    identification: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
+                    identification: v.operation_sheet.identification ? v.operation_sheet.identification : '-',
                     contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification  : '-',
                     osId: v.operation_sheet.identification ?? '-',
                     lot_number:  v.lot_number ?? '-',
@@ -125,7 +125,7 @@ const MesMidrangeList = ({option}:IProps) => {
                     return {
                         id:"midrange_"+randomId,
                         record_id: v.record_id,
-                        identification: v.operation_sheet.contract ? v.operation_sheet.contract.identification : '-',
+                        identification: v.operation_sheet.identification ? v.operation_sheet.identification : '-',
                         contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification : '-',
                         osId: v.operation_sheet.identification ?? '-',
                         lot_number: v.lot_number ?? '-',

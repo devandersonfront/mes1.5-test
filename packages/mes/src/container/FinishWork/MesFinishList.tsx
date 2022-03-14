@@ -278,6 +278,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? "-",
         id: `sheet_${random_id}`,
+        code: row.product?.code ?? '-',
       }
     })
 

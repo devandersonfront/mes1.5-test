@@ -1096,7 +1096,7 @@ export const columnlist: any = {
   productChangeModify: [
     {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168, type: 'autoInput'},
     {key: "cm_id", name: '모델',formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput'},
-    {key: "code", name: 'CODE', formatter: SearchModalTest, type: 'product', width: 480},
+    {key: "code", name: 'CODE', width: 480},
     {key: "name", name:"품명", formatter: PlaceholderBox, placeholder: '자동입력',type: 'autoInput'},
   ],
   dailyInspectionMachine: [
