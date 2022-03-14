@@ -78,7 +78,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
     if(column.key === 'customer_id'){
       switch(option){
-        case 3: 
+        case 3:
         return 7
         default :
         return option
@@ -321,6 +321,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               scrollEnd={(value) => {
                 if(value){
                   if(pageInfo.total > pageInfo.page){
+                    setSelectList(new Set)
                     setPageInfo({...pageInfo, page:pageInfo.page+1})
                   }
                 }
@@ -378,7 +379,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                   }else if(column.type === 'customer'){
                     onRowChange(
                       {
-                        ...row,   
+                        ...row,
                         ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
                         manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                         name: selectNameFunction(column.type),
@@ -437,7 +438,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
                 }
 
-               
+
               }}
               style={{backgroundColor: POINT_COLOR}}
             >
