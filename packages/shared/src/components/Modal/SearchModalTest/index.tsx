@@ -399,8 +399,29 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         }
                       }
                     )
+                  }else if(column.type === 'factory'){
+                    onRowChange({
+                      ...row,   
+                      ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                      name: selectNameFunction(column.type),
+                      tab: tab,
+                      // type_name: undefined,
+                      version: row.version,
+                      isChange: true,
+                      cm_id : '',
+                      modelArray : {
+                        additional: [],
+                        cm_id: '',
+                        customer: null,
+                        customerId: '',
+                        model: '',
+                        sync: '',
+                        version: null
+                      }
+                    })
                   }
                   else {
+
                     onRowChange(
                         {
                           ...row,
