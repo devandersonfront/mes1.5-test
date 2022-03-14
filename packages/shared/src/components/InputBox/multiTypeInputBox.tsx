@@ -15,15 +15,13 @@ interface IProps {
 }
 
 const MultiTypeInputEditor = ({ row, column, onRowChange, onClose }: IProps) => {
-    useEffect(() => {
-    }, [row])
-
+    console.log(row, column.readonly, onClose)
     const typeCheck = () => {
         switch (row.columnType){
             case "text":
                 return <TextEditor row={row} column={column} onRowChange={(e) => {
                     onRowChange(e)
-                }} />
+                }} onClose={onClose}/>
             case "dropdown":
                 return <DropDownEditor column={column} row={row} onRowChange={onRowChange}/>
                 // return <DropDownEditor column={{...column,selectList:Object.keys(row.selectList).map((name, index) => Object({name:name, pk:index})), }} row={row} onRowChange={onRowChange}/>

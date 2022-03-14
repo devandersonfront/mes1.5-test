@@ -97,7 +97,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
         writer:{},
         manager:{},
         inspection_photo:[],
-        legendary_list: [{sequence:1, legendary:"", content:""}],
+        legendary_list: [],
         check_list:[],
         etc:[""],
     }
@@ -162,26 +162,31 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
 
     const forBindingClean = (basic:any, photoList:PictureInterface[]) => {
         const result = {...basic}
-        let legendary = {}
+        // console.log("before photoList : ", photoList)
+        // delete photoList[0].machinePicture
+        // console.log("photoList[0] : ", photoList[0])
+        result.inspection_photo = photoList[0]
+        let legendary = {sequence:1, name:"", uuid:""}
         result.legendary_list.map((e) =>{
             legendary[e.legendary] = e.content
         })
-        if(result.legendary_list && result.legendary_list.length > 0){
-        }else{
-            result.legendary_list = [legendary];
-        }
+        // if(result.legendary_list && result.legendary_list.length > 0){
+        // }else{
+            // result.legendary_list = [legendary];
+        // }
+        // console.log("??? machine : ", result)
         return result;
     }
 
     const forSaveClean = (basic:any, photoList:PictureInterface[]) => {
         const result = {...basic}
         let inspection_photo = [];
-        console.log("basic : ",basic)
-        console.log("photoList : ",photoList)
+        // console.log("basic : ",basic)
+        // console.log("photoList : ",photoList)
         result.etc = result.etc[0].etc ?? ""
-        Object.values(photoList[0]).filter((photo, index) => {
+        Object.values(photoList[0]).map((photo, index) => {
             Object.keys(basicRow.inspection_photo).map((row, index) => {
-                if(row !== "machinePicture" && photo && photo.uuid !== "" && photo.sequence === basicRow.inspection_photo[row].sequence){
+                if(row !== "machinePicture" && photo && photo.uuid !== "" && photo.sequence === basicRow.inspection_photo[row]?.sequence){
                     inspection_photo.push(photo);
                 }
                 // if(photo.sequence === basicRow.inspection_photo[row].sequence){
@@ -382,10 +387,16 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 columnlist.dailyInspectionMold
             } row={settingInfoData(basicRow, machine_id ? "machine" : "mold")} setRow={() => {}} height={105}/>
 
-            <ExcelTable headerList={columnlist.dailyInspectionMachinePicture} row={photoTitleList} setRow={(e) => {
-                setPhotoTitleList(e)
+            <ExcelTable headerList={machine_id ? columnlist.dailyInspectionMachinePicture : columnlist.dailyInspectionMoldPicture} row={photoTitleList} setRow={(e) => {
+                Object.keys(e[0]).map((value,index) => {
+                    if(e[0][value] == null){
+                        e[0][value] = {name:"", uuid:"", sequence:index}
+                    }else if(value === "isChange"){
+                       delete e[0][value]
+                    }
+                })
+                setPhotoTitleList([{...e[0], machinePicture:e[0]?.machinePicture}])
                 setBasicRow(forBindingClean(basicRow, e))
-                // setBasicRow({...basicRow, inspection_photo:[...basicRow.inspection_photo,  ...Object.values(e[0])] })
             }} height={105}/>
 
             <div>
