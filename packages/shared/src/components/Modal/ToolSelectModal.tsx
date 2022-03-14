@@ -55,7 +55,7 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
             if(row?.tools){
                 const tools = []
                 row.tools.map(({tool}) => {
-                    let toolObject:any = {}
+                    let toolObject:any = {...tool.tool}
                     toolObject.sequence = tool.sequence
                     toolObject.code = tool.tool.code
                     toolObject.name = tool.tool.name
