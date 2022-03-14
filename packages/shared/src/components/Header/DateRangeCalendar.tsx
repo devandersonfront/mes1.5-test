@@ -31,6 +31,7 @@ const DateRangeCalendar = ({selectDate, onChangeSelectDate, dataLimit}:Props) =>
             <p>기간선택</p>
             <div onClick={()=>setOnCalendar(!onCalendar)} style={{position: "absolute", marginLeft: '80px' ,width: '200px', height: '30px', zIndex: 2}}>
             </div>
+            {/*@ts-ignore*/}
             <DateRangePicker value={[selectDate.from, selectDate.to]} maxDate={maxDate} onChange={(e)=>{
                 onChangeSelectDate({...selectDate,from: moment(e[0]).format("YYYY-MM-DD"),to: moment(e[1]).format("YYYY-MM-DD")})
             }}
