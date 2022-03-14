@@ -30,7 +30,6 @@ const DateRangeCalendar = ({selectDate, onChangeSelectDate, dataLimit}:Props) =>
             <div onClick={()=>setOnCalendar(!onCalendar)} style={{position: "absolute", marginLeft: '80px' ,width: '200px', height: '30px', zIndex: 2}}>
             </div>
             <DateRangePicker value={[selectDate.from, selectDate.to]} maxDate={maxDate} onChange={(e)=>{
-                console.log(e)
                 onChangeSelectDate({...selectDate,from: moment(e[0]).format("YYYY-MM-DD"),to: moment(e[1]).format("YYYY-MM-DD")})
             }}
                              calendarIcon={null}

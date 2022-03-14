@@ -73,7 +73,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     const res = await RequestMethod('get', `shipmentSearch`,{
       path: {
         page: 1,
-        renderItem: 100000,
+        renderItem: 15,
       },
       params: {
         contract_id: row.contract_id

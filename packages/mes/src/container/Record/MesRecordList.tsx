@@ -377,7 +377,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         identification: row.operation_sheet?.identification ?? '-',
         product_id: row.operation_sheet?.product?.code ?? '-',
         name: row.operation_sheet?.product?.name ?? '-',
-        type: row.operation_sheet?.product?.type !== null ? TransferCodeToValue(row.operation_sheet.product.type, 'material') : '-',
+        type: row.operation_sheet?.product?.type !== null ? TransferCodeToValue(row.operation_sheet.product.type, 'product') : '-',
         unit: row.operation_sheet?.product?.unit,
         process_id: row.operation_sheet?.product?.process?.name ?? '-',
         user: row.worker,
