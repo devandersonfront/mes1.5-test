@@ -25,7 +25,6 @@ interface IProps {
 
 const DailyInspectionModal = ({isOpen, setIsOpen, basicRow, setBasicRow, modalType, modalSelectOption}:IProps) => {
     const [bindingBasicRow, setBindingBasicRow] = useState<any>(basicRow)
-    console.log(bindingBasicRow)
     const changeSelectOption = () => {
         let options = columnlist.dailyInspectionCheckList;
         if(modalSelectOption){

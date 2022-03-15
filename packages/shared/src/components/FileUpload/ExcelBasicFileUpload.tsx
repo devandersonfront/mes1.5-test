@@ -29,6 +29,8 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
   const changeSetOnImage = (value:boolean) => {
       setOnImage(value)
   }
+
+
   const cleanText = () => {
       switch(true){
           case column.type === "image":
@@ -51,7 +53,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
     }}>
         <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage}/>
       {
-          (column.key === "photo" && row[column.key]) || row[column.key]?.uuid ?
+          (row[column.key]?.uuid) ||  typeof row[column.key] !== "object" && row[column.key]?
           <div style={{
             width: "100%",
             height: "100%",
