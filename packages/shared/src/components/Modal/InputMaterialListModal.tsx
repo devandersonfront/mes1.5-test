@@ -60,7 +60,6 @@ const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: st
 
 
 const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
-
   const [bomDummy, setBomDummy] = useState<any[]>([])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -392,7 +391,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
                         setSelectType(v.type === 'COIL' || v.type === 'SHEET' ? '원자재' : v.type)
                         setSelectProduct(v.code)
-                        console.log("column : ", column, row)
                         setLotList([...v.lotList.map((v,i) => (
                             row?.bom ? {
                               ...v,
