@@ -252,7 +252,7 @@ const DataGridTable = styled(DataGrid)`
     }
     
     .rdg-row[aria-selected=true]{
-        border:1px solid white;
+        // border:1px solid white;
         background:none;
         &:hover{
             background:none;

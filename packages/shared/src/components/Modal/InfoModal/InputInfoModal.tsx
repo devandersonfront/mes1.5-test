@@ -35,7 +35,6 @@ const InputInfoModal = ({column, row, onRowChange,}: IProps) =>{
 
     useEffect(() => {
         if(isOpen) {
-            console.log(row)
         }
     }, [isOpen, searchKeyword])
 

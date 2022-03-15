@@ -271,7 +271,7 @@ const BasicMachineV1u = ({option}: IProps) => {
     if(haveIdRows.length > 0){
       deletable = await RequestMethod('delete','machineDelete', filterData)
     }
-    
+
     if(deletable){
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');

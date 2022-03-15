@@ -94,13 +94,13 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
       Notiflix.Report.warning("경고", "데이터를 선택해주세요.", "확인")
       return
     }
-    basicRow.map((row) => {
+    const error = basicRow.map((row) => {
       if(selectList.has(row.id) && !row.code){
-        Notiflix.Report.warning("경고","CODE를 입력해주세요.","확인")
-        return
+        // Notiflix.Report.warning("경고","CODE를 입력해주세요.","확인")
+        return 1
       }else if(!Number(row.amount)){
-        Notiflix.Report.warning("경고","수주량을 정확히 입력해주세요.","확인")
-        return
+        // Notiflix.Report.warning("경고","수주량을 정확히 입력해주세요.","확인")
+        return 2
       }
     })
     // else{
@@ -112,7 +112,11 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
     //     }
     //   })
     // }
-
+    if(error.includes(1)){
+      return Notiflix.Report.warning("경고","CODE를 입력해주세요.","확인")
+    }else if(error.includes(2)){
+      return Notiflix.Report.warning("경고","수주량을 정확히 입력해주세요.","확인")
+    }
     if(!checkValue) return
 
     res = await RequestMethod('post', `contractSave`,
