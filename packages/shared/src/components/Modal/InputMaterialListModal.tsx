@@ -60,7 +60,6 @@ const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: st
 
 
 const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
-
   const [bomDummy, setBomDummy] = useState<any[]>([])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
