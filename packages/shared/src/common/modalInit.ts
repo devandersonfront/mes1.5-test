@@ -566,7 +566,7 @@ export const searchModalList: any = {
     {key: 'identification', name: '납품 번호'},
     {key: 'date', name: '납품 날짜'},
     {key: 'total', name: '납품 수량'},
-    {key: 'lots', name: 'LOT별 납품 정보', formatter: LotDeliveryInfoModal, type: 'readonly', textAlign: 'center'},
+    {key: 'lot_number', name: 'LOT별 납품 정보', formatter: LotDeliveryInfoModal, type: 'readonly', textAlign: 'center'},
   ],
   lotDeliveryInfo: [
     {key: 'seq', name: '번호', width: 32, textAlign: 'center'},
