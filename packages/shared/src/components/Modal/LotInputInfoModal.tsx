@@ -322,14 +322,23 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
               <ExcelTable
                   headerList={column.type === 'readonly' ? searchModalList.InputListReadonly : searchModalList.InputList}
                   row={searchList ?? [{}]}
+                  setSelectRow={(e) => {
+                    setSelectRow(e)
+                    // if(!searchList[e].border){
+                    //   searchList.map((v,i)=>{
+                    //     v.border = false;
+                    //   })
+                    //   searchList[e].border = true
+                    //   setSearchList([...searchList])
+                    // }
+                  }}
                   setRow={(e) => {
                     let tmp = e.map((v, index) => {
-                      if(v.newTab === true){
-                        const newTabIndex = bomDummy.length+1
-                        addNewTab(newTabIndex)
-                        setFocusIndex(newTabIndex-1)
-                      }
-
+                      // if(v.newTab === true){
+                      //   const newTabIndex = bomDummy.length+1
+                      //   addNewTab(newTabIndex)
+                      //   setFocusIndex(newTabIndex-1)
+                      // }
                       // if(v.lotList){
                       //   setSelectProduct(v.code)
                       //   setLotList([...v.lotList.map((v,i) => ({
@@ -350,11 +359,15 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
                       if(v.bom){
                         setSelectProduct(v.code)
-                          setLotList([...v.bom.map((v,i) => ({
-                            ...v.lot,
-                            lot_number: /*v.lot.child_lot_rm.lot_number*/material_type_lot_number(v),
-                            seq: i+1
-                          }))])
+                          // setLotList([...v.bom.map((v,i) => ({
+                          //   ...v.lot,
+                          //   lot_number: /*v.lot.child_lot_rm.lot_number*/material_type_lot_number(v),
+                          //   seq: i+1
+                          // }))])
+                        if(v.lotList){
+                          console.log(v.lotList)
+                          setLotList(v.lotList)
+                        }
                       }
 
                       return {
@@ -371,9 +384,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                   // setSelectRow={(e) => {
                   //   setSelectRow(e)
                   // }}
-                  setSelectRow={(e) => {
-                    setSelectRow(e)
-                  }}
+
                   type={'searchModal'}
                   headerAlign={'center'}
               />
@@ -381,7 +392,8 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
             <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
               <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                 <div style={{ display: 'flex', width: 1200}}>
-                  <p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 ({selectProduct})</p>
+                  {/*<p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 ({selectProduct})</p>*/}
+                  <p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 ({lotList[0]?.raw_material?.code ?? lotList[0]?.sub_material?.code})</p>
                 </div>
               </div>
               <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>

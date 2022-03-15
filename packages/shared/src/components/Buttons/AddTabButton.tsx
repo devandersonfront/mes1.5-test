@@ -95,7 +95,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
                   lot = row.bom[row.seq-1].lot
                 }
               }
-
               onRowChange({
                 ...row,
                 lotList: [...lot.map(v => {
@@ -115,7 +114,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
 
                   return {
                     ...v,
-                    ...v[type]
+                    ...v[type],
                   }
                 })]
               })
