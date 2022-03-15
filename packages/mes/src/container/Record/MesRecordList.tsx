@@ -383,6 +383,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         user: row.worker,
         sic_id: row.inspection_category,
         worker: worker,
+        worker_object: row.worker_object ?? row.worker,
         id: `sheet_${random_id}`,
       }
     })
@@ -481,7 +482,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
             return {
               ...v,
               worker: v.user,
-              worker_name: v.user,
+              worker_name: v.user.name,
               sum: v.poor_quantity+v.good_quantity,
               input_bom: v.operation_sheet.input_bom,
             }

@@ -49,7 +49,6 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 
 const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
   const tabRef = useRef(null)
-
   const [bomDummy, setBomDummy] = useState<any[]>([
     {sequence: '1', code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
   ])
@@ -94,7 +93,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
         total_poor_quantity: poor_quantity,
         // unit: row[0].operation_sheet?.product?.unit,
       })
-      const newList = row.map((v)=> {return {...v, bom_root_id: row[0].operation_sheet.product.bom_root_id, productId: row[0].product.product_id, modify: true} })
+      const newList = row.map((v)=> {return {...v, bom_root_id: row[0].operation_sheet.product.bom_root_id, productId: row[0].product.product_id, modify: true, worker: row[0].worker_object, worker_object: null} })
       setSearchList([...newList])
     }
   }, [isOpen, searchKeyword])
