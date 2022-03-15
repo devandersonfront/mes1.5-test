@@ -49,7 +49,6 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 
 const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
   const tabRef = useRef(null)
-
   const [bomDummy, setBomDummy] = useState<any[]>([
     {sequence: '1', code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
   ])

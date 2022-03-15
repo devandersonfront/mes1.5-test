@@ -45,6 +45,13 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
 
                                     const isCheck = folderList.some((folder)=> folder.name === fileInfo[0].name)
 
+                                    if(fileInfo.length === 0){
+                                        return Notiflix.Report.warning(
+                                            '경고',
+                                            '폴더명을 입력해주세요.',
+                                            'Okay',
+                                        );
+                                    }
                                     if(isCheck){
                                         return Notiflix.Report.warning(
                                                 '경고',
@@ -82,6 +89,13 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                             <Button
                                 style={{color:"#111319", background:"#19B9DF"}}
                                 onClick={async() => {
+                                    if(fileInfo.length === 0){
+                                        return Notiflix.Report.warning(
+                                            '경고',
+                                            '파일을 업로드해주세요.',
+                                            'Okay',
+                                        );
+                                    }
                                     await RequestMethod("post", "documentSave", fileInfo)
                                         .then(() => {
                                             setIsOpen(false);
