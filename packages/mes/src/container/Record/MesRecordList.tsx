@@ -383,6 +383,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         user: row.worker,
         sic_id: row.inspection_category,
         worker: worker,
+        worker_object: row.worker_object ?? row.worker,
         id: `sheet_${random_id}`,
       }
     })
