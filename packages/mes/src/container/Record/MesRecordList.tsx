@@ -482,7 +482,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
             return {
               ...v,
               worker: v.user,
-              worker_name: v.user,
+              worker_name: v.user.name,
               sum: v.poor_quantity+v.good_quantity,
               input_bom: v.operation_sheet.input_bom,
             }
