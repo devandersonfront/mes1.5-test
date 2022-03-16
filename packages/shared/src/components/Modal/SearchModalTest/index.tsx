@@ -321,7 +321,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               scrollEnd={(value) => {
                 if(value){
                   if(pageInfo.total > pageInfo.page){
-                    setSelectList(new Set)
                     setPageInfo({...pageInfo, page:pageInfo.page+1})
                   }
                 }
@@ -401,7 +400,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     )
                   }else if(column.type === 'factory'){
                     onRowChange({
-                      ...row,   
+                      ...row,
                       ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
                       name: selectNameFunction(column.type),
                       tab: tab,
