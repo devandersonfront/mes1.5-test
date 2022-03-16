@@ -22,7 +22,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicCustomer = ({page, keyword, option}: IProps) => {
+const BasicCustomer = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -33,8 +33,8 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["customer"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처명', '대표자명', '담당자명', '전화 번호','휴대폰 번호', '팩스 번호', '주소', '사업자 번호'])
-  const [optionIndex, setOptionIndex] = useState<number>(option)
-
+  const [optionIndex, setOptionIndex] = useState<number>()
+  const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -43,19 +43,41 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       }).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword])
+
+  const valueExistence = () => {
+
+    const selectedRows = filterSelectedRows()
+
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
+    if(selectedRows.length > 0){
+
+      const nameCheck = selectedRows.every((data)=> data.name)
+
+      if(!nameCheck){
+        return '거래처명'
+      }
+
+    }
+
+    return false;
+
+  }
+
 
   const SaveBasic = async () => {
+
+    const existence = valueExistence()
 
     if(selectList.size === 0){
       return Notiflix.Report.warning(
@@ -64,6 +86,8 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
         '확인',
         );
     }
+
+    if(!existence){
 
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
@@ -118,7 +142,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
               ...selectData,
               additional: [
                 ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
+                  //if(!row[v.colName]) return undefined;
                   // result.push(
                   return {
                     mi_id: v.id,
@@ -134,28 +158,36 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v))
+        }).filter((v) => v)).catch((error)=>{
+          return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+        })
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인');
       if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
+        SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }else{
-        LoadBasic(page).then(() => {
+        LoadBasic(pageInfo.page).then(() => {
           Notiflix.Loading.remove()
         })
       }
     }
+  }else{
+    return Notiflix.Report.warning(
+      '경고',
+      `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+      '확인',
+    );
+  }
   }
 
-  console.log(basicRow,'basicRowbasicRowbasicRow')
 
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -171,7 +203,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -180,34 +212,31 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
 
   const classfyNormalAndHave = (selectedRows) => {
 
-    const normalRows = []
     const haveIdRows = []
 
     selectedRows.map((row : any)=>{
       if(row.customer_id){
         haveIdRows.push(row)
-      }else{
-        normalRows.push(row)
       }
     })
 
-    return [normalRows , haveIdRows]
+    return haveIdRows
   }
 
 
-  const DeleteBasic = async () => {
+  
 
+  const DeleteBasic = async () => {
 
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
-    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const haveIdRows = classfyNormalAndHave(selectedRows)
     const additional = setAdditionalData()
+    let deletable = true
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
-      await RequestMethod('delete','customerDelete', haveIdRows.map((row) => (
+      deletable = await RequestMethod('delete','customerDelete', haveIdRows.map((row) => (
           {...row , additional : [...additional.map(v => {
             if(row[v.name]) {
               return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
@@ -217,92 +246,14 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
       )))
 
     }
-
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-    setBasicRow(Array.from(map.values()))
-    setSelectList(new Set())
     
-    // const res = await RequestMethod('delete', `customerDelete`,
-    //   basicRow.map((row, i) => {
-    //     if(selectList.has(row.id)){
-    //       let selectKey: string[] = []
-    //       let additional:any[] = []
-    //       column.map((v) => {
-    //         if(v.selectList){
-    //           selectKey.push(v.key)
-    //         }
+    if(deletable){
+      selectedRows.forEach((row)=>{ map.delete(row.id)})
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      setBasicRow(Array.from(map.values()))
+      setSelectList(new Set())
+    }
 
-    //         if(v.type === 'additional'){
-    //           additional.push(v)
-    //         }
-    //       })
-
-    //       let selectData: any = {}
-
-    //       Object.keys(row).map(v => {
-    //         if(v.indexOf('PK') !== -1) {
-    //           selectData = {
-    //             ...selectData,
-    //             [v.split('PK')[0]]: row[v]
-    //           }
-    //         }
-
-    //         if(v === 'unitWeight') {
-    //           selectData = {
-    //             ...selectData,
-    //             unitWeight: Number(row['unitWeight'])
-    //           }
-    //         }
-
-    //         if(v === 'tmpId') {
-    //           selectData = {
-    //             ...selectData,
-    //             id: row['tmpId']
-    //           }
-    //         }
-    //       })
-    //       if(row.customer_id){
-    //         return {
-    //           ...row,
-    //           ...selectData,
-    //           additional: [
-    //             ...additional.map(v => {
-    //               if(row[v.name]) {
-    //                 return {
-    //                   id: v.id,
-    //                   title: v.name,
-    //                   value: row[v.name],
-    //                   unit: v.unit
-    //                 }
-    //               }
-    //             }).filter((v) => v)
-    //           ]
-    //         }
-
-    //       }
-
-    //     }
-    //   }).filter((v) => v))
-
-    // if(res) {
-    //   Notiflix.Report.success('삭제 성공!', '', '확인', () => {
-    //     if(Number(page) === 1){
-    //       LoadBasic(1).then(() => {
-    //         Notiflix.Loading.remove()
-    //       })
-    //     }
-    //   })
-    // }  
-    // if(keyword){
-    //   SearchBasic(keyword, option, page).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }else{
-    //   LoadBasic(page).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }
   }
 
   const LoadBasic = async (page?: number) => {
@@ -494,6 +445,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
           [v.mi_id]: v.value
         }
       })
+
       let random_id = Math.random()*1000;
       return {
         ...row,
@@ -569,7 +521,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
 
         break;
       case 5:
-        
+
         if(selectList.size === 0){
           return Notiflix.Report.warning(
         '경고',
@@ -589,12 +541,10 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
 
   const competeCustom = (rows) => {
 
-    console.log(rows,'rowsrowsrowsrows')
-
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null)
+    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null && row.name !== '')
 
     if(spliceRow){
       if(isCheck){
@@ -607,7 +557,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
     }
 
     setBasicRow(rows)
-    
+
   }
 
   return (
@@ -616,11 +566,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          if(keyword){
-            router.push(`/mes/basic/customer?page=1&keyword=${keyword}&opt=${optionIndex}`)
-          }else{
-            router.push(`/mes/basic/customer?page=1&keyword=`)
-          }
+          setKeyword(keyword)
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
@@ -661,11 +607,7 @@ const BasicCustomer = ({page, keyword, option}: IProps) => {
         currentPage={pageInfo.page}
         totalPage={pageInfo.total}
         setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/customer?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/customer?page=${page}`)
-          }
+          setPageInfo({...pageInfo,page:page})
         }}
       />
     </div>

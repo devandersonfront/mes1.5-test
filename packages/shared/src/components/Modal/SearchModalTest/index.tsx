@@ -78,7 +78,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
     if(column.key === 'customer_id'){
       switch(option){
-        case 3: 
+        case 3:
         return 7
         default :
         return option
@@ -117,7 +117,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    console.log(res,'resresresres')
 
     if(res){
         if(res.page !== 1){
@@ -376,7 +375,52 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                           contract_id: null
                         }
                     )
-                  }else {
+                  }else if(column.type === 'customer'){
+                    onRowChange(
+                      {
+                        ...row,
+                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                        manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                        name: selectNameFunction(column.type),
+                        tab: tab,
+                        // type_name: undefined,
+                        version: row.version,
+                        isChange: true,
+                        cm_id : '',
+                        modelArray : {
+                          additional: [],
+                          cm_id: '',
+                          customer: null,
+                          customerId: '',
+                          model: '',
+                          sync: '',
+                          version: null
+                        }
+                      }
+                    )
+                  }else if(column.type === 'factory'){
+                    onRowChange({
+                      ...row,
+                      ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                      name: selectNameFunction(column.type),
+                      tab: tab,
+                      // type_name: undefined,
+                      version: row.version,
+                      isChange: true,
+                      cm_id : '',
+                      modelArray : {
+                        additional: [],
+                        cm_id: '',
+                        customer: null,
+                        customerId: '',
+                        model: '',
+                        sync: '',
+                        version: null
+                      }
+                    })
+                  }
+                  else {
+
                     onRowChange(
                         {
                           ...row,
@@ -393,7 +437,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
                 }
 
-               
+
               }}
               style={{backgroundColor: POINT_COLOR}}
             >

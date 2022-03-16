@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react'
 import {
-    columnlist,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    RequestMethod,
-    TextEditor
+  columnlist,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  MAX_VALUE,
+  RequestMethod,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -46,6 +46,11 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
     page: 1,
     total: 1
   })
+  const [order, setOrder] = useState<number>(0);
+  const changeOrder = (value:number) => {
+    setPageInfo({page:1,total:1})
+    setOrder(value);
+  }
 
   useEffect(() => {
     // setOptionIndex(option)
@@ -58,7 +63,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, option, selectDate])
+  }, [pageInfo.page, searchKeyword, option, selectDate,order])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -95,7 +100,8 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeOrder
           }
         }else{
           return v
@@ -117,12 +123,22 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
       },
-      params: {
-        keyword: keyword,
-        opt: optionIndex,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params:order == 0 ?
+          {
+            keyword: keyword,
+            opt: optionIndex,
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+          {
+            sorts: 'end',
+            order: order == 1 ? 'asc' : 'desc',
+            keyword: keyword,
+            opt: optionIndex,
+            from: selectDate.from,
+            to: selectDate.to,
+          }
     })
 
     if(res){
@@ -143,11 +159,18 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
       },
-      params: {
-        // status: 2,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params:  order == 0 ?
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+          {
+            sorts: 'end',
+            order: order == 1 ? 'asc' : 'desc',
+            from: selectDate.from,
+            to: selectDate.to,
+          }
     })
 
     if(res){
@@ -163,67 +186,68 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
 
   const DeleteBasic = async () => {
     const res = await RequestMethod('delete', `recodeDelete`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
-
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
-
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
+        basicRow.map((row, i) => {
+          if(selectList.has(row.id)){
+            let selectKey: string[] = []
+            let additional:any[] = []
+            column.map((v) => {
+              if(v.selectList){
+                selectKey.push(v.key)
               }
-            }
 
-            if(v === 'unitWeight') {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(row['unitWeight'])
+              if(v.type === 'additional'){
+                additional.push(v)
               }
-            }
+            })
 
-            if(v === 'tmpId') {
-              selectData = {
-                ...selectData,
-                id: row['tmpId']
-              }
-            }
-          })
-          return {
-            ...row,
-            ...selectData,
-            worker: row.user,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
-                  }
+            let selectData: any = {}
+
+            Object.keys(row).map(v => {
+              if(v.indexOf('PK') !== -1) {
+                selectData = {
+                  ...selectData,
+                  [v.split('PK')[0]]: row[v]
                 }
-              }).filter((v) => v)
-            ]
-          }
+              }
 
-        }
-      }).filter((v) => v))
+              if(v === 'unitWeight') {
+                selectData = {
+                  ...selectData,
+                  unitWeight: Number(row['unitWeight'])
+                }
+              }
+
+              if(v === 'tmpId') {
+                selectData = {
+                  ...selectData,
+                  id: row['tmpId']
+                }
+              }
+            })
+            return {
+              ...row,
+              ...selectData,
+              worker: row.user,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
+                  }
+                }).filter((v) => v)
+              ]
+            }
+
+          }
+        }).filter((v) => v))
 
     if(res) {
       Notiflix.Report.success('삭제 성공!', '', '확인', () => {
+        setSelectList(new Set)
         LoadBasic(1).then(() => {
           Notiflix.Loading.remove()
         })
@@ -351,110 +375,117 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
 
 
   return (
-    <div>
-      <PageHeader
-        isSearch
-        isCalendar
-        searchKeyword={""}
-        searchOptionList={optionList}
-        onChangeSearchOption={(e) => {
-          setOptionIndex(e)
-        }}
-        onChangeSearchKeyword={(keyword) =>{
-          setSearchKeyword(keyword)
-          // SearchBasic(keyword, option, 1)
-        }}
-        calendarTitle={'종료일'}
-        calendarType={'period'}
-        selectDate={selectDate}
-        //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
-        title={"작업 일보 리스트"}
-        buttons={
-          ['', '수정하기', '삭제']
-        }
-        buttonsOnclick={
-          (e) => {
-            switch(e) {
-              case 1: {
-                if(selectList.size === 1) {
-                  setExcelOpen(true)
-                }else{
-                  Notiflix.Report.warning("경고","작업일보는 한 개씩만 수정 가능합니다.","확인")
+      <div>
+        <PageHeader
+            isSearch
+            isCalendar
+            searchKeyword={""}
+            searchOptionList={optionList}
+            onChangeSearchOption={(e) => {
+              setOptionIndex(e)
+            }}
+            onChangeSearchKeyword={(keyword) =>{
+              setSearchKeyword(keyword)
+              setSelectList(new Set)
+              // SearchBasic(keyword, option, 1)
+            }}
+            calendarTitle={'종료일'}
+            calendarType={'period'}
+            selectDate={selectDate}
+            //@ts-ignore
+            setSelectDate={(date) => {
+              setSelectDate(date as {from:string, to:string})
+              setSelectList(new Set)
+            }}
+            title={"작업 일보 리스트"}
+            buttons={
+              ['', '수정하기', '삭제']
+            }
+            buttonsOnclick={
+              (e) => {
+                switch(e) {
+                  case 1: {
+                    if(selectList.size === 1) {
+                      setExcelOpen(true)
+                    }else{
+                      Notiflix.Report.warning("경고","작업일보는 한 개씩만 수정 가능합니다.","확인")
+                    }
+                    break
+                  }
+                  case 2: {
+                    if(selectList.size === 0) {
+                      return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
+                    }
+                    if(selectList.size > 1) {
+                      return  Notiflix.Report.warning("경고","한개의 데이터를 선택해 주시기 바랍니다.","확인" )
+                    }
+                    Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",()=>DeleteBasic())
+                    break
+                  }
                 }
-                break
               }
-              case 2: {
-                if(selectList.size === 0) {
-                  return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
+              // onClickHeaderButton
+            }
+        />
+        <ExcelTable
+            editable
+            // resizable
+            headerList={[
+              SelectColumn,
+              ...column
+            ]}
+            row={basicRow}
+            // setRow={setBasicRow}
+            setRow={(e) => {
+              let tmp: Set<any> = selectList
+              e.map(v => {
+                if(v.isChange) tmp.add(v.id)
+              })
+              setSelectList(tmp)
+              setBasicRow(e)
+            }}
+            selectList={selectList}
+            //@ts-ignore
+            setSelectList={setSelectList}
+            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+            scrollEnd={(value) => {
+              if(value){
+                if(pageInfo.total > pageInfo.page){
+                  setSelectList(new Set)
+                  setPageInfo({...pageInfo, page:pageInfo.page+1})
                 }
-                Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",()=>DeleteBasic())
-                break
               }
-            }
-          }
-          // onClickHeaderButton
-        }
-      />
-      <ExcelTable
-        editable
-        // resizable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
+            }}
+        />
 
-          let tmp: Set<any> = selectList
-          e.map(v => {
-            if(v.isChange) tmp.add(v.id)
-          })
-          setSelectList(tmp)
-          setBasicRow(e)
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-        scrollEnd={(value) => {
-          if(value){
-            if(pageInfo.total > pageInfo.page){
-              setPageInfo({...pageInfo, page:pageInfo.page+1})
+        <WorkModifyModal
+            row={[...basicRow.map(v =>{
+              if(selectList.has(v.id)){
+                return {
+                  ...v,
+                  worker: v.user,
+                  worker_name: v.user.name,
+                  sum: v.poor_quantity+v.good_quantity,
+                  input_bom: v.operation_sheet.input_bom,
+                }
+              }
+            }).filter(v => v)]}
+            onRowChange={() => {
+              setOptionIndex(option)
+              if(keyword){
+                // SearchBasic(keyword, option, page).then(() => {
+                //   Notiflix.Loading.remove()
+                // })
+              }else{
+                LoadBasic(page).then(() => {
+                  Notiflix.Loading.remove();
+                  setSelectList(new Set())
+                })
+              }}
             }
-          }
-        }}
-      />
-
-      <WorkModifyModal
-        row={[...basicRow.map(v =>{
-          if(selectList.has(v.id)){
-            return {
-              ...v,
-              worker: v.user,
-              worker_name: v.user.name,
-              sum: v.poor_quantity+v.good_quantity,
-              input_bom: v.operation_sheet.input_bom,
-            }
-          }
-        }).filter(v => v)]}
-        onRowChange={() => {
-          setOptionIndex(option)
-          if(keyword){
-            // SearchBasic(keyword, option, page).then(() => {
-            //   Notiflix.Loading.remove()
-            // })
-          }else{
-            LoadBasic(page).then(() => {
-              Notiflix.Loading.remove();
-              setSelectList(new Set())
-            })
-          }}
-        }
-        isOpen={excelOpen}
-        setIsOpen={setExcelOpen}/>
-    </div>
+            isOpen={excelOpen}
+            setIsOpen={setExcelOpen}/>
+      </div>
   );
 }
 

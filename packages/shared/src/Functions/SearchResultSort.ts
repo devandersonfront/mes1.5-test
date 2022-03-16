@@ -94,6 +94,7 @@ export const SearchResultSort = (infoList, type: string) => {
           ...v,
           factory_id: v.factory?.name,
           affiliated_id: v.subFactory?.name,
+          type_id : v.type,
           type:TransferCodeToValue(v.type, "machine"),
           weldingType_id:v.weldingType,
           weldingType:TransferCodeToValue(v.weldingType, "welding")

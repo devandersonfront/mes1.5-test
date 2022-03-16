@@ -29,7 +29,7 @@ let now = moment().format('YYYY-MM-DD');
 const MesFinishList = ({page, keyword, option}: IProps) => {
   const router = useRouter()
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{id: '',}])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["finishListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['지시고유번호', '거래처', '모델', 'code',  '품명'])
@@ -272,6 +272,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
+        total_counter: row.total_good_quantity + row.total_poor_quantity ?? '-',
         contract_id: row.contract?.identification ?? '-' ,
         customer_id: row.product?.customer?.name ?? '-',
         cm_id: row.product?.model?.model ?? '-',
@@ -281,6 +282,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? "-",
         id: `sheet_${random_id}`,
+        code: row.product?.code ?? '-',
       }
     })
 
@@ -352,6 +354,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         scrollEnd={(value) => {
           if(value){
             if(pageInfo.total > pageInfo.page){
+              setSelectList(new Set)
               setPageInfo({...pageInfo, page:pageInfo.page+1})
             }
           }

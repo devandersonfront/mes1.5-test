@@ -59,6 +59,12 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
       ...row,
       seq: index+1,
       identification: row.identification,
+      customer_id: row.product?.customer?.name,
+      cm_id: row.product?.model.model,
+      product_id: row.product?.code,
+      name: row.product?.name,
+      type: TransferCodeToValue(row.product?.type, 'product'),
+      unit: row.product?.unit,
       date: row.date,
       total
     }

@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react'
 import {
   BarcodeModal,
-    columnlist,
-    excelDownload,
-    ExcelDownloadModal,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    PaginationComponent,
-    RequestMethod,
-    TextEditor
+  columnlist,
+  excelDownload,
+  ExcelDownloadModal,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  MAX_VALUE,
+  PaginationComponent,
+  RequestMethod,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -27,7 +27,7 @@ export interface IProps {
   option?: number
 }
 
-const BasicProduct = ({page}: IProps) => {
+const BasicProduct = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -47,11 +47,13 @@ const BasicProduct = ({page}: IProps) => {
     total: 1
   })
 
+
+
   const [buttonList , setButtonList ] = useState<string[]>([])
 
   useEffect(() => {
     if(keyword){
-      SearchBasic(keyword, optionIndex, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -191,22 +193,42 @@ const BasicProduct = ({page}: IProps) => {
           customer_id: undefined,
           model: row.modelArray,
           // standard_uph: row.uph,
-          molds:[...row?.molds?.map((mold)=>{
-            return {...mold, setting:mold.mold.setting}
-          }).filter((mold) => mold.mold.mold_id) ?? []],
+          molds:row?.molds?.map((mold)=>{
+            return { setting:mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
+          }).filter((mold) => mold.mold.mold_id) ?? [],
           machines:[
             ...row?.machines?.map((machine)=>{
+              // console.log(machine,'machinemachine')
               return {
-                ...machine,
-                setting:machine.machine.setting,
-                machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
+                sequence : machine.sequence,
+                setting: machine.setting,
+                // machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
+                machine : {
+                  machine_id : machine.machine.machine_id,
+                  mfrName : machine.machine.mfrName,
+                  name : machine.machine.name,
+                  type : machine.machine.type_id,
+                  weldingType : machine.machine.weldingType_id,
+                  madeAt:machine.machine.madeAt,
+                  mfrCode:machine.machine.mfrCode,
+                  manager:machine.machine.manager,
+                  photo:machine.machine.photo,
+                  capacity:machine.machine.capacity,
+                  qualify:machine.machine.qualify,
+                  guideline:machine.machine.guideline,
+                  interwork:machine.machine.interwork,
+                  devices:machine.machine.devices,
+                  factory:machine.machine.factory,
+                  subFactory:machine.machine.subFactory,
+                  additional :machine.machine.additional,
+                }
               }
             }).filter((machine) => machine.machine.machine_id)?? []
           ],
           type:row.type_id ?? row.typeId ?? row.typePK,
           additional: [
             ...additional.map((v, index)=>{
-              if(!row[v.colName]) return undefined;
+              //if(!row[v.colName]) return undefined;
               return {
                 mi_id: v.id,
                 title: v.name,
@@ -226,7 +248,9 @@ const BasicProduct = ({page}: IProps) => {
 
 
     if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
-      let res = await RequestMethod('post', `productSave`,result)
+      let res = await RequestMethod('post', `productSave`,result).catch((error)=>{
+        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+      })
 
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');
@@ -254,7 +278,10 @@ const BasicProduct = ({page}: IProps) => {
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
     }
+
   }
+
+
 
   const convertDataToMap = () => {
     const map = new Map()
@@ -268,38 +295,37 @@ const BasicProduct = ({page}: IProps) => {
 
   const classfyNormalAndHave = (selectedRows) => {
 
-    const normalRows = []
     const haveIdRows = []
 
     selectedRows.map((row : any)=>{
       if(row.product_id){
         haveIdRows.push(row)
-      }else{
-        normalRows.push(row)
       }
     })
 
-    return [normalRows , haveIdRows]
+    return haveIdRows
   }
   const DeleteBasic = async() => {
 
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
-    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const haveIdRows = classfyNormalAndHave(selectedRows)
+    let deletable = true
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-
-      await RequestMethod('delete','productDelete', haveIdRows.map((row) => (
+      deletable = await RequestMethod('delete','productDelete', haveIdRows.map((row) => (
           {...row , type : row.type_id}
       )))
     }
 
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-    setBasicRow(Array.from(map.values()))
-    setSelectList(new Set())
+    if(deletable){
+      selectedRows.forEach((row)=>{ map.delete(row.id)})
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      setBasicRow(Array.from(map.values()))
+      setSelectList(new Set())
+    }
+
   }
 
 
@@ -524,15 +550,15 @@ const BasicProduct = ({page}: IProps) => {
       case '삭제':
         if(selectList.size === 0){
           return Notiflix.Report.warning(
-        '경고',
-        '선택된 정보가 없습니다.',
-        '확인',
-        );
+              '경고',
+              '선택된 정보가 없습니다.',
+              '확인',
+          );
         }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{DeleteBasic()}
-          ,()=>{}
+            ()=>{DeleteBasic()}
+            ,()=>{}
         )
         break;
 
@@ -544,14 +570,14 @@ const BasicProduct = ({page}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined)
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
 
     if(spliceRow){
       if(isCheck){
         return Notiflix.Report.warning(
-          '코드 경고',
-          `중복된 코드를 입력할 수 없습니다`,
-          '확인'
+            '경고',
+            `중복된 코드가 존재합니다.`,
+            '확인'
         );
       }
     }
@@ -559,107 +585,71 @@ const BasicProduct = ({page}: IProps) => {
     setBasicRow(rows)
   }
 
-  const handleBarcode = async (dataurl : string , id : string) => {
 
-    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
-                {
-                  "id":id,
-                  "functions":
-                  {"func0":{"checkLabelStatus":[]},
-                    "func1":{"clearBuffer":[]},
-                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
-                    "func3":{"printBuffer":[]}
-                  }
-                },
-                {
-                  headers : {
-                    'Content-Type' : 'application/x-www-form-urlencoded'
-                  }
-                }
-    ).catch((error) => {
 
-      if(error){
-        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-        return false
-      }
-    })
-  }
-
-  const handleModal = (open:boolean) => {
-
-    setBarcodeOpen(!open)
-
-  }
 
   React.useEffect(()=>{
+    return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
 
-    if(selectList.size > 1){
-      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
-    }
   },[selectList.size])
 
 
+
   return (
-    <div>
+      <div>
         <PageHeader
-          isSearch
-          searchKeyword={keyword}
-          onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword)
-          }}
-          searchOptionList={optionList}
-          onChangeSearchOption={(option) => {
-            setOptionIndex(option)
-          }}
-          optionIndex={optionIndex}
-          title={"제품 등록 관리"}
-          buttons={buttonList}
-          buttonsOnclick={
-            // () => {}
-            onClickHeaderButton
-          }
+            isSearch
+            searchKeyword={keyword}
+            onChangeSearchKeyword={(keyword) => {
+              setKeyword(keyword)
+            }}
+            searchOptionList={optionList}
+            onChangeSearchOption={(option) => {
+              setOptionIndex(option)
+            }}
+            optionIndex={optionIndex}
+            title={"제품 등록 관리"}
+            buttons={buttonList}
+            buttonsOnclick={
+              // () => {}
+              onClickHeaderButton
+            }
         />
         <ExcelTable
-          editable
-          resizable
-          headerList={[
-            SelectColumn,
-            ...column
-          ]}
-          row={basicRow}
-          // setRow={setBasicRow}
-          setRow={(e) => {
-            let tmp: Set<any> = selectList
-            e.map(v => {
-              if(v.isChange) tmp.add(v.id)
-            })
-            setSelectList(tmp)
-            competeProductV1u(e)
-          }}
-          selectList={selectList}
-          //@ts-ignore
-          setSelectList={setSelectList}
-          setSelectRow={setSelectRow}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+            editable
+            resizable
+            headerList={[
+              SelectColumn,
+              ...column
+            ]}
+            row={basicRow}
+            // setRow={setBasicRow}
+            setRow={(e) => {
+
+              console.log(e,'eeeeee')
+
+              let tmp: Set<any> = selectList
+              e.map(v => {
+                if(v.isChange) tmp.add(v.id)
+              })
+              setSelectList(tmp)
+              competeProductV1u(e)
+            }}
+            selectList={selectList}
+            //@ts-ignore
+            setSelectList={setSelectList}
+            setSelectRow={setSelectRow}
+            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent
-          currentPage={pageInfo.page}
-          totalPage={pageInfo.total}
-          setPage={(page) => {
-            setPageInfo({...pageInfo,page:page})
-          }}
+            currentPage={pageInfo.page}
+            totalPage={pageInfo.total}
+            setPage={(page) => {
+              setPageInfo({...pageInfo,page:page})
+            }}
         />
 
-        <BarcodeModal
-              title={'바코드 미리보기'}
-              handleBarcode={handleBarcode}
-              handleModal={handleModal}
-              isOpen={barcodeOpen}
-              type={'product'}
-              data={selectRow}
-              />
-
-      {/* <ExcelDownloadModal
+        {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
@@ -669,7 +659,7 @@ const BasicProduct = ({page}: IProps) => {
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}
       /> */}
-    </div>
+      </div>
   );
 }
 

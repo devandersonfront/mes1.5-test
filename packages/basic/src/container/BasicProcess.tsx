@@ -24,7 +24,7 @@ export interface IProps {
 
 const title = '공정 종류 관리'
 const optList = ['공정명']
-const BasicProcess = ({page, keyword, option}: IProps) => {
+const BasicProcess = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -36,24 +36,24 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(optList)
   const [optionIndex, setOptionIndex] = useState<number>(0)
-  // const [keyword, setKeyword] = useState<string>('')
+  const [keyword, setKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: page,
+    page: 1,
     total: 1
   })
   const [selectRow , setSelectRow] = useState<number>(0);
 
   useEffect(() => {
     if(keyword){
-      SearchBasic(keyword, option, page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(page).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -115,8 +115,31 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     })
     // }
   }
+
+  const valueExistence = () => {
+
+    const selectedRows = filterSelectedRows()
+
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
+    if(selectedRows.length > 0){
+
+      const nameCheck = selectedRows.every((data)=> data.name)
+
+      if(!nameCheck){
+        return '공정명'
+      }
+
+    }
+
+    return false;
+
+  }
+
   const SaveBasic = async () => {
 
+    const existence = valueExistence()
+
+    if(!existence){
     if(selectList.size === 0){
       return Notiflix.Report.warning(
         '경고',
@@ -152,7 +175,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
               ...selectData,
               additional: [
                 ...additional.map((v, index)=>{
-                  if(!row[v.colName]) return undefined;
+                  //if(!row[v.colName]) return undefined;
                   return {
                     mi_id: v.id,
                     title: v.name,
@@ -175,24 +198,31 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
-          SearchBasic(keyword, option, page).then(() => {
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
-          LoadBasic(page).then(() => {
+          LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }
 
     }
+  }else{
+    return Notiflix.Report.warning(
+      '경고',
+      `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+      '확인',
+    );
+  }
   }
 
-  console.log(basicRow,'basicRowbasicRow')
+
 
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -208,7 +238,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -217,105 +247,46 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
 
   const classfyNormalAndHave = (selectedRows) => {
 
-    const normalRows = []
     const haveIdRows = []
 
     selectedRows.map((row : any)=>{
       if(row.process_id){
         haveIdRows.push(row)
-      }else{
-        normalRows.push(row)
       }
     })
 
-    return [normalRows , haveIdRows]
+    return haveIdRows
   }
 
 
   const DeleteBasic = async () => {
 
-
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
-    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const haveIdRows = classfyNormalAndHave(selectedRows)
     const additional = setAdditionalData()
+    let deletable = true
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
-      await RequestMethod('delete','processDelete', haveIdRows.map((row) => (
+      deletable = await RequestMethod('delete','processDelete', haveIdRows.map((row) => (
           {...row , customer: row.customerArray, additional : [...additional.map(v => {
-            if(row[v.name]) {
-              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
-            }
-          }).filter(v => v)
-          ]}
+              if(row[v.name]) {
+                return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
+              }
+            }).filter(v => v)
+            ]}
       )))
 
     }
-      
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-    setBasicRow(Array.from(map.values()))
-    setSelectList(new Set())
     
+    if(deletable){
+      selectedRows.forEach((row)=>{ map.delete(row.id)})
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      setBasicRow(Array.from(map.values()))
+      setSelectList(new Set())
+    }
 
-    // const res = await RequestMethod('delete', `processDelete`,
-
-    //     basicRow.map((row, i) => {
-    //       if(selectList.has(row.id)){
-    //         let selectKey: string[] = []
-    //         let additional:any[] = []
-    //         column.map((v) => {
-    //           if(v.selectList){
-    //             selectKey.push(v.key)
-    //           }
-
-    //           if(v.type === 'additional'){
-    //             additional.push(v)
-    //           }
-    //         })
-
-    //         let selectData: any = {}
-    //         if(row.process_id){
-    //           return {
-    //             ...row,
-    //             ...selectData,
-    //             additional: additional.map(v => {
-    //               if(row[v.name]) {
-    //                 return {
-    //                   id: v.id,
-    //                   title: v.name,
-    //                   value: row[v.name],
-    //                   unit: v.unit
-    //                 }
-    //               }
-    //             }).filter((v) => v)
-    //           }
-    //         }
-
-    //       }
-    //     }).filter((v) => v)
-    //   )
-
-    // if(res) {
-
-    //     Notiflix.Report.success('삭제 성공!', '공정 데이터를 삭제하였습니다.', '확인', () => {
-    //       if(Number(page) === 1){
-    //         LoadBasic(1).then(() => {
-    //           Notiflix.Loading.remove()
-    //         })
-    //       }else{
-    //         if(keyword){
-    //           router.push(`/mes/basic/process?page=1&keyword=${keyword}&opt=${option}`)
-    //         }else{
-    //           router.push(`/mes/basic/process?page=1`)
-    //         }
-    //       }
-    //     })
-
-    // }
   }
 
   const LoadBasic = async (page?: number) => {
@@ -566,7 +537,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
         '확인',
         );
         }
-        
+
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
           ()=>{DeleteBasic()},
           ()=>{}
@@ -582,9 +553,9 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    
+
     if(spliceRow){
-      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null)){
+      if(spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== null && row.name !== '')){
         return Notiflix.Report.warning(
           '공정명 경고',
           `중복된 공정명을 입력할 수 없습니다`,
@@ -602,11 +573,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          if(keyword){
-            router.push(`/mes/basic/process?page=1&keyword=${keyword}&opt=${optionIndex}`)
-          }else{
-            router.push(`/mes/basic/process?page=1&keyword=`)
-          }
+          setKeyword(keyword)
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
@@ -648,11 +615,7 @@ const BasicProcess = ({page, keyword, option}: IProps) => {
         currentPage={pageInfo.page}
         totalPage={pageInfo.total}
         setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/process?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/process?page=${page}`)
-          }
+          setPageInfo({...pageInfo,page:page})
         }}
       />
     </div>

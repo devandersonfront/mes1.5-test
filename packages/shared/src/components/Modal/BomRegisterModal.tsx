@@ -61,6 +61,8 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
 
+  console.log(searchList,'searchListsearchList')
+
   useEffect(() => {
     if(isOpen) {
       if(row.bom_root_id){
@@ -87,6 +89,68 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         }
       }))
     }
+  }
+
+  const haveBasicValidation = () => {
+
+    let rawMaterialBasic = [] ;
+    let subMaterialBasic = [] ;
+    let productBasic = [];
+
+    let haveRawMaterialBasic;
+    let haveSubMaterialBasic;
+    let haveProductBasic;
+
+    searchList.map((list)=>{
+      if(list.tab === 0){
+        rawMaterialBasic.push({type : list.setting})
+      }else if(list.tab === 1){
+        subMaterialBasic.push({type : list.setting})
+      }else if(list.tab === 2){
+        productBasic.push({type : list.setting})
+      }
+    })
+
+    if(rawMaterialBasic.length !== 0){
+      haveRawMaterialBasic = rawMaterialBasic.some((v) => v.type === 1)
+    }else{
+      haveRawMaterialBasic = true
+    }
+
+    if(subMaterialBasic.length !== 0){
+      haveSubMaterialBasic = subMaterialBasic.some((v) => v.type === 1)
+    }else{
+      haveSubMaterialBasic = true
+    }
+
+    if(productBasic.length !== 0){
+      haveProductBasic = productBasic.some((v) => v.type === 1)
+    }else{
+      haveProductBasic = true
+    }
+
+    if(haveRawMaterialBasic && haveSubMaterialBasic && haveProductBasic){
+      return true
+    }
+
+    return false
+
+  }
+
+
+
+  const executeValidation = () => {
+
+    let isValidation = false
+    const haveBasic = haveBasicValidation()
+
+    if(!haveBasic){
+      isValidation = true
+      Notiflix.Report.warning("경고",`자재 보기를 눌러 BOM 등록을 해주세요. 품목 종류별로 최소 한 개 이상은 사용해야 합니다.`,"확인",)
+    }
+
+    return isValidation
+
   }
 
   const changeRow = (tmpRow: any, key?: string) => {
@@ -392,32 +456,35 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-                onRowChange({
-                  ...row,
-                  input_bom: [
-                    ...searchList.map((v, i) => {
-                      // if(v.spare === '여'){
-                        return {
-                          bom: {
-                            seq: i+1,
-                            type: v.tab,
-                            parent: v.parent,
-                            child_product: v.tab === 2 ? {...v.product} : null,
-                            child_rm: v.tab === 0 ? {...v.raw_material} : null,
-                            child_sm: v.tab === 1 ? {...v.sub_material} : null,
-                            key: v.parent.bom_root_id,
-                            setting: v.setting,
-                            usage: v.usage,
+                const isValidation = executeValidation()
+                if(!isValidation){
+                  onRowChange({
+                    ...row,
+                    input_bom: [
+                      ...searchList.map((v, i) => {
+                        // if(v.spare === '여'){
+                          return {
+                            bom: {
+                              seq: i+1,
+                              type: v.tab,
+                              parent: v.parent,
+                              child_product: v.tab === 2 ? {...v.product} : null,
+                              child_rm: v.tab === 0 ? {...v.raw_material} : null,
+                              child_sm: v.tab === 1 ? {...v.sub_material} : null,
+                              key: v.parent.bom_root_id,
+                              setting: v.setting,
+                              usage: v.usage,
+                            }
                           }
-                        }
-                      // }
-                    }).filter(v=>v)
-                  ],
-                  name: row.name,
-                  isChange: true
-                })
-                dispatch(reset_summary_info())
-                setIsOpen(false)
+                        // }
+                      }).filter(v=>v)
+                    ],
+                    name: row.name,
+                    isChange: true
+                  })
+                  dispatch(reset_summary_info())
+                  setIsOpen(false)
+                }
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >

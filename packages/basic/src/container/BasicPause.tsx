@@ -160,7 +160,6 @@ const BasicPause = ({page, keyword, option}: IProps) => {
     excelDownload(pauseColumn, pauseBasicRow, `일시정지 유형 등록`, '일시정지 유형 등록', tmpSelectList)
   }
 
-  console.log(pauseBasicRow,'pauseBasicRowpauseBasicRowpauseBasicRow')
 
 
   const convertDataToMap = () => {
@@ -175,18 +174,15 @@ const BasicPause = ({page, keyword, option}: IProps) => {
 
   const classfyNormalAndHave = (selectedRows) => {
 
-    const normalRows = []
     const haveIdRows = []
 
     selectedRows.map((row : any)=>{
       if(row.ppr_id){
         haveIdRows.push(row)
-      }else{
-        normalRows.push(row)
       }
     })
 
-    return [normalRows , haveIdRows]
+    return haveIdRows
   }
 
 
@@ -194,19 +190,20 @@ const BasicPause = ({page, keyword, option}: IProps) => {
 
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
-    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const haveIdRows = classfyNormalAndHave(selectedRows)
+    let deletable = true
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      await RequestMethod('delete','pauseDelete', haveIdRows)
-
+      deletable = await RequestMethod('delete','pauseDelete', haveIdRows)
     }
 
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((nRow)=>{map.delete(nRow.id)})
-    setPauseBasicRow(Array.from(map.values()).map((data,index)=>({...data, index : index + 1})))
-    setSelectList(new Set())
+    if(deletable){
+      selectedRows.forEach((row)=>{ map.delete(row.id)})
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      setPauseBasicRow(Array.from(map.values()))
+      setSelectList(new Set())
+    }
   }
 
   const buttonEvents = async(index:number) => {

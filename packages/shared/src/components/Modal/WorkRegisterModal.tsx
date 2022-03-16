@@ -69,6 +69,8 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       setSearchList([{
+        modify: true,
+        osId: row.os_id,
         sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
         start: moment().format('YYYY-MM-DD HH:mm:00'),
         end: moment().format('YYYY-MM-DD HH:mm:00'),
@@ -290,7 +292,8 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 setSearchList([...tmp.map(v => {
                   return {
                     ...v,
-                    sum: Number(v.good_quantity ?? 0)+Number(v.poor_quantity ?? 0)
+                    good_quantity: Number(v.quantity ?? 0)-Number(v.poor_quantity ?? 0),
+                    sum: Number(v.quantity ?? 0)
                   }
                 })])
               }}
