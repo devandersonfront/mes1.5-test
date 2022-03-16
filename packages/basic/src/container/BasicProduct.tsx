@@ -270,14 +270,14 @@ const BasicProduct = ({}: IProps) => {
     }else if(!codeCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인");
-    }else if(!bom){
-      Notiflix.Loading.remove()
-      Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
-    }
-    else if(!processCheck){
+    }else if(!processCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
     }
+    // else if(!bomCheck){
+    //   Notiflix.Loading.remove()
+    //   Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
+    // }
 
   }
 
@@ -570,7 +570,7 @@ const BasicProduct = ({}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined)
 
     if(spliceRow){
       if(isCheck){
