@@ -1153,13 +1153,13 @@ export const columnlist: any = {
     {key: "etc", name: '기타 사항', formatter: PlaceholderBox, editor: TextEditor, placeholder: '기타 사항 입력'},
   ],
   dailyInspectionMachineModal: [
-    {key: "date", name: '점검 날짜',  formatter: CalendarBox, width:304, type:"Modal"},
+    {key: "date", name: '점검 날짜',  formatter: CalendarBox, width:304, type:"Modal", readonly:true},
     {key: "name", name: '기계 이름', formatter:LineBorderContainer,  width:360},
     {key: "mfrCode", name: '제조 번호', formatter:LineBorderContainer,  width:880},
     {key: "type", name: '기계 종류', formatter:LineBorderContainer,  },
   ],
   dailyInspectionMoldModal: [
-    {key: "date", name: '점검 날짜',  formatter: CalendarBox, width:304, type:"Modal"},
+    {key: "date", name: '점검 날짜',  formatter: CalendarBox, width:304, type:"Modal", readonly:true},
     {key: "name", name: '금형명', formatter:LineBorderContainer,  width:360},
     {key: "code", name: 'CODE', formatter:LineBorderContainer,  width:880},
     {key: "type", name: '금형 종류', formatter:LineBorderContainer,  },
