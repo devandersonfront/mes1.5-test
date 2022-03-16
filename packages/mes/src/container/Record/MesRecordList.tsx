@@ -145,6 +145,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         page: res.page,
         total: res.totalPages
       })
+      setSelectList(new Set)
       cleanUpData(res)
     }
 
@@ -179,6 +180,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         page: res.page,
         total: res.totalPages
       })
+      setSelectList(new Set)
       cleanUpData(res)
     }
 
