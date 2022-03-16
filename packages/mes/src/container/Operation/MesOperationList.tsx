@@ -33,11 +33,12 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{}])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["operationListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['지시 고유 번호', '고객사명', '모델', 'CODE', '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [order, setOrder] = useState<number>(0);
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
@@ -51,6 +52,10 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
     total: 1
   })
 
+  const changeOrder = (value:number) => {
+    setPageInfo({page:1,total:1})
+    setOrder(value);
+  }
 
   useEffect(() => {
     if(searchKeyword){
@@ -62,7 +67,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, searchKeyword, option, selectDate])
+  }, [pageInfo.page, searchKeyword, option, selectDate, order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -101,7 +106,8 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeOrder
           }
         }else{
           return v
@@ -123,11 +129,20 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         page: page ?? 1,
         renderItem: 22,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-        status: '0,1'
-      }
+      params: order == 0 ?
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+            status: '0,1'
+          }
+          :
+          {
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC',
+            from: selectDate.from,
+            to: selectDate.to,
+            status: '0,1'
+          }
     })
 
 
@@ -152,13 +167,24 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 22,
       },
-      params: {
-        from: selectDate.from,
-        to: selectDate.to,
-        keyword: keyword ?? '',
-        status: '0,1',
-        opt: option ?? 0
-      }
+      params: order == 0 ?
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+            keyword: keyword ?? '',
+            status: '0,1',
+            opt: option ?? 0
+          }
+          :
+          {
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC',
+            from: selectDate.from,
+            to: selectDate.to,
+            keyword: keyword ?? '',
+            status: '0,1',
+            opt: option ?? 0
+          }
     })
 
     if(res){
@@ -354,7 +380,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         id: `sheet_${random_id}`,
       }
     })
-
+    setSelectList(new Set)
     Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
   }
@@ -372,16 +398,18 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         onChangeSearchKeyword={(keyword) => {
-          // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)
+          setSelectList(new Set)
           setSearchKeyword(keyword);
           setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
-          // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)
           setOptionIndex(option)
         }}
         //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
+        setSelectDate={(date) => {
+          setSelectList(new Set)
+          setSelectDate(date as {from:string, to:string})
+        }}
         title={"작업지시서 리스트"}
         buttons={
           ['', '수정하기', '삭제']
@@ -391,7 +419,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
 
             switch(e) {
               case 1:
-                if( 0 > selectList.size){
+                if( 0 >= selectList.size){
                   Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
                 }else if(selectList.size < 2){
                   dispatch(setModifyInitData({
@@ -466,7 +494,9 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
       scrollEnd={(value) => {
         if(value){
           if(pageInfo.total > pageInfo.page){
+            setSelectList(new Set)
             setPageInfo({...pageInfo, page:pageInfo.page+1})
+            setSelectList(new Set)
           }
         }
       }}

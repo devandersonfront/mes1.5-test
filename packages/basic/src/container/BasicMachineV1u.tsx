@@ -248,18 +248,15 @@ const BasicMachineV1u = ({}: IProps) => {
 
   const classfyNormalAndHave = (selectedRows) => {
 
-    const normalRows = []
     const haveIdRows = []
 
     selectedRows.map((row : any)=>{
       if(row.machine_id){
         haveIdRows.push(row)
-      }else{
-        normalRows.push(row)
       }
     })
 
-    return [normalRows , haveIdRows]
+    return haveIdRows
   }
 
 
@@ -267,57 +264,20 @@ const BasicMachineV1u = ({}: IProps) => {
 
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
-    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const haveIdRows = classfyNormalAndHave(selectedRows)
     const filterData = haveIdRows.map((row)=>cleanForRegister(row))
+    let deletable = true
 
     if(haveIdRows.length > 0){
-
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-      
-      await RequestMethod('delete','machineDelete', filterData)
-
+      deletable = await RequestMethod('delete','machineDelete', filterData)
     }
-
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-    setBasicRow(Array.from(map.values()))
-    setSelectList(new Set())
-
-
-
-
-    // let result = [];
-    // basicRow.map((value, index)=>{
-    //   if(selectList.has(value.id)){
-    //     cleanForRegister(value)
-    //     if(value.machine_id){
-    //       result.push(cleanForRegister(value))
-    //     }
-    //   }
-    // })
-    // if(result.length === 0){
-    //   Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인", )
-    //   return
-    // } Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-    //     ()=>{
-    //       RequestMethod("delete", "machineDelete", result)
-    //           .then((res) => {
-    //             Notiflix.Report.success( "삭제되었습니다.", "", "확인");
-    //             if(keyword){
-    //               SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-    //                 Notiflix.Loading.remove()
-    //               })
-    //             }else{
-    //               LoadBasic(pageInfo.page).then(() => {
-    //                 Notiflix.Loading.remove()
-    //               })
-    //             }
-    //           })
-
-    //     },
-    //     ()=>{}
-    // )
-
+    
+    if(deletable){
+      selectedRows.forEach((row)=>{ map.delete(row.id)})
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      setBasicRow(Array.from(map.values()))
+      setSelectList(new Set())
+    }
   }
 
   const cleanUpData = (res: any) => {

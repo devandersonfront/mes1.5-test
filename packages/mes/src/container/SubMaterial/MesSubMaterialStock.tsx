@@ -40,11 +40,11 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
     code: 'SUS-111', name: 'SUS360', texture: 'SUS360', depth: '1.2', width: 3000, height: 3000, type: 'COIL', amount: 1000,
     number: `${dummyDate.format('YYMMDD')}-01-01`, current: 1000, customer: '한국상사',
   }])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawstockV1u"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["substockV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['부자재 CODE', '부자재 품명',  '부자재 LOT 번호', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-
+  const [order, setOrder] = useState<number>(0);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -60,6 +60,10 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
   const changeNzState = (value:boolean) => {
     setNzState(value);
   }
+  const changeOrder = (value: string) => {
+    setOrder(Number(value));
+    setPageInfo({page:1,total:1})
+  }
 
   useEffect(() => {
     setOptionIndex(option)
@@ -72,7 +76,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [page, keyword, option, nzState, selectDate])
+  }, [pageInfo.page, keyword, option, nzState, selectDate, order])
 
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
@@ -112,7 +116,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
           return {
             ...v,
             pk: v.unit_id,
-            result: changeNzState
+            result: changeOrder
           }
         }else{
           return v
@@ -135,19 +139,19 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 18,
       },
-      params:
-          // first ?
-          // {
-          //   nz:nzState,
-          //   from:"2000-01-01",
-          //   to:moment().format("yyyy-MM-DD")
-          // }
-          // :
+      params: order == 0 ?
           {
-              nz:nzState,
-                  from:selectDate.from,
-                  to:selectDate.to
-            }
+            nz:nzState,
+            from:selectDate.from,
+            to:selectDate.to
+          }
+          :
+          {
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC',
+            from:selectDate.from,
+            to:selectDate.to
+          }
     })
 
     if(res){
@@ -172,13 +176,24 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 18,
       },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0,
-        nz:nzState,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
+      params: order == 0 ?
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+            nz:nzState,
+            from:selectDate.from,
+            to:selectDate.to
+          }
+          :
+          {
+            sorts: 'date',
+            order: order == 1 ? 'ASC' : 'DESC',
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+            nz:nzState,
+            from:selectDate.from,
+            to:selectDate.to
+          }
     })
 
     if(res){
@@ -291,7 +306,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         id: `rawin_${random_id}`,
       }
     })
-
+    setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
@@ -395,11 +410,15 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
     <div>
       <PageHeader
         isNz
-        onChangeNz={changeNzState}
+        onChangeNz={(e) => {
+          setSelectList(new Set)
+          changeNzState(e)
+        }}
         nz={nzState}
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
+          setSelectList(new Set)
           if(keyword){
             router.push(`/mes/submaterialV1u/stock?page=1&keyword=${keyword}&opt=${optionIndex}`)
           }else{
@@ -412,11 +431,14 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         }}
         calendarTitle={'입고일'}
         optionIndex={optionIndex}
-      isCalendar
+        isCalendar
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={setSelectDate}
+        setSelectDate={(date) => {
+          setSelectList(new Set)
+          setSelectDate(date as {from:string, to:string})
+        }}
         title={"부자재 재고 현황"}
         buttons={
           ['수정하기', '삭제']
@@ -448,6 +470,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         currentPage={pageInfo.page}
         totalPage={pageInfo.total}
         setPage={(page) => {
+          setSelectList(new Set)
           if(keyword){
             router.push(`/mes/submaterialV1u/stock?page=${page}&keyword=${keyword}&opt=${option}`)
           }else{

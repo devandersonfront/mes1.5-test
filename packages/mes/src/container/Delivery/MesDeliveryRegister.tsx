@@ -28,19 +28,9 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     date: moment().format('YYYY-MM-DD'),
     // limit_date: moment().format('YYYY-MM-DD')
   }])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["deliveryRegister"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["deliveryIdentificationRegister"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  // const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
-  // const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
-  });
-
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
+  const [codeCheck, setCodeCheck] = useState<boolean>(false)
 
   useEffect(() => {
     getMenus().then((res) => {
@@ -64,7 +54,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
                 // product_id: res.info_list[0].product.product_id,
                 customer_id: res.info_list[0].product.customer.name,
                 name: res.info_list[0].product.name,
-                cm_id: res.info_list[0].product.model.model,
+                product_name: res.info_list[0].product.name,
+                cm_id: res.info_list[0].product.model?.model,
                 product_id: res.info_list[0].product.code,
                 type: TransferCodeToValue(res.info_list[0].product.type, "product"),
                 unit: res.info_list[0].product.unit,
@@ -75,10 +66,10 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     })
 
     Notiflix.Loading.remove()
-     return () => {
+    return () => {
       dispatch(delete_delivery_identification());
-     }
-  }, [])
+    }
+  }, [codeCheck])
 
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
@@ -88,7 +79,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     })
 
     if(res){
-      let tmpColumn = columnlist["deliveryRegister"]
+      let tmpColumn = codeCheck ? columnlist["deliveryCodeRegister"] : columnlist['deliveryIdentificationRegister']
       tmpColumn = tmpColumn.map((column: any) => {
         let menuData: object | undefined;
         res.bases && res.bases.map((menu: any) => {
@@ -98,7 +89,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable
             }
           } else if(menu.colName === 'id' && column.key === 'tmpId'){
             menuData = {
@@ -106,7 +98,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable
             }
           }
         })
@@ -119,7 +112,24 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         }
       }).filter((v:any) => v)
 
-      setColumn([...tmpColumn])
+      setColumn([...tmpColumn.map(v=> {
+        if(v.name === '수주 번호' && !codeCheck){
+          return {
+            ...v,
+            name:  v.name+'(필수)'
+          }
+        }else if(v.name === 'CODE' && codeCheck){
+          return {
+            ...v,
+            name: v.name+'(필수)'
+          }
+        }else {
+          return {
+            ...v,
+            name: !v.moddable ? v.name+'(필수)' : v.name
+          }
+        }
+      })])
       return true
     }else {
       return false
@@ -165,7 +175,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
                 }
               }
             }).filter((v) => v)
-          ]
+          ],
+          date: row?.date ?? moment().format("YYYY-MM-DD")
         }
 
       }
@@ -199,7 +210,11 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         ])
         break;
       case 1:
-        SaveBasic()
+        if(selectList.size <= 0){
+          Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
+        }else{
+          SaveBasic()
+        }
 
         break;
       case 2:
@@ -222,51 +237,61 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
 
 
   return (
-    <div>
-      <PageHeader
-        title={"납품 정보 등록"}
-        buttons={
-          [ '행추가', '저장하기', '삭제']
-        }
-        buttonsOnclick={onClickHeaderButton}
-      />
-      <ExcelTable
-        editable
-        // resizable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<number> = selectList
-          let tmpRow = e.map((v,i) => {
-            if(v.product_id){
-              let index = e.findIndex((row) => row.product_id == v.product_id)
-              if(index !== -1 && index == i){
-                tmp.add(v.id)
-                return true
-              }else{
-                Notiflix.Report.warning("동시에 같은품목을 두개이상 등록할 수 없습니다.", "", "확인")
-                return false
-              }
+      <div>
+        <PageHeader
+            isCode
+            code={codeCheck}
+            onChangeCode={(value)=> {
+              setCodeCheck(value)
+              setBasicRow([{
+                date: moment().format('YYYY-MM-DD'),
+              }])
+              setSelectList(new Set())
+              setColumn(value ? columnlist.deliveryCodeRegister : columnlist.deliveryIdentificationRegister)
+            }}
+            title={"납품 정보 등록"}
+            buttons={
+              [ '행추가', '저장하기', '삭제']
             }
-          })
-          setSelectList(tmp)
-          if(tmpRow.indexOf(false) !== -1){
-            setBasicRow([...basicRow])
-          }else{
-            setBasicRow([...e.map(v => ({...v, name: v.product_name}))])
-          }
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
+            buttonsOnclick={onClickHeaderButton}
+        />
+        <ExcelTable
+            editable
+            // resizable
+            headerList={[
+              SelectColumn,
+              ...column
+            ]}
+            row={basicRow}
+            // setRow={setBasicRow}
+            setRow={(e) => {
+              let tmp: Set<number> = selectList
+              let tmpRow = e.map((v,i) => {
+                if(v.product_id){
+                  let index = e.findIndex((row) => row.product_id == v.product_id)
+                  if(index !== -1 && index == i){
+                    tmp.add(v.id)
+                    return true
+                  }else{
+                    Notiflix.Report.warning("동시에 같은품목을 두개이상 등록할 수 없습니다.", "", "확인")
+                    return false
+                  }
+                }
+              })
+              setSelectList(tmp)
+              if(tmpRow.indexOf(false) !== -1){
+                setBasicRow([...basicRow])
+              }else{
+                setBasicRow([...e.map(v => ({...v, name: v.product_name}))])
+              }
+            }}
+            selectList={selectList}
+            //@ts-ignore
+            setSelectList={setSelectList}
+            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        />
 
-    </div>
+      </div>
   );
 }
 

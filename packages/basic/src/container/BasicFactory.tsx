@@ -238,97 +238,46 @@ const BasicFactory = ({}: IProps) => {
 
   const classfyNormalAndHave = (selectedRows) => {
 
-    const normalRows = []
     const haveIdRows = []
 
     selectedRows.map((row : any)=>{
-      if(row.factory_id){
-        haveIdRows.push(row)
-      }else{
-        normalRows.push(row)
-      }
+        if(row.factory_id){
+            haveIdRows.push(row)
+        }
     })
 
-    return [normalRows , haveIdRows]
-  }
+    return haveIdRows
+}
 
 
-  const DeleteBasic = async () => {
+const DeleteBasic = async () => {
 
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
-    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const haveIdRows = classfyNormalAndHave(selectedRows)
     const additional = setAdditionalData()
+    let deletable = true
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{map.delete(nRow.id)})
-      
-      await RequestMethod('delete','factoryDelete', haveIdRows.map((row) => (
-          {...row , manager: row.user , additional : [...additional.map(v => {
-            if(row[v.name]) {
-              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
-            }
-          }).filter(v => v)
-          ]}
-      )))
-
+        deletable = await RequestMethod('delete','factoryDelete', haveIdRows.map((row) => (
+            {...row , manager: row.user , additional : [...additional.map(v => {
+                    if(row[v.name]) {
+                        return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
+                    }
+                }).filter(v => v)
+                ]}
+        )))
     }
 
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((row)=>{ map.delete(row.id)})
-    setBasicRow(Array.from(map.values()))
-    setSelectList(new Set())
+    if(deletable){
+        selectedRows.forEach((row)=>{ map.delete(row.id)})
+        Notiflix.Report.success('삭제되었습니다.','','확인');
+        setBasicRow(Array.from(map.values()))
+        setSelectList(new Set())
+    }
 
-
-    // const res = await RequestMethod('delete', `factoryDelete`,
-    //   basicRow.map((row, i) => {
-    //     if(selectList.has(row.id)){
-    //       let selectKey: string[] = []
-    //       let additional:any[] = []
-    //       column.map((v) => {
-    //         if(v.selectList){
-    //           selectKey.push(v.key)
-    //         }
-
-    //         if(v.type === 'additional'){
-    //           additional.push(v)
-    //         }
-    //       })
-    //       if(row.factory_id){
-    //         return {
-    //           ...row,
-    //           manager: row.user,
-    //           additional: [
-    //             ...additional.map(v => {
-    //               if(row[v.name]) {
-    //                 return {
-    //                   id: v.id,
-    //                   title: v.name,
-    //                   value: row[v.name],
-    //                   unit: v.unit
-    //                 }
-    //               }
-    //             }).filter((v) => v)
-    //           ]
-    //         }
-
-    //       }
-
-    //     }
-    //   }).filter((v) => v))
-
-    // Notiflix.Report.success('삭제되었습니다.','','확인');
-    //   if(keyword){
-    //     SearchBasic(keyword, option, page).then(() => {
-    //       Notiflix.Loading.remove()
-    //     })
-    //   }else{
-    //     LoadBasic(page).then(() => {
-    //       Notiflix.Loading.remove()
-    //     })
-    //   }
-  }
+}
 
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()

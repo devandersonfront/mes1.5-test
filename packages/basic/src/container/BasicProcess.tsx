@@ -247,105 +247,46 @@ const BasicProcess = ({}: IProps) => {
 
   const classfyNormalAndHave = (selectedRows) => {
 
-    const normalRows = []
     const haveIdRows = []
 
     selectedRows.map((row : any)=>{
       if(row.process_id){
         haveIdRows.push(row)
-      }else{
-        normalRows.push(row)
       }
     })
 
-    return [normalRows , haveIdRows]
+    return haveIdRows
   }
 
 
   const DeleteBasic = async () => {
 
-
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
-    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const haveIdRows = classfyNormalAndHave(selectedRows)
     const additional = setAdditionalData()
+    let deletable = true
 
     if(haveIdRows.length > 0){
 
-      if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-
-      await RequestMethod('delete','processDelete', haveIdRows.map((row) => (
+      deletable = await RequestMethod('delete','processDelete', haveIdRows.map((row) => (
           {...row , customer: row.customerArray, additional : [...additional.map(v => {
-            if(row[v.name]) {
-              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
-            }
-          }).filter(v => v)
-          ]}
+              if(row[v.name]) {
+                return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
+              }
+            }).filter(v => v)
+            ]}
       )))
 
     }
+    
+    if(deletable){
+      selectedRows.forEach((row)=>{ map.delete(row.id)})
+      Notiflix.Report.success('삭제되었습니다.','','확인');
+      setBasicRow(Array.from(map.values()))
+      setSelectList(new Set())
+    }
 
-    Notiflix.Report.success('삭제되었습니다.','','확인');
-    selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-    setBasicRow(Array.from(map.values()))
-    setSelectList(new Set())
-
-
-    // const res = await RequestMethod('delete', `processDelete`,
-
-    //     basicRow.map((row, i) => {
-    //       if(selectList.has(row.id)){
-    //         let selectKey: string[] = []
-    //         let additional:any[] = []
-    //         column.map((v) => {
-    //           if(v.selectList){
-    //             selectKey.push(v.key)
-    //           }
-
-    //           if(v.type === 'additional'){
-    //             additional.push(v)
-    //           }
-    //         })
-
-    //         let selectData: any = {}
-    //         if(row.process_id){
-    //           return {
-    //             ...row,
-    //             ...selectData,
-    //             additional: additional.map(v => {
-    //               if(row[v.name]) {
-    //                 return {
-    //                   id: v.id,
-    //                   title: v.name,
-    //                   value: row[v.name],
-    //                   unit: v.unit
-    //                 }
-    //               }
-    //             }).filter((v) => v)
-    //           }
-    //         }
-
-    //       }
-    //     }).filter((v) => v)
-    //   )
-
-    // if(res) {
-
-    //     Notiflix.Report.success('삭제 성공!', '공정 데이터를 삭제하였습니다.', '확인', () => {
-    //       if(Number(page) === 1){
-    //         LoadBasic(1).then(() => {
-    //           Notiflix.Loading.remove()
-    //         })
-    //       }else{
-    //         if(keyword){
-    //           router.push(`/mes/basic/process?page=1&keyword=${keyword}&opt=${option}`)
-    //         }else{
-    //           router.push(`/mes/basic/process?page=1`)
-    //         }
-    //       }
-    //     })
-
-    // }
   }
 
   const LoadBasic = async (page?: number) => {
