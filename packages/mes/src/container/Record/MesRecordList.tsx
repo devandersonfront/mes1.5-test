@@ -388,7 +388,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         id: `sheet_${random_id}`,
       }
     })
-
+    setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
