@@ -70,6 +70,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                         [column.key]: null,
                         isChange:true
                       })
+                      fileRef.current.value = "";
                   }}
                   src={Icon_X} style={{borderRadius:"4px", width:"24px", height:"24px", marginRight:"4px", marginLeft: '4px'}} />
               }
@@ -135,6 +136,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         hidden
         onChange={async (e) => {
           if(e.target.files && e.target.files.length !== 0) {
+            console.log("e.target.files : ", e.target.files)
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
               if(uploadImg !== undefined){
                   if(column.key.includes("photo")){

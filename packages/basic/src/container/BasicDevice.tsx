@@ -226,7 +226,7 @@ const BasicDevice = ({}: IProps) => {
                 type:row.type_id,
                 manager: row.user,
                 subFactory: row?.subFactory ? {...row?.subFactory, manager:row?.subFactory?.manager_info} : undefined,
-                // photo: row?.photo.uuid,
+                photo: row?.photo?.uuid ?? row?.photo,
                 additional: [
                   ...additional.map((v, index)=>{
                     //if(!row[v.colName]) return undefined;
