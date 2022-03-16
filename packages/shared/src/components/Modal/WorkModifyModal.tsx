@@ -161,6 +161,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
         onRowChange()
+        Notiflix.Loading.standard()
         setIsOpen(false)
       });
 

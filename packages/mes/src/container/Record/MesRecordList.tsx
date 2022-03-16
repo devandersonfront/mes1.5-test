@@ -489,17 +489,19 @@ const MesRecordList = ({page, search, option}: IProps) => {
           }
         }).filter(v => v)]}
         onRowChange={() => {
-          setOptionIndex(option)
-          if(keyword){
-            // SearchBasic(keyword, option, page).then(() => {
-            //   Notiflix.Loading.remove()
-            // })
-          }else{
-            LoadBasic(pageInfo.page).then(() => {
-              Notiflix.Loading.remove();
-              setSelectList(new Set())
-            })
-          }}
+          setTimeout(() => {
+            if(keyword){
+              SearchBasic(keyword, option, page).then(() => {
+                Notiflix.Loading.remove()
+              })
+            }else{
+              LoadBasic(pageInfo.page).then(() => {
+                Notiflix.Loading.remove();
+                setSelectList(new Set())
+              })
+            }
+          },1000)
+        }
         }
         isOpen={excelOpen}
         setIsOpen={setExcelOpen}/>
