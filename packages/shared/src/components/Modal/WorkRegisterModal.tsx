@@ -147,6 +147,8 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                   ...tool,
                   tool:{
                     ...tool.tool,
+                    setting: 0,
+                    used: Number(tool.tool.tool.used),
                     tool: {
                       ...tool.tool.tool,
                       customer: tool.tool.tool.customerArray
