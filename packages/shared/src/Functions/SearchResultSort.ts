@@ -51,7 +51,8 @@ export const SearchResultSort = (infoList, type: string) => {
           customer: v.customer?.name ?? "",
           rawName: v.name,
           type: v.type === 2 ? "SHEET" : "COIL",
-          type_id:v.type
+          type_id:v.type,
+          type_name : v.type === 2 ? "SHEET" : "COIL",
         }
       })
     }
@@ -93,6 +94,7 @@ export const SearchResultSort = (infoList, type: string) => {
           ...v,
           factory_id: v.factory?.name,
           affiliated_id: v.subFactory?.name,
+          type_id : v.type,
           type:TransferCodeToValue(v.type, "machine"),
           weldingType_id:v.weldingType,
           weldingType:TransferCodeToValue(v.weldingType, "welding")
@@ -127,6 +129,10 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         ...selectData,
         cm_id: selectData.model,
         customer: selectData.customerArray,
+        model : {
+          ...selectData,
+          customer: selectData.customerArray
+        },
         modelArray: {
           ...selectData,
           customer: selectData.customerArray
@@ -162,7 +168,9 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         shipment_date : selectData.shipment_date,
         lead_time : selectData.lead_time,
         uph : selectData.uph,
-        identification : selectData.identification
+        identification : selectData.identification,
+        date: selectData.date,
+        deadline: selectData.deadline
 
       }:{
         code: selectData.code,
@@ -226,6 +234,7 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         ...selectData,
         rm_id: selectData.code,
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
+        type_name:"원자재",
         customer_id: selectData.customerArray?.name,
         unit:unitResult(),
         raw_material: {
@@ -239,7 +248,7 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         ...selectData,
         wip_id: selectData.code,
         customer_id: selectData.customerArray?.name,
-        // type:"부자재",
+        type:"부자재",
         type_name:"부자재",
         sub_material: {
           ...selectData,

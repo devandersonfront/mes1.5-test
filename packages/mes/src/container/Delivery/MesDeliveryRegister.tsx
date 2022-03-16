@@ -24,7 +24,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
 
   const orderIdentificationId = useSelector((root:RootState) => root.deliveryRegisterState)
 
-
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     date: moment().format('YYYY-MM-DD'),
     // limit_date: moment().format('YYYY-MM-DD')

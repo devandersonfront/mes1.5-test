@@ -192,7 +192,7 @@ const MesStockProductList = ({page, keyword, option}) => {
       let random_id = Math.random()*1000;
       return {
         ...row,
-        customer_id: row.product?.model?.customer?.name ?? "-",
+        customer_id: row.product?.customer?.name ?? "-",
         cm_id:row.product?.model?.model ?? "-",
         model:row.product?.model?.model ?? "-",
         code:row.product?.code ?? "-",

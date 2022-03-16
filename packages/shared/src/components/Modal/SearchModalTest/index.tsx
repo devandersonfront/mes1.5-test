@@ -45,9 +45,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
+
   // const [page, setPage] = useState<number>(1);
   // const [totalPage, setTotalPage] = useState<number>(0);
-
 
   useEffect(() => {
     if(column.type){
@@ -73,11 +73,28 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }, [column.type, tab])
 
+
+  const switchOption = (option : number) => {
+
+    if(column.key === 'customer_id'){
+      switch(option){
+        case 3:
+        return 7
+        default :
+        return option
+      }
+    }
+
+    return option
+
+
+  }
+
   useEffect(() => {
     if(isOpen){
       LoadBasic();
     }
-  }, [isOpen, searchModalInit, optionIndex, pageInfo.page])
+  }, [isOpen, searchModalInit, pageInfo.page])
 
   const LoadBasic = async (page?:number) => {
     Notiflix.Loading.circle();
@@ -99,6 +116,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         opt:optionIndex
       }
     })
+
 
     if(res){
         if(res.page !== 1){
@@ -230,7 +248,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 <select
                   defaultValue={'-'}
                   onChange={(e) => {
-                    setOptionIndex(Number(e.target.value))
+                    const option = switchOption(Number(e.target.value))
+                    setOptionIndex(option)
                     // SearchBasic('', Number(e.target.value))
                   }}
                   style={{
@@ -312,6 +331,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
+                setSelectRow(undefined)
+                setOptionIndex(0)
+                setKeyword('')
               }}
               style={{backgroundColor: '#E7E9EB'}}
             >
@@ -319,52 +341,83 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             </FooterButton>
             <FooterButton
               onClick={() => {
+                console.log("처음은 Row : ", row, searchModalInit.excelColumnType)
                 setIsOpen(false)
-                const selectNameFunction = (type:string) => {
-                  switch(type){
-                    case "bom":
-                      return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
-                    case "rawmaterial" :
-                      return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
-                    case "machine" :
-                      return searchList[selectRow].name;
-                    case "mold":
-                      return searchList[selectRow].name;
-                    case "tool":
-                      return searchList[selectRow].name;
-                    default:
-                      return row.name;
+                if(selectRow !== undefined){
+
+                  const selectNameFunction = (type:string) => {
+                    switch(type){
+                      case "bom":
+                        return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
+                      case "rawmaterial" :
+                        return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
+                      case "machine" :
+                        return searchList[selectRow].name;
+                      case "mold":
+                        return searchList[selectRow].name;
+                      case "tool":
+                        return searchList[selectRow].name;
+                      default:
+                        return row.name;
+                    }
                   }
-                }
-                if(column.clearContract) {
-                  onRowChange(
+                  if(column.clearContract) {
+                    onRowChange(
+                        {
+                          ...row,
+                          ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                          manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                          name: selectNameFunction(column.type),
+                          tab: tab,
+                          // type_name: undefined,
+                          version: row.version,
+                          isChange: true,
+                          contract: null,
+                          contract_id: null
+                        }
+                    )
+                  }else if(column.type === 'customer'){
+                    onRowChange(
                       {
                         ...row,
                         ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
                         manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
                         name: selectNameFunction(column.type),
                         tab: tab,
-                        type_name: undefined,
+                        // type_name: undefined,
                         version: row.version,
                         isChange: true,
-                        contract: null,
-                        contract_id: null
+                        cm_id : '',
+                        modelArray : {
+                          additional: [],
+                          cm_id: '',
+                          customer: null,
+                          customerId: '',
+                          model: '',
+                          sync: '',
+                          version: null
+                        }
                       }
-                  )
-                }else {
-                  onRowChange(
-                      {
-                        ...row,
-                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-                        manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                        name: selectNameFunction(column.type),
-                        tab: tab,
-                        type_name: undefined,
-                        version: row.version,
-                        isChange: true,
-                      }
-                  )
+                    )
+                  }
+                  else {
+                    onRowChange(
+                        {
+                          ...row,
+                          ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+                          manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+                          name: selectNameFunction(column.type),
+                          tab: tab,
+                          // type_name: undefined,
+                          version: row.version,
+                          isChange: true,
+                        }
+                    )
+                  }
+
                 }
+
+
               }}
               style={{backgroundColor: POINT_COLOR}}
             >

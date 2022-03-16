@@ -111,9 +111,11 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     // if(tmpRows){
     tmpData = tmpRows?.map((v, i) => {
       let childData: any = {}
+      let type = ''
       switch(v.bom.type){
         case 0:{
           childData = v.bom.child_rm
+          type = v.bom.child_rm.type == "1" ? "kg" : v.bom.child_rm.type == "2" ? "장" : "-";
           break;
         }
         case 1:{
@@ -133,7 +135,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         type: TransferCodeToValue(v.bom.type, 'material'),
         tab: v.bom.type,
         type_name: TransferCodeToValue(v.bom.type, 'material'),
-        unit: childData.unit ?? "-",
+        unit: childData.unit ?? type,
         parent: v.bom.parent,
         usage: v.bom.usage,
         version: v.bom.version,
@@ -225,8 +227,8 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          color: 'white',
-          background: '#353B48'
+          color: column.type === 'Modal' && '#0D0D0D',
+          background:row.border ? "#19B9DF80" : column.type === 'Modal' ? "white" : '#0000',
         }} onClick={() => {
           setIsOpen(true)
         }}>

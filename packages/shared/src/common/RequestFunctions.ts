@@ -269,8 +269,8 @@ const ApiList = {
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/inspec/category/load`,
-
-
+  moldPrdMoldLinkLoad: `/api/v1/mold/prd-mold-link/load`,
+  machinePrdMachineLinkLoad: `/api/v1/machine/prd-machine-link/load`,
   //recent
   operationRecent:`/api/v1/operation/recent`,
 
@@ -342,6 +342,7 @@ const ApiList = {
   recordGroupList: `/api/v1/record/groups`,
   stockAdminList: '/api/v1/stock/admin/summary',
   electicPowerList : `/api/v2/statistics/press/electric-power`,
+  sheetDefectList: `/api/v1/sheet/defect`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -397,6 +398,8 @@ const ApiList = {
 
   bomLoad: `/api/v1/bom`,
   bomSave: `/api/v1/bom/save`,
+
+  sheetBomLoad: `/api/v1/sheet`,
 
   anonymousLoad: `/anonymous/load`,
 

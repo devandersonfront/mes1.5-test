@@ -55,7 +55,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
 
           },
           params: {
-            productIds: row.product_id,
+            productIds: row.product.product_id,
             nz: true
           }
         })
@@ -70,71 +70,81 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
     }
   }
 
-  return (
-    <div>
-      <div style={{
-        fontSize: '15px',
-        margin: 0,
-        padding: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: '#0D0D0D',
-        background:row.border ? "#19B9DF80" : "white",
-        cursor: 'pointer',
-      }} onClick={() => {
 
-        if(column.key === 'lot'){
-          if(column.type === 'readonly'){
-            let lot = []
-            console.log(row)
-            if(row.bom){
-              if(row.bom[row.seq-1].lot && !Array.isArray(row.bom[row.seq-1].lot)){
-                lot = [row.bom[row.seq-1].lot]
-              }else{
-                lot = row.bom[row.seq-1].lot
+  return (
+      <div>
+        <div style={{
+          fontSize: '15px',
+          margin: 0,
+          padding: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: '#0D0D0D',
+          background:row.border ? "#19B9DF80" : "white",
+          cursor: 'pointer',
+        }} onClick={() => {
+
+          if(column.key === 'lot'){
+            if(column.type === 'readonly'){
+              let lot = []
+              if(row.bom){
+                if(row.bom[row.seq-1].lot && !Array.isArray(row.bom[row.seq-1].lot)){
+                  lot = [row.bom[row.seq-1].lot]
+                }else{
+                  lot = row.bom[row.seq-1].lot
+                }
+              }
+
+              onRowChange({
+                ...row,
+                lotList: [...lot.map(v => {
+                  let type
+
+                  switch(v.type){
+                    case 0:
+                      type = 'child_lot_rm'
+                      break
+                    case 1 :
+                      type = 'child_lot_sm'
+                      break
+                    case 2:
+                      type = 'child_lot_record'
+                      break
+                  }
+
+                  return {
+                    ...v,
+                    ...v[type]
+                  }
+                })]
+              })
+            }else{
+              if(row.stock === 0){
+                return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
+              }
+              if(row.bom_info !== null){
+                onRowChange({
+                  ...row,
+                  lotList: [...row.bom_info]
+                })
+              }else {
+                loadMaterialLot(row.tab)
               }
             }
+          }else {
 
-            onRowChange({
-              ...row,
-              lotList: [...lot.map(v => {
-                let type
-
-                switch(v.type){
-                  case 0:
-                    type = 'child_lot_rm'
-                    break
-                  case 1 :
-                    type = 'child_lot_sm'
-                    break
-                  case 2:
-                    type = 'child_lot_record'
-                    break
-                }
-
-                return {
-                  ...v,
-                  ...v[type]
-                }
-              })]
-            })
-          }else{
-            loadMaterialLot(row.tab)
+            if (row.bom_root_id) {
+              dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1, product_id:row.bom_root_id}))
+            } else {
+              Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
+              })
+            }
           }
-        }else {
-
-          if (row.bom_root_id) {
-            dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1, product_id:row.bom_root_id}))
-          } else {
-            Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
-            })
-          }
-        }
-      }}>
-        <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{title}</p>
+        }}>
+          <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{title}</p>
+        </div>
       </div>
-    </div>
   );
 }
 

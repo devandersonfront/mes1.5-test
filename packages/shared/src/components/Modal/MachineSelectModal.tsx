@@ -54,46 +54,68 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
-    let tmpMachines
-    if(!row.machines || !row.machines.length){
-      tmpMachines = row.product?.machines.map((v, index) => {
-        return {
-          machine: {
-            sequence: index+1,
-            machine: {
-              ...v.machine
-            },
-            setting: v.spare === '여' ? 0 : 1
-          }
-        }
-      }) ?? []
+    if(isOpen){
+      LoadBasic(row.productId)
+    }
+    // let tmpMachines
+    // if(!row.machines || !row.machines.length){
+    //   tmpMachines = row.product?.machines.map((v, index) => {
+    //     return {
+    //       machine: {
+    //         sequence: index+1,
+    //         machine: {
+    //           ...v.machine
+    //         },
+    //         setting: v.spare === '여' ? 0 : 1
+    //       }
+    //     }
+    //   }) ?? []
+    //
+    //   onRowChange({
+    //     ...row,
+    //     name: row.name,
+    //     machines: tmpMachines,
+    //     isChange: true
+    //   })
+    // }else{
+    //   tmpMachines = row.machines.map(v => {
+    //     return {
+    //       ...v,
+    //       ...v.machine
+    //     }
+    //   })
+    // }
+    //
+    // if(isOpen) {
+    //   setSearchList([...tmpMachines.map((v, index) => {
+    //     return {
+    //       ...v.machine,
+    //       ...v.machine.machine,
+    //       sequence: index+1,
+    //       spare: v.setting === 0 ? '여' : '부',
+    //     }
+    //   })])
+    // }
+  }, [isOpen])
 
-      onRowChange({
-        ...row,
-        name: row.name,
-        machines: tmpMachines,
-        isChange: true
-      })
-    }else{
-      tmpMachines = row.machines.map(v => {
+  const LoadBasic = async (productId) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `machinePrdMachineLinkLoad`,{
+      path: {
+        productId: productId
+      },
+    })
+
+    if(res){
+      setSearchList([...res].map((v, index) => {
         return {
           ...v,
-          ...v.machine
-        }
-      })
-    }
-
-    if(isOpen) {
-      setSearchList([...tmpMachines.map((v, index) => {
-        return {
-          ...v.machine,
-          ...v.machine.machine,
           sequence: index+1,
-          spare: v.setting === 0 ? '여' : '부',
+          setting: '부',
         }
-      })])
+      }))
     }
-  }, [isOpen, searchKeyword])
+  }
 
   const ModalContents = () => {
     return <>
@@ -121,6 +143,12 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
   const getSummaryInfo = (info) => {
     return row[info.key] ?? '-'
   }
+
+  const ModalUpdate = (e:any) => {
+    onRowChange(e)
+    setIsOpen(false)
+  }
+
 
   return (
     <SearchModalWrapper >
@@ -199,7 +227,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <MachineInfoModal column={column} row={row} onRowChange={onRowChange} modify/>
+              {/*<MachineInfoModal column={column} row={row} onRowChange={ModalUpdate} modify/>*/}
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
@@ -248,6 +276,16 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
+                let settingUseArray = 0
+                searchList.map((v)=> {
+                  if(v.setting === 1) {
+                    settingUseArray += 1
+                  }
+                })
+                if(settingUseArray > 1) {
+                  return Notiflix.Report.warning("경고", "금형을 하나만 선택해주시기 바랍니다.", "확인");
+                }
+
                 if(selectRow !== undefined && selectRow !== null){
                   onRowChange({
                     ...row,

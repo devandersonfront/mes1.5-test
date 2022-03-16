@@ -15,6 +15,7 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import ExcelUploadModal from '../../../main/component/Modal/ExcelUploadModal'
+import { Row } from 'react-data-grid';
 
 export interface IProps {
   children?: any
@@ -26,23 +27,24 @@ export interface IProps {
 const title = '유저 관리'
 const optList = ['성명', '이메일', '직책명', '전화번호',]
 
-const BasicUser = ({page, keyword, option}: IProps) => {
+const BasicUser = ({}: IProps) => {
   const router = useRouter()
 
   const [excelDownOpen, setExcelDownOpen] = useState<boolean>(false)
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
 
-  
+
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     name: "", id: ""
   }])
+
 
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist.member)
   const [selectList, setSelectList] = useState<Set<any>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(optList)
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectRow , setSelectRow] = useState<number>(0);
-
+  const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -50,11 +52,11 @@ const BasicUser = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     if(keyword){
-      SearchBasic(keyword, option, page)
+      SearchBasic(keyword, optionIndex, pageInfo.page)
     }else{
-      LoadBasic(page).then(() => {})
+      LoadBasic(pageInfo.page).then(() => {})
     }
-  }, [page, keyword, option])
+  }, [pageInfo.page, keyword, ])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -148,7 +150,6 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       }
 
     }else{
-      console.log(selectedRows,'selectedRows')
       const nameCheck = selectedRows.every((data)=> data.name)
       const authorityCheck = selectedRows.every((data)=> data.authority)
 
@@ -220,7 +221,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
                     version: row.version ?? null,
                     additional: [
                     ...additional.map((v, index)=>{
-                      if(!row[v.colName]) return undefined;
+                      //if(!row[v.colName]) return undefined;
                       return {
                           mi_id: v.id,
                           title: v.name,
@@ -235,18 +236,16 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       
                 }
               }).filter((v) => v)).catch((error)=>{
-                if(error.status === 409) {
-                  return Notiflix.Report.failure('저장할 수 없습니다.', error?.data.message, '확인')
-                }
+                return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
               })
             if(res){
               Notiflix.Report.success('저장되었습니다.','','확인');
               if(keyword){
-                SearchBasic(keyword, option, page).then(() => {
+                SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
                   Notiflix.Loading.remove()
                 })
               }else{
-                LoadBasic(page).then(() => {
+                LoadBasic(pageInfo.page).then(() => {
                   Notiflix.Loading.remove()
                 })
               }
@@ -268,55 +267,121 @@ const BasicUser = ({page, keyword, option}: IProps) => {
   
   }
 
-  const DeleteBasic = async () => {
 
-    const res = await RequestMethod('delete', `memberDelete`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.type === 'additional'){
-              additional.push(v)
+  const setAdditionalData = () => {
+
+    const addtional = []
+    basicRow.map((row)=>{     
+      if(selectList.has(row.id)){
+        column.map((v) => {
+          if(v.type === 'additional'){
+              addtional.push(v)
             }
           })
-          let selectData: any = {}
-          if(row.user_id){
-            return {
-              ...row,
-              ...selectData,
-              id: row.tmpId,
-              authority: row.authorityPK,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
-          }
-
-        }
-      }).filter((v) => v))
-
-    if(res) {
-      Notiflix.Report.success('삭제되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, option, page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(page).then(() => {
-          Notiflix.Loading.remove()
-        })
       }
+    })
+
+    return addtional;
+  }
+
+  const convertDataToMap = () => {
+    const map = new Map()
+    basicRow.map((v)=>map.set(v.id , v))
+    return map 
+  }
+
+  const filterSelectedRows = () => {
+    return basicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+  }
+
+  const classfyNormalAndHave = (selectedRows) => {
+
+    const normalRows = []
+    const haveIdRows = []
+
+    selectedRows.map((row : any)=>{
+      if(row.user_id){
+        haveIdRows.push(row)
+      }else{
+        normalRows.push(row)
+      }
+    })
+
+    return [normalRows , haveIdRows]
+  }
+
+  const DeleteBasic = async () => {
+
+    const map = convertDataToMap()
+    const selectedRows = filterSelectedRows()
+    const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+    const additional = setAdditionalData()
+    
+    if(haveIdRows.length > 0){
+
+      if(normalRows.length !== 0) selectedRows.forEach((row)=>{ map.delete(row.id)})
+      
+      await RequestMethod('delete','memberDelete', haveIdRows.map((row) => (
+          {...row , id: row.tmpId , authority: row.authorityPK, additional : [...additional.map(v => {
+            if(row[v.name]) {
+              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
+            }
+          }).filter(v => v)
+          ]}
+      )))
+
     }
+    
+    Notiflix.Report.success('삭제되었습니다.','','확인');
+    selectedRows.forEach((row)=>{ map.delete(row.id)})
+    setBasicRow(Array.from(map.values()))
+    setSelectList(new Set())
+
+    // if(keyword){
+    //   SearchBasic(keyword, option, page).then(() => {
+    //     Notiflix.Loading.remove()
+    //   })
+    // }else{
+    //   LoadBasic(page).then(() => {
+    //     Notiflix.Loading.remove()
+    //   })
+    // }
+
+
+    // const res = await RequestMethod('delete', `memberDelete`,
+    //   basicRow.map((row, i) => {
+    //     if(selectList.has(row.id)){
+    //       let additional:any[] = []
+    //       column.map((v) => {
+    //         if(v.type === 'additional'){
+    //           additional.push(v)
+    //         }
+    //       })
+    //       let selectData: any = {}
+    //       if(row.user_id){
+    //         return {
+    //           ...row,
+    //           ...selectData,
+    //           id: row.tmpId,
+    //           authority: row.authorityPK,
+              // additional: [
+              //   ...additional.map(v => {
+              //     if(row[v.name]) {
+              //       return {
+              //         id: v.id,
+              //         title: v.name,
+              //         value: row[v.name],
+              //         unit: v.unit
+              //       }
+              //     }
+              //   }).filter((v) => v)
+              // ]
+    //         }
+
+    //       }
+
+    //     }
+    //   }).filter((v) => v))
 
   }
 
@@ -617,7 +682,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
       const tempRow = [...rows]
       const spliceRow = [...rows]
       spliceRow.splice(selectRow, 1)
-      const isCheck = spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId && row.tmpId !== undefined)
+      const isCheck = spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId && row.tmpId !== undefined && row.tmpId !== '')
 
       if(spliceRow){
         if(isCheck){
@@ -638,11 +703,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          if(keyword){
-            router.push(`/mes/basic/user?page=1&keyword=${keyword}&opt=${optionIndex}`)
-          }else{
-            router.push(`/mes/basic/user?page=1&keyword=`)
-          }
+          setKeyword(keyword)
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
@@ -684,11 +745,7 @@ const BasicUser = ({page, keyword, option}: IProps) => {
         currentPage={pageInfo.page}
         totalPage={pageInfo.total}
         setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/user?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/user?page=${page}`)
-          }
+          setPageInfo({...pageInfo,page:page})
         }}
       />
       {/* <ExcelDownloadModal
