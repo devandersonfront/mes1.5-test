@@ -50,6 +50,9 @@ const MesRecordList = ({page, search, option}: IProps) => {
     setOrder(value);
   }
 
+  useEffect(()=>{
+    console.log(basicRow)
+  },[basicRow])
   useEffect(() => {
     if(keyword){
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {

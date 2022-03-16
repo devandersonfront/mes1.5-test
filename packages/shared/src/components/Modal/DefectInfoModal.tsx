@@ -291,7 +291,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             }
             <div
               onClick={() => {
-                if(row.good_quantity < totalCount){
+                if(column.type !== 'readonly' && row.good_quantity < totalCount){
                   Notiflix.Report.warning("경고", "생산한 수량보다 적게 입력해주세요.", "확인",)
                   return
                 }
