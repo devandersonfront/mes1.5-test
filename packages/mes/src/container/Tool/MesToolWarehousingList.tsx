@@ -206,6 +206,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 customer_id:row?.tool?.customer?.name,
             }
         })
+        setSelectList(new Set)
         setBasicRow([...tmpBasicRow])
 
     }
@@ -308,12 +309,14 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 calendarType={"period"}
                 selectDate={selectDate}
                 setSelectDate={(date) => {
+                    setSelectList(new Set)
                     setSelectDate(date as SelectParameter)
                 }}
                 dataLimit
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
+                    setSelectList(new Set)
                     setKeyword(keyword)
                     setPageInfo({page:1,total:1})
                 }}
@@ -339,7 +342,10 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                     setSelectList(selectedRows)
                 }}
                 scrollEnd={(e) => {
-                    if(e && pageInfo.total > pageInfo.page) setPageInfo({...pageInfo, page:pageInfo.page+1})
+                    if(e && pageInfo.total > pageInfo.page) {
+                        setSelectList(new Set)
+                        setPageInfo({...pageInfo, page: pageInfo.page + 1})
+                    }
                 }}
             />
             {/*<PaginationComponent totalPage={} currentPage={} setPage={} />*/}
