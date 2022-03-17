@@ -359,15 +359,15 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         if(selectList.size > 0) {
           Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
               () => {
-
-                Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
                   const resultBasic = [...basicRow];
-                  resultBasic.forEach((row, index) => {
-                    if (selectList.has(row.id)) {
-                      basicRow.splice(index, 1)
+                  const result = resultBasic.filter((row, index) => {
+                    if (!selectList.has(row.id)) {
+                      return row
                     }
                   })
-                  setBasicRow([...basicRow])
+                  setBasicRow([...result])
+
+                Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
                 })
               },
           )

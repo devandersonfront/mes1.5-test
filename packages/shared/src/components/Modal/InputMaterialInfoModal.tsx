@@ -74,7 +74,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
           code: row.product.code,
           name: row.product.name,
           process: row.product.process?.name,
-          type: TransferCodeToValue(row.product.type, 'material'),
+          type: TransferCodeToValue(row.product.type, 'product'),
           unit: row.product.unit,
           goal: row.goal,
         })

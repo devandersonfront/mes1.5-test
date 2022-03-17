@@ -125,7 +125,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     }else{
       haveProductBasic = true
     }
-
     if(haveRawMaterialBasic && haveSubMaterialBasic && haveProductBasic){
       return true
     }
@@ -165,7 +164,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     }else{
       tmpRows = [{...tmpRow}]
     }
-
     tmpData = tmpRows.map((v, i) => {
       let childData: any = {}
       let rmType
@@ -399,7 +397,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <BomInfoModal column={column} row={row} onRowChange={onRowChange} modify update={(e)=> e ? SearchBasic() : ''}/>
+              {/*<BomInfoModal column={column} row={row} onRowChange={onRowChange} modify update={(e)=> e ? SearchBasic() : ''}/>*/}
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
