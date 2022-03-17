@@ -123,9 +123,11 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
             }
         })
         if(pageInfo.page > 1) {
+            setSelectList(new Set)
             const basicAddTmpRow = basicRow.concat(tmpRow)
             setBasicRow([...basicAddTmpRow])
         }else {
+            setSelectList(new Set)
             setBasicRow([...tmpRow])
         }
     }
@@ -176,11 +178,11 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 searchKeyword={keyword}
                 searchOptionList={optionList}
                 onChangeSearchKeyword={(keyword) =>{
+                    setSelectList(new Set)
                     setSearchKeyword(keyword)
-                    // SearchBasic(keyword, option, 1)
                 }}
                 onChangeSearchOption={(option) => {
-                    // SearchBasic(keyword, option, 1)
+                    setSelectList(new Set)
                     setOptionIndex(option)
                 }}
                 calendarTitle={'등록 날짜'}

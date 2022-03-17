@@ -50,6 +50,8 @@ const MesRecordList = ({page, search, option}: IProps) => {
     setOrder(value);
   }
 
+  useEffect(()=>{
+  },[basicRow])
   useEffect(() => {
     if(keyword){
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -404,6 +406,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
           setOptionIndex(e)
         }}
         onChangeSearchKeyword={(keyword) =>{
+          setSelectList(new Set)
           setKeyword(keyword)
           setPageInfo({page:1, total:1})
         }}
@@ -412,6 +415,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         selectDate={selectDate}
         //@ts-ignore
         setSelectDate={(date) => {
+          setSelectList(new Set)
           setSelectDate(date as {from:string, to:string})
           setPageInfo({page:1, total:1})
         }}

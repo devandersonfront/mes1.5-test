@@ -204,6 +204,9 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                             headerList={searchModalList.toolUse}
                             row={searchList ?? [{}]}
                             setRow={(e) => {
+                                if(e[0].stock === 0){
+                                    return Notiflix.Report.warning("경고", "재고량이 없습니다.", "확인",  );
+                                }
                                 const tmpData = [...e]
                                 tmpData.map((data, index) => {
                                     data.sequence = index+1
@@ -219,6 +222,7 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                             // }}
                             setSelectRow={(e) => {
                                 if(!searchList[e].border){
+
                                     searchList.map((v,i)=>{
                                         v.border = false;
                                     })
