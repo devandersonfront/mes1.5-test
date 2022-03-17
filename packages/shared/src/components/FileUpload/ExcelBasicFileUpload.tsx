@@ -147,8 +147,9 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                               name:e.target.files[0].name,
                               uuid: uploadImg.UUID,
                               url:uploadImg.url,
-                              sequence: column.idx
-                          }
+                              sequence: column.idx,
+                          },
+                              isChange: true
                       })
                   }else{
                     onRowChange({

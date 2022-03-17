@@ -142,17 +142,19 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 ...row,
                 status: typeof row.status_no === "string" ? transferStringToCode('workStatus', row.status_no) : row.status_no
               },
-              tools:v?.tools?.map((tool) => {
+              tools: v?.tools?.map((tool) => {
                 return{
                   ...tool,
                   tool:{
                     ...tool.tool,
+                    setting: 0,
+                    used: Number(tool.tool.tool.used),
                     tool: {
                       ...tool.tool.tool,
                       customer: tool.tool.tool.customerArray
                     }
                   }}
-              }),
+              }).filter(v=>v.tool.tool.code),
               // input_bom: [],
               status: 0,
               version: undefined

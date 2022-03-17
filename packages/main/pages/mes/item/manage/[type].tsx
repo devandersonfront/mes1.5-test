@@ -39,7 +39,7 @@ export const getServerSideProps = async (ctx: any) => {
         }
       case 'customer':
         return {
-          title: '고객사 정보 관리',
+          title: '거래처 정보 관리',
           code: 'ROLE_BASE_01'
         }
       case 'process':
