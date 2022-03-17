@@ -261,6 +261,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
 
     if(res) {
       Notiflix.Report.success('삭제 성공!', '', '확인', () => {
+        setSelectList(new Set)
         LoadBasic(1).then(() => {
           Notiflix.Loading.remove(3000)
         })
