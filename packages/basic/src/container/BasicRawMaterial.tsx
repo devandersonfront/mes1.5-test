@@ -143,6 +143,17 @@ const BasicRawMaterial = ({}: IProps) => {
   const SaveBasic = async () => {
     let selectCheck = false
     let codeCheck = true
+
+    const searchAiID = (rowAdditional:any[], index:number) => {
+      let result:number = undefined;
+      rowAdditional.map((addi, i)=>{
+        if(index === i){
+          result = addi.ai_id;
+        }
+      })
+      return result;
+    }
+
     let result = basicRow.map((row, i) => {
       if(selectList.has(row.id)){
         selectCheck = true
@@ -188,15 +199,7 @@ const BasicRawMaterial = ({}: IProps) => {
       }
     }).filter((v) => v);
 
-    const searchAiID = (rowAdditional:any[], index:number) => {
-      let result:number = undefined;
-      rowAdditional.map((addi, i)=>{
-        if(index === i){
-          result = addi.ai_id;
-        }
-      })
-      return result;
-    }
+
 
     if(selectCheck && codeCheck){
       let res = await RequestMethod('post', `rawMaterialSave`, result).catch((error)=>{
