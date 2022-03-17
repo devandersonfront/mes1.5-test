@@ -55,9 +55,11 @@ const MesSubMaterialStock = ({page, search, option}: IProps) => {
   const [nzState, setNzState] = useState<boolean>(false);
   const [first, setFirst] = useState<boolean>(true);
   const changeNzState = (value:boolean) => {
+    setSelectList(new Set)
     setNzState(value);
   }
   const changeOrder = (value: string) => {
+    setSelectList(new Set)
     setOrder(Number(value));
     setPageInfo({page:1,total:1})
   }
@@ -300,7 +302,7 @@ const MesSubMaterialStock = ({page, search, option}: IProps) => {
         id: `rawin_${random_id}`,
       }
     })
-
+    setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
@@ -404,11 +406,15 @@ const MesSubMaterialStock = ({page, search, option}: IProps) => {
     <div>
       <PageHeader
         isNz
-        onChangeNz={changeNzState}
+        onChangeNz={(e) => {
+          setSelectList(new Set)
+          changeNzState(e)
+        }}
         nz={nzState}
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
+          setSelectList(new Set)
           setKeyword(keyword)
           setPageInfo({page:1, total:1})
         }}
@@ -418,11 +424,12 @@ const MesSubMaterialStock = ({page, search, option}: IProps) => {
         }}
         calendarTitle={'입고일'}
         optionIndex={optionIndex}
-      isCalendar
+        isCalendar
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
         setSelectDate={(date) => {
+          setSelectList(new Set)
           setSelectDate(date as {from:string, to:string})
           setPageInfo({page:1, total:1})
         }}

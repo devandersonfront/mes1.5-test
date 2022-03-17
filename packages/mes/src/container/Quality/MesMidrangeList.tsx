@@ -182,10 +182,7 @@ const MesMidrangeList = ({option}:IProps) => {
             />
             <ExcelTable
                 editable
-                headerList={[
-                    SelectColumn,
-                    ...column
-                ]}
+                headerList={column}
                 row={basicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = selectList

@@ -381,7 +381,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
         id: `sheet_${random_id}`,
       }
     })
-
+    setSelectList(new Set)
     Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
   }
@@ -399,6 +399,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         onChangeSearchKeyword={(keyword) => {
+          setSelectList(new Set)
           setKeyword(keyword);
           setPageInfo({page:1, total:1})
         }}
@@ -407,6 +408,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
         }}
         //@ts-ignore
         setSelectDate={(date) => {
+          setSelectList(new Set)
           setSelectDate(date as {from:string, to:string })
           setPageInfo({page:1, total:1})
         }}

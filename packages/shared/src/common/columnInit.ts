@@ -678,7 +678,7 @@ export const columnlist: any = {
   ],
   workStandardList: [
     {key: 'customer', name: '거래처',width: 120},
-    {key: 'model', name: '모델', width: 120},
+    {key: 'model', name: '모델', width: 240},
     {key: 'code', name: 'CODE',width: 464},
     {key: 'material_name', name: '품명',width: 464},
     {key: 'type', name: '품목 종류', width: 120, selectList: [
@@ -686,7 +686,7 @@ export const columnlist: any = {
         {pk: '1', name: '재공품'},
         {pk: '2', name: '완제품'},
       ]},
-    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer, type:"image", readonly:true},
+    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer, type:"image", readonly:true, width:120},
   ],
   midrange: [
     {key: 'samples', name: '시료 개수 선택 (최소 1 ~ 최대 10개)', formatter: DropDownEditor, selectList: [
@@ -768,7 +768,7 @@ export const columnlist: any = {
       ]},
     {key: 'unit', name: '단위', width: 120},
     {key: 'process_id', name: '생산 공정', width: 120},
-    {key: 'ln_id', name: 'LOT 번호', width: 120},
+    {key: 'ln_id', name: 'LOT 번호', },
     {key: 'worker', name: '작업자', width: 120 },
     {key: 'start', name: '작업 시작 일시', width: 164},
     {key: 'end', name: '작업 종료 일시', width: 164},

@@ -145,6 +145,7 @@ const BasicTool = ({page, search, option}: IProps) => {
                 })],
             }
         })
+        setSelectList(new Set)
         setBasicRow([...tmpBasicRow])
     }
 
@@ -372,8 +373,6 @@ const BasicTool = ({page, search, option}: IProps) => {
 
 
     const DeleteBasic = async() => {
-
-
         const map = convertDataToMap()
         const selectedRows = filterSelectedRows()
         const haveIdRows = classfyNormalAndHave(selectedRows)
@@ -503,6 +502,7 @@ const BasicTool = ({page, search, option}: IProps) => {
                 onChangeSearchKeyword={(keyword) => {
                     setKeyword(keyword)
                     setPageInfo({page:1,total:1})
+                    setSelectList(new Set)
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(option) => {
@@ -531,7 +531,10 @@ const BasicTool = ({page, search, option}: IProps) => {
                 setSelectRow={setSelectRow}
                 height={700}
             />
-            <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => setPageInfo({...pageInfo, page:page})} />
+            <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => {
+                setSelectList(new Set)
+                setPageInfo({...pageInfo, page: page})
+            }} />
         </div>
     )
 }
