@@ -59,14 +59,17 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   const [expState, setExpState] = useState<boolean>(false);
 
   const changeNzState = (value:boolean) => {
+    setSelectList(new Set)
     setNzState(value);
   }
 
   const changeExpState = (value:boolean) => {
+    setSelectList(new Set)
     setExpState(value);
   }
 
   const changeOrder = (value:number) => {
+    setSelectList(new Set)
     setOrder(value);
     setPageInfo({page:1,total:1})
   }
@@ -324,7 +327,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         id: `rawin_${random_id}`,
       }
     })
-
+    setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
@@ -455,10 +458,12 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     if(res) {
       Notiflix.Report.success('삭제되었습니다.','','확인', () => {
         if(keyword){
+          setSelectList(new Set)
           SearchBasic(keyword, option, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }else{
+          setSelectList(new Set)
           LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
@@ -518,11 +523,18 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         isExp
         nz={nzState}
         exp={expState}
-        onChangeNz={changeNzState}
-        onChangeExp={changeExpState}
+        onChangeNz={(e) => {
+          setSelectList(new Set)
+          changeNzState(e)
+        }}
+        onChangeExp={(e) => {
+          setSelectList(new Set)
+          changeExpState(e)
+        }}
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
+          setSelectList(new Set)
           setKeyword(keyword)
           setPageInfo({page:1, total:1})
         }}
@@ -537,6 +549,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         selectDate={selectDate}
         //@ts-ignore
         setSelectDate={(date) => {
+          setSelectList(new Set)
           setSelectDate(date as {from:string, to:string})
           setPageInfo({page:1, total:1})
         }}

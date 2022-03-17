@@ -284,8 +284,10 @@ const MesFinishList = ({page, search, option}: IProps) => {
 
     Notiflix.Loading.remove()
     if(pageInfo.total > pageInfo.page){
+      setSelectList(new Set)
       setBasicRow([...basicRow,...tmpBasicRow])
     }else{
+      setSelectList(new Set)
       setBasicRow([...tmpBasicRow])
     }
   }
@@ -299,6 +301,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         searchOptionList={optionList}
         optionIndex={optionIndex}
         onChangeSearchKeyword={(keyword) => {
+          setSelectList(new Set)
           setKeyword(keyword)
           setPageInfo({page:1, total:1})
         }}
@@ -310,6 +313,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         selectDate={selectDate}
         //@ts-ignore
         setSelectDate={(date) => {
+          setSelectList(new Set)
           setSelectDate(date as { from:string, to:string })
           setPageInfo({page:1, total:1})
         }}
