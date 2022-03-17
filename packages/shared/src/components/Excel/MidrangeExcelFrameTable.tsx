@@ -285,11 +285,12 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
     }
 
     const resultRow = (inspection_info: InspectionInfo[], inspection_result: InspectionFinalDataResult[], type: 'beginning' | 'middle' | 'end') => {
+        console.log(arr, inspection_result)
         return(
             arr.map((v,i)=>
                 <ExampleNumber>
                     {inspection_info[0].samples > i ?
-                        inspection_result[i] !== undefined ?
+                        inspection_result && inspection_result.length > i && (inspection_result[i] !== undefined) ?
                             <MidrangeExcelDropdown contents={['합격', '불합격']} onChange={(e)=>dataResultDropdownChange(type,e,i)} value={inspection_result[i].pass ? '합격' : '불합격'} readOnly={midrangeUpdate}/>
                             :
                             <MidrangeExcelDropdown contents={['합격', '불합격']} onChange={(e)=>dataResultDropdownChange(type,e,i)} value={''} readOnly={midrangeUpdate}/>
