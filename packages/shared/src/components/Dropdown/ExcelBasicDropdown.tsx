@@ -22,10 +22,17 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
     switch(type){
       case "spare":
         // 22/01/24 수정
-        return row.setting === 0 ? "스페어" : row.setting === 1 ? "기본" : row.setting
+        return row.setting === 0 ?
+            "스페어"
+            :
+            row.setting === 1 ?
+                "기본"
+                :
+                row.setting
         // return row.spare
       case "setting" :
-        return (row[column.key] === 1 || row[column.key] === "여") ? "여" : "부"
+        return (row[column.key] === 1 || row[column.key] === "여")
+            ? "여" : "부"
       default:
         return row[column.key] ? row[column.key] : "무"
     }
@@ -65,6 +72,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
       }}
       value={cleanValue(column.key)}
       // value={selectType()}
+      disabled={column.readonly}
       onChange={(event) => {
         let pk = "";
         Object.keys(column && column.selectList ? column.selectList[0] : []).map((v) => {
@@ -140,7 +148,9 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
           }else{
             return onRowChange({
               //@ts-ignore
-              ...row, [column.key]:filterValue(event.target.value), [column.key+"PK"]: pkValue ?? undefined,
+              ...row,
+              [column.key]:filterValue(event.target.value),
+              [column.key+"PK"]: pkValue ?? undefined,
               [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
               setting : filterValue(event.target.value),
               // ...tmpData,
