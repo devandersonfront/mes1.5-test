@@ -73,7 +73,6 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
       value={cleanValue(column.key)}
       disabled={column.readonly}
       // value={selectType()}
-      disabled={column.readonly}
       onChange={(event) => {
         let pk = "";
         Object.keys(column && column.selectList ? column.selectList[0] : []).map((v) => {
