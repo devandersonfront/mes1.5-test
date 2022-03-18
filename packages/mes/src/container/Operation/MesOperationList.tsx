@@ -33,7 +33,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{}])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["operationListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['지시 고유 번호', '고객사명', '모델', 'CODE', '품명'])

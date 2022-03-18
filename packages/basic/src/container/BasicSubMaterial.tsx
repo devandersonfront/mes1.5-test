@@ -29,9 +29,7 @@ const BasicSubMaterial = ({}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", unit: 'EA'
-  }])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["submaterial"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['부자재 CODE', '부자재 품명', '거래처'])
@@ -262,7 +260,7 @@ const BasicSubMaterial = ({}: IProps) => {
           }
       )))
     }
-    
+
     if(deletable){
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');
