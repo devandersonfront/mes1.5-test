@@ -155,7 +155,6 @@ const MesStockProductList = ({page, keyword, option}) => {
         tmpColumn.map((v)=>{
           totalWidth +=v.width
         })
-
         setExcelTableWidths({data:1576-totalWidth, model:totalWidth})
         setColumn([...tmpColumn]);
 
@@ -195,7 +194,8 @@ const MesStockProductList = ({page, keyword, option}) => {
         customer_id: row.product?.customer?.name ?? "-",
         cm_id:row.product?.model?.model ?? "-",
         model:row.product?.model?.model ?? "-",
-        code:row.product?.code ?? "-",
+        // code:row.product?.code ?? "-",
+        product_id:row.product?.code ?? "-",
         name: row.product?.name ?? "-",
         id: `product_${random_id}`,
       }
@@ -283,7 +283,7 @@ const MesStockProductList = ({page, keyword, option}) => {
     column.map((v)=>{
       modelWidth += v.width;
     })
-    modelWidth += 36;
+    // modelWidth += 36;
     setExcelTableWidths({...excelTableWidths,data:1576-modelWidth, model:modelWidth})
 
   },[column])
@@ -318,10 +318,7 @@ const MesStockProductList = ({page, keyword, option}) => {
     />
     <div style={{display:"flex",justifyContent:"center"}}>
       <ScrollSyncPane>
-        <ExcelTable headerList={[
-          SelectColumn,
-          ...column
-        ]}
+        <ExcelTable headerList={column}
                     setHeaderList={(value) => {
                       // value.splice(0,1);
                       value.map((v,i)=>{

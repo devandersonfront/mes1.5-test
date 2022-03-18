@@ -71,6 +71,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                         isChange:true
                       })
                       fileRef.current.value = "";
+
                   }}
                   src={Icon_X} style={{borderRadius:"4px", width:"24px", height:"24px", marginRight:"4px", marginLeft: '4px'}} />
               }
@@ -78,7 +79,8 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
               style={{
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                whiteSpace:'nowrap'
+                whiteSpace:'nowrap',
+                textDecoration:"underline"
               }}
               onClick={() => {
                   if(typeof row[column.key] === "object"){
@@ -115,17 +117,17 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
             </p>
           </div>
           : column.readonly ?
-              <>
-                 <p style={{color:"white", }}>등록된 이미지가 없습니다.</p>
-              </>
-              :
-              <>
-                  <UploadButton onClick={() => {
-                      if(!column.readonly) onClickImageUpload(column.key)
-                  }} style={column.readonly && {background:"#B3B3B3"}}>
-                      <p>파일 첨부하기</p>
-                  </UploadButton>
-              </>
+            <>
+                <p style={{color:"white", }}>이미지가 없습니다.</p>
+            </>
+            :
+            <>
+                <UploadButton onClick={() => {
+                    if(!column.readonly) onClickImageUpload(column.key)
+                }} style={column.readonly && {background:"#B3B3B3"}}>
+                    <p>파일 첨부하기</p>
+                </UploadButton>
+            </>
       }
       <input
         key={`${column.key}`}
