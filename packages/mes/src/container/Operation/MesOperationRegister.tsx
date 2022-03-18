@@ -365,6 +365,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                       return row
                     }
                   })
+                  result[0].first = true
                   setBasicRow([...result])
 
                 Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
@@ -406,7 +407,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             ]}
             row={basicRow}
             setRow={async(e) => {
-
               const eData = e.filter((eValue) => {
                 let equal = false;
                 basicRow.map((bValue)=>{
@@ -418,6 +418,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 if(!equal) return eValue
               })
               if(eData.length <= 0){
+                console.log("e : ", e)
                 setBasicRow([...e])
               }else{
                 // if(codeCheck) {
@@ -425,6 +426,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 //   setBasicRow([...resultData])
                 // }else{
                   const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
+                console.log("resultData : ", resultData)
                   setBasicRow([...resultData])
                 // }
               }
