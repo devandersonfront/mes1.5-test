@@ -13,6 +13,7 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
+import {TransferCodeToValue} from "../../common/TransferFunction";
 
 interface IProps {
     column: IExcelHeaderType
@@ -49,6 +50,7 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
     const [title, setTitle] = useState<string>('기계')
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [keyword, setKeyword] = useState<string>('')
+    const [summaryData, setSummaryData] = useState<any>({})
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
     const [searchKeyword, setSearchKeyword] = useState<string>('')
@@ -71,6 +73,22 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
             }else{
                 setSearchList([])
             }
+            setSummaryData({
+                // ...res.parent
+                identification: row.identification,
+                lot_number: row.lot_number ?? '-',
+                customer: row.product?.customer?.name,
+                model: row.product?.model?.model,
+                code: row.product?.code,
+                name: row.product?.name,
+                process: row.product?.process?.name,
+                type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+                unit: row.product?.unit,
+                goal: row.goal,
+                worker_name: row.worker.name ?? '-',
+                good_quantity: row.good_quantity ?? 0,
+                poor_quantity: row.poor_quantity ?? 0,
+            })
         }
     }, [isOpen, searchKeyword])
 
@@ -87,7 +105,7 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
 
 
     const getSummaryInfo = (info) => {
-        return row[info.key] ?? '-'
+        return summaryData[info.key] ?? '-'
     }
 
     const ModalContents = () => {
