@@ -95,6 +95,13 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
           }else if(error.response.status === 404){
             Notiflix.Report.failure('에러', error.response.data.message, '확인')
+          }else if(error.response.status === 422){
+            Notiflix.Report.warning('경고', error.response.data.message, '확인')
+          }else if (error.response?.status === 423){
+            console.log("error 423 : ", error)
+            Notiflix.Loading.remove(300)
+            Notiflix.Report.failure('버전 에러', '잠시 후 다시 시도해주세요.', '확인', () => window.location.reload())
+            return false
           }
           throw error.response
         })
@@ -124,7 +131,6 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           return Axios.delete(tmpUrl, token && {'headers': {'Authorization': token}, responseType: contentsType})
               .then((result) => {
                 // if(result.data.status !== 200){
-                console.log(result)
                 //   Notiflix.Report.failure('불러올 수 없습니다.', result.data.message, '확인')
                 //   return false
                 // }
@@ -162,6 +168,11 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           }else if(error.response.status === 422){
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('권한 에러', error.response.data.message, '확인', )
+          }else if(error.response.status === 409){
+            console.log(error.response)
+            Notiflix.Loading.remove(300)
+            Notiflix.Report.failure('경고', error.response.data.message, '확인')
+            return false
           }else if(error.response.status === 500){
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')

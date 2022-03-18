@@ -175,7 +175,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
                 }
               }
             }).filter((v) => v)
-          ]
+          ],
+          date: row?.date ?? moment().format("YYYY-MM-DD")
         }
 
       }

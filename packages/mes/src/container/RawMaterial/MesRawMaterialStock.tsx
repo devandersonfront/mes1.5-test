@@ -332,7 +332,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         id: `rawin_${random_id}`,
       }
     })
-
+    setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
@@ -530,11 +530,18 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
           isExp
           nz={nzState}
           exp={expState}
-          onChangeNz={changeNzState}
-          onChangeExp={changeExpState}
+          onChangeNz={(e) => {
+            setSelectList(new Set)
+            changeNzState(e)
+          }}
+          onChangeExp={(e) => {
+            setSelectList(new Set)
+            changeExpState(e)
+          }}
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
+          setSelectList(new Set)
           if(keyword){
             router.push(`/mes/rawmaterialV1u/stock?page=1&keyword=${keyword}&opt=${optionIndex}`)
           }else{
@@ -551,7 +558,10 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={setSelectDate}
+        setSelectDate={(date) => {
+          setSelectList(new Set)
+          setSelectDate(date as {from:string, to:string})
+        }}
         title={"원자재 재고 현황"}
         buttons={
           [ '수정하기', '삭제']
@@ -592,6 +602,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         currentPage={pageInfo.page}
         totalPage={pageInfo.total}
         setPage={(page) => {
+          setSelectList(new Set)
           if(keyword){
             router.push(`/mes/rawmaterialV1u/stock?page=${page}&keyword=${keyword}&opt=${option}`)
           }else{

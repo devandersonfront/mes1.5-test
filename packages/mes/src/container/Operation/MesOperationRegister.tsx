@@ -278,6 +278,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       // if(codeCheck) {
       //   Notiflix.Report.warning("알림", "최근 작업지시서가 없어 BOM기준으로 불러왔습니다.", "확인")
       // }
+      console.log("object : ", object)
       return [{
         ...object,
         contract_id: codeCheck ? "-" : object.contract_id,
@@ -408,7 +409,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 //   setBasicRow([...resultData])
                 // }else{
                   const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
+                console.log("e : ", e)
+                console.log("resultData : ", resultData)
+                if(resultData){
                   setBasicRow([...resultData])
+                }else{
+                  setBasicRow([...e])
+                }
                 // }
               }
               let tmp: Set<any> = selectList;

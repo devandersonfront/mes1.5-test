@@ -283,10 +283,7 @@ const MesStockList = ({page, keyword, option}: IProps) => {
       <ExcelTable
         editable
         // resizable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
+        headerList={column}
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {

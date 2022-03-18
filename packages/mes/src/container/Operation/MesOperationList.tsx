@@ -380,7 +380,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         id: `sheet_${random_id}`,
       }
     })
-
+    setSelectList(new Set)
     Notiflix.Loading.remove()
     setBasicRow([...tmpBasicRow])
   }
@@ -398,16 +398,18 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         onChangeSearchKeyword={(keyword) => {
-          // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)
+          setSelectList(new Set)
           setSearchKeyword(keyword);
           setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
-          // router.push(`/mes/operationV1u/list?keyword=${keyword}&option=${option}&page=${page}`)
           setOptionIndex(option)
         }}
         //@ts-ignore
-        setSelectDate={(date) => setSelectDate(date)}
+        setSelectDate={(date) => {
+          setSelectList(new Set)
+          setSelectDate(date as {from:string, to:string})
+        }}
         title={"작업지시서 리스트"}
         buttons={
           ['', '수정하기', '삭제']
@@ -417,7 +419,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
 
             switch(e) {
               case 1:
-                if( 0 > selectList.size){
+                if( 0 >= selectList.size){
                   Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
                 }else if(selectList.size < 2){
                   dispatch(setModifyInitData({
@@ -494,6 +496,7 @@ const MesOperationList = ({page, keyword, option}: IProps) => {
           if(pageInfo.total > pageInfo.page){
             setSelectList(new Set)
             setPageInfo({...pageInfo, page:pageInfo.page+1})
+            setSelectList(new Set)
           }
         }
       }}

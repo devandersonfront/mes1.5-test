@@ -369,7 +369,7 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
         id: `sheet_${random_id}`,
       }
     })
-
+    setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
@@ -385,14 +385,17 @@ const MesRecordList = ({page, keyword, option}: IProps) => {
               setOptionIndex(e)
             }}
             onChangeSearchKeyword={(keyword) =>{
+              setSelectList(new Set)
               setSearchKeyword(keyword)
-              // SearchBasic(keyword, option, 1)
             }}
             calendarTitle={'종료일'}
             calendarType={'period'}
             selectDate={selectDate}
             //@ts-ignore
-            setSelectDate={(date) => setSelectDate(date)}
+            setSelectDate={(date) => {
+              setSelectList(new Set)
+              setSelectDate(date as {from:string, to:string})
+            }}
             title={"작업 일보 리스트"}
             buttons={
               ['', '수정하기', '삭제']

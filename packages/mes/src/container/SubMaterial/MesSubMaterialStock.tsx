@@ -306,7 +306,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         id: `rawin_${random_id}`,
       }
     })
-
+    setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
@@ -410,11 +410,15 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
     <div>
       <PageHeader
         isNz
-        onChangeNz={changeNzState}
+        onChangeNz={(e) => {
+          setSelectList(new Set)
+          changeNzState(e)
+        }}
         nz={nzState}
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
+          setSelectList(new Set)
           if(keyword){
             router.push(`/mes/submaterialV1u/stock?page=1&keyword=${keyword}&opt=${optionIndex}`)
           }else{
@@ -427,11 +431,14 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         }}
         calendarTitle={'입고일'}
         optionIndex={optionIndex}
-      isCalendar
+        isCalendar
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={setSelectDate}
+        setSelectDate={(date) => {
+          setSelectList(new Set)
+          setSelectDate(date as {from:string, to:string})
+        }}
         title={"부자재 재고 현황"}
         buttons={
           ['수정하기', '삭제']
@@ -463,6 +470,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
         currentPage={pageInfo.page}
         totalPage={pageInfo.total}
         setPage={(page) => {
+          setSelectList(new Set)
           if(keyword){
             router.push(`/mes/submaterialV1u/stock?page=${page}&keyword=${keyword}&opt=${option}`)
           }else{

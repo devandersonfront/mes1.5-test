@@ -375,7 +375,7 @@ const MesDeliveryList = ({page, keyword, option}: IProps) => {
         product_id: row.product.code ?? '-',
         code: row.product.code ?? '-',
         name: row.product.name ?? '-',
-        type: TransferCodeToValue(row.product.type, 'material'),
+        type: TransferCodeToValue(row.product.type, 'product'),
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? '-',
         amount: tmpAmount,

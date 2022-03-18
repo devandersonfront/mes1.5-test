@@ -276,6 +276,10 @@ const BasicProduct = ({}: IProps) => {
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
     }
+    // else if(!bomCheck){
+    //   Notiflix.Loading.remove()
+    //   Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
+    // }
 
   }
 

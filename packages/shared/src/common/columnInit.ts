@@ -802,8 +802,8 @@ export const columnlist: any = {
   ],
   operationCodeRegisterV2: [
     {key:"contract_id", name:"수주 번호", type: 'order', placeholder: '검색', disableType:"true", width: 118},
-    {key:"date", name:"지시 날짜", formatter: CalendarBox, width: 118},
-    {key:"deadline", name:"작업 기한", formatter: CalendarBox, width: 118},
+    {key:"date", name:"지시 날짜", formatter: CalendarBox, width: 118, type:"date"},
+    {key:"deadline", name:"작업 기한", formatter: CalendarBox, width: 118, type:"deadline"},
     {key:"customer_id", name:"거래처", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118},
     {key:"cm_id", name:"모델", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput' , width: 118},
     {key:"product_id", name:"CODE", formatter: SearchModalTest, type: 'product', placeholder: '검색', disableType:"true", width: 118},
