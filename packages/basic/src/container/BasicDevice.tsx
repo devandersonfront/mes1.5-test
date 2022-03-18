@@ -41,9 +41,7 @@ const BasicDevice = ({}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", madeAt: moment().format("YYYY-MM-DD")
-  }])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["device"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(["장치 제조사", "장치 이름", "제조 번호", "담당자"])

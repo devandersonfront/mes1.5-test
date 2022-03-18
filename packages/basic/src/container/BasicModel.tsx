@@ -31,9 +31,7 @@ const BasicModel = ({}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: ""
-  }])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
 
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["model"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -307,7 +305,7 @@ const BasicModel = ({}: IProps) => {
           ]}
       )))
     }
-    
+
     if(deletable){
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');

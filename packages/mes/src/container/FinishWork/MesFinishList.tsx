@@ -26,7 +26,7 @@ interface IProps {
 
 const MesFinishList = ({page, search, option}: IProps) => {
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{id: '',}])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["finishListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['지시고유번호', '거래처', '모델', 'code',  '품명'])

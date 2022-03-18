@@ -35,9 +35,7 @@ const BasicRawMaterial = ({}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [barcodeOpen , setBarcodeOpen] = useState<boolean>(false)
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", type: 'COIL'
-  }])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( V_columnlist["rawmaterial"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '거래처'])
