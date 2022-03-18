@@ -279,6 +279,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         process_id: row.product?.process?.name ?? "-",
         id: `sheet_${random_id}`,
         code: row.product?.code ?? '-',
+        avg_uph : row.product?.standard_uph
       }
     })
 
