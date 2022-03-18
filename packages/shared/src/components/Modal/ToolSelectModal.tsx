@@ -14,6 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {MachineInfoModal} from './MachineInfoModal'
+import {TransferCodeToValue} from "../../common/TransferFunction";
 
 interface IProps {
     column: IExcelHeaderType
@@ -49,9 +50,26 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<any[]>([])
+    const [summaryData, setSummaryData] = useState<any>({})
 
     useEffect(() => {
         if(isOpen) {
+            setSummaryData({
+                // ...res.parent
+                identification: row.identification,
+                lot_number: row.lot_number ?? '-',
+                customer: row.product?.customer?.name,
+                model: row.product?.model?.model,
+                code: row.product?.code,
+                name: row.product?.name,
+                process: row.product?.process?.name,
+                type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+                unit: row.product?.unit,
+                goal: row.goal,
+                worker_name: row?.worker?.name ?? row?.worker ?? '-',
+                good_quantity: row.good_quantity ?? 0,
+                poor_quantity: row.poor_quantity ?? 0,
+            })
             if(row?.tools){
                 const tools = []
                 row.tools.map(({tool}) => {
@@ -97,7 +115,7 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
     }
 
     const getSummaryInfo = (info) => {
-        return row[info.key] ?? '-'
+        return summaryData[info.key] ?? '-'
     }
 
     return (

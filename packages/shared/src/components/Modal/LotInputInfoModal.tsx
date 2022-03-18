@@ -351,7 +351,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                           //   seq: i+1
                           // }))])
                         if(v.lotList){
-                          console.log(v.lotList)
                           setLotList(v.lotList)
                         }
                       }
