@@ -94,6 +94,22 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen && row.modify){
       modifyLoadRecordGroup(row.osId, row.bom_root_id)
+      setSummaryData({
+        // ...res.parent
+        identification: row.identification,
+        lot_number: row.lot_number ?? '-',
+        customer: row.product?.customer?.name,
+        model: row.product?.model?.model,
+        code: row.product?.code,
+        name: row.product?.name,
+        process: row.product?.process?.name,
+        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+        unit: row.product?.unit,
+        goal: row.goal,
+        worker_name: row?.worker?.name ?? row?.worker ?? '-',
+        good_quantity: row.good_quantity ?? 0,
+        poor_quantity: row.poor_quantity ?? 0,
+      })
     }else {
       // loadRecordGroup(row.bom_root_id)
     }
@@ -136,22 +152,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     let tmpData = []
     const bom_info = row.bom_info
     const row_good_quantity = row.good_quantity
-    setSummaryData({
-      // ...res.parent
-      identification: row.identification,
-      lot_number: row.lot_number ?? '-',
-      customer: row.product?.customer?.name,
-      model: row.product?.model?.model,
-      code: row.product?.code,
-      name: row.product?.name,
-      process: row.product?.process?.name,
-      type: row.product?.type ? TransferCodeToValue(row.product.type, 'productType') : "-",
-      unit: row.product?.unit,
-      goal: row.goal,
-      worker_name: row.worker_name ?? '-',
-      good_quantity: row.good_quantity ?? 0,
-      poor_quantity: row.qoor_quantity ?? 0,
-    })
 
     if(typeof tmpRow === 'string'){
       let tmpRowArray = tmpRow.split('\n')

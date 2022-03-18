@@ -111,7 +111,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
         // let searchList = res.map((row: any, index: number) => {
         //   return changeRow(row)
         // })
-        console.log("res1 : ", res)
         let searchList = changeRow(res, row)
         setSearchList([...searchList])
       }
@@ -126,7 +125,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
         // let searchList = res.map((row: any, index: number) => {
         //   return changeRow(row)
         // })
-        console.log("res2 : ", res)
         let searchList = changeRow(Array.isArray(res) ? res : [res], row)
         setSearchList([...searchList])
       }
@@ -150,7 +148,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
       row = tmpRow
     }
 
-    console.log("row : ", row)
     tmpData = row.map((v, i) => {
       let childData: any = {}
       let type = "";
