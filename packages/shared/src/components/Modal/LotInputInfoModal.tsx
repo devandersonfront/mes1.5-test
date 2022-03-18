@@ -76,7 +76,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
         unit: row.product?.unit,
         goal: row.goal,
-        worker_name: row.worker.name ?? '-',
+        worker_name: row.worker.name ?? row.worker ?? '-',
         good_quantity: row.good_quantity ?? 0,
         poor_quantity: row.poor_quantity ?? 0,
       })
