@@ -52,6 +52,7 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [summaryData, setSummaryData] = useState<any>({})
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -74,6 +75,22 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
       }else{
         setSearchList([])
       }
+      setSummaryData({
+        // ...res.parent
+        identification: row.identification,
+        lot_number: row.lot_number ?? '-',
+        customer: row.product?.customer?.name,
+        model: row.product?.model?.model,
+        code: row.product?.code,
+        name: row.product?.name,
+        process: row.product?.process?.name,
+        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+        unit: row.product?.unit,
+        goal: row.goal,
+        worker_name: row.worker.name ?? row.worker ?? '-',
+        good_quantity: row.good_quantity ?? 0,
+        poor_quantity: row.poor_quantity ?? 0,
+      })
     }
 
   }, [isOpen, searchKeyword])
@@ -150,7 +167,7 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const getSummaryInfo = (info) => {
-    return row[info.key] ?? '-'
+    return summaryData[info.key] ?? '-'
   }
 
   return (

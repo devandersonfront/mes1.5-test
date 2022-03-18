@@ -206,14 +206,14 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               {/*  <p>엑셀로 받기</p>*/}
               {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}}  onClick={() => {
-                onRowChange({
-                  ...row,
-                  poor_quantity: 0,
-                  defect_reasons: undefined,
-                  isChange: true
-                })
-                setSearchList([])
-                setTotalCount(0)
+                // onRowChange({
+                //   ...row,
+                //   poor_quantity: 0,
+                //   defect_reasons: undefined,
+                //   isChange: true
+                // })
+                // setSearchList([])
+                // setTotalCount(0)
                 setIsOpen(false)
               }}>
                 <img style={{width: 20, height: 20}} src={IcX}/>
@@ -291,9 +291,15 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             }
             <div
               onClick={() => {
-                if(column.type !== 'readonly' && row.good_quantity < totalCount){
+                if (column.type !== 'readonly' && row.sum < totalCount) {
                   Notiflix.Report.warning("경고", "생산한 수량보다 적게 입력해주세요.", "확인",)
                   return
+                }
+                if(row.sum === undefined || row.sum === 0) {
+                  if(column.type !== 'readonly' && row.good_quantity < totalCount){
+                    Notiflix.Report.warning("경고", "생산한 수량보다 적게 입력해주세요.", "확인",)
+                    return
+                  }
                 }
                 if(selectRow !== undefined && selectRow !== null ){
                   onRowChange({
