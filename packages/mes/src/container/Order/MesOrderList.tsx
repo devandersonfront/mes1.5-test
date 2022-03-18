@@ -357,6 +357,7 @@ const MesOrderList = ({page, search, option}: IProps) => {
         id: `mold_${random_id}`,
       }
     })
+    setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
@@ -438,6 +439,7 @@ const MesOrderList = ({page, search, option}: IProps) => {
         searchKeyword={keyword}
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) => {
+          setSelectList(new Set)
           setKeyword(keyword);
           setPageInfo({page:1, total:1})
         }}
@@ -449,6 +451,7 @@ const MesOrderList = ({page, search, option}: IProps) => {
         selectDate={selectDate}
         //@ts-ignore
         setSelectDate={(date) => {
+          setSelectList(new Set)
           setSelectDate(date as {from:string, to:string})
           setPageInfo({page:1, total:1})
         }}
