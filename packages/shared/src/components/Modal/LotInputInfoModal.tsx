@@ -21,19 +21,6 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
-const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
-  [{title: '거래처', infoWidth: 144, key: 'customer'}, {title: '모델', infoWidth: 144, key: 'model'},],
-  [
-    {title: 'CODE', infoWidth: 144, key: 'code'},
-    {title: '품명', infoWidth: 144, key: 'name'},
-    {title: '품목 종류', infoWidth: 144, key: 'type'},
-    {title: '생산 공정', infoWidth: 144, key: 'process'},
-  ],
-  [{title: '단위', infoWidth: 144, key: 'unit'},{title: '목표 생산량', infoWidth: 144, key: 'goal'},],
-]
-
 const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
     {title: '지시 고유번호', infoWidth: 144, key: 'identification'},
@@ -57,7 +44,6 @@ const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: st
 ]
 
 const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
-
   const [bomDummy, setBomDummy] = useState<any[]>([])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -78,6 +64,22 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      setSummaryData({
+        // ...res.parent
+        identification: row.identification,
+        lot_number: row.lot_number ?? '-',
+        customer: row.product?.customer?.name,
+        model: row.product?.model?.model,
+        code: row.product?.code,
+        name: row.product?.name,
+        process: row.product?.process?.name,
+        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+        unit: row.product?.unit,
+        goal: row.goal,
+        worker_name: row.worker.name ?? '-',
+        good_quantity: row.good_quantity ?? 0,
+        poor_quantity: row.poor_quantity ?? 0,
+      })
       if(row.operation_sheet && row.operation_sheet?.input_bom?.length > 0){
         const ilter_nput_bom = row.operation_sheet.input_bom.map((v)=>{if(v.bom.setting === 1){
           return {...v}
@@ -95,22 +97,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     let tmpData = []
     let tmpRows = tmpRow;
 
-    setSummaryData({
-      // ...res.parent
-      identification: row.identification,
-      lot_number: row.lot_number ?? '-',
-      customer: row.product?.customer?.name,
-      model: row.product?.model?.model,
-      code: row.product?.code,
-      name: row.product?.name,
-      process: row.product?.process?.name,
-      type: row.product?.type ? TransferCodeToValue(row.product.type, 'productType') : "-",
-      unit: row.product?.unit,
-      goal: row.goal,
-      worker_name: row.worker_name ?? '-',
-      good_quantity: row.good_quantity ?? 0,
-      poor_quantity: row.qoor_quantity ?? 0,
-    })
     // if(tmpRows){
     tmpData = tmpRows?.map((v, i) => {
       let childData: any = {}

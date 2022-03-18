@@ -13,6 +13,7 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
+import {TransferCodeToValue} from "../../common/TransferFunction";
 
 interface IProps {
   column: IExcelHeaderType
@@ -46,6 +47,7 @@ const headerItems: {title: string, infoWidth: number, key: string, unit?: string
 
 const MoldListModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [summaryData, setSummaryData] = useState<any>({})
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
@@ -59,6 +61,7 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      console.log("row : ", row)
       if(!!row.molds && row.molds.length){
         setSearchList([...row.molds.map(v => {
           return {
@@ -70,6 +73,23 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
       }else{
         setSearchList([])
       }
+    console.log(row.product?.process?.name)
+      setSummaryData({
+        // ...res.parent
+        identification: row.identification,
+        lot_number: row.lot_number ?? '-',
+        customer: row.product?.customer?.name,
+        model: row.product?.model?.model,
+        code: row.product?.code,
+        name: row.product?.name,
+        process: row.product?.process?.name,
+        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+        unit: row.product?.unit,
+        goal: row.goal,
+        worker_name: row.worker.name ?? '-',
+        good_quantity: row.good_quantity ?? 0,
+        poor_quantity: row.poor_quantity ?? 0,
+      })
     }
   }, [isOpen, searchKeyword])
 
@@ -80,7 +100,6 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
       machine_idPK: row.machine_id,
       manager: row.manager ? row.manager.name : null
     }
-
     return tmpData
   }
 
@@ -115,7 +134,7 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const getSummaryInfo = (info) => {
-    return row[info.key] ?? '-'
+    return summaryData[info.key] ?? '-'
   }
 
   const ModalContents = () => {
