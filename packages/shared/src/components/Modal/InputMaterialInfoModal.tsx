@@ -96,20 +96,38 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   },[bomInfoList.index])
 
-  const loadRecordGroup = async (product_id: any) => {
+  const loadRecordGroup = async (product_id: any, os_id?: any) => {
     // Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `bomLoad`,{
-      path: {
-        product_id: product_id,
-      },
-    })
+    if(os_id) {
+      const res = await RequestMethod('get', `sheetBomLoad`, {
+        path: {
+          os_id: os_id,
+          bom: 'bom',
+          key: product_id,
+        },
+      })
 
-    if(res){
-      // let searchList = res.map((row: any, index: number) => {
-      //   return changeRow(row)
-      // })
-      let searchList = changeRow(res,row)
-      setSearchList([...searchList])
+      if (res) {
+        // let searchList = res.map((row: any, index: number) => {
+        //   return changeRow(row)
+        // })
+        let searchList = changeRow(res, row)
+        setSearchList([...searchList])
+      }
+    }else {
+      const res = await RequestMethod('get', `bomLoad`, {
+        path: {
+          product_id: product_id,
+        },
+      })
+
+      if (res) {
+        // let searchList = res.map((row: any, index: number) => {
+        //   return changeRow(row)
+        // })
+        let searchList = changeRow(res, row)
+        setSearchList([...searchList])
+      }
     }
   }
 
@@ -127,7 +145,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
         }
       }).filter(v=>v)
     }else{
-      row = [{...tmpRow}]
+      row = tmpRow
     }
 
     tmpData = row.map((v, i) => {
@@ -210,7 +228,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
         <div onClick={() => {
           setIsOpen(true)
           dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: 0, product_id:row.product.bom_root_id}))
-          loadRecordGroup(row.product.bom_root_id);
+          loadRecordGroup(row.product.bom_root_id, row.os_id);
         }}>
           <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
         </div>
