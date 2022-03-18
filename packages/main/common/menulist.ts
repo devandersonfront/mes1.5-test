@@ -146,7 +146,7 @@ const PMS_MENUS: IMenuType[] = [
     title: '프레스 모니터링', url: '',
     subMenu: [
       { title: '프레스별 분석 모니터링', url: '/pms/v2/factoryMonitoring' },
-      // { title: '프레스 현황 모니터링', url: '/pms/new/monitoring/press' }
+      { title: '프레스 상태 모니터링' , url : '/pms/new/monitoring/press'}
     ]
   },
   {
