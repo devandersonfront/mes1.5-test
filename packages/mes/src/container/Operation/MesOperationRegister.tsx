@@ -305,8 +305,9 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             name: v.child_product.name ?? v.product_name,
             product_id: v.child_product.code,
             code: v.child_product.code,
-            type: TransferCodeToValue(v.type, 'product'),
+            type: TransferCodeToValue(v.child_product.type, 'product'),
             unit: v.child_product.unit,
+            goal:  codeCheck ? 0 : object.contract.amount,
             process_id: v.child_product.process?.name ?? '-',
             readonly: true,
           }
