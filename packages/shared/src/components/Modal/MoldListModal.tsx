@@ -61,7 +61,6 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log("row : ", row)
       if(!!row.molds && row.molds.length){
         setSearchList([...row.molds.map(v => {
           return {
@@ -73,7 +72,6 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
       }else{
         setSearchList([])
       }
-    console.log(row.product?.process?.name)
       setSummaryData({
         // ...res.parent
         identification: row.identification,

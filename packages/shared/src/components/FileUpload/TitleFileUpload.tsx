@@ -3,6 +3,8 @@ import {SelectButton, TitleBox} from "../../styles/styledComponents";
 import styled from "styled-components";
 import {uploadTempFile} from "../../common/fileFuctuons";
 import {SF_ENDPOINT_S3} from "../../common/configset";
+// @ts-ignore
+import DELETE_BUTTON from "../../../../mes/public/images/file_delete_button.png"
 
 interface IProps {
     title: string
@@ -12,7 +14,7 @@ interface IProps {
     detail?: boolean
     placeholder: string
     fileOnClick: (fileObject: object)=> void
-    deleteOnClick: ()=> void
+    deleteOnClick: (index : number)=> void
 }
 
 const TitleFileUpload = ({title,index,uuid, detail,value,placeholder,fileOnClick,deleteOnClick}: IProps) => {
@@ -23,9 +25,14 @@ const TitleFileUpload = ({title,index,uuid, detail,value,placeholder,fileOnClick
         fileRef.current.click();
     }
 
+    const handleDeleteButton = () => {
+
+        deleteOnClick(index)
+    }
+
 
     return (
-        <div style={{display: "flex", marginBottom: '8px', alignItems: "center"}}>
+        <div style={{display: "flex", marginBottom: '8px', alignItems: "center" , position : 'relative'}}>
             <TitleBox>{title}</TitleBox>
             <ValueBox onClick={()=> uuid !== '' && detail && window.open(SF_ENDPOINT_S3+uuid)} style={{color: value === '' ? 'rgba(255,255,255,0.3)' : 'white', width: detail && '100%', textDecoration:  detail && "underline", textUnderlinePosition: 'under', cursor: detail && "pointer"}}>
                 {value === '' ? placeholder : value}
@@ -57,6 +64,9 @@ const TitleFileUpload = ({title,index,uuid, detail,value,placeholder,fileOnClick
                    }}
                    id={`${title}+${index}`}
                    accept={"image/png, image/jpeg, image/jpg, .xlsx, .pdf, .hwp, .doc, .docx" }/>
+            <div style={{position : 'absolute' , right : 100}} onClick={handleDeleteButton}>
+                <img src={DELETE_BUTTON} style={{width : 20 , height : 20 , cursor : 'pointer'}}/>
+            </div>
         </div>
     );
 };

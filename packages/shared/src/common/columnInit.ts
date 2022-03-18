@@ -961,7 +961,7 @@ export const columnlist: any = {
     {key: 'total_counter', name: '총 카운터', width: 118 },
     {key: 'total_good_quantity', name: '총 양품 수량', width: 118 },
     {key: 'total_poor_quantity', name: '총 불량 수량', width: 118, formatter: DefectInfoModal, type: 'readonly' ,load: 'sheet'},
-    {key:"total_uph", name:"총 UPH", width: 118},
+    {key:"avg_uph", name:"총 UPH", width: 118},
   ],
   stockV2: [
     {key:"customer_id", name:"거래처", width: 118},
