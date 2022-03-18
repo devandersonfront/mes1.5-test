@@ -31,9 +31,7 @@ const BasicModel = ({}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: ""
-  }])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
 
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["model"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -120,9 +118,9 @@ const BasicModel = ({}: IProps) => {
   const valueExistence = () => {
 
     const selectedRows = filterSelectedRows()
-    
-    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함 
-    if(selectedRows.length > 0){ 
+
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
+    if(selectedRows.length > 0){
 
       const nameCheck = selectedRows.every((data)=> data.customer_id)
       const modelCheck = selectedRows.every((data)=> data.model)
@@ -136,9 +134,9 @@ const BasicModel = ({}: IProps) => {
     }
 
     return false;
-    
+
   }
-  
+
   const SaveBasic = async () => {
 
     const existence = valueExistence()
@@ -246,7 +244,7 @@ const BasicModel = ({}: IProps) => {
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -262,7 +260,7 @@ const BasicModel = ({}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -302,7 +300,7 @@ const BasicModel = ({}: IProps) => {
           ]}
       )))
     }
-    
+
     if(deletable){
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');
@@ -559,7 +557,7 @@ const BasicModel = ({}: IProps) => {
         SaveBasic()
         break;
       case 5:
-        
+
         if(selectList.size === 0){
           return Notiflix.Report.warning(
         '경고',

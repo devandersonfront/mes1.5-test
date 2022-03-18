@@ -29,9 +29,7 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: "", unit: 'EA'
-  }])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["submaterial"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['부자재 CODE', '부자재 품명', '거래처'])
@@ -207,7 +205,7 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -223,7 +221,7 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -262,7 +260,7 @@ const BasicSubMaterial = ({page, search, option}: IProps) => {
           }
       )))
     }
-    
+
     if(deletable){
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');

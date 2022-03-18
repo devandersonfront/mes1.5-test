@@ -38,7 +38,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [tab, setTab] = useState<number>(0)
   const [searchModalInit, setSearchModalInit] = useState<any>()
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
