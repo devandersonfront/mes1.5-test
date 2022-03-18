@@ -27,9 +27,7 @@ const BasicCustomer = ({}: IProps) => {
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    name: "", id: ""
-  }])
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["customer"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처명', '대표자명', '담당자명', '전화 번호','휴대폰 번호', '팩스 번호', '주소', '사업자 번호'])
@@ -224,7 +222,7 @@ const BasicCustomer = ({}: IProps) => {
   }
 
 
-  
+
 
   const DeleteBasic = async () => {
 
@@ -246,7 +244,7 @@ const BasicCustomer = ({}: IProps) => {
       )))
 
     }
-    
+
     if(deletable){
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');
