@@ -30,6 +30,8 @@ const MesProductChangeRegister = () => {
         ]
     )
 
+    console.log(files,'filesfilesfiles')
+
     const productChangeSave = async () => {
         const filesFilter = files.filter((v)=> v.name !== '')
 
@@ -58,8 +60,16 @@ const MesProductChangeRegister = () => {
     }
 
     const fileChange = (fileInfo: ChangeProductFileInfo, index: number) => {
-        const temp = files
+        const temp = [...files]
         temp[index] = fileInfo
+        setFiles([...temp])
+    }
+
+    const deleteFile = (index : number) => {
+
+        const initFile = {name: '', UUID: '', sequence: index + 1}
+        const temp = [...files]
+        temp[index] = initFile
         setFiles([...temp])
     }
 
@@ -75,7 +85,6 @@ const MesProductChangeRegister = () => {
             <ExcelTable
                 editable
                 headerList={[
-                    SelectColumn,
                     ...column
                 ]}
                 row={basicRow}
@@ -95,7 +104,7 @@ const MesProductChangeRegister = () => {
             <TitleInput title={'제목'} value={changeInfo.title} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, title: e.target.value})}/>
             <TitleTextArea title={'설명'} value={changeInfo.content} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, content: e.target.value})}/>
             {files.map((v,i) =>
-                <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} value={v.name} placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={(fileInfo: ChangeProductFileInfo)=>fileChange(fileInfo,i)}/>
+                <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} value={v.name} placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={deleteFile} fileOnClick={(fileInfo: ChangeProductFileInfo)=>fileChange(fileInfo,i)}/>
             )}
             <TitleCalendarBox value={changeInfo.registered} onChange={(date)=>setChangeInfo({...changeInfo, registered: moment(date).format('YYYY.MM.DD')})}/>
         </div>

@@ -55,7 +55,6 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     row.lots.map(v => {
       if(v.amount) total += v.amount
     })
-    console.log(row)
     let tmpData = {
       ...row,
       customer_id: row.product?.customer?.name,
