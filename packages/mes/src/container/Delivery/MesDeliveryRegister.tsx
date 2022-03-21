@@ -52,7 +52,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
                 contract_id: res.info_list[0].identification,
                 product:res.info_list[0].product,
                 // product_id: res.info_list[0].product.product_id,
-                customer_id: res.info_list[0].product.customer.name,
+                customer_id: res.info_list[0].product.customer?.name,
                 name: res.info_list[0].product.name,
                 product_name: res.info_list[0].product.name,
                 cm_id: res.info_list[0].product.model?.model,
