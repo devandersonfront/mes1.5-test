@@ -125,7 +125,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         onChange={async (e) => {
           if(e.target.files && e.target.files.length !== 0) {
               // Buffer.from(e.target.files[0]);
-              console.log(e.target.files[0],'e.target.files[0]')
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
 
               if(uploadImg !== undefined){
