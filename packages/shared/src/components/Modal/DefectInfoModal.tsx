@@ -206,15 +206,19 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               {/*  <p>엑셀로 받기</p>*/}
               {/*</Button>*/}
               <div style={{cursor: 'pointer', marginLeft: 20}}  onClick={() => {
-                onRowChange({
-                  ...row,
-                  poor_quantity: 0,
-                  defect_reasons: undefined,
-                  isChange: true
-                })
-                setSearchList([])
-                setTotalCount(0)
-                setIsOpen(false)
+                if(column.type !== 'readonly') {
+                  onRowChange({
+                    ...row,
+                    poor_quantity: 0,
+                    defect_reasons: undefined,
+                    isChange: true
+                  })
+                  setSearchList([])
+                  setTotalCount(0)
+                  setIsOpen(false)
+                }else {
+                  setIsOpen(false)
+                }
               }}>
                 <img style={{width: 20, height: 20}} src={IcX}/>
               </div>
