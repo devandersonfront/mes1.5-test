@@ -301,7 +301,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                   >
                     {
                       searchModalInit && searchModalInit.searchFilter.map((v, i) => {
-                        return (<option value={i}>{v}</option>)
+                        if(v !== ""){
+                          return (<option value={i}>{v}</option>)
+                        }
                       })
                     }
                   </select>
