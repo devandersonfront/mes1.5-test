@@ -418,7 +418,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 if(!equal) return eValue
               })
               if(eData.length <= 0){
-                console.log("e : ", e)
                 setBasicRow([...e])
               }else{
                 // if(codeCheck) {
@@ -426,7 +425,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 //   setBasicRow([...resultData])
                 // }else{
                   const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
-                console.log("resultData : ", resultData)
                   setBasicRow([...resultData])
                 // }
               }
