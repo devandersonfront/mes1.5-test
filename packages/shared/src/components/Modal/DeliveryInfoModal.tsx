@@ -29,7 +29,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [total, setTotal] = useState<number>(0)
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -38,8 +38,10 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
-    if(isOpen) SearchBasic()
-  }, [row])
+    if(isOpen) {
+      SearchBasic()
+    }
+  }, [row, isOpen])
   // useEffect(() => {
   //   if(pageInfo.total > 1){
   //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -60,7 +62,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
       seq: index+1,
       identification: row.identification,
       customer_id: row.product?.customer?.name,
-      cm_id: row.product?.model.model,
+      cm_id: row.product?.model?.model,
       product_id: row.product?.code,
       name: row.product?.name,
       type: TransferCodeToValue(row.product?.type, 'product'),
@@ -79,7 +81,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     const res = await RequestMethod('get', `shipmentSearch`,{
       path: {
         page: 1,
-        renderItem: 100000,
+        renderItem: 15,
       },
       params: {
         contract_id: row.contract_id
@@ -103,7 +105,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         <div onClick={() => {
           setIsOpen(true)
         }}>
-          <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{total}</p>
+          <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{row.shipment_amount}</p>
         </div>
       </div>
     </>
