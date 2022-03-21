@@ -255,22 +255,22 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 <p style={{fontSize: 22, padding: 0, margin: 0}}>작업이력</p>
               </div>
             </div>
-            <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <Button onClick={() => {
-                let tmp = searchList
+            {/*<div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>*/}
+            {/*  <Button onClick={() => {*/}
+            {/*    let tmp = searchList*/}
 
-                setSearchList([
-                  ...searchList,
-                  {
-                    sequence: searchList.length+1,
-                    start: moment().format('YYYY-MM-DD'),
-                    end: moment().format('YYYY-MM-DD'),
-                  }
-                ])
-              }}>
-                <p>행 추가</p>
-              </Button>
-            </div>
+            {/*    setSearchList([*/}
+            {/*      ...searchList,*/}
+            {/*      {*/}
+            {/*        sequence: searchList.length+1,*/}
+            {/*        start: moment().format('YYYY-MM-DD'),*/}
+            {/*        end: moment().format('YYYY-MM-DD'),*/}
+            {/*      }*/}
+            {/*    ])*/}
+            {/*  }}>*/}
+            {/*    <p>행 추가</p>*/}
+            {/*  </Button>*/}
+            {/*</div>*/}
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
