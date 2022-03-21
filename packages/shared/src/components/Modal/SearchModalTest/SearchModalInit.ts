@@ -84,7 +84,8 @@ export const SearchInit: Record<string, SearchInitType> = {
   },
   machine: {
     title: '기계 검색',
-    searchFilter: ['제조 번호', '기게 이름', '기계 종류', '톤 수', '공장명'],
+    // searchFilter: ['제조 번호', '기게 이름', '기계 종류', '톤 수', '공장명'],
+    searchFilter: ['제조사명', '기계명', '기계 종류', '제조번호명', '', '공장명', '세분화 공장명'],
     excelColumnType: 'machine'
   },
   device: {
