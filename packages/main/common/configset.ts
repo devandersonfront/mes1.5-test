@@ -60,7 +60,7 @@ export const AUTHORITY_LIST = [
           { title: "공정 일시정지 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_09" },
         ]},
       { title: "품질 기준정보", show: false, checkable: true, check: false, child: [
-          { title: "공정별 자주검사 항목 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_03" },
+          { title: "공정별 불량유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_03" },
         ]},
       { title: "주변장치 기준정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_12" },
       { title: "기계 기준 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_04" },

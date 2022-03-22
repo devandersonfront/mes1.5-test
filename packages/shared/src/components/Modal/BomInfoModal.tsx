@@ -344,7 +344,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     if(modify){
       return <>
         <div style={{
-          padding: '3.5px 0px 0px 3.5px',
+          padding: '3.5px 0px 0px 2.5px',
           width: 112
         }}>
           <Button onClick={() => {
