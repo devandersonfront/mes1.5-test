@@ -226,7 +226,7 @@ export const columnlist: any = {
   stockProduct: [
     {key:'customer_id', name:"고객사명"},
     {key:'cm_id', name:"모델"},
-    {key:'product_id', name:"CODE"},
+    {key:'code', name:"CODE"},
     {key:'name', name:"품명"},
   ],
   stockDate: [
