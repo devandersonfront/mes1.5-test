@@ -70,11 +70,11 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 padding: '3.5px 0px 0px 3.5px',
                 width: 112
             }}>
-                <Button onClick={() => {
+                <Underline onClick={() => {
                     setIsOpen(true)
                 }}>
                     <p>공구 수정</p>
-                </Button>
+                </Underline>
             </div>
 
         }else{
@@ -99,19 +99,19 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         }
 
         return true;
-    } 
-    
+    }
+
       // 데이터 유무 판단
     const haveDataValidation = () => {
-    
+
         let dataCheck = true
-    
+
         searchList.map((v,i)=>{
             if(!v.tool_id){
                 dataCheck = false
             }
         })
-    
+
         return dataCheck
     }
 
@@ -121,7 +121,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         // const haveList = searchList.length === 0
         const haveData = haveDataValidation()
         const haveBasic = haveBasicValidation()
-    
+
         if(!haveData){
             isValidation = true
             Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
@@ -129,9 +129,9 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             isValidation = true
             Notiflix.Report.warning("경고","기본설정은 최소 한개 이상 필요합니다.","확인",)
         }
-    
+
         return isValidation
-    
+
     }
 
     return (
@@ -272,11 +272,11 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                                 return
                               }
                               let tmpRow = [...searchList]
-                
+
                               let tmp = tmpRow[selectRow]
                               tmpRow[selectRow] = tmpRow[selectRow - 1]
                               tmpRow[selectRow - 1] = tmp
-                
+
                               // setSearchList([...tmpRow.map((v, i) => {
                               //   if(!searchList[selectRow-1].border){
                               //     searchList.map((v,i)=>{
@@ -309,7 +309,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                               let tmp = tmpRow[selectRow]
                               tmpRow[selectRow] = tmpRow[selectRow + 1]
                               tmpRow[selectRow + 1] = tmp
-                
+
                               // setSearchList([...tmpRow.map((v, i) => {
                               //   if(!searchList[selectRow+1].border){
                               //     searchList.map((v,i)=>{
@@ -331,7 +331,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                                     seq: i+1
                                   }
                                 })])
-                
+
                             }}>
                               <p>아래로</p>
                         </Button>
@@ -344,7 +344,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                             if(selectRow === -1){
                                 return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
                             }
-                              
+
                             let tmpRow = [...searchList]
                             tmpRow.splice(selectRow, 1)
                             setSearchList([...tmpRow.map((v, i) => {
@@ -354,7 +354,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                                   }
                             })])
                             setSelectRow(-1)
-                              
+
                         }}>
                             <p>삭제</p>
                         </Button>
@@ -412,7 +412,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                                             }),
                                             name: row.name,
                                             isChange: true
-                                            
+
                                         })
                                     }
                                     setIsOpen(false)
@@ -447,6 +447,16 @@ const Button = styled.button`
     align-items:center;
     cursor:pointer;
     
+`;
+
+const Underline = styled.div`
+  color:white;
+  text-decoration:underline;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:112px;
+  height:32px;
 `;
 
 const HeaderTable = styled.div`

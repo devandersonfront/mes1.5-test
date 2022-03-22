@@ -29,7 +29,6 @@ const modify = true
 
 const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
   const router = useRouter()
-
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)

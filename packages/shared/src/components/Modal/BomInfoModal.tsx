@@ -54,7 +54,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       // if(row.bom_root_id){
 
       if(column.type ==='bomRegister'){
-        
+
         if(row.product_id){
           SearchBasic().then(() => {
             Notiflix.Loading.remove()
@@ -387,21 +387,20 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         </div>
       </>
     }else{
-      if(column.type === 'readonly'){
+      if(column.type === 'readonly' || row.bom_root_id){
         return <>
           <div style={{
             // padding: '3.5px 0px 0px 3.5px',
             width: '100%',
           }}>
             <div onClick={() => {
-
               if (row.bom_root_id) {
                 setIsOpen(true)
               } else {
                 Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
                 })
               }
-              
+
             }}>
               <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>
             </div>
@@ -421,7 +420,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 Notiflix.Report.warning("경고","BOM을 등록하시려면 CODE가 입력 되어야합니다.","확인",)
               }
             }}>
-              <p>BOM 등록</p>
+                  <p>BOM 등록</p>
             </UploadButton>
           </div>
         </>
@@ -566,7 +565,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
             <HeaderTableTextInput style={{width: 144}}>
               <HeaderTableText>{headerData ? headerData.unit : row.unit ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
-            
+
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
@@ -613,7 +612,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
               })}
               </div>
             </div>
-            {column.type !== "readonly" &&
+            {column.type !== "readonly" && tabStore.index === 0 &&
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
               <Button onClick={() => {
                 let tmp = searchList

@@ -125,11 +125,11 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             padding: '3.5px 0px 0px 3.5px',
             width: 112
           }}>
-            <Button onClick={() => {
+            <Underline onClick={() => {
               setIsOpen(true)
             }}>
               <p>금형 수정</p>
-            </Button>
+            </Underline>
           </div>
         </>
       }else{
@@ -436,6 +436,16 @@ const SearchModalWrapper = styled.div`
   display: flex;
   width: 100%;
 `
+
+const Underline = styled.div`
+  color:white;
+  text-decoration:underline;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:112px;
+  height:32px;
+`;
 
 const Button = styled.button`
     width:112px;
