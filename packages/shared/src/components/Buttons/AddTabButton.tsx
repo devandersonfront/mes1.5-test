@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";
-import {add_summary_info} from "../../reducer/infoModal";
+import {add_summary_info, change_summary_info_index} from "../../reducer/infoModal";
 import {RequestMethod, RootState} from '../../index'
 import moment from "moment";
 
@@ -134,7 +134,12 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           }else {
 
             if (row.bom_root_id) {
-              dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1, product_id:row.bom_root_id}))
+              const check = tabStore.datas.findIndex((tab) => tab.code == row.bom_root_id)
+              if(check >= 0){
+                dispatch(change_summary_info_index(check))
+              }else{
+                dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1, product_id:row.bom_root_id}))
+              }
             } else {
               Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
               })
