@@ -89,6 +89,19 @@ export const SearchResultSort = (infoList, type: string) => {
         }
       }) : []
     }
+    case 'receiveContract': {
+      return infoList ? infoList.map((v) => {
+        return {
+          ...v,
+          customer_name: v.product.customer?.name,
+          model_name: v.product.model?.model,
+          product_code: v.product.code,
+          product_name: v.product.name,
+          product_type: TransferCodeToValue(v.product.type, 'product'),
+          product_unit: v.product.unit,
+        }
+      }) : []
+    }
     case 'machine': {
       return infoList.map((v) => {
         return {
@@ -138,7 +151,7 @@ export const SearchResultSort = (infoList, type: string) => {
   }
 }
 
-export const SearchModalResult = (selectData, type: string , staticCalendar?: boolean) => {
+export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean) => {
 
   switch(type) {
     case 'user': {
@@ -306,27 +319,29 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         crn:selectData.crn,
       }
     }
+    case 'receiveContract':
     case 'contract': {
+      console.log("selectData : ", selectData)
       return {
         contract: {
           ...selectData,
         },
+        bom_root_id: selectData.product?.bom_root_id,
+        customer: selectData.product?.customer?.name,
+        customer_id: selectData.product?.customer?.name,
+        model: selectData.product?.model?.model,
+        cm_id: selectData.product?.model?.model,
+        code: selectData.product?.code,
+        product_id: selectData.product?.code,
+        product_name: selectData.product?.name,
+        name: selectData.product?.name,
+        type: TransferCodeToValue(selectData.product?.type, 'product'),
+        unit: selectData.product?.unit,
+        process: selectData.product?.process?.name,
+        contract_id: selectData.identification,
         product: {
           ...selectData.product
         },
-        bom_root_id: selectData.product.bom_root_id,
-        customer: selectData.product.customer?.name,
-        customer_id: selectData.product.customer?.name,
-        model: selectData.product.model?.model,
-        cm_id: selectData.product.model?.model,
-        code: selectData.product.code,
-        product_id: selectData.product.code,
-        product_name: selectData.product.name,
-        name: selectData.product.name,
-        type: TransferCodeToValue(selectData.product.type, 'product'),
-        unit: selectData.product.unit,
-        process: selectData.product.process?.name,
-        contract_id: selectData.identification
       }
     }
     case 'toolRegister': {

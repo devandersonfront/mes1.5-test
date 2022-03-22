@@ -14,15 +14,13 @@ interface IProps {
 const FinishButton = ({ row, column, onRowChange}: IProps) => {
   const [title, setTitle] = useState<string>("작업 종료")
 
-  const router = useRouter()
-
   const SaveBasic = async () => {
     let res: any
-    res = await RequestMethod('post', `sheetSave`,
-      [{
+    res = await RequestMethod('post', `sheetFinish`,
+      {
         ...row,
         status: 2
-      }]).catch((err) => {
+      }).catch((err) => {
         Notiflix.Report.failure("에러",err.data.message,"확인")
     })
 

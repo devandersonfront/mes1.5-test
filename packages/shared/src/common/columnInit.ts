@@ -966,7 +966,7 @@ export const columnlist: any = {
   stockV2: [
     {key:"customer_name", name:"거래처", width: 118},
     {key:"customer_model", name:"모델", width: 118},
-    {key:"product_id", name:"CODE", width: 118 },
+    {key:"code", name:"CODE", width: 118 },
     {key:"name", name:"품명", width: 118 },
     {key:"type", name:"품목 종류", width: 118 },
     {key:"unit", name:"단위", width: 118   },
@@ -1003,7 +1003,8 @@ export const columnlist: any = {
     {key:"type", name:"품목 종류", width: 118 },
     {key:"unit", name:"단위", width: 118 },
     {key:"amount", name:"수주량", width: 118 },
-    {key:"route_operation_register", name:"지시 고유 번호", width: 118, formatter: OperationInfoModal},
+    {key:"operation_sheet_list", name:"지시 지시 목록", width: 118, formatter: OperationInfoModal},
+    {key:"route_sheet_register", name:"지시 지시 등록", width: 118, formatter: OperationInfoModal, type:"register"},
     {key:"shipment_id", name:"납품 수량", width: 118, formatter: DeliveryInfoModal },
     {key:"route_shipment_register", name:"납품 등록", width: 118, formatter: OrderRegisterButton, title: '납품 등록', url: '/mes/delivery/register'   },
   ],

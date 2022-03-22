@@ -34,11 +34,11 @@ interface IProps {
     changeSelectMonth?:(value:string) => void
 }
 
-// const optionList = ['고객사명','대표자명','담당자명', '', '', '주소', '사업자 번호']
+// const optionList = ['거래처명','대표자명','담당자명', '', '', '주소', '사업자 번호']
 //{column, row, onRowChange}: IProps
 const StockSearchModal = ({onDataLoadModal, setOnDataLoadModal, onChangeSelectDate, setModalResult, setState, changeSelectMonth}:IProps) => {
 
-    const [title, setTitle] = useState<string>('고객사')
+    const [title, setTitle] = useState<string>('거래처')
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [keyword, setKeyword] = useState<string>('')
     const [selectRow, setSelectRow] = useState<number>()

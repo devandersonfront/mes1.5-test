@@ -61,9 +61,9 @@ export const AUTHORITY_LIST = [
           { title: "유저 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_HR_01" },
           { title: "권한 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_HR_02" },
         ] },
-      { title: "고객사 관리", show: false, checkable: true, check: false, child: [
-          { title: "고객사 정보 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_01" },
-          { title: "고객사 모델 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_08" },
+      { title: "거래처 관리", show: false, checkable: true, check: false, child: [
+          { title: "거래처 정보 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_01" },
+          { title: "거래처 모델 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_08" },
         ]},
       { title: "공정 관리", show: false, checkable: true, check: false, child: [
           { title: "공정 종류 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_02" },
