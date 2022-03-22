@@ -19,7 +19,7 @@ import moment from 'moment'
 import ExcelDownloadModal from '../../../component/Modal/ExcelDownloadMoadal'
 
 const title = '원자재 입고 관리'
-const optList = ['고객사명', '모델명', 'CODE', '품명', 'Lot번호']
+const optList = ['거래처명', '모델명', 'CODE', '품명', 'Lot번호']
 
 interface IProps {
   children?: any

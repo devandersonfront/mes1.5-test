@@ -21,7 +21,7 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['고객사명','모델명','CODE', '품명', '재질']
+const optionList = ['거래처명','모델명','CODE', '품명', '재질']
 
 const PoorQuantityModal = ({column, row, onRowChange}: IProps) => {
   const [isExist, setIsExist] = useState<boolean>(false)

@@ -207,7 +207,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     {/*}*/}
                     <HeaderTable>
                         <HeaderTableTitle>
-                            <HeaderTableText style={{fontWeight: 'bold'}}>고객사명</HeaderTableText>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
                         </HeaderTableTitle>
                         <HeaderTableTextInput style={{width: 144}}>
                             <HeaderTableText>{row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
