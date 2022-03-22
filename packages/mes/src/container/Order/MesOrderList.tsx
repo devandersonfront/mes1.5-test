@@ -280,7 +280,6 @@ const MesOrderList = ({page, search, option}: IProps) => {
         }
       }
     }).filter((v:any) => v)
-
     let additionalMenus = res.menus ? res.menus.map((menu:any) => {
       if(menu.colName === null){
         return {

@@ -37,10 +37,10 @@ const BASIC_MENUS: IMenuType[] = [
   },
   {title: '공장 기준정보', url: '/mes/basic/factory'},
   {
-    title: '고객사 관리', url: '',
+    title: '거래처 관리', url: '',
     subMenu: [
-      {title: '고객사 정보 관리', url: '/mes/basic/customer?page=1'},
-      {title: '고객사 모델 관리', url: '/mes/basic/customer/model?page=1'},
+      {title: '거래처 정보 관리', url: '/mes/basic/customer?page=1'},
+      {title: '거래처 모델 관리', url: '/mes/basic/customer/model?page=1'},
     ]
   },
   {title: '공정 관리', url: '',

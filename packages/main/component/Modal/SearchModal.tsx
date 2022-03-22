@@ -21,9 +21,9 @@ interface IProps {
 
 const optionList = {
   member: ['사용자명'],
-  product: ['고객사명','모델명','CODE', '품명', '재질'],
-  customer: ['고객사명'],
-  model: ['고객사명', '모델']
+  product: ['거래처명','모델명','CODE', '품명', '재질'],
+  customer: ['거래처명'],
+  model: ['거래처명', '모델']
 }
 
 const SearchModal = ({column, row, onRowChange}: IProps) => {
@@ -54,10 +54,10 @@ const SearchModal = ({column, row, onRowChange}: IProps) => {
         setTitle('제품')
         break;
       case 'customer':
-        setTitle('고객사')
+        setTitle('거래처')
         break;
       case 'model':
-        setTitle('고객사 모델')
+        setTitle('거래처 모델')
         break;
       default:
         setTitle('')

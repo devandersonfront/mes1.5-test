@@ -16,6 +16,8 @@ import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import {useRouter} from 'next/router'
 import {TransferCodeToValue} from '../../common/TransferFunction'
+import {useDispatch} from "react-redux";
+import {change_operation_searchKey} from "../../reducer/operationRegisterState";
 
 interface IProps {
   column: IExcelHeaderType
@@ -25,11 +27,10 @@ interface IProps {
 }
 
 const optionList = ['수주 번호', '거래처명', '모델', 'CODE', '품명', '지시고유번호']
-const modify = true
 
 const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [title, setTitle] = useState<string>('기계')
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -95,7 +96,7 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const ModalContents = () => {
-    if(modify){
+    if(column?.type !== "register"){
       return <>
         <div style={{
           padding: '3.5px 0px 0px 3.5px',
@@ -115,7 +116,13 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
           width: '100%'
         }}>
           <UploadButton onClick={() => {
-            router.push('/mes/operationV1u/register')
+            console.log(row)
+            if(row?.productId){
+              dispatch(change_operation_searchKey(row?.identification))
+              router.push('/mes/operationV1u/register')
+            }else{
+              Notiflix.Report.warning("수주번호가 없습니다.", "", "확인")
+            }
           }}>
             <p>작업 지시 등록</p>
           </UploadButton>

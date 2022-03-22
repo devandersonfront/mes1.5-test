@@ -24,7 +24,7 @@ interface IProps {
     option?: number
 }
 
-const optList = ["고객사명", "모델", "CODE", "품명"];
+const optList = ["거래처명", "모델", "CODE", "품명"];
 const Stock = ({page, keyword, option}: IProps) => {
     const router = useRouter();
 

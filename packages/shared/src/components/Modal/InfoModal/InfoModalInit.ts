@@ -58,7 +58,7 @@ export const BomRegisterInit = {
   buttonText: '자재확인',
   modalKey: 'bomRegister',
   summaryInfo: [
-    [{title: '고객사명', infoWidth: 144, key: 'customer'}, {title: '모델', infoWidth: 144, key: 'model'},],
+    [{title: '거래처명', infoWidth: 144, key: 'customer'}, {title: '모델', infoWidth: 144, key: 'model'},],
     [
       {title: 'CODE', infoWidth: 144, key: 'code'},
       {title: '품명', infoWidth: 144, key: 'name'},
@@ -75,7 +75,7 @@ export const BomInfoInit = {
   buttonText: 'BOM 보기',
   modalKey: 'bomRegister',
   summaryInfo: [
-    [{title: '고객사명', infoWidth: 144, key: 'customer'}, {title: '모델', infoWidth: 144, key: 'model'},],
+    [{title: '거래처명', infoWidth: 144, key: 'customer'}, {title: '모델', infoWidth: 144, key: 'model'},],
     [
       {title: 'CODE', infoWidth: 144, key: 'code'},
       {title: '품명', infoWidth: 144, key: 'name'},
@@ -231,7 +231,7 @@ export const SummaryInfoInit: Record<string, Array<SummaryInfoInitType[]>> = {
   ],
   product: [
     [
-      {title: '고객사명', key: 'customer'},
+      {title: '거래처명', key: 'customer'},
       {title: '모델', key: 'model'},
     ],
     [
@@ -247,7 +247,7 @@ export const SummaryInfoInit: Record<string, Array<SummaryInfoInitType[]>> = {
   ],
   product_no_cavity: [
     [
-      {title: '고객사명', key: 'customer'},
+      {title: '거래처명', key: 'customer'},
       {title: '모델', key: 'model'},
     ],
     [

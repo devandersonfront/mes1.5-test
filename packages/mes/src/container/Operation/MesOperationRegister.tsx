@@ -6,7 +6,7 @@ import {
   ExcelTable,
   Header as PageHeader,
   IExcelHeaderType,
-  RequestMethod,
+  RequestMethod, RootState,
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -15,6 +15,8 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
+import {useSelector} from "react-redux";
+import {SearchModalResult, SearchResultSort} from "shared/src/Functions/SearchResultSort";
 
 interface IProps {
   page?: number
@@ -24,8 +26,9 @@ interface IProps {
 
 const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const router = useRouter()
-
-  const [bomCheck, setBomCheck] = useState<boolean>(false)
+  const receiveKey = useSelector((root:RootState) => root.OperationRegisterState);
+  //처음인지 확인하는 state 하나 필요
+  const [firstCheck, setFirstCheck] = useState<boolean>(true)
   const [codeCheck, setCodeCheck] = useState<boolean>(true)
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
@@ -207,7 +210,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     })
     let resultData = [];
     if(res){
-      setBomCheck(true)
       setSelectList(new Set())
       Notiflix.Report.success("알림","최근 작업지시서를 불러왔습니다.","확인")
       let row:any = [];
@@ -297,7 +299,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     if(res){
       let tmp: Set<any> = selectList
       setSelectList(new Set())
-      setBomCheck(false)
       // if(codeCheck) {
       //   Notiflix.Report.warning("알림", "최근 작업지시서가 없어 BOM기준으로 불러왔습니다.", "확인")
       // }
@@ -310,6 +311,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         name: object.product_name ?? '-',
         date: object?.date ?? moment().format('YYYY-MM-DD'),
         deadline: object?.deadline ?? moment().format('YYYY-MM-DD'),
+        first:true,
       }, ...res.map(v => {
         if(v.type === 2){
           let random_id = Math.random()*1000;
@@ -335,7 +337,9 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             readonly: true,
           }
         }
-      }).filter(v => v)]
+      }).filter(v => v)
+
+    ]
     }
   }
 
@@ -380,7 +384,27 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   }
 
   useEffect(() => {
-    getMenus()
+    if(receiveKey.searchKey !== "" && firstCheck){
+      setColumn(columnlist["operationIdentificationRegisterV2"])
+      RequestMethod("get", "contractSearch", {
+        params:{
+          keyword:receiveKey.searchKey,
+          opt:0
+        }
+      })
+          .then(async(res) => {
+            await loadGraphSheet(res.info_list[0].productId,  SearchModalResult(SearchResultSort(res.info_list, "contract")[0], "receiveContract"))
+                .then((res) => {
+                  setBasicRow(res)
+                  setCodeCheck(false)
+                  setFirstCheck(false)
+                })
+
+          })
+    }else{
+      getMenus()
+      setFirstCheck(false)
+    }
   }, [codeCheck])
 
 
@@ -389,10 +413,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       <div>
         <PageHeader
             isCode
-            onChangeCode={(value)=> {setCodeCheck(value), setBasicRow([{
-              id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
-              deadline: moment().format('YYYY-MM-DD'), first:true
-            }])}}
+            onChangeCode={(value)=> {
+              setCodeCheck(value),
+              setBasicRow([{
+                id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
+                deadline: moment().format('YYYY-MM-DD'), first:true
+              }])
+            }}
             code={codeCheck}
             title={"작업지시서 등록"}
             buttons={['', '', '저장하기', '삭제']}
