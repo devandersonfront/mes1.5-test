@@ -30,6 +30,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
       className={'editCell'}
       ref={autoFocusAndSelect}
       value={row[column.key]}
+      type={column.type === "number" ? "number" : "text"}
       onFocus={() => {
         if(column.searchType === 'record' && row.osd_id){
           onClose(true)
