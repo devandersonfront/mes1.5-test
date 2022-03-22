@@ -110,7 +110,7 @@ export const AUTHORITY_LIST = [
         //         { title: "공구 입고 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_TOOL_01" },
         //         { title: "공구 재고 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_TOOL_02" },
         //     ] },
-      { title: "납품 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_SHPT_01" },
+      // { title: "납품 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_SHPT_01" },
     ]
   },
   // { title: "PMS", show: false, checkable: false,
