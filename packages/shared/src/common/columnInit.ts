@@ -55,6 +55,7 @@ import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFact
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
 import placeholder from "lodash/fp/placeholder";
 import {OnClickContainer} from '../components/InputBox/OnClickContainer'
+import { InputWithDropDown } from '../components/Dropdown/InputWithDropDown'
 
 
 export const columnlist: any = {
@@ -310,7 +311,11 @@ export const columnlist: any = {
     {key: 'slideHeight', name: '슬라이드 위치',editor: TextEditor,formatter: PlaceholderBox, placeholder: '0',type:"number"},
     {key: 'limit', name: '최대타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력',type:"number"},
     {key: 'inspect', name: '점검타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력',type:"number"},
-    // {key: 'inspect', name: '점검주기', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력'},
+    {key: 'period', name: '점검주기', formatter: InputWithDropDown , selectList: [
+      {pk: 'day', name: '일'},
+      {pk: 'week' , name :'주'},
+      {pk: 'month' , name : '월'},
+    ]},
     {key: 'current', name: '현재타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력',type:"number"},
     {key: 'product_id', name: '생산품목', formatter: ProductInfoModal, type:"mold", headerType:[  {code:"CODE", name:"금형명"},
                                                                                                  {cavity:"캐비티", spm:"SPM", slideHeight:"슬라이드 위치"},

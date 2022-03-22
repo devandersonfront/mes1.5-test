@@ -484,6 +484,8 @@ const BasicMold = ({}: IProps) => {
         setBasicRow([
           {
             ...items,
+            period : 0,
+            period_unit : 0,
             id: `process_${random_id}`,
             name: null,
             additional: [],
