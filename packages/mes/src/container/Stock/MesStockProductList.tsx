@@ -193,9 +193,9 @@ const MesStockProductList = ({page, keyword, option}) => {
         ...row,
         customer_name: row.product?.customer?.name ?? "-",
         customer_model:row.product?.model?.model ?? "-",
-        model:row.product?.model?.model ?? "-",
+        // model:row.product?.model?.model ?? "-",
         code:row.product?.code ?? "-",
-        // product_id:row.product?.code ?? "-",
+        product_id:row.product?.code ?? "-",
         name: row.product?.name ?? "-",
         id: `product_${random_id}`,
       }

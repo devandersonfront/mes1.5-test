@@ -10,11 +10,11 @@ const BASIC_MENUS: IMenuType[] = [
     ]
   },
   {
-    title: '고객사 관리',
+    title: '거래처 관리',
     url: '',
     subMenu: [
-      { title: '고객사 정보 관리', url: '' },
-      { title: '고객사 모델 관리', url: '' }
+      { title: '거래처 정보 관리', url: '' },
+      { title: '거래처 모델 관리', url: '' }
     ]
   },
   {

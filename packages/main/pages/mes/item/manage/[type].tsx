@@ -74,7 +74,7 @@ export const getServerSideProps = async (ctx: any) => {
         }
       case 'model':
         return {
-          title: "고객사 모델정보",
+          title: "거래처 모델정보",
           code: 'ROLE_BASE_08'
         }
       case 'factory' :
