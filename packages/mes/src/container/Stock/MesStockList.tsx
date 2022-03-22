@@ -236,8 +236,8 @@ const MesStockList = ({page, search, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
-        customer_id: row.customer?.name ?? '-',
-        cm_id: row.model?.model ?? '-',
+        customer_name: row.customer?.name ?? '-',
+        customer_model: row.model?.model ?? '-',
         product_id: row.code ?? '-',
         productId: row.product_id ?? '-',
         process_id: row.processId ?? '-' ,

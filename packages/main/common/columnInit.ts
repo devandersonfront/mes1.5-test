@@ -224,8 +224,8 @@ export const columnlist: any = {
     {key:'inverse_expectation', formatter: UnitContainer, unitData: 'EA'},
   ],
   stockProduct: [
-    {key:'customer_id', name:"고객사명"},
-    {key:'cm_id', name:"모델"},
+    {key:'customer_name', name:"고객사명"},
+    {key:'customer_model', name:"모델"},
     {key:'code', name:"CODE"},
     {key:'name', name:"품명"},
   ],
