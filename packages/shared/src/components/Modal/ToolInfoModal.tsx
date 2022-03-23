@@ -101,7 +101,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         return true;
     }
 
-      // 데이터 유무 판단
+    // 데이터 유무 판단
     const haveDataValidation = () => {
 
         let dataCheck = true
@@ -207,7 +207,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     {/*}*/}
                     <HeaderTable>
                         <HeaderTableTitle>
-                            <HeaderTableText style={{fontWeight: 'bold'}}>고객사명</HeaderTableText>
+                            <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
                         </HeaderTableTitle>
                         <HeaderTableTextInput style={{width: 144}}>
                             <HeaderTableText>{row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
@@ -268,72 +268,71 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                             <p>행 추가</p>
                         </Button>
                         <Button style={{marginLeft: 16}} onClick={() => {
-                             if(selectRow === 0 || selectRow === undefined){
+                            if(selectRow === 0 || selectRow === undefined){
                                 return
-                              }
-                              let tmpRow = [...searchList]
+                            }
+                            let tmpRow = [...searchList]
+                            let tmp = tmpRow[selectRow]
+                            tmpRow[selectRow] = tmpRow[selectRow - 1]
+                            tmpRow[selectRow - 1] = tmp
 
-                              let tmp = tmpRow[selectRow]
-                              tmpRow[selectRow] = tmpRow[selectRow - 1]
-                              tmpRow[selectRow - 1] = tmp
-
-                              // setSearchList([...tmpRow.map((v, i) => {
-                              //   if(!searchList[selectRow-1].border){
-                              //     searchList.map((v,i)=>{
-                              //       v.border = false;
-                              //     })
-                              //     searchList[selectRow-1].border = true
-                              //     setSearchList([...searchList])
-                              //   }
-                              //   setSelectRow(selectRow -1)
-                              //   return {
-                              //     ...v,
-                              //     seq: i+1
-                              //   }
-                              // })])
-                              setSelectRow((prevSelectRow)=> prevSelectRow - 1)
-                              setSearchList([...tmpRow.map((v, i) => {
+                            // setSearchList([...tmpRow.map((v, i) => {
+                            //   if(!searchList[selectRow-1].border){
+                            //     searchList.map((v,i)=>{
+                            //       v.border = false;
+                            //     })
+                            //     searchList[selectRow-1].border = true
+                            //     setSearchList([...searchList])
+                            //   }
+                            //   setSelectRow(selectRow -1)
+                            //   return {
+                            //     ...v,
+                            //     seq: i+1
+                            //   }
+                            // })])
+                            setSelectRow((prevSelectRow)=> prevSelectRow - 1)
+                            setSearchList([...tmpRow.map((v, i) => {
                                 return {
-                                  ...v,
-                                  seq: i+1
+                                    ...v,
+                                    seq: i+1
                                 }
-                              })])
+                            })])
                         }}>
                             <p>위로</p>
                         </Button>
                         <Button style={{marginLeft: 16}} onClick={() => {
                             if(selectRow === searchList.length-1 || selectRow === undefined){
                                 return
-                              }
-                              let tmpRow = [...searchList]
-                              let tmp = tmpRow[selectRow]
-                              tmpRow[selectRow] = tmpRow[selectRow + 1]
-                              tmpRow[selectRow + 1] = tmp
+                            }
+                            let tmpRow = [...searchList]
+                            let tmp = tmpRow[selectRow]
+                            tmpRow[selectRow] = tmpRow[selectRow + 1]
+                            tmpRow[selectRow + 1] = tmp
 
-                              // setSearchList([...tmpRow.map((v, i) => {
-                              //   if(!searchList[selectRow+1].border){
-                              //     searchList.map((v,i)=>{
-                              //       v.border = false;
-                              //     })
-                              //     searchList[selectRow+1].border = true
-                              //     setSearchList([...searchList])
-                              //   }
-                              //   setSelectRow(selectRow +1)
-                              //   return {
-                              //     ...v,
-                              //     seq: i+1
-                              //   }
-                              // })])
-                              setSelectRow((prevSelectRow)=> prevSelectRow + 1)
-                                setSearchList([...tmpRow.map((v, i) => {
-                                  return {
+                            // setSearchList([...tmpRow.map((v, i) => {
+                            //   if(!searchList[selectRow+1].border){
+                            //     searchList.map((v,i)=>{
+                            //       v.border = false;
+                            //     })
+                            //     searchList[selectRow+1].border = true
+                            //     setSearchList([...searchList])
+                            //   }
+                            //   setSelectRow(selectRow +1)
+                            //   return {
+                            //     ...v,
+                            //     seq: i+1
+                            //   }
+                            // })])
+                            setSelectRow((prevSelectRow)=> prevSelectRow + 1)
+                            setSearchList([...tmpRow.map((v, i) => {
+                                return {
                                     ...v,
                                     seq: i+1
-                                  }
-                                })])
+                                }
+                            })])
 
-                            }}>
-                              <p>아래로</p>
+                        }}>
+                            <p>아래로</p>
                         </Button>
                         <Button style={{marginLeft: 16}} onClick={() => {
                             // let tmpRow = [...searchList]
@@ -351,7 +350,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                                 return {
                                     ...v,
                                     seq: i+1
-                                  }
+                                }
                             })])
                             setSelectRow(-1)
 

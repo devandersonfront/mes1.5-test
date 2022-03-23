@@ -129,7 +129,7 @@ export const columnlist: any = {
 
   ],
   productprocess: [
-    {key: 'customer', name: '고객사명', width:118},
+    {key: 'customer', name: '거래처명', width:118},
     {key: 'model', name: '모델', width:118},
     {key: 'code', name: 'CODE', width:118},
     {key: 'name', name: '품명', width:118},
@@ -224,9 +224,9 @@ export const columnlist: any = {
     {key:'inverse_expectation', formatter: UnitContainer, unitData: 'EA'},
   ],
   stockProduct: [
-    {key:'customer_id', name:"고객사명"},
-    {key:'cm_id', name:"모델"},
-    {key:'product_id', name:"CODE"},
+    {key:'customer_name', name:"거래처명"},
+    {key:'customer_model', name:"모델"},
+    {key:'code', name:"CODE"},
     {key:'name', name:"품명"},
   ],
   stockDate: [
@@ -234,7 +234,7 @@ export const columnlist: any = {
   ],
   operationRegister: [
     {key: 'date', editor: CalendarBox, name: '지시 날짜'},
-    {key: 'customer_id',  name: '고객사명'},
+    {key: 'customer_id',  name: '거래처명'},
     {key: 'cm_id', name: '모델'},
     {key: 'code', formatter: ProductSearchModal, searchType: 'operation', name: 'CODE'},
     {key: 'name', name: '품명'},
@@ -269,7 +269,7 @@ export const columnlist: any = {
   recordRegister: [
     {key: 'osd_id', name: '지시 고유 번호', formatter: OperationSearchModal, width:118},
     {key: 'date', name: '지시 날짜', editor: CalendarBox, width:118, disableType: 'record'},
-    {key: 'customer_id', name: '고객사명', width:200, disableType: 'record'},
+    {key: 'customer_id', name: '거래처명', width:200, disableType: 'record'},
     {key: 'cm_id', name: '모델', width:200, disableType: 'record'},
     {key: 'code', name: 'CODE', formatter: ProductSearchModal, width:118, disableType: 'record'},
     {key: 'name', name: '품명', width:118},
@@ -292,7 +292,7 @@ export const columnlist: any = {
   workerRecordReigster: [
     {key: 'osd_id', name: '지시 고유 번호', formatter: OperationSearchModal, width:118},
     {key: 'date', name: '지시 날짜', editor: CalendarBox, width:118, disableType: 'record'},
-    {key: 'customer_id', name: '고객사명', formatter: CustomerSearchModal, width:200, disableType: 'record'},
+    {key: 'customer_id', name: '거래처명', formatter: CustomerSearchModal, width:200, disableType: 'record'},
     {key: 'cm_id', name: '모델', formatter: ModelSearchModal, width:200, disableType: 'record'},
     {key: 'code', name: 'CODE', formatter: ProductSearchModal, width:118, disableType: 'record'},
     {key: 'name', name: '품명', width:118},
@@ -313,7 +313,7 @@ export const columnlist: any = {
   recordList: [
     {key: 'identification', name: '지시 고유 번호', width:118},
     {key: 'date', name: '지시 날짜', width:118},
-    {key: 'customer_id', name: '고객사명', width:118},
+    {key: 'customer_id', name: '거래처명', width:118},
     {key: 'cm_id', name: '모델', width:118},
     {key: 'code', name: 'CODE', width:118},
     {key: 'name', name: '품명', width:118},
@@ -338,7 +338,7 @@ export const columnlist: any = {
   workerRecordList: [
     {key: 'identification', name: '지시 고유 번호', width:118},
     {key: 'date', name: '지시 날짜', width:118},
-    {key: 'customer_id', name: '고객사명', width:118},
+    {key: 'customer_id', name: '거래처명', width:118},
     {key: 'cm_id', name: '모델', width:118},
     {key: 'code', name: 'CODE', width:118},
     {key: 'name', name: '품명', width:118},
@@ -363,7 +363,7 @@ export const columnlist: any = {
   recordSumList: [
     {key: 'identification', name: '지시 고유 번호', width:118},
     {key: 'latest_date', name: '지시 날짜', width:118},
-    {key: 'customer_id', name: '고객사명', width:118},
+    {key: 'customer_id', name: '거래처명', width:118},
     {key: 'cm_id', name: '모델', width:118},
     {key: 'code', name: 'CODE', width:118},
     {key: 'name', name: '품명', width:118},
@@ -413,7 +413,7 @@ export const columnlist: any = {
      },
   ],
   delivery: [
-    {key:"customer_id", name:"고객사명",   },
+    {key:"customer_id", name:"거래처명",   },
     {key:"cm_id", name:"모델",  },
     {key:"code", name:"CODE", formatter: /*ProductSearchModal*/ MultipleSelectModal},
     {key:"name", name:"품명"},

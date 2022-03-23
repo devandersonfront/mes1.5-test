@@ -34,7 +34,7 @@ const BasicSubMaterial = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["submaterial"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['고객사명','모델명', 'CODE', '품명', '금형명'])
+  const [optionList, setOptionList] = useState<string[]>(['거래처명','모델명', 'CODE', '품명', '금형명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectRow , setSelectRow] = useState<number>(0);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({

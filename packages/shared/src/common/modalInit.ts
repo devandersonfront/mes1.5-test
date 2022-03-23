@@ -33,7 +33,7 @@ export const searchModalList: any = {
     {key: 'user_id', name: '아이디', formatter: LineBorderContainer},
   ],
   product: [
-    {key: 'customer_name', name: '고객사명', formatter: LineBorderContainer},
+    {key: 'customer_name', name: '거래처명', formatter: LineBorderContainer},
     {key: 'model_name', name: '모델', formatter: LineBorderContainer},
     {key: 'code', name: 'code', formatter: LineBorderContainer},
     {key: 'name', name: '품명', formatter: LineBorderContainer},
@@ -43,7 +43,7 @@ export const searchModalList: any = {
     // {key: 'spare', name: '기본/스페어 설정', formatter: LineBorderContainer},
   ],
   customer: [
-    {key: 'customer_id', name: '고객사명', formatter: LineBorderContainer},
+    {key: 'customer_id', name: '거래처명', formatter: LineBorderContainer},
     {key: 'rep', name: '대표자명', formatter: LineBorderContainer},
     {key: 'manager', name: '담당자명', formatter: LineBorderContainer},
     // {key: 'telephone', name: '전화번호'},
@@ -61,7 +61,7 @@ export const searchModalList: any = {
     {key: 'name', name: '공정명', formatter: LineBorderContainer},
   ],
   model: [
-    {key: 'customer_name', name: '고객사명', formatter: LineBorderContainer},
+    {key: 'customer_name', name: '거래처명', formatter: LineBorderContainer},
     {key: 'ceo', name: '대표자명', formatter: LineBorderContainer},
     {key: 'crn', name: '사업자 번호', formatter: LineBorderContainer},
     {key: 'model', name: '모델명', formatter: LineBorderContainer},
@@ -122,7 +122,7 @@ export const searchModalList: any = {
     {key: 'average', name: '평균 공구 교환주기', formatter: LineBorderContainer, placeholder: '-'},
   ],
   productInfo: [
-    {key: 'customer', name: '고객사명', width: 160, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'customer', name: '거래처명', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'model', name: '모델', width: 160, formatter: LineBorderContainer, placeholder: '-' },
     {key: 'code', name: '품목 CODE', width: 312, formatter: LineBorderContainer, placeholder: '-' },
     {key: 'name', name: '품명', width: 472, formatter: LineBorderContainer, placeholder: '-'},
@@ -261,7 +261,7 @@ export const searchModalList: any = {
   ],
   lot: [
     {key: 'number', width: 118, name: 'Lot번호'},
-    {key: 'customer_id', width: 152, name: '고객사명'},
+    {key: 'customer_id', width: 152, name: '거래처명'},
     {key: 'cm_id', width: 152, name: '모델'},
     {key: 'code', width: 176, name: 'code'},
     {key: 'name', width: 176, name: '품명'},
@@ -272,7 +272,7 @@ export const searchModalList: any = {
   operation: [
     {key: 'osd_id', name: '지시 고유 번호'},
     {key: 'date', name: '지시 날짜'},
-    {key: 'customer_id', name: '고객사명'},
+    {key: 'customer_id', name: '거래처명'},
     {key: 'cm_id', name: '모델'},
     {key: 'code', name: 'code'},
     {key: 'name', name: '품명'},

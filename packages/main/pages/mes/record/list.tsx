@@ -25,7 +25,7 @@ interface IProps {
 }
 
 const title = '작업완료 리스트'
-const optList = ['고객사명', '모델명','CODE','품명',]
+const optList = ['거래처명', '모델명','CODE','품명',]
 
 const BasicContainer = ({page, keyword, option}: IProps) => {
   const router = useRouter()

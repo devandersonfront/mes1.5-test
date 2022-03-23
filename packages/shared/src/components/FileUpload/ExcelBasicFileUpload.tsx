@@ -113,7 +113,10 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
 
               }}
             >
-                {column.type === "image" ? "이미지 확인" : "파일 다운로드" }
+              {/*{*/}
+              {/*  row[column.key]*/}
+              {/*}*/}
+                {column.type === "image" ? "이미지 보기" : "파일 다운로드" }
             </p>
           </div>
           : column.readonly ?
@@ -168,7 +171,5 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
     </div>
   );
 }
-
-
 
 export {FileEditer};

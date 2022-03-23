@@ -26,7 +26,7 @@ interface IProps {
 }
 
 const title = '원자재 재고 관리'
-const optList = ['고객사명', '모델명', 'CODE', '품명', 'Lot번호']
+const optList = ['거래처명', '모델명', 'CODE', '품명', 'Lot번호']
 
 const BasicContainer = ({page, keyword, option}: IProps) => {
   const router = useRouter()

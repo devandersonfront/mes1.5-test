@@ -55,11 +55,11 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const haveBasicValidation = () => {
 
     if(searchList.length > 0){
-        return searchList.some((list)=>list.setting === 1)
+      return searchList.some((list)=>list.setting === 1)
     }
 
     return true;
-}
+  }
 
 
   // 데이터 유무 판단
@@ -106,9 +106,9 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     if(spliceRow){
       if(isCheck){
         return Notiflix.Report.warning(
-          '경고',
-          `중복된 금형이 존재합니다.`,
-          '확인'
+            '경고',
+            `중복된 금형이 존재합니다.`,
+            '확인'
         );
       }
     }
@@ -119,200 +119,200 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const ModalContents = () => {
     // if(row?.molds){
-      if(row?.molds?.length){
-        return <>
-          <div style={{
-            padding: '3.5px 0px 0px 3.5px',
-            width: 112
+    if(row?.molds?.length){
+      return <>
+        <div style={{
+          padding: '3.5px 0px 0px 3.5px',
+          width: 112
+        }}>
+          <Underline onClick={() => {
+            setIsOpen(true)
           }}>
-            <Underline onClick={() => {
-              setIsOpen(true)
-            }}>
-              <p>금형 수정</p>
-            </Underline>
-          </div>
-        </>
-      }else{
-        return <>
-          <div style={{
-            padding: '3.5px 0px 0px 3.5px',
-            width: '100%'
+            <p>금형 수정</p>
+          </Underline>
+        </div>
+      </>
+    }else{
+      return <>
+        <div style={{
+          padding: '3.5px 0px 0px 3.5px',
+          width: '100%'
+        }}>
+          <UploadButton onClick={() => {
+            setIsOpen(true)
           }}>
-            <UploadButton onClick={() => {
-              setIsOpen(true)
-            }}>
-              <p>금형 등록</p>
-            </UploadButton>
-          </div>
-        </>
-      }
+            <p>금형 등록</p>
+          </UploadButton>
+        </div>
+      </>
+    }
     // }
   }
 
   return (
-    <SearchModalWrapper >
-      { ModalContents() }
-      <Modal isOpen={isOpen} style={{
-        content: {
-          top: '50%',
-          left: '50%',
-          right: 'auto',
-          bottom: 'auto',
-          marginRight: '-50%',
-          transform: 'translate(-50%, -50%)',
-          padding: 0
-        },
-        overlay: {
-          background: 'rgba(0,0,0,.6)',
-          zIndex: 5
-        }
-      }}>
-        <div style={{
-          width: 1776,
-          height: 800
+      <SearchModalWrapper >
+        { ModalContents() }
+        <Modal isOpen={isOpen} style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            padding: 0
+          },
+          overlay: {
+            background: 'rgba(0,0,0,.6)',
+            zIndex: 5
+          }
         }}>
           <div style={{
-            margin: '24px 16px 16px',
-            display: 'flex',
-            justifyContent: 'space-between'
+            width: 1776,
+            height: 800
           }}>
-            <p style={{
-              color: 'black',
-              fontSize: 22,
-              fontWeight: 'bold',
-              margin: 0,
-            }}>금형 정보 (해당 제품을 만드는데 필요한 금형을 등록해주세요)</p>
-            <div style={{display: 'flex'}}>
-              {/*<Button>*/}
-              {/*  <p>엑셀로 받기</p>*/}
-              {/*</Button>*/}
-              <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
-                setIsOpen(false)
-              }}>
-                <img style={{width: 20, height: 20}} src={IcX}/>
+            <div style={{
+              margin: '24px 16px 16px',
+              display: 'flex',
+              justifyContent: 'space-between'
+            }}>
+              <p style={{
+                color: 'black',
+                fontSize: 22,
+                fontWeight: 'bold',
+                margin: 0,
+              }}>금형 정보 (해당 제품을 만드는데 필요한 금형을 등록해주세요)</p>
+              <div style={{display: 'flex'}}>
+                {/*<Button>*/}
+                {/*  <p>엑셀로 받기</p>*/}
+                {/*</Button>*/}
+                <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
+                  setIsOpen(false)
+                }}>
+                  <img style={{width: 20, height: 20}} src={IcX}/>
+                </div>
               </div>
             </div>
-          </div>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>고객사명</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.code ?? "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.name ?? "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.type ? TransferCodeToValue(row.type, 'material') : "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.process ? row.process.name : "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.unit ?? "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-            <Button onClick={() => {
-              let tmp = searchList
+            <HeaderTable>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+            </HeaderTable>
+            <HeaderTable>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{row.code ?? "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{row.name ?? "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{row.type ? TransferCodeToValue(row.type, 'material') : "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{row.process ? row.process.name : "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+            </HeaderTable>
+            <HeaderTable>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{row.unit ?? "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+            </HeaderTable>
+            <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
+              <Button onClick={() => {
+                let tmp = searchList
 
-              setSearchList([
-                ...searchList,
-                {
-                  setting: 1,
-                  sequence: searchList.length+1
+                setSearchList([
+                  ...searchList,
+                  {
+                    setting: 1,
+                    sequence: searchList.length+1
+                  }
+                ])
+              }}>
+                <p>행 추가</p>
+              </Button>
+              <Button style={{marginLeft: 16}} onClick={() => {
+                if(selectRow === 0 || selectRow === undefined){
+                  return
                 }
-              ])
-            }}>
-              <p>행 추가</p>
-            </Button>
-            <Button style={{marginLeft: 16}} onClick={() => {
-              if(selectRow === 0 || selectRow === undefined){
-                return
-              }
-              let tmpRow = [...searchList]
+                let tmpRow = [...searchList]
 
-              let tmp = tmpRow[selectRow]
-              tmpRow[selectRow] = tmpRow[selectRow - 1]
-              tmpRow[selectRow - 1] = tmp
+                let tmp = tmpRow[selectRow]
+                tmpRow[selectRow] = tmpRow[selectRow - 1]
+                tmpRow[selectRow - 1] = tmp
 
-              // setSearchList([...tmpRow.map((v, i) => {
-              //   if(!searchList[selectRow-1].border){
-              //     searchList.map((v,i)=>{
-              //       v.border = false;
-              //     })
-              //     searchList[selectRow-1].border = true
-              //     setSearchList([...searchList])
-              //   }
-              //   setSelectRow(selectRow -1)
-              //   return {
-              //     ...v,
-              //     seq: i+1
-              //   }
-              // })])
-              setSelectRow((prevSelectRow)=> prevSelectRow - 1)
-              setSearchList([...tmpRow.map((v, i) => {
-                return {
-                  ...v,
-                  sequence: i+1
+                // setSearchList([...tmpRow.map((v, i) => {
+                //   if(!searchList[selectRow-1].border){
+                //     searchList.map((v,i)=>{
+                //       v.border = false;
+                //     })
+                //     searchList[selectRow-1].border = true
+                //     setSearchList([...searchList])
+                //   }
+                //   setSelectRow(selectRow -1)
+                //   return {
+                //     ...v,
+                //     seq: i+1
+                //   }
+                // })])
+                setSelectRow((prevSelectRow)=> prevSelectRow - 1)
+                setSearchList([...tmpRow.map((v, i) => {
+                  return {
+                    ...v,
+                    sequence: i+1
+                  }
+                })])
+              }}>
+                <p>위로</p>
+              </Button>
+              <Button style={{marginLeft: 16}} onClick={() => {
+                if(selectRow === searchList.length-1 || selectRow === undefined){
+                  return
                 }
-              })])
-            }}>
-              <p>위로</p>
-            </Button>
-            <Button style={{marginLeft: 16}} onClick={() => {
-              if(selectRow === searchList.length-1 || selectRow === undefined){
-                return
-              }
-              let tmpRow = [...searchList]
-              let tmp = tmpRow[selectRow]
-              tmpRow[selectRow] = tmpRow[selectRow + 1]
-              tmpRow[selectRow + 1] = tmp
+                let tmpRow = [...searchList]
+                let tmp = tmpRow[selectRow]
+                tmpRow[selectRow] = tmpRow[selectRow + 1]
+                tmpRow[selectRow + 1] = tmp
 
-              // setSearchList([...tmpRow.map((v, i) => {
-              //   if(!searchList[selectRow+1].border){
-              //     searchList.map((v,i)=>{
-              //       v.border = false;
-              //     })
-              //     searchList[selectRow+1].border = true
-              //     setSearchList([...searchList])
-              //   }
-              //   setSelectRow(selectRow +1)
-              //   return {
-              //     ...v,
-              //     seq: i+1
-              //   }
-              // })])
-              setSelectRow((prevSelectRow)=> prevSelectRow + 1)
+                // setSearchList([...tmpRow.map((v, i) => {
+                //   if(!searchList[selectRow+1].border){
+                //     searchList.map((v,i)=>{
+                //       v.border = false;
+                //     })
+                //     searchList[selectRow+1].border = true
+                //     setSearchList([...searchList])
+                //   }
+                //   setSelectRow(selectRow +1)
+                //   return {
+                //     ...v,
+                //     seq: i+1
+                //   }
+                // })])
+                setSelectRow((prevSelectRow)=> prevSelectRow + 1)
                 setSearchList([...tmpRow.map((v, i) => {
                   return {
                     ...v,
@@ -320,19 +320,19 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   }
                 })])
 
-            }}>
-              <p>아래로</p>
-            </Button>
-            <Button style={{marginLeft: 16}} onClick={() => {
-              // let tmpRow = [...searchList]
-              // if(selectRow){
-              //   tmpRow.splice(selectRow, 1)
-              //   setSelectRow(undefined);
-              //   setSearchList([...tmpRow])
-              // }
-              if(selectRow === -1){
-                return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
-              }
+              }}>
+                <p>아래로</p>
+              </Button>
+              <Button style={{marginLeft: 16}} onClick={() => {
+                // let tmpRow = [...searchList]
+                // if(selectRow){
+                //   tmpRow.splice(selectRow, 1)
+                //   setSelectRow(undefined);
+                //   setSearchList([...tmpRow])
+                // }
+                if(selectRow === -1){
+                  return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
+                }
                 let tmpRow = [...searchList]
                 tmpRow.splice(selectRow, 1)
                 setSearchList([...tmpRow.map((v, i) => {
@@ -342,93 +342,93 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   }
                 })])
                 setSelectRow(-1)
-            }}>
-              <p>삭제</p>
-            </Button>
-          </div>
-          <div style={{padding: '0 16px', width: 1776}}>
-            <ExcelTable
-              headerList={searchModalList.moldInfo}
-              row={searchList ?? [{}]}
-              setRow={(e) => competeMold([...e])}
-              width={1746}
-              rowHeight={32}
-              height={552}
-              // setSelectRow={(e) => {
-              //   setSelectRow(e)
-              // }}
-              setSelectRow={(e) => {
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
-                setSelectRow(e)
-              }}
-              type={'searchModal'}
-              headerAlign={'center'}
-            />
-          </div>
-          <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
-            <div
-              onClick={() => {
-                setIsOpen(false)
-              }}
-              style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p>취소</p>
+              }}>
+                <p>삭제</p>
+              </Button>
             </div>
-            <div
-
-              onClick={() => {
-
-                const isValidation = executeValidation()
-                if(!isValidation){
-                  if(selectRow !== undefined && selectRow !== null){
-
-                    if(column.name === '금형'){
-                      onRowChange({
-                        ...row,
-                        molds: searchList.map((v, i) => {
-
-                          return {
-                            sequence: i+1,
-                            setting : v.setting,
-                            mold: v
-                          }
-                        }),
-                        name: row.name,
-                        isChange: true
+            <div style={{padding: '0 16px', width: 1776}}>
+              <ExcelTable
+                  headerList={searchModalList.moldInfo}
+                  row={searchList ?? [{}]}
+                  setRow={(e) => competeMold([...e])}
+                  width={1746}
+                  rowHeight={32}
+                  height={552}
+                  // setSelectRow={(e) => {
+                  //   setSelectRow(e)
+                  // }}
+                  setSelectRow={(e) => {
+                    if(!searchList[e].border){
+                      searchList.map((v,i)=>{
+                        v.border = false;
                       })
-                    }else{
-
-                      onRowChange({
-                        ...row,
-                        molds: searchList.map((v, i) => {
-                          return {
-                            sequence: i+1,
-                            mold: {mold: {...v}}
-                          }
-                        }),
-                        name: row.name,
-                        isChange: true
-                      })
+                      searchList[e].border = true
+                      setSearchList([...searchList])
                     }
+                    setSelectRow(e)
+                  }}
+                  type={'searchModal'}
+                  headerAlign={'center'}
+              />
+            </div>
+            <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
+              <div
+                  onClick={() => {
+                    setIsOpen(false)
+                  }}
+                  style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              >
+                <p>취소</p>
+              </div>
+              <div
 
-                  }
-                  setIsOpen(false)
-                }
-              }}
-              style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p>등록하기</p>
+                  onClick={() => {
+
+                    const isValidation = executeValidation()
+                    if(!isValidation){
+                      if(selectRow !== undefined && selectRow !== null){
+
+                        if(column.name === '금형'){
+                          onRowChange({
+                            ...row,
+                            molds: searchList.map((v, i) => {
+
+                              return {
+                                sequence: i+1,
+                                setting : v.setting,
+                                mold: v
+                              }
+                            }),
+                            name: row.name,
+                            isChange: true
+                          })
+                        }else{
+
+                          onRowChange({
+                            ...row,
+                            molds: searchList.map((v, i) => {
+                              return {
+                                sequence: i+1,
+                                mold: {mold: {...v}}
+                              }
+                            }),
+                            name: row.name,
+                            isChange: true
+                          })
+                        }
+
+                      }
+                      setIsOpen(false)
+                    }
+                  }}
+                  style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              >
+                <p>등록하기</p>
+              </div>
             </div>
           </div>
-        </div>
-      </Modal>
-    </SearchModalWrapper>
+        </Modal>
+      </SearchModalWrapper>
   )
 }
 

@@ -10,11 +10,11 @@ const BASIC_MENUS: IMenuType[] = [
     ]
   },
   {
-    title: '고객사 관리',
+    title: '거래처 관리',
     url: '',
     subMenu: [
-      { title: '고객사 정보 관리', url: '' },
-      { title: '고객사 모델 관리', url: '' }
+      { title: '거래처 정보 관리', url: '' },
+      { title: '거래처 모델 관리', url: '' }
     ]
   },
   {
@@ -25,7 +25,7 @@ const BASIC_MENUS: IMenuType[] = [
     title: '품질 기준정보',
     url: '',
     subMenu: [
-      { title: '공정별 자주검사 항목 등록', url: '' },
+      { title: '공정별 불량유형 등록', url: '' },
     ]
   },
   {

@@ -60,7 +60,7 @@ export const AUTHORITY_LIST = [
           { title: "공정 일시정지 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_09" },
         ]},
       { title: "품질 기준정보", show: false, checkable: true, check: false, child: [
-          { title: "공정별 자주검사 항목 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_03" },
+          { title: "공정별 불량유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_03" },
         ]},
       { title: "주변장치 기준정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_12" },
       { title: "기계 기준 정보", show: false, checkable: true, check: false, child: [], value: "ROLE_BASE_04" },
@@ -111,7 +111,7 @@ export const AUTHORITY_LIST = [
       { title: "재고 관리", show: false, checkable: true, check: false, child: [
           { title: "재고 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_STK_01" },
           { title: "생산/납품 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_STK_02" },
-          { title: "생산/납품 현황(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_STK_03" },
+          // { title: "생산/납품 현황(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_STK_03" },
         ] },
       // { title: "납품 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_SHPT_01" },
       { title: "KPI",     show: false, checkable: true, check: false, child: [

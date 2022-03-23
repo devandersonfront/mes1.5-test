@@ -28,9 +28,9 @@ interface IProps {
 
 const optionList = {
   member: ['사용자명'],
-  product: ['고객사명','모델명','CODE', '품명', '재질'],
-  customer: ['고객사명'],
-  model: ['고객사명', '모델']
+  product: ['거래처명','모델명','CODE', '품명', '재질'],
+  customer: ['거래처명'],
+  model: ['거래처명', '모델']
 }
 
 const SearchModalTest = ({column, row, onRowChange}: IProps) => {
@@ -474,6 +474,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         }
                     )
                   }else {
+                    console.log("here ? " , row, searchList[selectRow], searchModalInit.excelColumnType,)
                     onRowChange(
                         {
                           ...row,
