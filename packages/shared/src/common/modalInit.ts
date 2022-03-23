@@ -356,7 +356,7 @@ export const searchModalList: any = {
   ],
   InputLotInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'elapsed', name: '경과일', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'elapsed', name: '경과일', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
     {key: 'lot_number', name: 'LOT 번호', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'date', name: '입고일', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'warehousing', name: '입고량', formatter: LineBorderContainer, textAlign: 'center'},
@@ -370,7 +370,7 @@ export const searchModalList: any = {
   ],
   InputLotReadonlyInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'date', name: '경과일', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'date', name: '경과일', formatter: LineBorderContainer, textAlign: 'center', placeholder:"-"},
     {key: 'lot_number', name: '원자재 LOT 번호', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'date', name: '입고일', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'warehousing', name: '입고량', formatter: LineBorderContainer, textAlign: 'center'},
@@ -388,7 +388,7 @@ export const searchModalList: any = {
     {key: 'real_disturbance', name: '소요량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'disturbance', name: '생산량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
     {key: 'lot', name: '투입 LOT', width: 160, formatter: AddTabButton, placeholder: '-', type: '' },
 
   ],
@@ -401,7 +401,7 @@ export const searchModalList: any = {
     {key: 'usage', name: '1회 사용량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'disturbance', name: '소요량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
     {key: 'lot', name: '투입 LOT', width: 160, formatter: AddTabButton, placeholder: '-', type: 'readonly'},
 
   ],
