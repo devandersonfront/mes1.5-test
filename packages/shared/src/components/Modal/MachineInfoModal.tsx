@@ -135,11 +135,11 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             padding: '3.5px 0px 0px 3.5px',
             width: 112
           }}>
-            <Button onClick={() => {
-              setIsOpen(true)
-            }}>
-              <p>기계 수정</p>
-            </Button>
+              <Underline onClick={() => {
+                    setIsOpen(true)
+                }}>
+                    <p>기계 수정</p>
+              </Underline>
           </div>
         </>
       }else{
@@ -480,6 +480,16 @@ const HeaderTable = styled.div`
   border: 0.5px solid #B3B3B3;
   display: flex
 `
+
+const Underline = styled.div`
+  color:white;
+  text-decoration:underline;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:112px;
+  height:32px;
+`;
 
 const HeaderTableTextInput = styled.div`
   background-color: #ffffff;

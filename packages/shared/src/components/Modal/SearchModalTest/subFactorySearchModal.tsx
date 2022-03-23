@@ -72,7 +72,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
         if(row.affiliated_id){
             return row.affiliated_id
         }else {
-            return ""
+            return column.placeholder
         }
     }
 
