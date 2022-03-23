@@ -83,8 +83,8 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
         name: row[0].operation_sheet?.product?.name,
         type: row[0].operation_sheet?.product?.type
         || row[0].operation_sheet?.product?.type === 0
-          ? TransferCodeToValue(row[0].operation_sheet?.product?.type, 'productType')
-          : null,
+            ? TransferCodeToValue(row[0].operation_sheet?.product?.type, 'productType')
+            : null,
         process: row[0].product?.process?.name,
         unit: row[0].operation_sheet?.product?.unit,
         goal: row[0].operation_sheet?.goal,
@@ -119,43 +119,43 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
 
   const SaveBasic = async () => {
     let res = await RequestMethod('post', `recordSave`,
-      searchList.map((v, i) => {
-        let selectData: any = {}
+        searchList.map((v, i) => {
+          let selectData: any = {}
 
-        Object.keys(v).map(v => {
-          if(v.indexOf('PK') !== -1) {
-            selectData = {
-              ...selectData,
-              [v.split('PK')[0]]: v[v]
+          Object.keys(v).map(v => {
+            if(v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: v[v]
+              }
             }
-          }
 
-          if(v === 'unitWeight') {
-            selectData = {
-              ...selectData,
-              unitWeight: Number(v['unitWeight'])
+            if(v === 'unitWeight') {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(v['unitWeight'])
+              }
             }
-          }
 
-          if(v === 'tmpId') {
-            selectData = {
-              ...selectData,
-              id: v['tmpId']
+            if(v === 'tmpId') {
+              selectData = {
+                ...selectData,
+                id: v['tmpId']
+              }
             }
-          }
-        })
+          })
 
-        return {
-          ...v,
-          ...selectData,
-          operation_sheet: {
-            ...v.operation_sheet,
-            status: row.status_no
-          },
-          input_bom: [],
-          status: 0,
-        }
-      }).filter((v) => v))
+          return {
+            ...v,
+            ...selectData,
+            operation_sheet: {
+              ...v.operation_sheet,
+              status: row.status_no
+            },
+            input_bom: [],
+            status: 0,
+          }
+        }).filter((v) => v))
 
 
     if(res){
@@ -173,152 +173,152 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
   }
 
   return (
-    <Modal isOpen={isOpen} style={{
-      content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        padding: 0
-      },
-      overlay: {
-        background: 'rgba(0,0,0,.6)',
-        zIndex: 5
-      }
-    }}>
-      <div style={{
-        width: 1776,
-        height: 800
+      <Modal isOpen={isOpen} style={{
+        content: {
+          top: '50%',
+          left: '50%',
+          right: 'auto',
+          bottom: 'auto',
+          marginRight: '-50%',
+          transform: 'translate(-50%, -50%)',
+          padding: 0
+        },
+        overlay: {
+          background: 'rgba(0,0,0,.6)',
+          zIndex: 5
+        }
       }}>
         <div style={{
-          margin: '24px 16px 16px',
-          display: 'flex',
-          justifyContent: 'space-between'
+          width: 1776,
+          height: 800
         }}>
-          <p style={{
-            color: 'black',
-            fontSize: 22,
-            fontWeight: 'bold',
-            margin: 0,
-          }}>작업 일보 수정 (해당 작업지시의 작업 일보를 수정해주세요)</p>
-          <div style={{display: 'flex'}}>
-            <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
-              setIsOpen(false)
-            }}>
-              <img style={{width: 20, height: 20}} src={IcX}/>
+          <div style={{
+            margin: '24px 16px 16px',
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}>
+            <p style={{
+              color: 'black',
+              fontSize: 22,
+              fontWeight: 'bold',
+              margin: 0,
+            }}>작업 일보 수정 (해당 작업지시의 작업 일보를 수정해주세요)</p>
+            <div style={{display: 'flex'}}>
+              <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
+                setIsOpen(false)
+              }}>
+                <img style={{width: 20, height: 20}} src={IcX}/>
+              </div>
             </div>
           </div>
-        </div>
-        {
-          headerItems && headerItems.map((infos, index) => {
-            return (
-              <HeaderTable>
-                {
-                  infos.map(info => {
-                    return (
-                      <>
-                        <HeaderTableTitle>
-                          <HeaderTableText style={{fontWeight: 'bold'}}>{info.title}</HeaderTableText>
-                        </HeaderTableTitle>
-                        <HeaderTableTextInput style={{width: info.infoWidth}}>
-                          <HeaderTableText>
-                            {getSummaryInfo(info)}
-                            {/*-*/}
-                          </HeaderTableText>
-                          {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
-                        </HeaderTableTextInput>
-                      </>
-                    )
+          {
+            headerItems && headerItems.map((infos, index) => {
+              return (
+                  <HeaderTable>
+                    {
+                      infos.map(info => {
+                        return (
+                            <>
+                              <HeaderTableTitle>
+                                <HeaderTableText style={{fontWeight: 'bold'}}>{info.title}</HeaderTableText>
+                              </HeaderTableTitle>
+                              <HeaderTableTextInput style={{width: info.infoWidth}}>
+                                <HeaderTableText>
+                                  {getSummaryInfo(info)}
+                                  {/*-*/}
+                                </HeaderTableText>
+                                {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
+                              </HeaderTableTextInput>
+                            </>
+                        )
+                      })
+                    }
+                  </HeaderTable>
+              )
+            })
+          }
+          <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
+            <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
+              <div style={{ display: 'flex', width: 1200}}>
+                <p style={{fontSize: 22, padding: 0, margin: 0}}>작업이력</p>
+              </div>
+            </div>
+            <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
+
+            </div>
+          </div>
+          <div style={{padding: '0 16px', width: 1776}}>
+            <ExcelTable
+                headerList={searchModalList.workRegister}
+                row={searchList ?? [{}]}
+                setRow={(e) => {
+                  let tmp = e.map((v, index) => {
+                    if(v.newTab === true){
+                      const newTabIndex = bomDummy.length+1
+                      addNewTab(newTabIndex)
+                      setFocusIndex(newTabIndex-1)
+                    }
+
+                    return {
+                      ...v,
+                      newTab: false
+                    }
                   })
-                }
-              </HeaderTable>
-            )
-          })
-        }
-        <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
-          <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
-            <div style={{ display: 'flex', width: 1200}}>
-              <p style={{fontSize: 22, padding: 0, margin: 0}}>작업이력</p>
+
+                  setSearchList([...tmp.map(v => {
+                    return {
+                      ...v,
+                      good_quantity: Number(v.quantity ?? 0)-Number(v.poor_quantity ?? 0),
+                      sum: Number(v.quantity ?? v.sum ?? 0)
+                    }
+                  })])
+                }}
+                width={1746}
+                rowHeight={32}
+                height={552}
+                // setSelectRow={(e) => {
+                //   setSelectRow(e)
+                // }}
+                setSelectRow={(e) => {
+                  // setSearchList([...searchList.map((v,i)=>{
+                  //   if(i === e){
+                  //     return {
+                  //       ...v,
+                  //       border: !v.border
+                  //     }
+                  //   }else{
+                  //     return {
+                  //       ...v,
+                  //       border: false
+                  //     }
+                  //   }
+                  // })])
+                  setSelectRow(e)
+                }}
+                type={'searchModal'}
+                headerAlign={'center'}
+            />
+          </div>
+          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+            <div
+                onClick={() => {
+                  setIsOpen(false)
+                }}
+                style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+            >
+              <p style={{color: '#717C90'}}>취소</p>
+            </div>
+            <div
+                onClick={() => {
+                  SaveBasic()
+                }}
+                style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+            >
+              <p>저장</p>
             </div>
           </div>
-          <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-
-          </div>
         </div>
-        <div style={{padding: '0 16px', width: 1776}}>
-          <ExcelTable
-            headerList={searchModalList.workRegister}
-            row={searchList ?? [{}]}
-            setRow={(e) => {
-              let tmp = e.map((v, index) => {
-                if(v.newTab === true){
-                  const newTabIndex = bomDummy.length+1
-                  addNewTab(newTabIndex)
-                  setFocusIndex(newTabIndex-1)
-                }
-
-                return {
-                  ...v,
-                  newTab: false
-                }
-              })
-
-              setSearchList([...tmp.map(v => {
-                return {
-                  ...v,
-                  good_quantity: Number(v.sum ?? 0)-Number(v.poor_quantity ?? 0),
-                  sum: Number(v.quantity ?? v.sum ?? 0)
-                }
-              })])
-            }}
-            width={1746}
-            rowHeight={32}
-            height={552}
-            // setSelectRow={(e) => {
-            //   setSelectRow(e)
-            // }}
-            setSelectRow={(e) => {
-              // setSearchList([...searchList.map((v,i)=>{
-              //   if(i === e){
-              //     return {
-              //       ...v,
-              //       border: !v.border
-              //     }
-              //   }else{
-              //     return {
-              //       ...v,
-              //       border: false
-              //     }
-              //   }
-              // })])
-              setSelectRow(e)
-            }}
-            type={'searchModal'}
-            headerAlign={'center'}
-          />
-        </div>
-        <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
-          <div
-            onClick={() => {
-              setIsOpen(false)
-            }}
-            style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-          >
-            <p style={{color: '#717C90'}}>취소</p>
-          </div>
-          <div
-            onClick={() => {
-              SaveBasic()
-            }}
-            style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-          >
-            <p>저장</p>
-          </div>
-        </div>
-      </div>
-    </Modal>
+      </Modal>
   )
 }
 
