@@ -474,7 +474,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         }
                     )
                   }else {
-                    console.log("here ? " , row, searchList[selectRow], searchModalInit.excelColumnType,)
                     onRowChange(
                         {
                           ...row,

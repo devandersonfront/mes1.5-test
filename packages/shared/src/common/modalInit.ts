@@ -162,9 +162,9 @@ export const searchModalList: any = {
     {key: 'stock', name: '재고량', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
   ],
   toolSearch: [
-    {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '공구 품명', /*formatter: SearchModalTest,*/ type: 'mold', modalType: true },
-    {key: 'customer', name: '거래처'},
+    {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: '-' },
+    {key: 'name', name: '공구 품명', formatter: LineBorderContainer, type: 'mold', modalType: true, placeholder: "-" },
+    {key: 'customer', name: '거래처', formatter: LineBorderContainer, placeholder: "-"},
     {key: 'stock', name: '재고량', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
   ],
   machineInfo: [
@@ -350,7 +350,7 @@ export const searchModalList: any = {
     {key: 'usage', name: '1회 사용량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'disturbance', name: '소요량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
     {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-', },
 
   ],
