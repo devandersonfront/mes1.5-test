@@ -46,8 +46,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
   const [headerData, setHeaderData] = useState<any>();
 
-  console.log(searchList,'searchListsearchList')
-  console.log(column.name, 'name')
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
@@ -355,10 +353,10 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         </div>
       </>
     }else{
-      if(column.type === 'readonly'){
+      if(column.type === 'readonly' || row.bom_root_id){
         return <>
           <div style={{
-            padding: '3.5px 0px 0px 3.5px',
+            // padding: '3.5px 0px 0px 3.5px',
             width: '100%'
           }}>
             <div onClick={() => {
