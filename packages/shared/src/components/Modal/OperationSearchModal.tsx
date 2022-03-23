@@ -23,7 +23,7 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['고객사명','대표자명','담당자명', '', '', '주소', '사업자 번호']
+const optionList = ['거래처명','대표자명','담당자명', '', '', '주소', '사업자 번호']
 
 const OperationSearchModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)

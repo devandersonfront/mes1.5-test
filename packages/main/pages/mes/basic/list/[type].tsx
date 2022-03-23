@@ -44,8 +44,8 @@ const machineType = [{pk: 0, name: "선택없음"},
 //         }
 //       case 'customer':
 //         return {
-//           title: '고객사 정보 관리',
-//           optList: ['고객사명', '대표자명', '담당자명', '전화 번호','휴대폰 번호', '팩스 번호', '주소', '사업자 번호'],
+//           title: '거래처 정보 관리',
+//           optList: ['거래처명', '대표자명', '담당자명', '전화 번호','휴대폰 번호', '팩스 번호', '주소', '사업자 번호'],
 //         }
 //       case 'process':
 //         return {
@@ -61,22 +61,22 @@ const machineType = [{pk: 0, name: "선택없음"},
 //       case 'product':
 //         return {
 //           title: '제품 등록 관리',
-//           optList: ['고객사명','모델명', 'CODE', '품명', '재질'],
+//           optList: ['거래처명','모델명', 'CODE', '품명', '재질'],
 //         }
 //       case 'rawmaterial':
 //         return {
 //           title: '원자재 기준정보',
-//           optList: ['고객사명', '모델명', 'CODE', '품명', '재질'],
+//           optList: ['거래처명', '모델명', 'CODE', '품명', '재질'],
 //         }
 //       case 'mold':
 //         return {
 //           title: '금형 기준정보',
-//           optList: ['고객사명','모델명', 'CODE', '품명', '재질'],
+//           optList: ['거래처명','모델명', 'CODE', '품명', '재질'],
 //         }
 //       case 'model':
 //         return {
-//           title: "고객사 모델정보",
-//           optList: ['고객사명','사업자 번호', '모델명'],
+//           title: "거래처 모델정보",
+//           optList: ['거래처명','사업자 번호', '모델명'],
 //         }
 //
 //     }

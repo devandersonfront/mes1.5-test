@@ -21,11 +21,11 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['고객사명','대표자명','담당자명', '', '', '', '주소', '사업자 번호']
+const optionList = ['거래처명','대표자명','담당자명', '', '', '', '주소', '사업자 번호']
 
 const CustomerSearchModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('고객사')
+  const [title, setTitle] = useState<string>('거래처')
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [searchKeyword, setSearchKeyword] = useState<string>('')

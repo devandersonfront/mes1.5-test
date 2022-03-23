@@ -466,6 +466,9 @@ const ApiList = {
   documentMove: `/cnc/api/v1/document/move`,
 
   toolAverage: `/cnc/api/v1/tool/average`,
+
+  sheetFinish: `/api/v1/sheet/update/status`,
+
   //전력사용량 list
   statisticsPressElectricPower: `/api/v2/statistics/press/electric-power`,
 }

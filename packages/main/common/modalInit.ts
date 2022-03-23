@@ -8,14 +8,14 @@ export const searchModalList: any = {
     {key: 'user_id', name: '담당자명'},
   ],
   product: [
-    {key: 'customer', name: '고객사명'},
+    {key: 'customer', name: '거래처명'},
     {key: 'model', name: '모델'},
     {key: 'code', name: 'code'},
     {key: 'name', name: '품명'},
     {key: 'texture', name: '재질'},
   ],
   customer: [
-    {key: 'customer_id', name: '고객사명'},
+    {key: 'customer_id', name: '거래처명'},
     {key: 'rep', name: '대표자명'},
     {key: 'manager', name: '담당자명'},
     // {key: 'telephone', name: '전화번호'},
@@ -28,7 +28,7 @@ export const searchModalList: any = {
     {key: 'name', name: '공정명'},
   ],
   model: [
-    {key: 'customer', name: '고객사명'},
+    {key: 'customer', name: '거래처명'},
     {key: 'model', name: '모델명'},
   ],
   machine: [
@@ -42,7 +42,7 @@ export const searchModalList: any = {
   ],
   lot: [
     {key: 'number', width: 118, name: 'Lot번호'},
-    {key: 'customer_id', width: 152, name: '고객사명'},
+    {key: 'customer_id', width: 152, name: '거래처명'},
     {key: 'cm_id', width: 152, name: '모델'},
     {key: 'code', width: 176, name: 'code'},
     {key: 'name', width: 176, name: '품명'},
@@ -53,7 +53,7 @@ export const searchModalList: any = {
   operation: [
     {key: 'osd_id', name: '지시 고유 번호'},
     {key: 'date', name: '지시 날짜'},
-    {key: 'customer_id', name: '고객사명'},
+    {key: 'customer_id', name: '거래처명'},
     {key: 'cm_id', name: '모델'},
     {key: 'code', name: 'code'},
     {key: 'name', name: '품명'},

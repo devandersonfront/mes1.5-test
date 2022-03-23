@@ -272,7 +272,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                       pause_reasons: [
                         ...searchList.map(v => {
                           return ({
-                            amount: v.time_sec,
+                            amount: v.time_sec ?? 0,
                             pause_reason: v
                           })
                         })

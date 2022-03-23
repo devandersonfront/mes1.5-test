@@ -17,10 +17,10 @@ import {UploadButton} from '../../styles/styledComponents'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import {
   add_summary_info,
-    change_summary_info_index,
-    delete_summary_info,
-    insert_summary_info,
-    reset_summary_info
+  change_summary_info_index,
+  delete_summary_info,
+  insert_summary_info,
+  reset_summary_info
 } from "../../reducer/infoModal";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../reducer";
@@ -54,7 +54,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       // if(row.bom_root_id){
 
       if(column.type ==='bomRegister'){
-        
+
         if(row.product_id){
           SearchBasic().then(() => {
             Notiflix.Loading.remove()
@@ -74,9 +74,9 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
   }, [isOpen])
 
   useEffect(() => {
-     if(tabStore.datas.length <= 0){
-        setIsOpen(false);
-     }
+    if(tabStore.datas.length <= 0){
+      setIsOpen(false);
+    }
   },[tabStore])
 
   useEffect(() => {
@@ -265,68 +265,68 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
     if(row.id.includes('operation')){
       return searchList.map((v, i) => (
-        {
-          seq: i+1,
-          parent: {
-            ...row,
-            additional: row.additional ?? [],
-            process: row.processArray,
-            model: row.model === '' ? null : row.modelData,
-            type: row.type_id ?? row.type === '완제품' ? 2 : 1,
-            product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
-            code: row.code,
-            customer: row.customer === '' ? null : row.customerData
-          },
-          child_product: v.tab === 2 ? {
-            ...v.product
-          } : null,
-          child_rm: v.tab === 0 ? {
-            ...v.raw_material,
-            type:v.raw_material.type_id
-          } : null,
-          child_sm: v.tab === 1 ? {
-            ...v.sub_material
-          } : null,
-          type: v.tab,
-          key: row.bom_root_id,
-          setting: v.setting,
-          usage: v.usage,
-          version: v.version
-        }
+          {
+            seq: i+1,
+            parent: {
+              ...row,
+              additional: row.additional ?? [],
+              process: row.processArray,
+              model: row.model === '' ? null : row.modelData,
+              type: row.type_id ?? row.type === '완제품' ? 2 : 1,
+              product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
+              code: row.code,
+              customer: row.customer === '' ? null : row.customerData
+            },
+            child_product: v.tab === 2 ? {
+              ...v.product
+            } : null,
+            child_rm: v.tab === 0 ? {
+              ...v.raw_material,
+              type:v.raw_material.type_id
+            } : null,
+            child_sm: v.tab === 1 ? {
+              ...v.sub_material
+            } : null,
+            type: v.tab,
+            key: row.bom_root_id,
+            setting: v.setting,
+            usage: v.usage,
+            version: v.version
+          }
       ))
 
     }else{
       return searchList.map((v, i) => (
-        {
-          seq: i+1,
-          parent: {
-            ...row,
-            additional: row.additional ?? [],
-            process: row.processArray,
-            model: row.model === '' ? null : row.model,
-            type: row.type_id ?? row.type === '완제품' ? 2 : 1,
-            product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
-            code: row.code,
-            customer: row.customer === '' ? null : row.customer
-          },
-          child_product: v.tab === 2 ? {
-            ...v.product
-          } : null,
-          child_rm: v.tab === 0 ? {
-            ...v.raw_material,
-            type:v.raw_material.type_id
-          } : null,
-          child_sm: v.tab === 1 ? {
-            ...v.sub_material
-          } : null,
-          type: v.tab,
-          key: row.bom_root_id,
-          setting: v.setting,
-          usage: v.usage,
-          version: v.version
-        }
+          {
+            seq: i+1,
+            parent: {
+              ...row,
+              additional: row.additional ?? [],
+              process: row.processArray,
+              model: row.model === '' ? null : row.model,
+              type: row.type_id ?? row.type === '완제품' ? 2 : 1,
+              product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
+              code: row.code,
+              customer: row.customer === '' ? null : row.customer
+            },
+            child_product: v.tab === 2 ? {
+              ...v.product
+            } : null,
+            child_rm: v.tab === 0 ? {
+              ...v.raw_material,
+              type:v.raw_material.type_id
+            } : null,
+            child_sm: v.tab === 1 ? {
+              ...v.sub_material
+            } : null,
+            type: v.tab,
+            key: row.bom_root_id,
+            setting: v.setting,
+            usage: v.usage,
+            version: v.version
+          }
       ))
-      }
+    }
   }
 
   const executeValidation = () => {
@@ -366,7 +366,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         const res = await RequestMethod('post', `bomSave`, body)
         if(res) {
           modify && update(true)
-            Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
+          Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
         }
       }
     }
@@ -387,21 +387,20 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         </div>
       </>
     }else{
-      if(column.type === 'readonly'){
+      if(column.type === 'readonly' || row.bom_root_id){
         return <>
           <div style={{
             // padding: '3.5px 0px 0px 3.5px',
             width: '100%',
           }}>
             <div onClick={() => {
-
               if (row.bom_root_id) {
                 setIsOpen(true)
               } else {
                 Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
                 })
               }
-              
+
             }}>
               <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>
             </div>
@@ -410,7 +409,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       }else{
         return <>
           <div style={{
-            // padding: '3.5px 0px 0px 3.5px',
+            padding: '3.5px 0px 0px 2.5px',
             width: '100%',
           }}>
             <UploadButton
@@ -421,7 +420,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 Notiflix.Report.warning("경고","BOM을 등록하시려면 CODE가 입력 되어야합니다.","확인",)
               }
             }}>
-              <p>BOM 등록</p>
+                  <p>BOM 등록</p>
             </UploadButton>
           </div>
         </>
@@ -443,7 +442,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
           row.type_name = row.type;
           return row
         default:
-        return row
+          return row
       }
     })
     return result;
@@ -452,148 +451,148 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
   // 중복되는거 없는지 판단하자..
   const competeBom = (rows) => {
 
-      const tempRow = [...rows]
-      const spliceRow = [...rows]
-      spliceRow.splice(selectRow, 1)
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
 
-      const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
+    const isCheck = spliceRow.some((row)=> row.code === tempRow[selectRow]?.code && row.code !==undefined && row.code !=='')
 
-      if(spliceRow){
-        if(isCheck){
-          return Notiflix.Report.warning(
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
             '경고',
             `중복된 BOM이 존재합니다.`,
             '확인'
-          );
-        }
+        );
       }
-
-      setSearchList(rows)
     }
 
+    setSearchList(rows)
+  }
+
   return (
-    <SearchModalWrapper >
-      { ModalContents() }
-      <Modal isOpen={isOpen} style={{
-        content: {
-          top: '50%',
-          left: '50%',
-          right: 'auto',
-          bottom: 'auto',
-          marginRight: '-50%',
-          transform: 'translate(-50%, -50%)',
-          padding: 0
-        },
-        overlay: {
-          background: 'rgba(0,0,0,.6)',
-          zIndex: 5
-        }
-      }}>
-        <div style={{
-          width: 1776,
-          height: 800
+      <SearchModalWrapper >
+        { ModalContents() }
+        <Modal isOpen={isOpen} style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            padding: 0
+          },
+          overlay: {
+            background: 'rgba(0,0,0,.6)',
+            zIndex: 5
+          }
         }}>
           <div style={{
-            margin: '24px 16px 16px',
-            display: 'flex',
-            justifyContent: 'space-between'
+            width: 1776,
+            height: 800
           }}>
-            <p style={{
-              color: 'black',
-              fontSize: 22,
-              fontWeight: 'bold',
-              margin: 0,
-            }}>BOM 정보 (해당 제품을 만드는데 필요한 BOM을 등록해주세요)</p>
-            <div style={{display: 'flex'}}>
-              <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
-                setIsOpen(false)
-              }}>
-                <img style={{width: 20, height: 20}} src={IcX}/>
+            <div style={{
+              margin: '24px 16px 16px',
+              display: 'flex',
+              justifyContent: 'space-between'
+            }}>
+              <p style={{
+                color: 'black',
+                fontSize: 22,
+                fontWeight: 'bold',
+                margin: 0,
+              }}>BOM 정보 (해당 제품을 만드는데 필요한 BOM을 등록해주세요)</p>
+              <div style={{display: 'flex'}}>
+                <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
+                  setIsOpen(false)
+                }}>
+                  <img style={{width: 20, height: 20}} src={IcX}/>
+                </div>
               </div>
             </div>
-          </div>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData ? headerData.customer?.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
-              {/*<HeaderTableText>{tabStore.datas[tabStore.index]?.headerData ? tabStore.datas[tabStore.index].headerData.customerArray.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>*/}
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData ? headerData.model?.model : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData ? headerData.code :row.code ?? "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData ? headerData.name : row.name ?? "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData ? TransferCodeToValue(headerData.type, 'productType') :row.type || row.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData ? headerData.process?.name : row.processArray ? row.processArray.name : "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>생산수량</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>1</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{headerData ? headerData.unit : row.unit ?? "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-            
-          </HeaderTable>
-          <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
-            <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
-              <div style={{ display: 'flex', width: 1200}}>
-              {tabStore.datas.map((v, i) => {
-                return <TabBox ref={i === 0 ? tabRef : null} style={
-                  // focusIndex === i ? {
-                  tabStore.index === i ? {
-                    backgroundColor: '#19B9DF',
-                    opacity: 1
-                  } : {
-                    backgroundColor: '#E7E9EB',
-                    opacity: 1
-                  }
-                }>
-                  {
-                    tabRef.current && tabRef.current.clientWidth < 63 ?
-                        // focusIndex !== i ?
-                        tabStore.index !== i ?
-                            <p onClick={() => {setFocusIndex(i)}}>{v.title}</p>
-                            // <p onClick={() => {setFocusIndex(i)}}>{tabStore.datas[i].title}</p>
-                            :
-                            <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
-                              dispatch(delete_summary_info(i));
-                            }}>
-                              <img style={{width: 20, height: 20}} src={IcX}/>
-                            </div>
+            <HeaderTable>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{headerData ? headerData.customer?.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
+                {/*<HeaderTableText>{tabStore.datas[tabStore.index]?.headerData ? tabStore.datas[tabStore.index].headerData.customerArray.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>*/}
+              </HeaderTableTextInput>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{headerData ? headerData.model?.model : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+            </HeaderTable>
+            <HeaderTable>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{headerData ? headerData.code :row.code ?? "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{headerData ? headerData.name : row.name ?? "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{headerData ? TransferCodeToValue(headerData.type, 'productType') :row.type || row.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{headerData ? headerData.process?.name : row.processArray ? row.processArray.name : "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+            </HeaderTable>
+            <HeaderTable>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>생산수량</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>1</HeaderTableText>
+              </HeaderTableTextInput>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <HeaderTableText>{headerData ? headerData.unit : row.unit ?? "-"}</HeaderTableText>
+              </HeaderTableTextInput>
+
+            </HeaderTable>
+            <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
+              <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
+                <div style={{ display: 'flex', width: 1200}}>
+                  {tabStore.datas.map((v, i) => {
+                    return <TabBox ref={i === 0 ? tabRef : null} style={
+                      // focusIndex === i ? {
+                      tabStore.index === i ? {
+                        backgroundColor: '#19B9DF',
+                        opacity: 1
+                      } : {
+                        backgroundColor: '#E7E9EB',
+                        opacity: 1
+                      }
+                    }>
+                      {
+                        tabRef.current && tabRef.current.clientWidth < 63 ?
+                            // focusIndex !== i ?
+                            tabStore.index !== i ?
+                                <p onClick={() => {setFocusIndex(i)}}>{v.title}</p>
+                                // <p onClick={() => {setFocusIndex(i)}}>{tabStore.datas[i].title}</p>
+                                :
+                                <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
+                                  dispatch(delete_summary_info(i));
+                                }}>
+                                  <img style={{width: 20, height: 20}} src={IcX}/>
+                                </div>
                             :
                             <>
                               <p onClick={() => {
@@ -608,194 +607,194 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                                 <img style={{width: 20, height: 20}} src={IcX}/>
                               </div>
                             </>
-                  }
-                </TabBox>
-              })}
+                      }
+                    </TabBox>
+                  })}
+                </div>
               </div>
-            </div>
-            {column.type !== "readonly" &&
-            <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-              <Button onClick={() => {
-                let tmp = searchList
+              {column.type !== "readonly" && tabStore.index === 0 &&
+              <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
+                <Button onClick={() => {
+                  let tmp = searchList
 
-                setSearchList([
-                  ...searchList,
-                  {
-                    setting: 1,
-                    seq: searchList.length+1
-                  }
-                ])
-              }}>
-                <p>행 추가</p>
-              </Button>
-              <Button style={{marginLeft: 16}} onClick={() => {
+                  setSearchList([
+                    ...searchList,
+                    {
+                      setting: 1,
+                      seq: searchList.length+1
+                    }
+                  ])
+                }}>
+                  <p>행 추가</p>
+                </Button>
+                <Button style={{marginLeft: 16}} onClick={() => {
 
-                if(selectRow === null || selectRow === 0){
-                  return;
-                }else{
+                  if(selectRow === null || selectRow === 0){
+                    return;
+                  }else{
 
-                  let tmpRow = searchList
+                    let tmpRow = searchList
 
-                  let tmp = tmpRow[selectRow]
-                  tmpRow[selectRow] = tmpRow[selectRow - 1]
-                  tmpRow[selectRow - 1] = tmp
+                    let tmp = tmpRow[selectRow]
+                    tmpRow[selectRow] = tmpRow[selectRow - 1]
+                    tmpRow[selectRow - 1] = tmp
 
-                  setSearchList([...tmpRow.map((v, i) => {
-                    if(!searchList[selectRow-1].border){
+                    setSearchList([...tmpRow.map((v, i) => {
+                      if(!searchList[selectRow-1].border){
                         searchList.map((v,i)=>{
                           v.border = false;
                         })
                         searchList[selectRow-1].border = true
                         setSearchList([...searchList])
+                      }
+                      setSelectRow(selectRow -1)
+                      return {
+                        ...v,
+                        seq: i+1
+                      }
+                    })])
+                  }
+
+                }}>
+                  <p>위로</p>
+                </Button>
+                <Button style={{marginLeft: 16}} onClick={() => {
+                  if(selectRow === searchList.length-1 || selectRow === null){
+                    return
+                  }
+                  let tmpRow = searchList
+
+                  let tmp = tmpRow[selectRow]
+                  tmpRow[selectRow] = tmpRow[selectRow + 1]
+                  tmpRow[selectRow + 1] = tmp
+
+                  setSearchList([...tmpRow.map((v, i) => {
+                    if(!searchList[selectRow+1].border){
+                      searchList.map((v,i)=>{
+                        v.border = false;
+                      })
+                      searchList[selectRow+1].border = true
+                      setSearchList([...searchList])
                     }
-                    setSelectRow(selectRow -1)
+                    setSelectRow(selectRow +1)
                     return {
                       ...v,
                       seq: i+1
                     }
                   })])
-                }
-
-              }}>
-                <p>위로</p>
-              </Button>
-              <Button style={{marginLeft: 16}} onClick={() => {
-                if(selectRow === searchList.length-1 || selectRow === null){
-                  return
-                }
-                let tmpRow = searchList
-
-                let tmp = tmpRow[selectRow]
-                tmpRow[selectRow] = tmpRow[selectRow + 1]
-                tmpRow[selectRow + 1] = tmp
-
-                setSearchList([...tmpRow.map((v, i) => {
-                  if(!searchList[selectRow+1].border){
-                    searchList.map((v,i)=>{
-                      v.border = false;
-                    })
-                    searchList[selectRow+1].border = true
-                    setSearchList([...searchList])
-                  }
-                  setSelectRow(selectRow +1)
-                  return {
-                    ...v,
-                    seq: i+1
-                  }
-                })])
-              }}>
-                <p>아래로</p>
-              </Button>
-              <Button style={{marginLeft: 16}} onClick={() => {
-                if(selectRow === null){
-                  return Notiflix.Report.warning(
-                    '경고',
-                    '선택된 정보가 없습니다.',
-                    '확인',
+                }}>
+                  <p>아래로</p>
+                </Button>
+                <Button style={{marginLeft: 16}} onClick={() => {
+                  if(selectRow === null){
+                    return Notiflix.Report.warning(
+                        '경고',
+                        '선택된 정보가 없습니다.',
+                        '확인',
                     );
-                }
-
-                let tmpRow = [...searchList]
-                if(selectRow !== undefined && selectRow !== null){
-                  tmpRow.splice(selectRow, 1)
-
-                  const filterRow = tmpRow.map((v , i)=>{
-                    return {...v , seq : i + 1}
-                  })
-                  setSearchList(filterRow)
-                  setSelectRow(undefined)
-                }
-
-              }}>
-                <p>삭제</p>
-              </Button>
-            </div>
-            }
-          </div>
-          <div style={{padding: '0 16px', width: 1776}}>
-            <ExcelTable
-              headerList={column.type === "readonly" ?  searchModalList.readOnlyBomInfo : searchModalList.bomInfo}
-              row={searchList ?? [{}]}
-              setRow={(e) => {
-                let tmp = e.map((v, index) => {
-                  return {
-                    ...v,
-                    newTab: false
                   }
-                })
-                // typeCheck(tmp)
-                competeBom([...tmp])
-                // setSearchList([...tmp])
-              }}
-              width={1746}
-              rowHeight={32}
-              height={552}
-              // setSelectRow={(e) => {
-              //   setSelectRow(e)
-              // }}
-              setSelectRow={(e) => {
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
-                setSelectRow(e)
-              }}
-              type={'searchModal'}
-              headerAlign={'center'}
-            />
-          </div>
-          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
-            {
-              column.type !== 'readonly' && <div
-                  onClick={() => {
-                    setIsOpen(false)
-                  }}
-                  style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-              >
-                  <p style={{color: '#717C90'}}>취소</p>
+
+                  let tmpRow = [...searchList]
+                  if(selectRow !== undefined && selectRow !== null){
+                    tmpRow.splice(selectRow, 1)
+
+                    const filterRow = tmpRow.map((v , i)=>{
+                      return {...v , seq : i + 1}
+                    })
+                    setSearchList(filterRow)
+                    setSelectRow(undefined)
+                  }
+
+                }}>
+                  <p>삭제</p>
+                </Button>
               </div>
-            }
-            <div
-              onClick={() => {
-                if(column.type !== 'readonly' && tabStore.index === 0){
-                    if(row.product_id){
-                        return SaveBasic()
-                    }else{
-                      const isValidation = executeValidation()
-                      if(!isValidation){
-                        onRowChange(
-                          column.type === "bomRegister" ?
-                            {
-                              ...row,
-                              isChange: true,
-                              bom : filterList()
-                            }
-                            :
-                            {
-                              ...row,
-                              ...searchList[selectRow],
-                              name: row.name,
-                              isChange: true
-                            }
-                        )
-                        Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
+              }
+            </div>
+            <div style={{padding: '0 16px', width: 1776}}>
+              <ExcelTable
+                  headerList={column.type === "readonly" ?  searchModalList.readOnlyBomInfo : searchModalList.bomInfo}
+                  row={searchList ?? [{}]}
+                  setRow={(e) => {
+                    let tmp = e.map((v, index) => {
+                      return {
+                        ...v,
+                        newTab: false
                       }
-                  }
-                }else {
-                  setIsOpen(false)
-                }
-              }}
-              style={{width: column.type === 'readonly' ? '100%' : '50%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p>{column.type !== 'readonly' && tabStore.index === 0 ? '등록하기' : '확인'}</p>
+                    })
+                    // typeCheck(tmp)
+                    competeBom([...tmp])
+                    // setSearchList([...tmp])
+                  }}
+                  width={1746}
+                  rowHeight={32}
+                  height={552}
+                  // setSelectRow={(e) => {
+                  //   setSelectRow(e)
+                  // }}
+                  setSelectRow={(e) => {
+                    if(!searchList[e].border){
+                      searchList.map((v,i)=>{
+                        v.border = false;
+                      })
+                      searchList[e].border = true
+                      setSearchList([...searchList])
+                    }
+                    setSelectRow(e)
+                  }}
+                  type={'searchModal'}
+                  headerAlign={'center'}
+              />
+            </div>
+            <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+              {
+                column.type !== 'readonly' && <div
+                    onClick={() => {
+                      setIsOpen(false)
+                    }}
+                    style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                >
+                  <p style={{color: '#717C90'}}>취소</p>
+                </div>
+              }
+              <div
+                  onClick={() => {
+                    if(column.type !== 'readonly' && tabStore.index === 0){
+                      if(row.product_id){
+                        return SaveBasic()
+                      }else{
+                        const isValidation = executeValidation()
+                        if(!isValidation){
+                          onRowChange(
+                              column.type === "bomRegister" ?
+                                  {
+                                    ...row,
+                                    isChange: true,
+                                    bom : filterList()
+                                  }
+                                  :
+                                  {
+                                    ...row,
+                                    ...searchList[selectRow],
+                                    name: row.name,
+                                    isChange: true
+                                  }
+                          )
+                          Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
+                        }
+                      }
+                    }else {
+                      setIsOpen(false)
+                    }
+                  }}
+                  style={{width: column.type === 'readonly' ? '100%' : '50%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+              >
+                <p>{column.type !== 'readonly' && tabStore.index === 0 ? '등록하기' : '확인'}</p>
+              </div>
             </div>
           </div>
-        </div>
-      </Modal>
-    </SearchModalWrapper>
+        </Modal>
+      </SearchModalWrapper>
   )
 }
 

@@ -433,7 +433,7 @@ const BasicMachineV1u = ({option}: IProps) => {
     tempData.devices = value?.devices?.map((device) => {
       return {...device, type: device.type_id}
     })
-    tempData.photo = value.photo?.uuid;
+    tempData.photo = value.photo?.uuid ?? value.photo;
     tempData.additional =[
       ...additional.map((v, index)=>{
           if(!value[v.colName]) return undefined;

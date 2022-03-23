@@ -135,11 +135,11 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             padding: '3.5px 0px 0px 3.5px',
             width: 112
           }}>
-            <Button onClick={() => {
+            <Underline onClick={() => {
               setIsOpen(true)
             }}>
               <p>기계 수정</p>
-            </Button>
+            </Underline>
           </div>
         </>
       }else{
@@ -227,7 +227,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           </div>
           <HeaderTable>
             <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>고객사명</HeaderTableText>
+              <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
               <HeaderTableText>{row.customerArray ? row.customerArray.name : '-'}</HeaderTableText>
@@ -470,6 +470,16 @@ const Button = styled.button`
     align-items:center;
     cursor:pointer;
     
+`;
+
+const Underline = styled.div`
+  color:white;
+  text-decoration:underline;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:112px;
+  height:32px;
 `;
 
 const HeaderTable = styled.div`

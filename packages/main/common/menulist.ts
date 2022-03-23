@@ -54,7 +54,7 @@ const BASIC_MENUS: IMenuType[] = [
   {
     title: '품질 기준정보', url: '',
     subMenu: [
-      {title: '공정별 자주검사 항목 등록', url: '/mes/basic/register/defect'},
+      {title: '공정별 불량유형 등록', url: '/mes/basic/register/defect'},
     ]
   },
   {title: '주변장치 기준정보', url: '/mes/basic/device'},

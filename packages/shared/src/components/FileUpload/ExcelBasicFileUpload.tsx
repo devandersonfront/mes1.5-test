@@ -113,7 +113,10 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
 
               }}
             >
-                {column.type === "image" ? "이미지 확인" : "파일 다운로드" }
+              {/*{*/}
+              {/*  row[column.key]*/}
+              {/*}*/}
+                {column.type === "image" ? "이미지 보기" : "파일 다운로드" }
             </p>
           </div>
           : column.readonly ?
@@ -138,7 +141,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         hidden
         onChange={async (e) => {
           if(e.target.files && e.target.files.length !== 0) {
-            console.log("e.target.files : ", e.target.files)
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
               if(uploadImg !== undefined){
                   if(column.key.includes("photo")){
@@ -168,7 +170,5 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
     </div>
   );
 }
-
-
 
 export {FileEditer};
