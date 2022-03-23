@@ -171,6 +171,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
                             <div
                                 onClick={() => {
                                     setIsOpen(false)
+                                    setMidrangeUpdate(false)
                                 }}
                                 style={{width: "50%", height: 40, color: '#717C90', backgroundColor: '#DFDFDF', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                             >
