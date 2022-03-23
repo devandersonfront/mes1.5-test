@@ -46,9 +46,11 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
           }
         })
             .then((res) => {
+              console.log(res)
               setBasicRow([{
                 ...basicRow[0],
                 date: res.info_list[0].deadline,
+                contract: res.info_list[0],
                 contract_id: res.info_list[0].identification,
                 product:res.info_list[0].product,
                 // product_id: res.info_list[0].product.product_id,
