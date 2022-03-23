@@ -245,7 +245,7 @@ export const searchModalList: any = {
     {key: 'sequence', name: '번호', width: 64, textAlign: 'center', formatter: LineBorderContainer},
     {key: 'code', name: '공구 CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
     {key: 'name', name: '공구명', formatter: LineBorderContainer, type: 'Modal'},
-    {key: 'customer', name: '거래처', width: 160, formatter: LineBorderContainer, placeholder: '0'},
+    {key: 'customer', name: '거래처', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'used', name: '생산량', width: 160, formatter: LineBorderContainer, placeholder: '0'},
   ],
   machineList: [
