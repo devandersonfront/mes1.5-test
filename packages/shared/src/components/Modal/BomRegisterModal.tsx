@@ -191,7 +191,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
           code: v.parent?.code,
           name: v.parent?.name,
           process: v.parent?.process?.name,
-          type: TransferCodeToValue(v.parent.type, 'material'),
+          type: TransferCodeToValue(v.parent.type, 'productType'),
           unit: v.parent?.unit,
           goal: row.goal,
         })
@@ -201,9 +201,9 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         ...childData,
         seq: i+1,
         code: childData.code,
-        type: TransferCodeToValue(v.type, 'material'),
+        type: TransferCodeToValue(childData?.type, v.type === 0 ? "rawmaterial" : v.type === 1 ? "submaterial" : "product"),
         tab: v.type,
-        type_name: TransferCodeToValue(v.type, 'material'),
+        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawmaterial" : v.type === 1 ? "submaterial" : "product"),
         unit: v.type === 0 ? rmType : childData.unit ?? "-",
         parent: v.parent,
         usage: v.usage,
@@ -320,7 +320,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>BOM 정보 (해당 제품을 만드는데 사용할 자재를 선택해주세요. 자재 정보가 없으면 BOM 수정 버튼을 눌러 BOM 정보를 수정해주세요)</p>
+            }}>BOM 정보 {/*(해당 제품을 만드는데 사용할 자재를 선택해주세요. 자재 정보가 없으면 BOM 수정 버튼을 눌러 BOM 정보를 수정해주세요)*/}</p>
             <div style={{display: 'flex'}}>
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)

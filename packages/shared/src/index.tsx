@@ -94,6 +94,7 @@ export {LotNumberRegister} from "./components/Cell/LotNumberRegister"
 //드롭다운
 export {DropDownEditor} from "./components/Dropdown/ExcelBasicDropdown"
 export {ExcelTable} from "./components/Excel/ExcelTable"
+export {InputWithDropDown} from './components/Dropdown/InputWithDropDown'
 
 export {FileEditer} from "./components/FileUpload/ExcelBasicFileUpload"
 export {TitleFileUpload} from './components/FileUpload/TitleFileUpload'
