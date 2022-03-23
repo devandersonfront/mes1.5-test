@@ -18,11 +18,15 @@ const FinishCancelButton = ({ row, column, onRowChange}: IProps) => {
 
   const SaveBasic = async () => {
     let res: any
-    res = await RequestMethod('post', `sheetSave`,
-      [{
-        ...row,
-        status: 0
-      }])
+    res = await RequestMethod('post', `sheetFinish`,
+        {
+          ...row,
+          status: 0
+        }).catch((err) => {
+      Notiflix.Report.failure("에러",err.data.message,"확인")
+    })
+
+
 
 
     if(res){
