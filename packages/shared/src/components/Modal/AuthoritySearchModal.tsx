@@ -79,7 +79,7 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
 
   const ModalContents = () => {
     if(column.searchType === 'operation' && row.index !== 1){
-      return <></>
+      return <>-</>
     }
 
     if(column.disableType === 'record' && row.osd_id){
@@ -90,7 +90,7 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
 
     return <>
       <div style={{width: 'calc(100% - 40px)', height: 40}}>
-        { row[`${column.key}`]}
+        { row[`${column.key}`] ?? "-"}
       </div>
       <div style={{
         display: 'flex',
