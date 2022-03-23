@@ -74,14 +74,14 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                 const tools = []
                 row.tools.map(({tool}) => {
                     let toolObject:any = {...tool.tool}
-                    toolObject.sequence = tool.sequence
-                    toolObject.code = tool.tool.code
-                    toolObject.name = tool.tool.name
-                    toolObject.customer = tool.tool.customer
-                    toolObject.customerArray = tool.tool.customerArray
-                    toolObject.product_id = tool.tool.product_id
-                    toolObject.stock = tool.tool.stock
-                    toolObject.version = tool.tool.version
+                    toolObject.sequence = tool?.sequence
+                    toolObject.code = tool.tool?.code
+                    toolObject.name = tool.tool?.name
+                    toolObject.customer = tool.tool?.customer
+                    toolObject.customerArray = tool.tool?.customerArray
+                    toolObject.product_id = tool.tool?.product_id
+                    toolObject.stock = tool.tool?.stock
+                    toolObject.version = tool.tool?.version
                     tools.push(toolObject)
                 })
                 setSearchList(tools)
@@ -264,23 +264,23 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                         </div>
                         <div
                             onClick={() => {
-                                if(selectRow !== undefined && selectRow !== null){
+                                // if(selectRow !== undefined && selectRow !== null){
                                     onRowChange({
                                         ...row,
-                                        tools: searchList.map(v => {
+                                        tools: searchList.map((v,i) => {
                                             return {
+                                                ...row.tools[i] ?? undefined,
+                                                record_id: row.record_id,
                                                 tool: {
-                                                    sequence: v.sequence,
-                                                    tool: {
-                                                        ...v
-                                                    },
-                                                }
+                                                    ...row.tools[i]?.tool,
+                                                    tool: {...v}
+                                                },
                                             }
                                         }),
                                         name: row.name,
                                         isChange: true
                                     })
-                                }
+                                // }
                                 setIsOpen(false)
                             }}
                             style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
