@@ -196,7 +196,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
           code: v.parent?.code,
           name: v.parent?.name,
           process: v.parent?.process?.name,
-          type: TransferCodeToValue(v.parent.type, 'material'),
+          type: TransferCodeToValue(v.parent.type, 'productType'),
           unit: v.parent?.unit,
           goal: row.goal,
         })
