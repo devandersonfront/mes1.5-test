@@ -30,8 +30,6 @@ const MesProductChangeRegister = () => {
         ]
     )
 
-    console.log(files,'filesfilesfiles')
-
     const productChangeSave = async () => {
         const filesFilter = files.filter((v)=> v.name !== '')
 
@@ -101,8 +99,8 @@ const MesProductChangeRegister = () => {
                 setSelectList={setSelectList}
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
             />
-            <TitleInput title={'제목'} value={changeInfo.title} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, title: e.target.value})}/>
-            <TitleTextArea title={'설명'} value={changeInfo.content} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, content: e.target.value})}/>
+            <TitleInput title={'제목'} value={changeInfo.title} placeholder={'제목'} onChange={(e)=>setChangeInfo({...changeInfo, title: e.target.value})}/>
+            <TitleTextArea title={'설명'} value={changeInfo.content} placeholder={'설명'} onChange={(e)=>setChangeInfo({...changeInfo, content: e.target.value})}/>
             {files.map((v,i) =>
                 <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} value={v.name} placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={deleteFile} fileOnClick={(fileInfo: ChangeProductFileInfo)=>fileChange(fileInfo,i)}/>
             )}

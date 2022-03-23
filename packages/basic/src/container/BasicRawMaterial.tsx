@@ -3,14 +3,13 @@ import {
   ExcelTable,
   Header as PageHeader,
   RequestMethod,
-  V_columnlist,
   MAX_VALUE,
   DropDownEditor,
   TextEditor,
   excelDownload,
   PaginationComponent,
   ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType, BarcodeModal
+  IExcelHeaderType, IItemMenuType, BarcodeModal, columnlist
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -36,7 +35,7 @@ const BasicRawMaterial = ({}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [barcodeOpen , setBarcodeOpen] = useState<boolean>(false)
   const [basicRow, setBasicRow] = useState<Array<any>>([])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>( V_columnlist["rawmaterial"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawmaterial"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -273,7 +272,7 @@ const BasicRawMaterial = ({}: IProps) => {
   }
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = V_columnlist["rawmaterial"];
+    let tmpColumn = columnlist["rawmaterial"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;

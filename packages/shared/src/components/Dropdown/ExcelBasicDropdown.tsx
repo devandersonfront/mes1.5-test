@@ -34,7 +34,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         return (row[column.key] === 1 || row[column.key] === "여")
             ? "여" : "부"
       default:
-        return row[column.key] ? row[column.key] : "무"
+        return row[column.key] ?? "무"
     }
   }
 
