@@ -70,7 +70,9 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onRowChange({ ...row, [column.key]: event.target.value, isChange: true })
         }
       }}
-      onBlur={() => onClose(true)}
+      onBlur={() => {
+        onClose(true)
+      }}
     />
   );
 }
