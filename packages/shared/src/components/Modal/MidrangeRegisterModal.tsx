@@ -94,9 +94,6 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
         setSearchList([...formReviewData.basic])
     },[formReviewData])
 
-    React.useEffect(() => {
-
-    },[])
 
     return (
         <SearchModalWrapper >
@@ -137,6 +134,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
                                 </Button>
                             }
                             <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
+                                setMidrangeUpdate(false)
                                 setIsOpen(false)
                             }}>
                                 <img style={{width: 20, height: 20}} src={IcX}/>
@@ -194,6 +192,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
                         <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
                             <div
                                 onClick={() => {
+                                    setMidrangeUpdate(true)
                                     setIsOpen(false)
                                 }}
                                 style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
@@ -205,6 +204,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
                     <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
                         <div
                             onClick={() => {
+                                setMidrangeUpdate(true)
                                 setIsOpen(false)
                             }}
                             style={{width: "50%", height: 40, color: '#717C90', backgroundColor: '#DFDFDF', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
@@ -213,6 +213,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
                         </div>
                         <div
                             onClick={() => {
+                                setMidrangeUpdate(true)
                                 recordInspectFrameSave()
                             }}
                             style={{width: "50%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
