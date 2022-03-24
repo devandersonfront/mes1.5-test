@@ -30,7 +30,7 @@ export const searchModalList: any = {
     {key: 'name', name: '성명', formatter: LineBorderContainer},
     {key: 'appointment', name: '직책', formatter: LineBorderContainer},
     {key: 'authority', name: '권한', formatter: LineBorderContainer},
-    {key: 'user_id', name: '아이디', formatter: LineBorderContainer},
+    {key: 'id', name: '아이디', formatter: LineBorderContainer},
   ],
   product: [
     {key: 'customer_name', name: '거래처명', formatter: LineBorderContainer},
