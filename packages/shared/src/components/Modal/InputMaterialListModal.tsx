@@ -14,6 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {TransferCodeToValue} from '../../common/TransferFunction'
+import moment from "moment"
 
 interface IProps {
   column: IExcelHeaderType
@@ -165,7 +166,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     }else{
       row = tmpRow
     }
-
     tmpData = row.map((v, i) => {
       let childData: any = {}
       let type = "";
@@ -186,7 +186,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
       }
-
       return {
         ...childData,
         bom_info: bom_info !== undefined ? bom_info[i] : null,
@@ -197,7 +196,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawmaterial" : v.type === 1 ? "submaterial" : "product"),
         unit: childData.unit ?? type,
         usage: v.usage,
-        version: v.version,
+        version: v.version ?? undefined,
         processArray: childData.process ?? null,
         process: childData.process ? childData.process.name : null,
         // bom_root_id: childData.bom_root_id,
@@ -402,7 +401,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                             :
                                 {
                                   ...v,
-                                  date: v.date ?? v.end,
+                                  date: v.date ?? moment(v.end).format("YYYY-MM-DD"),
                                   warehousing: v.warehousing ?? v.good_quantity,
                                   // amount: v.lot_number === e[0].lotList[i].lot_number ? e[0][lotList[i]].amount : "0",
                                   // amount: v.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
@@ -542,10 +541,10 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                               if (Number(lot.amount) > lot.current) {
                                 Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
                               }
-
                               bomList.push({
-                                record_id: row.record_id,
+                                // record_id: row.record_id,
                                 ...row.input_bom[index],
+                                record_id: lot?.record_id ?? undefined,
                                 lot: {
                                   elapsed: lot.elapsed,
                                   type: bom.tab,
@@ -555,7 +554,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                                   warehousing: lot.warehousing,
                                   date: lot.date,
                                   current: lot.current,
-                                  amount: Number(lot.amount) > lot.current ? 0 : lot.amount
+                                  amount: Number(lot.amount) > lot.current ? 0 : lot.amount,
+                                  version: lot?.version ?? undefined
                                 }
                               })
                             }
@@ -570,8 +570,9 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                               }
 
                               bomList.push({
-                                record_id: row.record_id,
+                                // record_id: row.record_id,
                                 ...row.input_bom[index],
+                                record_id: lot?.child_lot_record?.record_id ?? undefined,
                                 lot: {
                                   elapsed: lot.elapsed,
                                   type: bom.tab,
@@ -581,7 +582,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                                   warehousing: lot.warehousing,
                                   date: lot.date,
                                   current: lot.current,
-                                  amount: Number(lot.amount) > lot.current ? 0 : lot.amount
+                                  amount: Number(lot.amount) > lot.current ? 0 : lot.amount,
+                                  version: lot?.version ?? undefined
                                 }
                               })
                             }
