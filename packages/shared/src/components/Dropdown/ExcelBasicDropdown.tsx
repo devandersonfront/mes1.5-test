@@ -58,7 +58,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
   return (
     <>
     {
-      (column.name !== '용접 종류' || row.type ==='용접기') && <select
+      (column.name !== '용접 종류' || row.type ==='용접기') ? <select
       className={'editDropdown'}
       style={{
         appearance: 'none',
@@ -167,6 +167,8 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         </option>)
       })}
     </select>
+          :
+          "-"
     }
     </>
 
