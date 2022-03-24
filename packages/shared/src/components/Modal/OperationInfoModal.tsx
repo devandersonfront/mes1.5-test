@@ -116,7 +116,6 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
           width: '100%'
         }}>
           <UploadButton onClick={() => {
-            console.log(row)
             if(row?.productId){
               dispatch(change_operation_searchKey(row?.identification))
               router.push('/mes/operationV1u/register')

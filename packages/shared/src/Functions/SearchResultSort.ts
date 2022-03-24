@@ -321,7 +321,6 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
     }
     case 'receiveContract':
     case 'contract': {
-      console.log("selectData : ", selectData)
       return {
         contract: {
           ...selectData,

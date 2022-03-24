@@ -394,6 +394,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                         setLotList([...v.lotList.map((v,i) => (
                             row?.bom ? {
                               ...v,
+
                               // amount: v.lot_number === e[0].lotList[i].lot_number ? e[0][lotList[i]].amount : "0",
                               amount: v.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
                               seq: i+1
@@ -401,6 +402,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                             :
                                 {
                                   ...v,
+                                  date: v.date ?? v.end,
+                                  warehousing: v.warehousing ?? v.good_quantity,
                                   // amount: v.lot_number === e[0].lotList[i].lot_number ? e[0][lotList[i]].amount : "0",
                                   // amount: v.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
                                   seq: i+1

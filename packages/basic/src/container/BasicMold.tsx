@@ -42,7 +42,6 @@ const BasicMold = ({}: IProps) => {
     total: 1
   })
 
-  console.log(basicRow,'basicRowbasicRow')
 
   useEffect(() => {
     setOptionIndex(optionIndex)
