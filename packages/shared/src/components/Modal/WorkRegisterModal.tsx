@@ -48,7 +48,6 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 ]
 
 const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
-  const tabRef = useRef(null)
 
   const [bomDummy, setBomDummy] = useState<any[]>([
     {sequence: '1', code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
@@ -66,8 +65,8 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         modify: true,
         osId: row.os_id,
         sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
-        start: moment().format('YYYY-MM-DD HH:mm:00'),
-        end: moment().format('YYYY-MM-DD HH:mm:00'),
+        start: moment().format('YYYY-MM-DD'),
+        end: moment().format('YYYY-MM-DD'),
         ...row,
         defect_reasons: [],
       }])

@@ -464,24 +464,10 @@ const BasicMold = ({}: IProps) => {
         router.push(`/mes/item/manage/mold`)
         break;
       case 3:
-        let items = {}
-
-        column.map((value) => {
-          if (value.selectList && value.selectList.length) {
-            items = {
-              ...value.selectList[0],
-              [value.key]: value.selectList[0].name,
-              [value.key + 'PK']: value.selectList[0].pk,
-              ...items,
-            }
-          }
-        })
-
         const random_id = Math.random() * 1000
 
         setBasicRow([
           {
-            ...items,
             period : 0,
             period_unit : 0,
             id: `process_${random_id}`,
