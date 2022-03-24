@@ -91,7 +91,7 @@ const MesKpiOperation = () => {
                     paused_time: 0,
                     good_quantity: v.good_quantity,
                     poor_quantity: v.poor_quantity,
-                    operation : v.standardUph ? ((v.good_quantity/(v.standardUph * v.workTime)) * 100).toFixed(1) : '0'
+                    operation : v.cu_rate
                 }
             })
             setPauseBasicRow(filterResponse)
