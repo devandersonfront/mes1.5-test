@@ -278,7 +278,7 @@ const MesFinishList = ({page, keyword, option}: IProps) => {
         cm_id: row.product?.model?.model ?? '-',
         product_id: row.product?.code ?? '-',
         name: row.product?.name ?? '-',
-        type: row.product?.type ? TransferCodeToValue(row.product.type, 'material') : '-',
+        type: typeof row.product?.type !== 'undefined' ? TransferCodeToValue(row.product.type, 'product') : '-',
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? "-",
         id: `sheet_${random_id}`,
