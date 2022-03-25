@@ -542,15 +542,6 @@ export const searchModalList: any = {
     {key: 'current', name: '재고량'},
     {key: 'amount', name: '납품 수량', textType: 'Modal',},
   ],
-  midrangeInfo: [
-    {key: 'osd_id', name: '지시 고유 번호', width: 152},
-    {key: 'lot_number', name: 'LOT 번호 (생산로트)', width: 152},
-    {key: 'code', name: 'CODE', width: 480},
-    {key: 'material_name', name: '품명', width: 360},
-    {key: 'type', name: '품목 종류', width: 120},
-    {key: 'process_id', name: '생산 공정', width: 120},
-    {key: 'worker_name', name: '작업자', width: 120},
-    {key: 'name', name: '기계 이름 (CODE)', width: 240}
-  ]
+
 }
 

@@ -547,6 +547,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
           }else{
             router.push(`/mes/rawmaterialV1u/stock?page=1&keyword=`)
           }
+          setSelectList(new Set)
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {

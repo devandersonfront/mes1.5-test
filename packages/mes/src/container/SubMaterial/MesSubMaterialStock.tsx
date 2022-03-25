@@ -424,6 +424,7 @@ const MesSubMaterialStock = ({page, keyword, option}: IProps) => {
           }else{
             router.push(`/mes/submaterialV1u/stock?page=1&keyword=`)
           }
+          setSelectList(new Set)
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {

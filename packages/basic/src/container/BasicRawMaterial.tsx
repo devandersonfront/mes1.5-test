@@ -28,8 +28,6 @@ export interface IProps {
   option?: number
 }
 
-
-
 const BasicRawMaterial = ({}: IProps) => {
   const router = useRouter()
 
@@ -463,9 +461,14 @@ const BasicRawMaterial = ({}: IProps) => {
 
   }
 
-
-
   const onClickHeaderButton = (index: number) => {
+        if(selectList.size === 0){
+          return Notiflix.Report.failure('선택을 하셔야 합니다.',
+          '선택을 하셔야지 바코드를 보실수 있습니다.',
+          'Okay')
+        }
+        setBarcodeOpen(true)
+        selectedData()
 
     switch(buttonList[index]){
       case '항목관리':
@@ -518,8 +521,50 @@ const BasicRawMaterial = ({}: IProps) => {
 
     }
   }
+  const handleModal = (open:boolean) => {
 
+    setBarcodeOpen(!open)
 
+  }
+
+  const selectedData = () => {
+
+    let tmpSelectList : any[] = []
+    basicRow.map(row => {
+      if(selectList.has(row.id)){
+        tmpSelectList.push(row)
+      }
+    })
+
+    setSelectRow(tmpSelectList[0])
+
+  }
+
+  const handleBarcode = async (dataurl , id) => {
+
+    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
+                {
+                  "id":id,
+                  "functions":
+                  {"func0":{"checkLabelStatus":[]},
+                    "func1":{"clearBuffer":[]},
+                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+                    "func3":{"printBuffer":[]}
+                  }
+                },
+                {
+                  headers : {
+                    'Content-Type' : 'application/x-www-form-urlencoded'
+                  }
+                }
+    ).catch((error) => {
+
+      if (error) {
+        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        return false
+      }
+    })
+  }
 
   React.useEffect(()=>{
 
@@ -596,6 +641,15 @@ const BasicRawMaterial = ({}: IProps) => {
           setPage={(page) => {
             setPageInfo({...pageInfo, page:page})
           }}
+        />
+
+          <BarcodeModal
+          title={'바코드 미리보기'}
+          handleBarcode={handleBarcode}
+          handleModal={handleModal}
+          isOpen={barcodeOpen}
+          type={'rawMaterial'}
+          data={selectRow}
         />
 
       {/* <ExcelDownloadModal

@@ -189,7 +189,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
     }else{
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
-
       let searchList = changeRow(res)
 
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));

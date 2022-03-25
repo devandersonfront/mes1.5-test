@@ -630,14 +630,3 @@ export const SelectButton = styled.div`
 `
 
 
-export const MidrangeButton = styled.div`
-    width: 100%;
-    background-color: #111319;
-    height: 40px;
-    margin-bottom: 16px; 
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-`

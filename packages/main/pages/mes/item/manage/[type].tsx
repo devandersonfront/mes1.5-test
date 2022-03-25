@@ -14,7 +14,7 @@ import ItemManageBox from '../../../../component/ItemManage/ItemManageBox'
 import Notiflix from "notiflix";
 import {RequestMethod, RootState} from "shared";
 import {useDispatch, useSelector} from "react-redux";
-import { getUserInfoAction } from '../../../../reducer/userInfo'
+// import { getUserInfoAction } from '../../../../reducer/userInfo'
 import { useRouter } from 'next/router'
 import cookie from 'react-cookies'
 
@@ -112,6 +112,11 @@ export const getServerSideProps = async (ctx: any) => {
           title: "주변창지 정보관리",
           code:"ROLE_BASE_12"
         }
+      case "tool" :
+          return {
+            title: "공구 관리",
+            code: "ROLE_BASE_14"
+          }
     }
   }
 

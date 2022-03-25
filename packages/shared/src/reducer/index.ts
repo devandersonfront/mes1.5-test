@@ -10,13 +10,13 @@ import deliveryRegisterState from "./deliveryRegisterState";
 import OperationRegisterState from "./operationRegisterState";
 
 const rootReducer = combineReducers({
+  mainUserInfo,
   userInfo,
   menuState,
   MachineSelectReducer,
   MulitpleSelectModal,
   infoModal,
   modifyInfo,
-  mainUserInfo,
   deliveryRegisterState,
   OperationRegisterState
 })
