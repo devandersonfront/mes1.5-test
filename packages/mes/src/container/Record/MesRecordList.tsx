@@ -188,72 +188,65 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
   const DeleteBasic = async () => {
 
-    const delete_array = basicRow.map((row, i) => {
-      if(selectList.has(row.id)){
-        let selectKey: string[] = []
-        let additional:any[] = []
-        column.map((v) => {
-          if(v.selectList){
-            selectKey.push(v.key)
-          }
+    let res = await RequestMethod('delete', `cncRecordeDelete`, basicRow.map((row, i) => {
+          if(selectList.has(row.id)){
+            let selectKey: string[] = []
+            let additional:any[] = []
+            column.map((v) => {
+              if(v.selectList){
+                selectKey.push(v.key)
+              }
 
-          if(v.type === 'additional'){
-            additional.push(v)
-          }
-        })
+              if(v.type === 'additional'){
+                additional.push(v)
+              }
+            })
 
-        let selectData: any = {}
+            let selectData: any = {}
 
-        Object.keys(row).map(v => {
-          if(v.indexOf('PK') !== -1) {
-            selectData = {
-              ...selectData,
-              [v.split('PK')[0]]: row[v]
-            }
-          }
-
-          if(v === 'unitWeight') {
-            selectData = {
-              ...selectData,
-              unitWeight: Number(row['unitWeight'])
-            }
-          }
-
-          if(v === 'tmpId') {
-            selectData = {
-              ...selectData,
-              id: row['tmpId']
-            }
-          }
-        })
-        return {
-          ...row,
-          ...selectData,
-          worker: row.user,
-          additional: [
-            ...additional.map(v => {
-              if(row[v.name]) {
-                return {
-                  id: v.id,
-                  title: v.name,
-                  value: row[v.name],
-                  unit: v.unit
+            Object.keys(row).map(v => {
+              if(v.indexOf('PK') !== -1) {
+                selectData = {
+                  ...selectData,
+                  [v.split('PK')[0]]: row[v]
                 }
               }
-            }).filter((v) => v)
-          ]
-        }
 
-      }
-    }).filter((v) => v)
-    let res
-    for(let i = 0; i < delete_array.length; i++ ){
-      res = await RequestMethod('delete', `cncRecordeDelete`, [delete_array[i]])
+              if(v === 'unitWeight') {
+                selectData = {
+                  ...selectData,
+                  unitWeight: Number(row['unitWeight'])
+                }
+              }
 
-      if(!res){
-        break
-      }
-    }
+              if(v === 'tmpId') {
+                selectData = {
+                  ...selectData,
+                  id: row['tmpId']
+                }
+              }
+            })
+            return {
+              ...row,
+              ...selectData,
+              worker: row.user,
+              additional: [
+                ...additional.map(v => {
+                  if(row[v.name]) {
+                    return {
+                      id: v.id,
+                      title: v.name,
+                      value: row[v.name],
+                      unit: v.unit
+                    }
+                  }
+                }).filter((v) => v)
+              ]
+            }
+
+          }
+        }).filter((v) => v)
+    )
 
     if(res) {
       Notiflix.Report.success('삭제 성공!', '', '확인', () => {
