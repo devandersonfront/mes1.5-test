@@ -74,6 +74,8 @@ const MesKpiManHour = () => {
                     good_quantity: v.good_quantity,
                     poor_quantity: v.poor_quantity,
                     manufacturing_leadtime: v.lead_time,
+
+
                     manDays : `${((v.lead_time * processBasicRow.standardUph)/86400).toFixed(1)}`
                 }
             })
