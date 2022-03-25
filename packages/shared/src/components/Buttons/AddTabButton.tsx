@@ -31,8 +31,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
             from: "2000-01-01",
             to:moment().format("YYYY-MM-DD"),
             option:0,
-            keyword:row.code,
-            // rm_id: row.rm_id,
+            // keyword:row.code,
+            rm_id: row.rm_id,
             nz: false
           }
         })

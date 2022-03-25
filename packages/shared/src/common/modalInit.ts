@@ -167,7 +167,7 @@ export const searchModalList: any = {
     {key: 'type_name', name: '품목 종류', width: 160,  placeholder: '-'},
     {key: 'unit', name: '단위', width: 160,  placeholder: '-'},
     {key: 'usage', name: '1회 사용량', width: 160,   textType: 'Modal', placeholder: '-'},
-    {key: 'process', name: '생산 공정', width: 160,  placeholder: '-'},
+    {key: 'process', name: '생산 공정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-'},
   ],
 

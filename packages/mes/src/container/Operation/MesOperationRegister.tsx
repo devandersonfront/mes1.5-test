@@ -6,7 +6,7 @@ import {
   ExcelTable,
   Header as PageHeader,
   IExcelHeaderType,
-  RequestMethod,
+  RequestMethod, RootState,
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -15,6 +15,8 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
+import {useSelector} from "react-redux";
+import {SearchModalResult, SearchResultSort} from "shared/src/Functions/SearchResultSort";
 
 interface IProps {
   page?: number
@@ -24,13 +26,17 @@ interface IProps {
 
 const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const router = useRouter()
-
-  const [bomCheck, setBomCheck] = useState<boolean>(false)
+  const receiveKey = useSelector((root:RootState) => root.OperationRegisterState);
+  //처음인지 확인하는 state 하나 필요
+  const [firstCheck, setFirstCheck] = useState<boolean>(true)
   const [codeCheck, setCodeCheck] = useState<boolean>(true)
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
     deadline: moment().format('YYYY-MM-DD'),first:true
   }])
+
+
+
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationCodeRegisterV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const getMenus = async () => {
@@ -52,7 +58,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable,
             }
           } else if(menu.colName === 'id' && column.key === 'tmpId'){
             menuData = {
@@ -60,7 +67,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               name: menu.title,
               width: menu.width,
               tab:menu.tab,
-              unit:menu.unit
+              unit:menu.unit,
+              moddable: menu.moddable,
             }
           }
         })
@@ -72,7 +80,25 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           }
         }
       }).filter((v:any) => v)
-      setColumn([...tmpColumn])
+
+      setColumn([...tmpColumn.map(v=> {
+        if(v.name === '수주 번호' && !codeCheck){
+          return {
+            ...v,
+            name:  v.name+'(필수)'
+          }
+        }else if(v.name === 'CODE' && codeCheck){
+          return {
+            ...v,
+            name: v.name+'(필수)'
+          }
+        }else {
+          return {
+            ...v,
+            name: !v.moddable ? v.name+'(필수)' : v.name
+          }
+        }
+      })])
     }
   }
 
@@ -184,7 +210,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     })
     let resultData = [];
     if(res){
-      setBomCheck(true)
       setSelectList(new Set())
       Notiflix.Report.success("알림","최근 작업지시서를 불러왔습니다.","확인")
       let row:any = [];
@@ -274,11 +299,9 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     if(res){
       let tmp: Set<any> = selectList
       setSelectList(new Set())
-      setBomCheck(false)
       // if(codeCheck) {
       //   Notiflix.Report.warning("알림", "최근 작업지시서가 없어 BOM기준으로 불러왔습니다.", "확인")
       // }
-      console.log("object : ", object)
       return [{
         ...object,
         contract_id: codeCheck ? "-" : object.contract_id,
@@ -288,6 +311,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         name: object.product_name ?? '-',
         date: object?.date ?? moment().format('YYYY-MM-DD'),
         deadline: object?.deadline ?? moment().format('YYYY-MM-DD'),
+        first:true,
       }, ...res.map(v => {
         if(v.type === 2){
           let random_id = Math.random()*1000;
@@ -313,7 +337,9 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             readonly: true,
           }
         }
-      }).filter(v => v)]
+      }).filter(v => v)
+
+      ]
     }
   }
 
@@ -337,15 +363,16 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         if(selectList.size > 0) {
           Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
               () => {
+                const resultBasic = [...basicRow];
+                const result = resultBasic.filter((row, index) => {
+                  if (!selectList.has(row.id)) {
+                    return row
+                  }
+                })
+                result[0].first = true
+                setBasicRow([...result])
 
                 Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
-                  const resultBasic = [...basicRow];
-                  resultBasic.forEach((row, index) => {
-                    if (selectList.has(row.id)) {
-                      basicRow.splice(index, 1)
-                    }
-                  })
-                  setBasicRow([...basicRow])
                 })
               },
           )
@@ -357,25 +384,42 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   }
 
   useEffect(() => {
-    getMenus()
-  }, [])
-
-  useEffect(()=>{
-    if(codeCheck) {
-      setColumn(columnlist["operationCodeRegisterV2"])
-    }else {
+    if(receiveKey.searchKey !== "" && firstCheck){
       setColumn(columnlist["operationIdentificationRegisterV2"])
+      RequestMethod("get", "contractSearch", {
+        params:{
+          keyword:receiveKey.searchKey,
+          opt:0
+        }
+      })
+          .then(async(res) => {
+            await loadGraphSheet(res.info_list[0].productId,  SearchModalResult(SearchResultSort(res.info_list, "contract")[0], "receiveContract"))
+                .then((res) => {
+                  setBasicRow(res)
+                  setCodeCheck(false)
+                  setFirstCheck(false)
+                })
+
+          })
+    }else{
+      getMenus()
+      setFirstCheck(false)
     }
-  },[codeCheck])
+  }, [codeCheck])
+
+
 
   return (
       <div>
         <PageHeader
             isCode
-            onChangeCode={(value)=> {setCodeCheck(value), setBasicRow([{
-              id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
-              deadline: moment().format('YYYY-MM-DD'), first:true
-            }])}}
+            onChangeCode={(value)=> {
+              setCodeCheck(value),
+                  setBasicRow([{
+                    id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
+                    deadline: moment().format('YYYY-MM-DD'), first:true
+                  }])
+            }}
             code={codeCheck}
             title={"작업지시서 등록"}
             buttons={['', '', '저장하기', '삭제']}
@@ -390,7 +434,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             ]}
             row={basicRow}
             setRow={async(e) => {
-
               const eData = e.filter((eValue) => {
                 let equal = false;
                 basicRow.map((bValue)=>{
@@ -408,14 +451,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 //   const resultData = await loadLatestSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
                 //   setBasicRow([...resultData])
                 // }else{
-                  const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
-                console.log("e : ", e)
-                console.log("resultData : ", resultData)
-                if(resultData){
-                  setBasicRow([...resultData])
-                }else{
-                  setBasicRow([...e])
-                }
+                const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
+                setBasicRow([...resultData])
                 // }
               }
               let tmp: Set<any> = selectList;

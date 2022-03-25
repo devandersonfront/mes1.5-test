@@ -277,6 +277,7 @@ export const SearchModalResult = (selectData, type: string , staticCalendar?: bo
         crn:selectData.crn,
       }
     }
+    case 'receiveContract':
     case 'contract': {
       return {
         contract: {

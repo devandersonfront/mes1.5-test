@@ -7,6 +7,7 @@ import infoModal from './infoModal'
 import modifyInfo from './modifyInfo'
 import mainUserInfo from '../../../main/reducer/userInfo'
 import deliveryRegisterState from "./deliveryRegisterState";
+import OperationRegisterState from "./operationRegisterState";
 
 const rootReducer = combineReducers({
   userInfo,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
   infoModal,
   modifyInfo,
   mainUserInfo,
-  deliveryRegisterState
+  deliveryRegisterState,
+  OperationRegisterState
 })
 
 export {rootReducer};

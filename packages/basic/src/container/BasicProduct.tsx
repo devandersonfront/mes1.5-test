@@ -627,19 +627,23 @@ const BasicProduct = ({}: IProps) => {
           row={basicRow}
           // setRow={setBasicRow}
           setRow={(e) => {
-
-            console.log(e,'eeeeee')
-
             let tmp: Set<any> = selectList
             e.map(v => {
-              if(v.isChange) tmp.add(v.id)
+              if(v.isChange) {
+                tmp.add(v.id)
+                v.isChange = false
+              }
             })
             setSelectList(tmp)
             competeProductV1u(e)
           }}
           selectList={selectList}
           //@ts-ignore
-          setSelectList={setSelectList}
+          setSelectList={ (p) => {
+            console.log("p :", p)
+            console.log()
+            setSelectList(p as any)
+          }}
           setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />

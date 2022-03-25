@@ -283,7 +283,6 @@ const MesStockProductList = ({page, keyword, option}) => {
     column.map((v)=>{
       modelWidth += v.width;
     })
-    modelWidth += 36;
     setExcelTableWidths({...excelTableWidths,data:1576-modelWidth, model:modelWidth})
 
   },[column])
@@ -318,10 +317,7 @@ const MesStockProductList = ({page, keyword, option}) => {
     />
     <div style={{display:"flex",justifyContent:"center"}}>
       <ScrollSyncPane>
-        <ExcelTable headerList={[
-          SelectColumn,
-          ...column
-        ]}
+        <ExcelTable headerList={column}
                     setHeaderList={(value) => {
                       // value.splice(0,1);
                       value.map((v,i)=>{
