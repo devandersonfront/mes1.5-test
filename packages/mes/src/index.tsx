@@ -36,12 +36,4 @@ export {MesProductChangeList} from './container/Quality/MesProductChangeList'
 export {MesProductChangeDetail} from './container/Quality/MesProductChangeDetail'
 export {MesProductChangeModify} from './container/Quality/MesProductChangeModify'
 
-//kpi
-export {MesKpiDefect} from './container/kpi/MesKpiDefect'
-export {MesKpiManHour} from './container/kpi/MesKpiManHour'
-export {MesKpiOperation} from './container/kpi/MesKpiOperation'
-export {MesKpiPowerUsage} from './container/kpi/MesKpiPowerUsage'
-export {MesKpiUph} from './container/kpi/MesKpiUph'
-export {MesLeadtimeManufacture} from './container/kpi/MesLeadtimeManufacture'
-export {MesLeadtimeOrder} from './container/kpi/MesLeadtimeOrder'
 

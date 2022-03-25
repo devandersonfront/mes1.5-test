@@ -61,8 +61,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const [focusIndex, setFocusIndex] = useState<number>(0)
 
 
-  console.log(searchList,'searchListsearchList')
-
   useEffect(() => {
     if(isOpen) {
       if(row.bom_root_id){

@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react'
 import {
   BarcodeModal,
-    columnlist,
-    excelDownload,
-    ExcelDownloadModal,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    PaginationComponent,
-    RequestMethod,
-    TextEditor
+  columnlist,
+  excelDownload,
+  ExcelDownloadModal,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  MAX_VALUE,
+  PaginationComponent,
+  RequestMethod,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -552,15 +552,15 @@ const BasicProduct = ({}: IProps) => {
       case '삭제':
         if(selectList.size === 0){
           return Notiflix.Report.warning(
-        '경고',
-        '선택된 정보가 없습니다.',
-        '확인',
-        );
+              '경고',
+              '선택된 정보가 없습니다.',
+              '확인',
+          );
         }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{DeleteBasic()}
-          ,()=>{}
+            ()=>{DeleteBasic()}
+            ,()=>{}
         )
         break;
 
@@ -577,9 +577,9 @@ const BasicProduct = ({}: IProps) => {
     if(spliceRow){
       if(isCheck){
         return Notiflix.Report.warning(
-          '경고',
-          `중복된 코드가 존재합니다.`,
-          '확인'
+            '경고',
+            `중복된 코드가 존재합니다.`,
+            '확인'
         );
       }
     }
@@ -598,24 +598,24 @@ const BasicProduct = ({}: IProps) => {
 
 
   return (
-    <div>
+      <div>
         <PageHeader
-          isSearch
-          searchKeyword={keyword}
-          onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword)
-          }}
-          searchOptionList={optionList}
-          onChangeSearchOption={(option) => {
-            setOptionIndex(option)
-          }}
-          optionIndex={optionIndex}
-          title={"제품 등록 관리"}
-          buttons={buttonList}
-          buttonsOnclick={
-            // () => {}
-            onClickHeaderButton
-          }
+            isSearch
+            searchKeyword={keyword}
+            onChangeSearchKeyword={(keyword) => {
+              setKeyword(keyword)
+            }}
+            searchOptionList={optionList}
+            onChangeSearchOption={(option) => {
+              setOptionIndex(option)
+            }}
+            optionIndex={optionIndex}
+            title={"제품 등록 관리"}
+            buttons={buttonList}
+            buttonsOnclick={
+              // () => {}
+              onClickHeaderButton
+            }
         />
         <ExcelTable
           editable
@@ -627,31 +627,35 @@ const BasicProduct = ({}: IProps) => {
           row={basicRow}
           // setRow={setBasicRow}
           setRow={(e) => {
-
-            console.log(e,'eeeeee')
-
             let tmp: Set<any> = selectList
             e.map(v => {
-              if(v.isChange) tmp.add(v.id)
+              if(v.isChange) {
+                tmp.add(v.id)
+                v.isChange = false
+              }
             })
             setSelectList(tmp)
             competeProductV1u(e)
           }}
           selectList={selectList}
           //@ts-ignore
-          setSelectList={setSelectList}
+          setSelectList={ (p) => {
+            console.log("p :", p)
+            console.log()
+            setSelectList(p as any)
+          }}
           setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent
-          currentPage={pageInfo.page}
-          totalPage={pageInfo.total}
-          setPage={(page) => {
-            setPageInfo({...pageInfo,page:page})
-          }}
+            currentPage={pageInfo.page}
+            totalPage={pageInfo.total}
+            setPage={(page) => {
+              setPageInfo({...pageInfo,page:page})
+            }}
         />
 
-      {/* <ExcelDownloadModal
+        {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
@@ -661,7 +665,7 @@ const BasicProduct = ({}: IProps) => {
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}
       /> */}
-    </div>
+      </div>
   );
 }
 

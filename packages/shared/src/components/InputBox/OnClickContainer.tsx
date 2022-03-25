@@ -27,5 +27,4 @@ const ClickContainer = styled.div<any>`
     & > p {
         margin : 0px
     }
-
 `
