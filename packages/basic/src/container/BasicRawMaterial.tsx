@@ -462,12 +462,6 @@ const BasicRawMaterial = ({}: IProps) => {
   }
 
   const onClickHeaderButton = (index: number) => {
-        if(selectList.size === 0){
-          return Notiflix.Report.failure('선택을 하셔야 합니다.',
-          '선택을 하셔야지 바코드를 보실수 있습니다.',
-          'Okay')
-        }
-        setBarcodeOpen(true)
         selectedData()
 
     switch(buttonList[index]){
@@ -641,15 +635,6 @@ const BasicRawMaterial = ({}: IProps) => {
           setPage={(page) => {
             setPageInfo({...pageInfo, page:page})
           }}
-        />
-
-          <BarcodeModal
-          title={'바코드 미리보기'}
-          handleBarcode={handleBarcode}
-          handleModal={handleModal}
-          isOpen={barcodeOpen}
-          type={'rawMaterial'}
-          data={selectRow}
         />
 
       {/* <ExcelDownloadModal
