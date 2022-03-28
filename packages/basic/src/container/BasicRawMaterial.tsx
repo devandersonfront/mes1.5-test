@@ -3,14 +3,13 @@ import {
   ExcelTable,
   Header as PageHeader,
   RequestMethod,
-  V_columnlist,
   MAX_VALUE,
   DropDownEditor,
   TextEditor,
   excelDownload,
   PaginationComponent,
   ExcelDownloadModal,
-  IExcelHeaderType, IItemMenuType, BarcodeModal
+  IExcelHeaderType, IItemMenuType, BarcodeModal, columnlist
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -28,13 +27,15 @@ export interface IProps {
   option?: number
 }
 
+
+
 const BasicRawMaterial = ({}: IProps) => {
   const router = useRouter()
 
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [barcodeOpen , setBarcodeOpen] = useState<boolean>(false)
   const [basicRow, setBasicRow] = useState<Array<any>>([])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>( V_columnlist["rawmaterial"])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawmaterial"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -139,6 +140,17 @@ const BasicRawMaterial = ({}: IProps) => {
   const SaveBasic = async () => {
     let selectCheck = false
     let codeCheck = true
+
+    const searchAiID = (rowAdditional:any[], index:number) => {
+      let result:number = undefined;
+      rowAdditional.map((addi, i)=>{
+        if(index === i){
+          result = addi.ai_id;
+        }
+      })
+      return result;
+    }
+
     let result = basicRow.map((row, i) => {
       if(selectList.has(row.id)){
         selectCheck = true
@@ -184,15 +196,7 @@ const BasicRawMaterial = ({}: IProps) => {
       }
     }).filter((v) => v);
 
-    const searchAiID = (rowAdditional:any[], index:number) => {
-      let result:number = undefined;
-      rowAdditional.map((addi, i)=>{
-        if(index === i){
-          result = addi.ai_id;
-        }
-      })
-      return result;
-    }
+
 
     if(selectCheck && codeCheck){
       let res = await RequestMethod('post', `rawMaterialSave`, result).catch((error)=>{
@@ -268,7 +272,7 @@ const BasicRawMaterial = ({}: IProps) => {
   }
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = V_columnlist["rawmaterial"];
+    let tmpColumn = columnlist["rawmaterial"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
@@ -391,8 +395,6 @@ const BasicRawMaterial = ({}: IProps) => {
   }
 
 
-
-
   const setAdditionalData = () => {
 
     const addtional = []
@@ -400,9 +402,9 @@ const BasicRawMaterial = ({}: IProps) => {
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
-              addtional.push(v)
-            }
-          })
+            addtional.push(v)
+          }
+        })
       }
     })
 
@@ -444,11 +446,11 @@ const BasicRawMaterial = ({}: IProps) => {
 
       deletable = await RequestMethod('delete','rawMaterialDelete', haveIdRows.map((row) => (
           {...row , customer: row.customerArray, additional : [...additional.map(v => {
-            if(row[v.name]) {
-              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
-            }
-          }).filter(v => v)
-          ], type:settingType(row.type)}
+              if(row[v.name]) {
+                return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
+              }
+            }).filter(v => v)
+            ], type:settingType(row.type)}
       )))
     }
 
@@ -461,16 +463,22 @@ const BasicRawMaterial = ({}: IProps) => {
 
   }
 
+
+
   const onClickHeaderButton = (index: number) => {
+
+    switch(buttonList[index]){
+      case '바코드 미리보기':
+      case '바코드 미리보기':
         if(selectList.size === 0){
-          return Notiflix.Report.failure('선택을 하셔야 합니다.',
-          '선택을 하셔야지 바코드를 보실수 있습니다.',
-          'Okay')
+          return Notiflix.Report.warning('오류',
+              '선택을 하셔야 합니다.',
+              'Okay',)
         }
         setBarcodeOpen(true)
         selectedData()
+        break;
 
-    switch(buttonList[index]){
       case '항목관리':
         router.push(`/mes/item/manage/rawmaterial`)
         break;
@@ -507,20 +515,21 @@ const BasicRawMaterial = ({}: IProps) => {
       case '삭제':
         if(selectList.size === 0){
           return Notiflix.Report.warning(
-        '경고',
-        '선택된 정보가 없습니다.',
-        '확인',
-        );
+              '경고',
+              '선택된 정보가 없습니다.',
+              '확인',
+          );
         }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{DeleteBasic()}
-          ,()=>{}
+            ()=>{DeleteBasic()}
+            ,()=>{}
         )
         break;
 
     }
   }
+
   const handleModal = (open:boolean) => {
 
     setBarcodeOpen(!open)
@@ -540,35 +549,16 @@ const BasicRawMaterial = ({}: IProps) => {
 
   }
 
-  const handleBarcode = async (dataurl , id) => {
-
-    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
-                {
-                  "id":id,
-                  "functions":
-                  {"func0":{"checkLabelStatus":[]},
-                    "func1":{"clearBuffer":[]},
-                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
-                    "func3":{"printBuffer":[]}
-                  }
-                },
-                {
-                  headers : {
-                    'Content-Type' : 'application/x-www-form-urlencoded'
-                  }
-                }
-    ).catch((error) => {
-
-      if (error) {
-        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-        return false
-      }
-    })
-  }
-
   React.useEffect(()=>{
 
-     return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
+
+    if(selectList.size > 1){
+
+      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
+
+    }
+
+    return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
 
   },[selectList.size])
 
@@ -581,9 +571,9 @@ const BasicRawMaterial = ({}: IProps) => {
     if(spliceRow){
       if(isCheck){
         return Notiflix.Report.warning(
-          '코드 경고',
-          `중복된 코드를 입력할 수 없습니다`,
-          '확인'
+            '코드 경고',
+            `중복된 코드를 입력할 수 없습니다`,
+            '확인'
         );
       }
     }
@@ -591,68 +581,94 @@ const BasicRawMaterial = ({}: IProps) => {
     setBasicRow(rows)
   }
 
+  const handleBarcode = async (dataurl , id) => {
 
+    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
+        {
+          "id":id,
+          "functions":
+              {"func0":{"checkLabelStatus":[]},
+                "func1":{"clearBuffer":[]},
+                "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+                "func3":{"printBuffer":[]}
+              }
+        },
+        {
+          headers : {
+            'Content-Type' : 'application/x-www-form-urlencoded'
+          }
+        }
+    ).catch((error) => {
+
+      if(error){
+        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        return false
+      }
+
+    })
+  }
 
   return (
-    <div>
+      <div>
         <PageHeader
-          isSearch
-          searchKeyword={keyword}
-          onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword)
-          }}
-          searchOptionList={optionList}
-          onChangeSearchOption={(option) => {
-            setOptionIndex(option)
-          }}
-          optionIndex={optionIndex}
-          title={"원자재 기준정보"}
-          buttons={buttonList}
-          buttonsOnclick={
-            onClickHeaderButton
-          }
+            isSearch
+            searchKeyword={keyword}
+            onChangeSearchKeyword={(keyword) => {
+              setKeyword(keyword)
+              setPageInfo({page:1,total:1})
+            }}
+            searchOptionList={optionList}
+            onChangeSearchOption={(option) => {
+              setOptionIndex(option)
+            }}
+            optionIndex={optionIndex}
+            title={"원자재 기준정보"}
+            buttons={buttonList}
+            buttonsOnclick={
+              onClickHeaderButton
+            }
         />
         <ExcelTable
-          editable
-          resizable
-          headerList={[
-            SelectColumn,
-            ...column
-          ]}
-          row={basicRow}
-          // setRow={setBasicRow}
-          setRow={(e) => {
-            let tmp: Set<any> = selectList
-            e.map(v => {
-              if(v.isChange) tmp.add(v.id)
-            })
-            setSelectList(tmp)
-            competeRawMaterial(e)
-          }}
-          selectList={selectList}
-          setSelectRow={setSelectRow}
-          //@ts-ignore
-          setSelectList={setSelectList}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+            editable
+            resizable
+            headerList={[
+              SelectColumn,
+              ...column
+            ]}
+            row={basicRow}
+            // setRow={setBasicRow}
+            setRow={(e) => {
+              let tmp: Set<any> = selectList
+              e.map(v => {
+                if(v.isChange) tmp.add(v.id)
+              })
+              setSelectList(tmp)
+              competeRawMaterial(e)
+            }}
+            selectList={selectList}
+            setSelectRow={setSelectRow}
+            //@ts-ignore
+            setSelectList={setSelectList}
+            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent
-          currentPage={pageInfo.page}
-          totalPage={pageInfo.total}
-          setPage={(page) => {
-            setPageInfo({...pageInfo, page:page})
-          }}
+            currentPage={pageInfo.page}
+            totalPage={pageInfo.total}
+            setPage={(page) => {
+              setPageInfo({...pageInfo, page:page})
+            }}
         />
 
-          <BarcodeModal
-          title={'바코드 미리보기'}
-          handleBarcode={handleBarcode}
-          handleModal={handleModal}
-          isOpen={barcodeOpen}
-          type={'rawMaterial'}
-          data={selectRow}
+        <BarcodeModal
+            title={'바코드 미리보기'}
+            handleBarcode={handleBarcode}
+            handleModal={handleModal}
+            isOpen={barcodeOpen}
+            type={'rawMaterial'}
+            data={selectRow}
         />
 
-      {/* <ExcelDownloadModal
+        {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}
         basicRow={basicRow}
@@ -662,7 +678,7 @@ const BasicRawMaterial = ({}: IProps) => {
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}
       /> */}
-    </div>
+      </div>
   );
 }
 
