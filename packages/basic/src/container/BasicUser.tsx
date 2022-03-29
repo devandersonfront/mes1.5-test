@@ -105,7 +105,7 @@ const BasicUser = ({}: IProps) => {
     return rowMap
   }
 
-  // 내가 선택한 Row 
+  // 내가 선택한 Row
   const selectRowList = () => {
 
     let temp = []
@@ -127,16 +127,16 @@ const BasicUser = ({}: IProps) => {
 
     const selectedRows = selectRowList()
     const newRows = selectedRows.filter((row) => row.user_id === undefined)
-    
-    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함 
-    if(newRows.length > 0){ 
+
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
+    if(newRows.length > 0){
 
       const nameCheck = newRows.every((data)=> data.name)
       const idCheck = newRows.every((data) => data.tmpId)
       const authorityCheck = newRows.every((data)=> data.authority)
       const passwordCheck = newRows.every((data)=> data.password)
       const passwordConfirmCheck = newRows.every((data)=> data['password-confirm'])
-  
+
       if(!nameCheck){
         return '성명'
       }else if(!authorityCheck){
@@ -161,24 +161,24 @@ const BasicUser = ({}: IProps) => {
     }
 
     return false;
-    
+
   }
 
-  
+
 
 
   const passwordCompete = () => {
-    
+
     const selectedRows  = selectRowList()
 
     return selectedRows.every((row)=>{
       const passwordConfirm = row['password-confirm'] ?? null
-      return row.password === passwordConfirm 
+      return row.password === passwordConfirm
     })
   }
 
   const SaveBasic = async () => {
-    
+
     const existence = valueExistence()
 
     if(selectList.size === 0){
@@ -233,7 +233,7 @@ const BasicUser = ({}: IProps) => {
                       }).filter((v) => v)
                     ]
                   }
-      
+
                 }
               }).filter((v) => v)).catch((error)=>{
                 return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
@@ -264,14 +264,14 @@ const BasicUser = ({}: IProps) => {
         '확인',
       );
     }
-  
+
   }
 
 
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -287,7 +287,7 @@ const BasicUser = ({}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -314,7 +314,7 @@ const BasicUser = ({}: IProps) => {
     const haveIdRows = classfyNormalAndHave(selectedRows)
     const additional = setAdditionalData()
     let deletable = true
-  
+
     if(haveIdRows.length > 0){
 
       deletable = await RequestMethod('delete','memberDelete', haveIdRows.map((row) => (
@@ -332,6 +332,7 @@ const BasicUser = ({}: IProps) => {
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');
       setBasicRow(Array.from(map.values()))
+      setPageInfo({page: 1, total:1})
       setSelectList(new Set())
     }
 
