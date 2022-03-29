@@ -9,7 +9,6 @@ interface IProps {
 }
 
 const LineBorderContainer = ({row, column, setRow}: IProps) => {
-    console.log(row[column.key])
   return(
     <Background style={{background:row.border ? "#19B9DF80" :  row.color ? row.color :"white"}} onClick={()=>{}} >
       <p style={{padding: 0, color: row[column.key] ? '#0D0D0D' : row.color ? "white" : '#0D0D0D66', width: '100%', textAlign: column.textAlign ?? 'left' }}>
