@@ -128,18 +128,18 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }, [isOpen, searchKeyword])
 
   const ModalContents = () => {
-    // if(row?.machines){
+    console.log(row)
       if(row?.machines?.length > 0){
         return <>
           <div style={{
             padding: '3.5px 0px 0px 3.5px',
             width: 112
           }}>
-            <Underline onClick={() => {
+            <UploadButton style={{backgroundColor: '#ffffff00'}} onClick={() => {
                 setIsOpen(true)
-            }}>
+            }} hoverColor={"#19B9DF"} haveId={!!row.machines.length}>
                 <p>기계 수정</p>
-            </Underline>
+            </UploadButton>
           </div>
         </>
       }else{

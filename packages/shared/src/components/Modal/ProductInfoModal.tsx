@@ -149,8 +149,9 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
       }}>
       <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
         setIsOpen(true)
-      }}>
-        <p style={{color: 'white', textDecoration: 'underline'}}>품목 보기</p>
+      }} hoverColor={"#19B9DF"} haveId>
+        {/*<p style={{color: 'white', textDecoration: 'underline'}}>품목 보기</p>*/}
+        <p style={{textDecoration: 'underline'}}>품목 보기</p>
       </UploadButton>
       </div>
     </>)

@@ -13,6 +13,7 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
   column: IExcelHeaderType
@@ -149,22 +150,16 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
-  const ModalContents = () => {
-    return <>
-      <div style={{
-        width: '100%',
-        backgroundColor: column.type === 'base' || column.type === 'baseReadonly' || column.type === "placeholder" ? '#00000000' : 'white'
-      }}>
-        <div onClick={() => {
-          setIsOpen(true)
-        }}>
-          <p style={{textDecoration: column.type !== "placeholder" && 'underline', padding: 0, margin: 0, color: column.type === 'base' || column.type === 'baseReadonly' || column.type === "placeholder" ? 'white' : 'black', textAlign: 'center'}}>
-            {column.type === "placeholder" ? totalDelivery : "LOT 보기"}
-          </p>
-        </div>
-      </div>
-    </>
-  }
+  const ModalContents = () => (
+      <UploadButton onClick={() => {
+        setIsOpen(true)
+      }} hoverColor={POINT_COLOR} haveId>
+        <p>
+          {column.type === "placeholder" ? totalDelivery : "LOT 보기"}
+        </p>
+      </UploadButton>
+  )
+
 
   return (
     <SearchModalWrapper >
@@ -402,8 +397,11 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`

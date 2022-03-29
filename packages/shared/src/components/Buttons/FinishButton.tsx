@@ -34,11 +34,13 @@ const FinishButton = ({ row, column, onRowChange}: IProps) => {
   }
 
   return (
-    <CellButton onClick={() => {
-      SaveBasic()
-    }}>
-      {title}
-    </CellButton>
+      <div style={{width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+        <CellButton onClick={() => {
+          SaveBasic()
+        }}>
+          {title}
+        </CellButton>
+      </div>
   );
 }
 

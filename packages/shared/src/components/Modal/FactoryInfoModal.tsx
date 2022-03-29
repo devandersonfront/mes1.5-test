@@ -118,7 +118,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     //}
     //description :
 
-    
+
     // const filterList = searchList.map((list)=>{
     //   if(!list.manager){
     //     return {...list, manager : list.manager_info , managerId : list.manager_info?.user_id}
@@ -199,38 +199,21 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     //         });
     //       })
     //     })
-       
+
   }
-  const ModalContents = () => {
-    if(row.subFactories && row.subFactories.length > 0){
-      return (<>
-        <div style={{
-          padding: '3.5px 0px 0px 3.5px',
-          width: '100%'
-        }}>
-          <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
+  const ModalContents = () => (
+        <div>
+          <UploadButton onClick={() => {
             setIsOpen(true)
-          }}>
-            <p style={{color: 'white', textDecoration: 'underline'}}>세분화 보기</p>
+          }}
+            hoverColor={POINT_COLOR}
+            haveId={row.subFactories && row.subFactories.length}
+          >
+            <p>{row.subFactories && row.subFactories.length ? "세분화 보기" : "세분화 등록"}</p>
           </UploadButton>
         </div>
-      </>)
-    }else{
-      return (<>
-        <div style={{
-          padding: '3.5px 0px 0px 3.5px',
-          width: '100%'
-        }}>
-        <UploadButton onClick={() => {
-          setIsOpen(true)
-        }}>
-          <p>세분화 등록</p>
-        </UploadButton>
-        </div>
-      </>)
 
-    }
-  }
+    )
 
   const changeData = (key:string) => {
     if(column.type === "subFactory" && row.factory){
@@ -379,14 +362,14 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             }}>
               <p>위로</p>
             </Button>
-            
+
             <Button style={{marginLeft: 16}} onClick={() => {
 
               if(selectRow > -1){
                 if(selectRow === searchList.length-1){
                   return
                 }
-  
+
                 let tmpRow = [...searchList]
                 let tmp = tmpRow[selectRow]
                 tmpRow[selectRow] = tmpRow[selectRow + 1]
@@ -494,6 +477,9 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 const SearchModalWrapper = styled.div`
   display: flex;
   width: 100%;
+  height:100%;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`
