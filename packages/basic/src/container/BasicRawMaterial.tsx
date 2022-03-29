@@ -456,6 +456,7 @@ const BasicRawMaterial = ({}: IProps) => {
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');
       setBasicRow(Array.from(map.values()))
+      setPageInfo({page: 1, total: 1})
       setSelectList(new Set())
     }
 
