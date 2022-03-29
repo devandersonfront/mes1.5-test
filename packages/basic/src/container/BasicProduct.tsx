@@ -641,8 +641,6 @@ const BasicProduct = ({}: IProps) => {
           selectList={selectList}
           //@ts-ignore
           setSelectList={ (p) => {
-            console.log("p :", p)
-            console.log()
             setSelectList(p as any)
           }}
           setSelectRow={setSelectRow}

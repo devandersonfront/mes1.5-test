@@ -13,6 +13,7 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
+import {SearchIcon} from "../../styles/styledComponents";
 
 interface IProps {
   column: IExcelHeaderType
@@ -92,21 +93,14 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
       <div style={{width: 'calc(100% - 40px)', height: 40}}>
         { row[`${column.key}`]}
       </div>
-      <div style={{
-        display: 'flex',
-        backgroundColor: POINT_COLOR,
-        width: 38,
-        height: 38,
-        justifyContent: 'center',
-        alignItems: 'center'
-      }} onClick={() => {
+      <SearchIcon  onClick={() => {
         // 마스터 일때는 클릭 되면 안됨
         if(column.key === 'authority' && row[column.key] !== 'MASTER'){
             setIsOpen(true)
         }
       }}>
         <img style={{width: 20, height: 20 , opacity : column.key === 'authority' && row[column.key] !== 'MASTER' ? 1 : .3}} src={IcSearchButton}/>
-      </div>
+      </SearchIcon>
     </>
   }
 

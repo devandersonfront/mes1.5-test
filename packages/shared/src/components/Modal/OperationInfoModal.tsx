@@ -95,40 +95,22 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
-  const ModalContents = () => {
-    if(column?.type !== "register"){
-      return <>
-        <div style={{
-          padding: '3.5px 0px 0px 3.5px',
-          width: 112
-        }}>
-          <Button onClick={() => {
-            setIsOpen(true)
-          }}>
-            <p>작업 지시 보기</p>
-          </Button>
-        </div>
-      </>
-    }else{
-      return <>
-        <div style={{
-          padding: '3.5px 0px 0px 3.5px',
-          width: '100%'
-        }}>
+  const ModalContents = () => (
           <UploadButton onClick={() => {
-            if(row?.productId){
-              dispatch(change_operation_searchKey(row?.identification))
-              router.push('/mes/operationV1u/register')
+            if(column?.type !== "register"){
+              setIsOpen(true)
             }else{
-              Notiflix.Report.warning("수주번호가 없습니다.", "", "확인")
+              if(row?.productId){
+                dispatch(change_operation_searchKey(row?.identification))
+                router.push('/mes/operationV1u/register')
+              }else{
+                Notiflix.Report.warning("수주번호가 없습니다.", "", "확인")
+              }
             }
-          }}>
-            <p>작업 지시 등록</p>
+          }} hoverColor={POINT_COLOR} haveId={column?.type !== "register"}>
+            <p>{column?.type !== "register" ? "작업 지시 보기" : "작업 지시 등록"}</p>
           </UploadButton>
-        </div>
-      </>
-    }
-  }
+      )
 
   return (
       <SearchModalWrapper >
@@ -331,8 +313,11 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.div`

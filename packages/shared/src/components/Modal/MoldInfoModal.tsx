@@ -30,7 +30,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 1}])
+  const [searchList, setSearchList] = useState<any[]>([{sequence: 1 , setting : 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -113,42 +113,17 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         );
       }
     }
-
     setSearchList(rows)
   }
 
 
-  const ModalContents = () => {
-    // if(row?.molds){
-      if(row?.molds?.length){
-        return <>
-          <div style={{
-            padding: '3.5px 0px 0px 3.5px',
-            width: 112
-          }}>
-            <Underline onClick={() => {
-                    setIsOpen(true)
-            }}>
-                <p>금형 수정</p>
-            </Underline>
-          </div>
-        </>
-      }else{
-        return <>
-          <div style={{
-            padding: '3.5px 0px 0px 3.5px',
-            width: '100%'
-          }}>
+  const ModalContents = () => (
             <UploadButton onClick={() => {
               setIsOpen(true)
-            }}>
-              <p>금형 등록</p>
+            }} hoverColor={POINT_COLOR} haveId={!!row.molds?.length}>
+              <p>{!!row.molds?.length ? "금형 수정" : "금형 등록"}</p>
             </UploadButton>
-          </div>
-        </>
-      }
-    // }
-  }
+      )
 
   return (
     <SearchModalWrapper >
@@ -436,8 +411,11 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`
@@ -452,7 +430,7 @@ const Button = styled.button`
     justify-content:center;
     align-items:center;
     cursor:pointer;
-    
+
 `;
 
 const HeaderTable = styled.div`
@@ -483,7 +461,7 @@ const HeaderTableText = styled.p`
 const HeaderTableTitle = styled.div`
   width: 99px;
   padding: 0 8px;
-  display: flex; 
+  display: flex;
   align-items: center;
 `
 const Underline = styled.div`

@@ -14,6 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {MachineInfoModal} from './MachineInfoModal'
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
   column: IExcelHeaderType
@@ -117,29 +118,13 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
-  const ModalContents = () => {
-    return <>
-      <div style={{
-        width: '100%'
-      }}>
-        <div style={{
-          fontSize: '15px',
-          margin: 0,
-          padding: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          color: '#0D0D0D',
-          background:row.border ? "#19B9DF80" : "white",
-        }} onClick={() => {
+  const ModalContents = () =>(
+        <UploadButton onClick={() => {
           setIsOpen(true)
-        }}>
-          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>기계 보기</p>
-        </div>
-      </div>
-    </>
-  }
-
+        }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
+          <p>기계 보기</p>
+        </UploadButton>
+  )
   const getSummaryInfo = (info) => {
     return row[info.key] ?? '-'
   }
@@ -318,8 +303,11 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const HeaderTable = styled.div`

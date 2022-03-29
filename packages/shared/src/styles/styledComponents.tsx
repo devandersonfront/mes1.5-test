@@ -143,21 +143,55 @@ export const ContentsItem = styled.div`
   margin-right: 1px;
 `
 
-export const UploadButton = styled.div`
+export const UploadButton = styled.div<{hoverColor?:string, haveId?:boolean, status?: "table" | "modal"}>`
   width:112px;
   height: 32px;
-  background-color: #19B9DF;
+  background-color: ${({haveId}) => haveId ? "none" : "#19B9DF"};
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
+  color:white;
   p {
-    color: black;
+    // color: black;
+    color: ${({haveId, status}) => status == "modal" || !haveId ? "black" : "white"};
     font-size: 15px;
+    text-decoration: ${({haveId, status}) => haveId ? "underline" : "none"};
   }
     border:none;
-    border-radius:6px;
+  &:hover {
+    opacity:70%;
+    p{
+        color:${({hoverColor, haveId}) => haveId ? hoverColor : "none"};
+    }
+    // color:red;
+  }
 `
+
+export const SearchIcon = styled.div<{modalType?:boolean}>`
+  display: flex;
+  background-color: ${POINT_COLOR};
+  width: ${({modalType}) => (modalType ? '30px' : '38px')};
+  height: ${({modalType}) => (modalType ? '30px' : '38px')};
+  // width: 38px;
+  // height:38px;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    opacity:70%;
+  }
+`;
+
+export const DeleteImage = styled.img`
+    border-radius:4px;
+    width:24px;
+    height:24px;
+    margin-right:4px;
+    margin=left:4px;
+    &:hover{
+        opacity:70%;
+    }
+`;
 
 export const Handler = styled.div`
   position: relative;
@@ -260,10 +294,6 @@ export const ExcelDataStyle = styled.div`
     .editDropdown > option {
       background:#484848;
     }
-   
-    .rdg-row[aria-selected=true]{
-        background:none;
-    }
 
     .rdg-checkbox-input:checked + div{
         width:20px;
@@ -355,20 +385,7 @@ export const SearchModalStyle = styled.div`
         padding: 0;
         border-top: none;
     }
-    
-    .rdg-row[aria-selected=true]{
-        // background: blue;
-        &:hover{
-            background:none;
-            // background-color:none;
-        }
-    }
-   
-    .rdg-row[aria-selected=true]{
-        // background: blue;
-    }
-    
-
+      
     .rdg-checkbox-input:checked + div{
         width:20px;
         height:20px;
@@ -567,8 +584,8 @@ export const InnerBoxWrap = styled.div`
 `
 
 export const CellButton = styled.div`
-  width: 100%;
-  height: 100%;
+  width: 112px;
+  height: 32px;
  
   background-color: ${POINT_COLOR};
   display: flex;
@@ -576,6 +593,10 @@ export const CellButton = styled.div`
   align-items: center;
   color: black;
   cursor: pointer;
+  
+  &:hover{
+    opacity:70%;   
+  }
 `
 
 export const UnitWrapper = styled.div`

@@ -389,20 +389,21 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       if(column.type === 'readonly' || row.bom_root_id){
         return <>
           <div style={{
-            // padding: '3.5px 0px 0px 3.5px',
+            padding: '3.5px 0px 0px 3.5px',
             width: '100%',
           }}>
-            <div onClick={() => {
+            <UploadButton  style={{backgroundColor: '#ffffff00'}} onClick={() => {
               if (row.bom_root_id) {
                 setIsOpen(true)
               } else {
                 Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
                 })
               }
-
-            }}>
+            }}
+              hoverColor={'#19B9DF'} haveId
+            >
               <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>
-            </div>
+            </UploadButton>
           </div>
         </>
       }else{
