@@ -316,7 +316,11 @@ export const columnlist: any = {
       {pk: 'week' , name :'주'},
       {pk: 'month' , name : '월'},
     ]},
-    {key: 'current', name: '현재타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력',type:"number"},
+    {key: 'current', name: '현재타수', editor: TextEditor,formatter: PlaceholderBox, 
+      placeholder: '타수 입력',
+      type:"number",
+      readonly : true
+    },
     {key: 'product_id', name: '생산품목', formatter: ProductInfoModal, type:"mold", headerType:[  {code:"CODE", name:"금형명"},
                                                                                                  {cavity:"캐비티", spm:"SPM", slideHeight:"슬라이드 위치"},
                                                                                                  {limit:"최대 타수", inspect:"점검 타수", current:"현재 타수"},

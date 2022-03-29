@@ -43,6 +43,9 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
             }else if(column.key === 'amount' && row.setting){
               onClose(true)
               Notiflix.Report.warning('수정할 수 없습니다.', '사용여부가 부 입니다.', '확인')
+            }else if(column.readonly && row.mold_id){
+              onClose(true)
+              return Notiflix.Report.warning('수정할 수 없습니다.', '', '확인')
             }
           }}
 
