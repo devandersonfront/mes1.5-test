@@ -310,7 +310,7 @@ const BasicUser = ({}: IProps) => {
     const haveIdRows = classfyNormalAndHave(selectedRows)
     const additional = setAdditionalData()
     let deletable = true
-  
+
     if(haveIdRows.length > 0){
 
       deletable = await RequestMethod('delete','memberDelete', haveIdRows.map((row) => (
@@ -328,6 +328,7 @@ const BasicUser = ({}: IProps) => {
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');
       setBasicRow(Array.from(map.values()))
+      setPageInfo({page: 1, total: 1})
       setSelectList(new Set())
     }
 
