@@ -111,11 +111,11 @@ const BasicFactory = ({}: IProps) => {
   const valueExistence = () => {
 
     const selectedRows = filterSelectedRows()
-    
-    if(selectedRows.length > 0){ 
+
+    if(selectedRows.length > 0){
 
       const nameCheck = selectedRows.every((data)=> data.name)
-  
+
       if(!nameCheck){
         return '공장명'
       }
@@ -123,7 +123,7 @@ const BasicFactory = ({}: IProps) => {
     }
 
     return false;
-    
+
   }
 
   const SaveBasic = async () => {
@@ -213,7 +213,7 @@ const BasicFactory = ({}: IProps) => {
   const setAdditionalData = () => {
 
     const addtional = []
-    basicRow.map((row)=>{     
+    basicRow.map((row)=>{
       if(selectList.has(row.id)){
         column.map((v) => {
           if(v.type === 'additional'){
@@ -229,7 +229,7 @@ const BasicFactory = ({}: IProps) => {
   const convertDataToMap = () => {
     const map = new Map()
     basicRow.map((v)=>map.set(v.id , v))
-    return map 
+    return map
   }
 
   const filterSelectedRows = () => {
@@ -250,7 +250,7 @@ const BasicFactory = ({}: IProps) => {
 }
 
 
-const DeleteBasic = async () => {
+const   DeleteBasic = async () => {
 
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
@@ -275,6 +275,7 @@ const DeleteBasic = async () => {
         Notiflix.Report.success('삭제되었습니다.','','확인');
         setBasicRow(Array.from(map.values()))
         setSelectList(new Set())
+        setPageInfo({page: 1, total: 1})
     }
 
 }
