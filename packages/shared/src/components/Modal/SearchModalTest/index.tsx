@@ -335,7 +335,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             </FooterButton>
             <FooterButton
               onClick={() => {
-                console.log("처음은 Row : ", row, searchModalInit.excelColumnType)
                 setIsOpen(false)
                 if(selectRow !== undefined){
 

@@ -143,7 +143,7 @@ export const ContentsItem = styled.div`
   margin-right: 1px;
 `
 
-export const UploadButton = styled.div<{hoverColor?:string, haveId?:boolean}>`
+export const UploadButton = styled.div<{hoverColor?:string, haveId?:boolean, status?: "table" | "modal"}>`
   width:112px;
   height: 32px;
   background-color: ${({haveId}) => haveId ? "none" : "#19B9DF"};
@@ -154,9 +154,9 @@ export const UploadButton = styled.div<{hoverColor?:string, haveId?:boolean}>`
   color:white;
   p {
     // color: black;
-    color: ${({haveId}) => haveId ? "white" : "black"};
+    color: ${({haveId, status}) => status == "modal" || !haveId ? "black" : "white"};
     font-size: 15px;
-    text-decoration: ${({haveId}) => haveId ? "underline" : "none"};
+    text-decoration: ${({haveId, status}) => haveId ? "underline" : "none"};
   }
     border:none;
   &:hover {

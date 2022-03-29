@@ -140,7 +140,7 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           if(column.load === 'sheet'){
             loadDefectSheet()
           }
-        }} hoverColor={POINT_COLOR} haveId>
+        }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
           <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>{totalCount}</p>
         </UploadButton>
     )

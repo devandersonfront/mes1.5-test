@@ -95,7 +95,6 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
         total_poor_quantity: poor_quantity,
         // unit: row[0].operation_sheet?.product?.unit,
       })
-      console.log(row)
       const newList = row.map((v)=> {return {...v, bom_root_id: row[0].operation_sheet.product.bom_root_id, productId: row[0].product.product_id, modify: true} })
       setSearchList([...newList])
     }

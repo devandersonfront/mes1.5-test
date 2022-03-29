@@ -153,7 +153,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const ModalContents = () => (
       <UploadButton onClick={() => {
         setIsOpen(true)
-      }} hoverColor={POINT_COLOR} haveId>
+      }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
         <p>
           {column.type === "placeholder" ? totalDelivery : "LOT 보기"}
         </p>

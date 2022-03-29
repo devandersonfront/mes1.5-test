@@ -30,7 +30,7 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 1}])
+  const [searchList, setSearchList] = useState<any[]>([{sequence: 1 , setting : 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -113,7 +113,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         );
       }
     }
-
     setSearchList(rows)
   }
 
@@ -121,8 +120,8 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const ModalContents = () => (
             <UploadButton onClick={() => {
               setIsOpen(true)
-            }} hoverColor={POINT_COLOR} haveId={!!row.molds.length}>
-              <p>{!!row.molds.length ? "금형 수정" : "금형 등록"}</p>
+            }} hoverColor={POINT_COLOR} haveId={!!row.molds?.length}>
+              <p>{!!row.molds?.length ? "금형 수정" : "금형 등록"}</p>
             </UploadButton>
       )
 

@@ -128,7 +128,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }, [isOpen, searchKeyword])
 
   const ModalContents = () => {
-    console.log(row)
       if(row?.machines?.length > 0){
         return <>
           <div style={{
@@ -137,7 +136,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           }}>
             <UploadButton style={{backgroundColor: '#ffffff00'}} onClick={() => {
                 setIsOpen(true)
-            }} hoverColor={"#19B9DF"} haveId={!!row.machines.length}>
+            }} hoverColor={POINT_COLOR} haveId={!!row.machines?.length}>
                 <p>기계 수정</p>
             </UploadButton>
           </div>
@@ -378,9 +377,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               headerList={searchModalList.machineInfo}
               row={searchList }
               setRow={(e) => {
-
-                console.log(e,'eeee')
-
                 const filterList = [...e.map((machine) => {
                   if(typeof machine.type !== "string"){
                     return {...machine, type_id:machine.type, type:selectMachineType(machine.type)}

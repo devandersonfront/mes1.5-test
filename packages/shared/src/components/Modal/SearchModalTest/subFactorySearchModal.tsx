@@ -276,9 +276,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 height={632}
                                 setRow={()=>{}}
                                 setSelectRow={(e) => {
-
-                                    console.log(e,'eeee')
-
                                     if(!searchList[e].border){
                                         searchList.map((v,i)=>{
                                             v.border = false;
@@ -307,8 +304,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         <FooterButton
                             onClick={() => {
                                 if(selectRow !== undefined){
-
-                                    console.log(searchList[selectRow],'searchList[selectRow]searchList[selectRow]')
                                     onRowChange({
                                         ...row,
                                         // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),

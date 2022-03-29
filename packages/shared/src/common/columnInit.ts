@@ -821,9 +821,9 @@ export const columnlist: any = {
     {key:"good_quantity", name:"양품 수량", width: 118},
     {key:"poor_quantity", name:"불량 수량", formatter: DefectInfoModal, type: 'readonly', width: 118},
     {key:"uph", name:"UPH", width: 118},
-    {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, type: 'readonly'},
-    {key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit},
-    {key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit},
+    {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, type: 'readonly', },
+    {key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit, },
+    {key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit, },
   ],
   finishListV2: [
     {key:"status", name:"상태", formatter: FinishCancelButton, width: 118},
