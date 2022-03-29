@@ -126,66 +126,66 @@ export const AUTHORITY_LIST = [
     ]
   },
 
-  { title: "PMS", show: false, checkable: false,
-  child: [
-    { title: "프레스 모니터링", show: false, checkable: true, check: false, child: [
-        { title: "프레스 분석 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_MON_01" },
-        { title: "프레스 현황 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_MON_02" },
-      ] },
-    { title: "프레스 통계 및 분석", show: false, checkable: true, check: false, child: [
-        { title: "생산량", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_01" },
-        { title: "능력", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_02" },
-        { title: "에러", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_03" },
-        { title: "전력", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_04" },
-        { title: "기계 비가동 시간", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_05" },
-        { title: "작업시간", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_06" },
-      ] },
-    { title: "프레스 관리", show: false, checkable: true, check: false, child: [
-        { title: "에러 보기", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_01" },
-        { title: "파라미터 보기", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_02" },
-        { title: "캠 보기", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_03" },
-        { title: "클러치&브레이크", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_04" },
-        { title: "설비 수리 요청 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_05" },
-        { title: "설비 수리 요청 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_06" },
-        { title: "설비 수리 완료 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_07" },
-        { title: "설비 수리 완료 리스트(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_08" },
-        { title: "설비 문제 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_09" },
-        // { title: "프레스 일상점검 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_10" },
-        // { title: "프레스 일상점검 일일현황", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_11" },
-      ] },
-    { title: "금형 관리", show: false, checkable: true, check: false, child: [
-        { title: "금형 타수 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_01" },
-        { title: "금형 수리 요청 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_02" },
-        { title: "금형 수리 요청 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_03" },
-        { title: "금형 수리 완료 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_04" },
-        { title: "금형 수리 완료 리스트(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_05" },
-        { title: "금형 문제 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_06" },
-        // { title: "금형 일상점검 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_07" },
-        // { title: "금형 일상점검 일일현황", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_08" },
-      ] },
-  ]
-},
+//   { title: "PMS", show: false, checkable: false,
+//   child: [
+//     { title: "프레스 모니터링", show: false, checkable: true, check: false, child: [
+//         { title: "프레스 분석 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_MON_01" },
+//         { title: "프레스 현황 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_MON_02" },
+//       ] },
+//     { title: "프레스 통계 및 분석", show: false, checkable: true, check: false, child: [
+//         { title: "생산량", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_01" },
+//         { title: "능력", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_02" },
+//         { title: "에러", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_03" },
+//         { title: "전력", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_04" },
+//         { title: "기계 비가동 시간", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_05" },
+//         { title: "작업시간", show: false, checkable: true, check: false, child: [], value: "ROLE_STAT_06" },
+//       ] },
+//     { title: "프레스 관리", show: false, checkable: true, check: false, child: [
+//         { title: "에러 보기", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_01" },
+//         { title: "파라미터 보기", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_02" },
+//         { title: "캠 보기", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_03" },
+//         { title: "클러치&브레이크", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_04" },
+//         { title: "설비 수리 요청 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_05" },
+//         { title: "설비 수리 요청 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_06" },
+//         { title: "설비 수리 완료 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_07" },
+//         { title: "설비 수리 완료 리스트(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_08" },
+//         { title: "설비 문제 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_09" },
+//         // { title: "프레스 일상점검 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_10" },
+//         // { title: "프레스 일상점검 일일현황", show: false, checkable: true, check: false, child: [], value: "ROLE_PMNGT_11" },
+//       ] },
+//     { title: "금형 관리", show: false, checkable: true, check: false, child: [
+//         { title: "금형 타수 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_01" },
+//         { title: "금형 수리 요청 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_02" },
+//         { title: "금형 수리 요청 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_03" },
+//         { title: "금형 수리 완료 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_04" },
+//         { title: "금형 수리 완료 리스트(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_05" },
+//         { title: "금형 문제 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_06" },
+//         // { title: "금형 일상점검 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_07" },
+//         // { title: "금형 일상점검 일일현황", show: false, checkable: true, check: false, child: [], value: "ROLE_MMNGT_08" },
+//       ] },
+//   ]
+// },
 
-  { title: "CNC", show: false, checkable: false,
-    child: [
-      { title: "설비 모니터링", show: false, checkable: true, check: false, child: [
-          { title: " CNC 설비 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_CMON_01" },
-        ] },
-      { title: "프레스 통계 및 분석", show: false, checkable: true, check: false, child: [
-          { title: "생산량", show: false, checkable: true, check: false, child: [], value: "ROLE_CSTAT_01" },
-          { title: "에러", show: false, checkable: true, check: false, child: [], value: "ROLE_CSTAT_03" },
-          { title: "기계 비가동 시간", show: false, checkable: true, check: false, child: [], value: "ROLE_CSTAT_05" },
-        ] },
-      { title: "CNC 관리", show: false, checkable: true, check: false, child: [
-          { title: "설비 수리 요청 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_CMNGT_05" },
-          { title: "설비 수리 요청 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_CMNGT_06" },
-          { title: "설비 수리 완료 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_CMNGT_07" },
-          { title: "설비 수리 완료 리스트(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_CMNGT_08" },
-          { title: "설비 문제 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_CMNGT_09" },
+  // { title: "CNC", show: false, checkable: false,
+  //   child: [
+  //     { title: "설비 모니터링", show: false, checkable: true, check: false, child: [
+  //         { title: " CNC 설비 모니터링", show: false, checkable: true, check: false, child: [], value: "ROLE_CMON_01" },
+  //       ] },
+  //     { title: "프레스 통계 및 분석", show: false, checkable: true, check: false, child: [
+  //         { title: "생산량", show: false, checkable: true, check: false, child: [], value: "ROLE_CSTAT_01" },
+  //         { title: "에러", show: false, checkable: true, check: false, child: [], value: "ROLE_CSTAT_03" },
+  //         { title: "기계 비가동 시간", show: false, checkable: true, check: false, child: [], value: "ROLE_CSTAT_05" },
+  //       ] },
+  //     { title: "CNC 관리", show: false, checkable: true, check: false, child: [
+  //         { title: "설비 수리 요청 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_CMNGT_05" },
+  //         { title: "설비 수리 요청 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_CMNGT_06" },
+  //         { title: "설비 수리 완료 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_CMNGT_07" },
+  //         { title: "설비 수리 완료 리스트(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_CMNGT_08" },
+  //         { title: "설비 문제 유형 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_CMNGT_09" },
 
-        ] },
-    ]
-  },
+  //       ] },
+  //   ]
+  // },
 
   
   // {
