@@ -57,7 +57,7 @@ const InputWithDropDown = ({row, column, onRowChange} : ExcelType) => {
     return (
         <InputWithDropDownContainer>
             <InputContainer>
-                <InputValue maxLength={5} value={row.period} onChange={handleChange}></InputValue>
+                <InputValue type={'number'} value={row.period} onChange={handleChange}></InputValue>
             </InputContainer>
             <DropDownContainer>
                     <select 

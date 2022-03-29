@@ -274,7 +274,11 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
     }).filter((v: any) => v) : []
 
 
-    tmpRow = res.info_list
+    if(pageInfo.page > 1){
+      tmpRow = [...basicRow,...res.info_list]
+    }else{
+      tmpRow = res.info_list
+    }
 
 
     loadAllSelectItems( [
@@ -597,7 +601,7 @@ const MesRawMaterialStock = ({page, keyword, option}: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        height={basicRow.length * 50 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
       <PaginationComponent
         currentPage={pageInfo.page}
