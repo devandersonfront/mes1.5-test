@@ -399,9 +399,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 <ExcelTable headerList={columnlist.dailyInspectionMachineLegendary}
                             row={basicRow?.legendary_list}
                             setRow={(e) => {
-                                //@ts-ignore
-                                basicRow?.legendary_list = e;
-                                setBasicRow({...basicRow})
+                                setBasicRow({...basicRow , legendary_list : e})
                                 setModalSelectOption(e)
                             }}
                             setSelectRow={(index) => {
