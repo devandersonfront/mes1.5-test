@@ -67,10 +67,12 @@ const MesSubMaterialStockModify = ({page, keyword, option}: IProps) => {
   // }, [page, keyword, option])
 
   useEffect(() => {
-    if(selector && selector.modifyInfo){
+    if(selector && Object.keys(selector.modifyInfo).length > 0){
       setBasicRow([
         ...selector.modifyInfo
       ])
+    }else{
+      router.back()
     }
   }, [selector])
 
@@ -248,27 +250,6 @@ const MesSubMaterialStockModify = ({page, keyword, option}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          if(keyword){
-            router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)
-          }else{
-            router.push(`/mes/basic/mold?page=${page}`)
-          }
-        }}
-      />
-      <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`금형기준정보`}
-        sheetname={`금형기준정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
       />
     </div>
   );

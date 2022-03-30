@@ -14,10 +14,10 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
-import {useRouter} from 'next/router'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import {useDispatch} from "react-redux";
 import {change_operation_searchKey} from "../../reducer/operationRegisterState";
+import {useRouter} from "next/router";
 
 interface IProps {
   column: IExcelHeaderType
