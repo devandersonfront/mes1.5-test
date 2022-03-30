@@ -337,6 +337,7 @@ const BasicProduct = ({}: IProps) => {
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');
       setBasicRow(Array.from(map.values()))
+      setPageInfo({page: 1, total: 1})
       setSelectList(new Set())
     }
 
@@ -568,15 +569,26 @@ const BasicProduct = ({}: IProps) => {
         break;
 
       case '저장하기':
+
+        if(selectList.size > 1){
+          return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
+        }
+
         SaveBasic()
+
         break;
       case '삭제':
+        
         if(selectList.size === 0){
           return Notiflix.Report.warning(
-        '경고',
-        '선택된 정보가 없습니다.',
-        '확인',
+          '경고',
+          '선택된 정보가 없습니다.',
+          '확인',
         );
+        }
+
+        if(selectList.size > 1){
+          return Notiflix.Report.warning('경고','삭제는 한 개만 하실수 있습니다.','확인')
         }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
