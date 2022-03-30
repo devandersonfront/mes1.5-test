@@ -1,4 +1,4 @@
-type TransferType = "productType" | "material" | "rawmaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "submaterial" | "welding" | null
+import { TransferType } from '../@types/type'
 
 interface CodeType {
   code: number

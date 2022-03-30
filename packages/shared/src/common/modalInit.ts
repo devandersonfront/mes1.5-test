@@ -24,7 +24,6 @@ import {ToolListModal} from "../components/Modal/ToolListModal";
 import {LotInputInfoModal} from "../components/Modal/LotInputInfoModal";
 import { BomInfoModal } from '../components/Modal/BomInfoModal'
 
-
 export const searchModalList: any = {
   member: [
     {key: 'name', name: '성명', formatter: LineBorderContainer},
@@ -370,8 +369,8 @@ export const searchModalList: any = {
   ],
   InputLotReadonlyInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'date', name: '경과일', formatter: LineBorderContainer, textAlign: 'center', placeholder:"-"},
-    {key: 'lot_number', name: '원자재 LOT 번호', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'elapsed', name: '경과일', formatter: LineBorderContainer, textAlign: 'center', placeholder:"-"},
+    {key: 'lot_number', name: '자재 LOT 번호', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'date', name: '입고일', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'warehousing', name: '입고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'current', name: 'LOT 재고량', formatter: LineBorderContainer, textAlign: 'center'},
