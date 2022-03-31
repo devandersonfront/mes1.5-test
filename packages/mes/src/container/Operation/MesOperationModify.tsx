@@ -108,33 +108,34 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
         }
     }
 
-    const onClickHeaderButton = async(index: number) => {
-        switch(index){
-            case 0:
-                SaveBasic(basicRow, selectList)
-                break;
-            case 1:
-                if(selectList.size > 0) {
-                    Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
-                        () => {
+  const onClickHeaderButton = async(index: number) => {
+    const isSelected = selectList.size > 0
+    switch(index){
+      case 0:
+        isSelected ? SaveBasic(basicRow, selectList) : Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인");
+        break;
+      case 1:
+        if(isSelected) {
+          Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
+            () => {
 
-                            Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
-                                const resultBasic = [...basicRow];
-                                resultBasic.forEach((row, index) => {
-                                    if (selectList.has(row.id)) {
-                                        basicRow.splice(index, 1)
-                                    }
-                                })
-                                setBasicRow([...basicRow])
-                            })
-                        },
-                    )
-                }else{
-                    Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인");
-                }
-                break;
+              Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
+                const resultBasic = [...basicRow];
+                resultBasic.forEach((row, index) => {
+                  if (selectList.has(row.id)) {
+                    basicRow.splice(index, 1)
+                  }
+                })
+                setBasicRow([...basicRow])
+              })
+            },
+          )
+        }else{
+          Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인");
         }
+        break;
     }
+  }
 
     useEffect(() => {
         if(selector && selector.type && selector.modifyInfo){
