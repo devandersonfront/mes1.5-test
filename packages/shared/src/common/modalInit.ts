@@ -327,11 +327,7 @@ export const searchModalList: any = {
         {pk: 0, name: '부'},
       ], type: 'Modal',
     },
-    {key: 'isDefault', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
-        {pk: 1, name: '기본'},
-        {pk: 0, name: '스페어'},
-      ], type: 'Modal', readonly:true
-    },
+    {key: 'isDefault', name: '기본/스페어', width: 160, formatter: LineBorderContainer, textAlign: 'left'},
     {key: 'type', name: '품목 종류', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'unit', name: '단위', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'usage', name: '1회 사용량', formatter: LineBorderContainer, textAlign: 'center'},

@@ -209,6 +209,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         usage: v.usage,
         version: v.version,
         setting: v.setting,
+        isDefault: v.setting == 1 ? '기본' : '스페어',
         stock: childData.stock,
         disturbance: Number(row.goal) * Number(v.usage),
         processArray: childData.process ?? null,
