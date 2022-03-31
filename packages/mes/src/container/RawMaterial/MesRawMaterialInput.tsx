@@ -105,6 +105,13 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
       return Notiflix.Report.warning("경고", "원자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
     }
 
+    const arrLot = basicRow.map(v=> {return v.lot_number})
+    const overlapCheckLot = new Set(arrLot)
+
+
+    if(overlapCheckLot.size < arrLot.length){
+      return Notiflix.Report.warning("경고", "원자재 LOT 번호는 중복이 불가능 합니다.", "확인",)
+    }
 
     let res: any
     res = await RequestMethod('post', `lotRmSave`,

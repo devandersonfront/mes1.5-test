@@ -154,7 +154,11 @@ const MesToolList = ({page, search, option}: IProps) => {
             }
         }).filter((v: any) => v) : []
 
-        tmpRow = info_list.info_list
+        if(pageInfo.page > 1){
+            tmpRow = [...basicRow,...info_list.info_list]
+          }else{
+            tmpRow = info_list.info_list
+          }
 
 
         loadAllSelectItems([
@@ -319,10 +323,22 @@ const MesToolList = ({page, search, option}: IProps) => {
                     setSelectList(tmp)
                     setBasicRow(e);
                 }}
+                height={750}
+                scrollEnd={(value) => {
+                    if(value){
+                        if(pageInfo.total > pageInfo.page){
+                        setSelectList(new Set)
+                        setPageInfo({...pageInfo, page:pageInfo.page+1})
+                        }
+                    }
+                }}
                 setSelectList={(selectedRows) => {
                     //@ts-ignore
                     setSelectList(selectedRows)
-                }}
+                }
+                
+                
+                }
             />
         </div>
     )

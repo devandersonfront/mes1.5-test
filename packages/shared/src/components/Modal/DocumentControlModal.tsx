@@ -64,6 +64,7 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                                     [{...fileInfo[0], parent:parentData.name ==="표준 문서 관리" ? undefined : parentData}])
                                         .then((res) => {
                                             setIsOpen(false);
+                                            setFileInfo([])
                                             reload()
                                         })
                                 }}
@@ -99,6 +100,7 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                                     await RequestMethod("post", "documentSave", fileInfo)
                                         .then(() => {
                                             setIsOpen(false);
+                                            setFileInfo([])
                                             reload()
                                         })
 

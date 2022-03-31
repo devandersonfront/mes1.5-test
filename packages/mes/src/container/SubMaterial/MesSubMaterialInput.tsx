@@ -93,15 +93,32 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
     if(selectList.size <= 0) {
       return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
     }
-    basicRow.map((v)=> {
+
+    const error = basicRow.map((v)=> {
       if(selectList.has(v.id)) {
         if (v.sm_id === undefined) {
-          return Notiflix.Report.warning("경고", "부자재 CODE를 선택해 주시기 바랍니다.", "확인",)
-        }else if (v.lot_number === undefined) {
-          return Notiflix.Report.warning("경고", "부자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
+          return 1
+        }
+        if (v.lot_number === undefined) {
+          return 2
         }
       }
     })
+
+    if(error.includes(1)){
+      return Notiflix.Report.warning("경고", "부자재 CODE를 선택해 주시기 바랍니다.", "확인",)
+    }
+    if(error.includes(2)){
+      return Notiflix.Report.warning("경고", "부자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
+    }
+
+    const arrLot = basicRow.map(v=> {return v.lot_number})
+    const overlapCheckLot = new Set(arrLot)
+
+
+    if(overlapCheckLot.size < arrLot.length){
+      return Notiflix.Report.warning("경고", "부자재 LOT 번호는 중복이 불가능 합니다.", "확인",)
+    }
 
     let res: any
     res = await RequestMethod('post', `lotSmSave`,
