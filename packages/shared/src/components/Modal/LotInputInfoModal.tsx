@@ -411,7 +411,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                 )
               })
             }
-
             <div id='body-title' style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
               <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                 <div style={{ display: 'flex', width: 1200}}>
@@ -421,7 +420,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
               <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
               </div>
             </div>
-
             <div id='body-root' style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
                   headerList={column.type === 'readonly' ? searchModalList.InputListReadonly : searchModalList.InputList}
@@ -450,7 +448,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                       //     seq: i+1
                       //   }))])
                       // }
-                      console.log(v)
                       if(v.bom){
                         setSelectProduct(v.code)
                           // setLotList([...v.bom.map((v,i) => ({
@@ -492,7 +489,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
               <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
               </div>
             </div>
-
             <div id='body-2-root' style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
                   headerList={column.type === 'readonly' ? searchModalList.InputLotReadonlyInfo : searchModalList.InputLotInfo}
