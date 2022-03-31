@@ -70,6 +70,72 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
     }
   }
 
+  const lotReadOnlyEvent = () => {
+    let lots = []
+    lots = row.bom?.map((bom) => bom.lot)
+    onRowChange({
+      ...row,
+      lotList: [...lots.map((v, i) => {
+        let type, date, warehousing, elapsed
+        switch(v.type){
+          case 0:
+            type = 'child_lot_rm'
+            date = v.date
+            warehousing = v.warehousing
+            elapsed = v.elapsed
+            break
+          case 1 :
+            type = 'child_lot_sm'
+            date = v.date
+            warehousing = v.warehousing
+            elapsed = null
+            break
+          case 2:
+            type = 'child_lot_record'
+            date = moment(v[type].end).format("YYYY-MM-DD")
+            warehousing = v[type].good_quantity
+            elapsed = null
+            break
+        }
+        return {
+          ...v,
+          ...v[type],
+          date,
+          elapsed,
+          warehousing,
+          seq: i+1,
+        }
+      })]
+    })
+  }
+
+  const lotNotReadOnlyEvent = () => {
+    if(row.stock === 0){
+      return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
+    }
+    if(row.bom_info !== null){
+      onRowChange({
+        ...row,
+        lotList: [...row.bom_info]
+      })
+    }else {
+      loadMaterialLot(row.tab)
+    }
+  }
+
+  const notLotEvent = () => {
+    if (row.bom_root_id) {
+      const check = tabStore.datas.findIndex((tab) => tab.code == row.bom_root_id)
+      if(check >= 0){
+        dispatch(change_summary_info_index(check))
+      }else{
+        dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1, product_id:row.bom_root_id}))
+      }
+    } else {
+      Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
+      })
+    }
+  }
 
   return (
       <div>
@@ -87,63 +153,12 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
 
           if(column.key === 'lot'){
             if(column.type === 'readonly'){
-              let lot = []
-              if(row.bom){
-                if(row.bom[row.seq-1].lot && !Array.isArray(row.bom[row.seq-1].lot)){
-                  lot = [row.bom[row.seq-1].lot]
-                }else{
-                  lot = row.bom[row.seq-1].lot
-                }
-              }
-              onRowChange({
-                ...row,
-                lotList: [...lot.map(v => {
-                  let type
-
-                  switch(v.type){
-                    case 0:
-                      type = 'child_lot_rm'
-                      break
-                    case 1 :
-                      type = 'child_lot_sm'
-                      break
-                    case 2:
-                      type = 'child_lot_record'
-                      break
-                  }
-
-                  return {
-                    ...v,
-                    ...v[type],
-                  }
-                })]
-              })
+              lotReadOnlyEvent()
             }else{
-              if(row.stock === 0){
-                return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
-              }
-              if(row.bom_info !== null){
-                onRowChange({
-                  ...row,
-                  lotList: [...row.bom_info]
-                })
-              }else {
-                loadMaterialLot(row.tab)
-              }
+              lotNotReadOnlyEvent()
             }
           }else {
-
-            if (row.bom_root_id) {
-              const check = tabStore.datas.findIndex((tab) => tab.code == row.bom_root_id)
-              if(check >= 0){
-                dispatch(change_summary_info_index(check))
-              }else{
-                dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1, product_id:row.bom_root_id}))
-              }
-            } else {
-              Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
-              })
-            }
+            notLotEvent()
           }
         }}>
           <p style={{padding: 0, margin: 0, textDecoration: 'underline'}}>{title}</p>
