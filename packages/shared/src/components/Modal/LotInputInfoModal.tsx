@@ -486,7 +486,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
               <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                 <div style={{ display: 'flex', width: 1200}}>
                   {/*<p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 ({selectProduct})</p>*/}
-                  <p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 ({filterLotListTitle()})</p>
+                  <p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 ({selectProduct})</p>
                 </div>
               </div>
               <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
