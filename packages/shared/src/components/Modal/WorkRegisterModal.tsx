@@ -65,8 +65,8 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         modify: true,
         osId: row.os_id,
         sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
-        start: moment().format('YYYY-MM-DD'),
-        end: moment().format('YYYY-MM-DD'),
+        start: moment().format('YYYY-MM-DD HH:mm:00'),
+        end: moment().format('YYYY-MM-DD HH:mm:00'),
         ...row,
         defect_reasons: [],
       }])
@@ -95,6 +95,13 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   const SaveBasic = async () => {
     let checkPoint = true;
     searchList.map((row) => {
+      let a = '00:00:00'
+      let seconds
+      if(row.pause_time !== undefined ){
+        a = row.pause_time.split(':')
+      }
+      seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2])
+
       if(!row.lot_number){
         Notiflix.Report.warning("경고","LOT번호를 입력해주시기 바랍니다.","확인",)
         return checkPoint = false;
@@ -104,8 +111,12 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
       }else if(!row.good_quantity){
         Notiflix.Report.warning("경고","양품 수량을 입력해주시기 바랍니다.","확인",)
         return checkPoint = false;
+      } else if( (moment(row.end).toDate().getTime() - moment(row.start).toDate().getTime()) / 1000 < seconds ){
+        Notiflix.Report.warning("경고","작업 시간보다 일시 정지 시간이 더 클 수 없습니다.","확인",)
+        return checkPoint = false;
       }
     })
+
     if(checkPoint){
       let res = await RequestMethod('post', `recordSave`,
           searchList.map((v, i) => {
