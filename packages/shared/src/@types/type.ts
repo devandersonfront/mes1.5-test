@@ -153,3 +153,5 @@ export type MidrangeRecordRegister = {
   writer: string
   version?: number
 }
+
+export type TransferType = "productType" | "material" | "rawmaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "submaterial" | "welding" | null
