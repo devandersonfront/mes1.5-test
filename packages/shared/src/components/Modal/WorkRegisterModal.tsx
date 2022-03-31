@@ -67,6 +67,8 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
         start: moment().format('YYYY-MM-DD HH:mm:00'),
         end: moment().format('YYYY-MM-DD HH:mm:00'),
+       
+       
         ...row,
         defect_reasons: [],
       }])
