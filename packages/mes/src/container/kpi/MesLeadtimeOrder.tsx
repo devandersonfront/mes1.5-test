@@ -79,7 +79,7 @@ const MesLeadtimeOrder = () => {
                     amount: v.amount,
                     shipment_amount :v.shipment_amount,
                     shipment_date :v.shipment_date,
-                    leadTime : (v.lead_time/86400).toFixed(1),
+                    leadTime : v.lead_time,
                 }
             })
             setPauseBasicRow(filterResponse)
@@ -104,6 +104,7 @@ const MesLeadtimeOrder = () => {
                 pauseBasicRow.map((row)=> {
                     sum += row.leadTime
                 })
+                console.log(sum)
                 setProcessBasicRow({...processBasicRow , leadTime_average : `${Math.round(sum/rowLenth)}`})
             }
         }else{

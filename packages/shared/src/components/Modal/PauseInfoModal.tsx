@@ -269,6 +269,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   if(selectRow !== undefined && selectRow !== null){
                     onRowChange({
                       ...row,
+                      pause_time: totalTime,
                       pause_reasons: [
                         ...searchList.map(v => {
                           return ({
