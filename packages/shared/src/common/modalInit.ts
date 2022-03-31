@@ -367,7 +367,7 @@ export const searchModalList: any = {
     {key: 'amount', name: '생산량', formatter: LineBorderContainer, editor: TextEditor, textAlign: 'center', textType: 'Modal',},
 
   ],
-  InputLotReadonlyInfo: [
+    InputLotReadonlyInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'elapsed', name: '경과일', formatter: LineBorderContainer, textAlign: 'center', placeholder:"-"},
     {key: 'lot_number', name: '자재 LOT 번호', formatter: LineBorderContainer, textAlign: 'center'},
