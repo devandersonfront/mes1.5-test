@@ -265,23 +265,23 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                         <div
                             onClick={() => {
                                 // if(selectRow !== undefined && selectRow !== null){
+                                if(searchList[0]?.name !== undefined) {
                                     onRowChange({
                                         ...row,
-                                        tools: searchList.map((v,i) => {
+                                        tools: searchList.map((v, i) => {
                                             return {
-                                                ...row.tools !== undefined ? {
-                                                    ...row.tools ?? undefined,
-                                                    record_id: row.record_id,
-                                                    tool: {
-                                                        ...row.tools[i]?.tool,
-                                                        tool: {...v}
-                                                    },
-                                                } : undefined
+                                                ...row.tools[i] ?? undefined,
+                                                record_id: row.record_id,
+                                                tool: {
+                                                    ...row.tools[i]?.tool,
+                                                    tool: {...v}
+                                                },
                                             }
                                         }),
                                         name: row.name,
                                         isChange: true
                                     })
+                                }
                                 // }
                                 setIsOpen(false)
                             }}
