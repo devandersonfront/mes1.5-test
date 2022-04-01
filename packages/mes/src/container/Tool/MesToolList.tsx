@@ -201,7 +201,7 @@ const MesToolList = ({page, search, option}: IProps) => {
                 ...row,
                 ...appendAdditional,
                 id: `tool_${random_id}`,
-                tool_id:row?.tool?.code,
+                tool_id: row?.tool_id,
                 elapsed: row?.elapsed  === 0 ? "0" : row?.elapsed,
                 name: row?.name,
                 unit:row?.unit,
@@ -336,8 +336,8 @@ const MesToolList = ({page, search, option}: IProps) => {
                     //@ts-ignore
                     setSelectList(selectedRows)
                 }
-                
-                
+
+
                 }
             />
         </div>
