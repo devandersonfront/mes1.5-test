@@ -270,10 +270,10 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                         ...row,
                                         tools: searchList.map((v, i) => {
                                             return {
-                                                ...row.tools[i] ?? undefined,
+                                                ...row.tools === undefined ? undefined : {...row.tools[i]},
                                                 record_id: row.record_id,
                                                 tool: {
-                                                    ...row.tools[i]?.tool,
+                                                    ...row.tools === undefined ? undefined : {...row.tools[i]?.tool},
                                                     tool: {...v}
                                                 },
                                             }
