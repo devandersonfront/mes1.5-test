@@ -31,11 +31,10 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
             }
         })
         if(res){
-            const legendaryValue : string[] = Object.values(res.legendary_list)
-
-            const legendaryArray: string[] = legendaryValue.map((v,i)=>{
-                return v
-            })
+            const legendaryValue : string[] = Object.values(res?.legendary_list)
+            const legendaryArray: string[] = res?.legendary_list.map((v,i)=>{
+                    return v
+                })
             let machineName
             const processName = row.product.process === null ? '-' : row.product.process.name
             if(row.machines !== null) {
@@ -50,7 +49,7 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
             }else if (typeof row.user === 'string'){
                 worker = row.user
             }
-            setExcelInfo({sic_id: res.sic_id, record_id: row.record_id ,basic: [{osd_id: row.identification, lot_number: row.lot_number, code: row.product.code, material_name: row.product.name, type: row.type , process_id: processName, worker_name: worker, name: machineName}], samples: [{samples: res.samples}], legendary: legendaryArray, inspection_info: res.inspection_info})
+            setExcelInfo({sic_id: res.sic_id, record_id: row.record_id ,basic: [{osd_id: row.identification, lot_number: row.lot_number, code: row.product.code, material_name: row.product.name, type: row.type , process_id: processName, worker_name: worker, name: machineName}], samples: [{samples: res.samples}], legendary: ["legendaryArray"], inspection_info: res.inspection_info})
             setModalOpen(true)
         }else {
             Notiflix.Report.warning('검사 항목을 등록해주세요.','','확인');

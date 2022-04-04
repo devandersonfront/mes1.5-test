@@ -7,6 +7,9 @@ import ButtonGroup from "../../../../main/component/ButtonGroup";
 import {SelectColumn} from "react-data-grid";
 import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
 import Notiflix from "notiflix";
+import {useRouter} from "next/router";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 
 interface SelectParameter {
@@ -15,6 +18,8 @@ interface SelectParameter {
 }
 
 const MesLeadtimeOrder = () => {
+    const router = useRouter()
+    const dispatch = useDispatch()
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
     const [processBasicRow, setProcessBasicRow] = useState<any>({
         id: ''
@@ -104,7 +109,6 @@ const MesLeadtimeOrder = () => {
                 pauseBasicRow.map((row)=> {
                     sum += row.leadTime
                 })
-                console.log(sum)
                 setProcessBasicRow({...processBasicRow , leadTime_average : `${Math.round(sum/rowLenth)}`})
             }
         }else{
@@ -115,6 +119,13 @@ const MesLeadtimeOrder = () => {
 
     },[pauseBasicRow])
 
+
+    React.useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"KPI",sub:router.pathname}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     return (
         <div>

@@ -28,15 +28,15 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
   );
 }
 
-export const getServerSideProps = (ctx: NextPageContext) => {
-  return {
-    props: {
-      page: ctx.query.page,
-      keyword: ctx.query.keyword ?? "",
-      option: ctx.query.option ?? 0,
-    }
-  }
-}
+// export const getServerSideProps = (ctx: NextPageContext) => {
+//   return {
+//     props: {
+//       page: ctx.query.page,
+//       keyword: ctx.query.keyword ?? "",
+//       option: ctx.query.option ?? 0,
+//     }
+//   }
+// }
 
 // BasicContainer.getInitialProps = async ({ query }) => {
 //   let { page, keyword, opt } = query

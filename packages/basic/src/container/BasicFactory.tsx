@@ -16,6 +16,8 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
     children?: any
@@ -26,7 +28,7 @@ export interface IProps {
 
 const BasicFactory = ({}: IProps) => {
     const router = useRouter()
-
+    const dispatch = useDispatch()
     const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
     const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -53,6 +55,12 @@ const BasicFactory = ({}: IProps) => {
         }
     }, [pageInfo.page, keyword])
 
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"공장 기준정보",sub:router.pathname}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {

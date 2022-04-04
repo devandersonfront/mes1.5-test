@@ -17,14 +17,11 @@ import ic_wms from '../../public/images/ic_wms.png'
 //@ts-ignore
 import ic_ums from '../../public/images/ic_ums.png'
 //@ts-ignore
-import ic_cnc from '../../public/images/icon_CMS_WH_T.svg'
-
-//@ts-ignore
 import ic_setting from '../../public/images/ic_setting.png'
 import {useRouter} from 'next/router'
 import {useDispatch, useSelector} from 'react-redux'
-import {setMenuStateChange} from '../../reducer/menuState'
-import {RootState} from '../../reducer'
+import {RootState} from 'shared/src/reducer'
+import {setMenuStateChange} from "shared/src/reducer/menuState";
 
 type IMenu = 'HOME' | 'BASIC' | 'MES' | 'PMS' | 'WMS' | 'UMS' | 'SETTING' | "CNC" | ""
 
@@ -44,8 +41,8 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
   const [subMenuList, setSubMenuList] = useState<IMenuType[][]>([])
 
   const selector = useSelector((selector:RootState) => selector.menuState)
+  const selectMenu = useSelector((selector:RootState) => selector.menuSelectState)
   const dispatch = useDispatch()
-
   const router = useRouter()
 
   useEffect(() => {
@@ -66,10 +63,6 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
       dispatch(setMenuStateChange({
         main: [],
         sub: [],
-        selectState:{
-          main:0,
-          sub:""
-        }
       }))
     }else{
       setMenuType(selectType)
@@ -79,127 +72,100 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
         sub: new Array(tmpMenu?.length).fill([]).map((v, i) => {
           return []
         }),
-        selectState:{
-          main:0,
-          sub:""
-        }
       }))
     }
   }
 
   return (
-    <div style={{display: 'flex'}}>
-      <MenuNavComponent>
-        <div>
-          <MenuNavItem style={{backgroundColor: menuType === "HOME" ? POINT_COLOR : undefined}} onClick={() => {
-            router.push('/mes/dashboard')
-            changeMenuType("HOME")
-          }}>
-            <img src={ic_home} style={{width: 30, height: 30, marginBottom: 5}}/>
-            <MenuText>HOME</MenuText>
-          </MenuNavItem>
-          <MenuNavItem style={{backgroundColor: menuType === "BASIC" ? POINT_COLOR : undefined}} onClick={() => {
-            changeMenuType("BASIC")
-          }}>
-            <img src={ic_info} style={{width: 30, height: 30, marginBottom: 5}}/>
-            <MenuText>기준정보관리</MenuText>
-          </MenuNavItem>
-          <MenuNavItem style={{backgroundColor: menuType === "MES" ? POINT_COLOR : undefined}} onClick={() => {
-            changeMenuType("MES")
-          }}>
-            <img src={ic_mes} style={{width: 30, height: 30, marginBottom: 5}}/>
-            <MenuText>MES</MenuText>
-          </MenuNavItem>
-          {/* <MenuNavItem style={{backgroundColor: menuType === "PMS" ? POINT_COLOR : undefined}} onClick={() => {
-            changeMenuType("PMS")
-          }}>
-            <img src={ic_pms} style={{width: 30, height: 30, marginBottom: 5}}/>
-            <MenuText>PMS</MenuText>
-          </MenuNavItem> */}
-          <MenuNavItem style={{backgroundColor: menuType === "CNC" ? POINT_COLOR : undefined}} onClick={() => {
-            changeMenuType("CNC")
-          }}>
-            <img src={ic_cnc} style={{width: 30, height: 30, marginBottom: 5}}/>
-            <MenuText>CNC</MenuText>
-          </MenuNavItem>
-          {/*<MenuNavItem style={{backgroundColor: menuType === "WMS" ? POINT_COLOR : undefined}} onClick={() => {*/}
-          {/*  changeMenuType("WMS")*/}
-          {/*}}>*/}
-          {/*  <img src={ic_wms} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
-          {/*  <MenuText>WMS</MenuText>*/}
-          {/*</MenuNavItem>*/}
-          {/*<MenuNavItem style={{backgroundColor: menuType === "UMS" ? POINT_COLOR : undefined}} onClick={() => {*/}
-          {/*  changeMenuType("UMS")*/}
-          {/*}}>*/}
-          {/*  <img src={ic_ums} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
-          {/*  <MenuText>UMS</MenuText>*/}
-          {/*</MenuNavItem>*/}
-          {/*<MenuNavItem style={{backgroundColor: menuType === "SETTING" ? POINT_COLOR : undefined}} onClick={() => {*/}
-          {/*  changeMenuType("SETTING")*/}
-          {/*}}>*/}
-          {/*  <img src={ic_setting} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
-          {/*  <MenuText>Setting</MenuText>*/}
-          {/*</MenuNavItem>*/}
-        </div>
-        <div style={{width: 198, paddingTop: 30, paddingLeft: 24}}>
-          {
-            selector.main && selector.main.map((v, i) => <>
-              <SideMenuItem onClick={() => {
-                if(v.subMenu && v.subMenu.length){
-                  let tmpSubMenus = selector.sub
+      <div style={{display: 'flex'}}>
+        <MenuNavComponent>
+          <div>
+            <MenuNavItem style={{backgroundColor: menuType === "HOME" ? POINT_COLOR : undefined}} onClick={() => {
+              router.push('/mes/dashboard')
+              changeMenuType("HOME")
+            }}>
+              <img src={ic_home} style={{width: 30, height: 30, marginBottom: 5}}/>
+              <MenuText>HOME</MenuText>
+            </MenuNavItem>
+            <MenuNavItem style={{backgroundColor: menuType === "BASIC" ? POINT_COLOR : undefined}} onClick={() => {
+              changeMenuType("BASIC")
+            }}>
+              <img src={ic_info} style={{width: 30, height: 30, marginBottom: 5}}/>
+              <MenuText>기준정보관리</MenuText>
+            </MenuNavItem>
+            <MenuNavItem style={{backgroundColor: menuType === "MES" ? POINT_COLOR : undefined}} onClick={() => {
+              changeMenuType("MES")
+            }}>
+              <img src={ic_mes} style={{width: 30, height: 30, marginBottom: 5}}/>
+              <MenuText>MES</MenuText>
+            </MenuNavItem>
+            <MenuNavItem style={{backgroundColor: menuType === "PMS" ? POINT_COLOR : undefined}} onClick={() => {
+              changeMenuType("PMS")
+            }}>
+              <img src={ic_pms} style={{width: 30, height: 30, marginBottom: 5}}/>
+              <MenuText>PMS</MenuText>
+            </MenuNavItem>
+            {/*<MenuNavItem style={{backgroundColor: menuType === "WMS" ? POINT_COLOR : undefined}} onClick={() => {*/}
+            {/*  changeMenuType("WMS")*/}
+            {/*}}>*/}
+            {/*  <img src={ic_wms} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
+            {/*  <MenuText>WMS</MenuText>*/}
+            {/*</MenuNavItem>*/}
+            {/*<MenuNavItem style={{backgroundColor: menuType === "UMS" ? POINT_COLOR : undefined}} onClick={() => {*/}
+            {/*  changeMenuType("UMS")*/}
+            {/*}}>*/}
+            {/*  <img src={ic_ums} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
+            {/*  <MenuText>UMS</MenuText>*/}
+            {/*</MenuNavItem>*/}
+            {/*<MenuNavItem style={{backgroundColor: menuType === "SETTING" ? POINT_COLOR : undefined}} onClick={() => {*/}
+            {/*  changeMenuType("SETTING")*/}
+            {/*}}>*/}
+            {/*  <img src={ic_setting} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
+            {/*  <MenuText>Setting</MenuText>*/}
+            {/*</MenuNavItem>*/}
+          </div>
+          <div style={{width: 198, paddingTop: 30, paddingLeft: 24}}>
+            {
+              selector.main && selector.main.map((v, i) => <>
+                    <SideMenuItem onClick={() => {
+                      if(v.subMenu && v.subMenu.length){
+                        let tmpSubMenus = selector.sub
 
-                  if(tmpSubMenus[i].length){
-                    tmpSubMenus[i] = []
-                  }else{
-                    tmpSubMenus[i] = v.subMenu ?? []
-                  }
-                  dispatch(setMenuStateChange({
-                    ...selector,
-                    sub: [...tmpSubMenus],
-                    selectState:{
-                      main:selector.selectState.main == i ? null : i,
-                      sub:selector.selectState.sub
-                    }
-                  }))
-                } else if(v.url) {
-                  dispatch(setMenuStateChange({
-                    ...selector,
-                    selectState:{
-                      main:selector.selectState.main == i ? null : i,
-                      sub:null
-                    }
-                  }))
-                  router.push(v.url)
-                }
-              }} selectMain={selector.selectState.main == i}>
-                <p>{v.title}</p>
-              </SideMenuItem>
-                {
-                  selector.sub[i] && selector.sub[i].length ?
-                    selector.sub[i].map((sub =>
-                      <SideMenuItem onClick={() => {
-                        if(sub.url){
-                          dispatch(setMenuStateChange({
-                            ...selector,
-                            selectState:{
-                              main: i,
-                              sub:sub.title
-                            }
-                          }))
-                          router.push(sub.url)
+                        if(tmpSubMenus[i].length){
+                          tmpSubMenus[i] = []
+                        }else{
+                          tmpSubMenus[i] = v.subMenu ?? []
                         }
-                      }} selectSub={selector.selectState.sub == sub.title}>
-                        <p style={{fontSize: 13, paddingLeft: 12}}>· {sub.title}</p>
-                      </SideMenuItem>
-                    ))
-                    : null
-                }
-            </>
-            )
-          }
-        </div>
-      </MenuNavComponent>
-    </div>
+                        dispatch(setMenuStateChange({
+                          ...selector,
+                          sub: [...tmpSubMenus],
+                        }))
+                      } else if(v.url) {
+                        router.push(v.url)
+                      }
+                    }} selectMain={v.title == selectMenu.main}>
+                      <p>{v.title}</p>
+                    </SideMenuItem>
+                    {
+                      selector.sub[i] && selector.sub[i].length ?
+                          selector.sub[i].map((sub =>
+                                  <SideMenuItem onClick={() => {
+                                    if(sub.url){
+
+                                      router.push(sub.url)
+                                    }
+                                  }} selectSub={sub.url == selectMenu.sub}>
+                                    <p style={{fontSize: 13, paddingLeft: 12}}>· {sub.title}</p>
+                                  </SideMenuItem>
+                          ))
+                          : null
+                    }
+                  </>
+              )
+            }
+          </div>
+        </MenuNavComponent>
+      </div>
   );
 }
 

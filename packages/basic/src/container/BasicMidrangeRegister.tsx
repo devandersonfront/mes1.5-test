@@ -48,7 +48,7 @@ const BasicMidrangeRegister = () => {
             legendaryKeyValue[v.legendary] = v.LegendaryExplain
         })
 
-        if(Object.keys(legendaryKeyValue).includes('') || Object.keys(legendaryKeyValue).includes('undefined')){
+        if(Object.keys(legendaryKeyValue).length <= 0 || Object.keys(legendaryKeyValue).includes('') || Object.keys(legendaryKeyValue).includes('undefined')){
             return Notiflix.Report.warning('경고', '범례를 확인해주세요.', '확인')
         }else if(Object.values(legendaryKeyValue).includes('') || Object.values(legendaryKeyValue).includes('undefined')){
             return Notiflix.Report.warning('경고', '범례 설명을 확인해주세요.', '확인')
@@ -63,6 +63,10 @@ const BasicMidrangeRegister = () => {
             samples: Number(sampleBasicRow[0].samples),
             legendary_list: legendaryKeyValue,
             category_info: categoryInfo
+        }
+
+        if(midrangeData){
+
         }
         let res: any
         res = await RequestMethod('post', `inspectCategorySave`,[midrangeData])
