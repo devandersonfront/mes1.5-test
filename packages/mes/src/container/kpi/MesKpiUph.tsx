@@ -7,6 +7,9 @@ import ButtonGroup from "../../../../main/component/ButtonGroup";
 import {SelectColumn} from "react-data-grid";
 import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
 import Notiflix from "notiflix";
+import {useRouter} from "next/router";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface SelectParameter {
     from:string
@@ -15,6 +18,8 @@ interface SelectParameter {
 
 
 const MesKpiUph = () => {
+    const router = useRouter()
+    const dispatch = useDispatch()
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
     const [processBasicRow, setProcessBasicRow] = useState<any>({id: ''});
     const changeHeaderStatus = (value:number) => {
@@ -118,6 +123,12 @@ const MesKpiUph = () => {
 
     },[pauseBasicRow])
 
+    React.useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"KPI",sub:router.pathname}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     return (
         <div>

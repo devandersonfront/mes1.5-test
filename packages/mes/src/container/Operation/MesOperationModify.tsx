@@ -13,7 +13,8 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -24,7 +25,7 @@ interface IProps {
 
 const MesOperationModify = ({page, keyword, option}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -146,6 +147,13 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
             router.push('/mes/operationV1u/list')
         }
     }, [selector])
+
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:"/mes/operationV1u/list"}))
+        return(() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
   return (
     <div>

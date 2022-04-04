@@ -14,6 +14,8 @@ import {useRouter} from "next/router";
 //@ts-ignore
 import Notiflix from "notiflix";
 import moment from "moment";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
     children?: any
@@ -24,6 +26,7 @@ export interface IProps {
 
 const BasicTool = ({page, search, option}: IProps) => {
     const router = useRouter();
+    const dispatch = useDispatch()
     const [column, setColumn] = useState<any>(columnlist.toolRegister)
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:1});
@@ -492,6 +495,13 @@ const BasicTool = ({page, search, option}: IProps) => {
             LoadBasic();
         }
     }, [pageInfo.page,keyword])
+
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"공구 기준정보",sub:""}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     return (
         <div>

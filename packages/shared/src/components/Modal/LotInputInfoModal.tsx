@@ -134,6 +134,8 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         }
       }
       const stock = getTotalStock(bomId, childDataType)
+
+
       return {
         ...childData,
         seq: i+1,
@@ -148,7 +150,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         setting: v.bom.setting,
         stock,
         bom_lot_list: tmpRow,
-        disturbance: new Big(row.good_quantity ?? 0).plus(row.poor_quantity ?? 0).times(v.bom.usage).toNumber(),
+        disturbance: new Big(row.good_quantity ?? 0)?.plus(row.poor_quantity ?? 0)?.times(v.bom.usage)?.toNumber(),
         processArray: childData.process ?? null,
         process: childData.process ? childData.process.name : '-',
         bom: row.bom,

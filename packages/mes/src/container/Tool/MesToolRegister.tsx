@@ -8,9 +8,12 @@ import moment from "moment";
 //@ts-ignore
 import Notiflix from "notiflix";
 import {useRouter} from "next/router";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 const MesToolRegister = () => {
     const router = useRouter();
+    const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([{
         id:`toolWarehousingRegister_${Math.random()*1000}`,
         warehousing:"0",
@@ -21,7 +24,12 @@ const MesToolRegister = () => {
 
     useEffect(() => {
         getMenus()
-    }, [])
+        dispatch(setSelectMenuStateChange({main:"공구 관리",sub:router.pathname}))
+        return(() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
+
 
     const getMenus = async () => {
         let res = await RequestMethod('get', `loadMenu`, {
