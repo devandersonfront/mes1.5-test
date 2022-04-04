@@ -13,6 +13,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {TransferCodeToValue} from '../../common/TransferFunction'
+import moment from "moment";
 
 interface IProps {
   row: any
@@ -118,53 +119,75 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
   }
 
   const SaveBasic = async () => {
-    let res = await RequestMethod('post', `recordSave`,
-        searchList.map((v, i) => {
-          let selectData: any = {}
+    let checkPoint = true;
+    searchList.map((row) => {
+      let a = '00:00:00'
+      let seconds
+      if(row.pause_time !== undefined ){
+        a = row.pause_time.split(':')
+      }
+      seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2])
 
-          Object.keys(v).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: v[v]
+      if(!row.lot_number){
+        Notiflix.Report.warning("경고","LOT번호를 입력해주시기 바랍니다.","확인",)
+        return checkPoint = false;
+      }else if(!row.good_quantity){
+        Notiflix.Report.warning("경고","양품 수량을 입력해주시기 바랍니다.","확인",)
+        return checkPoint = false;
+      } else if( (moment(row.end).toDate().getTime() - moment(row.start).toDate().getTime()) / 1000 < seconds ){
+        Notiflix.Report.warning("경고","작업 시간보다 일시 정지 시간이 더 클 수 없습니다.","확인",)
+        return checkPoint = false;
+      }
+    })
+    if(checkPoint) {
+      let res = await RequestMethod('post', `recordSave`,
+          searchList.map((v, i) => {
+            let selectData: any = {}
+
+            Object.keys(v).map(v => {
+              if (v.indexOf('PK') !== -1) {
+                selectData = {
+                  ...selectData,
+                  [v.split('PK')[0]]: v[v]
+                }
               }
-            }
 
-            if(v === 'unitWeight') {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(v['unitWeight'])
+              if (v === 'unitWeight') {
+                selectData = {
+                  ...selectData,
+                  unitWeight: Number(v['unitWeight'])
+                }
               }
-            }
 
-            if(v === 'tmpId') {
-              selectData = {
-                ...selectData,
-                id: v['tmpId']
+              if (v === 'tmpId') {
+                selectData = {
+                  ...selectData,
+                  id: v['tmpId']
+                }
               }
+            })
+
+            return {
+              ...v,
+              ...selectData,
+              operation_sheet: {
+                ...v.operation_sheet,
+                status: row.status_no
+              },
+              input_bom: [],
+              status: 0,
             }
-          })
-
-          return {
-            ...v,
-            ...selectData,
-            operation_sheet: {
-              ...v.operation_sheet,
-              status: row.status_no
-            },
-            input_bom: [],
-            status: 0,
-          }
-        }).filter((v) => v))
+          }).filter((v) => v))
 
 
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인', () => {
-        onRowChange()
-        Notiflix.Loading.standard()
-        setIsOpen(false)
-      });
+      if (res) {
+        Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
+          onRowChange()
+          Notiflix.Loading.standard()
+          setIsOpen(false)
+        });
 
+      }
     }
   }
 

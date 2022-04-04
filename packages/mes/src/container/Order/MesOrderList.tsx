@@ -339,6 +339,7 @@ const MesOrderList = ({page, search, option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
+        code: row.product.code,
         customer_id: row.product.customer?.name,
         cm_id: row.product.model?.model,
         modelArray: row.model,

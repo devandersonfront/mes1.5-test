@@ -371,6 +371,7 @@ export const searchModalList: any = {
   InputLotReadonlyInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center', placeholder:"-"},
     {key: 'date', name: '경과일', formatter: LineBorderContainer, textAlign: 'center', placeholder:"-"},
+    // {key: 'elapsed', name: '경과일', formatter: LineBorderContainer, textAlign: 'center', placeholder:"-"},
     {key: 'lot_number', name: '원자재 LOT 번호', formatter: LineBorderContainer, textAlign: 'center', placeholder:"-"},
     {key: 'date', name: '입고일', formatter: LineBorderContainer, textAlign: 'center', placeholder:"-"},
     {key: 'warehousing', name: '입고량', formatter: LineBorderContainer, textAlign: 'center', placeholder:"-"},

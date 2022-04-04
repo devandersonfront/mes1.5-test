@@ -140,9 +140,9 @@ const BasicTool = ({page, search, option}: IProps) => {
                 ...row,
                 ...appendAdditional,
                 id: `tool_${random_id}`,
-                products:[...row.products.map((product,index)=>{
-                    return ({...product, average:Number(toolAverageArray[index])})
-                })],
+                // products:[...row.products.map((product,index)=>{
+                //     return ({...product, average:Number(toolAverageArray[index])})
+                // })],
             }
         })
         setSelectList(new Set)
@@ -218,23 +218,23 @@ const BasicTool = ({page, search, option}: IProps) => {
 
         if(res){
             const productIdArrayList = [];
-            res.info_list.map((row)=>{
-                const productList = [];
-                row?.products?.map((product) => {
-                    // productList.push(product.product_id)
-                    RequestMethod("get", "toolAverage", {
-                        path:{
-                            product_id: product.product_id,
-                            tool_id: row.tool_id
-                        }
-                    })
-                        .then((res) => {
-                            productList.push(res)
-                        })
-                })
-                productIdArrayList.push(productList);
-            })
-            cleanUpData(res, productIdArrayList);
+            // res.info_list.map((row)=>{
+            //     const productList = [];
+            //     row?.products?.map((product) => {
+            //         // productList.push(product.product_id)
+            //         RequestMethod("get", "toolAverage", {
+            //             path:{
+            //                 product_id: product.product_id,
+            //                 tool_id: row.tool_id
+            //             }
+            //         })
+            //             .then((res) => {
+            //                 productList.push(res)
+            //             })
+            //     })
+            //     productIdArrayList.push(productList);
+            // })
+            cleanUpData(res);
             setPageInfo({...pageInfo, total:res.totalPages});
         }
     }

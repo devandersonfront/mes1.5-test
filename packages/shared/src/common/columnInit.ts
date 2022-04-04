@@ -60,6 +60,7 @@ import {MidrangeFrameButton} from "../components/Buttons/MidrangeFrameButton";
 import {UnderLineContainer} from '../components/Formatter/UnderLineContainer'
 import { OnClickContainer } from '../components/InputBox/OnClickContainer'
 import { InputWithDropDown } from '../components/Dropdown/InputWithDropDown'
+import {ToolModal} from "../components/Modal/ToolModal";
 
 
 export const columnlist: any = {
@@ -1273,7 +1274,7 @@ export const columnlist: any = {
       ]},
     {key: "customer_id", name: '거래처', formatter: SearchModalTest, placeholder: '거래처 입력', type:"customer"},
     {key: "stock", name: '공구 재고량', formatter: UnitContainer, unitData:"EA", },
-    {key: "product_id", name: '생산 품목', formatter:ProductInfoModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
+    {key: "product_id", name: '생산 품목', formatter: ToolModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
   ],
   toolList: [
     {key: "code", name: '공구 CODE',  formatter: PlaceholderBox, placeholder: 'CODE 입력'},
@@ -1281,7 +1282,7 @@ export const columnlist: any = {
     {key: "unit", name: '단위', },
     {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '거래처 입력', type:"customer"},
     {key: "stock", name: '공구 재고량', formatter: UnitContainer, unitData:"EA", },
-    {key: "product_id", name: '생산 품목', formatter:ProductInfoModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
+    {key: "product_id", name: '생산 품목', formatter: ToolModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
   ],
   toolWarehousingRegister:[
     {key: "tool_id", name: '공구 CODE', formatter: SearchModalTest, type:"tool", placeholder: 'CODE 입력', toolType: 'register'},
