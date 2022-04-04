@@ -19,24 +19,24 @@ type SelectListType = {
 
 // period_unit : 0(day) , 1(week) , 2(month)
 const InputWithDropDown = ({row, column, onRowChange} : ExcelType) => {
-    
+
     const [visible , setVisible] = React.useState<boolean>(false)
     const typeOfUnit = (unit : '일' | '주' | '월') : 0 | 1 | 2 | undefined  => {
-        return  unit === '일' 
-                ? 0 
-                : unit === '주' 
-                ? 1 
-                : unit ==='월' 
-                ? 2 
+        return  unit === '일'
+                ? 0
+                : unit === '주'
+                ? 1
+                : unit ==='월'
+                ? 2
                 : undefined
     }
 
     const unitOfType = (type : 0 | 1 | 2) : '일' | '주' | '월' => {
-        return  type === 0 
-        ? '일' 
-        : type === 1 
+        return  type === 0
+        ? '일'
+        : type === 1
         ? '주'
-        : type === 2 
+        : type === 2
         ? '월'
         : undefined
     }
@@ -60,23 +60,23 @@ const InputWithDropDown = ({row, column, onRowChange} : ExcelType) => {
                 <InputValue maxLength={5} value={row.period} onChange={handleChange}></InputValue>
             </InputContainer>
             <DropDownContainer>
-                    <select 
+                    <select
                         style={{background : 'inherit' , border : 'none' , marginRight : 5, color : '#fff'}}
                         onChange={handleDayChange}
                         onClick={handleClick}
-                    >   
+                    >
                         {
                             visible ? column.selectList?.map((list : SelectListType)=>(
                                 <option key={list.pk} value={list.name} style={{color : '#000'}}>
                                     {list.name}
                                 </option>
-                            )) : 
+                            )) :
                                 <option key={'init'} style={{color : '#000'}}>
                                     {unitOfType(row.period_unit)}
                                 </option>
                         }
                     </select>
-                
+
             </DropDownContainer>
         </InputWithDropDownContainer>
     )
@@ -115,4 +115,3 @@ const DropDownContainer = styled.div`
     display : flex;
     align-items : center;
     `
-

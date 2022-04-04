@@ -8,10 +8,12 @@ import moment from "moment";
 //@ts-ignore
 import Notiflix from "notiflix";
 import {useRouter} from "next/router";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 const MesToolUpdate = () => {
     const router = useRouter();
+    const dispatch = useDispatch()
     const toolStore = useSelector((router:RootState) => router.toolInfo);
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingUpdate);
@@ -89,7 +91,11 @@ const MesToolUpdate = () => {
             router.push("/mes/tool/list")
         }else{
             cleanUpData();
+            dispatch(setSelectMenuStateChange({main:"공구 관리",sub:"/mes/tool/warehousinglist"}))
         }
+        return(() => {
+            dispatch(deleteSelectMenuState())
+        })
     },[])
 
     return (

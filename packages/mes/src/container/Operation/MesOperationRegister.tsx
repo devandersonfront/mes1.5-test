@@ -15,8 +15,10 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {SearchModalResult, SearchResultSort} from "shared/src/Functions/SearchResultSort";
+import {delete_operation_searchKey} from "shared/src/reducer/operationRegisterState";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   page?: number
@@ -26,6 +28,7 @@ interface IProps {
 
 const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const router = useRouter()
+  const dispatch = useDispatch();
   const receiveKey = useSelector((root:RootState) => root.OperationRegisterState);
   //처음인지 확인하는 state 하나 필요
   const [firstCheck, setFirstCheck] = useState<boolean>(true)
@@ -407,7 +410,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     }
   }, [codeCheck])
 
-
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
+    return(() => {
+      dispatch(delete_operation_searchKey())
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   return (
       <div>
@@ -451,8 +460,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 //   const resultData = await loadLatestSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
                 //   setBasicRow([...resultData])
                 // }else{
-                  const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
-                  setBasicRow([...resultData])
+                const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
+                setBasicRow([...resultData])
                 // }
               }
               let tmp: Set<any> = selectList;

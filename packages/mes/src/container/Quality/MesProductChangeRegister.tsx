@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     columnlist,
     ExcelTable,
@@ -13,10 +13,13 @@ import {
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
 import {useRouter} from "next/router";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 const MesProductChangeRegister = () => {
 
     const router = useRouter()
+    const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([{
         order_num: '-', operation_num: '20210401-013'
     }])
@@ -70,6 +73,13 @@ const MesProductChangeRegister = () => {
         temp[index] = initFile
         setFiles([...temp])
     }
+
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"품질 관리",sub:router.pathname}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     return (
         <div>

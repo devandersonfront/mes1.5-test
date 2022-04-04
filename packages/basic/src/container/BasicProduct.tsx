@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react'
 import {
   BarcodeModal,
-    columnlist,
-    excelDownload,
-    ExcelDownloadModal,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    PaginationComponent,
-    RequestMethod,
-    TextEditor
+  columnlist,
+  excelDownload,
+  ExcelDownloadModal,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  MAX_VALUE,
+  PaginationComponent,
+  RequestMethod,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -19,6 +19,8 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import axios from 'axios';
 import { SF_ENDPOINT_BARCODE } from 'shared/src/common/configset';
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
   children?: any
@@ -29,7 +31,7 @@ export interface IProps {
 
 const BasicProduct = ({}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -61,6 +63,12 @@ const BasicProduct = ({}: IProps) => {
     }
   }, [pageInfo.page, keyword])
 
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"제품 등록 관리",sub:""}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const selectedData = () => {
 
@@ -278,7 +286,6 @@ const BasicProduct = ({}: IProps) => {
           })
         }
       }
-
     }else if(!selectCheck){
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
@@ -293,6 +300,10 @@ const BasicProduct = ({}: IProps) => {
       Notiflix.Loading.remove()
       Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
     }
+    // else if(!bomCheck){
+    //   Notiflix.Loading.remove()
+    //   Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
+    // }
 
   }
 
@@ -569,16 +580,13 @@ const BasicProduct = ({}: IProps) => {
         break;
 
       case '저장하기':
-
         if(selectList.size > 1){
           return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
         }
-
         SaveBasic()
 
         break;
       case '삭제':
-        
         if(selectList.size === 0){
           return Notiflix.Report.warning(
           '경고',
@@ -592,8 +600,8 @@ const BasicProduct = ({}: IProps) => {
         }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          ()=>{DeleteBasic()}
-          ,()=>{}
+            ()=>{DeleteBasic()}
+            ,()=>{}
         )
         break;
 
@@ -652,21 +660,15 @@ const BasicProduct = ({}: IProps) => {
 
 
   React.useEffect(()=>{
-
-
     if(selectList.size > 1){
-
       return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
-
     }
-
     return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
-
   },[selectList.size])
 
 
   return (
-    <div>
+      <div>
         <PageHeader
           isSearch
           searchKeyword={keyword}
@@ -696,27 +698,30 @@ const BasicProduct = ({}: IProps) => {
           row={basicRow}
           // setRow={setBasicRow}
           setRow={(e) => {
-
-
             let tmp: Set<any> = selectList
             e.map(v => {
-              if(v.isChange) tmp.add(v.id)
+              if(v.isChange) {
+                tmp.add(v.id)
+                v.isChange = false
+              }
             })
             setSelectList(tmp)
             competeProductV1u(e)
           }}
           selectList={selectList}
           //@ts-ignore
-          setSelectList={setSelectList}
+          setSelectList={ (p) => {
+            setSelectList(p as any)
+          }}
           setSelectRow={setSelectRow}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent
-          currentPage={pageInfo.page}
-          totalPage={pageInfo.total}
-          setPage={(page) => {
-            setPageInfo({...pageInfo,page:page})
-          }}
+            currentPage={pageInfo.page}
+            totalPage={pageInfo.total}
+            setPage={(page) => {
+              setPageInfo({...pageInfo,page:page})
+            }}
         />
 
         <BarcodeModal
@@ -738,7 +743,7 @@ const BasicProduct = ({}: IProps) => {
         tab={'ROLE_BASE_07'}
         setIsOpen={setExcelOpen}
       /> */}
-    </div>
+      </div>
   );
 }
 

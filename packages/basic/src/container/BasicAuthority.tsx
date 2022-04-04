@@ -9,6 +9,8 @@ import {IMenu} from '../../../main/common/@types/type'
 import {AUTHORITY_LIST} from '../../../main/common/configset'
 import {AxiosResponse} from 'axios'
 import styled from 'styled-components'
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
   children?: any
@@ -20,14 +22,19 @@ export interface IProps {
 const title = '권한 관리'
 
 const BasicAuthority = ({page, keyword, option}: IProps) => {
+  const router = useRouter()
+  const dispatch = useDispatch()
   const [row, setRow] = useState<Array<any>>([])
   const [auth, setAuth] = useState<Array<IMenu>>(AUTHORITY_LIST)
   const [selectIndex, setSelectIndex] = useState<number>(-1)
 
-  const router = useRouter()
 
   useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"사용자 권한 관리", sub:router.pathname}))
     loadAuthorityList().then(() => Notiflix.Loading.remove())
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
   }, [])
 
   const loadAuthorityList = async () => {

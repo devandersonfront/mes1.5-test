@@ -54,14 +54,12 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       // if(row.bom_root_id){
 
       if(column.type ==='bomRegister'){
-
         if(row.product_id){
           SearchBasic().then(() => {
             Notiflix.Loading.remove()
           })
         }
       }else{
-
         if(row.process_id || row.processId){
           SearchBasic().then(() => {
             Notiflix.Loading.remove()
@@ -189,7 +187,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
     }else{
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
-
       let searchList = changeRow(res)
 
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
@@ -390,20 +387,21 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       if(column.type === 'readonly' || row.bom_root_id){
         return <>
           <div style={{
-            // padding: '3.5px 0px 0px 3.5px',
+            padding: '3.5px 0px 0px 3.5px',
             width: '100%',
           }}>
-            <div onClick={() => {
+            <UploadButton  style={{backgroundColor: '#ffffff00'}} onClick={() => {
               if (row.bom_root_id) {
                 setIsOpen(true)
               } else {
                 Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
                 })
               }
-
-            }}>
+            }}
+              hoverColor={'#19B9DF'} haveId
+            >
               <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>
-            </div>
+            </UploadButton>
           </div>
         </>
       }else{
@@ -516,14 +514,14 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
               </HeaderTableTitle>
               <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.customer?.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
+                <HeaderTableText>{headerData ? headerData.customer?.name ?? "-" : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
                 {/*<HeaderTableText>{tabStore.datas[tabStore.index]?.headerData ? tabStore.datas[tabStore.index].headerData.customerArray.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>*/}
               </HeaderTableTextInput>
               <HeaderTableTitle>
                 <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
               </HeaderTableTitle>
               <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.model?.model : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
+                <HeaderTableText>{headerData ? headerData.model?.model ?? "-" : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
               </HeaderTableTextInput>
             </HeaderTable>
             <HeaderTable>
@@ -531,13 +529,13 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
               </HeaderTableTitle>
               <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.code :row.code ?? "-"}</HeaderTableText>
+                <HeaderTableText>{headerData ? headerData.code ?? "-" :row.code ?? "-"}</HeaderTableText>
               </HeaderTableTextInput>
               <HeaderTableTitle>
                 <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
               </HeaderTableTitle>
               <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.name : row.name ?? "-"}</HeaderTableText>
+                <HeaderTableText>{headerData ? headerData.name ?? "-" : row.name ?? "-"}</HeaderTableText>
               </HeaderTableTextInput>
               <HeaderTableTitle>
                 <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
@@ -549,7 +547,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
               </HeaderTableTitle>
               <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.process?.name : row.processArray ? row.processArray.name : "-"}</HeaderTableText>
+                <HeaderTableText>{headerData ? headerData.process?.name ?? "-" : row.processArray ? row.processArray.name : "-"}</HeaderTableText>
               </HeaderTableTextInput>
             </HeaderTable>
             <HeaderTable>

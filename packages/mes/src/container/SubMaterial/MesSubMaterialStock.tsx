@@ -19,6 +19,7 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {useDispatch} from 'react-redux'
+import {deleteSelectMenuState, setSelectMenuStateChange} from "../../../../shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -76,6 +77,12 @@ const MesSubMaterialStock = ({page, search, option}: IProps) => {
     }
   }, [pageInfo.page, keyword, option, nzState, selectDate, order])
 
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"부자재 관리",sub:router.pathname}))
+    return(() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -462,7 +469,7 @@ const MesSubMaterialStock = ({page, search, option}: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
-        height={750}
+        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         scrollEnd={(value) => {
           if(value){
             if(pageInfo.total > pageInfo.page){

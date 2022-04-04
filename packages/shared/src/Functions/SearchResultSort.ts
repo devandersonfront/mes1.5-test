@@ -212,7 +212,9 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         shipment_date : selectData.shipment_date,
         lead_time : selectData.lead_time,
         uph : selectData.uph,
-        identification : selectData.identification
+        identification : selectData.identification,
+        date: selectData.date,
+        deadline: selectData.deadline
 
       }:{
         code: selectData.code,

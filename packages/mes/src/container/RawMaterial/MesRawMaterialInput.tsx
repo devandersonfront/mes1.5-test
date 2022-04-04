@@ -6,6 +6,8 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -16,7 +18,7 @@ interface IProps {
 
 const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
@@ -27,7 +29,11 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     getMenus()
-  }, [])
+    dispatch(setSelectMenuStateChange({main:"원자재 관리",sub:router.pathname}))
+    return(() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
@@ -71,7 +77,6 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         }
 
       }).filter((v:any) => v)
-
 
       setColumn([...tmpColumn.map(v=> {
         return {

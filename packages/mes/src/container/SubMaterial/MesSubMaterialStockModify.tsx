@@ -18,6 +18,7 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {useDispatch, useSelector} from 'react-redux'
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -48,6 +49,13 @@ const MesSubMaterialStockModify = ({page, keyword, option}: IProps) => {
       router.push("/mes/submaterialV1u/stock")
     }
   }, [selector])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"부자재 관리",sub:"/mes/submaterialV1u/stock"}))
+    return(() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -235,16 +243,6 @@ const MesSubMaterialStockModify = ({page, keyword, option}: IProps) => {
         setSelectList={setSelectList}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`금형기준정보`}*/}
-      {/*  sheetname={`금형기준정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
     </div>
   );
 }

@@ -25,48 +25,47 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   }, [row])
 
   return (
-    <input
-      style={{textAlign: 'center', color: column.textType ? 'black' : 'white', border:"none" }}
-      className={'editCell'}
-      ref={autoFocusAndSelect}
-      value={row[column.key]}
-      disabled={column.readonly}
-      type={column.type === "number" ? "number" : "text"}
-      onFocus={() => {
-        if(column.searchType === 'record' && row.osd_id){
-          onClose(true)
-          Notiflix.Report.warning('수정할 수 없습니다.', '작업지시 고유 번호가 있으면 수정할 수 없습니다.', '확인')
-        }else if(column.key === 'tmpId' && row[column.key]){
-          if(!row.isChange || row.user_id){
-            onClose(true)
-            return Notiflix.Report.warning('수정할 수 없습니다.', '아이디는 수정할 수 없습니다.', '확인')
-          }
-        }else if(column.key === 'amount' && row.setting){
-          onClose(true)
-          Notiflix.Report.warning('수정할 수 없습니다.', '사용여부가 부 입니다.', '확인')
-        }else if(column.readonly && row.mold_id){
-          onClose(true)
-          return Notiflix.Report.warning('수정할 수 없습니다.', '', '확인')
-        }
-      }}
-
-      onChange={(event) => {
-        if(column.key === 'mold_name') {
-          onRowChange({
-            ...row,
-            [column.key]: event.target.value,
-            wip_name: event.target.value ? event.target.value+'-1' : undefined,
-            isChange: true
-          })
-        }else if(column.key === "goal"){
-          onRowChange({ ...row, [column.key]: event.target.value, isChange: true })
-          if(selector.selectRow === 1){
-            selector.machineList.map((v,i)=>{
-              if(i !== 0){
-                v.goal = Number(event.target.value)
+      <input
+          style={{textAlign: 'center', color: column.textType ? 'black' : 'white' }}
+          className={'editCell'}
+          ref={autoFocusAndSelect}
+          value={row[column.key]}
+          type={column.type === "number" ? "number" : "text"}
+          onFocus={() => {
+            if(column.searchType === 'record' && row.osd_id){
+              onClose(true)
+              Notiflix.Report.warning('수정할 수 없습니다.', '작업지시 고유 번호가 있으면 수정할 수 없습니다.', '확인')
+            }else if(column.key === 'tmpId' && row[column.key]){
+              if(!row.isChange || row.user_id){
+                onClose(true)
+                return Notiflix.Report.warning('수정할 수 없습니다.', '아이디는 수정할 수 없습니다.', '확인')
               }
-            })
-          }else{
+            }else if(column.key === 'amount' && row.setting){
+              onClose(true)
+              Notiflix.Report.warning('수정할 수 없습니다.', '사용여부가 부 입니다.', '확인')
+            }else if(column.readonly && row.mold_id){
+              onClose(true)
+              return Notiflix.Report.warning('수정할 수 없습니다.', '', '확인')
+            }
+          }}
+
+          onChange={(event) => {
+            if(column.key === 'mold_name') {
+              onRowChange({
+                ...row,
+                [column.key]: event.target.value,
+                wip_name: event.target.value ? event.target.value+'-1' : undefined,
+                isChange: true
+              })
+            }else if(column.key === "goal"){
+              onRowChange({ ...row, [column.key]: event.target.value, isChange: true })
+              if(selector.selectRow === 1){
+                selector.machineList.map((v,i)=>{
+                  if(i !== 0){
+                    v.goal = Number(event.target.value)
+                  }
+                })
+              }else{
             selector.machineList[selector.selectRow].goal = Number(event.target.value);
           }
           dispatch(insert_machine_list({...selector}))

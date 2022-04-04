@@ -18,6 +18,7 @@ import {TransferCodeToValue} from '../../common/TransferFunction'
 import {useDispatch, useSelector} from 'react-redux'
 import {change_summary_info_index, insert_summary_info, reset_summary_info} from '../../reducer/infoModal'
 import {RootState} from '../../index'
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
   column: IExcelHeaderType
@@ -274,19 +275,13 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
     setBomDummy([...tmp])
   }
 
-  const ModalContents = () => {
-    return <>
-      <div style={{
-        width: '100%'
-      }}>
-        <div onClick={() => {
+  const ModalContents = () => (
+        <UploadButton onClick={() => {
           setIsOpen(true)
-        }}>
-          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
-        </div>
-      </div>
-    </>
-  }
+        }} hoverColor={POINT_COLOR} haveId>
+          <p>자재 보기</p>
+        </UploadButton>
+  )
 
   return (
     <SearchModalWrapper >
@@ -451,7 +446,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div
               onClick={() => {
-
                 const isValidation = executeValidation()
                 if(!isValidation){
                   onRowChange({
@@ -494,8 +488,11 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`

@@ -17,6 +17,7 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from 'react-redux'
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -68,6 +69,12 @@ const MesOperationList = ({page, search, option}: IProps) => {
     }
   }, [pageInfo.page, keyword, selectDate, order])
 
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
+    return(() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -166,7 +173,6 @@ const MesOperationList = ({page, search, option}: IProps) => {
         page: pageInfo.page ?? 1,
         renderItem: 18,
       },
-
       params: order == 0 ?
           {
             from: selectDate.from,
@@ -418,10 +424,9 @@ const MesOperationList = ({page, search, option}: IProps) => {
         }
         buttonsOnclick={
           (e) => {
-
             switch(e) {
               case 1:
-                if( 0 > selectList.size){
+                if( 0 >= selectList.size){
                   Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
                 }else if(selectList.size < 2){
                   dispatch(setModifyInitData({
@@ -438,7 +443,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
                 }
                 break;
               case 2:
-                if(selectList.size === 0) {
+                if(selectList.size <= 0) {
                   return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
                 }
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
@@ -498,6 +503,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
           if(pageInfo.total > pageInfo.page){
             setSelectList(new Set)
             setPageInfo({...pageInfo, page:pageInfo.page+1})
+            setSelectList(new Set)
           }
         }
       }}

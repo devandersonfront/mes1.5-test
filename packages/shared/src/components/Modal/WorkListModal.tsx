@@ -12,6 +12,7 @@ import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
   column: IExcelHeaderType
@@ -185,16 +186,11 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
 
   const ModalContents = () => {
     return <>
-      <div style={{
-        // padding: '3.5px 0px 0px 3.5px',
-        width: '100%'
-      }}>
-        <div onClick={() => {
+        <UploadButton onClick={() => {
           setIsOpen(true)
-        }}>
+        }} hoverColor={POINT_COLOR} haveId>
           <p style={{margin:0, padding: 0, textDecoration: 'underline'}}>이력 보기</p>
-        </div>
-      </div>
+        </UploadButton>
     </>
   }
 
@@ -330,8 +326,11 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`

@@ -188,19 +188,20 @@ export const MenuText = styled.p`
   font-size: 12px;
 `
 
-export const SideMenuItem = styled.div`
+export const SideMenuItem = styled.div<{selectMain?:boolean, selectSub?:boolean}>`
   width: 170px;
   height: 48px;
   display: flex;
   align-items: center;
   padding-left: 5px;
   cursor: pointer;
+  background:${({selectMain}) => selectMain ? "rgba(25, 185, 223, 0.5)" : "none"};
   p {
     padding: 0;
     margin: 0;
     text-align: left;
     font-size: 15px;
-    color: white;
+    color: ${({selectSub}) => selectSub ? "rgb(25, 185, 223)" : "white"};
   }
   &:hover {
     background-color: ${BG_COLOR_SUB3};
