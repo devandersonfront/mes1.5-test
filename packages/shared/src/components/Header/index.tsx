@@ -3,7 +3,7 @@ import styled from 'styled-components'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {FormControl, makeStyles, Select} from '@material-ui/core'
-import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles'
+import {createTheme, MuiThemeProvider} from '@material-ui/core/styles'
 import {POINT_COLOR} from '../../common/configset'
 import 'react-calendar/dist/Calendar.css'
 //@ts-ignore
@@ -146,7 +146,7 @@ const useStyles2 = makeStyles(_ => {
   }
 });
 
-const lightTheme = createMuiTheme({
+const lightTheme = createTheme({
   palette: {
     primary: { main: 'rgba(0,0,0,0)', contrastText: "#000" },
   }
@@ -206,7 +206,7 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
             {
               title && <span style={{fontSize: 22, marginRight: 18, marginLeft: 3, fontWeight: 'bold', color: 'white', marginTop:20}}>{title}</span>
             }
-            <ButtonWrapper style={{marginTop: 20 }}>
+            <ButtonWrapper style={{  marginTop: 20}}>
               {
                 isCode && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
                   <input id='codeTrue' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {
@@ -383,12 +383,11 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
                               height: 32,
                               width: 155
                             }}
-                            value={optionIndex}
                         >
                           {
                             searchOptionList.map((v, i) => {
                               if(v){
-                                return <option value={i}>{v}</option>
+                                return <option key={i.toString()} value={i}>{v}</option>
                               }
                             })
                           }

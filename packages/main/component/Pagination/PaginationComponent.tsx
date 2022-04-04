@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import {Pagination} from '@material-ui/lab'
-import {createMuiTheme, createStyles, makeStyles, MuiThemeProvider} from '@material-ui/core/styles'
+import {createTheme, createStyles, makeStyles, MuiThemeProvider} from '@material-ui/core/styles'
 
-const darkTheme = createMuiTheme({
+const darkTheme = createTheme({
   palette: {
     type: 'dark'
   }
