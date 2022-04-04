@@ -34,20 +34,20 @@ const BASIC_MENUS: IMenuType[] = [
     title: '사용자 권한 관리', url: '',
     subMenu: [
       {title: '권한 관리', url: '/mes/basic/authority/member'},
-      {title: '유저 관리', url: '/mes/basic/user?page=1'},
+      {title: '유저 관리', url: '/mes/basic/user'},
     ]
   },
   {title: '공장 기준정보', url: '/mes/basic/factory'},
   {
     title: '거래처 관리', url: '',
     subMenu: [
-      {title: '거래처 정보 관리', url: '/mes/basic/customer?page=1'},
-      {title: '모델 관리', url: '/mes/basic/customer/model?page=1'},
+      {title: '거래처 정보 관리', url: '/mes/basic/customer'},
+      {title: '모델 관리', url: '/mes/basic/customer/model'},
     ]
   },
   {title: '공정 관리', url: '',
     subMenu:[
-      {title: '공정 종류 관리', url: '/mes/basic/process?page=1'},
+      {title: '공정 종류 관리', url: '/mes/basic/process'},
       {title: '공정 일시정지 유형 등록', url: '/mes/basic/register/pause'},
     ]
   },

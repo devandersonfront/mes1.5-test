@@ -92,10 +92,8 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     if(tabStore.datas[tabStore.index]?.code){
       await RequestMethod("get", "bomLoad", {path: { key: tabStore.datas[tabStore.index].code }})
           .then((res) => {
-            console.log(res)
             const result = changeRow(res);
             setSearchList([...result])
-                console.log(result)
 
             result.map((value, i) => {
               if(tabStore.datas[tabStore.index].code == value.parent.bom_root_id){

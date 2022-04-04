@@ -415,34 +415,34 @@ const MesRecordList = ({page, search, option}: IProps) => {
         }
         buttonsOnclick={
           (e) => {
-            // switch(e) {
-            //   case 1: {
-            //     if(selectList.size === 1) {
-            //       setExcelOpen(true)
-            //     }else{
-            //       Notiflix.Report.warning("경고","작업일보는 한 개씩만 수정 가능합니다.","확인")
-            //     }
-            //     break
-            //   }
-            //   case 2: {
-            //     if(selectList.size === 0) {
-            //       return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
-            //     }
-            //     Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",()=>DeleteBasic())
-            //     break
-            //   }
-            // }
-
-            switch (e) {
+            switch(e) {
               case 1: {
-                if (selectList.size === 1) {
+                if(selectList.size === 1) {
                   setExcelOpen(true)
-                } else {
-                  Notiflix.Report.warning("경고", "작업일보는 한 개씩만 수정 가능합니다.", "확인")
+                }else{
+                  Notiflix.Report.warning("경고","작업일보는 한 개씩만 수정 가능합니다.","확인")
                 }
+                break
               }
-                // onClickHeaderButton
+              case 2: {
+                if(selectList.size === 0) {
+                  return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
+                }
+                Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",()=>DeleteBasic())
+                break
+              }
             }
+
+            // switch (e) {
+            //   case 1: {
+            //     if (selectList.size === 1) {
+            //       setExcelOpen(true)
+            //     } else {
+            //       Notiflix.Report.warning("경고", "작업일보는 한 개씩만 수정 가능합니다.", "확인")
+            //     }
+            //   }
+            //     // onClickHeaderButton
+            // }
           }
         }
         />

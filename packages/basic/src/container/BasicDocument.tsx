@@ -7,6 +7,8 @@ import DocumentControlModal from "../../../shared/src/components/Modal/DocumentC
 import Notiflix from "notiflix";
 import moment from "moment";
 import {useRouter} from "next/router";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
     children?: any
@@ -18,7 +20,7 @@ interface IProps {
 
 const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
     const router = useRouter();
-
+    const dispatch = useDispatch()
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<"folderAdd" | "documentUpload" | "fileMove" | null>(null);
     const [basicRow, setBasicRow] = useState<any[]>([]);
@@ -192,7 +194,12 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
         LoadDocumentState();
     },[doc_id])
 
-
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"문서 관리",sub:""}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     return (
         <div>

@@ -16,6 +16,8 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -26,7 +28,7 @@ interface IProps {
 
 const MesFinishList = ({page, search, option}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["finishListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -57,6 +59,12 @@ const MesFinishList = ({page, search, option}: IProps) => {
     }
   }, [pageInfo.page, keyword, selectDate])
 
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
+    return(() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {

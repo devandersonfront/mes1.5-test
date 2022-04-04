@@ -5,6 +5,8 @@ import {SelectColumn} from "react-data-grid";
 import moment from "moment";
 import {useRouter} from "next/router";
 import Notiflix from "notiflix";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
     children?: any
@@ -16,6 +18,7 @@ interface IProps {
 
 const MesProductChangeList = ({page, keyword, option}: IProps) => {
     const router = useRouter()
+    const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productChangeList"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -44,6 +47,13 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
             })
         }
     }, [pageInfo.page, searchKeyword, option, selectDate])
+
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"품질 관리",sub:router.pathname}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     const LoadBasic = async (page?: number) => {
         Notiflix.Loading.circle()

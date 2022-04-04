@@ -15,6 +15,8 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import styled from 'styled-components'
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {useDispatch} from "react-redux";
 
 export interface IProps {
   children?: any
@@ -25,7 +27,7 @@ export interface IProps {
 
 const BasicCustomer = ({}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
   const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -53,6 +55,13 @@ const BasicCustomer = ({}: IProps) => {
       })
     }
   }, [pageInfo.page, keyword])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"거래처 관리", sub:router.pathname}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  }, [])
 
   const valueExistence = () => {
 

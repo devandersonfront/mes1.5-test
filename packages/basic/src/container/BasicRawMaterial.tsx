@@ -19,6 +19,8 @@ import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import axios from 'axios';
 import { SF_ENDPOINT_BARCODE } from 'shared/src/common/configset';
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
   children?: any
@@ -29,7 +31,7 @@ export interface IProps {
 
 const BasicRawMaterial = ({}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [barcodeOpen , setBarcodeOpen] = useState<boolean>(false)
   const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -60,6 +62,12 @@ const BasicRawMaterial = ({}: IProps) => {
     }
   }, [pageInfo.page, keyword])
 
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"원자재 기준정보",sub:""}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const settingType = (type:any) => {
     switch (type){

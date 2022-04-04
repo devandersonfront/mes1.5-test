@@ -19,6 +19,7 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {useDispatch} from 'react-redux'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -75,6 +76,13 @@ const MesOrderList = ({page, search, option}: IProps) => {
     }
 
   }, [pageInfo.page, keyword, selectDate, order])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"영업 관리",sub:router.pathname}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
