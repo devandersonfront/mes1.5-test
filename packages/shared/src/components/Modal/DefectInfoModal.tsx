@@ -209,12 +209,12 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 if(column.type !== 'readonly') {
                   onRowChange({
                     ...row,
-                    poor_quantity: 0,
+                    // poor_quantity: 0,
                     defect_reasons: undefined,
                     isChange: true
                   })
-                  setSearchList([])
-                  setTotalCount(0)
+                  // setSearchList([])
+                  // setTotalCount(0)
                   setIsOpen(false)
                 }else {
                   setIsOpen(false)
@@ -280,12 +280,12 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   onClick={() => {
                     onRowChange({
                       ...row,
-                      poor_quantity: 0,
+                      // poor_quantity: 0,
                       defect_reasons: undefined,
                       isChange: true
                     })
-                    setSearchList([])
-                    setTotalCount(0)
+                    // setSearchList([])
+                    // setTotalCount(0)
                     setIsOpen(false)
                   }}
                   style={{width: "50%", height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
