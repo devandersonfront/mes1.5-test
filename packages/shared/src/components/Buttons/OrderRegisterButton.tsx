@@ -16,12 +16,14 @@ const OrderRegisterButton = ({row, column}: IProps) => {
 
 
   return (
-    <CellButton onClick={() => {
-      dispatch(change_delivery_identification(row.identification))
-      router.push(column.url)
-    }}>
-      {column.title}
-    </CellButton>
+      <div style={{width:"100%", height:"100%",display:"flex", justifyContent:"center", alignItems:"center"}}>
+        <CellButton onClick={() => {
+          dispatch(change_delivery_identification(row.identification))
+          router.push(column.url)
+        }}>
+          {column.title}
+        </CellButton>
+      </div>
   );
 }
 

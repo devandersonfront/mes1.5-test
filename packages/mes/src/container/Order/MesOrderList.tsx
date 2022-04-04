@@ -40,8 +40,8 @@ const MesOrderList = ({page, search, option}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [order, setOrder] = useState([0,3])
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD') ,
-    to:  moment(new Date()).add(1,'month').format('YYYY-MM-DD')
+    from: moment(new Date()).subtract(1,"month").format('YYYY-MM-DD') ,
+    to:  moment(new Date()).add(1,"month").format('YYYY-MM-DD')
   });
 
   const [keyword, setKeyword] = useState<string>("");
@@ -184,7 +184,6 @@ const MesOrderList = ({page, search, option}: IProps) => {
   }
 
 
-
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `contractList`,{
@@ -226,16 +225,15 @@ const MesOrderList = ({page, search, option}: IProps) => {
         page: isPaging ?? 1,
         renderItem: 22,
       },
-      params:
-          order[0] === 0 && order[1] === 3 ?
-              {
-                keyword: keyword ?? '',
-                opt: option ?? 0,
-                from: selectDate.from,
-                to: selectDate.to,
-              }
-              :
-              search_basic_param_return()
+      params: order[0] === 0 && order[1] === 3 ?
+          {
+            keyword: keyword ?? '',
+            opt: option ?? 0,
+            from: selectDate.from,
+            to: selectDate.to,
+          }
+          :
+          search_basic_param_return()
     })
 
     if(res){

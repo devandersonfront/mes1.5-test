@@ -13,6 +13,7 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
   column: IExcelHeaderType
@@ -112,19 +113,12 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
-  const ModalContents = () => {
-    return <>
-      <div style={{
-        width: '100%'
-      }}>
-        <div onClick={() => {
-          setIsOpen(true)
-        }}>
+  const ModalContents = () =>
+      <UploadButton onClick={() => {
+        setIsOpen(true)
+      }} hoverColor={POINT_COLOR} haveId >
           <p style={{textDecoration: 'underline', padding: 0, margin: 0}}>LOT 보기</p>
-        </div>
-      </div>
-    </>
-  }
+      </UploadButton>
 
   return (
     <SearchModalWrapper >
@@ -354,8 +348,11 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const HeaderTable = styled.div`

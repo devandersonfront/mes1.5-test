@@ -462,7 +462,7 @@ const MesSubMaterialStock = ({page, search, option}: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
-        height={750}
+        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         scrollEnd={(value) => {
           if(value){
             if(pageInfo.total > pageInfo.page){

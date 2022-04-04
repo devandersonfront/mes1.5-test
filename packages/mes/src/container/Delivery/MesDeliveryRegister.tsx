@@ -49,9 +49,9 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
               setBasicRow([{
                 ...basicRow[0],
                 date: res.info_list[0].deadline,
+                contract: res.info_list[0],
                 contract_id: res.info_list[0].identification,
                 product:res.info_list[0].product,
-                contract: res.info_list[0],
                 // product_id: res.info_list[0].product.product_id,
                 customer_id: res.info_list[0].product.customer?.name,
                 name: res.info_list[0].product.name,
@@ -176,7 +176,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
                 }
               }
             }).filter((v) => v)
-          ]
+          ],
+          date: row?.date ?? moment().format("YYYY-MM-DD")
         }
 
       }

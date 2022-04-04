@@ -54,8 +54,27 @@ const BasicCustomer = ({}: IProps) => {
     }
   }, [pageInfo.page, keyword])
 
-  const SaveBasic = async () => {
+  const valueExistence = () => {
 
+    const selectedRows = filterSelectedRows()
+
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
+    if(selectedRows.length > 0){
+
+      const nameCheck = selectedRows.every((data)=> data.name)
+
+      if(!nameCheck){
+        return '거래처명'
+      }
+
+    }
+
+    return false;
+
+  }
+
+
+  const SaveBasic = async () => {
 
     const existence = valueExistence()
 
@@ -143,7 +162,6 @@ const BasicCustomer = ({}: IProps) => {
       })
 
 
-
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
@@ -204,11 +222,7 @@ const BasicCustomer = ({}: IProps) => {
     return haveIdRows
   }
 
-
-
-
   const DeleteBasic = async () => {
-
 
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
@@ -519,25 +533,6 @@ const BasicCustomer = ({}: IProps) => {
         break;
 
     }
-  }
-
-  const valueExistence = () => {
-
-    const selectedRows = filterSelectedRows()
-
-    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
-    if(selectedRows.length > 0){
-
-      const nameCheck = selectedRows.every((data)=> data.name)
-
-      if(!nameCheck){
-        return '거래처명'
-      }
-
-    }
-
-    return false;
-
   }
 
   const competeCustom = (rows) => {

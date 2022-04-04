@@ -15,6 +15,7 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import moment from "moment"
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
   column: IExcelHeaderType
@@ -274,28 +275,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     return summaryData[info.key] ?? '-'
   }
 
-  const ModalContents = () => {
-    return <>
-      <div style={{
-        width: '100%'
-      }}>
-        <div style={{
-          fontSize: '15px',
-          margin: 0,
-          padding: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          color: '#0D0D0D',
-          background:row.border ? "#19B9DF80" : "white",
-        }} onClick={() => {
+  const ModalContents = () => (
+        <UploadButton onClick={() => {
           setIsOpen(true)
-        }}>
-          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
-        </div>
-      </div>
-    </>
-  }
+        }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
+          <p>자재 보기</p>
+        </UploadButton>
+    )
 
   return (
       <SearchModalWrapper >
@@ -390,24 +376,10 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
                         setSelectType(v.type === 'COIL' || v.type === 'SHEET' ? '원자재' : v.type)
                         setSelectProduct(v.code)
-                        setLotList([...v.lotList.map((v,i) => (
-                            row?.bom ? {
-                              ...v,
-
-                              // amount: v.lot_number === e[0].lotList[i].lot_number ? e[0][lotList[i]].amount : "0",
-                              amount: v.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
-                              seq: i+1
-                            }
-                            :
-                                {
-                                  ...v,
-                                  date: v.date ?? moment(v.end).format("YYYY-MM-DD"),
-                                  warehousing: v.warehousing ?? v.good_quantity,
-                                  // amount: v.lot_number === e[0].lotList[i].lot_number ? e[0][lotList[i]].amount : "0",
-                                  // amount: v.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
-                                  seq: i+1
-                                }
-                        ))])
+                        setLotList([...v.lotList.map((v,i) => ({
+                          ...v,
+                          seq: i+1
+                        }))])
                       }
 
                       return {
@@ -542,7 +514,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                                 Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
                               }
                               bomList.push({
-                                // record_id: row.record_id,
                                 ...row.input_bom[index],
                                 record_id: lot?.record_id ?? undefined,
                                 lot: {
@@ -570,7 +541,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                               }
 
                               bomList.push({
-                                // record_id: row.record_id,
                                 ...row.input_bom[index],
                                 record_id: lot?.child_lot_record?.record_id ?? undefined,
                                 lot: {
@@ -596,7 +566,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                       })
                       const disturbanceArray = searchList.map((v)=>{return v.disturbance})
                       const allEqual = arr => arr.every( v => v === arr[0] )
-
                       if(disturbance === 0){
                         if(disturbanceArray.every((value) => value === 0)){
                           Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
@@ -640,8 +609,11 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`

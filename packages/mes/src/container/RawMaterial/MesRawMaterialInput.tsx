@@ -72,7 +72,6 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
 
       }).filter((v:any) => v)
 
-
       setColumn([...tmpColumn.map(v=> {
         return {
           ...v,

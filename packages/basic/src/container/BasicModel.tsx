@@ -37,7 +37,7 @@ const BasicModel = ({}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처명','사업자 번호', '모델명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>();
+  const [keyword, setKeyword] = useState<string>()
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -50,7 +50,7 @@ const BasicModel = ({}: IProps) => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic((pageInfo.page)).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
@@ -148,11 +148,7 @@ const BasicModel = ({}: IProps) => {
         '확인',
         );
     }
-
-
-
     if(!existence){
-
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{
