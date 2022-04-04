@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react'
 import {
-    columnlist,
-    excelDownload,
-    ExcelDownloadModal,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    PaginationComponent,
-    RequestMethod,
-    TextEditor
+  columnlist,
+  excelDownload,
+  ExcelDownloadModal,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  MAX_VALUE,
+  PaginationComponent,
+  RequestMethod,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -17,6 +17,8 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from "moment"
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
   children?: any
@@ -44,7 +46,7 @@ const weldingType = [
 
 const BasicMachineV1u = ({option}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -80,6 +82,12 @@ const BasicMachineV1u = ({option}: IProps) => {
     }
   }, [pageInfo.page, keyword, typesState])
 
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"기계 기준정보",sub:""}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -437,16 +445,16 @@ const BasicMachineV1u = ({option}: IProps) => {
     tempData.photo = value.photo?.uuid ?? value.photo;
     tempData.additional =[
       ...additional.map((v, index)=>{
-          if(!value[v.colName]) return undefined;
-          return {
-            mi_id: v.id,
-            title: v.name,
-            value: value[v.colName] ?? "",
-            unit: v.unit,
-            ai_id: searchAiID(value.additional, index) ?? undefined,
-            version:value.additional[index]?.version ?? undefined
-          }
-        }).filter((v) => v)
+        if(!value[v.colName]) return undefined;
+        return {
+          mi_id: v.id,
+          title: v.name,
+          value: value[v.colName] ?? "",
+          unit: v.unit,
+          ai_id: searchAiID(value.additional, index) ?? undefined,
+          version:value.additional[index]?.version ?? undefined
+        }
+      }).filter((v) => v)
     ]
 
     // tempData.device.manager
@@ -507,14 +515,14 @@ const BasicMachineV1u = ({option}: IProps) => {
       case 5:
         if(selectList.size === 0){
           return Notiflix.Report.warning(
-        '경고',
-        '선택된 정보가 없습니다.',
-        '확인',
-        );
+              '경고',
+              '선택된 정보가 없습니다.',
+              '확인',
+          );
         }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-          () => DeleteBasic()
+            () => DeleteBasic()
         )
         break;
 
@@ -532,19 +540,19 @@ const BasicMachineV1u = ({option}: IProps) => {
     if(spliceRow){
       if(isCheck){
         return Notiflix.Report.warning(
-          '제조 번호 경고',
-          `중복되는 제조 번호가 존재합니다.`,
-          '확인'
+            '제조 번호 경고',
+            `중복되는 제조 번호가 존재합니다.`,
+            '확인'
         );
       }
     }
 
     setBasicRow(rows)
-}
+  }
 
 
   return (
-    <div>
+      <div>
         <PageHeader
           isSearch
           searchKeyword={keyword}
@@ -564,27 +572,27 @@ const BasicMachineV1u = ({option}: IProps) => {
           buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
-          editable
-          resizable
-          headerList={[
-            SelectColumn,
-            ...column
-          ]}
-          row={basicRow}
-          // setRow={setBasicRow}
-          setRow={(e) => {
-            let tmp: Set<any> = selectList
-            e.map(v => {
-              if(v.isChange) tmp.add(v.id)
-            })
-            setSelectList(tmp)
-            competeMachineV1u(e)
-          }}
-          selectList={selectList}
-          //@ts-ignore
-          setSelectList={setSelectList}
-          setSelectRow={setSelectRow}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+            editable
+            resizable
+            headerList={[
+              SelectColumn,
+              ...column
+            ]}
+            row={basicRow}
+            // setRow={setBasicRow}
+            setRow={(e) => {
+              let tmp: Set<any> = selectList
+              e.map(v => {
+                if(v.isChange) tmp.add(v.id)
+              })
+              setSelectList(tmp)
+              competeMachineV1u(e)
+            }}
+            selectList={selectList}
+            //@ts-ignore
+            setSelectList={setSelectList}
+            setSelectRow={setSelectRow}
+            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent
           currentPage={pageInfo.page}
@@ -593,17 +601,7 @@ const BasicMachineV1u = ({option}: IProps) => {
             setPageInfo({...pageInfo,page:page})
           }}
         />
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`기계기준정보`}*/}
-      {/*  sheetname={`기계기준정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
-    </div>
+      </div>
   );
 }
 

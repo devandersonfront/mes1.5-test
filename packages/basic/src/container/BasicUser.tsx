@@ -13,6 +13,8 @@ import {
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
   children?: any
@@ -26,7 +28,7 @@ const optList = ['성명', '이메일', '직책명', '전화번호',]
 
 const BasicUser = ({}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelDownOpen, setExcelDownOpen] = useState<boolean>(false)
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
 
@@ -54,6 +56,13 @@ const BasicUser = ({}: IProps) => {
       LoadBasic(pageInfo.page).then(() => {})
     }
   }, [pageInfo.page, keyword])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"사용자 권한 관리",sub:router.pathname}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {

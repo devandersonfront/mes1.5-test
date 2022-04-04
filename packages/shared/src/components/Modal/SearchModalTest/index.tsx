@@ -18,6 +18,7 @@ import Notiflix from 'notiflix'
 import {SearchModalResult, SearchResultSort} from '../../../Functions/SearchResultSort'
 import {Select} from '@material-ui/core'
 import {TransferCodeToValue} from '../../../common/TransferFunction'
+import {SearchIcon} from "../../../styles/styledComponents";
 
 
 interface IProps {
@@ -196,18 +197,11 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         {getContents()}
       </div>
       {(row.first || !column.disableType) &&
-        <div style={{
-          display: 'flex',
-          backgroundColor: POINT_COLOR,
-          width: column.modalType ? 30 : 38,
-          height: column.modalType ? 30 : 38,
-          justifyContent: 'center',
-          alignItems: 'center'
-        }} onClick={() => {
+        <SearchIcon  onClick={() => {
           setIsOpen(true)
-        }}>
+        }} modalType={column.modalType}>
           <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
-        </div>
+        </SearchIcon>
         }
       <Modal isOpen={isOpen} style={{
         content: {
@@ -394,8 +388,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                         return searchList[selectRow].name;
                       case "mold":
                         return searchList[selectRow].name;
-                      case "tool":
-                        return searchList[selectRow].name;
                       default:
                         return row.name;
                     }
@@ -507,6 +499,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 const SearchModalWrapper = styled.div`
   display: flex;
   width: 100%;
+  align-items:center;
 `
 
 const FooterButton = styled.div`

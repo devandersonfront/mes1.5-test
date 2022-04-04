@@ -3,7 +3,7 @@ import {IExcelHeaderType} from '../../common/@types/type'
 //@ts-ignore
 import Icon_X from '../../../public/images/file_delete_button.png'
 import Notiflix from "notiflix";
-import {UploadButton} from '../../styles/styledComponents'
+import {DeleteImage, UploadButton} from '../../styles/styledComponents'
 import {uploadTempFile} from '../../common/fileFuctuons'
 import {RequestMethod} from "../../common/RequestFunctions";
 import ImageOpenModal from "../Modal/ImageOpenModal";
@@ -61,20 +61,16 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-              {!column.readonly &&
-                <img
-                  onClick={()=>{
-                      onRowChange({
-                        ...row,
-                        // [column.key+'Path']: null,
-                        [column.key]: null,
-                        isChange:true
-                      })
-                      fileRef.current.value = "";
-
-                  }}
-                  src={Icon_X} style={{borderRadius:"4px", width:"24px", height:"24px", marginRight:"4px", marginLeft: '4px'}} />
-              }
+            <DeleteImage
+              onClick={()=>{
+                  onRowChange({
+                    ...row,
+                    [column.key+'Path']: null,
+                    [column.key]: null,
+                    isChange:true
+                  })
+              }}
+              src={Icon_X} />
             <p
               style={{
                 overflow: 'hidden',

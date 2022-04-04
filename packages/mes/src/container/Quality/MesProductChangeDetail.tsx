@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     ChangeProductFileInfo,
     columnlist,
@@ -15,9 +15,12 @@ import moment from "moment";
 import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
 import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
 import {useRouter} from "next/router";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 const MesProductChangeDetail = () => {
     const router = useRouter()
+    const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([{
         order_num: '-', operation_num: '20210401-013'
     }])
@@ -31,7 +34,6 @@ const MesProductChangeDetail = () => {
             {name: '', UUID: '', sequence: 3},
         ]
     )
-
 
     const productChangeLoad = async (pcr_id: string) => {
         const res = await RequestMethod('get', `productChangeLoad`,{
@@ -66,12 +68,17 @@ const MesProductChangeDetail = () => {
     }
 
 
-    React.useEffect(()=>{
+    useEffect(()=>{
         if(router.query.pcr_id !== undefined) {
             productChangeLoad(String(router.query.pcr_id))
         }
     },[router.query])
-
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"품질 관리",sub:"/mes/quality/product/change/list"}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     const buttonEvents = async(index:number) => {
         switch (index) {

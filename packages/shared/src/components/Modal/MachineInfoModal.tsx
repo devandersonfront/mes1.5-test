@@ -127,37 +127,14 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
   }, [isOpen, searchKeyword])
 
-  const ModalContents = () => {
-    // if(row?.machines){
-      if(row?.machines?.length > 0){
-        return <>
-          <div style={{
-            padding: '3.5px 0px 0px 3.5px',
-            width: 112
-          }}>
-              <Underline onClick={() => {
-                    setIsOpen(true)
-                }}>
-                    <p>기계 수정</p>
-              </Underline>
-          </div>
-        </>
-      }else{
-        return <>
-          <div style={{
-            padding: '3.5px 0px 0px 3.5px',
-            width: '100%'
-          }}>
-            <UploadButton onClick={() => {
-              setIsOpen(true)
-            }}>
-              <p>기계 등록</p>
-            </UploadButton>
-          </div>
-        </>
-      }
-      // }
-    }
+  const ModalContents = () => (
+
+    <UploadButton onClick={() => {
+      setIsOpen(true)
+    }} hoverColor={POINT_COLOR} haveId={row?.machines?.length > 0} status={column.modalType ? "modal" : "table"} >
+      <p>{row?.machines?.length > 0 ? "기계 수정" : "기계 등록"}</p>
+    </UploadButton>
+  )
 
     const competeMachine = (rows) => {
 
@@ -378,7 +355,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               headerList={searchModalList.machineInfo}
               row={searchList }
               setRow={(e) => {
-
                 const filterList = [...e.map((machine) => {
                   if(typeof machine.type !== "string"){
                     return {...machine, type_id:machine.type, type:selectMachineType(machine.type)}
@@ -453,8 +429,11 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`

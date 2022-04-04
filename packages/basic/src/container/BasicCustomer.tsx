@@ -15,6 +15,8 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import styled from 'styled-components'
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {useDispatch} from "react-redux";
 
 export interface IProps {
   children?: any
@@ -25,7 +27,7 @@ export interface IProps {
 
 const BasicCustomer = ({}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
   const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -54,8 +56,34 @@ const BasicCustomer = ({}: IProps) => {
     }
   }, [pageInfo.page, keyword])
 
-  const SaveBasic = async () => {
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"거래처 관리", sub:router.pathname}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  }, [])
 
+  const valueExistence = () => {
+
+    const selectedRows = filterSelectedRows()
+
+    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
+    if(selectedRows.length > 0){
+
+      const nameCheck = selectedRows.every((data)=> data.name)
+
+      if(!nameCheck){
+        return '거래처명'
+      }
+
+    }
+
+    return false;
+
+  }
+
+
+  const SaveBasic = async () => {
 
     const existence = valueExistence()
 
@@ -143,7 +171,6 @@ const BasicCustomer = ({}: IProps) => {
       })
 
 
-
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인');
         if(keyword){
@@ -204,11 +231,7 @@ const BasicCustomer = ({}: IProps) => {
     return haveIdRows
   }
 
-
-
-
   const DeleteBasic = async () => {
-
 
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
@@ -519,25 +542,6 @@ const BasicCustomer = ({}: IProps) => {
         break;
 
     }
-  }
-
-  const valueExistence = () => {
-
-    const selectedRows = filterSelectedRows()
-
-    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
-    if(selectedRows.length > 0){
-
-      const nameCheck = selectedRows.every((data)=> data.name)
-
-      if(!nameCheck){
-        return '거래처명'
-      }
-
-    }
-
-    return false;
-
   }
 
   const competeCustom = (rows) => {

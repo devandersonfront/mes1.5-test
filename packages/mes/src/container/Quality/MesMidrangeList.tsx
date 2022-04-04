@@ -4,6 +4,9 @@ import moment from "moment";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import Notiflix from "notiflix";
+import {useRouter} from "next/router";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
     children?: any
@@ -13,7 +16,8 @@ interface IProps {
 }
 
 const MesMidrangeList = ({option}:IProps) => {
-
+    const router = useRouter()
+    const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["midrangeList"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -41,6 +45,13 @@ const MesMidrangeList = ({option}:IProps) => {
             })
         }
     }, [pageInfo.page, keyword, selectDate])
+
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"품질 관리",sub:router.pathname}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     const searchQualityRecordInspect = async (keyword, opt, page?: number) => {
         Notiflix.Loading.circle()
