@@ -111,9 +111,7 @@ export const AUTHORITY_LIST = [
       { title: "재고 관리", show: false, checkable: true, check: false, child: [
           { title: "재고 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_STK_01" },
           { title: "생산/납품 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_STK_02" },
-          // { title: "생산/납품 현황(관리자용)", show: false, checkable: true, check: false, child: [], value: "ROLE_STK_03" },
         ] },
-      // { title: "납품 관리", show: false, checkable: true, check: false, child: [], value: "ROLE_SHPT_01" },
       { title: "KPI",     show: false, checkable: true, check: false, child: [
           { title: "생산지수(P)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_01" },
           { title: "품질지수(Q)", show: false, checkable: true, check: false, child: [], value: "ROLE_KPI_02" },
@@ -125,7 +123,6 @@ export const AUTHORITY_LIST = [
         ]},
     ]
   },
-
 //   { title: "PMS", show: false, checkable: false,
 //   child: [
 //     { title: "프레스 모니터링", show: false, checkable: true, check: false, child: [
@@ -187,7 +184,6 @@ export const AUTHORITY_LIST = [
   //   ]
   // },
 
-  
   // {
   //   title: "Setting", show: false, checkable: false,
   //   child: [

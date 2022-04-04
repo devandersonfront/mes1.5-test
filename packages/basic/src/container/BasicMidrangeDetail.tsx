@@ -7,7 +7,6 @@ import {
     MidrangeFormReviewModal,
     RequestMethod
 } from "shared";
-import {MidrangeButton} from "shared/src/styles/styledComponents";
 import {useRouter} from "next/router";
 import Notiflix from "notiflix";
 

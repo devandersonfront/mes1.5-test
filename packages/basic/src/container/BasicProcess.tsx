@@ -120,7 +120,7 @@ const BasicProcess = ({}: IProps) => {
 
     const existence = valueExistence()
 
-    if(selectList.size === 0){
+    if (selectList.size === 0) {
       return Notiflix.Report.warning(
           '경고',
           '선택된 정보가 없습니다.',
@@ -129,12 +129,12 @@ const BasicProcess = ({}: IProps) => {
     }
 
 
-    if(!existence){
+    if (!existence) {
 
-      const searchAiID = (rowAdditional:any[], index:number) => {
-        let result:number = undefined;
-        rowAdditional?.map((addi, i)=>{
-          if(index === i){
+      const searchAiID = (rowAdditional: any[], index: number) => {
+        let result: number = undefined;
+        rowAdditional?.map((addi, i) => {
+          if (index === i) {
             result = addi.ai_id;
           }
         })
@@ -142,12 +142,12 @@ const BasicProcess = ({}: IProps) => {
       }
       let res = await RequestMethod('post', `processSave`,
           basicRow.map((row, i) => {
-            if(selectList.has(row.id)){
+            if (selectList.has(row.id)) {
 
-              let additional:any[] = []
+              let additional: any[] = []
               column.map((v) => {
 
-                if(v.type === "additional"){
+                if (v.type === "additional") {
                   additional.push(v)
                 }
               })
@@ -157,7 +157,7 @@ const BasicProcess = ({}: IProps) => {
                 ...row,
                 ...selectData,
                 additional: [
-                  ...additional.map((v, index)=>{
+                  ...additional.map((v, index) => {
                     //if(!row[v.colName]) return undefined;
                     return {
                       mi_id: v.id,
@@ -165,7 +165,7 @@ const BasicProcess = ({}: IProps) => {
                       value: row[v.colName] ?? "",
                       unit: v.unit,
                       ai_id: searchAiID(row.additional, index) ?? undefined,
-                      version:row?.additional[index]?.version ?? undefined
+                      version: row?.additional[index]?.version ?? undefined
                     }
                   }).filter((v) => v)
                 ],
@@ -173,33 +173,32 @@ const BasicProcess = ({}: IProps) => {
 
             }
           }).filter((v) => v)
-      ).catch((error)=>{
-        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+      ).catch((error) => {
+        return error.data && Notiflix.Report.warning("경고", `${error.data.message}`, "확인");
       })
 
 
-      if(res){
+      if (res) {
 
-        Notiflix.Report.success('저장되었습니다.','','확인');
-        if(keyword){
+        Notiflix.Report.success('저장되었습니다.', '', '확인');
+        if (keyword) {
           SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
-        }else{
+        } else {
           LoadBasic(pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
         }
 
       }
-    }else{
+    } else {
       return Notiflix.Report.warning(
           '경고',
           `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
           '확인',
       );
     }
-
   }
 
   const setAdditionalData = () => {
@@ -243,7 +242,6 @@ const BasicProcess = ({}: IProps) => {
 
 
   const DeleteBasic = async () => {
-
 
     const map = convertDataToMap()
     const selectedRows = filterSelectedRows()
@@ -572,58 +570,57 @@ const BasicProcess = ({}: IProps) => {
   }
 
   return (
-      <div>
-        <PageHeader
-            isSearch
-            searchKeyword={keyword}
-            onChangeSearchKeyword={(keyword) => {
-              setKeyword(keyword)
-              setPageInfo({page:1,total:1})
-            }}
-            searchOptionList={optionList}
-            onChangeSearchOption={(option) => {
-              setOptionIndex(option)
-            }}
-            title={title}
-            buttons={['','', '항목관리', '행 추가', '저장하기', '삭제']}
-            buttonsOnclick={onClickHeaderButton}
-        />
-        <ExcelTable
-            editable
-            resizable
-            pageInfo={pageInfo}
-            headerList={[
-              SelectColumn,
-              ...column
-            ]}
-            top={top}
-            setTop={setTop}
-            row={basicRow}
-            // setRow={setBasicRow}
-            setRow={(e) => {
-              let tmp: Set<any> = selectList
-              e.map(v => {
-                if(v.isChange) tmp.add(v.id)
-              })
-              setSelectList(tmp)
-              // setBasicRow(e)
-              competeProcess(e)
-            }}
-            selectList={selectList}
-            //@ts-ignore
-            setSelectList={setSelectList}
-            setSelectRow={setSelectRow}
-            loadEvent={LoadBasic}
-            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-        />
-        <PaginationComponent
-            currentPage={pageInfo.page}
-            totalPage={pageInfo.total}
-            setPage={(page) => {
-              setPageInfo({...pageInfo,page:page})
-            }}
-        />
-      </div>
+    <div>
+      <PageHeader
+        isSearch
+        searchKeyword={keyword}
+        onChangeSearchKeyword={(keyword) => {
+          setKeyword(keyword)
+        }}
+        searchOptionList={optionList}
+        onChangeSearchOption={(option) => {
+          setOptionIndex(option)
+        }}
+        title={title}
+        buttons={['','', '항목관리', '행 추가', '저장하기', '삭제']}
+        buttonsOnclick={onClickHeaderButton}
+      />
+      <ExcelTable
+        editable
+        resizable
+        pageInfo={pageInfo}
+        headerList={[
+          SelectColumn,
+          ...column
+        ]}
+        top={top}
+        setTop={setTop}
+        row={basicRow}
+        // setRow={setBasicRow}
+        setRow={(e) => {
+          let tmp: Set<any> = selectList
+          e.map(v => {
+            if(v.isChange) tmp.add(v.id)
+          })
+          setSelectList(tmp)
+          // setBasicRow(e)
+          competeProcess(e)
+        }}
+        selectList={selectList}
+        //@ts-ignore
+        setSelectList={setSelectList}
+        setSelectRow={setSelectRow}
+        loadEvent={LoadBasic}
+        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+      />
+      <PaginationComponent
+        currentPage={pageInfo.page}
+        totalPage={pageInfo.total}
+        setPage={(page) => {
+          setPageInfo({...pageInfo,page:page})
+        }}
+      />
+    </div>
   );
 }
 

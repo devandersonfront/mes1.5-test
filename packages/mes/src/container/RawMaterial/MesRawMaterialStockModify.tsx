@@ -41,7 +41,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
   useEffect(() => {
-    if(selector && selector.modifyInfo && selector.type){
+    if(selector && Object.keys(selector.modifyInfo).length > 0){
       setBasicRow([
         ...selector.modifyInfo
       ])

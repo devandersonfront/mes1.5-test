@@ -165,20 +165,14 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
 
-  const ModalContents = () => {
-    return (<>
-      <div style={{
-        padding: '3.5px 0px 0px 3.5px',
-        width: '100%'
-      }}>
-        <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
-          setIsOpen(true)
-        }}>
-          <p style={{color: 'white', textDecoration: 'underline'}}>품목 보기</p>
-        </UploadButton>
-      </div>
-    </>)
-  }
+  const ModalContents = () => (
+      <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
+        setIsOpen(true)
+      }} hoverColor={"#19B9DF"} haveId>
+        {/*<p style={{color: 'white', textDecoration: 'underline'}}>품목 보기</p>*/}
+        <p>품목 보기</p>
+      </UploadButton>
+  )
 
   const cleanUp = (row:any, value:any) => {
 

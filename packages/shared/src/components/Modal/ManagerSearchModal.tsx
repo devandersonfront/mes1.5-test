@@ -55,7 +55,7 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
 
   const changeRow = (row: any, key?: string) => {
 
-    let tmpData: any = {  
+    let tmpData: any = {
       ...row,
       user_id: row.name,
       user_idPK: row.user_id,
@@ -115,7 +115,7 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
             <>
               <div style={{width: '100%', height: 40}} onClick={() => {}}>
                 {/*{ row[`${column.key}`]}*/}
-                <LineBorderContainer row={{...row, color:"none"}} column={column} setRow={() => {}}/>
+                <LineBorderContainer row={{...row, color:"none"}} column={column} setRow={() => {}} />
               </div>
               <div style={{
                 display: 'flex',
@@ -137,7 +137,7 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
             <>
               <div style={{width: '100%', height: 30, background:row.border ? "#19B9DF80" :  row.color ? row.color :"white"}} onClick={() => {}}>
                 {/*{ row[`${column.key}`]}*/}
-                {searchList[selectRow]?.name ?? row?.manager_name}
+                {searchList[selectRow]?.name ?? row?.manager_name ?? "-"}
                 {/*<LineBorderContainer row={row} column={column} setRow={() => {}}/>*/}
               </div>
               <div style={{

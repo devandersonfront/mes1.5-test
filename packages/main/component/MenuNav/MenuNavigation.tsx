@@ -65,7 +65,11 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
       setMenuType("")
       dispatch(setMenuStateChange({
         main: [],
-        sub: []
+        sub: [],
+        selectState:{
+          main:0,
+          sub:""
+        }
       }))
     }else{
       setMenuType(selectType)
@@ -74,7 +78,11 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
         main: tmpMenu,
         sub: new Array(tmpMenu?.length).fill([]).map((v, i) => {
           return []
-        })
+        }),
+        selectState:{
+          main:0,
+          sub:""
+        }
       }))
     }
   }
@@ -147,12 +155,23 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
                   }
                   dispatch(setMenuStateChange({
                     ...selector,
-                    sub: [...tmpSubMenus]
+                    sub: [...tmpSubMenus],
+                    selectState:{
+                      main:selector.selectState.main == i ? null : i,
+                      sub:selector.selectState.sub
+                    }
                   }))
                 } else if(v.url) {
+                  dispatch(setMenuStateChange({
+                    ...selector,
+                    selectState:{
+                      main:selector.selectState.main == i ? null : i,
+                      sub:null
+                    }
+                  }))
                   router.push(v.url)
                 }
-              }}>
+              }} selectMain={selector.selectState.main == i}>
                 <p>{v.title}</p>
               </SideMenuItem>
                 {
@@ -160,9 +179,16 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
                     selector.sub[i].map((sub =>
                       <SideMenuItem onClick={() => {
                         if(sub.url){
+                          dispatch(setMenuStateChange({
+                            ...selector,
+                            selectState:{
+                              main: i,
+                              sub:sub.title
+                            }
+                          }))
                           router.push(sub.url)
                         }
-                      }}>
+                      }} selectSub={selector.selectState.sub == sub.title}>
                         <p style={{fontSize: 13, paddingLeft: 12}}>· {sub.title}</p>
                       </SideMenuItem>
                     ))

@@ -2,8 +2,10 @@ import React from 'react';
 // Modules
 import Document, {Head, Html, Main, NextScript} from 'next/document';
 // MUI Core
-import {ServerStyleSheets} from '@material-ui/core/styles';
+// import {ServerStyleSheets} from '@material-ui/core/styles';
+import {ServerStyleSheets} from '@mui/styles';
 import {ServerStyleSheet as StyledServerStyleSheets} from 'styled-components';
+
 // Utils
 import {theme} from '../common/theme';
 
@@ -52,6 +54,7 @@ MyDocument.getInitialProps = async (ctx) => {
   // Render app and page and get the context of the page with collected side effects.
   const sheets = new ServerStyleSheets();
   const styledSheets = new StyledServerStyleSheets();
+  // const muiSheets = new MuiServerStyleSheets();
   const originalRenderPage = ctx.renderPage;
 
   try {
@@ -66,6 +69,7 @@ MyDocument.getInitialProps = async (ctx) => {
           {initialProps.styles}
           {sheets.getStyleElement()}
           {styledSheets.getStyleElement()}
+          {/*{muiSheets.getStyleElement()}*/}
         </React.Fragment>
       )
     }

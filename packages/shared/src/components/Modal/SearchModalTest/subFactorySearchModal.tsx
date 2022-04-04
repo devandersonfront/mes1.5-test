@@ -16,6 +16,7 @@ import {MoldRegisterModal} from '../MoldRegisterModal'
 import Notiflix from 'notiflix'
 import {Select} from '@material-ui/core'
 import {SearchInit} from './SearchModalInit'
+import {SearchIcon} from "../../../styles/styledComponents";
 
 
 interface IProps {
@@ -130,25 +131,18 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
         <SearchModalWrapper >
             <div style={ column.modalType
                 ? {width: 'calc(100% - 32px)', height: 32, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
-                : {width: 'calc(100% - 40px)', height: 40, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
+                : {width: 'calc(100% - 38px)', height: 40, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
             } onClick={() => {
                 setIsOpen(true)
             }}>
                 {getContents()}
                 {/*{row.affiliated_id ?? ""}*/}
             </div>
-            <div style={{
-                display: 'flex',
-                backgroundColor: POINT_COLOR,
-                width: column.modalType ? 30 : 38,
-                height: column.modalType ? 30 : 38,
-                justifyContent: 'center',
-                alignItems: 'center'
-            }} onClick={() => {
+            <SearchIcon onClick={() => {
                 setIsOpen(true)
             }}>
                 <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
-            </div>
+            </SearchIcon>
             <Modal isOpen={isOpen} style={{
                 content: {
                     top: '50%',

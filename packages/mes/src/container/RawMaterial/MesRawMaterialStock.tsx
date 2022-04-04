@@ -53,7 +53,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     from: moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
   });
-
   const [nzState, setNzState] = useState<boolean>(false);
   const [order, setOrder] = useState<number>(0);
   const [expState, setExpState] = useState<boolean>(false);
