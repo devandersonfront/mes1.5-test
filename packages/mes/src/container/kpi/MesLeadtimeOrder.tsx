@@ -104,7 +104,6 @@ const MesLeadtimeOrder = () => {
                 pauseBasicRow.map((row)=> {
                     sum += row.leadTime
                 })
-                console.log(sum)
                 setProcessBasicRow({...processBasicRow , leadTime_average : `${Math.round(sum/rowLenth)}`})
             }
         }else{

@@ -17,6 +17,8 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from "moment"
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
   children?: any
@@ -44,7 +46,7 @@ const weldingType = [
 
 const BasicMachineV1u = ({option}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -80,6 +82,12 @@ const BasicMachineV1u = ({option}: IProps) => {
     }
   }, [pageInfo.page, keyword, typesState])
 
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"기계 기준정보",sub:""}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
