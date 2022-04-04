@@ -172,7 +172,7 @@ const BasicDevice = ({}: IProps) => {
 
     let pass = true;
     basicRow.map((value)=>{
-      if(value.mfrCode === undefined || value.mfrCode === ""){
+      if(selectList.has(value.id) && value.mfrCode === undefined || value.mfrCode === ""){
         pass = false;
         return Notiflix.Report.failure("경고", "제조 번호를 입력해주세요.", "확인")
       }

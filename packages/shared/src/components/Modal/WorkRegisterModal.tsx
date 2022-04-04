@@ -189,16 +189,11 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   const ModalContents = () => {
     return <>
-      <div style={{
-        padding: '3.5px 0px 0px 3.5px',
-        width: '100%'
-      }}>
         <UploadButton onClick={() => {
           setIsOpen(true)
         }}>
           <p>작업 일보 등록</p>
         </UploadButton>
-      </div>
     </>
   }
 
@@ -358,8 +353,11 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`

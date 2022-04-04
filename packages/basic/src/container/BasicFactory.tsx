@@ -108,8 +108,25 @@ const BasicFactory = ({}: IProps) => {
         })
     }
 
-    const SaveBasic = async () => {
+    const valueExistence = () => {
 
+        const selectedRows = filterSelectedRows()
+
+        if(selectedRows.length > 0){
+
+            const nameCheck = selectedRows.every((data)=> data.name)
+
+            if(!nameCheck){
+                return '공장명'
+            }
+
+        }
+
+        return false;
+
+    }
+
+    const SaveBasic = async () => {
 
         const existence = valueExistence()
 
@@ -172,7 +189,6 @@ const BasicFactory = ({}: IProps) => {
                 return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
             })
 
-
             if(res){
                 Notiflix.Report.success('저장되었습니다.','','확인');
                 if(keyword){
@@ -234,7 +250,7 @@ const BasicFactory = ({}: IProps) => {
     }
 
 
-    const DeleteBasic = async () => {
+    const   DeleteBasic = async () => {
 
         const map = convertDataToMap()
         const selectedRows = filterSelectedRows()
@@ -259,6 +275,7 @@ const BasicFactory = ({}: IProps) => {
             Notiflix.Report.success('삭제되었습니다.','','확인');
             setBasicRow(Array.from(map.values()))
             setSelectList(new Set())
+            setPageInfo({page: 1, total: 1})
         }
 
     }
@@ -480,24 +497,6 @@ const BasicFactory = ({}: IProps) => {
         }
     }
 
-    const valueExistence = () => {
-
-        const selectedRows = filterSelectedRows()
-
-        if(selectedRows.length > 0){
-
-            const nameCheck = selectedRows.every((data)=> data.name)
-
-            if(!nameCheck){
-                return '공장명'
-            }
-
-        }
-
-        return false;
-
-    }
-
     const competefactory = (rows) => {
 
         const tempRow = [...rows]
@@ -526,7 +525,6 @@ const BasicFactory = ({}: IProps) => {
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
                     setKeyword(keyword)
-                    setPageInfo({page:1,total:1})
                 }}
                 searchOptionList={optionList}
                 onChangeSearchOption={(option) => {

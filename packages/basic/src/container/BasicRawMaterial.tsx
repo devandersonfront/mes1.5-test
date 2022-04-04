@@ -27,8 +27,6 @@ export interface IProps {
   option?: number
 }
 
-
-
 const BasicRawMaterial = ({}: IProps) => {
   const router = useRouter()
 
@@ -394,7 +392,6 @@ const BasicRawMaterial = ({}: IProps) => {
     excelDownload(column, basicRow, `mold`, "mold", tmpSelectList)
   }
 
-
   const setAdditionalData = () => {
 
     const addtional = []
@@ -464,8 +461,6 @@ const BasicRawMaterial = ({}: IProps) => {
 
   }
 
-
-
   const onClickHeaderButton = (index: number) => {
 
     switch(buttonList[index]){
@@ -530,7 +525,6 @@ const BasicRawMaterial = ({}: IProps) => {
 
     }
   }
-
   const handleModal = (open:boolean) => {
 
     setBarcodeOpen(!open)

@@ -197,14 +197,13 @@ const BasicPause = ({page, keyword, option}: IProps) => {
 
       deletable = await RequestMethod('delete','pauseDelete', haveIdRows)
     }
-    
+
     if(deletable){
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');
       setPauseBasicRow(Array.from(map.values()))
       setSelectList(new Set())
     }
-
   }
 
   const buttonEvents = async(index:number) => {

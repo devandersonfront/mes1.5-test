@@ -20,8 +20,16 @@ module.exports = function babelConfig(api) {
             ],
             '@babel/typescript',
             '@babel/react',
+            'next/babel'
         ],
         plugins: [
+            'babel-plugin-styled-components',
+            {
+                ssr:true,
+                fileName: true,
+                displayName: true,
+                pure: true
+            },
             '@babel/syntax-dynamic-import',
             '@babel/plugin-proposal-object-rest-spread',
         ],

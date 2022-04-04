@@ -127,7 +127,6 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
         renderItem: 22,
       },
       params: order == 0 ?
-
           {
             from: selectDate.from,
             to: selectDate.to,
@@ -139,7 +138,6 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
           sorts: 'date',
           order: order == 1 ? 'ASC' : 'DESC'
         }
-
     })
 
     if(res){
@@ -168,7 +166,6 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
         renderItem: 22,
       },
       params:order == 0 ?
-
           {
             keyword: keyword ?? '',
             opt: option ?? 0,
@@ -380,7 +377,7 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
         product_id: row.product.code ?? '-',
         code: row.product.code ?? '-',
         name: row.product.name ?? '-',
-        type: TransferCodeToValue(row.product.type, 'material'),
+        type: TransferCodeToValue(row.product.type, 'product'),
         unit: row.product?.unit ?? '-',
         process_id: row.product?.process?.name ?? '-',
         amount: tmpAmount,

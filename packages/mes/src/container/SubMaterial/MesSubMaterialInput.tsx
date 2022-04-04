@@ -78,7 +78,6 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
         }
       }).filter((v:any) => v)
 
-      // setColumn([...tmpColumn])
       setColumn([...tmpColumn.map(v=> {
         return {
           ...v,

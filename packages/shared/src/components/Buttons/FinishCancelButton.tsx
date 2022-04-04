@@ -27,8 +27,6 @@ const FinishCancelButton = ({ row, column, onRowChange}: IProps) => {
     })
 
 
-
-
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인',()=> onRowChange({
         ...row,

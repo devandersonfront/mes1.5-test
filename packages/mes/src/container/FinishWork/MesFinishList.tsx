@@ -25,6 +25,7 @@ interface IProps {
 }
 
 const MesFinishList = ({page, search, option}: IProps) => {
+  const router = useRouter()
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["finishListV2"])
