@@ -162,7 +162,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
       }}
     >
       {column.selectList && column.selectList.map((title) => {
-        return (<option key={title.pk} value={title.name}>
+        return (<option key={title.pk} value={title.name} style={{background:column.type === "Modal" ? "white" : "none"}}>
           {title.name}
         </option>)
       })}

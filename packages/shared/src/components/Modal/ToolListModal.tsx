@@ -14,6 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {TransferCodeToValue} from "../../common/TransferFunction";
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
     column: IExcelHeaderType
@@ -108,28 +109,13 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
         return summaryData[info.key] ?? '-'
     }
 
-    const ModalContents = () => {
-        return <>
-            <div style={{
-                width: '100%'
-            }}>
-                <div style={{
-                    fontSize: '15px',
-                    margin: 0,
-                    padding: 0,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    color: column.type === 'Modal' && '#0D0D0D',
-                    background:row.border ? "#19B9DF80" : column.type === 'Modal' ? "white" : '#0000',
-                }} onClick={() => {
-                    setIsOpen(true)
-                }}>
-                    <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>공구 보기</p>
-                </div>
-            </div>
-        </>
-    }
+    const ModalContents = () => (
+        <UploadButton onClick={() => {
+            setIsOpen(true)
+        }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
+            <p>공구 보기</p>
+        </UploadButton>
+    )
 
     return (
         <SearchModalWrapper >
@@ -248,8 +234,11 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`

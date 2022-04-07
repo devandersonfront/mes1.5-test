@@ -156,7 +156,7 @@ export const UploadButton = styled.div<{hoverColor?:string, haveId?:boolean, sta
     // color: black;
     color: ${({haveId, status}) => status == "modal" || !haveId ? "black" : "white"};
     font-size: 15px;
-    text-decoration: ${({haveId, status}) => haveId ? "underline" : "none"};
+    text-decoration: ${({haveId}) => haveId ? "underline" : "none"};
   }
     border:none;
   &:hover {
