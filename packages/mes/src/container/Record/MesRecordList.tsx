@@ -16,6 +16,8 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {WorkModifyModal} from '../../../../shared/src/components/Modal/WorkModifyModal'
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {useDispatch} from "react-redux";
 
 interface IProps {
   children?: any
@@ -27,7 +29,8 @@ interface IProps {
 let now = moment().format('YYYY-MM-DD')
 
 const MesRecordList = ({page, search, option}: IProps) => {
-
+  const router = useRouter()
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -51,8 +54,6 @@ const MesRecordList = ({page, search, option}: IProps) => {
     setOrder(value);
   }
 
-  useEffect(()=>{
-  },[basicRow])
   useEffect(() => {
     if(keyword){
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -64,6 +65,13 @@ const MesRecordList = ({page, search, option}: IProps) => {
       })
     }
   }, [pageInfo.page, keyword, selectDate,order])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
+    return(() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {

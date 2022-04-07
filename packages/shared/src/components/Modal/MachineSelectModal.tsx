@@ -76,45 +76,6 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
         poor_quantity: row.poor_quantity ?? 0,
       })
     }
-    // let tmpMachines
-    // if(!row.machines || !row.machines.length){
-    //   tmpMachines = row.product?.machines.map((v, index) => {
-    //     return {
-    //       machine: {
-    //         sequence: index+1,
-    //         machine: {
-    //           ...v.machine
-    //         },
-    //         setting: v.spare === '여' ? 0 : 1
-    //       }
-    //     }
-    //   }) ?? []
-    //
-    //   onRowChange({
-    //     ...row,
-    //     name: row.name,
-    //     machines: tmpMachines,
-    //     isChange: true
-    //   })
-    // }else{
-    //   tmpMachines = row.machines.map(v => {
-    //     return {
-    //       ...v,
-    //       ...v.machine
-    //     }
-    //   })
-    // }
-    //
-    // if(isOpen) {
-    //   setSearchList([...tmpMachines.map((v, index) => {
-    //     return {
-    //       ...v.machine,
-    //       ...v.machine.machine,
-    //       sequence: index+1,
-    //       spare: v.setting === 0 ? '여' : '부',
-    //     }
-    //   })])
-    // }
   }, [isOpen])
 
   const LoadBasic = async (productId) => {
@@ -146,12 +107,6 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
   const getSummaryInfo = (info) => {
     return summaryData[info.key] ?? '-'
   }
-
-  const ModalUpdate = (e:any) => {
-    onRowChange(e)
-    setIsOpen(false)
-  }
-
 
   return (
     <SearchModalWrapper >

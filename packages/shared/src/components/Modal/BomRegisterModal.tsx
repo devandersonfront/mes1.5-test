@@ -337,8 +337,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
                             <HeaderTableText>
-                              {summaryData[info.key]}
-                              {/*-*/}
+                              {summaryData[info.key] ?? "-"}
                             </HeaderTableText>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>

@@ -385,12 +385,8 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       </>
     }else{
       if(column.type === 'readonly' || row.bom_root_id){
-        return <>
-          <div style={{
-            padding: '3.5px 0px 0px 3.5px',
-            width: '100%',
-          }}>
-            <UploadButton  style={{backgroundColor: '#ffffff00'}} onClick={() => {
+        return(
+            <UploadButton  onClick={() => {
               if (row.bom_root_id) {
                 setIsOpen(true)
               } else {
@@ -398,18 +394,14 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 })
               }
             }}
-              hoverColor={'#19B9DF'} haveId
+              hoverColor={'#19B9DF'} haveId status={column.modalType ? "modal" : "table"}
             >
-              <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>
+              <p>BOM 보기</p>
             </UploadButton>
-          </div>
-        </>
+          )
+
       }else{
-        return <>
-          <div style={{
-            padding: '3.5px 0px 0px 2.5px',
-            width: '100%',
-          }}>
+        return (
             <UploadButton
             onClick={() => {
               if(row.code){
@@ -420,8 +412,8 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
             }}>
                   <p>BOM 등록</p>
             </UploadButton>
-          </div>
-        </>
+        )
+
       }
     }
   }
@@ -797,8 +789,11 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`

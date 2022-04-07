@@ -125,7 +125,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const ModalContents = () => (
         <UploadButton onClick={() => {
           setIsOpen(true)
-        }} hoverColor={POINT_COLOR} haveId >
+        }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
           <p>{totalTime}</p>
         </UploadButton>
       )
