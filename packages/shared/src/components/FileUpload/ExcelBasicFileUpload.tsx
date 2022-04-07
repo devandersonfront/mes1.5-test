@@ -31,13 +31,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
   }
 
   return (
-    // <input
-    //   className={'editCell'}
-    //   ref={autoFocusAndSelect}
-    //   value={row[column.key]}
-    //   onChange={(event) => onRowChange({ ...row, [column.key]: event.target.value })}
-    //   onBlur={() => onClose(true)}
-    // />
     <div style={{
       width: "100%",
       height: "100%",
@@ -45,9 +38,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
       justifyContent: 'center',
       alignItems: 'center'
     }}>
-        {/*{onImage && */}
         <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage}/>
-        {/*}*/}
       {
         row[column.key] ?
           <div style={{
@@ -57,16 +48,18 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-            <DeleteImage
-              onClick={()=>{
-                  onRowChange({
-                    ...row,
-                    [column.key+'Path']: null,
-                    [column.key]: null,
-                    isChange:true
-                  })
-              }}
-              src={Icon_X} />
+              {!column.readonly &&
+              <img
+                  onClick={()=>{
+                      onRowChange({
+                          ...row,
+                          [column.key+'Path']: null,
+                          [column.key]: null,
+                          isChange:true
+                      })
+                  }}
+                  src={Icon_X} style={{borderRadius:"4px", width:"24px", height:"24px", marginRight:"4px", marginLeft: '4px'}} />
+              }
             <p
               style={{
                 overflow: 'hidden',
@@ -87,16 +80,8 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                       .catch((err) => {
                           Notiflix.Report.failure("에러","에러입니다.","확인")
                       })
-                // if(row[column.key+'Path']){
-                //   window.open(SF_ENDPOINT_RESOURCE+`/${row[column.key+'Path']}`)
-                // }else{
-                //   window.open(SF_ENDPOINT_RESOURCE+`${row[column.key+'Resource']}`)
-                // }
               }}
             >
-              {/*{*/}
-              {/*  row[column.key]*/}
-              {/*}*/}
                 {column.type === "image" ? "이미지 보기" : "파일 다운로드" }
             </p>
           </div>
@@ -122,7 +107,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         hidden
         onChange={async (e) => {
           if(e.target.files && e.target.files.length !== 0) {
-              // Buffer.from(e.target.files[0]);
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
 
               if(uploadImg !== undefined){

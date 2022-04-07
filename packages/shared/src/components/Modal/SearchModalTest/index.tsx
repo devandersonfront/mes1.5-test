@@ -345,6 +345,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{
                     v.border = false;
+                    v.id = row.id
                   })
                   searchList[e].border = true
                   setSearchList([...searchList])
@@ -458,7 +459,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                           ...row,
                           ...SearchModalResult(searchList[selectRow], column.toolType === 'register' ? 'toolRegister' : searchModalInit.excelColumnType, column.staticCalendar),
                           manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                          name: selectNameFunction(column.type),
+                          // name: selectNameFunction(column.type),
                           tab: tab,
                           // type_name: undefined,
                           version: row.version,
