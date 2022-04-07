@@ -187,7 +187,7 @@ export const searchModalList: any = {
       ], type: 'Modal'},
     {key: 'type_name', name: '품목 종류', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'unit', name: '단위', width: 160, formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
-    {key: 'usage', name: '1회 사용량', width: 160, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '-'},
+    {key: 'usage', name: '1회 사용량', width: 160, formatter: LineBorderContainer, editor: TextEditor, type:"number", textType: 'Modal', placeholder: '-'},
     {key: 'process', name: '생산 공정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-'},
   ],
@@ -323,10 +323,10 @@ export const searchModalList: any = {
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'code', name: 'CODE', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'name', name: '품명', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
+    {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor, type: 'Modal',selectList: [
         {pk: 1, name: '여'},
         {pk: 0, name: '부'},
-      ], type: 'Modal',
+      ],
     },
     {key: 'isDefault', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 1, name: '기본'},
@@ -339,7 +339,7 @@ export const searchModalList: any = {
     {key: 'disturbance', name: '소요량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' , type : 'readonly' },
+    {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' , type : 'readonly', modalType:"modal" },
   ],
   InputInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
