@@ -1372,7 +1372,7 @@ export const columnlist: any = {
   toolRegister: [
     {key: "code", name: '공구 CODE', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
     {key: "name", name: '공구 품명', editor:TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
-    {key: "unit", name: '단위', formatter: DropDownEditor, type:"Modal",
+    {key: "unit", name: '단위', formatter: DropDownEditor,
       selectList:[
         {pk: 0, name: "EA"},
         {pk: 1, name: "g"},
