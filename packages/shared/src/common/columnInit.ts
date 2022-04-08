@@ -271,8 +271,6 @@ export const columnlist: any = {
         {pk: 1, name: 'COIL'},
         {pk: 2, name: 'SHEET'}
       ]},
-    {key: 'stock', name: '원자재 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', placeholder:"0"},
-    {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer' , placeholder:"-"},
     {key: 'stock', name: '원자재 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',placeholder:"0"},
     {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer' ,placeholder:"-"},
     {key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력',type:"number",},
