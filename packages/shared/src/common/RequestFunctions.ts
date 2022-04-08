@@ -102,7 +102,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
           }else if(error.response.status === 404){
             Notiflix.Report.failure('에러', error.response.data.message, '확인')
-          }else if(error.response.status === 422){
+          }else if(error.response.status === 422 || error.response.status === 409){
             Notiflix.Report.warning('경고', error.response.data.message, '확인')
           }else if (error.response?.status === 423){
             console.log("error 423 : ", error)

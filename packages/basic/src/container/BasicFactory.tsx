@@ -171,7 +171,7 @@ const BasicFactory = ({}: IProps) => {
                         })
                         return {
                             ...row,
-                            id: row.tmpId,
+                            // id: row.tmpId,
                             authority: row.authorityPK,
                             manager: row.user,
                             version: row.version ?? null,
@@ -180,7 +180,7 @@ const BasicFactory = ({}: IProps) => {
                                     //if(!row[v.colName]) return undefined;
                                     // result.push(
                                     return {
-                                        mi_id: v.id,
+                                        // mi_id: v.id,
                                         title: v.name,
                                         value: row[v.colName] ?? "",
                                         unit: v.unit,
@@ -532,6 +532,7 @@ const BasicFactory = ({}: IProps) => {
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
+                    setPageInfo({page:1,total:1})
                     setKeyword(keyword)
                 }}
                 searchOptionList={optionList}

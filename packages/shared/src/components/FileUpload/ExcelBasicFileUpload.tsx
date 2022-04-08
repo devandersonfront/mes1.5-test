@@ -61,16 +61,18 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-            <DeleteImage
-              onClick={()=>{
-                  onRowChange({
-                    ...row,
-                    [column.key+'Path']: null,
-                    [column.key]: null,
-                    isChange:true
-                  })
-              }}
-              src={Icon_X} />
+              {!column.readonly &&
+              <img
+                  onClick={()=>{
+                      onRowChange({
+                          ...row,
+                          [column.key+'Path']: null,
+                          [column.key]: null,
+                          isChange:true
+                      })
+                  }}
+                  src={Icon_X} style={{borderRadius:"4px", width:"24px", height:"24px", marginRight:"4px", marginLeft: '4px'}} />
+              }
             <p
               style={{
                 overflow: 'hidden',
@@ -109,9 +111,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
 
               }}
             >
-              {/*{*/}
-              {/*  row[column.key]*/}
-              {/*}*/}
                 {column.type === "image" ? "이미지 보기" : "파일 다운로드" }
             </p>
           </div>

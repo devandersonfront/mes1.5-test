@@ -6,18 +6,13 @@ import {MidrangeFormReviewModal} from "../Modal/MidrangeFormReviewModal";
 import Notiflix from "notiflix";
 import {RequestMethod} from "../../common/RequestFunctions";
 import {MidrangeRegisterModal} from "../Modal/MidrangeRegisterModal";
+import {POINT_COLOR} from "../../common/configset";
 
 
 interface IProps {
     row: any
     column: IExcelHeaderType
 }
-
-const selectList = [
-    {pk: '0', name: '반제품'},
-    {pk: '1', name: '재공품'},
-    {pk: '2', name: '완제품'},
-]
 
 const MidrangeFrameButton = ({row, column }: IProps) => {
     const [modalOpen, setModalOpen] = React.useState<boolean>(false)
@@ -31,10 +26,6 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
             }
         })
         if(res){
-            const legendaryValue : string[] = Object.values(res?.legendary_list)
-            const legendaryArray: string[] = res?.legendary_list.map((v,i)=>{
-                    return v
-                })
             let machineName
             const processName = row.product.process === null ? '-' : row.product.process.name
             if(row.machines !== null) {
@@ -83,32 +74,26 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
         setModify(true)
     }
 
-    const contentCheck = () => {
-        if(row.inspection_category !== null){
-            return (<>
-                <div style={{
-                    padding: '3.5px 0px 0px 3.5px',
-                    width: '100%'
-                }}>
-                    <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}}  onClick={() => midrangeRecordInspectResultLoad()}>
-                        <p style={{color: 'white', textDecoration: 'underline'}}>결과 보기</p>
-                    </UploadButton>
-                </div>
-            </>)
-        }else{
-            return (<>
-                <div style={{
-                    padding: '3.5px 0px 0px 3.5px',
-                    width: '100%'
-                }}>
-                    <UploadButton  onClick={() => midrangeRecordInspectLoad()}>
-                        <p>검사 등록</p>
-                    </UploadButton>
-                </div>
-            </>)
-        }
-    }
-
+    const contentCheck = () => (
+        <div style={{
+            padding: '3.5px 0px 0px 3.5px',
+            width: '100%'
+        }}>
+            <UploadButton
+                hoverColor={POINT_COLOR}
+                haveId={row.inspection_category !== null}
+                onClick={() => {
+                    if(row.inspection_category !== null){
+                        midrangeRecordInspectResultLoad()
+                    }else{
+                        midrangeRecordInspectLoad()
+                    }
+                }}
+            >
+                <p>{row.inspection_category !== null ? "결과 보기" : "결과 등록"}</p>
+            </UploadButton>
+        </div>
+    )
     return (
         <>
             <MidrangeRegisterModal isOpen={modalOpen} setIsOpen={setModalOpen} formReviewData={execlInfo} modify={modify}/>

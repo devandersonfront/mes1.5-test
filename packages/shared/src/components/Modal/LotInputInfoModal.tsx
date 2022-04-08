@@ -66,7 +66,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     total: 1
   })
   const [focusIndex, setFocusIndex] = useState<number>(0)
-  console.log(row)
   useEffect(() => {
     if(isOpen) {
       setSummaryData({
