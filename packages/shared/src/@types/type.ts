@@ -155,3 +155,27 @@ export type MidrangeRecordRegister = {
 }
 
 export type TransferType = "productType" | "material" | "rawmaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "submaterial" | "welding" | null
+
+export interface BomType {
+  childProductId: number | null
+  childRmId: number | null
+  childSmId: number | null
+  child_product: any | null
+  child_rm: any | null
+  child_sm: any | null
+  key: string | null
+  parent: any | null
+  parentId: number | null
+  seq: number | null
+  setting: number | null
+  type: number | null
+  usage: number | null
+  version: number | null
+}
+
+export interface BomObjectType extends BomType {
+  typeName : TransferType| null
+  bomKey: string | null,
+  id: number | null,
+  object: any | null
+}
