@@ -226,7 +226,7 @@ export const searchModalList: any = {
   ],
   toolUse: [
     {key: 'sequence', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'code', name: '공구 CODE', width: 160, formatter: SearchModalTest, placeholder: '-', type: 'searchToolModal', textAlign: 'center' },
+    {key: 'code', name: '공구 CODE', width: 160, formatter: SearchModalTest, placeholder: '-', type: 'searchToolModal', textAlign: 'center', modalType: true },
     {key: 'name', name: '공구명', formatter: LineBorderContainer, placeholder: '-', type: 'Modal' },
     {key: 'customer', name: '거래처', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
     {key: 'used', name: '생산량', width: 160, formatter: LineBorderContainer, editor:TextEditor, placeholder: '생산량 입력', textAlign: 'center', textType:"Modal", type:"number" },
@@ -359,8 +359,21 @@ export const searchModalList: any = {
     //     {pk: 1, name: '여'},
     //     {pk: 0, name: '부'},
     //   ], type: 'Modal'},
-    {key: 'amount', name: '생산량', formatter: LineBorderContainer, editor: TextEditor, textAlign: 'center', textType: 'Modal', placeholder: '생산량 입력', type:'number'},
-
+    {key: 'amount', name: '생산량', formatter: LineBorderContainer, editor: TextEditor, textAlign: 'center', textType: 'Modal', placeholder: '생산량 입력', type:'number', disabledCase: { key: 'current', value: 0}},
+  ],
+  ModifyInputLotInfo: [
+    {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'elapsed', name: '경과일', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
+    {key: 'lot_number', name: 'LOT 번호', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'date', name: '입고일', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'warehousing', name: '입고량', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'current', name: 'LOT 재고량', formatter: LineBorderContainer, textAlign: 'center'},
+    // {key: 'spare', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
+    //     {pk: 1, name: '여'},
+    //     {pk: 0, name: '부'},
+    //   ], type: 'Modal'},
+    {key: 'amount', name: '생산량', formatter: LineBorderContainer, editor: TextEditor, textAlign: 'center', textType: 'Modal', placeholder: '생산량 입력', type:'number', disabledCase: [{ key: 'current', value: 0}, {key:'is_complete', value: true}]},
+    {key: 'isComplete', name: '사용완료 상태', formatter: LineBorderContainer, textAlign: 'center'},
   ],
   InputLotReadonlyInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
@@ -409,7 +422,22 @@ export const searchModalList: any = {
     {key: 'good_quantity', name: '양품 수량', textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 250},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center', width: 104},
+    {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center', width: 104, action:'register'},
+    {key: 'molds', name: '금형', formatter: MoldSelectModal, textAlign: 'center', width: 104},
+    {key: 'machines', name: '기계', formatter: MachineSelectModal, textAlign: 'center', width: 104},
+    {key: 'tool', name: '공구', formatter: ToolSelectModal, textAlign: 'center'},
+  ],
+  workModify: [
+    {key: 'sequence', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'lot_number', name: 'LOT 번호', formatter: LotNumberRegister, editor: TextEditor, textType: 'Modal', textAlign: 'center', width: 300},
+    {key: 'worker_name', name: '작업자', formatter: SearchModalTest, type: 'user', width: 118, modalType: true, placeholder: '작업자 선택'},
+    {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type:"date"},
+    {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type:"deadline"},
+    {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true, width: 120},
+    {key: 'good_quantity', name: '양품 수량', textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 250},
+    {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center', width: 104, action:'modify'},
     {key: 'molds', name: '금형', formatter: MoldSelectModal, textAlign: 'center', width: 104},
     {key: 'machines', name: '기계', formatter: MachineSelectModal, textAlign: 'center', width: 104},
     {key: 'tool', name: '공구', formatter: ToolSelectModal, textAlign: 'center'},
@@ -431,13 +459,17 @@ export const searchModalList: any = {
   ],
   pauseTime: [
     {key: 'reason', name: '일시 정지 유형', formatter: LineBorderContainer},
-    {key: 'amount', width: 194, name: '시간', formatter: TimeFormatter, textType: 'Modal', searchType: 'pause', },
+    {key: 'amount', width: 194, name: '시간', formatter: TimeFormatter, textType: 'Modal', searchType: 'pause' },
+  ],
+  pauseTimeReadOnly: [
+    {key: 'reason', name: '일시 정지 유형', formatter: LineBorderContainer},
+    {key: 'amount', width: 194, name: '시간', formatter: TimeFormatter, textType: 'Modal', searchType: 'pause', type:'readonly' },
   ],
   defectCount : function({readonly}){
     return [
       {key: 'process_name', name: '공정명', width: 200},
       {key: 'reason', name: '불량 유형', formatter: LineBorderContainer},
-      {key: 'amount', width: 194, name: '불량 개수', editor: readonly !== 'readonly' ? TextEditor : undefined, formatter: UnitContainer, unitData: 'EA', textType: 'Modal', searchType: 'pause', placeholder: '숫자만 입력'},
+      {key: 'amount', width: 194, name: '불량 개수', editor: readonly !== 'readonly' ? TextEditor : undefined, formatter: UnitContainer, unitData: 'EA', textType: 'Modal', searchType: 'pause', placeholder: '숫자만 입력', type:'number'},
     ]
   },
   //검색 모달 엑셀 헤더
