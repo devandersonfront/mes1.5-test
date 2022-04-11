@@ -49,7 +49,7 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
   const router = useRouter()
 
   useEffect(() => {
-    let tmpMenu = menuSelect(menuType)
+    let tmpMenu =  menuSelect(menuType)
     setMenuList(tmpMenu)
     setSubMenuList(new Array(tmpMenu?.length).fill([]).map((v, i) => {
       return tmpMenu[i].subMenu
@@ -81,7 +81,7 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
 
   return (
     <div style={{display: 'flex'}}>
-      <MenuNavComponent>
+      <div style = {{  width: '288px', display: 'flex'}}>
         <div>
           <MenuNavItem style={{backgroundColor: menuType === "HOME" ? POINT_COLOR : undefined}} onClick={() => {
             router.push('/mes/dashboard')
@@ -136,7 +136,7 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
         <div style={{width: 198, paddingTop: 30, paddingLeft: 24}}>
           {
             selector.main && selector.main.map((v, i) => <>
-              <SideMenuItem onClick={() => {
+              <SideMenuItem key={i.toString()} onClick={() => {
                 if(v.subMenu && v.subMenu.length){
                   let tmpSubMenus = selector.sub
 
@@ -157,22 +157,22 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
               </SideMenuItem>
                 {
                   selector.sub[i] && selector.sub[i].length ?
-                    selector.sub[i].map((sub =>
-                      <SideMenuItem onClick={() => {
+                    selector.sub[i].map((sub,si) =>
+                      <SideMenuItem key={si.toString()} onClick={() => {
                         if(sub.url){
                           router.push(sub.url)
                         }
                       }}>
                         <p style={{fontSize: 13, paddingLeft: 12}}>· {sub.title}</p>
                       </SideMenuItem>
-                    ))
+                    )
                     : null
                 }
             </>
             )
           }
         </div>
-      </MenuNavComponent>
+      </div>
     </div>
   );
 }
