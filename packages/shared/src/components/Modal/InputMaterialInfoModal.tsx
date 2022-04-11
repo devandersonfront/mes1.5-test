@@ -23,6 +23,7 @@ import {
   delete_summary_info,
   reset_summary_info
 } from "../../reducer/infoModal";
+import Big from 'big.js'
 
 interface IProps {
   column: IExcelHeaderType
@@ -66,7 +67,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       if(row.input_bom.length > 0) {
-        changeRow(row.input_bom, row)
+        // changeRow(row.input_bom, row)
         setSummaryData({
           // ...res.parent
           customer: row.product.customer?.name,
@@ -90,7 +91,9 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
     if(isOpen){
       if(bomInfoList.index === -1) {
         setIsOpen(false)
-        }else {
+      } else if(bomInfoList.index === 0){
+        loadRecordGroup(row.product.bom_root_id, row.os_id)
+      } else {
         loadRecordGroup(bomInfoList.datas[bomInfoList.index]?.product_id)
       }
     }
@@ -108,9 +111,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
       })
 
       if (res) {
-        // let searchList = res.map((row: any, index: number) => {
-        //   return changeRow(row)
-        // })
         let searchList = changeRow(res, row)
         setSearchList([...searchList])
       }
@@ -122,10 +122,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
       })
 
       if (res) {
-        // let searchList = res.map((row: any, index: number) => {
-        //   return changeRow(row)
-        // })
-        let searchList = changeRow(Array.isArray(res) ? res : [res], row)
+        let searchList = changeRow(typeof res === 'string' ? res : [res], row)
         setSearchList([...searchList])
       }
     }
@@ -134,23 +131,23 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const changeRow = (tmpRow: any, parent?:any) => {
     let tmpData = []
-    let row = [];
+    let inputBom = [];
     if(typeof tmpRow === 'string'){
       let tmpRowArray = tmpRow.split('\n')
-
-      row = tmpRowArray.map(v => {
+      inputBom = tmpRowArray.map(v => {
         if(v !== ""){
           let tmp = JSON.parse(v)
           return tmp
         }
       }).filter(v=>v)
     }else{
-      row = tmpRow
+      inputBom = tmpRow
     }
 
-    tmpData = row.map((v, i) => {
+    tmpData = inputBom.map((v, i) => {
       let childData: any = {}
       let type = "";
+      let usage = 1
       switch(v.type){
         case 0:{
           childData = v.child_rm
@@ -168,7 +165,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
       }
-
       return {
         ...childData,
         seq: i+1,
@@ -194,7 +190,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
         }: null,
         parent:v.parent,
         setting:v.setting === 0 ? "기본" : "스페어",
-        disturbance:parent?.goal * v.usage
+        disturbance: new Big(parent?.goal).times(v.usage).toNumber()
       }
     })
     return tmpData
@@ -261,7 +257,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
       }}>
         <div style={{
           width: 1776,
-          height: 800
+          height: 803
         }}>
           <div style={{
             margin: '24px 16px 16px',
