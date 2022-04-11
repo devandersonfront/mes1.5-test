@@ -16,6 +16,7 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {WorkModifyModal} from '../../../../shared/src/components/Modal/WorkModifyModal'
+import lodash from 'lodash'
 
 interface IProps {
   children?: any
@@ -383,6 +384,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         worker: worker,
         worker_object: row.worker_object ?? row.worker,
         id: `sheet_${random_id}`,
+        // paused_time: row.pause_reasons && lodash.sum(row.pause_reasons?.map(reason => reason.amount))
       }
     })
     setSelectList(new Set)
@@ -424,6 +426,8 @@ const MesRecordList = ({page, search, option}: IProps) => {
               case 1: {
                 if(selectList.size === 1) {
                   setExcelOpen(true)
+                }else if(selectList.size === 0){
+                  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인")
                 }else{
                   Notiflix.Report.warning("경고","작업일보는 한 개씩만 수정 가능합니다.","확인")
                 }
@@ -472,36 +476,37 @@ const MesRecordList = ({page, search, option}: IProps) => {
           }
         }}
       />
-
-      <WorkModifyModal
-        row={[...basicRow.map(v =>{
-          if(selectList.has(v.id)){
-            return {
-              ...v,
-              worker: v.user,
-              worker_name: v.user.name,
-              sum: v.poor_quantity+v.good_quantity,
-              input_bom: v.operation_sheet.input_bom,
-            }
-          }
-        }).filter(v => v)]}
-        onRowChange={() => {
-          setTimeout(() => {
-            if(keyword){
-              SearchBasic(keyword, option, page).then(() => {
-                Notiflix.Loading.remove()
-              })
-            }else{
-              LoadBasic(pageInfo.page).then(() => {
-                Notiflix.Loading.remove();
-                setSelectList(new Set())
-              })
-            }
-          },1000)
-        }
-        }
-        isOpen={excelOpen}
-        setIsOpen={setExcelOpen}/>
+      {
+        excelOpen && <WorkModifyModal
+              row={[ ...basicRow.map(v => {
+                if (selectList.has(v.id)) {
+                  return {
+                    ...v,
+                    worker: v.user,
+                    worker_name: v.user.name,
+                    sum: v.poor_quantity + v.good_quantity,
+                    input_bom: v.operation_sheet.input_bom,
+                  }
+                }
+              }).filter(v => v) ]}
+              onRowChange={() => {
+                setTimeout(() => {
+                  if (keyword) {
+                    SearchBasic(keyword, option, page).then(() => {
+                      Notiflix.Loading.remove()
+                    })
+                  } else {
+                    LoadBasic(pageInfo.page).then(() => {
+                      Notiflix.Loading.remove();
+                      setSelectList(new Set())
+                    })
+                  }
+                }, 1000)
+              }
+              }
+              isOpen={excelOpen}
+              setIsOpen={setExcelOpen}/>
+      }
     </div>
   );
 }
