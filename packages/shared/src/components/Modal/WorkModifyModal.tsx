@@ -249,7 +249,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-                headerList={searchModalList.workRegister}
+                headerList={searchModalList.workModify}
                 row={searchList ?? [{}]}
                 setRow={(e) => {
                   let tmp = e.map((v, index) => {
