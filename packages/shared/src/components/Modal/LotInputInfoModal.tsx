@@ -60,12 +60,12 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   const [lotList, setLotList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [selectProduct, setSelectProduct] = useState<string>('')
+  const [selectType, setSelectType] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
   const [focusIndex, setFocusIndex] = useState<number>(0)
-  console.log(row)
   useEffect(() => {
     if(isOpen) {
       setSummaryData({
@@ -85,9 +85,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         poor_quantity: row.poor_quantity ?? 0,
       })
       if(row.operation_sheet && row.operation_sheet?.input_bom?.length > 0){
-        const filter_input_bom = row.operation_sheet.input_bom.map((v)=>{if(v.bom.setting === 1){
-          return {...v}
-        }}).filter((v)=>v)
+        const filter_input_bom = row.operation_sheet.input_bom.filter((bom) => bom.bom.setting === 1)
         changeRow(filter_input_bom)
       }else if(row.input_bom?.length > 0){
         changeRow(row.input_bom)
@@ -100,7 +98,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpData = []
     let tmpRows = tmpRow;
-
     // if(tmpRows){
     tmpData = tmpRows?.map((v, i) => {
       let childData: any = {}
@@ -167,13 +164,13 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     let lots = null
     switch(type){
       case 'rawmaterial':
-        lots = row.bom?.filter((bom) => bom.bom.childRmId === id)
+        lots = row.bom?.filter((bom) => bom?.lot?.child_lot_rm?.rmId === id)
         break
       case 'submaterial':
-        lots = row.bom?.filter((bom) => bom.bom.childSmId === id)
+        lots = row.bom?.filter((bom) => bom?.lot?.child_lot_sm?.smId === id)
         break
       case 'product':
-        lots = row.bom?.filter((bom) => bom.bom.childProductId === id)
+        lots = row.bom?.filter((bom) => bom?.lot?.child_lot_record?.operation_sheet?.productId === id)
         break
       default:
         break
@@ -182,7 +179,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     else if(lots.length > 1){
       stock = lodash.sum(lots.map((lot) => lot.lot.current))
     }else {
-      stock = lots[0].lot.current
+      stock = lots[0]?.lot.current
     }
     return stock
   }
@@ -357,10 +354,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     </div>
   }
 
-  const filterLotListTitle = () => {
-    return lotList[0]?.raw_material?.code ?? lotList[0]?.sub_material?.code ?? lotList[0]?.operation_sheet.product.code
-  }
-
   return (
       <SearchModalWrapper >
         { ModalContents() }
@@ -450,7 +443,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                       //     seq: i+1
                       //   }))])
                       // }
-                      console.log(v)
                       if(v.bom){
                         setSelectProduct(v.code)
                           // setLotList([...v.bom.map((v,i) => ({
@@ -459,6 +451,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                           //   seq: i+1
                           // }))])
                         if(v.lotList){
+                          setSelectType(v.type_name)
                           setLotList(v.lotList)
                         }
                       }
@@ -486,7 +479,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
               <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                 <div style={{ display: 'flex', width: 1200}}>
                   {/*<p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 ({selectProduct})</p>*/}
-                  <p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 ({selectProduct})</p>
+                  <p style={{fontSize: 22, padding: 0, margin: 0}}>{selectType} LOT 리스트 ({selectProduct})</p>
                 </div>
               </div>
               <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
