@@ -105,7 +105,7 @@ const MesStockList = ({page, search, option}: IProps) => {
     const res = await RequestMethod('get', `stockList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
-        renderItem: 18,
+        renderItem: 20,
       },
     })
 
@@ -253,7 +253,7 @@ const MesStockList = ({page, search, option}: IProps) => {
       }
     })
 
-    setBasicRow([...tmpBasicRow])
+    setBasicRow([...basicRow, ...tmpBasicRow])
   }
 
   return (
