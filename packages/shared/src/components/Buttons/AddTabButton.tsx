@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";
@@ -6,6 +6,7 @@ import {add_summary_info, change_summary_info_index} from "../../reducer/infoMod
 import {RequestMethod, RootState} from '../../index'
 import moment from "moment";
 import lodash from 'lodash'
+import { ParseResponse } from '../../common/Util'
 
 interface IProps {
   row: any
@@ -19,13 +20,16 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   const [title, setTitle] = useState<string>(column.key === 'lot' ? "LOT 보기" : "BOM 보기")
   const selector = useSelector((state:RootState) => state.infoModal)
 
-  const loadMaterialLot = async (type) => {
+  useEffect(() => {
+    row.clicked && row.page !== 1 && loadMaterialLot(row.tab)
+  }, [row.page])
+  const loadMaterialLot = async (type:number, initPage?: number) => {
     let res
     switch(type){
       case 0:
         res = await RequestMethod('get', `lotRmSearch`, {
           path:{
-            page:1,
+            page:initPage? initPage: row.page,
             renderItem:15
           },
           params: {
@@ -41,43 +45,54 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
       case 1:
         res = await RequestMethod('get', `lotSmSearch`, {
           path:{
-            page:1,
+            page:initPage? initPage: row.page,
+            renderItem:15
           },
           params: {
             sm_id: row.sm_id,
-            // nz: true
+            // nz: false
           }
         })
         break;
       case 2:
         res = await RequestMethod('get', `cncRecordSearch`, {
           path:{
-            page:1,
-
+            page:initPage? initPage: row.page,
+            renderItem:15
           },
           params: {
             productIds: row.product.product_id,
-            nz: true
+            nz: false,
+            rangeNeeded:false
           }
         })
         break;
     }
-
     if(res){
+      const parsedRes = ParseResponse(res)
       onRowChange({
         ...row,
-        lotList: [...res.info_list]
+        page: res.page,
+        total: res.totalPages,
+        clicked: true,
+        lotList: initPage? [...parsedRes] : [ ...row.rowLotList,...parsedRes],
+        rowLotList: initPage? [...parsedRes] : [ ...row.rowLotList,...parsedRes]
       })
+      row.setLo
     }
   }
 
   const lotReadOnlyEvent = () => {
+    updateLotList()
+  }
+
+  const updateLotList = () => {
     let lots = []
     lots = row.bom?.map((bom) => bom.lot)
     onRowChange({
       ...row,
       lotList: [...lots.map((v, i) => {
-        let type, date, warehousing, elapsed
+        let type, date, warehousing, elapsed, current
         switch(v.type){
           case 0:
             type = 'child_lot_rm'
@@ -104,6 +119,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           date,
           elapsed,
           warehousing,
+          current: v.amount,
           seq: i+1,
         }
       })]
@@ -114,13 +130,12 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
     if(row.stock === 0){
       return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
     }
-    if(row.bom_info !== null){
-      onRowChange({
-        ...row,
-        lotList: [...row.bom_info]
-      })
-    }else {
-      loadMaterialLot(row.tab)
+    else if(row.action === 'modifyAndNoStock') {
+      updateLotList()
+    }
+    // if(row.bom_info !== null){
+    else {
+      loadMaterialLot(row.tab, 1)
     }
   }
 
@@ -151,7 +166,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           background:row.border ? "#19B9DF80" : "white",
           cursor: 'pointer',
         }} onClick={() => {
-
           if(column.key === 'lot'){
             if(column.type === 'readonly'){
               lotReadOnlyEvent()
