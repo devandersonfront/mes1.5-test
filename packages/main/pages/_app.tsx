@@ -31,16 +31,16 @@ import {composeWithDevTools} from 'redux-devtools-extension'
 const App = ({ Component, pageProps, store }: any) => {
   return (
     <React.Fragment>
-        {/*<MaterialUiThemeProvider theme={theme}>*/}
-        {/*  <StyledThemeProvider theme={theme}>*/}
-        <Head>
-          <title>MES</title>
-          <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-        </Head>
-            {/*<GlobalStyles />*/}
-            <Component {...pageProps} />
-          {/*</StyledThemeProvider>*/}
-        {/*</MaterialUiThemeProvider>*/}
+      <Head>
+        <title>MES</title>
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+      </Head>
+      <MaterialUiThemeProvider theme={theme}>
+        <StyledThemeProvider theme={theme}>
+          <GlobalStyles />
+          <Component {...pageProps} />
+        </StyledThemeProvider>
+      </MaterialUiThemeProvider>
     </React.Fragment>
   )
 }
