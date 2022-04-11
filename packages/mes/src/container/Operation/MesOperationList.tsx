@@ -421,9 +421,9 @@ const MesOperationList = ({page, search, option}: IProps) => {
 
             switch(e) {
               case 1:
-                if( 0 > selectList.size){
+                if(selectList.size === 0){
                   Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
-                }else if(selectList.size < 2){
+                }else if(selectList.size === 1){
                   dispatch(setModifyInitData({
                     modifyInfo: basicRow.map(v => {
                       if (selectList.has(v.id)) {
