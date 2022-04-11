@@ -416,6 +416,7 @@ const ApiList = {
   operationSearch: `/api/v1/sheet/search`,
   recordSearch: `/api/v1/record/search`,
   cncRecordSearch: `/cnc/api/v1/record/search`,
+  cncRecordAll: `/cnc/api/v1/record/all`,
   shipmentSearch: `/api/v1/shipment/search`,
   recordSumSearch: `/api/v1/record/summation/search`,
   submaterialSearch: `/api/v1/sub-material/search`,
