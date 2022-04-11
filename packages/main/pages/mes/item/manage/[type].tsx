@@ -152,6 +152,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
     return userInfo.ca_id.name === 'MASTER' ?? undefined
   }
 
+
   const listItem = async (code: string) => {
     const res =  await RequestMethod('get', 'itemList', {
       path: {

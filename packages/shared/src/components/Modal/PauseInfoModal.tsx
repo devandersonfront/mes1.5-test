@@ -14,6 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import moment from 'moment'
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
   column: IExcelHeaderType
@@ -150,28 +151,13 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
   }
 
-  const ModalContents = () => {
-    return <>
-      <div style={{
-        width: '100%'
-      }}>
-        <div style={{
-          fontSize: '15px',
-          margin: 0,
-          padding: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          color: '#0D0D0D',
-          background: row.border ? "#19B9DF80" : (column.type === 'default' || !column.modalType) ? '#353B48'  : "white",
-        }} onClick={() => {
+  const ModalContents = () => (
+        <UploadButton onClick={() => {
           setIsOpen(true)
-        }}>
-          <p style={{color: (column.type === 'default' || !column.modalType) ? 'white': '#0d0d0d', textDecoration: 'underline', margin: 0, padding: 0}}>{totalTime}</p>
-        </div>
-      </div>
-    </>
-  }
+        }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
+          <p>{totalTime}</p>
+        </UploadButton>
+      )
 
   const ModalButtons = () => {
     return <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
@@ -353,8 +339,11 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`

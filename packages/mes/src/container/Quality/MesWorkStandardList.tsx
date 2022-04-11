@@ -12,45 +12,51 @@ import {useRouter} from "next/router";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import Notiflix from "notiflix";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
     children?: any
     page?: number
-    keyword?: string
+    search?: string
     option?: number
 }
 
 
-const MesWorkStandardList = ({page, keyword, option}: IProps)=> {
+const MesWorkStandardList = ({search, option}: IProps)=> {
     const router = useRouter()
-
+    const dispatch = useDispatch()
     const [excelOpen, setExcelOpen] = useState<boolean>(false)
     const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["workStandardList"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionList, setOptionList] = useState<string[]>(['거래처', '모델', '코드', '품명'])
     const [optionIndex, setOptionIndex] = useState<number>(0)
-
+    const [keyword, setKeyword] = useState<string>("")
     const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
         page: 1,
         total: 1
     })
 
-
-
     useEffect(() => {
         setOptionIndex(option)
         if(keyword){
-            SearchBasic(keyword, option, page).then(() => {
+            SearchBasic(keyword, option, pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
             })
         }else{
-            LoadBasic(page).then(() => {
+            LoadBasic(pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
             })
         }
-    }, [page, keyword, option])
+    }, [pageInfo.page, keyword, option])
 
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"품질 관리",sub:router.pathname}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     const LoadBasic = async (page?: number) => {
         Notiflix.Loading.circle()
@@ -118,11 +124,13 @@ const MesWorkStandardList = ({page, keyword, option}: IProps)=> {
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
-                    if(keyword){
-                        router.push(`/mes/quality/work/standardlist?page=1&keyword=${keyword}&opt=${optionIndex}`)
-                    }else{
-                        router.push(`/mes/quality/work/standardlist?page=1&keyword=`)
-                    }
+                    setPageInfo({page:1,total:1})
+                    setKeyword(keyword)
+                    // if(keyword){
+                    //     router.push(`/mes/quality/work/standardlist?page=1&keyword=${keyword}&opt=${optionIndex}`)
+                    // }else{
+                    //     router.push(`/mes/quality/work/standardlist?page=1&keyword=`)
+                    // }
                 }}
                 searchOptionList={optionList}
                 onChangeSearchOption={(option) => {
@@ -151,11 +159,12 @@ const MesWorkStandardList = ({page, keyword, option}: IProps)=> {
                 currentPage={pageInfo.page}
                 totalPage={pageInfo.total}
                 setPage={(page) => {
-                    if(keyword){
-                        router.push(`/mes/quality/work/standardlist?page=${page}&keyword=${keyword}&opt=${option}`)
-                    }else{
-                        router.push(`/mes/quality/work/standardlist?page=${page}`)
-                    }
+                    setPageInfo({...pageInfo,page:page})
+                    // if(keyword){
+                    //     router.push(`/mes/quality/work/standardlist?page=${page}&keyword=${keyword}&opt=${option}`)
+                    // }else{
+                    //     router.push(`/mes/quality/work/standardlist?page=${page}`)
+                    // }
                 }}
             />
         </div>

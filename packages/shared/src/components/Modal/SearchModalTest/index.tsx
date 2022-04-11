@@ -18,6 +18,7 @@ import Notiflix from 'notiflix'
 import {SearchModalResult, SearchResultSort} from '../../../Functions/SearchResultSort'
 import {Select} from '@material-ui/core'
 import {TransferCodeToValue} from '../../../common/TransferFunction'
+import {SearchIcon} from "../../../styles/styledComponents";
 
 
 interface IProps {
@@ -180,19 +181,13 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }
 
+
   const addSearchButton = () => {
-  return <div style={{
-      display: 'flex',
-      backgroundColor: POINT_COLOR,
-      width: column.modalType ? 32 : 38,
-      height: column.modalType ? 30 : 38,
-      justifyContent: 'center',
-      alignItems: 'center'
-    }} onClick={() => {
+  return <SearchIcon  onClick={() => {
       setIsOpen(true)
-    }}>
+    }} modalType={column.modalType}>
       <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
-    </div>
+    </SearchIcon>
   }
 
   const ContentHeader = () => {
@@ -364,6 +359,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{
                     v.border = false;
+                    v.id = row.id
                   })
                   searchList[e].border = true
                   setSearchList([...searchList])
@@ -406,8 +402,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                       case "machine" :
                         return searchList[selectRow].name;
                       case "mold":
-                        return searchList[selectRow].name;
-                      case "tool":
                         return searchList[selectRow].name;
                       default:
                         return row.name;
@@ -479,7 +473,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                           ...row,
                           ...SearchModalResult(searchList[selectRow], column.toolType === 'register' ? 'toolRegister' : searchModalInit.excelColumnType, column.staticCalendar),
                           manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                          name: selectNameFunction(column.type),
+                          // name: selectNameFunction(column.type),
                           tab: tab,
                           // type_name: undefined,
                           version: row.version,
@@ -520,6 +514,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 const SearchModalWrapper = styled.div`
   display: flex;
   width: 100%;
+  align-items:center;
 `
 
 const FooterButton = styled.div`

@@ -17,6 +17,8 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {useDispatch} from "react-redux";
 
 export interface IProps {
   children?: any
@@ -38,7 +40,7 @@ const deviceList = [
 
 const BasicDevice = ({}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -72,6 +74,13 @@ const BasicDevice = ({}: IProps) => {
       })
     }
   }, [pageInfo.page, keyword, typesState])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"주변장치 기준정보",sub:""}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -172,7 +181,7 @@ const BasicDevice = ({}: IProps) => {
 
     let pass = true;
     basicRow.map((value)=>{
-      if(value.mfrCode === undefined || value.mfrCode === ""){
+      if(selectList.has(value.id) && value.mfrCode === undefined || value.mfrCode === ""){
         pass = false;
         return Notiflix.Report.failure("경고", "제조 번호를 입력해주세요.", "확인")
       }

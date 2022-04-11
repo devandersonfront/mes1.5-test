@@ -3,7 +3,7 @@ import {IExcelHeaderType} from '../../common/@types/type'
 //@ts-ignore
 import Icon_X from '../../../public/images/file_delete_button.png'
 import Notiflix from "notiflix";
-import {UploadButton} from '../../styles/styledComponents'
+import {DeleteImage, UploadButton} from '../../styles/styledComponents'
 import {uploadTempFile} from '../../common/fileFuctuons'
 import {RequestMethod} from "../../common/RequestFunctions";
 import ImageOpenModal from "../Modal/ImageOpenModal";
@@ -62,16 +62,14 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
             alignItems: 'center',
           }}>
               {!column.readonly &&
-                <img
+              <img
                   onClick={()=>{
                       onRowChange({
-                        ...row,
-                        // [column.key+'Path']: null,
-                        [column.key]: null,
-                        isChange:true
+                          ...row,
+                          [column.key+'Path']: null,
+                          [column.key]: null,
+                          isChange:true
                       })
-                      fileRef.current.value = "";
-
                   }}
                   src={Icon_X} style={{borderRadius:"4px", width:"24px", height:"24px", marginRight:"4px", marginLeft: '4px'}} />
               }
@@ -113,9 +111,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
 
               }}
             >
-              {/*{*/}
-              {/*  row[column.key]*/}
-              {/*}*/}
                 {column.type === "image" ? "이미지 보기" : "파일 다운로드" }
             </p>
           </div>

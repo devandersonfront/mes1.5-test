@@ -1,4 +1,4 @@
-import Cookies from 'react-cookies'
+import cookie from 'react-cookies'
 
 type localStorageKeyType = "userToken" | "userInfo"
 
@@ -24,6 +24,6 @@ export const removeLocalstorage = (key: localStorageKeyType[] | localStorageKeyT
       window.localStorage.removeItem(key)
     }
   }
-  Cookies.remove('userToken')
-  Cookies.remove('userInfo')
+  cookie.remove('userToken')
+  cookie.remove('userInfo')
 }

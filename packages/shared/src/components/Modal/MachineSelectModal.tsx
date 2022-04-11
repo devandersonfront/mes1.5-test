@@ -15,6 +15,7 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {MachineInfoModal} from './MachineInfoModal'
 import {TransferCodeToValue} from "../../common/TransferFunction";
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
   column: IExcelHeaderType
@@ -75,45 +76,6 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
         poor_quantity: row.poor_quantity ?? 0,
       })
     }
-    // let tmpMachines
-    // if(!row.machines || !row.machines.length){
-    //   tmpMachines = row.product?.machines.map((v, index) => {
-    //     return {
-    //       machine: {
-    //         sequence: index+1,
-    //         machine: {
-    //           ...v.machine
-    //         },
-    //         setting: v.spare === '여' ? 0 : 1
-    //       }
-    //     }
-    //   }) ?? []
-    //
-    //   onRowChange({
-    //     ...row,
-    //     name: row.name,
-    //     machines: tmpMachines,
-    //     isChange: true
-    //   })
-    // }else{
-    //   tmpMachines = row.machines.map(v => {
-    //     return {
-    //       ...v,
-    //       ...v.machine
-    //     }
-    //   })
-    // }
-    //
-    // if(isOpen) {
-    //   setSearchList([...tmpMachines.map((v, index) => {
-    //     return {
-    //       ...v.machine,
-    //       ...v.machine.machine,
-    //       sequence: index+1,
-    //       spare: v.setting === 0 ? '여' : '부',
-    //     }
-    //   })])
-    // }
   }, [isOpen])
 
   const LoadBasic = async (productId) => {
@@ -135,38 +97,16 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
     }
   }
 
-  const ModalContents = () => {
-    return <>
-      <div style={{
-        width: '100%'
-      }}>
-        <div style={{
-          fontSize: '15px',
-          margin: 0,
-          padding: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          color: '#0D0D0D',
-          background:row.border ? "#19B9DF80" : "white",
-        }} onClick={() => {
+  const ModalContents = () =>(
+        <UploadButton onClick={() => {
           setIsOpen(true)
-        }}>
-          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>기계 보기</p>
-        </div>
-      </div>
-    </>
-  }
-
+        }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
+          <p>기계 보기</p>
+        </UploadButton>
+  )
   const getSummaryInfo = (info) => {
     return summaryData[info.key] ?? '-'
   }
-
-  const ModalUpdate = (e:any) => {
-    onRowChange(e)
-    setIsOpen(false)
-  }
-
 
   return (
     <SearchModalWrapper >
@@ -336,8 +276,11 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const HeaderTable = styled.div`

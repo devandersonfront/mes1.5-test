@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react'
 import {
-    columnlist,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    RequestMethod,
-    TextEditor
+  columnlist,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  MAX_VALUE,
+  RequestMethod,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -17,6 +17,8 @@ import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {WorkModifyModal} from '../../../../shared/src/components/Modal/WorkModifyModal'
 import lodash from 'lodash'
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {useDispatch} from "react-redux";
 
 interface IProps {
   children?: any
@@ -28,7 +30,8 @@ interface IProps {
 let now = moment().format('YYYY-MM-DD')
 
 const MesRecordList = ({page, search, option}: IProps) => {
-
+  const router = useRouter()
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -48,11 +51,10 @@ const MesRecordList = ({page, search, option}: IProps) => {
   })
   const [order, setOrder] = useState<number>(0);
   const changeOrder = (value:number) => {
+    setPageInfo({page:1,total:1})
     setOrder(value);
   }
 
-  useEffect(()=>{
-  },[basicRow])
   useEffect(() => {
     if(keyword){
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -64,6 +66,13 @@ const MesRecordList = ({page, search, option}: IProps) => {
       })
     }
   }, [pageInfo.page, keyword, selectDate,order])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
+    return(() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -161,7 +170,6 @@ const MesRecordList = ({page, search, option}: IProps) => {
         page: (page || page !== 0) ? page : 1,
         renderItem: 22,
       },
-
       params:
           order == 0 ?
               {
@@ -176,7 +184,6 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 to: selectDate.to,
               }
     })
-
     if(res){
       setPageInfo({
         ...pageInfo,
@@ -190,7 +197,6 @@ const MesRecordList = ({page, search, option}: IProps) => {
   }
 
   const DeleteBasic = async () => {
-
     let res = await RequestMethod('delete', `cncRecordeDelete`, basicRow.map((row, i) => {
           if(selectList.has(row.id)){
             let selectKey: string[] = []
@@ -248,8 +254,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
             }
 
           }
-        }).filter((v) => v)
-    )
+        }).filter((v) => v))
 
     if(res) {
       Notiflix.Report.success('삭제 성공!', '', '확인', () => {
@@ -441,73 +446,82 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 break
               }
             }
-          }
-          // onClickHeaderButton
-        }
-      />
-      <ExcelTable
-        editable
-        // resizable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
 
-          let tmp: Set<any> = selectList
-          e.map(v => {
-            if(v.isChange) tmp.add(v.id)
-          })
-          setSelectList(tmp)
-          setBasicRow(e)
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-        scrollEnd={(value) => {
-          if(value){
-            if(pageInfo.total > pageInfo.page){
-              setSelectList(new Set)
-              setPageInfo({...pageInfo, page:pageInfo.page+1})
-            }
+            // switch (e) {
+            //   case 1: {
+            //     if (selectList.size === 1) {
+            //       setExcelOpen(true)
+            //     } else {
+            //       Notiflix.Report.warning("경고", "작업일보는 한 개씩만 수정 가능합니다.", "확인")
+            //     }
+            //   }
+            //     // onClickHeaderButton
+            // }
           }
-        }}
-      />
+        }
+        />
+        <ExcelTable
+            editable
+            // resizable
+            headerList={[
+              SelectColumn,
+              ...column
+            ]}
+            row={basicRow}
+            // setRow={setBasicRow}
+            setRow={(e) => {
+              let tmp: Set<any> = selectList
+              e.map(v => {
+                if(v.isChange) tmp.add(v.id)
+              })
+              setSelectList(tmp)
+              setBasicRow(e)
+            }}
+            selectList={selectList}
+            //@ts-ignore
+            setSelectList={setSelectList}
+            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+            scrollEnd={(value) => {
+              if(value){
+                if(pageInfo.total > pageInfo.page){
+                  setSelectList(new Set)
+                  setPageInfo({...pageInfo, page:pageInfo.page+1})
+                }
+              }
+            }}
+        />
+
       {
         excelOpen && <WorkModifyModal
-              row={[ ...basicRow.map(v => {
-                if (selectList.has(v.id)) {
-                  return {
-                    ...v,
-                    worker: v.user,
-                    worker_name: v.user.name,
-                    sum: v.poor_quantity + v.good_quantity,
-                    input_bom: v.operation_sheet.input_bom,
-                  }
-                }
-              }).filter(v => v) ]}
-              onRowChange={() => {
-                setTimeout(() => {
-                  if (keyword) {
-                    SearchBasic(keyword, option, page).then(() => {
-                      Notiflix.Loading.remove()
-                    })
-                  } else {
-                    LoadBasic(pageInfo.page).then(() => {
-                      Notiflix.Loading.remove();
-                      setSelectList(new Set())
-                    })
-                  }
-                }, 1000)
-              }
-              }
-              isOpen={excelOpen}
-              setIsOpen={setExcelOpen}/>
+        row={[ ...basicRow.map(v => {
+          if (selectList.has(v.id)) {
+            return {
+              ...v,
+              worker: v.user,
+              worker_name: v.user.name,
+              sum: v.poor_quantity + v.good_quantity,
+              input_bom: v.operation_sheet.input_bom,
+            }
+          }
+        }).filter(v => v) ]}
+        onRowChange={() => {
+          setOptionIndex(option)
+          if (keyword) {
+            // SearchBasic(keyword, option, page).then(() => {
+            //   Notiflix.Loading.remove()
+            // })
+          } else {
+            LoadBasic(page).then(() => {
+              Notiflix.Loading.remove();
+              setSelectList(new Set())
+            })
+          }
+        }
+        }
+        isOpen={excelOpen}
+        setIsOpen={setExcelOpen}/>
       }
-    </div>
+      </div>
   );
 }
 

@@ -86,34 +86,32 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
       }
 
       return Axios.post(postUrl, data, token && {'headers': {'Authorization': token}, responseType: contentsType})
-          .then((result) => {
+        .then((result) => {
+          Notiflix.Loading.remove(300)
+          if(result.data){
+            return result.data
+          }else{
+            return true
+          }
+        })
+        .catch((error) => {
+          Notiflix.Loading.remove(300)
+          if(error.response.status === 400) {
+            Notiflix.Report.failure('저장할 수 없습니다.', error?.response?.data?.message, '확인')
+          }else if(error.response.status === 500){
+            Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+          }else if(error.response.status === 404){
+            Notiflix.Report.failure('에러', error.response.data.message, '확인')
+          }else if(error.response.status === 422 || error.response.status === 409){
+            Notiflix.Report.warning('경고', error.response.data.message, '확인')
+          }else if (error.response?.status === 423){
+            console.log("error 423 : ", error)
             Notiflix.Loading.remove(300)
-            if(result.data){
-              return result.data
-            }else{
-              return true
-            }
-          })
-          .catch((error) => {
-            Notiflix.Loading.remove(300)
-            if(error.response.status === 400) {
-              console.log("error 400: ", error)
-              Notiflix.Report.failure('저장할 수 없습니다.', error?.response?.data?.message, '확인')
-            }else if(error.response.status === 500){
-              console.log("error 500 : ", error)
-              Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-            }else if (error.response?.status === 423){
-              console.log("error 423 : ", error)
-              Notiflix.Loading.remove(300)
-              Notiflix.Report.failure('버전 에러', '잠시 후 다시 시도해주세요.', '확인', () => window.location.reload())
-              return false
-            }else if(error.response.status === 404){
-              Notiflix.Report.failure('에러', error.response.data.message, '확인')
-            }else if(error.response.status === 422 || error.response.status === 409){
-              Notiflix.Report.warning('경고', error.response.data.message, '확인')
-            }
-            throw error.response
-          })
+            Notiflix.Report.failure('버전 에러', '잠시 후 다시 시도해주세요.', '확인', () => window.location.reload())
+            return false
+          }
+          throw error.response
+        })
     case 'put':
       return Axios.put(ENDPOINT+url, data,token && {'headers': {'Authorization': token}, responseType: contentsType})
           .then((result) => {
@@ -303,8 +301,8 @@ const ApiList = {
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/product/inspect/category/load/`,
-  inspecLoadMachine: `/api/v1/inspect/daily/machine/load`,
-  inspecLoadMold: `/api/v1/inspect/daily/mold/load`,
+  inspecLoadMachine: `/api/v1/inspec/daily/machine/load`,
+  inspecLoadMold: `/api/v1/inspec/daily/mold/load`,
   recordInspectFrame: `/cnc/api/v1/record/inspect/frame`,
   documentLoad: `/cnc/api/v1/document/load`,
   productChangeLoad: `/cnc/api/v1/product-changes/load`,

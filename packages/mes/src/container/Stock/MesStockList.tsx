@@ -15,6 +15,8 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "../../../../shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -25,7 +27,7 @@ interface IProps {
 
 const MesStockList = ({page, search, option}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["stockV2"])
@@ -49,6 +51,13 @@ const MesStockList = ({page, search, option}: IProps) => {
       })
     }
   }, [pageInfo.page, keyword, ])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"재고 관리",sub:router.pathname}))
+    return(() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {

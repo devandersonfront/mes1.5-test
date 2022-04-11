@@ -16,6 +16,8 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
     children?: any
@@ -26,7 +28,7 @@ export interface IProps {
 
 const BasicFactory = ({}: IProps) => {
     const router = useRouter()
-
+    const dispatch = useDispatch()
     const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
     const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -53,6 +55,12 @@ const BasicFactory = ({}: IProps) => {
         }
     }, [pageInfo.page, keyword])
 
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"공장 기준정보",sub:router.pathname}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {
@@ -108,8 +116,25 @@ const BasicFactory = ({}: IProps) => {
         })
     }
 
-    const SaveBasic = async () => {
+    const valueExistence = () => {
 
+        const selectedRows = filterSelectedRows()
+
+        if(selectedRows.length > 0){
+
+            const nameCheck = selectedRows.every((data)=> data.name)
+
+            if(!nameCheck){
+                return '공장명'
+            }
+
+        }
+
+        return false;
+
+    }
+
+    const SaveBasic = async () => {
 
         const existence = valueExistence()
 
@@ -146,7 +171,7 @@ const BasicFactory = ({}: IProps) => {
                         })
                         return {
                             ...row,
-                            id: row.tmpId,
+                            // id: row.tmpId,
                             authority: row.authorityPK,
                             manager: row.user,
                             version: row.version ?? null,
@@ -155,7 +180,7 @@ const BasicFactory = ({}: IProps) => {
                                     //if(!row[v.colName]) return undefined;
                                     // result.push(
                                     return {
-                                        mi_id: v.id,
+                                        // mi_id: v.id,
                                         title: v.name,
                                         value: row[v.colName] ?? "",
                                         unit: v.unit,
@@ -171,7 +196,6 @@ const BasicFactory = ({}: IProps) => {
                 }).filter((v) => v)).catch((error)=>{
                 return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
             })
-
 
             if(res){
                 Notiflix.Report.success('저장되었습니다.','','확인');
@@ -234,7 +258,7 @@ const BasicFactory = ({}: IProps) => {
     }
 
 
-    const DeleteBasic = async () => {
+    const   DeleteBasic = async () => {
 
         const map = convertDataToMap()
         const selectedRows = filterSelectedRows()
@@ -259,6 +283,7 @@ const BasicFactory = ({}: IProps) => {
             Notiflix.Report.success('삭제되었습니다.','','확인');
             setBasicRow(Array.from(map.values()))
             setSelectList(new Set())
+            setPageInfo({page: 1, total: 1})
         }
 
     }
@@ -480,24 +505,6 @@ const BasicFactory = ({}: IProps) => {
         }
     }
 
-    const valueExistence = () => {
-
-        const selectedRows = filterSelectedRows()
-
-        if(selectedRows.length > 0){
-
-            const nameCheck = selectedRows.every((data)=> data.name)
-
-            if(!nameCheck){
-                return '공장명'
-            }
-
-        }
-
-        return false;
-
-    }
-
     const competefactory = (rows) => {
 
         const tempRow = [...rows]
@@ -525,8 +532,8 @@ const BasicFactory = ({}: IProps) => {
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
-                    setKeyword(keyword)
                     setPageInfo({page:1,total:1})
+                    setKeyword(keyword)
                 }}
                 searchOptionList={optionList}
                 onChangeSearchOption={(option) => {

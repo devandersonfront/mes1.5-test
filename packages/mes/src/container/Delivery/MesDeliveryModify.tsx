@@ -15,7 +15,8 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
-import {useSelector} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -26,7 +27,7 @@ interface IProps {
 
 const MesDeliveryModify = ({page, keyword, option}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const selector = useSelector((state: RootState) => state.modifyInfo)
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     name: "", id: "", start_date: moment().format('YYYY-MM-DD'),
@@ -42,6 +43,13 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
       router.push('/mes/delivery/list')
     }
   }, [selector])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"영업 관리",sub:"/mes/delivery/list"}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const SaveBasic = async () => {
     let res: any

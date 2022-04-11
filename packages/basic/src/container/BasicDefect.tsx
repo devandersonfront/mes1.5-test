@@ -5,6 +5,8 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import ButtonGroup from '../../../main/component/ButtonGroup'
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "../../../shared/src/reducer/menuSelectState";
 
 export interface IProps {
   children?: any
@@ -33,12 +35,20 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<any>>(new Set());
 
   const router = useRouter()
+  const dispatch = useDispatch()
 
   useEffect(()=>{
     if(processBasicRow.length > 0){
       LoadDefectList(processBasicRow[selectRow].process_id);
     }
   },[selectRow])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"품질 기준정보",sub:router.pathname}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const cleanUpBasicData = (res:any) => {
     let tmpRow = [];
@@ -194,7 +204,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
       deletable = await RequestMethod('delete','defectDelete', haveIdRows)
 
     }
-    
+
     if(deletable){
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');

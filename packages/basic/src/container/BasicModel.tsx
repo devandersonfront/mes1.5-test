@@ -15,6 +15,8 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import styled from 'styled-components'
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
   children?: any
@@ -27,7 +29,7 @@ const title = '권한 관리'
 
 const BasicModel = ({}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false)
 
@@ -37,7 +39,7 @@ const BasicModel = ({}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처명','사업자 번호', '모델명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>();
+  const [keyword, setKeyword] = useState<string>()
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -50,11 +52,18 @@ const BasicModel = ({}: IProps) => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic((pageInfo.page)).then(() => {
+      LoadBasic(pageInfo.page).then(() => {
         Notiflix.Loading.remove()
       })
     }
   }, [pageInfo.page, keyword])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"거래처 관리",sub:router.pathname}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -148,11 +157,7 @@ const BasicModel = ({}: IProps) => {
         '확인',
         );
     }
-
-
-
     if(!existence){
-
     const searchAiID = (rowAdditional:any[], index:number) => {
       let result:number = undefined;
       rowAdditional.map((addi, i)=>{

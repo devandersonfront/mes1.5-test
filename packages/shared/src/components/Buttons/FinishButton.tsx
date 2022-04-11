@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 import {CellButton} from '../../styles/styledComponents'
-import {useRouter} from 'next/router'
 import Notiflix from 'notiflix'
 import {RequestMethod} from '../../common/RequestFunctions'
 
@@ -34,11 +33,13 @@ const FinishButton = ({ row, column, onRowChange}: IProps) => {
   }
 
   return (
-    <CellButton onClick={() => {
-      SaveBasic()
-    }}>
-      {title}
-    </CellButton>
+      <div style={{width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+        <CellButton onClick={() => {
+          SaveBasic()
+        }}>
+          {title}
+        </CellButton>
+      </div>
   );
 }
 

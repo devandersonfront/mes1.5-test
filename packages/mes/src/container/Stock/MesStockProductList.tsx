@@ -16,10 +16,12 @@ import {
 import {ScrollSyncPane} from 'react-scroll-sync'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "../../../../shared/src/reducer/menuSelectState";
 
 const MesStockProductList = ({page, keyword, option}) => {
   const router = useRouter();
-
+  const dispatch = useDispatch()
   const [rowData, setRowData] = useState<any[]>([]);
   const [dateData, setDateData] = useState<any[]>([]);
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist.stockProduct);
@@ -61,6 +63,13 @@ const MesStockProductList = ({page, keyword, option}) => {
     })
     // }
   }, [page, keyword, option, selectDate])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"재고 관리",sub:router.pathname}))
+    return(() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const changeSelectDate = (from:string, to:string) => {
     setSelectDate({from:from, to:to});
@@ -193,7 +202,7 @@ const MesStockProductList = ({page, keyword, option}) => {
         ...row,
         customer_name: row.product?.customer?.name ?? "-",
         customer_model:row.product?.model?.model ?? "-",
-        // model:row.product?.model?.model ?? "-",
+        model:row.product?.model?.model ?? "-",
         code:row.product?.code ?? "-",
         product_id:row.product?.code ?? "-",
         name: row.product?.name ?? "-",

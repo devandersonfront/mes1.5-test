@@ -18,6 +18,7 @@ import Notiflix from "notiflix"
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "shared";
 import {setToolDataAdd, ToolUploadInterface} from "shared/src/reducer/toolInfo";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
     children?: any
@@ -201,7 +202,7 @@ const MesToolList = ({page, search, option}: IProps) => {
                 ...row,
                 ...appendAdditional,
                 id: `tool_${random_id}`,
-                tool_id:row?.tool?.code,
+                tool_id: row?.tool_id,
                 elapsed: row?.elapsed  === 0 ? "0" : row?.elapsed,
                 name: row?.name,
                 unit:row?.unit,
@@ -295,6 +296,13 @@ const MesToolList = ({page, search, option}: IProps) => {
 
     },[pageInfo.page, selectDate, keyword])
 
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"공구 관리",sub:router.pathname}))
+        return(() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
+
     return (
         <div>
             <PageHeader
@@ -336,8 +344,8 @@ const MesToolList = ({page, search, option}: IProps) => {
                     //@ts-ignore
                     setSelectList(selectedRows)
                 }
-                
-                
+
+
                 }
             />
         </div>

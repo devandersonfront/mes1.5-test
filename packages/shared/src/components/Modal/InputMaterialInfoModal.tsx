@@ -24,6 +24,7 @@ import {
   reset_summary_info
 } from "../../reducer/infoModal";
 import Big from 'big.js'
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
   column: IExcelHeaderType
@@ -143,7 +144,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
     }else{
       inputBom = tmpRow
     }
-
     tmpData = inputBom.map((v, i) => {
       let childData: any = {}
       let type = "";
@@ -215,23 +215,16 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
     dispatch(delete_summary_info(index))
   }
 
-  const ModalContents = () => {
-    return <>
-      <div style={{
-        // padding: '3.5px 0px 0px 3.5px',
-        width: '100%'
-      }}>
-        <div onClick={() => {
+  const ModalContents = () => (
+        <UploadButton onClick={() => {
           setIsOpen(true)
           dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: 0, product_id:row.product.bom_root_id}))
-
           loadRecordGroup(row.product.bom_root_id, row.os_id);
-        }}>
-          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
-        </div>
-      </div>
-    </>
-  }
+        }} haveId hoverColor={"#19B9DF"}
+        >
+          <p>자재 보기</p>
+        </UploadButton>
+  )
 
   const getSummaryInfo = (info) => {
     return summaryData[info.key] ?? '-'
@@ -405,8 +398,11 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`

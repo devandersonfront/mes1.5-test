@@ -246,9 +246,11 @@ const DataGridTable = styled(DataGrid)`
     }
     .rdg-row > .rdg-cell{
         background:#353B48;
-        // &:hover{
-        //     background:red;
-        // }
+        &:hover{
+          // opacity:50%;
+          background-color: rgba(53,59,72,0.5);
+          // background-color: #353B48;
+        }
     }
     
     .rdg-row[aria-selected=true]{

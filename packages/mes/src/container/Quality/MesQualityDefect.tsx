@@ -8,6 +8,8 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import PeriodSelectCalendar from '../../../../main/component/Header/PeriodSelectCalendar'
 import ButtonGroup from '../../../../main/component/ButtonGroup'
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface SelectParameter {
   from:string
@@ -23,7 +25,7 @@ interface IProps {
 
 const MesQualityDefect = ({page, keyword, option}: IProps) => {
   const router = useRouter()
-
+  const dispatch = useDispatch()
   const changeHeaderStatus = (value:number) => {
     setHeaderStatus(value);
   }
@@ -69,6 +71,13 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
       })
     }
   }, [processBasicRow, selectDate, headerStatus])
+
+  useEffect(() => {
+    dispatch(setSelectMenuStateChange({main:"품질 관리",sub:router.pathname}))
+    return (() => {
+      dispatch(deleteSelectMenuState())
+    })
+  },[])
 
   const LoadPauseList = async (value:string) => {
     Notiflix.Loading.circle()

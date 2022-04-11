@@ -49,6 +49,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
             renderItem:15
           },
           params: {
+            // from: "2000-01-01",
+            // to:moment().format("YYYY-MM-DD"),
             sm_id: row.sm_id,
             // nz: false
           }
@@ -61,6 +63,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
             renderItem:15
           },
           params: {
+            from: "2000-01-01",
+            to:moment().format("YYYY-MM-DD"),
             productIds: row.product.product_id,
             nz: false,
             rangeNeeded:false

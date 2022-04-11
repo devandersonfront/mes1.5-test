@@ -19,13 +19,10 @@ const OnClickContainer = ({ row, column }: IProps) => {
 export {OnClickContainer};
 
 const ClickContainer = styled.div<any>`
-
     width: 100%;
     height: 100%;
-    box-shadow: ${props => props.clicked && 'inset 0 0 0 2px #66afe9'};
-
+    // box-shadow: ${props => props.clicked && 'inset 0 0 0 2px #66afe9'};
     & > p {
         margin : 0px
     }
-
 `

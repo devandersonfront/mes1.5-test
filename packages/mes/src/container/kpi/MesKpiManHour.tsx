@@ -16,6 +16,9 @@ import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
 import {DatetimePickerBox} from "shared/src/components/CalendarBox/DatetimePickerBox";
 import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
 import Notiflix from "notiflix";
+import {useRouter} from "next/router";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface SelectParameter {
     from:string
@@ -24,6 +27,8 @@ interface SelectParameter {
 
 
 const MesKpiManHour = () => {
+    const router = useRouter()
+    const dispatch = useDispatch()
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
     const [processBasicRow, setProcessBasicRow] = useState<any>({
         id: '', customer_id: ''
@@ -135,6 +140,12 @@ const MesKpiManHour = () => {
 
     },[pauseBasicRow])
 
+    React.useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"KPI",sub:router.pathname}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     return (
         <div>

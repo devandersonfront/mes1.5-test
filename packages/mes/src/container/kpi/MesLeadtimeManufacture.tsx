@@ -16,6 +16,9 @@ import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
 import {DatetimePickerBox} from "shared/src/components/CalendarBox/DatetimePickerBox";
 import Notiflix from "notiflix";
 import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
+import {useRouter} from "next/router";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 interface SelectParameter {
     from:string
@@ -24,6 +27,8 @@ interface SelectParameter {
 
 
 const MesLeadtimeManufacture = () => {
+    const router = useRouter()
+    const dispatch = useDispatch()
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
     const [processBasicRow, setProcessBasicRow] = useState<any>({id : '' });
     const changeHeaderStatus = (value:number) => {
@@ -98,7 +103,7 @@ const MesLeadtimeManufacture = () => {
 
     // Date 변화에 따른 API 요청
     React.useEffect(()=>{
-
+        console.log("processBasicRow : ", processBasicRow)
         if(processBasicRow.id){
             productLeadTimeListLoad(processBasicRow.id)
         }
@@ -125,6 +130,13 @@ const MesLeadtimeManufacture = () => {
 
 
     },[pauseBasicRow])
+
+    React.useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"KPI",sub:router.pathname}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     return (
         <div>

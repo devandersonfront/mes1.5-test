@@ -54,14 +54,12 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       // if(row.bom_root_id){
 
       if(column.type ==='bomRegister'){
-
         if(row.product_id){
           SearchBasic().then(() => {
             Notiflix.Loading.remove()
           })
         }
       }else{
-
         if(row.process_id || row.processId){
           SearchBasic().then(() => {
             Notiflix.Loading.remove()
@@ -189,7 +187,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 
     }else{
       res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
-
       let searchList = changeRow(res)
 
       dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
@@ -388,30 +385,23 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       </>
     }else{
       if(column.type === 'readonly' || row.bom_root_id){
-        return <>
-          <div style={{
-            // padding: '3.5px 0px 0px 3.5px',
-            width: '100%',
-          }}>
-            <div onClick={() => {
+        return(
+            <UploadButton  onClick={() => {
               if (row.bom_root_id) {
                 setIsOpen(true)
               } else {
                 Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
                 })
               }
+            }}
+              hoverColor={'#19B9DF'} haveId status={column.modalType ? "modal" : "table"}
+            >
+              <p>BOM 보기</p>
+            </UploadButton>
+          )
 
-            }}>
-              <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>BOM 보기</p>
-            </div>
-          </div>
-        </>
       }else{
-        return <>
-          <div style={{
-            padding: '3.5px 0px 0px 2.5px',
-            width: '100%',
-          }}>
+        return (
             <UploadButton
             onClick={() => {
               if(row.code){
@@ -422,8 +412,8 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
             }}>
                   <p>BOM 등록</p>
             </UploadButton>
-          </div>
-        </>
+        )
+
       }
     }
   }
@@ -673,7 +663,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
               </HeaderTableTitle>
               <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.code :row.code ?? "-"}</HeaderTableText>
+                <HeaderTableText>{headerData ? headerData.code ?? "-" :row.code ?? "-"}</HeaderTableText>
               </HeaderTableTextInput>
               <HeaderTableTitle>
                 <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
@@ -691,7 +681,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
               </HeaderTableTitle>
               <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.process?.name : row.processArray ? row.processArray.name : "-"}</HeaderTableText>
+                <HeaderTableText>{headerData ? headerData.process?.name ?? "-" : row.processArray ? row.processArray.name : "-"}</HeaderTableText>
               </HeaderTableTextInput>
             </HeaderTable>
             <HeaderTable>
@@ -807,8 +797,11 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`

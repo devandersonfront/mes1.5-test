@@ -31,16 +31,6 @@ interface PictureInterface {
     photo8?:PictureInfo
     photo9?:PictureInfo
 }
-//
-// export interface DailyInspection {
-//     from_id:string
-//     machine:any
-//     inspection_photo:PictureInterface
-//     legendary_list:object
-//     check_list:{sequence:number, title:string, standard:string, method:string, type:0 | 1}[]
-//     etc:{etc:string}[]
-//     version:number
-// }
 
 const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
     const router = useRouter()
@@ -103,7 +93,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
     }
     )
 
-
     const [modalSelectOption, setModalSelectOption] = useState<{ sequence?: number, legendary?: string, content?: string, }[]>([]);
 
     const [photoTitleList, setPhotoTitleList] = useState<PictureInterface[]>([])
@@ -160,36 +149,23 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
 
     const forBindingClean = (basic:any, photoList:PictureInterface[]) => {
         const result = {...basic}
-        // console.log("before photoList : ", photoList)
-        // delete photoList[0].machinePicture
-        // console.log("photoList[0] : ", photoList[0])
         result.inspection_photo = photoList[0]
         let legendary = {sequence:1, name:"", uuid:""}
         result.legendary_list.map((e) =>{
             legendary[e.legendary] = e.content
         })
-        // if(result.legendary_list && result.legendary_list.length > 0){
-        // }else{
-            // result.legendary_list = [legendary];
-        // }
-        // console.log("??? machine : ", result)
         return result;
     }
 
     const forSaveClean = (basic:any, photoList:PictureInterface[]) => {
         const result = {...basic}
         let inspection_photo = [];
-        // console.log("basic : ",basic)
-        // console.log("photoList : ",photoList)
         result.etc = result.etc[0].etc ?? ""
         Object.values(photoList[0]).map((photo, index) => {
             Object.keys(basicRow.inspection_photo).map((row, index) => {
                 if(row !== "machinePicture" && photo && photo.uuid !== "" && photo.sequence === basicRow.inspection_photo[row]?.sequence){
                     inspection_photo.push(photo);
                 }
-                // if(photo.sequence === basicRow.inspection_photo[row].sequence){
-                //     result.inspection_photo[row] = (photo)
-                // }
             })
         })
         basic.check_list.map((check) => {
@@ -273,7 +249,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                                     })
 
             resultData.etc = [{etc:resultData.etc}] ?? [{etc:""}]
-            // resultData.manager = resultData.machine?.manager?.name
             resultData.form_id = resultData.form_id ?? undefined
             resultData.legendary_list =  resultLegendaryList
             resultData.inspection_photo = inspectionPhotoList

@@ -7,17 +7,17 @@ import {NextPageContext} from "next";
 interface IProps {
     children?: any
     page?: number
-    keyword?: string
+    search?: string
     option?: number
 }
 
-const BasicContainer = ({page, keyword, option}: IProps) => {
+const BasicContainer = ({page, search, option}: IProps) => {
     return (
         <div style={{display: 'flex', }}>
             <MenuNavigation pageType={'MES'}/>
             <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
-                <MesWorkStandardList page={page} keyword={keyword} option={option}/>
+                <MesWorkStandardList page={page} search={search} option={option}/>
             </div>
         </div>
     );

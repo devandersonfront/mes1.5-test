@@ -180,17 +180,17 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
       case "month":
 
         return (
-          <MonthSelectCalendar calendarTitle={calendarTitle} selectDate={selectDate as string} setSelectDate={setSelectDate} onChangeSelectDate={onChangeSelectDate} setState={setState} dataLimit={dataLimit}/>
+            <MonthSelectCalendar calendarTitle={calendarTitle} selectDate={selectDate as string} setSelectDate={setSelectDate} onChangeSelectDate={onChangeSelectDate} setState={setState} dataLimit={dataLimit}/>
         )
 
       case "day":
         return (
-          <MonthSelectCalendar calendarTitle={calendarTitle} selectDate={selectDate as string} setSelectDate={setSelectDate} onChangeSelectDate={onChangeSelectDate} setState={setState} dataLimit={dataLimit}/>
+            <MonthSelectCalendar calendarTitle={calendarTitle} selectDate={selectDate as string} setSelectDate={setSelectDate} onChangeSelectDate={onChangeSelectDate} setState={setState} dataLimit={dataLimit}/>
         )
 
       case "period":
         return (
-          <PeriodSelectCalendar calendarTitle={calendarTitle} selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={dataLimit} />
+            <PeriodSelectCalendar calendarTitle={calendarTitle} selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={dataLimit} />
         )
 
       default:
@@ -207,119 +207,118 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
               title && <span style={{fontSize: 22, marginRight: 18, marginLeft: 3, fontWeight: 'bold', color: 'white', marginTop:20}}>{title}</span>
             }
             <ButtonWrapper style={{  marginTop: 20}}>
-              {
-                isCode && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
-                  <input id='codeTrue' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {
-                    onChangeCode && onChangeCode(true)
-                  }}/>
-                  <label htmlFor="codeTrue">
-                    <div style={{display:"flex", alignItems:"center",}}>
-                      {
-                        code
-                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
-                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
-                      }
+                {
+                  isCode && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
+                    <input id='codeTrue' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                      onChangeCode && onChangeCode(true)
+                    }}/>
+                    <label htmlFor="codeTrue">
+                      <div style={{display:"flex", alignItems:"center",}}>
+                        {
+                          code
+                              ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
+                              : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
+                        }
 
-                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>CODE로 등록</p>
-                    </div>
-                  </label>
-                  <input id='codeFalse' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {
-                    onChangeCode && onChangeCode(false)
-                  }}/>
-                  <label htmlFor="codeFalse">
-                    <div style={{display:"flex", alignItems:"center",}}>
-                      {
-                        !code
-                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
-                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
-                      }
+                        <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>CODE로 등록</p>
+                      </div>
+                    </label>
+                    <input id='codeFalse' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                      onChangeCode && onChangeCode(false)
+                    }}/>
+                    <label htmlFor="codeFalse">
+                      <div style={{display:"flex", alignItems:"center",}}>
+                        {
+                          !code
+                              ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
+                              : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
+                        }
 
-                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>수주번호로 등록</p>
-                    </div>
-                  </label>
-                </div>
-              }
-              {
-                isExp && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 30 }}>
-                  <input id='expTrue' name={'exp'} type={'radio'} style={{display: 'none'}} onClick={() => {
-                    onChangeExp && onChangeExp(true)
-                  }}/>
-                  <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12,marginRight: 15}}>사용 기준일</p>
-                  <label htmlFor="expTrue">
-                    <div style={{display:"flex", alignItems:"center",}}>
-                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>초과</p>
-                      {
-                        exp
-                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
-                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
-                      }
-                    </div>
-                  </label>
-                  <input id='expFalse' name={'exp'} type={'radio'} style={{display: 'none'}} onClick={() => {
-                    onChangeExp && onChangeExp(false)
-                  }}/>
-                  <label htmlFor="expFalse">
-                    <div style={{display:"flex", alignItems:"center",}}>
-                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>전체</p>
-                      {
-                        !exp
-                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
-                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
-                      }
-                    </div>
-                  </label>
-                </div>
-              }
-              {
-                isNz && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
+                        <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>수주번호로 등록</p>
+                      </div>
+                    </label>
+                  </div>
+                }
+                {
+                  isExp && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 30 }}>
+                    <input id='expTrue' name={'exp'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                      onChangeExp && onChangeExp(true)
+                    }}/>
+                    <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12,marginRight: 15}}>사용 기준일</p>
+                    <label htmlFor="expTrue">
+                      <div style={{display:"flex", alignItems:"center",}}>
+                        <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>초과</p>
+                        {
+                          exp
+                              ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
+                              : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
+                        }
+                      </div>
+                    </label>
+                    <input id='expFalse' name={'exp'} type={'radio'} style={{display: 'none'}} onClick={() => {
+                      onChangeExp && onChangeExp(false)
+                    }}/>
+                    <label htmlFor="expFalse">
+                      <div style={{display:"flex", alignItems:"center",}}>
+                        <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>전체</p>
+                        {
+                          !exp
+                              ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
+                              : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
+                        }
+                      </div>
+                    </label>
+                  </div>
+                }
+                {
+                  isNz && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
                     <input id='nzTrue' name={'nz'} type={'radio'} style={{display: 'none'}} onClick={() => {
                       onChangeNz && onChangeNz(true)
                     }}/>
                     <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12,marginRight: 15}}>사용 완료</p>
                     <label htmlFor="nzTrue">
-                        <div style={{display:"flex", alignItems:"center",}}>
-                          <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>숨김</p>
-                          {
-                            nz
+                      <div style={{display:"flex", alignItems:"center",}}>
+                        <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>숨김</p>
+                        {
+                          nz
                               ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
                               : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
-                          }
-
-                        </div>
+                        }
+                      </div>
                     </label>
                     <input id='nzFalse' name={'nz'} type={'radio'} style={{display: 'none'}} onClick={() => {
                       onChangeNz && onChangeNz(false)
                     }}/>
-                  <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>표시</p>
+                    <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>표시</p>
                     <label htmlFor="nzFalse">
-                        <div style={{display:"flex", alignItems:"center",}}>
-                          {
-                            !nz
+                      <div style={{display:"flex", alignItems:"center",}}>
+                        {
+                          !nz
                               ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
                               : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
-                          }
-                        </div>
+                        }
+                      </div>
                     </label>
-                </div>
-              }
-              {
-                isCalendar &&
-                selectCalendarType(calendarType)
-              }
+                  </div>
+                }
+                {
+                  isCalendar &&
+                  selectCalendarType(calendarType)
+                }
 
-              {
-                typeList && typeList.map((buttonTitle, buttonIndex) => {
-                  return <HeaderButton
-                    style={{backgroundColor: basicMachineType === buttonTitle ? POINT_COLOR : '#717C90'}}
-                    onClick={() => typeListOnClick && typeListOnClick(buttonTitle)}
-                    key={`btn${buttonIndex}`}>
-                    {buttonTitle}
-                  </HeaderButton>
-                })
-              }
-              {
-                isMachine &&
-                <div style={{display:"flex", alignItems:"center", borderRadius: 6, }}>
+                {
+                  typeList && typeList.map((buttonTitle, buttonIndex) => {
+                    return <HeaderButton
+                        style={{backgroundColor: basicMachineType === buttonTitle ? POINT_COLOR : '#717C90'}}
+                        onClick={() => typeListOnClick && typeListOnClick(buttonTitle)}
+                        key={`btn${buttonIndex}`}>
+                      {buttonTitle}
+                    </HeaderButton>
+                  })
+                }
+                {
+                  isMachine &&
+                  <div style={{display:"flex", alignItems:"center", borderRadius: 6, }}>
                     <input id='mes' name={'machineType'} type={'radio'} style={{display: 'none'}} onClick={() => {
                       setMachineCheck({
                         ...machineCheck,
@@ -329,15 +328,15 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
                       setTab('ROLE_BASE_04')
                     }}/>
                     <label htmlFor="mes">
-                        <div style={{display:"flex", alignItems:"center",}}>
-                          {
-                            machineCheck.all
+                      <div style={{display:"flex", alignItems:"center",}}>
+                        {
+                          machineCheck.all
                               ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
                               : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
-                          }
+                        }
 
-                            <p style={{margin: 0, padding: 0, color: 'white'}}>MES</p>
-                        </div>
+                        <p style={{margin: 0, padding: 0, color: 'white'}}>MES</p>
+                      </div>
                     </label>
                     <input id='pms' name={'machineType'} type={'radio'} style={{display: 'none'}} onClick={() => {
                       setMachineCheck({
@@ -348,29 +347,29 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
                       setTab('ROLE_BASE_04-1')
                     }}/>
                     <label htmlFor="pms">
-                        <div style={{display:"flex", alignItems:"center",}}>
-                          {
-                            machineCheck.pms
+                      <div style={{display:"flex", alignItems:"center",}}>
+                        {
+                          machineCheck.pms
                               ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
                               : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
-                          }
+                        }
 
-                            <p style={{margin: 0, padding: 0, color: 'white'}}>PMS</p>
-                        </div>
+                        <p style={{margin: 0, padding: 0, color: 'white'}}>PMS</p>
+                      </div>
                     </label>
-                </div>
-              }
-              {
-                isSearch &&
+                  </div>
+                }
+                {
+                  isSearch &&
 
-                <div style={{display:"flex",width:searchOptionList? "448px" : "280px", alignItems:"center", borderRadius: 6, backgroundColor: 'white', marginLeft: 16}}>
+                  <div style={{display:"flex",width:searchOptionList? "448px" : "280px", alignItems:"center", borderRadius: 6, backgroundColor: 'white', marginLeft: 16}}>
 
-                  {
-                    searchOptionList &&
-                    <div style={{
-                      width: 160, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                      backgroundColor: POINT_COLOR, borderRadius: 6,
-                    }}>
+                    {
+                      searchOptionList &&
+                      <div style={{
+                        width: 160, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                        backgroundColor: POINT_COLOR, borderRadius: 6,
+                      }}>
                         <select
                             defaultValue={optionIndex}
                             onChange={(e) => {
@@ -392,8 +391,8 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
                             })
                           }
                         </select>
-                    </div>
-                  }
+                      </div>
+                    }
                     <input
                         value={keyword ?? ""}
                         type={"text"}
@@ -410,50 +409,50 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
                         style={{background:"#19b9df", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center",borderRadius:"6px"}}
                         onClick={() => {onChangeSearchKeyword && onChangeSearchKeyword(keyword ?? "")}}
                     >
-                        <img src={Search_icon} style={{width:"16.3px",height:"16.3px"}} />
+                      <img src={Search_icon} style={{width:"16.3px",height:"16.3px"}} />
                     </div>
-                </div>
-              }
-              {
-                filterList && <MuiThemeProvider theme={lightTheme}>
+                  </div>
+                }
+                {
+                  filterList && <MuiThemeProvider theme={lightTheme}>
                     <FormControl variant="outlined" style={{
                       borderRadius:"6px", width:112, marginLeft: 16
                     }} classes={{
                       root: classes2.quantityRoot,
                     }}>
-                        <div>
-                            <Select
-                                classes={{
-                                  icon: classes2.icon
-                                }}
-                                native
-                                defaultValue={filterList[0]}
-                                onChange={(e) => onChangeFilter && onChangeFilter(e.target.value)}
-                                style={{color: 'black'}}
-                            >
-                              {
-                                filterList.map((v, i) => {
-                                  return <option value={v.value}>{v.title}</option>
-                                })
-                              }
-                            </Select>
-                        </div>
+                      <div>
+                        <Select
+                            classes={{
+                              icon: classes2.icon
+                            }}
+                            native
+                            defaultValue={filterList[0]}
+                            onChange={(e) => onChangeFilter && onChangeFilter(e.target.value)}
+                            style={{color: 'black'}}
+                        >
+                          {
+                            filterList.map((v, i) => {
+                              return <option value={v.value}>{v.title}</option>
+                            })
+                          }
+                        </Select>
+                      </div>
                     </FormControl>
-                </MuiThemeProvider>
-              }
+                  </MuiThemeProvider>
+                }
 
-              {
-                buttons && buttons.map((buttonTitle, buttonIndex) => {
-                  if(buttonTitle){
-                    return <HeaderButton onClick={() => buttonsOnclick && buttonsOnclick(buttonIndex)} key={`btn${buttonIndex}`}>{buttonTitle}</HeaderButton>
-                  }
-                })
-              }
-            </ButtonWrapper>
+                {
+                  buttons && buttons.map((buttonTitle, buttonIndex) => {
+                    if(buttonTitle){
+                      return <HeaderButton onClick={() => buttonsOnclick && buttonsOnclick(buttonIndex)} key={`btn${buttonIndex}`}>{buttonTitle}</HeaderButton>
+                    }
+                  })
+                }
+              </ButtonWrapper>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   )
 }
 

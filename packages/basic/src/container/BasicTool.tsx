@@ -14,6 +14,8 @@ import {useRouter} from "next/router";
 //@ts-ignore
 import Notiflix from "notiflix";
 import moment from "moment";
+import {useDispatch} from "react-redux";
+import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
     children?: any
@@ -24,6 +26,7 @@ export interface IProps {
 
 const BasicTool = ({page, search, option}: IProps) => {
     const router = useRouter();
+    const dispatch = useDispatch()
     const [column, setColumn] = useState<any>(columnlist.toolRegister)
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:1});
@@ -140,9 +143,9 @@ const BasicTool = ({page, search, option}: IProps) => {
                 ...row,
                 ...appendAdditional,
                 id: `tool_${random_id}`,
-                products:[...row.products.map((product,index)=>{
-                    return ({...product, average:Number(toolAverageArray[index])})
-                })],
+                // products:[...row.products.map((product,index)=>{
+                //     return ({...product, average:Number(toolAverageArray[index])})
+                // })],
             }
         })
         setSelectList(new Set)
@@ -218,23 +221,23 @@ const BasicTool = ({page, search, option}: IProps) => {
 
         if(res){
             const productIdArrayList = [];
-            res.info_list.map((row)=>{
-                const productList = [];
-                row?.products?.map((product) => {
-                    // productList.push(product.product_id)
-                    RequestMethod("get", "toolAverage", {
-                        path:{
-                            product_id: product.product_id,
-                            tool_id: row.tool_id
-                        }
-                    })
-                        .then((res) => {
-                            productList.push(res)
-                        })
-                })
-                productIdArrayList.push(productList);
-            })
-            cleanUpData(res, productIdArrayList);
+            // res.info_list.map((row)=>{
+            //     const productList = [];
+            //     row?.products?.map((product) => {
+            //         // productList.push(product.product_id)
+            //         RequestMethod("get", "toolAverage", {
+            //             path:{
+            //                 product_id: product.product_id,
+            //                 tool_id: row.tool_id
+            //             }
+            //         })
+            //             .then((res) => {
+            //                 productList.push(res)
+            //             })
+            //     })
+            //     productIdArrayList.push(productList);
+            // })
+            cleanUpData(res);
             setPageInfo({...pageInfo, total:res.totalPages});
         }
     }
@@ -492,6 +495,13 @@ const BasicTool = ({page, search, option}: IProps) => {
             LoadBasic();
         }
     }, [pageInfo.page,keyword])
+
+    useEffect(() => {
+        dispatch(setSelectMenuStateChange({main:"공구 기준정보",sub:""}))
+        return (() => {
+            dispatch(deleteSelectMenuState())
+        })
+    },[])
 
     return (
         <div>

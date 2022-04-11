@@ -18,6 +18,7 @@ import moment from "moment"
 import lodash from 'lodash'
 import Big from 'big.js'
 import { getBomObject, getUsageType, ParseResponse } from '../../common/Util'
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
   column: IExcelHeaderType
@@ -174,28 +175,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     return summaryData[info.key] ?? '-'
   }
 
-  const ModalContents = () => {
-    return <>
-      <div style={{
-        width: '100%'
-      }}>
-        <div style={{
-          fontSize: '15px',
-          margin: 0,
-          padding: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          color: '#0D0D0D',
-          background:row.border ? "#19B9DF80" : "white",
-        }} onClick={() => {
+  const ModalContents = () => (
+        <UploadButton onClick={() => {
           setIsOpen(true)
-        }}>
-          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
-        </div>
-      </div>
-    </>
-  }
+        }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
+          <p>자재 보기</p>
+        </UploadButton>
+    )
 
   const onCancelEvent = () => {
     setLotList([])
@@ -310,7 +296,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                               warehousing: lot.warehousing ?? lot.good_quantity,
                               // amount: lot.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
                               amount: lotAmount,
-                              current: isModify ? lot.current + new Big(input.usage).times(lotAmount).toNumber(): Number(lot.current),
+                              current: isModify ? new Big(input.usage).times(lotAmount).plus(lot.current).toNumber(): Number(lot.current),
                               seq: lotIdx + 1,
                               isComplete: lot.is_complete ? '사용완료' : '-'
                             }
@@ -320,12 +306,11 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                               date: lot.date ?? moment(lot.end).format("YYYY-MM-DD"),
                               warehousing: lot.warehousing ?? lot.good_quantity,
                               amount: lotAmount,
-                              current: isModify ? lot.current + new Big(input.usage).times(lotAmount).toNumber(): lot.current,
+                              current: isModify ? new Big(input.usage).times(lotAmount).plus(lot.current).toNumber(): lot.current,
                               // amount: v.lot_number === e[0].lotList[i].lot_number ? e[0][lotList[i]].amount : "0",
                               // amount: v.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
                               seq: lotIdx + 1,
                               isComplete: lot.is_complete ? '사용완료' : '-'
-
                             }
                         })])
                       }
@@ -511,7 +496,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
                       const disturbanceArray = searchList.map((v)=>v.disturbance)
                       const allEqual = arr => arr.every( v => v === arr[0] )
-
                       if(disturbance === 0){
                         if(disturbanceArray.every((value) => value === 0)){
                           Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
@@ -555,8 +539,11 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 }
 
 const SearchModalWrapper = styled.div`
-  display: flex;
   width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
 `
 
 const Button = styled.button`
