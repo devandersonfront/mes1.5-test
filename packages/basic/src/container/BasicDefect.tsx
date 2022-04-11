@@ -17,13 +17,13 @@ export interface IProps {
 const BasicDefect = ({page, keyword, option}: IProps) => {
 
   const [processBasicRow, setProcessBasicRow] = useState<any[]>([]);
-  const [processColumn, setProcessColumn] = useState<Array<IExcelHeaderType>>(columnlist[`pause`] );
+  const [processColumn, setProcessColumn] = useState<Array<IExcelHeaderType>>(columnlist['pause']);
 
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
 
 
-  const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
-  const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`defectReason`]);
+  const [defectBasicRow, setDefectBasicRow] = useState<any[]>([]);
+  const [defectColumn, setDefectColumn] = useState<Array<IExcelHeaderType>>(columnlist['defectReason']);
   const [selectRow, setSelectRow] = useState<any>(0);
 
   const [processId, setProcessId] = useState<number>(0);
@@ -36,7 +36,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
 
   useEffect(()=>{
     if(processBasicRow.length > 0){
-      LoadPauseList(processBasicRow[selectRow].process_id);
+      LoadDefectList(processBasicRow[selectRow].process_id);
     }
   },[selectRow])
 
@@ -59,9 +59,9 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         ...menuData
       }
     })
-    setPauseBasicRow([...tmpRow]);
+    setDefectBasicRow([...tmpRow]);
   }
-  const LoadPauseList = async (value:string) => {
+  const LoadDefectList = async (value:string) => {
     const res = await RequestMethod("get", `defectReasonList`,{
       path: {
         page:1,
@@ -75,7 +75,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
       tmpColumn = tmpColumn.map((value:any,index:number) => {
         return {...value, key:value.key, name:value.name, width:value.width}
       })
-      setPauseColumn(tmpColumn);
+      setDefectColumn(tmpColumn);
       // tmpColumn.push({key:})
       let tmpRow = [];
       tmpRow = res.info_list.map((column: any,index:number) => {
@@ -95,7 +95,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
           ...menuData
         }
       })
-      setPauseBasicRow([...tmpRow]);
+      setDefectBasicRow([...tmpRow]);
       Notiflix.Loading.remove(300);
     }else{
       Notiflix.Loading.remove(300);
@@ -138,7 +138,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
       })
       tmpRow = res.info_list
       if(res.info_list.length > 0){
-        LoadPauseList(res.info_list[selectRow].process_id);
+        LoadDefectList(res.info_list[selectRow].process_id);
       }else{
         Notiflix.Loading.remove(300);
       }
@@ -153,20 +153,20 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
 
   const downloadExcel = () => {
     let tmpSelectList: boolean[] = []
-    pauseBasicRow.map(row => {
+    defectBasicRow.map(row => {
       tmpSelectList.push(selectList.has(row.id))
     })
-    excelDownload(pauseColumn, pauseBasicRow, `공정별 불량유형 등록`, '공정별 불량유형 등록', tmpSelectList)
+    excelDownload(defectColumn, defectBasicRow, `공정별 불량유형 등록`, '공정별 불량유형 등록', tmpSelectList)
   }
 
   const convertDataToMap = () => {
     const map = new Map()
-    pauseBasicRow.map((v)=>map.set(v.id , v))
+    defectBasicRow.map((v)=>map.set(v.id , v))
     return map
   }
 
   const filterSelectedRows = () => {
-    return pauseBasicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
+    return defectBasicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
   }
 
   const classfyNormalAndHave = (selectedRows) => {
@@ -198,12 +198,22 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
     if(deletable){
       selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');
-      setPauseBasicRow(Array.from(map.values()))
+      setDefectBasicRow(Array.from(map.values()))
       setSelectList(new Set())
     }
   }
-
-
+  
+  const validateSaveRequestBody = () => {
+    const filtered = defectBasicRow.filter(value => value.reason !== "" && value.reason !== undefined)
+    const reasons = filtered.map(defectReason => defectReason.reason)
+    if(filtered.length === 0) {
+      Notiflix.Report.warning("저장할 데이터가 없습니다", "", "확인");
+    }else if(reasons.length != new Set(reasons).size){
+      Notiflix.Report.warning("불량 유형은 중복될 수 없습니다.","","확인");
+    }
+    return filtered
+  }
+  
   const buttonEvents = async(index:number) => {
     switch (index) {
       case 0 :
@@ -217,7 +227,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
 
         columnlist[`defectReason`].map((key:any,index:number)=>{
           if(key.key === "index"){
-            dataRow[key.key] = pauseBasicRow.length+1;
+            dataRow[key.key] = defectBasicRow.length+1;
             dataRow.id = Math.random()*100;
           }else{
             dataRow[key.key] = "";
@@ -225,37 +235,30 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         })
 
         if(processId !== 0){
-          pauseBasicRow.push({...dataRow})
-          setPauseBasicRow([...pauseBasicRow])
+          defectBasicRow.push({...dataRow})
+          setDefectBasicRow([...defectBasicRow])
         }else{
           Notiflix.Report.warning("선택된 공정이 없습니다.","","확인");
         }
-        // pauseBasicRow.push({...dataRow})
-        // setPauseBasicRow([...pauseBasicRow])
+        // defectBasicRow.push({...dataRow})
+        // setDefectBasicRow([...defectBasicRow])
         return
       case 3 :
         // let validation = true;
-
         Notiflix.Loading.standard();
-        let savePauseBasicRow:any[] = [];
-        pauseBasicRow.map((value, i)=>{
-          if(value.reason === "" || value.reason === undefined){
-            // validation = false;
-          }else{
-            savePauseBasicRow.push({...value, process_id:processBasicRow[selectRow].process_id, seq:i+1});
-          }
-        })
-        if(pauseBasicRow.length > 0 ){
-          RequestMethod("post", `defectSave`, savePauseBasicRow
+        let saveDefectBasicRow:any[] = [];
+        validateSaveRequestBody()
+          .map((value,i)=>{
+            saveDefectBasicRow.push({...value, process_id:processBasicRow[selectRow].process_id, seq:i+1});
+          })
+        if(defectBasicRow.length > 0 ){
+          RequestMethod("post", `defectSave`, saveDefectBasicRow
         ).then(()=>{
             Notiflix.Loading.remove(300);
             Notiflix.Report.success("저장되었습니다.","","확인");
-            LoadPauseList(processBasicRow[selectRow].process_id);
+            LoadDefectList(processBasicRow[selectRow].process_id);
 
           })
-        }else{
-          Notiflix.Loading.remove(300);
-          Notiflix.Report.warning("저장할 데이터가 없습니다", "", "확인");
         }
         return
 
@@ -274,31 +277,31 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
             const idList = [];
             // const spliceArray:number[] = [];
 
-            pauseBasicRow.map((v,i)=> {
+            defectBasicRow.map((v,i)=> {
               if(selectList.has(v.id)){
                 // spliceArray.push(i);
                 idList.push(v)
               }
             })
 
-            const tmpPauseBasicRow = [...pauseBasicRow];
+            const tmpDefectBasicRow = [...defectBasicRow];
             // spliceArray.reverse();
             // spliceArray.map((value, index)=>{
-            //   tmpPauseBasicRow.splice(value, 1);
+            //   tmpDefectBasicRow.splice(value, 1);
             // })
 
             const res = await RequestMethod("delete", `defectDelete`, idList );
 
             if(res){
               Notiflix.Report.success("삭제되었습니다.","","확인", () => {
-                sortObject(tmpPauseBasicRow);
-                LoadPauseList(processBasicRow[selectRow].process_id);
+                sortObject(tmpDefectBasicRow);
+                LoadDefectList(processBasicRow[selectRow].process_id);
               });
             }
           },
           ()=>{
               const idList = [];
-            pauseBasicRow.map((v,i)=> {
+            defectBasicRow.map((v,i)=> {
               if(selectList.has(v.id)){
                 // spliceArray.push(i);
                 idList.push(v)
@@ -332,7 +335,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
     let sortData = object.map((v:object, index:number)=>{
       return {...v, index:index+1, lengthIndex:index+1}
     });
-    setPauseBasicRow([...sortData]);
+    setDefectBasicRow([...sortData]);
 
   }
 
@@ -343,10 +346,10 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
 
   useEffect(()=>{
     if(state){
-      sortObject(pauseBasicRow);
+      sortObject(defectBasicRow);
       setState(false);
     }
-  },[pauseBasicRow])
+  },[defectBasicRow])
 
 
   return (
@@ -383,9 +386,9 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         editable
         headerList={[
           SelectColumn,
-          ...pauseColumn
+          ...defectColumn
         ]}
-        row={pauseBasicRow}
+        row={defectBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
           e.map(v => {
@@ -393,7 +396,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
           })
           setSelectList(tmp)
           setState(true)
-          setPauseBasicRow(e)
+          setDefectBasicRow(e)
         }}
         width={1570}
         height={440}
