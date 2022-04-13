@@ -8,7 +8,7 @@
 import React from 'react';
 import Head from 'next/head';
 // MUI Core
-import {ThemeProvider as MaterialUiThemeProvider} from '@mui/styles';
+import {ThemeProvider as MaterialUiThemeProvider} from '@material-ui/styles';
 import {ThemeProvider as StyledThemeProvider} from 'styled-components';
 // Utils
 import {theme} from '../common/theme';

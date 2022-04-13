@@ -140,7 +140,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
   }
 
 }
-
+//@ts-ignore
 const DataGridTable = styled(DataGrid)`
   ::-webkit-scrollbar{
     display:block;

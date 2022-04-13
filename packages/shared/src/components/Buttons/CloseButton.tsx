@@ -1,4 +1,5 @@
 import React from 'react'
+//@ts-ignore
 import IcX from '../../../public/images/ic_x.png'
 
 interface IProps {
