@@ -127,3 +127,87 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
     return value
   }
 }
+
+export const TransferValueToCode = (value: string, type:TransferType) => {
+  let code = 0;
+  switch (type) {
+    case "productType": {
+      PRODUCT_TYPE.map(v => {
+        if(v.value === value){
+          code = v.code;
+        }
+      })
+      break;
+    }
+    case "product": {
+      PRODUCT_TYPE.map(v => {
+        if(v.value === value){
+          code = v.code;
+        }
+      })
+      break;
+    }
+    case 'material': {
+      MATERIAL_CODE.map(v => {
+        if(v.value === value){
+          code = v.code;
+        }
+      })
+      break;
+    }
+    case 'rawmaterial': {
+      value = "원자재"
+      // RAW_MATERIAL_TYPE_CODE.map(v => {
+      //   if(v.code === code){
+      //     value = v.value;
+      //   }
+      // })
+      break;
+    }
+    case 'rawMaterialType': {
+      RAW_MATERIAL_TYPE_CODE.map(v => {
+        if(v.value === value){
+          code = v.code;
+        }
+      })
+      break;
+    }
+    case "submaterial" :{
+      value = "부자재"
+      break;
+    }
+    case 'workStatus': {
+      WORK_STATUS.map(v => {
+        if(v.value === value){
+          code = v.code;
+        }
+      })
+      break
+    }
+    case 'machine': {
+      MACHINE_TYPE.map(v => {
+        if(v.value === value){
+          code = v.code;
+        }
+      })
+      break
+    }
+    case 'welding': {
+      WELDING_TYPE.map(v => {
+        if(v.value === value){
+          code = v.code;
+        }
+      })
+      break
+    }
+    case null : {
+      return "-"
+    }
+  }
+
+  if(value === ""){
+    return value
+  }else{
+    return code
+  }
+}

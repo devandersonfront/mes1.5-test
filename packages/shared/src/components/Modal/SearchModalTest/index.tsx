@@ -47,9 +47,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     total: 1
   })
 
-  // const [page, setPage] = useState<number>(1);
-  // const [totalPage, setTotalPage] = useState<number>(0);
-
   useEffect(() => {
     if(column.type){
       if(column.type === "bom"){
@@ -184,8 +181,131 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
   }
 
+
+  const addSearchButton = () => {
+  return <SearchIcon  onClick={() => {
+      setIsOpen(true)
+    }} modalType={column.modalType}>
+      <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
+    </SearchIcon>
+  }
+
+  const ContentHeader = () => {
+  return <div id={'content-header'} style={{
+    marginTop: 24,
+    marginLeft: 16,
+    marginRight: 16,
+    marginBottom: 12,
+    display: 'flex',
+    justifyContent: 'space-between'
+    }}>
+    <div id={'content-title'} style={{display: 'flex'}}>
+      <p style={{
+        color: 'black',
+        fontSize: 22,
+        fontWeight: 'bold',
+        margin: 0,
+      }}>{searchModalInit && searchModalInit.title}</p>
+      {
+        column.type === 'bom' && <div style={{marginLeft: 20}}>
+            <Select value={tab} onChange={(e) => {
+              setTab(Number(e.target.value))
+            }}>
+              <option key={'0'} value={0}>원자재</option>
+              <option key={'1'} value={1}>부자재</option>
+              <option key={'2'} value={2}>제품</option>
+            </Select>
+          </div>
+      }
+    </div>
+    <div id={'content-close-button'} style={{display: 'flex'}}>
+      {
+        column.type === 'mold' && <MoldRegisterModal column={column} row={row} onRowChange={onRowChange} register={() => {
+          LoadBasic();
+        }}/>
+      }
+      <div style={{cursor: 'pointer', marginLeft: 22}} onClick={() => {
+        setIsOpen(false)
+      }}>
+        <img style={{width: 20, height: 20}} src={IcX}/>
+      </div>
+    </div>
+  </div>
+  }
+
+  const SearchBox = () => {
+    return <div style={{
+      width: '100%', height: 32, margin: '16px 0 16px 16px',
+      display: 'flex',
+    }}>
+      <div style={{
+        width: 120, display: 'flex', justifyContent: 'center', alignItems: 'center',
+        backgroundColor: '#F4F6FA', border: '0.5px solid #B3B3B3',
+        borderRight: 'none',
+      }}>
+        <select
+          defaultValue={'-'}
+          onChange={(e) => {
+            const option = switchOption(Number(e.target.value))
+            setOptionIndex(option)
+            setPageInfo({total:1, page:1});
+            // SearchBasic('', Number(e.target.value))
+          }}
+          style={{
+            color: 'black',
+            backgroundColor: '#00000000',
+            border: 0,
+            height: 32,
+            width: 120,
+            fontSize:15,
+            fontWeight: 'bold'
+          }}
+        >
+          {
+            searchModalInit && searchModalInit.searchFilter.map((v, i) => {
+              if(v !== ""){
+                return (<option key={i.toString()} value={i}>{v}</option>)
+              }
+            })
+          }
+        </select>
+      </div>
+      <input
+        value={keyword ?? ""}
+        type={"text"}
+        placeholder="검색어를 입력해주세요."
+        onChange={(e) => {
+          setKeyword(e.target.value)
+          // setPageInfo({total:1, page:1});
+        }}
+        onKeyDown={(e) => {
+          if(e.key === 'Enter'){
+            setPageInfo({total:1, page:1});
+            LoadBasic(1);
+          }
+        }}
+        style={{
+          width:1592,
+          height:"32px",
+          paddingLeft:"10px",
+          border:"0.5px solid #B3B3B3",
+          backgroundColor: 'rgba(0,0,0,0)'
+        }}
+      />
+      <div
+        style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
+        onClick={() => {
+          setPageInfo({total:1, page:1})
+          LoadBasic();
+        }}
+      >
+        <img src={Search_icon} style={{width:"16px",height:"16px"}} />
+      </div>
+    </div>
+  }
+
   return (
-    <SearchModalWrapper >
+    <SearchModalWrapper>
       <div style={ column.modalType
         ? {width: 'calc(100% - 32px)', height: 32, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
         : {width: 'calc(100% - 40px)', height: 40, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
@@ -197,12 +317,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         {getContents()}
       </div>
       {(row.first || !column.disableType) &&
-        <SearchIcon  onClick={() => {
-          setIsOpen(true)
-        }} modalType={column.modalType}>
-          <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
-        </SearchIcon>
-        }
+          addSearchButton()
+      }
       <Modal isOpen={isOpen} style={{
         content: {
           top: '50%',
@@ -215,7 +331,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         },
         overlay: {
           background: 'rgba(0,0,0,.6)',
-          zIndex: 5
+          zIndex: 5,
         }
       }}>
         <div style={{
@@ -225,114 +341,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           flexDirection: 'column',
           justifyContent: 'space-between',
         }}>
-          <div>
-            <div style={{
-              marginTop: 24,
-              marginLeft: 16,
-              marginRight: 16,
-              marginBottom: 12,
-              display: 'flex',
-              justifyContent: 'space-between'
-            }}>
-              <div style={{display: 'flex'}}>
-                <p style={{
-                  color: 'black',
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                  margin: 0,
-                }}>{searchModalInit && searchModalInit.title}</p>
-                {
-                  column.type === 'bom' && <div style={{marginLeft: 20}}>
-                      <Select value={tab} onChange={(e) => {
-                        setTab(Number(e.target.value))
-                      }}>
-                          <option value={0}>원자재</option>
-                          <option value={1}>부자재</option>
-                          <option value={2}>제품</option>
-                      </Select>
-                  </div>
-                }
-              </div>
-              <div style={{display: 'flex'}}>
-                {
-                  column.type === 'mold' && <MoldRegisterModal column={column} row={row} onRowChange={onRowChange} register={() => {
-                    LoadBasic();
-                  }}/>
-                }
-                <div style={{cursor: 'pointer', marginLeft: 22}} onClick={() => {
-                  setIsOpen(false)
-                }}>
-                  <img style={{width: 20, height: 20}} src={IcX}/>
-                </div>
-              </div>
-            </div>
+          <div id={'content-root'}>
+            {
+              ContentHeader()
+            }
             {column.type !== "searchToolModal" &&
-              <div style={{
-                width: '100%', height: 32, margin: '16px 0 16px 16px',
-                display: 'flex',
-              }}>
-                <div style={{
-                  width: 120, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                  backgroundColor: '#F4F6FA', border: '0.5px solid #B3B3B3',
-                  borderRight: 'none',
-                }}>
-                  <select
-                    defaultValue={'-'}
-                    onChange={(e) => {
-                      const option = switchOption(Number(e.target.value))
-                      setOptionIndex(option)
-                      // SearchBasic('', Number(e.target.value))
-                    }}
-                    style={{
-                      color: 'black',
-                      backgroundColor: '#00000000',
-                      border: 0,
-                      height: 32,
-                      width: 120,
-                      fontSize:15,
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    {
-                      searchModalInit && searchModalInit.searchFilter.map((v, i) => {
-                        if(v !== ""){
-                          return (<option value={i}>{v}</option>)
-                        }
-                      })
-                    }
-                  </select>
-                </div>
-                <input
-                  value={keyword ?? ""}
-                  type={"text"}
-                  placeholder="검색어를 입력해주세요."
-                  onChange={(e) => {
-                    setKeyword(e.target.value)
-                    // setPageInfo({...pageInfo, page:1});
-                  }}
-                  onKeyDown={(e) => {
-                    if(e.key === 'Enter'){
-                      // setPageInfo({...pageInfo, page:1});
-                      LoadBasic(1);
-                    }
-                  }}
-                  style={{
-                    width:1592,
-                    height:"32px",
-                    paddingLeft:"10px",
-                    border:"0.5px solid #B3B3B3",
-                    backgroundColor: 'rgba(0,0,0,0)'
-                  }}
-                />
-                <div
-                  style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
-                  onClick={() => {
-                    LoadBasic();
-                  }}
-                >
-                  <img src={Search_icon} style={{width:"16px",height:"16px"}} />
-                </div>
-              </div>
+              SearchBox()
             }
             <ExcelTable
               headerList={searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
@@ -477,6 +491,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                           // type_name: undefined,
                           version: row.version,
                           isChange: true,
+                          //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
+                          returnType:column.key
                         }
                     )
                   }

@@ -71,8 +71,8 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         backgroundColor: column.type === 'Modal' ? row.border ? '#19B9DF80' : 'white' : '#00000000'
       }}
       value={cleanValue(column.key)}
-      // value={selectType()}
       disabled={column.readonly}
+      // value={selectType()}
       onChange={(event) => {
         let pk = "";
         Object.keys(column && column.selectList ? column.selectList[0] : []).map((v) => {
@@ -153,6 +153,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
               [column.key+"PK"]: pkValue ?? undefined,
               [tmpPk]: event.target.value, [tmpPk+"PK"]: pkValue, [column.key+"_id"]: pkValue,
               setting : filterValue(event.target.value),
+              // type: filterValue(event.target.value),
               // ...tmpData,
               isChange: true
             })
@@ -162,10 +163,11 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
       }}
     >
       {column.selectList && column.selectList.map((title) => {
-        return (<option key={title.pk} value={title.name} style={{background:column.type === "Modal" ? "white" : "none"}}>
+        return (<option style={{background:column.type === "Modal" ? "white" : "#353b48"}} key={title.pk} value={title.name}>
           {title.name}
         </option>)
       })}
+
     </select>
           :
           "-"

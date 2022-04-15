@@ -289,6 +289,8 @@ const ApiList = {
   lotToolSave: `/cnc/api/v1/lot-tool/save`,
   productChangeSave: `/cnc/api/v1/product-changes/save`,
   documentSave: `/cnc/api/v1/document/save`,
+  inspecMachineSave: `/api/v1/inspec/daily/machine/save`,
+  inspecMoldSave: `/api/v1/inspec/daily/mold/save`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -298,7 +300,9 @@ const ApiList = {
   productLoad: `/cnc/api/v1/product/load`,
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
-  inspectCategoryLoad: `/cnc/api/v1/product/inspect/category/load`,
+  inspectCategoryLoad: `/cnc/api/v1/product/inspect/category/load/`,
+  inspecLoadMachine: `/api/v1/inspec/daily/machine/load`,
+  inspecLoadMold: `/api/v1/inspec/daily/mold/load`,
   recordInspectFrame: `/cnc/api/v1/record/inspect/frame`,
   documentLoad: `/cnc/api/v1/document/load`,
   productChangeLoad: `/cnc/api/v1/product-changes/load`,
@@ -410,6 +414,7 @@ const ApiList = {
   operationSearch: `/api/v1/sheet/search`,
   recordSearch: `/api/v1/record/search`,
   cncRecordSearch: `/cnc/api/v1/record/search`,
+  cncRecordAll: `/cnc/api/v1/record/all`,
   shipmentSearch: `/api/v1/shipment/search`,
   recordSumSearch: `/api/v1/record/summation/search`,
   submaterialSearch: `/api/v1/sub-material/search`,

@@ -171,7 +171,7 @@ const BasicFactory = ({}: IProps) => {
                         })
                         return {
                             ...row,
-                            id: row.tmpId,
+                            // id: row.tmpId,
                             authority: row.authorityPK,
                             manager: row.user,
                             version: row.version ?? null,
@@ -180,7 +180,7 @@ const BasicFactory = ({}: IProps) => {
                                     //if(!row[v.colName]) return undefined;
                                     // result.push(
                                     return {
-                                        mi_id: v.id,
+                                        // mi_id: v.id,
                                         title: v.name,
                                         value: row[v.colName] ?? "",
                                         unit: v.unit,
@@ -577,16 +577,16 @@ const BasicFactory = ({}: IProps) => {
                     setPageInfo({...pageInfo,page:page})
                 }}
             />
-            <ExcelDownloadModal
-                isOpen={excelOpen}
-                column={column}
-                basicRow={basicRow}
-                filename={`금형기준정보`}
-                sheetname={`금형기준정보`}
-                selectList={selectList}
-                tab={'ROLE_BASE_07'}
-                setIsOpen={setExcelOpen}
-            />
+            {/*<ExcelDownloadModal*/}
+            {/*    isOpen={excelOpen}*/}
+            {/*    column={column}*/}
+            {/*    basicRow={basicRow}*/}
+            {/*    filename={`금형기준정보`}*/}
+            {/*    sheetname={`금형기준정보`}*/}
+            {/*    selectList={selectList}*/}
+            {/*    tab={'ROLE_BASE_07'}*/}
+            {/*    setIsOpen={setExcelOpen}*/}
+            {/*/>*/}
         </div>
     );
 }

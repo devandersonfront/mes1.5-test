@@ -233,6 +233,7 @@ const BasicDevice = ({}: IProps) => {
                 type:row.type_id,
                 manager: row.user,
                 subFactory: row?.subFactory ? {...row?.subFactory, manager:row?.subFactory?.manager_info} : undefined,
+                photo: row?.photo?.uuid ?? row?.photo,
                 additional: [
                   ...additional.map((v, index)=>{
                     //if(!row[v.colName]) return undefined;
@@ -676,16 +677,16 @@ const BasicDevice = ({}: IProps) => {
             setPageInfo({...pageInfo,page:page})
           }}
         />
-      <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`금형기준정보`}
-        sheetname={`금형기준정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
-      />
+      {/*<ExcelDownloadModal*/}
+      {/*  isOpen={excelOpen}*/}
+      {/*  column={column}*/}
+      {/*  basicRow={basicRow}*/}
+      {/*  filename={`금형기준정보`}*/}
+      {/*  sheetname={`금형기준정보`}*/}
+      {/*  selectList={selectList}*/}
+      {/*  tab={'ROLE_BASE_07'}*/}
+      {/*  setIsOpen={setExcelOpen}*/}
+      {/*/>*/}
     </div>
   );
 }

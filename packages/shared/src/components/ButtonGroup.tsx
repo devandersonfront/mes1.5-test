@@ -3,7 +3,7 @@ import styled from 'styled-components'
 //@ts-ignore
 import Search_icon from '../public/images/btn_search.png'
 import {FormControl, makeStyles, Select} from '@material-ui/core'
-import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles'
+import {createTheme, MuiThemeProvider} from '@material-ui/core/styles'
 import {POINT_COLOR} from "../common/configset";
 
 
@@ -112,7 +112,7 @@ const useStyles2 = makeStyles(_ => {
     }
 });
 
-const lightTheme = createMuiTheme({
+const lightTheme = createTheme({
     palette: {
         primary: { main: 'rgba(0,0,0,0)', contrastText: "#000" },
     }

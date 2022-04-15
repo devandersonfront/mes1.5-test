@@ -403,14 +403,14 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       }else{
         return (
             <UploadButton
-                onClick={() => {
-                  if(row.code){
-                    setIsOpen(true)
-                  }else{
-                    Notiflix.Report.warning("경고","BOM을 등록하시려면 CODE가 입력 되어야합니다.","확인",)
-                  }
-                }}>
-              <p>BOM 등록</p>
+            onClick={() => {
+              if(row.code){
+                setIsOpen(true)
+              }else{
+                Notiflix.Report.warning("경고","BOM을 등록하시려면 CODE가 입력 되어야합니다.","확인",)
+              }
+            }}>
+                  <p>BOM 등록</p>
             </UploadButton>
         )
 
@@ -460,6 +460,148 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     setSearchList(rows)
   }
 
+  const getBomTab = () => {
+    return tabStore.datas.map((v, i) => {
+      return <TabBox ref={i === 0 ? tabRef : null} style={
+        // focusIndex === i ? {
+        tabStore.index === i ? {
+          backgroundColor: '#19B9DF',
+          opacity: 1
+        } : {
+          backgroundColor: '#E7E9EB',
+          opacity: 1
+        }
+      }>
+        {
+          tabRef.current && tabRef.current.clientWidth < 63 ?
+            // focusIndex !== i ?
+            tabStore.index !== i ?
+              <p onClick={() => {setFocusIndex(i)}}>{v.title}</p>
+              // <p onClick={() => {setFocusIndex(i)}}>{tabStore.datas[i].title}</p>
+              :
+              <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
+                dispatch(delete_summary_info(i));
+              }}>
+                <img style={{width: 20, height: 20}} src={IcX}/>
+              </div>
+            :
+            <>
+              <p onClick={() => {
+                setFocusIndex(i)
+                dispatch(change_summary_info_index(i));
+              }}
+                 style={{color: tabStore.index === i ? "white" : '#353B48'}}
+              >{tabStore.datas[i].title}</p>
+              <div style={{cursor: 'pointer', width: 20, height: 20}} onClick={() => {
+                dispatch(delete_summary_info(i));
+              }}>
+                <img style={{width: 20, height: 20}} src={IcX}/>
+              </div>
+            </>
+        }
+      </TabBox>
+    })
+  }
+
+  const getButtons = () => {
+    return <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
+      <Button onClick={() => {
+        let tmp = searchList
+
+        setSearchList([
+          ...searchList,
+          {
+            setting: 1,
+            seq: searchList.length+1
+          }
+        ])
+      }}>
+        <p>행 추가</p>
+      </Button>
+      <Button style={{marginLeft: 16}} onClick={() => {
+
+        if(selectRow === null || selectRow === 0){
+          return;
+        }else{
+
+          let tmpRow = searchList
+
+          let tmp = tmpRow[selectRow]
+          tmpRow[selectRow] = tmpRow[selectRow - 1]
+          tmpRow[selectRow - 1] = tmp
+
+          setSearchList([...tmpRow.map((v, i) => {
+            if(!searchList[selectRow-1].border){
+              searchList.map((v,i)=>{
+                v.border = false;
+              })
+              searchList[selectRow-1].border = true
+              setSearchList([...searchList])
+            }
+            setSelectRow(selectRow -1)
+            return {
+              ...v,
+              seq: i+1
+            }
+          })])
+        }
+
+      }}>
+        <p>위로</p>
+      </Button>
+      <Button style={{marginLeft: 16}} onClick={() => {
+        if(selectRow === searchList.length-1 || selectRow === null){
+          return
+        }
+        let tmpRow = searchList
+
+        let tmp = tmpRow[selectRow]
+        tmpRow[selectRow] = tmpRow[selectRow + 1]
+        tmpRow[selectRow + 1] = tmp
+
+        setSearchList([...tmpRow.map((v, i) => {
+          if(!searchList[selectRow+1].border){
+            searchList.map((v,i)=>{
+              v.border = false;
+            })
+            searchList[selectRow+1].border = true
+            setSearchList([...searchList])
+          }
+          setSelectRow(selectRow +1)
+          return {
+            ...v,
+            seq: i+1
+          }
+        })])
+      }}>
+        <p>아래로</p>
+      </Button>
+      <Button style={{marginLeft: 16}} onClick={() => {
+        if(selectRow === null){
+          return Notiflix.Report.warning(
+            '경고',
+            '선택된 정보가 없습니다.',
+            '확인',
+          );
+        }
+
+        let tmpRow = [...searchList]
+        if(selectRow !== undefined && selectRow !== null){
+          tmpRow.splice(selectRow, 1)
+
+          const filterRow = tmpRow.map((v , i)=>{
+            return {...v , seq : i + 1}
+          })
+          setSearchList(filterRow)
+          setSelectRow(undefined)
+        }
+
+      }}>
+        <p>삭제</p>
+      </Button>
+    </div>
+  }
+
   return (
       <SearchModalWrapper >
         { ModalContents() }
@@ -492,7 +634,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 fontSize: 22,
                 fontWeight: 'bold',
                 margin: 0,
-              }}>BOM 정보 (해당 제품을 만드는데 필요한 BOM을 등록해주세요)</p>
+              }}>BOM 정보 {column.type === 'readonly' ? '' : '(해당 제품을 만드는데 필요한 BOM을 등록해주세요)'}</p>
               <div style={{display: 'flex'}}>
                 <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                   setIsOpen(false)
@@ -506,14 +648,14 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
               </HeaderTableTitle>
               <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.customer?.name ?? "-" : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
+                <HeaderTableText>{headerData && headerData.customer?.name ? headerData.customer?.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
                 {/*<HeaderTableText>{tabStore.datas[tabStore.index]?.headerData ? tabStore.datas[tabStore.index].headerData.customerArray.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>*/}
               </HeaderTableTextInput>
               <HeaderTableTitle>
                 <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
               </HeaderTableTitle>
               <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.model?.model ?? "-" : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
+                <HeaderTableText>{headerData && headerData.model?.model ? headerData.model?.model : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
               </HeaderTableTextInput>
             </HeaderTable>
             <HeaderTable>
@@ -527,7 +669,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
               </HeaderTableTitle>
               <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.name ?? "-" : row.name ?? "-"}</HeaderTableText>
+                <HeaderTableText>{headerData && headerData.name ? headerData.name : row.name ?? "-"}</HeaderTableText>
               </HeaderTableTextInput>
               <HeaderTableTitle>
                 <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
@@ -560,146 +702,12 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
             <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
               <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                 <div style={{ display: 'flex', width: 1200}}>
-                  {tabStore.datas.map((v, i) => {
-                    return <TabBox ref={i === 0 ? tabRef : null} style={
-                      // focusIndex === i ? {
-                      tabStore.index === i ? {
-                        backgroundColor: '#19B9DF',
-                        opacity: 1
-                      } : {
-                        backgroundColor: '#E7E9EB',
-                        opacity: 1
-                      }
-                    }>
-                      {
-                        tabRef.current && tabRef.current.clientWidth < 63 ?
-                            // focusIndex !== i ?
-                            tabStore.index !== i ?
-                                <p onClick={() => {setFocusIndex(i)}}>{v.title}</p>
-                                // <p onClick={() => {setFocusIndex(i)}}>{tabStore.datas[i].title}</p>
-                                :
-                                <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
-                                  dispatch(delete_summary_info(i));
-                                }}>
-                                  <img style={{width: 20, height: 20}} src={IcX}/>
-                                </div>
-                            :
-                            <>
-                              <p onClick={() => {
-                                setFocusIndex(i)
-                                dispatch(change_summary_info_index(i));
-                              }}
-                                 style={{color: tabStore.index === i ? "white" : '#353B48'}}
-                              >{tabStore.datas[i].title}</p>
-                              <div style={{cursor: 'pointer', width: 20, height: 20}} onClick={() => {
-                                dispatch(delete_summary_info(i));
-                              }}>
-                                <img style={{width: 20, height: 20}} src={IcX}/>
-                              </div>
-                            </>
-                      }
-                    </TabBox>
-                  })}
+                  {
+                    getBomTab()
+                  }
                 </div>
               </div>
-              {column.type !== "readonly" && tabStore.index === 0 &&
-              <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-                <Button onClick={() => {
-                  let tmp = searchList
-
-                  setSearchList([
-                    ...searchList,
-                    {
-                      setting: 1,
-                      seq: searchList.length+1
-                    }
-                  ])
-                }}>
-                  <p>행 추가</p>
-                </Button>
-                <Button style={{marginLeft: 16}} onClick={() => {
-
-                  if(selectRow === null || selectRow === 0){
-                    return;
-                  }else{
-
-                    let tmpRow = searchList
-
-                    let tmp = tmpRow[selectRow]
-                    tmpRow[selectRow] = tmpRow[selectRow - 1]
-                    tmpRow[selectRow - 1] = tmp
-
-                    setSearchList([...tmpRow.map((v, i) => {
-                      if(!searchList[selectRow-1].border){
-                        searchList.map((v,i)=>{
-                          v.border = false;
-                        })
-                        searchList[selectRow-1].border = true
-                        setSearchList([...searchList])
-                      }
-                      setSelectRow(selectRow -1)
-                      return {
-                        ...v,
-                        seq: i+1
-                      }
-                    })])
-                  }
-
-                }}>
-                  <p>위로</p>
-                </Button>
-                <Button style={{marginLeft: 16}} onClick={() => {
-                  if(selectRow === searchList.length-1 || selectRow === null){
-                    return
-                  }
-                  let tmpRow = searchList
-
-                  let tmp = tmpRow[selectRow]
-                  tmpRow[selectRow] = tmpRow[selectRow + 1]
-                  tmpRow[selectRow + 1] = tmp
-
-                  setSearchList([...tmpRow.map((v, i) => {
-                    if(!searchList[selectRow+1].border){
-                      searchList.map((v,i)=>{
-                        v.border = false;
-                      })
-                      searchList[selectRow+1].border = true
-                      setSearchList([...searchList])
-                    }
-                    setSelectRow(selectRow +1)
-                    return {
-                      ...v,
-                      seq: i+1
-                    }
-                  })])
-                }}>
-                  <p>아래로</p>
-                </Button>
-                <Button style={{marginLeft: 16}} onClick={() => {
-                  if(selectRow === null){
-                    return Notiflix.Report.warning(
-                        '경고',
-                        '선택된 정보가 없습니다.',
-                        '확인',
-                    );
-                  }
-
-                  let tmpRow = [...searchList]
-                  if(selectRow !== undefined && selectRow !== null){
-                    tmpRow.splice(selectRow, 1)
-
-                    const filterRow = tmpRow.map((v , i)=>{
-                      return {...v , seq : i + 1}
-                    })
-                    setSearchList(filterRow)
-                    setSelectRow(undefined)
-                  }
-
-                }}>
-                  <p>삭제</p>
-                </Button>
-              </div>
-              }
+                {column.type !== "readonly" && tabStore.index === 0 && getButtons()}
             </div>
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable

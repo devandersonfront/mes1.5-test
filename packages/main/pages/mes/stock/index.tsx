@@ -290,16 +290,16 @@ const Stock = ({page, keyword, option}: IProps) => {
                     />
                 </div>
             </div>
-            <ExcelDownloadModal
-              isOpen={excelOpen}
-              column={column}
-              basicRow={rowData}
-              filename={`재고현황`}
-              sheetname={`재고현황`}
-              selectList={selectList}
-              tab={'ROLE_STK_01'}
-              setIsOpen={setExcelOpen}
-            />
+            {/*<ExcelDownloadModal*/}
+            {/*  isOpen={excelOpen}*/}
+            {/*  column={column}*/}
+            {/*  basicRow={rowData}*/}
+            {/*  filename={`재고현황`}*/}
+            {/*  sheetname={`재고현황`}*/}
+            {/*  selectList={selectList}*/}
+            {/*  tab={'ROLE_STK_01'}*/}
+            {/*  setIsOpen={setExcelOpen}*/}
+            {/*/>*/}
         </div>
     );
 }

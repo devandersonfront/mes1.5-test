@@ -14,6 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import moment from 'moment'
+import CloseButton from '../Buttons/CloseButton'
 import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
@@ -23,66 +24,73 @@ interface IProps {
   modify?: boolean
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
-const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
-  const tabRef = useRef(null)
-
-
-  const [bomDummy, setBomDummy] = useState<any[]>([
-    {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
-  ])
-
+const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
   const [totalCount, setTotalCount] = useState<number>(0)
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
-
-
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
-  const [focusIndex, setFocusIndex] = useState<number>(0)
-
+  const [initProp, setInitProp]  = useState<{isInit: boolean, initTotal:number}>({isInit: true, initTotal:0})
+  const hasData = row['defect_reasons'] && row['defect_reasons'].length || row['total_defect_reasons'] && row['total_defect_reasons'].length
+  const isFromSheetList = column.load === 'sheet'
   useEffect(() => {
-    if(row['defect_reasons'] && row['defect_reasons'].length){
-      let total = 0
-      setSearchList([...row.defect_reasons.map(v => {
+    if(column.type !== 'readonly') {
+      initialize()
+      if(isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount) === -1) {
+        loadDefectList()
+      }
+    } else {
+      if(hasData) {
+        let total = 0
+        setSearchList([...row.defect_reasons.map(v => {
 
-        if(v.amount){
-          total += Number(v.amount)
-        }
+          if(v.amount){
+            total += Number(v.amount)
+          }
 
-        return ({
-          ...v,
-          ...v.defect_reason,
-        })
-      })])
+          return ({
+            ...v,
+            ...v.defect_reason,
+          })
+        })])
 
-      setTotalCount(total)
-    }else {
-
-      if(column.type !== 'readonly'){
-        if(isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount ) === -1) {
-          loadDefectList()
-        }
-      }else if(column.load === 'sheet'){
-        setTotalCount(row.total_poor_quantity)
+        setTotalCount(total)
+      } else {
+        if(initProp.isInit && isFromSheetList) setTotalCount(row.total_poor_quantity)
       }
     }
-  }, [isOpen, searchKeyword, row['defect_reasons']])
+  }, [isOpen, searchKeyword, row['defect_reasons'], row['total_defect_reasons']])
 
-  const changeRow = (row: any, key?: string) => {
+  const initialize = () => {
+    if(initProp.isInit){
+      let initTotal = 0
+      if(hasData){
+       initTotal =  row.poor_quantity
+      }
+      setInitProp({isInit: false, initTotal})
+      setTotalCount(initTotal)
+    }
+  }
+
+  const changeRow = (eachRow: any, key?: string) => {
+    let amount = 0
+    if(hasData) {
+      const reasonMap = new Map<number, any>(row.defect_reasons.map(reason =>
+        [reason.defect_reason.pdr_id, reason]
+      ))
+      amount = reasonMap.get(eachRow.pdr_id)?.amount ?? 0
+    }
+    setTotalCount(amount)
     let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
+      ...eachRow,
+      machine_id: eachRow.name,
+      machine_idPK: eachRow.machine_id,
+      manager: eachRow.manager ? eachRow.manager.name : null,
+      amount
     }
 
     return tmpData
@@ -103,8 +111,8 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `defectReasonSearch`,{
       path: {
-        page: 1,
-        renderItem: 18,
+        page: pageInfo.page,
+        renderItem: 22,
       }
     })
 
@@ -144,6 +152,71 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>{totalCount}</p>
         </UploadButton>
     )
+
+  const ModalButtons = () => {
+    return <>
+    <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+      {
+        column.type !== 'readonly' && <div
+              onClick={onCancelEvent}
+              style={{width: "50%", height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+          >
+            <p>취소</p>
+          </div>
+      }
+      <div
+        onClick={() => {
+          if (column.type !== 'readonly' && row.sum < totalCount) {
+            Notiflix.Report.warning("경고", "생산한 수량보다 적게 입력해주세요.", "확인",)
+            return
+          }
+          if(row.sum === undefined || row.sum === 0) {
+            if(column.type !== 'readonly' && row.good_quantity < totalCount){
+              Notiflix.Report.warning("경고", "생산한 수량보다 적게 입력해주세요.", "확인",)
+              return
+            }
+          }
+          if(selectRow !== undefined && selectRow !== null ){
+            onRowChange({
+              ...row,
+              poor_quantity: totalCount,
+              defect_reasons: [
+                ...searchList.map(v => ({
+                  amount: v.amount,
+                  defect_reason: v
+                }))
+              ],
+              name: row.name,
+              isChange: true,
+              total_poor_quantity: isFromSheetList ? totalCount : null
+            })
+          }
+          onCloseModalEvent()
+        }}
+        style={{width: column.type !== 'readonly' ? "50%" : "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+      >
+        <p>{column.type !== 'readonly' ? "등록하기" : "확인"}</p>
+      </div>
+    </div>
+    </>
+  }
+
+  const onCloseModalEvent = () => {
+    setIsOpen(false)
+    setPageInfo({page:1, total:1})
+    setSearchList([])
+    setInitProp({...initProp, isInit:true})
+  }
+
+  const onCancelEvent = () => {
+    onCloseModalEvent()
+    if(!hasData){
+      setTotalCount(0)
+    } else {
+      setTotalCount(initProp.initTotal)
+    }
+  }
+
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -190,24 +263,8 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               {/*<Button>*/}
               {/*  <p>엑셀로 받기</p>*/}
               {/*</Button>*/}
-              <div style={{cursor: 'pointer', marginLeft: 20}}  onClick={() => {
-                if(column.type !== 'readonly') {
-                  onRowChange({
-                    ...row,
-                    poor_quantity: 0,
-                    defect_reasons: undefined,
-                    isChange: true
-                  })
-                  setSearchList([])
-                  setTotalCount(0)
-                  setIsOpen(false)
-                }else {
-                  setIsOpen(false)
-                }
-              }}>
-                <img style={{width: 20, height: 20}} src={IcX}/>
-              </div>
-            </div>
+              <CloseButton onClick={onCancelEvent}/>
+          </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
@@ -257,61 +314,19 @@ const DefectInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 setSelectRow(e)
               }}
               type={'searchModal'}
-            />
-          </div>
-          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
-            {
-              column.type !== 'readonly' && <div
-                  onClick={() => {
-                    onRowChange({
-                      ...row,
-                      poor_quantity: 0,
-                      defect_reasons: undefined,
-                      isChange: true
-                    })
-                    setSearchList([])
-                    setTotalCount(0)
-                    setIsOpen(false)
-                  }}
-                  style={{width: "50%", height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-              >
-                  <p>취소</p>
-              </div>
-            }
-            <div
-              onClick={() => {
-                if (column.type !== 'readonly' && row.sum < totalCount) {
-                  Notiflix.Report.warning("경고", "생산한 수량보다 적게 입력해주세요.", "확인",)
-                  return
-                }
-                if(row.sum === undefined || row.sum === 0) {
-                  if(column.type !== 'readonly' && row.good_quantity < totalCount){
-                    Notiflix.Report.warning("경고", "생산한 수량보다 적게 입력해주세요.", "확인",)
-                    return
+              scrollEnd={(value) => {
+                if(value){
+                  if(pageInfo.total > pageInfo.page){
+                    setPageInfo({...pageInfo, page:pageInfo.page+1})
                   }
                 }
-                if(selectRow !== undefined && selectRow !== null ){
-                  onRowChange({
-                    ...row,
-                    poor_quantity: totalCount,
-                    defect_reasons: [
-                      ...searchList.map(v => ({
-                        amount: v.amount,
-                        defect_reason: v
-                      }))
-                    ],
-                    name: row.name,
-                    isChange: true
-                  })
-                }
-                setIsOpen(false)
               }}
-              style={{width: column.type !== 'readonly' ? "50%" : "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p>{column.type !== 'readonly' ? "등록하기" : "확인"}</p>
-            </div>
+            />
           </div>
-        </div>
+          {
+            ModalButtons()
+          }
+          </div>
       </Modal>
     </SearchModalWrapper>
   )

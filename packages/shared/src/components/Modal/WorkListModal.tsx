@@ -94,13 +94,6 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
             tmp.defect_reasons.map((v)=>{
               defectReasons.push(v)
             })
-            // if(defectReasons && defectReasons.length){
-            //   tmp.defect_reasons.map((defect, index) => {
-            //     defectReasons[index].amount += defect?.amount
-            //   })
-            // } else {
-            //   defectReasons = tmp.defect_reasons
-            // }
           }
 
           return tmp

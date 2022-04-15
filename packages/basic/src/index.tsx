@@ -15,10 +15,10 @@ export {BasicProduct} from './container/BasicProduct'
 export {BasicUser} from './container/BasicUser'
 export {BasicDocument} from "./container/BasicDocument"
 export {BasicDocumentLogs} from "./container/BasicDocumentLogs"
+export {BasicDailyInspectionInfo} from "./container/BasicDailyInspectionInfo"
 export {BasicTool} from "./container/BasicTool"
 export {BasicMidrangeModify} from "./container/BasicMidrangeModify"
 export {BasicMidrangeRegister} from "./container/BasicMidrangeRegister"
 export {BasicMidrangeDetail} from "./container/BasicMidrangeDetail"
-
 
 

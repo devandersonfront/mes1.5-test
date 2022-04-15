@@ -210,6 +210,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         usage: v.usage,
         version: v.version,
         setting: v.setting,
+        isDefault: v.setting == 1 ? '기본' : '스페어',
         stock: childData.stock,
         disturbance: Number(row.goal) * Number(v.usage),
         processArray: childData.process ?? null,
@@ -327,11 +328,11 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
           {
             headerItems && headerItems.map((infos, index) => {
               return (
-                <HeaderTable>
+                <HeaderTable key={index.toString()}>
                   {
-                    infos.map(info => {
+                    infos.map((info,i) => {
                       return (
-                        <>
+                        <React.Fragment key={''+index+i}>
                           <HeaderTableTitle>
                             <HeaderTableText style={{fontWeight: 'bold'}}>{info.title ?? "-"}</HeaderTableText>
                           </HeaderTableTitle>
@@ -341,7 +342,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                             </HeaderTableText>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>
-                        </>
+                        </React.Fragment>
                       )
                     })
                   }
@@ -353,7 +354,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
               {tabs.map((v, i) => {
-                return <TabBox ref={i === 0 ? tabRef : null} style={
+                return <TabBox key={i.toString()} ref={i === 0 ? tabRef : null} style={
                   focusIndex === i ? {
                     backgroundColor: '#19B9DF',
                     opacity: 1

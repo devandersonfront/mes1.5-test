@@ -28,17 +28,9 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 
 const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
-  const tabRef = useRef(null)
-
-  const [bomDummy, setBomDummy] = useState<any[]>([
-    {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
-  ])
-
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
   const [totalTime, setTotalTime] = useState<string>('00:00:00')
   const [totalSec, setTotalSec] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
@@ -46,47 +38,82 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     page: 1,
     total: 1
   })
-  const [focusIndex, setFocusIndex] = useState<number>(0)
-
+  const [initProp, setInitProp]  = useState<{isInit: boolean, initTotal:string}>({isInit: true, initTotal:'00:00:00'})
+  const hasData = row['pause_reasons'] && row['pause_reasons'].length > 0
   useEffect(() => {
-    if(row['pause_reasons'] && row['pause_reasons'].length){
-      let total = 0
-      setSearchList([...row.pause_reasons.map(v => {
-
-        let sec = v.amount
-        let hour = Math.floor(sec / 3600)
-        sec = sec % 3600
-        let min = Math.floor(sec / 60)
-        sec = sec % 60
-
-        total += v.amount
-
-        return {
-          ...v,
-          ...v.pause_reason,
-          hour: hour,
-          minute: min,
-          second: sec,
-          amount: `${hour >= 10 ? hour : '0' + hour}:${min >= 10 ? min : '0' + min}:${sec >= 10 ? sec : '0' + sec}`
-        }
-      })])
-
-      sumTotalTime(total)
-    }else {
-      if (column.type !== 'readonly') {
-        if (isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount) === -1) {
+      if(column.type !== 'readonly') {
+        initialize()
+        if(isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount) === -1) {
           loadPauseList()
         }
-      }
-    }
-  }, [isOpen, row, searchKeyword])
+      } else {
+        if(hasData) {
+          let total = 0
+          setSearchList([ ...row.pause_reasons.map(v => {
 
-  const changeRow = (row: any, key?: string) => {
+            let sec = v.amount
+            let hour = Math.floor(sec / 3600)
+            sec = sec % 3600
+            let min = Math.floor(sec / 60)
+            sec = sec % 60
+
+            total += v.amount
+
+            return {
+              ...v,
+              ...v.pause_reason,
+              hour: hour,
+              minute: min,
+              second: sec,
+              amount: `${hour >= 10 ? hour : '0' + hour}:${min >= 10 ? min : '0' + min}:${sec >= 10 ? sec : '0' + sec}`
+            }
+          }) ])
+
+          sumTotalTime(total)
+        }
+      }
+    }, [isOpen, row['pause_reason'], searchKeyword])
+
+  useEffect(() => {
+    if(isOpen && pageInfo.page!=1)
+    {
+      loadPauseList()
+    }
+  },[pageInfo.page])
+
+  const initialize = () => {
+    if(initProp.isInit){
+      let initTotal = 0
+      if(hasData){
+        row.pause_reasons.map(reason => {
+          initTotal += reason.amount
+        })
+      }
+      setInitProp({isInit:false, initTotal: sumTotalTime(initTotal) })
+    }
+  }
+
+  const changeRow = (eachRow: any, key?: string) => {
+    let second, minute, hour = 0
+    if(hasData) {
+      const reasonMap = new Map<number, any>(row.pause_reasons.map(reason =>
+        [reason.pause_reason.ppr_id, reason]
+      ))
+      second = reasonMap.get(eachRow.ppr_id)?.amount ?? 0
+      hour = Math.floor(second / 3600)
+      second = second % 3600
+      minute = Math.floor(second / 60)
+      second = second % 60
+    }
     let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
+      ...eachRow,
+      machine_id: eachRow.name,
+      machine_idPK: eachRow.machine_id,
+      manager: eachRow.manager ? eachRow.manager.name : null,
+      second,
+      minute,
+      hour,
+      amount: `${hour >= 10 ? hour : '0' + hour}:${minute >= 10 ? minute : '0' + minute}:${second >= 10 ? second : '0' + second}`
     }
 
     return tmpData
@@ -94,31 +121,33 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const sumTotalTime = (total: number) => {
     let sec = total
-    let hour = Math.floor(sec/3600)
-    sec = sec%3600
-    let min = Math.floor(sec/60)
-    sec = sec%60
-
+    let hour = Math.floor(sec / 3600)
+    sec = sec % 3600
+    let min = Math.floor(sec / 60)
+    sec = sec % 60
+    const totalTime = `${hour >= 10 ? hour : '0' + hour}:${min >= 10 ? min : '0' + min}:${sec >= 10 ? sec : '0' + sec}`
     setTotalSec(sec)
-    setTotalTime(`${hour >= 10 ? hour : '0'+hour}:${min >= 10 ? min : '0'+min}:${sec >= 10 ? sec : '0'+sec}`)
+    setTotalTime(totalTime)
+    return totalTime
   }
 
   const loadPauseList = async () => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `pauseReasonSearch`,{
       path: {
-        page: 1,
-        renderItem: 18,
-        process_id: row.processId,
+        page: pageInfo.page,
+        renderItem: 22,
+        process_id: row.processId ?? row.product.processId,
       }
     })
 
     if(res){
-      let searchList = res.info_list.map((row: any, index: number) => {
+      let resSearchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
 
-      setSearchList([...searchList])
+      setPageInfo({page: res.page, total:res.totalPages})
+      setSearchList([...searchList, ...resSearchList])
     }
   }
 
@@ -129,6 +158,63 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           <p>{totalTime}</p>
         </UploadButton>
       )
+
+  const ModalButtons = () => {
+    return <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+      {
+        column.type !== 'readonly' && <div
+              onClick={onCancelEvent}
+              style={{width: "50%", height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+          >
+            <p style={{color: '#717C90'}}>취소</p>
+          </div>
+      }
+      <div
+        onClick={() => {
+          if(column.type !== 'readonly'){
+            if(selectRow !== undefined && selectRow !== null){
+              onRowChange({
+                ...row,
+                pause_reasons: [
+                  ...searchList.map(v => {
+                    return ({
+                      amount: v.time_sec ?? 0,
+                      pause_reason: v
+                    })
+                  })
+                ],
+                name: row.name,
+                isChange: true
+              })
+            }
+          }
+          onCloseModalEvent()
+        }}
+        style={{width: column.type !== 'readonly' ? "50%" : "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+      >
+        <p>{column.type !== 'readonly' ? "등록하기" : "확인"}</p>
+      </div>
+    </div>
+  }
+
+  const onCloseModalEvent = () => {
+    setIsOpen(false)
+    setPageInfo({page:1, total:1})
+    setSearchList([])
+    setInitProp({...initProp, isInit:true})
+  }
+
+  const onCancelEvent = () => {
+    onCloseModalEvent()
+    setIsOpen(false)
+    if(!hasData){
+      setTotalTime('00:00:00')
+      setTotalSec(0)
+    } else {
+      setTotalTime(initProp.initTotal)
+      setTotalSec(0)
+    }
+  }
 
   return (
     <SearchModalWrapper >
@@ -150,7 +236,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       }}>
         <div style={{
           width: 1776,
-          height: 800
+          height: 803
         }}>
           <div style={{
             margin: '24px 16px 16px',
@@ -176,16 +262,14 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               {/*<Button>*/}
               {/*  <p>엑셀로 받기</p>*/}
               {/*</Button>*/}
-              <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
-                setIsOpen(false)
-              }}>
+              <div style={{cursor: 'pointer', marginLeft: 20}} onClick={onCancelEvent}>
                 <img style={{width: 20, height: 20}} src={IcX}/>
               </div>
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={ searchModalList.pauseTime }
+              headerList={ column.type === 'readonly' ? searchModalList.pauseTimeReadOnly : searchModalList.pauseTime }
               row={searchList ?? []}
               setRow={(e) => {
                 let addIndex = 0
@@ -236,46 +320,18 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 setSelectRow(e)
               }}
               type={'searchModal'}
-            />
-          </div>
-          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
-            {
-              column.type !== 'readonly' && <div
-                onClick={() => {
-                  setIsOpen(false)
-                }}
-                style={{width: "50%", height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-              >
-                <p style={{color: '#717C90'}}>취소</p>
-              </div>
-            }
-            <div
-              onClick={() => {
-                if(column.type !== 'readonly'){
-                  if(selectRow !== undefined && selectRow !== null){
-                    onRowChange({
-                      ...row,
-                      pause_time: totalTime,
-                      pause_reasons: [
-                        ...searchList.map(v => {
-                          return ({
-                            amount: v.time_sec ?? 0,
-                            pause_reason: v
-                          })
-                        })
-                      ],
-                      name: row.name,
-                      isChange: true
-                    })
+              scrollEnd={(value) => {
+                if(value){
+                  if(pageInfo.total > pageInfo.page){
+                    setPageInfo({...pageInfo, page:pageInfo.page+1})
                   }
                 }
-                setIsOpen(false)
               }}
-              style={{width: column.type !== 'readonly' ? "50%" : "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p>{column.type !== 'readonly' ? "등록하기" : "확인"}</p>
-            </div>
+            />
           </div>
+          {
+            ModalButtons()
+          }
         </div>
       </Modal>
     </SearchModalWrapper>

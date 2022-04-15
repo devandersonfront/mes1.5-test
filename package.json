@@ -15,6 +15,7 @@
     "@babel/preset-react": "^7.14.5",
     "@types/node": "^14.17.10",
     "babel-loader-lerna-cra": "*",
+    "babel-plugin-styled-components": "^2.0.6",
     "lerna": "^4.0.0",
     "npm-run-all": "^4.1.5",
     "typescript": "^3.9.10"
@@ -61,14 +62,18 @@
     "global": "4.4.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
+<<<<<<< HEAD
     "next": "^12.0.9",
+=======
+    "next": "^12.1.5",
+>>>>>>> origin/main
     "next-compose-plugins": "^2.2.1",
     "next-cookies": "^2.0.3",
     "next-images": "^1.7.0",
     "next-redux-wrapper": "^7.0.2",
     "next-transpile-modules": "^8.0.0",
     "notiflix": "^3.0.1",
-    "react": "next",
+    "react": "^18.1.0-next-f7cf077cc-20220412",
     "react-app-polyfill": "^3.0.0",
     "react-barcode": "1.4.1",
     "react-barcodes": "1.2.0",
@@ -78,7 +83,7 @@
     "react-data-grid": "^7.0.0-canary.49",
     "react-daum-postcode": "^3.0.1",
     "react-day-picker": "^7.4.10",
-    "react-dom": "next",
+    "react-dom": "^18.1.0-next-f7cf077cc-20220412",
     "react-modal": "^3.14.3",
     "react-paypal-express-checkout": "1.0.5",
     "react-redux": "^7.2.4",

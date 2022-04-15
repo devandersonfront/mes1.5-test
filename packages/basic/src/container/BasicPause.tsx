@@ -215,6 +215,17 @@ const BasicPause = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const validateSaveRequestBody = () => {
+    const filtered = pauseBasicRow.filter(value => value.reason !== "" && value.reason !== undefined)
+    const reasons = filtered.map(pauseReason => pauseReason.reason)
+    if(filtered.length === 0) {
+      Notiflix.Report.warning("저장할 데이터가 없습니다", "", "확인");
+    }else if(reasons.length != new Set(reasons).size){
+      Notiflix.Report.warning("일시정지 유형은 중복될 수 없습니다.","","확인");
+    }
+    return filtered
+  }
+
   const buttonEvents = async(index:number) => {
     switch (index) {
       case 0 :
@@ -245,23 +256,12 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         return
 
       case 3 :
-
-        if(selectList.size === 0){
-          return Notiflix.Report.warning(
-        '경고',
-        '선택된 정보가 없습니다.',
-        '확인',
-        );
-        }
         Notiflix.Loading.standard();
         let savePauseBasicRow:any[] = [];
-        pauseBasicRow.map((value,index)=>{
-          if(value.reason === "" || value.reason === undefined){
-          }else{
+        validateSaveRequestBody()
+          .map((value,index)=>{
             savePauseBasicRow.push({...value, process_id:processBasicRow[selectRow].process_id, seq:index+1});
-          }
         })
-
         if(pauseBasicRow.length > 0 ) {
           RequestMethod("post", `pauseSave`, savePauseBasicRow
           ).then(() => {
@@ -272,9 +272,6 @@ const BasicPause = ({page, keyword, option}: IProps) => {
             Notiflix.Loading.remove(300);
             Notiflix.Report.warning("관리자에게 문의하세요.", "", "확인");
           })
-        }else{
-          Notiflix.Loading.remove(300);
-          Notiflix.Report.warning("저장할 데이터가 없습니다", "", "확인");
         }
         return
 

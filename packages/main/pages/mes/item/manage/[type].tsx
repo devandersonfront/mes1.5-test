@@ -55,7 +55,7 @@ export const getServerSideProps = async (ctx: any) => {
       case 'product':
         return {
           title: '제품 등록 관리',
-          code: 'ROLE_BASE_05'
+          code: 'ROLE_BASE_15'
         }
       case 'rawmaterial':
         return {

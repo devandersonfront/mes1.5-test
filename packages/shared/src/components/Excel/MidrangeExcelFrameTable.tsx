@@ -259,7 +259,6 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
     }
 
     const formItemResult = (inspection_infoType: InspectionInfo[], type: 'beginning' | 'middle' | 'end') => {
-
         return (
             inspection_infoType.map((value,index)=>
                 <div style={{display: "flex"}}>
@@ -273,7 +272,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
                                        placeholder={inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ? value.data_result[i].value : '0' : '-'}
                                        onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } onChange={(e)=>itemDataResultTextChange(type,e,index,i)}/>
                                 :
-                                inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ?
+                                value.data_result[i] && inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ?
                                     <MidrangeExcelDropdown contents={testData.legendary_list} value={value.data_result[i].value} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)} readOnly={midrangeUpdate}/> :
                                     <MidrangeExcelDropdown contents={testData.legendary_list} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)} readOnly={midrangeUpdate}/> : <p>-</p>
                             }
@@ -289,7 +288,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
             arr.map((v,i)=>
                 <ExampleNumber>
                     {inspection_info[0].samples > i ?
-                        inspection_result[i] !== undefined ?
+                        inspection_result && inspection_result.length > i && (inspection_result[i] !== undefined) ?
                             <MidrangeExcelDropdown contents={['합격', '불합격']} onChange={(e)=>dataResultDropdownChange(type,e,i)} value={inspection_result[i].pass ? '합격' : '불합격'} readOnly={midrangeUpdate}/>
                             :
                             <MidrangeExcelDropdown contents={['합격', '불합격']} onChange={(e)=>dataResultDropdownChange(type,e,i)} value={''} readOnly={midrangeUpdate}/>

@@ -114,7 +114,7 @@ const MesStockList = ({page, search, option}: IProps) => {
     const res = await RequestMethod('get', `stockList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
-        renderItem: 18,
+        renderItem: 20,
       },
     })
 
@@ -262,7 +262,7 @@ const MesStockList = ({page, search, option}: IProps) => {
       }
     })
 
-    setBasicRow([...tmpBasicRow])
+    setBasicRow([...basicRow, ...tmpBasicRow])
   }
 
   return (
@@ -309,16 +309,16 @@ const MesStockList = ({page, search, option}: IProps) => {
         }}
       />
 
-      <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`금형기준정보`}
-        sheetname={`금형기준정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
-      />
+      {/*<ExcelDownloadModal*/}
+      {/*  isOpen={excelOpen}*/}
+      {/*  column={column}*/}
+      {/*  basicRow={basicRow}*/}
+      {/*  filename={`금형기준정보`}*/}
+      {/*  sheetname={`금형기준정보`}*/}
+      {/*  selectList={selectList}*/}
+      {/*  tab={'ROLE_BASE_07'}*/}
+      {/*  setIsOpen={setExcelOpen}*/}
+      {/*/>*/}
     </div>
   );
 }

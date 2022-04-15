@@ -12,7 +12,7 @@ interface IProps {
   headerList: Array<IExcelHeaderType>
   setHeaderList?:(value:Array<IExcelHeaderType>) => void
   row: Array<any>
-  width?: number
+  width?: number | string
   maxWidth?:number
   rowHeight?: number
   height?:number
@@ -32,9 +32,10 @@ interface IProps {
   headerAlign?: string
   clickable?:boolean
   scrollEnd?:(value:boolean) => void
+  scrollOnOff?:boolean
 }
 
-const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd}: IProps) => {
+const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff}: IProps) => {
   const [ selectedRows, setSelectedRows ] = useState<ReadonlySet<number>>(selectList ?? new Set())
 
 
@@ -143,7 +144,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
       }}
       style={{
         border:"none",
-        overflow:"auto",
+        overflow:scrollOnOff ? "hidden" : "auto",
         width: width ?? 1576,
         maxWidth: maxWidth,
         height: height ?? 760,
@@ -186,7 +187,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
   }
 
 }
-
+//@ts-ignore
 const DataGridTable = styled(DataGrid)`
   ::-webkit-scrollbar{
     display:block;
@@ -253,6 +254,7 @@ const DataGridTable = styled(DataGrid)`
     }
     
     .rdg-row[aria-selected=true]{
+        // border:1px solid white;
         background:none;
         &:hover{
             background:none;

@@ -16,6 +16,11 @@ export const SearchInit: Record<string, SearchInitType> = {
     searchFilter: ['성명', '이메일', '직책명'],
     excelColumnType: 'user'
   },
+  worker: {
+    title: '유저 검색',
+    searchFilter: ['성명', '이메일', '직책명'],
+    excelColumnType: 'user'
+  },
   customer: {
     title: '거래처 검색',
     searchFilter: ['거래처명', '대표자명', '담당자명', '사업자 번호'],

@@ -178,33 +178,6 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 </div>
               </div>
             </div>
-            {/*{*/}
-            {/*    headerItems && headerItems.map((infos, index) => {*/}
-            {/*        console.log("infos : ", infos)*/}
-            {/*        return (*/}
-            {/*            <HeaderTable>*/}
-            {/*                {*/}
-            {/*                    infos.map(info => {*/}
-            {/*                        return (*/}
-            {/*                            <>*/}
-            {/*                                <HeaderTableTitle>*/}
-            {/*                                    <HeaderTableText style={{fontWeight: 'bold'}}>{info.title ?? "-"}</HeaderTableText>*/}
-            {/*                                </HeaderTableTitle>*/}
-            {/*                                <HeaderTableTextInput style={{width: info.infoWidth}}>*/}
-            {/*                                    <HeaderTableText>*/}
-            {/*                                        {row[info.key] ?? "-"}*/}
-            {/*                                        /!*-*!/*/}
-            {/*                                    </HeaderTableText>*/}
-            {/*                                    {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}*/}
-            {/*                                </HeaderTableTextInput>*/}
-            {/*                            </>*/}
-            {/*                        )*/}
-            {/*                    })*/}
-            {/*                }*/}
-            {/*            </HeaderTable>*/}
-            {/*        )*/}
-            {/*    })*/}
-            {/*}*/}
             <HeaderTable>
               <HeaderTableTitle>
                 <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
@@ -276,21 +249,6 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 let tmp = tmpRow[selectRow]
                 tmpRow[selectRow] = tmpRow[selectRow - 1]
                 tmpRow[selectRow - 1] = tmp
-
-                // setSearchList([...tmpRow.map((v, i) => {
-                //   if(!searchList[selectRow-1].border){
-                //     searchList.map((v,i)=>{
-                //       v.border = false;
-                //     })
-                //     searchList[selectRow-1].border = true
-                //     setSearchList([...searchList])
-                //   }
-                //   setSelectRow(selectRow -1)
-                //   return {
-                //     ...v,
-                //     seq: i+1
-                //   }
-                // })])
                 setSelectRow((prevSelectRow)=> prevSelectRow - 1)
                 setSearchList([...tmpRow.map((v, i) => {
                   return {
@@ -309,21 +267,6 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 let tmp = tmpRow[selectRow]
                 tmpRow[selectRow] = tmpRow[selectRow + 1]
                 tmpRow[selectRow + 1] = tmp
-
-                // setSearchList([...tmpRow.map((v, i) => {
-                //   if(!searchList[selectRow+1].border){
-                //     searchList.map((v,i)=>{
-                //       v.border = false;
-                //     })
-                //     searchList[selectRow+1].border = true
-                //     setSearchList([...searchList])
-                //   }
-                //   setSelectRow(selectRow +1)
-                //   return {
-                //     ...v,
-                //     seq: i+1
-                //   }
-                // })])
                 setSelectRow((prevSelectRow)=> prevSelectRow + 1)
                 setSearchList([...tmpRow.map((v, i) => {
                   return {
@@ -336,11 +279,6 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>아래로</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-                // let tmpRow = [...searchList]
-
-                // tmpRow.splice(selectRow, 1)
-
-                // setSearchList([...tmpRow])
                 if(selectRow === -1){
                   return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
                 }

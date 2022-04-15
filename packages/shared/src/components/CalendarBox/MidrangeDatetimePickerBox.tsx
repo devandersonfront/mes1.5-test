@@ -3,7 +3,7 @@ import {IExcelHeaderType} from '../../common/@types/type'
 import 'react-calendar/dist/Calendar.css'
 import moment, {Moment} from 'moment'
 import {createStyles, Theme} from '@material-ui/core/styles'
-import {createMuiTheme, makeStyles} from '@material-ui/core'
+import {createTheme, makeStyles} from '@material-ui/core'
 import {DateTimePicker, MuiPickersUtilsProvider} from '@material-ui/pickers'
 import MomentUtils from "@date-io/moment";
 import {ThemeProvider} from 'styled-components'
@@ -16,7 +16,7 @@ interface IProps {
     readOnly?:boolean
 }
 
-const darkTheme = createMuiTheme({
+const darkTheme = createTheme({
     palette: {
         type: 'dark',
         primary: {

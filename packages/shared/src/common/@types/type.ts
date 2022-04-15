@@ -16,6 +16,7 @@ export interface IExcelHeaderType {
   tab?:string
   id?:number
   disableType?: string
+  disabledCase?: {key: any, value: any}[]
   textType?: string
   options?:{status:number, name:string}[]
   result?:(value:number | string | boolean) => void
@@ -32,10 +33,14 @@ export interface IExcelHeaderType {
   readonly?: boolean
   load?: string
   title?: string
+  subTitle?:string
   url?: string
   headerType?:any[]
   toolType?: 'register'
   callback?: (data : any) => void
+  idx?:number
+  headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][]
+  action?:string
 }
 
 export interface IResponseType {

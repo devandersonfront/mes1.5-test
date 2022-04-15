@@ -16,16 +16,18 @@ export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, 
     const type = data.type.split("/")[0];
       await Axios.post(`${SF_ENDPOINT}/anonymous/upload`, data,
           {
-                  headers: type === "image"?
+                  headers:
+                      // type === "image"?
                       {
                           "Content-Type": data.type,
                           "Content-Length": length
-                      } : fileType !== undefined ?
-                          {
-                              "Content-Type": fileType,
-                          }
-                          :
-                          {}
+                      }
+                      // : fileType !== undefined ?
+                      //     {
+                      //         "Content-Type": fileType,
+                      //     }
+                      //     :
+                      //     {}
                 })
           .then((res) => {
               result = res.data;

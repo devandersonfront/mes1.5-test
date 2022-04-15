@@ -30,6 +30,19 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
       setOnImage(value)
   }
 
+
+  const cleanText = () => {
+      switch(true){
+          case column.type === "image":
+              return "이미지 확인"
+          case column.readonly :
+              return "등록된 이미지가 없습니다."
+          default:
+              return "파일 다운로드"
+      }
+      {column.type === "image" ? "이미지 확인" : "파일 다운로드" }
+  }
+
   return (
     <div style={{
       width: "100%",
@@ -40,7 +53,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
     }}>
         <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage}/>
       {
-        row[column.key] ?
+          (row[column.key]?.uuid) ||  typeof row[column.key] !== "object" && row[column.key]?
           <div style={{
             width: "100%",
             height: "100%",
@@ -68,18 +81,34 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                 textDecoration:"underline"
               }}
               onClick={() => {
-                  RequestMethod("get", "anonymousLoad", {
-                      path:{
-                        uuid:row[column.key]
-                      }
-                  })
-                      .then((res) => {
-                          setImgUrl(res.url)
-                          setOnImage(true)
+                  if(typeof row[column.key] === "object"){
+                      RequestMethod("get", "anonymousLoad", {
+                          path:{
+                              uuid:row[column.key].uuid
+                          }
                       })
-                      .catch((err) => {
-                          Notiflix.Report.failure("에러","에러입니다.","확인")
+                          .then((res) => {
+                              setImgUrl(res.url)
+                              setOnImage(true)
+                          })
+                          .catch((err) => {
+                              Notiflix.Report.failure("에러","에러입니다.","확인")
+                          })
+                  }else{
+                      RequestMethod("get", "anonymousLoad", {
+                          path:{
+                              uuid:row[column.key]
+                          }
                       })
+                          .then((res) => {
+                              setImgUrl(res.url)
+                              setOnImage(true)
+                          })
+                          .catch((err) => {
+                              Notiflix.Report.failure("에러","에러입니다.","확인")
+                          })
+                  }
+
               }}
             >
                 {column.type === "image" ? "이미지 보기" : "파일 다운로드" }
@@ -108,22 +137,33 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         onChange={async (e) => {
           if(e.target.files && e.target.files.length !== 0) {
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
-
               if(uploadImg !== undefined){
-                onRowChange({
-                  ...row,
-                  [column.key]: uploadImg.UUID,
-                  [column.key+'Resource']: uploadImg.url,
-                  isChange: true
-                })
+                  if(column.key.includes("photo")){
+                      onRowChange({
+                          ...row,
+                          [column.key]: {
+                              ...row[column.key],
+                              name:e.target.files[0].name,
+                              uuid: uploadImg.UUID,
+                              url:uploadImg.url,
+                              sequence: column.idx,
+                          },
+                              isChange: true
+                      })
+                  }else{
+                    onRowChange({
+                      ...row,
+                      [column.key]: uploadImg.UUID,
+                      [column.key+'Resource']: uploadImg.url,
+                      isChange: true
+                    })
+                  }
               }
           }
-
         }}
       />
     </div>
   );
 }
-
 
 export {FileEditer};

@@ -17,6 +17,7 @@ import {UploadButton} from '../../styles/styledComponents'
 //@ts-ignore
 import moment from 'moment'
 import {transferStringToCode} from "../../common/codeTransferFunctions";
+import Big from 'big.js'
 
 interface IProps {
   column: IExcelHeaderType
@@ -70,6 +71,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
        
        
         ...row,
+        sum: 0,
         defect_reasons: [],
       }])
     }
