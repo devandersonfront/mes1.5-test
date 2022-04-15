@@ -12,7 +12,7 @@ const LineBorderContainer = ({row, column, setRow}: IProps) => {
   return(
     <Background style={{background:row.border ? "#19B9DF80" :  row.color ? row.color :"white"}} onClick={()=>{}} >
       <p style={{padding: 0, color: row[column.key] ? '#0D0D0D' : row.color ? "white" : '#0D0D0D66', width: '100%', textAlign: column.textAlign ?? 'left' }}>
-        {row[column.key] == "" || row[column.key] === null ||  row[column.key] === undefined ? column.placeholder : row[column.key]}
+        {row[column.key] === "" || row[column.key] === null ||  row[column.key] === undefined ? column.placeholder : row[column.key]}
       </p>
     </Background>
   )
