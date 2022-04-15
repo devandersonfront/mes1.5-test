@@ -175,13 +175,12 @@ export const columnlist: any = {
         {pk: 'false', name: '무'}
       ], width: 118},
     {key: 'device_id', name: '주변장치', formatter: /*InfoModal*/ DeviceInfoModal, width: 118, type: 'deviceRegister', summaryType: 'device'},
-    {key: 'form_id',name: '양식 등록', width: 118, formatter: CellButtonComponent /*FactoryInfoModal*/, type: 'inspection',},
+    {key: 'form_id',name: '일상 점검', width: 118, formatter: CellButtonComponent /*FactoryInfoModal*/, type: 'inspection'},
     {key: 'tons', name: '톤 수',editor: TextEditor, formatter: UnitContainer, type:"number", unitData: 'T', width: 118, placeholder:"0"},
     {key: 'volt', name: '사용 전압',editor: TextEditor, formatter: UnitContainer, type:"number", unitData: 'V', width: 118, placeholder:"0"},
     {key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory', placeholder:"-"},
     {key: 'affiliated_id',name: '공장 세분화명', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory', placeholder:"-"},
     {key: 'product_id',name: '생산 품목', width: 118, formatter: ProductInfoModal, type:"machine", headerType:[{name: "기계명"}]},
-    {key: 'form_id',name: '일상 점검', width: 118, formatter: CellButtonComponent /*FactoryInfoModal*/, type: 'inspection'},
   ],
   device: [
     {key: 'mfrName', name: '장치 제조사', editor: TextEditor, formatter: PlaceholderBox, placeholder:"제조사 입력"},
