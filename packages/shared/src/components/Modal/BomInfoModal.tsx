@@ -319,7 +319,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
             type: v.tab,
             key: row.bom_root_id,
             setting: v.setting,
-            usage: v.usage,
+            usage: v.usage?? 1,
             version: v.version
           }
       ))
