@@ -27,6 +27,7 @@ interface IProps {
 const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [totalCount, setTotalCount] = useState<number>(0)
+  const [initCount, setInitCount] = useState<number>(0)
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
@@ -34,12 +35,10 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
-  const [initProp, setInitProp]  = useState<{isInit: boolean, initTotal:number}>({isInit: true, initTotal:0})
   const hasData = row['defect_reasons'] && row['defect_reasons'].length || row['total_defect_reasons'] && row['total_defect_reasons'].length
   const isFromSheetList = column.load === 'sheet'
   useEffect(() => {
     if(column.type !== 'readonly') {
-      initialize()
       if(isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount) === -1) {
         loadDefectList()
       }
@@ -60,31 +59,13 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
 
         setTotalCount(total)
       } else {
-        if(initProp.isInit && isFromSheetList) setTotalCount(row.total_poor_quantity)
+        if(isFromSheetList) setTotalCount(row.total_poor_quantity)
       }
     }
   }, [isOpen, searchKeyword, row['defect_reasons'], row['total_defect_reasons']])
 
-  const initialize = () => {
-    if(initProp.isInit){
-      let initTotal = 0
-      if(hasData){
-       initTotal =  row.poor_quantity
-      }
-      setInitProp({isInit: false, initTotal})
-      setTotalCount(initTotal)
-    }
-  }
-
-  const changeRow = (eachRow: any, key?: string) => {
-    let amount = 0
-    if(hasData) {
-      const reasonMap = new Map<number, any>(row.defect_reasons.map(reason =>
-        [reason.defect_reason.pdr_id, reason]
-      ))
-      amount = reasonMap.get(eachRow.pdr_id)?.amount ?? 0
-    }
-    setTotalCount(amount)
+  const changeRow = (eachRow: any, reasonMap: Map<number, any>) => {
+    const amount = reasonMap.get(eachRow.pdr_id)?.amount ?? 0
     let tmpData = {
       ...eachRow,
       machine_id: eachRow.name,
@@ -117,8 +98,18 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
     })
 
     if(res){
+      const reasonMap = new Map<number, any>()
+      if(hasData) {
+        let totalAmount = 0
+        row.defect_reasons.map(reason => {
+          reasonMap.set(reason.defect_reason.pdr_id, reason)
+          totalAmount += Number(reason.amount)
+        })
+        setInitCount(totalAmount)
+        setTotalCount(totalAmount)
+      }
       let searchList = res.info_list.map((row: any, index: number) => {
-        return changeRow(row)
+        return changeRow(row, reasonMap)
       })
 
       setSearchList([...searchList])
@@ -205,7 +196,6 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
     setIsOpen(false)
     setPageInfo({page:1, total:1})
     setSearchList([])
-    setInitProp({...initProp, isInit:true})
   }
 
   const onCancelEvent = () => {
@@ -213,7 +203,8 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
     if(!hasData){
       setTotalCount(0)
     } else {
-      setTotalCount(initProp.initTotal)
+      setTotalCount(initCount)
+      setInitCount(0)
     }
   }
 

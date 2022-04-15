@@ -4,6 +4,6 @@
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "preserve",
-    "typeRoots": ["./node_modules/@types", "./src/@types"]
+    "typeRoots": ["../../node_modules/@types", "./src/@types", "./src/common/@types", "custom.d.ts"]
   }
 }

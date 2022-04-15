@@ -183,6 +183,132 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         </UploadButton>
     )
 
+  const ModalButtons = () => {
+    return <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
+      {
+        column.type !== 'readonly' && <div
+              onClick={onCancelEvent}
+              style={{width: '50%', height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+          >
+            <p>취소</p>
+          </div>
+      }
+      <div
+        onClick={() =>{
+          if(column.type === 'readonly'){
+            setIsOpen(false)
+          }else{
+            let bomToSave = []
+            let disturbance = 0
+            let quantity = 0
+            const inputBomIdMap = new Map()
+            row.input_bom?.map((bom) => {
+              let bomObject = getBomObject(bom.bom)
+              inputBomIdMap.set(bomObject.bomKey, bom)
+            })
+            searchList.map((bom, index) => {
+              let totalAmount = 0
+              if(bom.lots !== undefined) {
+                bom.lots?.map(lot => {
+                  if (Number(lot.amount)) {
+                    totalAmount += Number(lot.amount)
+
+                    bomToSave.push({
+                      ...inputBomIdMap.get(bom.bomKey),
+                      // record_id: lot?.record_id ?? undefined,
+                      record_id: undefined,
+                      lot: {
+                        elapsed: lot.elapsed,
+                        type: bom.tab,
+                        child_lot_rm: bom.tab === 0 ? {...lot} : null,
+                        child_lot_sm: bom.tab === 1 ? {...lot} : null,
+                        child_lot_record: bom.tab === 2 ? {...lot} : null,
+                        warehousing: lot.warehousing,
+                        date: lot.date,
+                        current: lot.current,
+                        amount: Number(lot.amount) > lot.current ? 0 : lot.amount,
+                        version: lot?.version ?? undefined
+                      }
+                    })
+                  }
+                })
+              }
+              else {
+                bom.bom_info?.map(lot => {
+                  if (Number(lot.amount)) {
+                    totalAmount += Number(lot.amount)
+
+                    bomToSave.push({
+                      ...inputBomIdMap.get(bom.bomKey),
+                      // record_id: lot?.child_lot_record?.record_id ?? undefined,
+                      record_id: undefined,
+                      lot: {
+                        elapsed: lot.elapsed,
+                        type: bom.tab,
+                        child_lot_rm: bom.tab === 0 ? {...lot} : null,
+                        child_lot_sm: bom.tab === 1 ? {...lot} : null,
+                        child_lot_record: bom.tab === 2 ? {...lot} : null,
+                        warehousing: lot.warehousing,
+                        date: lot.date,
+                        current: lot.current,
+                        amount: Number(lot.amount) > lot.current ? 0 : lot.amount,
+                        version: lot?.version ?? undefined
+                      }
+                    })
+                  }
+                })
+              }
+              const defectTotal = lodash.sum(row.defect_reasons?.filter((reason) => !!reason.amount).map((reason)=> Number(reason.amount)))
+              if(totalAmount < defectTotal) {
+                Notiflix.Report.warning("생산량은 불량 수량보다 작을 수 없습니다.", "", "확인")
+                disturbance += 1
+              }
+              if(totalAmount !== bom.disturbance){
+                disturbance += 1
+              }
+              quantity = totalAmount
+            })
+
+            const disturbanceArray = searchList.map((v)=>v.disturbance)
+            const allEqual = arr => arr.every( v => v === arr[0] )
+            if(disturbance === 0){
+              if(disturbanceArray.every((value) => value === 0)){
+                Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
+              }else if(allEqual(disturbanceArray)){
+                let bomLotInfo
+                if(searchList.map((v)=> {return v.lots}).filter(v=>v).length === 0){
+                  bomLotInfo = searchList.map((v) => {
+                    return v.bom_info
+                  })
+                }else {
+                  bomLotInfo = searchList.map((v) => {
+                    return v.lots
+                  })
+                }
+                onRowChange({
+                  ...row,
+                  bom: bomToSave,
+                  bom_info: bomLotInfo,
+                  quantity: quantity,
+                  good_quantity: quantity
+                })
+                setIsOpen(false)
+              }else {
+                Notiflix.Report.warning(`각 BOM의 생산량을 일치시켜 주세요.`, '', '확인')
+              }
+            }else{
+              Notiflix.Report.warning(`소요량과 생산량 합계를 일치시켜 주세요`, '', '확인')
+            }
+
+          }
+        }}
+        style={{width: column.type !== 'readonly' ? "50%" : '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+      >
+        <p>{column.type !== 'readonly' ? '선택 완료' : '확인'}</p>
+      </div>
+    </div>
+  }
+
   const onCancelEvent = () => {
     setLotList([])
     setSelectRow(undefined)
@@ -409,129 +535,9 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   }}
               />
             </div>
-            <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
-              {
-                column.type !== 'readonly' && <div
-                    onClick={onCancelEvent}
-                    style={{width: '50%', height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                >
-                  <p>취소</p>
-                </div>
-              }
-              <div
-                  onClick={() =>{
-                    if(column.type === 'readonly'){
-                      setIsOpen(false)
-                    }else{
-                      let bomToSave = []
-                      let disturbance = 0
-                      let quantity = 0
-                      const inputBomIdMap = new Map()
-                      row.input_bom?.map((bom) => {
-                        let bomObject = getBomObject(bom.bom)
-                        inputBomIdMap.set(bomObject.bomKey, bom)
-                        })
-                      searchList.map((bom, index) => {
-                        let totalAmount = 0
-                        if(bom.lots !== undefined) {
-                          bom.lots?.map(lot => {
-                            if (Number(lot.amount)) {
-                              totalAmount += Number(lot.amount)
-
-                              bomToSave.push({
-                                ...inputBomIdMap.get(bom.bomKey),
-                                // record_id: lot?.record_id ?? undefined,
-                                record_id: undefined,
-                                lot: {
-                                  elapsed: lot.elapsed,
-                                  type: bom.tab,
-                                  child_lot_rm: bom.tab === 0 ? {...lot} : null,
-                                  child_lot_sm: bom.tab === 1 ? {...lot} : null,
-                                  child_lot_record: bom.tab === 2 ? {...lot} : null,
-                                  warehousing: lot.warehousing,
-                                  date: lot.date,
-                                  current: lot.current,
-                                  amount: Number(lot.amount) > lot.current ? 0 : lot.amount,
-                                  version: lot?.version ?? undefined
-                                }
-                              })
-                            }
-                          })
-                        }
-                        else {
-                          bom.bom_info?.map(lot => {
-                            if (Number(lot.amount)) {
-                              totalAmount += Number(lot.amount)
-
-                              bomToSave.push({
-                                ...inputBomIdMap.get(bom.bomKey),
-                                // record_id: lot?.child_lot_record?.record_id ?? undefined,
-                                record_id: undefined,
-                                lot: {
-                                  elapsed: lot.elapsed,
-                                  type: bom.tab,
-                                  child_lot_rm: bom.tab === 0 ? {...lot} : null,
-                                  child_lot_sm: bom.tab === 1 ? {...lot} : null,
-                                  child_lot_record: bom.tab === 2 ? {...lot} : null,
-                                  warehousing: lot.warehousing,
-                                  date: lot.date,
-                                  current: lot.current,
-                                  amount: Number(lot.amount) > lot.current ? 0 : lot.amount,
-                                  version: lot?.version ?? undefined
-                                }
-                              })
-                            }
-                          })
-                        }
-                        const defectTotal = lodash.sum(row.defect_reasons?.filter((reason) => !!reason.amount).map((reason)=> Number(reason.amount)))
-                        if(totalAmount < defectTotal) {
-                          Notiflix.Report.warning("생산량은 불량 수량보다 작을 수 없습니다.", "", "확인")
-                          disturbance += 1
-                        }
-                        if(totalAmount !== bom.disturbance){
-                          disturbance += 1
-                        }
-                        quantity = totalAmount
-                      })
-
-                      const disturbanceArray = searchList.map((v)=>v.disturbance)
-                      const allEqual = arr => arr.every( v => v === arr[0] )
-                      if(disturbance === 0){
-                        if(disturbanceArray.every((value) => value === 0)){
-                          Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
-                        }else if(allEqual(disturbanceArray)){
-                          let bomLotInfo
-                          if(searchList.map((v)=> {return v.lots}).filter(v=>v).length === 0){
-                            bomLotInfo = searchList.map((v) => {
-                              return v.bom_info
-                            })
-                          }else {
-                             bomLotInfo = searchList.map((v) => {
-                              return v.lots
-                            })
-                          }
-                          onRowChange({
-                            ...row,
-                            bom: bomToSave,
-                            bom_info: bomLotInfo,
-                            quantity: quantity,
-                            good_quantity: quantity
-                          })
-                          setIsOpen(false)
-                        }else {
-                          Notiflix.Report.warning(`각 BOM의 생산량을 일치시켜 주세요.`, '', '확인')
-                        }
-                      }else{
-                        Notiflix.Report.warning(`소요량과 생산량 합계를 일치시켜 주세요`, '', '확인')
-                      }
-
-                    }
-                  }}
-                  style={{width: column.type !== 'readonly' ? "50%" : '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-              >
-                <p>{column.type !== 'readonly' ? '선택 완료' : '확인'}</p>
-              </div>
-            </div>
+            {
+              ModalButtons()
+            }
           </div>
         </Modal>
       </SearchModalWrapper>
