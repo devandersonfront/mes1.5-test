@@ -181,6 +181,7 @@ export const columnlist: any = {
     {key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory', placeholder:"-"},
     {key: 'affiliated_id',name: '공장 세분화명', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory', placeholder:"-"},
     {key: 'product_id',name: '생산 품목', width: 118, formatter: ProductInfoModal, type:"machine", headerType:[{name: "기계명"}]},
+    {key: 'form_id',name: '일상 점검', width: 118, formatter: CellButtonComponent /*FactoryInfoModal*/, type: 'inspection'},
   ],
   device: [
     {key: 'mfrName', name: '장치 제조사', editor: TextEditor, formatter: PlaceholderBox, placeholder:"제조사 입력"},

@@ -2,7 +2,7 @@ import React from 'react';
 // Modules
 import Document, {Head, Html, Main, NextScript} from 'next/document';
 // MUI Core
-import {ServerStyleSheets} from '@material-ui/styles'
+import {ServerStyleSheets} from '@mui/styles'
 import {ServerStyleSheet} from 'styled-components';
 // Utils
 import {theme} from '../common/theme';
