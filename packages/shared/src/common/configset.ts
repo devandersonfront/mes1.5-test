@@ -23,10 +23,10 @@ export const POINT_COLOR_3: string = '#e7e9eb' as const
 // export const SF_ADDRESS = "211.47.6.147"
 
 //CNC 주소
-export const SF_ADDRESS = "3.36.78.194"
+// export const SF_ADDRESS = "3.36.78.194"
 
 //1.5v 주소
-// export const SF_ADDRESS = "3.37.196.98"
+export const SF_ADDRESS = "3.37.196.98"
 
 let hostname
 if (typeof window !== 'undefined') {
@@ -51,7 +51,7 @@ export const SF_ENDPOINT_RESOURCE = `http://${isLocalhost()}:8285`
 export const SF_ENDPOINT_S3 = "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"
 export const SF_PORT = ``
 
-export const SF_ENDPOINT_BARCODE = 'http://192.168.0.49:18080'
+export const SF_ENDPOINT_BARCODE = `http://${isLocalhost()}:18080`
 
 export const SF_ENDPOINT_PMS = `http://3.34.98.247:8999`
 

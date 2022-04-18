@@ -129,11 +129,17 @@ const BasicCustomer = ({}: IProps) => {
                     [v.split('PK')[0]]: row[v]
                   }
                 }
-
                 if(v === 'unitWeight') {
                   selectData = {
                     ...selectData,
                     unitWeight: Number(row['unitWeight'])
+                  }
+                }
+
+                if(v === 'photo') {
+                  selectData = {
+                    ...selectData,
+                    photo: row['photo'].uuid
                   }
                 }
 
