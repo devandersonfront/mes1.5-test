@@ -139,7 +139,7 @@ const BasicCustomer = ({}: IProps) => {
                 if(v === 'photo') {
                   selectData = {
                     ...selectData,
-                    photo: row['photo'].uuid
+                    photo: row['photo']?.uuid
                   }
                 }
 
