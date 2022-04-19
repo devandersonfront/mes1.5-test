@@ -629,22 +629,23 @@ const BasicProduct = ({}: IProps) => {
 
   const handleBarcode = async (dataurl : string , id : string , clientIP : string) => {
     Notiflix.Loading.circle()
-    await axios.post(`http://${clientIP}:18080/WebPrintSDK/Printer1`,
-                {
-                  "id":id,
-                  "functions":
-                  {"func0":{"checkLabelStatus":[]},
-                    "func1":{"clearBuffer":[]},
-                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
-                    "func3":{"printBuffer":[]}
-                  }
-                },
-                {
-                  headers : {
-                    'Content-Type' : 'application/x-www-form-urlencoded'
-                  }
-                }
-    ).then((res)=>{
+    const data = {
+      "id":id,
+      "functions":
+          {"func0":{"checkLabelStatus":[]},
+            "func1":{"clearBuffer":[]},
+            "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+            "func3":{"printBuffer":[]}
+          }
+    }
+
+    await fetch(`http://${clientIP}:18080/WebPrintSDK/Printer1`,{
+      method : 'POST',
+      headers : {
+        'Content-Type' : 'application/x-www-form-urlencoded'
+      },
+      body : JSON.stringify(data)
+    }).then((res)=>{
       Notiflix.Loading.remove(2000)
     }).catch((error) => {
       Notiflix.Loading.remove()
