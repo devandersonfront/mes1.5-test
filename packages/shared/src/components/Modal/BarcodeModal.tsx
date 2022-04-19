@@ -54,7 +54,6 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
         const dataurl = await DomToImage.toPng(dom, {quality: 1})
         await axios.get('https://api.ipify.org?format=json')
                 .then(({data})=>{
-                    console.log(data.ip,'ip')
                     handleBarcode(dataurl,id,data.ip)
                 }).catch((error)=>{
                 if(error){
