@@ -817,7 +817,7 @@ export const columnlist: any = {
     {key:"type", name:"품목 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118},
     {key:"unit", name:"단위", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118},
     {key:"process_id", name:"생산 공정", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118},
-    {key:"goal", name:"목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118},
+    {key:"goal", name:"목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118, type: 'number'},
     {key: 'input', name: '자재 선택', formatter: BomRegisterModal, width: 118},
   ],
   operationIdentificationRegisterV2: [
@@ -831,7 +831,7 @@ export const columnlist: any = {
     {key:"type", name:"품목 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118},
     {key:"unit", name:"단위", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118},
     {key:"process_id", name:"생산 공정", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118},
-    {key:"goal", name:"목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118},
+    {key:"goal", name:"목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118, type: 'number'},
     {key: 'input', name: '자재 선택', formatter: BomRegisterModal, width: 118},
   ],
   operationRegisterV2: [
