@@ -177,10 +177,11 @@ const ToolModal = ({column, row, onRowChange}: IProps) => {
                 return {...v, product_type: cleanType(v?.type), average: res}
             }
         })
-
-        Promise.all(toolProductArray).then(res => {
-            setSearchList(res)
-        })
+        if(toolProductArray){
+            Promise.all(toolProductArray).then(res => {
+                setSearchList(res)
+            })
+        }
     }
 
     const ModalContents = () => {

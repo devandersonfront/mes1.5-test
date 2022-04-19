@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
+import {columnlist, ExcelTable, Header as PageHeader, RequestMethod} from "shared";
+import {IExcelHeaderType} from "shared/src/common/@types/type"
 import moment from "moment";
 import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
 import ButtonGroup from "../../../../main/component/ButtonGroup";
@@ -144,9 +145,7 @@ const MesKpiOperation = () => {
             <PageHeader title={"설비가동률(P)"} />
             <ExcelTable
                 editable
-                headerList={[
-                    ...processColumn
-                ]}
+                headerList={processColumn}
                 row={[processBasicRow]}
                 setRow={(row) => {
                     setProcessBasicRow({...processBasicRow,
