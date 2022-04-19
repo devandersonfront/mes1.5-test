@@ -18,7 +18,6 @@ import {useRouter} from 'next/router'
 import {loadAll} from 'react-cookies'
 import {NextPageContext} from 'next'
 import axios from 'axios';
-import { SF_ENDPOINT_BARCODE } from 'shared/src/common/configset';
 import {useDispatch} from "react-redux";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
@@ -584,9 +583,9 @@ const BasicRawMaterial = ({}: IProps) => {
     setBasicRow(rows)
   }
 
-  const handleBarcode = async (dataurl , id) => {
+  const handleBarcode = async (dataurl: string , id : string , clientIP : string) => {
 
-    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
+    await axios.post(`http://${clientIP}:18080/WebPrintSDK/Printer1`,
         {
           "id":id,
           "functions":
