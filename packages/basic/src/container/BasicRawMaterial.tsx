@@ -583,8 +583,8 @@ const BasicRawMaterial = ({}: IProps) => {
     setBasicRow(rows)
   }
 
-  const handleBarcode = async (dataurl: string , id : string , clientIP : string) => {
-
+  const handleBarcode = async (dataurl : string , id : string , clientIP : string) => {
+    Notiflix.Loading.circle()
     await axios.post(`http://${clientIP}:18080/WebPrintSDK/Printer1`,
         {
           "id":id,
@@ -600,13 +600,14 @@ const BasicRawMaterial = ({}: IProps) => {
             'Content-Type' : 'application/x-www-form-urlencoded'
           }
         }
-    ).catch((error) => {
-
+    ).then((res)=>{
+      Notiflix.Loading.remove(2000)
+    }).catch((error) => {
+      Notiflix.Loading.remove()
       if(error){
         Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
         return false
       }
-
     })
   }
 

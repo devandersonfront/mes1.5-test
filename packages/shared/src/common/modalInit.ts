@@ -206,7 +206,8 @@ export const searchModalList: any = {
     {key: 'sequence', name: '번호', width: 64, textAlign: 'center', formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer },
     {key: 'name', name: '금형명', formatter: LineBorderContainer, type: 'Modal'},
-    {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
+    {key: 'setting', name: '' +
+        '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '여'},
         {pk: 'spare', name: '부'},
       ], type: 'Modal'},
@@ -324,8 +325,7 @@ export const searchModalList: any = {
     {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 1, name: '여'},
         {pk: 0, name: '부'},
-      ],
-    },
+      ], type: 'Modal' },
     {key: 'isDefault', name: '기본/스페어', width: 160, formatter: LineBorderContainer, textAlign: 'left'},
     {key: 'type', name: '품목 종류', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'unit', name: '단위', formatter: LineBorderContainer, textAlign: 'center'},
@@ -333,7 +333,7 @@ export const searchModalList: any = {
     // {key: 'disturbance', name: '소요량', formatter: LineBorderContainer, textAlign: 'center'},
     // {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center',placeholder: '-'},
-    {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' , type : 'readonly' },
+    {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' , type : 'readonly', modalType: 'modal' },
   ],
   InputInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
