@@ -206,14 +206,14 @@ const MACHINE_CODE = [
 ]
 
 export const changeCodeInfo = (type: string, code: number) => {
-  let tmpData = {code: -1, name: ''}
+    let tmpData = {code: -1, name: ''}
 
-  if(type === 'machine'){
-    MACHINE_CODE.forEach((v: { code: number, name: string }, i) => {
-      if(v.code === code){
-        tmpData = v
-      }
-    })
-  }
-  return tmpData
+    if (type === 'machine') {
+        MACHINE_CODE.forEach((v: { code: number, name: string }, i) => {
+            if (v.code === code) {
+                tmpData = v
+            }
+        })
+    }
+    return tmpData
 }
