@@ -682,6 +682,7 @@ const BasicProduct = ({}: IProps) => {
           }}
           optionIndex={optionIndex}
           title={"제품 등록 관리"}
+          pageHelper={"제품 등록, 삭제는 하나씩 가능"}
           buttons={buttonList}
           buttonsOnclick={
             // () => {}

@@ -21,6 +21,7 @@ interface SelectParameter {
 //웰컴, 로그인 페이지 네비게이션 컴포넌트
 interface IProps {
   title: string
+  pageHelper?: string
   selectDate?:string | SelectParameter
   setSelectDate?:(value:SelectParameter | string) => void
   buttons?: string[]
@@ -152,7 +153,7 @@ const lightTheme = createTheme({
   }
 })
 
-const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnclick, isSearch, style, leftButton, onClickMenu, menuIndex,
+const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList, buttonsOnclick, isSearch, style, leftButton, onClickMenu, menuIndex,
                       searchKeyword, onChangeSearchKeyword, searchOptionList, onChangeSearchOption, filterList, onChangeFilter,
                       serviceFilterButton, onClickServiceButton, leftButtonOnClick, basicMachineType, typeListOnClick, isCalendar, onChangeSelectDate,
                       calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code}: IProps) => {
@@ -203,9 +204,14 @@ const Header = ({title, selectDate, setSelectDate, buttons, typeList, buttonsOnc
       <div style={{position: 'relative', textAlign: 'left',}}>
         <div style={{display: 'flex', textAlign: 'left', marginBottom: 23, justifyContent: 'space-between', ...style}}>
           <div style={{width: '100%',display: 'flex', justifyContent:"space-between"}}>
+            <div style={{marginTop:20}}>
             {
-              title && <span style={{fontSize: 22, marginRight: 18, marginLeft: 3, fontWeight: 'bold', color: 'white', marginTop:20}}>{title}</span>
+              title && <span style={{fontSize: 22, marginRight: 18, marginLeft: 3, fontWeight: 'bold', color: 'white'}}>{title}</span>
             }
+            {
+              pageHelper && <span style={{fontSize: 12, color: 'white'}}>*{pageHelper}</span>
+            }
+            </div>
             <ButtonWrapper style={{  marginTop: 20}}>
                 {
                   isCode && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
