@@ -13,7 +13,6 @@ import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
-import {PaginationComponent} from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {LineBorderContainer} from '../Formatter/LineBorderContainer'
 
@@ -43,15 +42,18 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
     if(isOpen) SearchBasic(searchKeyword, optionIndex, 1).then(() => {
       Notiflix.Loading.remove()
     })
-  }, [isOpen, searchKeyword])
+    return () => {
+      setPageInfo({page:1, total:1})
+    }
+  }, [isOpen])
 
   useEffect(() => {
     if(pageInfo.total > 1){
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page, true).then(() => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page])
+  }, [pageInfo.page, searchKeyword])
 
   const changeRow = (row: any, key?: string) => {
 
@@ -60,12 +62,11 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
       user_id: row.name,
       user_idPK: row.user_id,
       id:row.id,
-      // name:"",
       appointment: row.appointment,
       telephone: row.telephone,
       authority: row.ca_id.name,
       authorityPK: row.authority,
-      manager : row
+      manager : row,
     }
 
     if(column.searchType === 'list'){
@@ -79,7 +80,7 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
     return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
+  const SearchBasic = async (keyword: any, option: number, page: number, nextPage?:boolean) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `memberSearch`,{
       path: {
@@ -92,8 +93,8 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    if(res ){
-      let searchList = res.info_list.map((row: any, index: number) => {
+    if(res){
+      let nextList = res.info_list.map((row: any, index: number) => {
         return changeRow(row)
       })
 
@@ -102,8 +103,11 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
         page: res.page,
         total: res.totalPages,
       })
-
-      setSearchList([...searchList])
+      if(nextPage){
+        setSearchList([...searchList,...nextList])
+      }else{
+        setSearchList(nextList)
+      }
     }
   }
 
@@ -157,8 +161,14 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
 
       default:
         return
-
     }
+  }
+
+  const confirmFunction = () => {
+      if(selectRow !== undefined && selectRow !== null){
+        onRowChange({...row, manager: searchList[selectRow].manager , appointment : searchList[selectRow].appointment , telephone : searchList[selectRow].telephone})
+      }
+      setIsOpen(false)
   }
 
   return (
@@ -182,117 +192,124 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
         }}>
           <div style={{
             width: 1776,
-            height: 816
+            height: 816,
+            display:"flex",
+            flexDirection:"column",
+            justifyContent:"space-between"
           }}>
-            <div style={{
-              marginTop: 24,
-              marginLeft: 16,
-              marginRight: 16,
-              display: 'flex',
-              justifyContent: 'space-between'
-            }}>
-              <p style={{
-                color: 'black',
-                fontSize: 22,
-                fontWeight: 'bold',
-                margin: 0,
-              }}>{title} 검색</p>
-              <div style={{cursor: 'pointer'}} onClick={() => {
-                setIsOpen(false)
-              }}>
-                <img style={{width: 20, height: 20}} src={IcX}/>
-              </div>
-            </div>
-            <div style={{
-              width: 1776, height: 32, margin: '16px 0 16px 16px',
-              display: 'flex'
-            }}>
+            <div>
               <div style={{
-                width: 120, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                backgroundColor: '#F4F6FA', border: '0.5px solid #B3B3B3',
-                borderRight: 'none'
+                marginTop: 24,
+                marginLeft: 16,
+                marginRight: 16,
+                display: 'flex',
+                justifyContent: 'space-between'
               }}>
-                <select
-                  defaultValue={'-'}
-                  onChange={(e) => {
-                    setOptionIndex(Number(e.target.value))
+                <p style={{
+                  color: 'black',
+                  fontSize: 22,
+                  fontWeight: 'bold',
+                  margin: 0,
+                }}>{title} 검색</p>
+                <div style={{cursor: 'pointer'}} onClick={() => {
+                  setIsOpen(false)
+                }}>
+                  <img style={{width: 20, height: 20}} src={IcX}/>
+                </div>
+              </div>
+              <div style={{
+                width: 1776, height: 32, margin: '16px 0 16px 16px',
+                display: 'flex'
+              }}>
+                <div style={{
+                  width: 120, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                  backgroundColor: '#F4F6FA', border: '0.5px solid #B3B3B3',
+                  borderRight: 'none'
+                }}>
+                  <select
+                    defaultValue={'-'}
+                    onChange={(e) => {
+                      setOptionIndex(Number(e.target.value))
+                    }}
+                    style={{
+                      color: 'black',
+                      backgroundColor: '#00000000',
+                      border: 0,
+                      height: 32,
+                      width: 120,
+                      fontSize:15,
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {
+                      optionList && optionList.member.map((v, i) => {
+                        return <option value={i}>{v}</option>
+                      })
+                    }
+                  </select>
+                </div>
+                <input
+                  value={keyword ?? ""}
+                  type={"text"}
+                  placeholder="검색어를 입력해주세요."
+                  onChange={(e) => {setKeyword(e.target.value)}}
+                  onKeyDown={(e) => {
+                    if(e.key === 'Enter'){
+                      setSearchKeyword(keyword)
+                    }
                   }}
                   style={{
-                    color: 'black',
-                    backgroundColor: '#00000000',
-                    border: 0,
-                    height: 32,
-                    width: 120,
-                    fontSize:15,
-                    fontWeight: 'bold'
+                    width:"1594px",
+                    height:"32px",
+                    paddingLeft:"10px",
+                    border:"0.5px solid #B3B3B3",
+                    backgroundColor: 'rgba(0,0,0,0)'
+                  }}
+                />
+                <div
+                  style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
+                  onClick={() => {
+                    setSearchKeyword(keyword)
                   }}
                 >
-                  {
-                    optionList && optionList.member.map((v, i) => {
-                      return <option value={i}>{v}</option>
-                    })
-                  }
-                </select>
+                  <img src={Search_icon} style={{width:"16px",height:"16px"}} />
+                </div>
               </div>
-              <input
-                value={keyword ?? ""}
-                type={"text"}
-                placeholder="검색어를 입력해주세요."
-                onChange={(e) => {setKeyword(e.target.value)}}
-                onKeyDown={(e) => {
-                  if(e.key === 'Enter'){
-                    setSearchKeyword(keyword)
-                  }
-                }}
-                style={{
-                  width:"1594px",
-                  height:"32px",
-                  paddingLeft:"10px",
-                  border:"0.5px solid #B3B3B3",
-                  backgroundColor: 'rgba(0,0,0,0)'
-                }}
-              />
-              <div
-                style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
-                onClick={() => {
-                  setSearchKeyword(keyword)
-                }}
-              >
-                <img src={Search_icon} style={{width:"16px",height:"16px"}} />
+              <div style={{padding: '0 16px 0 16px', width: 1776}}>
+                <ExcelTable
+                  headerList={searchModalList.member}
+                  row={searchList ?? []}
+                  width={1750}
+                  rowHeight={32}
+                  height={576}
+                  setRow={()=>{}}
+                  setSelectRow={(e) => {
+                    setSelectRow(e)
+                    if(!searchList[e].border){
+                      searchList.map((v,i)=>{
+                        v.border = false;
+                      })
+                      searchList[e].border = true
+                      setSearchList([...searchList])
+                    }
+                    setSearchList([...searchList.map((row, index) => {
+                      if(index === e) {
+                        row.doubleClick = confirmFunction
+                        return row
+                      }
+                      else return row
+                    })])
+                  }}
+                  scrollEnd={(e) => {
+                    if(e && pageInfo.page < pageInfo.total){
+                      setPageInfo({...pageInfo, page: pageInfo.page + 1})
+                    }
+                  }}
+                  type={'searchModal'}
+                />
               </div>
             </div>
-            <div style={{padding: '0 16px 0 16px', width: 1776}}>
-              <ExcelTable
-                headerList={searchModalList.member}
-                row={searchList ?? []}
-                width={1750}
-                rowHeight={32}
-                height={576}
-                setRow={()=>{}}
-                setSelectRow={(e) => {
-                  setSelectRow(e)
-                  if(!searchList[e].border){
-                    searchList.map((v,i)=>{
-                      v.border = false;
-                    })
-                    searchList[e].border = true
-                    setSearchList([...searchList])
-                  }
-                }}
-                type={'searchModal'}
-              />
-              <PaginationComponent
-                currentPage={pageInfo.page}
-                totalPage={pageInfo.total}
-                themeType={'modal'}
-                setPage={(page) => {
-                  SearchBasic(searchKeyword, optionIndex, page).then(() => {
-                    Notiflix.Loading.remove()
-                  })
-                }}
-              />
-            </div>
-            <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
+            <div style={{  display: 'flex', alignItems: 'flex-end'}}>
               <div
                 onClick={() => {
                   setIsOpen(false)

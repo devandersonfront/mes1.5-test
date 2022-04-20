@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import styled from "styled-components";
 // @ts-ignore
 import DataGrid, {TextEditor, Row, RowRendererProps} from 'react-data-grid'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import {SearchModalStyle} from '../../styles/styledComponents'
 import {RequestMethod} from "../../common/RequestFunctions";
 //@ts-ignore
@@ -91,12 +91,6 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
       className={'cell'}
       columns={headerList}
       rows={row}
-      onDoubleClick={(e) => {
-        console.log("e : ", e)
-      }}
-      // onFill={(e) => {console.log(e)}}
-      // onCopy={(e) => {console.log(e)}}
-      // onPaste={(e) => {console.log(e)}}
       onColumnResize={(v, i) => {
         tempData.map((time,i)=>{
             clearTimeout(time)

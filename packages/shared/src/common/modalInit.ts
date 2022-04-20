@@ -26,10 +26,10 @@ import { BomInfoModal } from '../components/Modal/BomInfoModal'
 
 export const searchModalList: any = {
   member: [
-    {key: 'name', name: '성명', formatter: LineBorderContainer},
-    {key: 'appointment', name: '직책', formatter: LineBorderContainer},
-    {key: 'authority', name: '권한', formatter: LineBorderContainer},
-    {key: 'id', name: '아이디', formatter: LineBorderContainer},
+    {key: 'name', name: '성명', formatter: LineBorderContainer, placeholder:"-"},
+    {key: 'appointment', name: '직책', formatter: LineBorderContainer, placeholder:"-"},
+    {key: 'authority', name: '권한', formatter: LineBorderContainer, placeholder:"-"},
+    {key: 'id', name: '아이디', formatter: LineBorderContainer, placeholder:"-"},
   ],
   product: [
     {key: 'customer_name', name: '거래처명', formatter: LineBorderContainer},
@@ -99,10 +99,9 @@ export const searchModalList: any = {
 
   factoryInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'name', name: '세분화명', width: 576, formatter: LineBorderContainer, editor: TextEditor, editorOptions: {
-        editOnClick: true
-      }, textType: 'Modal', placeholder: '세분화명 입력'},
+    {key: 'name', name: '세분화명', width: 576, formatter: LineBorderContainer, editor: TextEditor,  textType: 'Modal', placeholder: '세분화명 입력'},
     {key: 'manager_name', name: '담당자', width: 392, formatter: ManagerSearchModal, type:"modal", placeholder: "-"},
+    // {key: 'manager_name', name: '담당자', width: 392, formatter: SearchModalTest, type:"user", placeholder: "-"},
     {key: 'appointment', name: '직책', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력'},
     {key: 'telephone', name: '전화번호', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력'},
     {key: 'description', name: '비고', width: 370, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '내용 입력'},
@@ -208,7 +207,8 @@ export const searchModalList: any = {
     {key: 'sequence', name: '번호', width: 64, textAlign: 'center', formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer },
     {key: 'name', name: '금형명', formatter: LineBorderContainer, type: 'Modal'},
-    {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
+    {key: 'setting', name: '' +
+        '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '여'},
         {pk: 'spare', name: '부'},
       ], type: 'Modal'},
@@ -336,6 +336,7 @@ export const searchModalList: any = {
     // {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center',placeholder: '-'},
     {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' ,modalType: true , type : 'readonly' },
+    // {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' , type : 'readonly', modalType: 'modal' },
   ],
   InputInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},

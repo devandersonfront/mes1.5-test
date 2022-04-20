@@ -394,7 +394,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                 })
               }
             }}
-              hoverColor={'#19B9DF'} haveId status={column.modalType ? "modal" : "table"}
+               hoverColor={'#19B9DF'} haveId status={column.modalType ? "modal" : "table"}
             >
               <p>BOM 보기</p>
             </UploadButton>
