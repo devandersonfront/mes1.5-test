@@ -52,10 +52,11 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
         const id = (type === 'rawMaterial' ? data?.rm_id : data?.product_id)
         const dom  = document.getElementById('capture_dom')
         const dataurl = await DomToImage.toPng(dom, {quality: 1})
-        await axios.get('http://api.ipify.org?format=json')
-                .then(({data})=>{
-                    handleBarcode(dataurl,id,data.ip)
-                }).catch((error)=>{
+        await fetch('http://api.ipify.org/?format=json')
+            .then(response => response.json())
+            .then(data => {
+                handleBarcode(dataurl,id,data.ip)
+            }).catch((error)=>{
                 if(error){
                     Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
                     return false
