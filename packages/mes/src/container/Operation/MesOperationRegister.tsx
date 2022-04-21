@@ -19,6 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {SearchModalResult, SearchResultSort} from "shared/src/Functions/SearchResultSort";
 import {delete_operation_searchKey} from "shared/src/reducer/operationRegisterState";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {NoneSelectedValidation, RequiredValidation, NoAmountValidation} from "shared/src/validations/validation";
 
 interface IProps {
   page?: number
@@ -105,102 +106,49 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const SaveBasic = async (result:any, selectList:Set<any>) => {
-    if(basicRow.length === 0) {
-      return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
-    }
-    if(selectList.size === 0){
-      return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
-    }
-    const error = result.map((row)=>{
-      if(selectList.has(row.id)){
-        if(row.product_id === undefined) {
-          return 1
-        }
-        if(row.input_bom === undefined){
-          return 2
-        }
-      }
-    })
+  const validateSaveRequest = (selectedData: any[]) => {
+    return NoneSelectedValidation(selectedData) ||
+    RequiredValidation('product_id', selectedData,"CODE OR 수주번호를 선택해주세요.") ||
+    RequiredValidation('input_bom', selectedData,"자재 보기를 눌러 BOM 등록을 해주세요.") ||
+    NoAmountValidation('goal', selectedData, "목표 생산량을 입력해 주세요.")
+  }
 
-    if(error.includes(1)){
-      return Notiflix.Report.warning("경고","CODE OR 수주번호를 선택해주세요.","확인")
-    }
-    if(error.includes(2)){
-      return Notiflix.Report.warning("경고","자재 보기를 눌러 BOM 등록을 해주세요.","확인")
-    }
-
+  const SaveBasic = async (selectedData: any[]) => {
+    if(validateSaveRequest(selectedData)) return
     let res: any
     res = await RequestMethod('post', `sheetSave`,
-        result.map((row, i) => {
-          if(selectList.has(row.id)){
-            let selectKey: string[] = []
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
-
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-
-            })
-            return {
-              ...row,
-              ...selectData,
-              os_id:undefined,
-              version: undefined,
-              input_bom: [...row?.input_bom?.map((bom)=>{
-                bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
-                return {...bom}
-              })] ?? [],
-              status: 1,
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
+      selectedData.map((row, i) => {
+        let selectKey: string[] = []
+        column.map((v) => {
+          if (v.selectList) {
+            selectKey.push(v.key)
           }
-        }).filter((v) => v))
+        })
+        let selectData: any = {}
 
+        Object.keys(row).map(v => {
+          if (v.indexOf('PK') !== -1) {
+            selectData = {
+              ...selectData,
+              [v.split('PK')[0]]: row[v]
+            }
+          }
 
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인', () => {
+        })
+        return {
+          ...row,
+          ...selectData,
+          os_id: undefined,
+          version: undefined,
+          input_bom: [ ...row?.input_bom?.map((bom) => {
+            bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
+            return { ...bom }
+          }) ] ?? [],
+          status: 1,
+        }
+      }))
+    if (res) {
+      Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
         router.push('/mes/operationV1u/list')
       });
     }
@@ -349,18 +297,9 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = async(index: number) => {
     switch(index){
       case 0:
-        // if(selectList.size === 1) {
-        //   if (basicRow[0].product.product_id) {
-        //     const data = await loadGraphSheet(basicRow[0].product.product_id, basicRow[0]).then(value => value)
-        //     setBasicRow(data);
-        //     setBomCheck(false)
-        //   }
-        // }else{
-        //   Notiflix.Report.warning("경고","한개의 데이터만 선택해 주시기 바랍니다.","확인");
-        // }
         break;
       case 2:
-        SaveBasic(basicRow, selectList)
+        SaveBasic(basicRow.filter(row => selectList.has(row.id)))
         break;
       case 3:
         if(selectList.size > 0) {
