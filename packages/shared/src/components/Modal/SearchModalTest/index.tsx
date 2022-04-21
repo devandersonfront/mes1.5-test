@@ -89,7 +89,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         // console.log("searchModalInit : ", searchModalInit)
         setSearchModalColumn(
             [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column) => {
-              return ({...column, doubleClick: confirmFunction()})
+              return ({...column, doubleClick: confirmFunction})
             })])
       }
 
@@ -322,6 +322,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   const confirmFunction = () => {
     setIsOpen(false)
+    console.log("here")
     if(selectRow !== undefined){
       const selectNameFunction = (type:string) => {
         switch(type){
@@ -456,7 +457,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }
 
     }
-
   }
 
   return (
