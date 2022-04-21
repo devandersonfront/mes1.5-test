@@ -164,6 +164,7 @@ const ApiList = {
   operationSave: `/api/v1/operation/save`,
   shipmentSave: `/api/v1/shipment/save`,
   recordSave: `/api/v1/record/save`,
+  lotRmComplete: `/api/v1/lot-rm/complete`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,

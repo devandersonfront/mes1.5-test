@@ -18,13 +18,12 @@ import {MachineListModal} from '../components/Modal/MachineListModal'
 import {SearchModalTest} from '../components/Modal/SearchModalTest'
 import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
 import {LotNumberRegister} from '../components/Cell/LotNumberRegister'
-import OperationSearchModal from "../../../main/component/Modal/OperationSearchModal";
 import {ToolSelectModal} from "../components/Modal/ToolSelectModal";
 import {ToolListModal} from "../components/Modal/ToolListModal";
 import {LotInputInfoModal} from "../components/Modal/LotInputInfoModal";
 import { BomInfoModal } from '../components/Modal/BomInfoModal'
 
-export const searchModalList: any = {
+export const searchModalList: any  = {
   member: [
     {key: 'name', name: '성명', formatter: LineBorderContainer, placeholder:"-"},
     {key: 'appointment', name: '직책', formatter: LineBorderContainer, placeholder:"-"},
@@ -220,7 +219,7 @@ export const searchModalList: any = {
     {key: 'sequence', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'name', name: '기계 이름', formatter: LineBorderContainer, placeholder: '-', type: 'Modal' },
     {key: 'mfrCode', name: '제조 번호', width: 160, formatter: LineBorderContainer, placeholder: '-', type: 'Modal', textAlign: 'center' },
-    {key: 'type', name: '기계 종류', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
+    {key: 'machineType', name: '기계 종류', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
     {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '여'},
         {pk: 'spare', name: '부'},
@@ -349,34 +348,6 @@ export const searchModalList: any = {
     {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
     {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-', },
-
-  ],
-  InputLotInfo: [
-    {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'elapsed', name: '경과일', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
-    {key: 'lot_number', name: 'LOT 번호', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'date', name: '입고일', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'warehousing', name: '입고량', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'current', name: 'LOT 재고량', formatter: LineBorderContainer, textAlign: 'center'},
-    // {key: 'spare', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
-    //     {pk: 1, name: '여'},
-    //     {pk: 0, name: '부'},
-    //   ], type: 'Modal'},
-    {key: 'amount', name: '생산량', formatter: LineBorderContainer, editor: TextEditor, textAlign: 'center', textType: 'Modal', placeholder: '생산량 입력', type:'number', disabledCase: { key: 'current', value: 0}},
-  ],
-  ModifyInputLotInfo: [
-    {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'elapsed', name: '경과일', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
-    {key: 'lot_number', name: 'LOT 번호', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'date', name: '입고일', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'warehousing', name: '입고량', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'current', name: 'LOT 재고량', formatter: LineBorderContainer, textAlign: 'center'},
-    // {key: 'spare', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
-    //     {pk: 1, name: '여'},
-    //     {pk: 0, name: '부'},
-    //   ], type: 'Modal'},
-    {key: 'amount', name: '생산량', formatter: LineBorderContainer, editor: TextEditor, textAlign: 'center', textType: 'Modal', placeholder: '생산량 입력', type:'number', disabledCase: [{ key: 'current', value: 0}, {key:'is_complete', value: true}]},
-    {key: 'isComplete', name: '사용완료 상태', formatter: LineBorderContainer, textAlign: 'center'},
   ],
   InputLotReadonlyInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
@@ -386,7 +357,14 @@ export const searchModalList: any = {
     {key: 'warehousing', name: '입고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'current', name: 'LOT 재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'amount', name: '생산량', formatter: LineBorderContainer, textAlign: 'center'},
-
+  ],
+  ProductLotReadonlyInfo: [
+    {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'lot_number', name: 'LOT 번호', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'date', name: '생산일', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'warehousing', name: 'LOT 생산량', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'current', name: 'LOT 재고량', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'amount', name: '생산량', formatter: LineBorderContainer, textAlign: 'center'},
   ],
   InputList: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
@@ -400,7 +378,6 @@ export const searchModalList: any = {
     {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
     {key: 'lot', name: '투입 LOT', width: 160, formatter: AddTabButton, placeholder: '-', type: '' },
-
   ],
   InputListReadonly: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center',placeholder: "-"},
@@ -610,7 +587,7 @@ export const searchModalList: any = {
     {key: 'end', name: '작업 종료 일시'},
     {key: 'worker_name', name: '작업자'},
     {key: 'current', name: '재고량'},
-    {key: 'amount', name: '납품 수량', editor: TextEditor, formatter: LineBorderContainer, textType: 'Modal', placeholder:"수량을 입력해주세요."},
+    {key: 'amount', name: '납품 수량', editor: TextEditor, formatter: LineBorderContainer, textType: 'Modal', placeholder:"수량을 입력해주세요.", type: 'number'},
   ],
   lotDeliveryInfoReadonly: [
     {key: 'seq', name: '번호', width: 32, textAlign: 'center'},

@@ -17,7 +17,7 @@ import {UploadButton} from '../../styles/styledComponents'
 //@ts-ignore
 import moment from 'moment'
 import {transferStringToCode} from "../../common/codeTransferFunctions";
-import Big from 'big.js'
+
 
 interface IProps {
   column: IExcelHeaderType

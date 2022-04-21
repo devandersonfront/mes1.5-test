@@ -46,6 +46,7 @@ import {LotInfoModal} from '../components/Modal/LotInfoModal'
 import {OperationInfoModal} from '../components/Modal/OperationInfoModal'
 import {DeliveryInfoModal} from '../components/Modal/DeliveryInfoModal'
 import {FinishButton} from '../components/Buttons/FinishButton'
+import {CompleteButton} from '../components/Buttons/CompleteButton'
 import {PauseInfoModal} from '../components/Modal/PauseInfoModal'
 import {FinishCancelButton} from '../components/Buttons/FinishCancelButton'
 import {OrderRegisterButton} from '../components/Buttons/OrderRegisterButton'
@@ -65,6 +66,8 @@ import {UnderLineContainer} from '../components/Formatter/UnderLineContainer'
 import { OnClickContainer } from '../components/InputBox/OnClickContainer'
 import { InputWithDropDown } from '../components/Dropdown/InputWithDropDown'
 import {ToolModal} from "../components/Modal/ToolModal";
+import { RequestMethod } from './RequestFunctions'
+import Notiflix from 'notiflix'
 
 
 export const columnlist: any = {
@@ -431,6 +434,11 @@ export const columnlist: any = {
     {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',width: 118},
     {key: 'customer_id', name: '거래처', width: 118},
     {key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118},
+    {key: 'is_complete', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소', onClickEvent: async (body:any) => {
+      body.is_complete ? body.onClickEvent(body)
+        : Notiflix.Confirm.show(`재고 수량이 '0'으로 변경됩니다. 진행 하시겠습니까?`, '*사용완료 처리된 자재는 작업이력 수정 시 수정불가해집니다.', '예','아니오', () => body.onClickEvent(body), ()=>{},
+          {width: '400px'})
+    }}
   ],
 
   rawstockModify: [
@@ -446,11 +454,11 @@ export const columnlist: any = {
     {key: 'warehousing',name: '입고량', editor: TextEditor, formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', width: 118},
     {key: 'date', name: '입고일', formatter: CalendarBox, width: 118},
     {key: 'lot_number', name: '원자재 LOT 번호', editor: TextEditor, width: 118},
-    {key: 'exhaustion', formatter: DropDownEditor, width: 118, name: '재고 현황' ,
-      selectList: [
-        {pk: false, name: '-'},
-        {pk: true, name: '사용완료'}
-      ]},
+    // {key: 'exhaustion', formatter: DropDownEditor, width: 118, name: '재고 현황' ,
+    //   selectList: [
+    //     {pk: false, name: '-'},
+    //     {pk: true, name: '사용완료'}
+    //   ]},
   ],
 
   subinV1u: [

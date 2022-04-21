@@ -291,6 +291,7 @@ const ApiList = {
   documentSave: `/cnc/api/v1/document/save`,
   inspecMachineSave: `/api/v1/inspec/daily/machine/save`,
   inspecMoldSave: `/api/v1/inspec/daily/mold/save`,
+  lotRmComplete: `/api/v1/lot-rm/complete`,
 
   //modify
   operationModify: `/api/v1/operation/modify`,

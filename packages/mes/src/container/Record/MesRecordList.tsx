@@ -55,17 +55,22 @@ const MesRecordList = ({page, search, option}: IProps) => {
     setOrder(value);
   }
 
-  useEffect(() => {
+  const loadPage = (page:number) => {
     if(keyword){
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+      SearchBasic(keyword, optionIndex, page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(pageInfo.page).then(() => {
+      LoadBasic(page).then(() => {
         Notiflix.Loading.remove()
       })
     }
+  }
+
+  useEffect(() => {
+    loadPage(pageInfo.page)
   }, [pageInfo.page, keyword, selectDate,order])
+
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
@@ -389,6 +394,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         worker: worker,
         worker_object: row.worker_object ?? row.worker,
         id: `sheet_${random_id}`,
+        loadPage
         // paused_time: row.pause_reasons && lodash.sum(row.pause_reasons?.map(reason => reason.amount))
       }
     })

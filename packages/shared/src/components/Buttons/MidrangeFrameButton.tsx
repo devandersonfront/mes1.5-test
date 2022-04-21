@@ -40,7 +40,7 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
             }else if (typeof row.user === 'string'){
                 worker = row.user
             }
-            setExcelInfo({sic_id: res.sic_id, record_id: row.record_id ,basic: [{osd_id: row.identification, lot_number: row.lot_number, code: row.product.code, material_name: row.product.name, type: row.type , process_id: processName, worker_name: worker, name: machineName}], samples: [{samples: res.samples}], legendary: ["legendaryArray"], inspection_info: res.inspection_info})
+            setExcelInfo({sic_id: res.sic_id, record_id: row.record_id ,basic: [{osd_id: row.identification, lot_number: row.lot_number, code: row.product.code, material_name: row.product.name, type: row.type , process_id: processName, worker_name: worker, name: machineName}], samples: [{samples: res.samples}], legendary: ['선택 없음',...res.legendary_list], inspection_info: res.inspection_info})
             setModalOpen(true)
         }else {
             Notiflix.Report.warning('검사 항목을 등록해주세요.','','확인');
@@ -96,7 +96,7 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
     )
     return (
         <>
-            <MidrangeRegisterModal isOpen={modalOpen} setIsOpen={setModalOpen} formReviewData={execlInfo} modify={modify}/>
+            <MidrangeRegisterModal isOpen={modalOpen} setIsOpen={setModalOpen} formReviewData={execlInfo} modify={modify} reloadPage={row.loadPage}/>
             {contentCheck()}
         </>
     );

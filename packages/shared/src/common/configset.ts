@@ -19,13 +19,8 @@ export const BUTTON_TEXT_COLOR: string = '#ffffff' as const
 export const BG_COLOR_SUB3: string = '#353b48' as const
 export const POINT_COLOR_3: string = '#e7e9eb' as const
 
-//AI 서버 주소
-// export const SF_ADDRESS = "211.47.6.147"
-
-//테스트 주소
 export const SF_ADDRESS = "3.36.78.194"
 
-//실서버 주소
 // export const SF_ADDRESS = "3.37.196.98"
 
 let hostname
