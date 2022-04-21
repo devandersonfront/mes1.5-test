@@ -252,6 +252,7 @@ export const columnlist: any = {
         {pk: 'L', name: 'L'},
       ]},
     {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister"},
+    // {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"product"},
     {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process", placeholder: "-"},
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
     {key: 'tool_id', name: '공구', formatter: ToolInfoModal},

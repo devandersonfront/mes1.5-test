@@ -46,16 +46,15 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   })
 
   useEffect(() => {
-    if(column.type){
-      if(column.type === "bom"){
+      if(column.type === "bom" ){
         setSearchList([{}])
         switch(tab){
           case 0:{
             setSearchModalInit(SearchInit.rawmaterial)
             // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
             setSearchModalColumn(
-                [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column) => {
-                  return ({...column, doubleClick: confirmFunction()})
+                [...searchModalList[`${SearchInit.rawmaterial.excelColumnType}Search`].map((column) => {
+                  return ({...column, doubleClick: confirmFunction})
                 })])
             break;
           }
@@ -63,28 +62,36 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             setSearchModalInit(SearchInit.submaterial)
             // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
             setSearchModalColumn(
-                [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column) => {
-                  return ({...column, doubleClick: confirmFunction()})
+                [...searchModalList[`${SearchInit.submaterial.excelColumnType}Search`].map((column) => {
+                  return ({...column, doubleClick: confirmFunction})
                 })])
             break;
           }
           case 2:{
             setSearchModalInit(SearchInit.product)
             setSearchModalColumn(
-                [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column) => {
-                    return ({...column, doubleClick: confirmFunction()})
+                [...searchModalList[`${SearchInit.product.excelColumnType}Search`].map((column) => {
+                    return ({...column, doubleClick: confirmFunction})
             })])
             break;
           }
         }
+        if(tab === null){
+          setSearchModalInit(SearchInit[column.type])
+          // console.log("searchModalInit : ", searchModalInit)
+          setSearchModalColumn(
+              [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column) => {
+                return ({...column, doubleClick: confirmFunction})
+              })])
+        }
       }else{
         setSearchModalInit(SearchInit[column.type])
+        // console.log("searchModalInit : ", searchModalInit)
         setSearchModalColumn(
             [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column) => {
               return ({...column, doubleClick: confirmFunction()})
             })])
       }
-    }
 
   }, [column.type, tab])
 
@@ -225,7 +232,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }}>{searchModalInit && searchModalInit.title}</p>
       {
         column.type === 'bom' && <div style={{marginLeft: 20}}>
-            <Select value={tab} onChange={(e) => {
+            <Select value={tab ?? 0} onChange={(e) => {
               setTab(Number(e.target.value))
             }}>
               <option key={'0'} value={0}>원자재</option>
@@ -413,7 +420,35 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               isChange: true,
             }
         )
-      }else {
+      }else if(column.type === "bom"){
+        const bomType = (tab:number) => {
+          switch (tab) {
+            case 0:
+              return "rawmaterial"
+            case 1:
+              return "submaterial"
+            case 2:
+              return "product"
+            default:
+              return "rawmaterial"
+          }
+        }
+
+        onRowChange(
+            {
+              ...row,
+              ...SearchModalResult(searchList[selectRow], bomType(tab === null ? 0 : tab), column.staticCalendar),
+              manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+              name: selectNameFunction(column.type),
+              tab: tab === null ? 0 : tab,
+              // type_name: undefined,
+              version: row.version,
+              isChange: true,
+              //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
+              returnType:column.key
+            }
+        )
+      }else{
         onRowChange(
             {
               ...row,
