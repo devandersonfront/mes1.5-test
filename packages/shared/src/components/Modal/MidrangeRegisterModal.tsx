@@ -19,10 +19,11 @@ interface IProps {
     isOpen: boolean
     setIsOpen?: (isOpen: boolean) => void
     modify: boolean
+    reloadPage: (page:number) => {}
 }
 
 
-const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IProps) => {
+const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, reloadPage}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>()
     const [ midrangeUpdate, setMidrangeUpdate] = useState<boolean>(false)
     const [searchList, setSearchList] = useState<Array<any>>()
@@ -65,7 +66,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
         if(res){
             Notiflix.Loading.circle()
             setIsOpen(false)
-            window.location.reload()
+            reloadPage(1)
         }
     }
 
@@ -86,7 +87,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify}: IPr
         if(res){
             Notiflix.Loading.circle()
             setIsOpen(false)
-            window.location.reload()
+            reloadPage(1)
         }
     }
 

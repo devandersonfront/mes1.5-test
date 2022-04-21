@@ -34,16 +34,20 @@ const MesMidrangeList = ({option}:IProps) => {
         total: 1
     })
 
-    useEffect(() => {
+    const loadPage= (page:number) => {
         if(keyword){
-            searchQualityRecordInspect(keyword, optionIndex, pageInfo.page).then(() => {
+            searchQualityRecordInspect(keyword, optionIndex, page).then(() => {
                 Notiflix.Loading.remove()
             })
         }else{
-            qualityRecordInspectList(pageInfo.page).then(() => {
+            qualityRecordInspectList(page).then(() => {
                 Notiflix.Loading.remove()
             })
         }
+    }
+
+    useEffect(() => {
+        loadPage(pageInfo.page)
     }, [pageInfo.page, keyword, selectDate])
 
     useEffect(() => {
@@ -97,6 +101,7 @@ const MesMidrangeList = ({option}:IProps) => {
                     start: v.start,
                     end: v.end,
                     inspection_category: v.inspection_category,
+                    loadPage
                 }
             })
 
@@ -153,6 +158,7 @@ const MesMidrangeList = ({option}:IProps) => {
                         start: v.start,
                         end: v.end,
                         inspection_category: v.inspection_category,
+                        loadPage
                     }
                 // }
             })
