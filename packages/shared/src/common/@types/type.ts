@@ -5,6 +5,9 @@ export interface IMenuType {
 }
 
 export interface IExcelHeaderType {
+  onClickEvent?: (any) => {any}
+  beforeEventTitle?: string
+  afterEventTitle?: string
   key: string
   name: string
   width?: number
