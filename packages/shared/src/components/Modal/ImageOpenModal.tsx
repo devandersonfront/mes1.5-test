@@ -29,7 +29,7 @@ const ImageOpenModal = ({url, open, changeSetOnImage}:IProps) => {
                 }
             }}>
                 <div style={{width:"100%", height:"100%"}}>
-                    <img src={url} alt={"이미지 이상함"} />
+                    <img src={url} alt={"이미지 없음"} />
                 </div>
             </Modal>
         </div>

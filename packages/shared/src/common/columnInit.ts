@@ -178,7 +178,7 @@ export const columnlist: any = {
         {pk: 'false', name: '무'}
       ], width: 118},
     {key: 'device_id', name: '주변장치', formatter: /*InfoModal*/ DeviceInfoModal, width: 118, type: 'deviceRegister', summaryType: 'device'},
-    {key: 'form_id',name: '일상 점검', width: 118, formatter: CellButtonComponent /*FactoryInfoModal*/, type: 'inspection',},
+    {key: 'form_id',name: '일상 점검', width: 118, formatter: CellButtonComponent /*FactoryInfoModal*/, type: 'inspection'},
     {key: 'tons', name: '톤 수',editor: TextEditor, formatter: UnitContainer, type:"number", unitData: 'T', width: 118, placeholder:"0"},
     {key: 'volt', name: '사용 전압',editor: TextEditor, formatter: UnitContainer, type:"number", unitData: 'V', width: 118, placeholder:"0"},
     {key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory', placeholder:"-"},
@@ -255,6 +255,7 @@ export const columnlist: any = {
         {pk: 'L', name: 'L'},
       ]},
     {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister"},
+    // {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"product"},
     {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process", placeholder: "-"},
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
     {key: 'tool_id', name: '공구', formatter: ToolInfoModal},

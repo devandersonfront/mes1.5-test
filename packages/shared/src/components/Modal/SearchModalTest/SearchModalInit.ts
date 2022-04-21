@@ -99,6 +99,12 @@ export const SearchInit: Record<string, SearchInitType> = {
     excelColumnType: 'product',
     placeholder: 'CODE 검색'
   },
+  bom: {
+    title: '제품 검색',
+    searchFilter: ['거래처', '모델', 'CODE', '품명'],
+    excelColumnType: 'rawmaterial',
+    placeholder: 'CODE 검색'
+  },
   order: {
     title: '수주 검색',
     searchFilter: ['수주 번호', '거래처', '모델', 'CODE', '품명'],
