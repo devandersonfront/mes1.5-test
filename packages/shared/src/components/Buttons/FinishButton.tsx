@@ -35,7 +35,8 @@ const FinishButton = ({ row, column, onRowChange}: IProps) => {
   return (
       <div style={{width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center"}}>
         <CellButton onClick={() => {
-          SaveBasic()
+          Notiflix.Confirm.show(`작업지시서가 완료 처리됩니다. 진행 하시겠습니까?`, '*작업완료 처리된 지시서는 작업일보 등록이 불가해집니다.', '예','아니오', () =>  SaveBasic(), ()=>{},
+            {width: '400px'})
         }}>
           {title}
         </CellButton>
