@@ -328,7 +328,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     </div>
   }
 
-  const selector = useSelector((root:RootState) => root.searchModalState)
 
   const confirmFunction = () => {
     setIsOpen(false)
