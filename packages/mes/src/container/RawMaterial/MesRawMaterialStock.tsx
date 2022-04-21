@@ -333,78 +333,19 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         customer_id: row.raw_material?.customer?.name ?? "-",
         expiration: row.raw_material.expiration,
         exhaustion: row.current ? '-' : '사용완료',
+        current: row.is_complete? 0 : row.current,
         ...appendAdditional,
         id: `rawin_${random_id}`,
+        onClickEvent: (data) => SaveBasic(data)
       }
     })
     setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
-  const SaveBasic = async () => {
+  const SaveBasic = async (row: any) => {
     let res: any
-    res = await RequestMethod('post', `lotRmSave`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
-
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
-
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
-              }
-            }
-
-            if(v === 'unitWeight') {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(row['unitWeight'])
-              }
-            }
-
-            if(v === 'tmpId') {
-              selectData = {
-                ...selectData,
-                id: row['tmpId']
-              }
-            }
-          })
-          return {
-            ...row,
-            ...selectData,
-            current: row.exhaustion === '사용완료' ? 0 : row.amount,
-            warehousing: 100,
-            type: row.type_id,
-            raw_material: {...row.raw_material, type:row.raw_material.type_id},
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
-                  }
-                }
-              }).filter((v) => v)
-            ]
-          }
-
-        }
-      }).filter((v) => v))
+    res = await RequestMethod('post', `lotRmComplete`,{...row, is_complete: !row.is_complete})
       .catch((error) => {
         if(error.status === 409){
           Notiflix.Report.warning("경고", error.data.message, "확인",)
@@ -412,7 +353,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         }
         return false
       })
-
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
@@ -493,36 +433,27 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   }
 
   const onClickHeaderButton = (index: number) => {
+    const noneSelected = selectList.size <= 0
+    if(noneSelected){
+      return Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
+    }
     switch(index){
       case 0:
-        if(selectList.size <= 0){
-          Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
-          return
+        const selectedRows = basicRow.filter(v => selectList.has(v.id))
+        const completeSelected = selectedRows.some(row => row.is_complete )
+        if(completeSelected){
+          Notiflix.Report.warning("사용 완료된 자재는 수정할 수 없습니다.","","확인")
+        } else {
+          dispatch(setModifyInitData({
+            modifyInfo: selectedRows,
+            type: "rawin"
+          }))
+          router.push('/mes/rawmaterialV1u/modify')
         }
-        dispatch(setModifyInitData({
-          modifyInfo: [
-            ...basicRow.map(v => {
-              if (selectList.has(v.id)) {
-                return v
-              }
-              return false
-            }).filter(v => v)
-          ],
-          type: "rawin"
-        }))
-        router.push('/mes/rawmaterialV1u/modify')
-        break;
-      // case 1:
-      //   // router.push(`/mes/item/manage/mold`)
-      //   SaveBasic()
-      //   break;
+        return;
       case 1:
-        if(selectList.size === 0) {
-          return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
-        }else{
-          Notiflix.Confirm.show("경고","데이터를 삭제하시겠습니까?", "확인", "취소", () => DeleteBasic())
-        }
-        break;
+        Notiflix.Confirm.show("경고","데이터를 삭제하시겠습니까?", "확인", "취소", () => DeleteBasic())
+        return;
     }
   }
 
@@ -567,15 +498,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         buttons={
           [ '수정하기', '삭제']
         }
-        buttonsOnclick={
-          // (e) => {
-          //   switch(e) {
-          //     case 0:
-          //       router.push('/mes/rawmaterialV1u/modify')
-          //   }
-          // }
-          onClickHeaderButton
-        }
+        buttonsOnclick={onClickHeaderButton}
       />
       <ExcelTable
         editable
