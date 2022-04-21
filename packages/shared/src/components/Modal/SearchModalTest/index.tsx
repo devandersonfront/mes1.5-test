@@ -106,24 +106,19 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         return option
       }
     }
-
     return option
-
-
   }
 
   useEffect(() => {
     if(isOpen){
       LoadBasic(pageInfo.page);
+    }else{
+      setPageInfo({page:1, total:1})
+      setSearchList([{}])
     }
   }, [isOpen, searchModalInit, pageInfo.page])
 
 
-  const filterList = (result) => {
-  return result.map((list)=>(
-      {...list , customer : list.customer?.name}
-    ))
-  }
 
   const LoadBasic = async (page:number) => {
     Notiflix.Loading.circle();
