@@ -14,6 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from "../../styles/styledComponents";
+import {NoAmountValidation, OverAmountValidation} from '../../validations/validation'
 
 interface IProps {
   column: IExcelHeaderType
@@ -282,14 +283,14 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               headerList={column.type === 'baseReadonly'  || column.type === "placeholder" ? searchModalList.lotDeliveryInfoReadonly : searchModalList.lotDeliveryInfo}
               row={searchList }
               setRow={(e) => {
-                let total = 0
-                setSearchList([...e])
-                e.map(v => {
-                  if(v.amount){
-                    total += Number(v.amount)
-                  }
-                })
-                setTotalDelivery(total)
+                  let total = 0
+                  setSearchList([...e])
+                  e.map(v => {
+                    if(v.amount){
+                      total += Number(v.amount)
+                    }
+                  })
+                  setTotalDelivery(total)
               }}
               width={1746}
               rowHeight={32}
@@ -337,14 +338,14 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                 <p>확인</p>
               </div>
             </div>
-            : <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
+            : <div style={{height:45 , width: '100%', display: 'flex', flexWrap:'wrap',flexDirection:'row'}}>
               <div
                 onClick={() => {
                   setIsOpen(false)
                 }}
                 style={{
-                  width: 888,
-                  height: 40,
+                  flex:1,
+                  height: '100%',
                   backgroundColor: '#b3b3b3',
                   display: 'flex',
                   justifyContent: 'center',
@@ -355,16 +356,8 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               </div>
               <div
                 onClick={() => {
-                  const error = searchList.map((v)=> {
-                    if(v.amount > v.current) {
-                      return 1
-                    }
-                  })
-
-                  if(error.includes(1)){
-                    return Notiflix.Report.warning("경고", "납품 수량이 재고량보다 많습니다.", "확인",)
-                  }
-
+                  if(NoAmountValidation('amount', searchList,)) return
+                  else if(OverAmountValidation('current', 'amount', searchList, '재고량 보다 납품 수량이 많습니다.')) return
                   let lot = searchList.map(v => {
                     return {
                       ...v,
@@ -391,8 +384,8 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                   setIsOpen(false)
                 }}
                 style={{
-                  width: 888,
-                  height: 40,
+                  flex:1,
+                  height: '100%',
                   backgroundColor: POINT_COLOR,
                   display: 'flex',
                   justifyContent: 'center',
