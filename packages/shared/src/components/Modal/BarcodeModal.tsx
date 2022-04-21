@@ -5,11 +5,12 @@ import BasicModal from "./BasicModal"
 import Barcode from 'react-barcode';
 import axios from 'axios';
 import DomToImage from "dom-to-image";
+import Notiflix from "notiflix";
 
 interface Props {
 
     title : string,
-    handleBarcode : (url : string , id : string) => void
+    handleBarcode : (url : string , id : string , clientIp : string) => void
     handleModal : (isOpen : boolean) => void
     isOpen : boolean
     data : any
@@ -48,13 +49,22 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props
 
     const onCaptureDOM = async (type,data) => {
 
-        
         const id = (type === 'rawMaterial' ? data?.rm_id : data?.product_id)
         const dom  = document.getElementById('capture_dom')
         const dataurl = await DomToImage.toPng(dom, {quality: 1})
-        handleBarcode(dataurl,id)
-
+        await fetch('http://api.ipify.org/?format=json')
+            .then(response => response.json())
+            .then(data => {
+                handleBarcode(dataurl,id,data.ip)
+            }).catch((error)=>{
+                if(error){
+                    Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+                    return false
+                }
+            })
     }
+
+
 
     const onClose = () => {
 

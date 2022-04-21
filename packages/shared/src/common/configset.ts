@@ -45,9 +45,10 @@ export const SF_ENDPOINT_RESOURCE = `http://${isLocalhost()}:8285`
 export const SF_ENDPOINT_S3 = "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com/"
 export const SF_PORT = ``
 
-export const SF_ENDPOINT_BARCODE = `http://${isLocalhost()}:18080`
+// export const SF_ENDPOINT_BARCODE = `http://${isLocalhost()}:18080`
 
 export const SF_ENDPOINT_PMS = `http://3.34.98.247:8999`
+
 
 export const AUTHORITY_LIST = [
   { title: "HOME", show: false, checkable: true, check: false, child: [

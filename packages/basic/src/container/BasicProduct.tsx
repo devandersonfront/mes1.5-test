@@ -18,7 +18,6 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import axios from 'axios';
-import { SF_ENDPOINT_BARCODE } from 'shared/src/common/configset';
 import {useDispatch} from "react-redux";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 
@@ -628,25 +627,28 @@ const BasicProduct = ({}: IProps) => {
     setBasicRow(rows)
   }
 
-  const handleBarcode = async (dataurl : string , id : string) => {
+  const handleBarcode = async (dataurl : string , id : string , clientIP : string) => {
+    Notiflix.Loading.circle()
+    const data = {
+      "id":id,
+      "functions":
+          {"func0":{"checkLabelStatus":[]},
+            "func1":{"clearBuffer":[]},
+            "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+            "func3":{"printBuffer":[]}
+          }
+    }
 
-    await axios.post(`${SF_ENDPOINT_BARCODE}/WebPrintSDK/Printer1`,
-                {
-                  "id":id,
-                  "functions":
-                  {"func0":{"checkLabelStatus":[]},
-                    "func1":{"clearBuffer":[]},
-                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
-                    "func3":{"printBuffer":[]}
-                  }
-                },
-                {
-                  headers : {
-                    'Content-Type' : 'application/x-www-form-urlencoded'
-                  }
-                }
-    ).catch((error) => {
-
+    await fetch(`http://${clientIP}:18080/WebPrintSDK/Printer1`,{
+      method : 'POST',
+      headers : {
+        'Content-Type' : 'application/x-www-form-urlencoded'
+      },
+      body : JSON.stringify(data)
+    }).then((res)=>{
+      Notiflix.Loading.remove(2000)
+    }).catch((error) => {
+      Notiflix.Loading.remove()
       if(error){
         Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
         return false
