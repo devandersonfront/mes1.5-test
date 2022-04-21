@@ -90,6 +90,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
       setSearchList([...res].map((v, index) => {
         return {
           ...v,
+          machineType: TransferCodeToValue(v.type, 'machine'),
           sequence: index+1,
           setting: '부',
         }

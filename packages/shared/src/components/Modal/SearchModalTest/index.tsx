@@ -90,7 +90,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen){
-      LoadBasic();
+      LoadBasic(pageInfo.page);
     }
   }, [isOpen, searchModalInit, pageInfo.page])
 
@@ -101,7 +101,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     ))
   }
 
-  const LoadBasic = async (page?:number) => {
+  const LoadBasic = async (page:number) => {
     Notiflix.Loading.circle();
     const selectType = () => {
       switch(column.type){
@@ -128,13 +128,13 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           }
         case "customerModel":
           return {
-            page:  page ?? pageInfo.page,
+            page:  page || page !== 0 ? page : 1,
             renderItem: 22,
             customer_id: row.customer?.customer_id ?? null
           }
         default :
           return {
-            page: page ?? pageInfo.page,
+            page: page || page !== 0 ? page : 1,
             renderItem: 22,
           }
       }
@@ -149,20 +149,18 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     if(res){
       if(searchModalInit.excelColumnType === "toolProduct"){
         setSearchList([...SearchResultSort(res, searchModalInit.excelColumnType)])
-        setPageInfo({...pageInfo, total:res.totalPages});
+        setPageInfo({page:res.page, total:res.totalPages});
         Notiflix.Loading.remove()
       }else
         if(res.page !== 1){
           setSearchList([ ...searchList,...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
-          setPageInfo({...pageInfo, total:res.totalPages});
+          setPageInfo({page:res.page, total:res.totalPages});
           Notiflix.Loading.remove()
         }else{
           setSearchList([...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
-          setPageInfo({...pageInfo, total:res.totalPages});
+          setPageInfo({page:res.page, total:res.totalPages});
           Notiflix.Loading.remove()
         }
-    }
-    if(document.querySelector(".LoadingBar") !== null){
     }
   }
   const getContents = () => {
@@ -221,7 +219,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     <div id={'content-close-button'} style={{display: 'flex'}}>
       {
         column.type === 'mold' && <MoldRegisterModal column={column} row={row} onRowChange={onRowChange} register={() => {
-          LoadBasic();
+          LoadBasic(1)
         }}/>
       }
       <div style={{cursor: 'pointer', marginLeft: 22}} onClick={() => {
@@ -280,7 +278,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         }}
         onKeyDown={(e) => {
           if(e.key === 'Enter'){
-            setPageInfo({total:1, page:1});
             LoadBasic(1);
           }
         }}
@@ -295,8 +292,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       <div
         style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
         onClick={() => {
-          setPageInfo({total:1, page:1})
-          LoadBasic();
+          LoadBasic(1);
         }}
       >
         <img src={Search_icon} style={{width:"16px",height:"16px"}} />

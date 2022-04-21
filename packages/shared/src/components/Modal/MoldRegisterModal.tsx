@@ -31,8 +31,6 @@ interface IRequestData {
   current: string
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
 const MoldRegisterModal = ({column, row, onRowChange, register}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
@@ -58,9 +56,12 @@ const MoldRegisterModal = ({column, row, onRowChange, register}: IProps) => {
 
     if(res) {
       Notiflix.Report.success('저장되었습니다.','','확인', ()=> {
-
+          register()
+          setRequestData({
+            code: '', cavity: '', inspect: '', current: '', slideHeight: '', limit: '', name: '', spm: ''
+          })
+          setIsOpen(false)
       });
-
     }
 
   }
@@ -185,12 +186,7 @@ const MoldRegisterModal = ({column, row, onRowChange, register}: IProps) => {
               <p>취소</p>
             </div>
             <div
-              onClick={() => {
-                SaveBasic().then(() => {
-                  register()
-                  setIsOpen(false)
-                })
-              }}
+              onClick={SaveBasic}
               style={{width: '50%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>등록하기</p>

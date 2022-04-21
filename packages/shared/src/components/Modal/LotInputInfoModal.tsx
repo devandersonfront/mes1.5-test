@@ -99,7 +99,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpData = []
     let tmpRows = tmpRow;
-    // if(tmpRows){
     tmpData = tmpRows?.map((v, i) => {
       let childData: any = {}
       let childDataType: TransferType = null
@@ -131,7 +130,8 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
       }
-      const stock = getTotalStock(bomId, childDataType)
+      const bomLots = getBomLots(bomId, childDataType)
+      const stock = getTotalStock(bomLots)
 
 
       return {
@@ -151,40 +151,38 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         disturbance: new Big(row.good_quantity ?? 0)?.plus(row.poor_quantity ?? 0)?.times(v.bom.usage)?.toNumber(),
         processArray: childData.process ?? null,
         process: childData.process ? childData.process.name : '-',
-        bom: row.bom,
+        bom: bomLots,
         product,
         raw_material,
         sub_material,
       }
     })
-    // }
 
     setSearchList([...tmpData])
   }
 
-  function getTotalStock(id:number, type: TransferType) {
+  function getTotalStock(lots){
     let stock = 0
-    let lots = null
-    switch(type){
-      case 'rawmaterial':
-        lots = row.bom?.filter((bom) => bom?.lot?.child_lot_rm?.rmId === id)
-        break
-      case 'submaterial':
-        lots = row.bom?.filter((bom) => bom?.lot?.child_lot_sm?.smId === id)
-        break
-      case 'product':
-        lots = row.bom?.filter((bom) => bom?.lot?.child_lot_record?.operation_sheet?.productId === id)
-        break
-      default:
-        break
-    }
-    if(lots == null) {}
+    if(lots === null) {}
     else if(lots.length > 1){
       stock = lodash.sum(lots.map((lot) => lot.lot.current))
     }else {
       stock = lots[0]?.lot.current
     }
     return stock
+  }
+
+  function getBomLots(id:number, type: TransferType) {
+    switch(type){
+      case 'rawmaterial':
+        return row.bom?.filter((bom) => bom?.lot?.child_lot_rm?.rmId === id)
+      case 'submaterial':
+        return row.bom?.filter((bom) => bom?.lot?.child_lot_sm?.smId === id)
+      case 'product':
+        return row.bom?.filter((bom) => bom?.lot?.child_lot_record?.operation_sheet?.productId === id)
+      default:
+        return null
+    }
   }
 
   const SearchBasic = async (keyword: any, option: number, page: number) => {
@@ -343,6 +341,12 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     </div>
   }
 
+  const isProduct = selectType === '반제품' || selectType === '재공품' || selectType === '완제품'
+
+  const LotListColumns = () => {
+    return isProduct ? searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
+  }
+
   return (
       <SearchModalWrapper >
         { ModalContents() }
@@ -417,6 +421,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                     // }
                   }}
                   setRow={(e) => {
+                    console.log('setRow',e)
                     let tmp = e.map((v, index) => {
                       // if(v.newTab === true){
                       //   const newTabIndex = bomDummy.length+1
@@ -474,7 +479,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div id='body-2-root' style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
-                  headerList={column.type === 'readonly' ? searchModalList.InputLotReadonlyInfo : searchModalList.InputLotInfo}
+                  headerList={LotListColumns()}
                   row={lotList ?? [{}]}
                   setRow={(e) => {
                     let tmp = e.map((v, index) => {
