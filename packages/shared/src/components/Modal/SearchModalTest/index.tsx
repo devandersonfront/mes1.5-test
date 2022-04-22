@@ -19,6 +19,9 @@ import {SearchModalResult, SearchResultSort} from '../../../Functions/SearchResu
 import {Select} from '@material-ui/core'
 import {TransferCodeToValue} from '../../../common/TransferFunction'
 import {SearchIcon} from "../../../styles/styledComponents";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../../reducer";
+import {changeSearchModalNumber} from "../../../reducer/searchModalState";
 
 
 interface IProps {
@@ -27,48 +30,69 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = {
-  member: ['사용자명'],
-  product: ['거래처명','모델명','CODE', '품명', '재질'],
-  customer: ['거래처명'],
-  model: ['거래처명', '모델']
-}
-
 const SearchModalTest = ({column, row, onRowChange}: IProps) => {
+  const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
-  const [tab, setTab] = useState<number>(0)
+  const [tab, setTab] = useState<number>(null)
   const [searchModalInit, setSearchModalInit] = useState<any>()
+  const [searchModalColumn, setSearchModalColumn] = useState<Array<IExcelHeaderType>>()
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
 
   useEffect(() => {
-    if(column.type){
-      if(column.type === "bom"){
+      if(column.type === "bom" ){
         setSearchList([{}])
         switch(tab){
           case 0:{
             setSearchModalInit(SearchInit.rawmaterial)
+            // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
+            setSearchModalColumn(
+                [...searchModalList[`${SearchInit.rawmaterial.excelColumnType}Search`].map((column) => {
+                  return ({...column, doubleClick: confirmFunction})
+                })])
             break;
           }
           case 1:{
             setSearchModalInit(SearchInit.submaterial)
+            // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
+            setSearchModalColumn(
+                [...searchModalList[`${SearchInit.submaterial.excelColumnType}Search`].map((column) => {
+                  return ({...column, doubleClick: confirmFunction})
+                })])
             break;
           }
           case 2:{
             setSearchModalInit(SearchInit.product)
+            setSearchModalColumn(
+                [...searchModalList[`${SearchInit.product.excelColumnType}Search`].map((column) => {
+                    return ({...column, doubleClick: confirmFunction})
+            })])
             break;
           }
         }
+        if(tab === null){
+          setSearchModalInit(SearchInit[column.type])
+          // console.log("searchModalInit : ", searchModalInit)
+          setSearchModalColumn(
+              [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column) => {
+                return ({...column, doubleClick: confirmFunction})
+              })])
+        }
       }else{
         setSearchModalInit(SearchInit[column.type])
+        // console.log("searchModalInit : ", searchModalInit)
+        setSearchModalColumn(
+            [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column) => {
+              return ({...column, doubleClick: confirmFunction()})
+            })])
       }
-    }
+
   }, [column.type, tab])
 
 
@@ -206,7 +230,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }}>{searchModalInit && searchModalInit.title}</p>
       {
         column.type === 'bom' && <div style={{marginLeft: 20}}>
-            <Select value={tab} onChange={(e) => {
+            <Select value={tab ?? 0} onChange={(e) => {
               setTab(Number(e.target.value))
             }}>
               <option key={'0'} value={0}>원자재</option>
@@ -300,6 +324,146 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     </div>
   }
 
+
+  const confirmFunction = () => {
+    setIsOpen(false)
+    if(selectRow !== undefined){
+      const selectNameFunction = (type:string) => {
+        switch(type){
+          case "bom":
+            return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
+          case "rawmaterial" :
+            return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
+          case "machine" :
+            return searchList[selectRow].name;
+          case "mold":
+            return searchList[selectRow].name;
+          default:
+            return row.name;
+        }
+      }
+      if(column.clearContract) {
+        onRowChange(
+            {
+              ...row,
+              ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+              manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+              name: selectNameFunction(column.type),
+              tab: tab,
+              // type_name: undefined,
+              version: row.version,
+              isChange: true,
+              contract: null,
+              contract_id: null
+            }
+        )
+      }else if(column.type === "searchToolModal"){
+        onRowChange(searchList[selectRow])
+      }else if(column.type === 'customer'){
+        onRowChange(
+            {
+              ...row,
+              ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+              manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+              name: selectNameFunction(column.type),
+              tab: tab,
+              // type_name: undefined,
+              version: row.version,
+              isChange: true,
+              cm_id : '',
+              modelArray : {
+                additional: [],
+                cm_id: '',
+                customer: null,
+                customerId: '',
+                model: '',
+                sync: '',
+                version: null
+              }
+            }
+        )
+      }else if(column.type === 'factory'){
+        onRowChange({
+          ...row,
+          ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+          name: selectNameFunction(column.type),
+          tab: tab,
+          // type_name: undefined,
+          version: row.version,
+          isChange: true,
+          cm_id : '',
+          modelArray : {
+            additional: [],
+            cm_id: '',
+            customer: null,
+            customerId: '',
+            model: '',
+            sync: '',
+            version: null
+          }
+        })
+      }else if(column.type === 'tool'){
+        onRowChange(
+            {
+              ...row,
+              ...SearchModalResult(searchList[selectRow], column.toolType === 'register' ? 'toolRegister' : searchModalInit.excelColumnType, column.staticCalendar),
+              manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+              // name: selectNameFunction(column.type),
+              tab: tab,
+              // type_name: undefined,
+              version: row.version,
+              isChange: true,
+            }
+        )
+      }else if(column.type === "bom"){
+        const bomType = (tab:number) => {
+          switch (tab) {
+            case 0:
+              return "rawmaterial"
+            case 1:
+              return "submaterial"
+            case 2:
+              return "product"
+            default:
+              return "rawmaterial"
+          }
+        }
+
+        onRowChange(
+            {
+              ...row,
+              ...SearchModalResult(searchList[selectRow], bomType(tab === null ? 0 : tab), column.staticCalendar),
+              manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+              name: selectNameFunction(column.type),
+              tab: tab === null ? 0 : tab,
+              // type_name: undefined,
+              version: row.version,
+              isChange: true,
+              //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
+              returnType:column.key
+            }
+        )
+      }else{
+        onRowChange(
+            {
+              ...row,
+              ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+              manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+              name: selectNameFunction(column.type),
+              tab: tab,
+              // type_name: undefined,
+              version: row.version,
+              isChange: true,
+              //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
+              returnType:column.key
+            }
+        )
+      }
+
+    }
+
+  }
+
   return (
     <SearchModalWrapper>
       <div style={ column.modalType
@@ -345,13 +509,17 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               SearchBox()
             }
             <ExcelTable
-              headerList={searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
+                // searchModalColumn
+              // headerList={ searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
+              headerList={ searchModalInit && searchModalColumn}
               row={searchList ?? []}
               setRow={() => {}}
               width={1744}
               rowHeight={32}
               height={640}
               setSelectRow={(e) => {
+                console.log(e, searchList)
+                // dispatch(changeSearchModalNumber(e))
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{
                     v.border = false;
@@ -360,6 +528,13 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                   searchList[e].border = true
                   setSearchList([...searchList])
                 }
+                setSearchList([...searchList.map((row, index) => {
+                  if(index === e) {
+                    row.doubleClick = confirmFunction
+                    return row
+                  }
+                  else return row
+                })])
                 setSelectRow(e)
               }}
               type={'searchModal'}
@@ -385,116 +560,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               <p style={{color: '#717C90'}}>취소</p>
             </FooterButton>
             <FooterButton
-              onClick={() => {
-                setIsOpen(false)
-                if(selectRow !== undefined){
-
-                  const selectNameFunction = (type:string) => {
-                    switch(type){
-                      case "bom":
-                        return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
-                      case "rawmaterial" :
-                        return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
-                      case "machine" :
-                        return searchList[selectRow].name;
-                      case "mold":
-                        return searchList[selectRow].name;
-                      default:
-                        return row.name;
-                    }
-                  }
-                  if(column.clearContract) {
-                    onRowChange(
-                        {
-                          ...row,
-                          ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-                          manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                          name: selectNameFunction(column.type),
-                          tab: tab,
-                          // type_name: undefined,
-                          version: row.version,
-                          isChange: true,
-                          contract: null,
-                          contract_id: null
-                        }
-                    )
-                  }else if(column.type === "searchToolModal"){
-                    onRowChange(searchList[selectRow])
-                  }else if(column.type === 'customer'){
-                    onRowChange(
-                      {
-                        ...row,
-                        ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-                        manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                        name: selectNameFunction(column.type),
-                        tab: tab,
-                        // type_name: undefined,
-                        version: row.version,
-                        isChange: true,
-                        cm_id : '',
-                        modelArray : {
-                          additional: [],
-                          cm_id: '',
-                          customer: null,
-                          customerId: '',
-                          model: '',
-                          sync: '',
-                          version: null
-                        }
-                      }
-                    )
-                  }else if(column.type === 'factory'){
-                    onRowChange({
-                      ...row,
-                      ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-                      name: selectNameFunction(column.type),
-                      tab: tab,
-                      // type_name: undefined,
-                      version: row.version,
-                      isChange: true,
-                      cm_id : '',
-                      modelArray : {
-                        additional: [],
-                        cm_id: '',
-                        customer: null,
-                        customerId: '',
-                        model: '',
-                        sync: '',
-                        version: null
-                      }
-                    })
-                  }else if(column.type === 'tool'){
-                    onRowChange(
-                        {
-                          ...row,
-                          ...SearchModalResult(searchList[selectRow], column.toolType === 'register' ? 'toolRegister' : searchModalInit.excelColumnType, column.staticCalendar),
-                          manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                          // name: selectNameFunction(column.type),
-                          tab: tab,
-                          // type_name: undefined,
-                          version: row.version,
-                          isChange: true,
-                        }
-                    )
-                  }else {
-                    onRowChange(
-                        {
-                          ...row,
-                          ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-                          manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-                          name: selectNameFunction(column.type),
-                          tab: tab,
-                          // type_name: undefined,
-                          version: row.version,
-                          isChange: true,
-                          //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
-                          returnType:column.key
-                        }
-                    )
-                  }
-
-                }
-              }}
+              onClick={() => {confirmFunction()}}
               style={{backgroundColor: POINT_COLOR}}
             >
               <p style={{color: '#0D0D0D'}}>등록하기</p>

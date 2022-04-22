@@ -10,6 +10,7 @@ import deliveryRegisterState from "./deliveryRegisterState";
 import toolInfo from './toolInfo'
 import OperationRegisterState from "./operationRegisterState";
 import menuSelectState from "./menuSelectState";
+import searchModalState from "./searchModalState"
 
 const rootReducer = combineReducers({
   mainUserInfo,
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
   deliveryRegisterState,
   toolInfo,
   OperationRegisterState,
-  menuSelectState
+  menuSelectState,
+  searchModalState
 })
 
 export {rootReducer};

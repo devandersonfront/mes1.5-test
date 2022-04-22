@@ -35,10 +35,15 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
+  const [searchModalColumn, setSearchModalColumn] = useState<Array<IExcelHeaderType>>(searchModalList.authority)
 
   useEffect(() => {
     if(isOpen) SearchBasic(searchKeyword, optionIndex, 1).then(() => {
       Notiflix.Loading.remove()
+      console.log(searchModalColumn)
+      setSearchModalColumn([...searchModalColumn].map((column) => {
+        return {...column, doubleClick:confirmFunction}
+      }))
     })
   }, [isOpen, searchKeyword])
 
@@ -104,6 +109,24 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
     </>
   }
 
+  const confirmFunction = () => {
+    setOptionIndex(0)
+    if(selectRow !== undefined && selectRow !== null){
+      onRowChange({
+        ...row,
+        ...searchList[selectRow],
+        ca_id:{
+          ca_id: searchList[selectRow].ca_id,
+          name:searchList[selectRow].name,
+          authorities:searchList[selectRow].authorities
+        },
+        name: row.name,
+        version:row.version,
+        isChange: true
+      })
+    }
+    setIsOpen(false)
+  }
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -210,13 +233,21 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div style={{padding: '0 16px 0 16px', width: 1776}}>
               <ExcelTable
-                headerList={searchModalList.authority}
+                // headerList={searchModalList.authority}
+                headerList={searchModalColumn}
                 row={searchList ?? []}
                 setRow={() => {}}
                 width={1750}
                 rowHeight={32}
                 height={642}
                 setSelectRow={(e) => {
+                  setSearchList([...searchList.map((row, index) => {
+                    if(index === e) {
+                      row.doubleClick = confirmFunction
+                      return row
+                    }
+                    else return row
+                  })])
                   if(!searchList[e].border){
                     searchList.map((v,i)=>{
                       v.border = false;
@@ -241,24 +272,7 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
                 <p>취소</p>
               </div>
               <div
-                onClick={() => {
-                  setOptionIndex(0)
-                  if(selectRow !== undefined && selectRow !== null){
-                      onRowChange({
-                        ...row,
-                        ...searchList[selectRow],
-                        ca_id:{
-                          ca_id: searchList[selectRow].ca_id,
-                          name:searchList[selectRow].name,
-                          authorities:searchList[selectRow].authorities
-                        },
-                        name: row.name,
-                        version:row.version,
-                        isChange: true
-                      })
-                  }
-                  setIsOpen(false)
-                }}
+                onClick={() => confirmFunction}
                 style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
               >
                 <p>등록하기</p>

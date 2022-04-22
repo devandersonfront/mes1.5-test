@@ -44,6 +44,10 @@ export interface IExcelHeaderType {
   idx?:number
   headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][]
   action?:string
+  doubleClick?:() => void
+  mi_id?:number
+  hide?:boolean
+  version?:number
 }
 
 export interface IResponseType {

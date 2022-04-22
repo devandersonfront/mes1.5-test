@@ -1,13 +1,9 @@
 import React from 'react';
-import {
-  SecendMenuView,
-  TopMenuTitle,
-  TopMenuView,
-  TreeViewContainer,
-  TreeViewHeader,
-} from '../../styles/styledComponents'
+//@ts-ignore
 import menuOpen from "../../../public/images/ic_monitoring_open.png"
+//@ts-ignore
 import menuClose from "../../../public/images/ic_monitoring_close.png"
+//@ts-ignore
 import checkIcon from "../../../public/images/ic_check.png"
 import Notiflix from 'notiflix'
 import styled from 'styled-components'

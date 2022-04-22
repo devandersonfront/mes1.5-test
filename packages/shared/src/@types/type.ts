@@ -12,22 +12,42 @@ export interface IExcelHeaderType {
   width?: number
   editor?: any
   selectList?: any[]
-  type?: 'additional'
+  type?: string
   unitData?: string
   searchType?: string
   tab?:string
   id?:number
-  mi_id?:number
   disableType?: string
+  disabledCase?: {key: any, value: any}[]
   textType?: string
   options?:{status:number, name:string}[]
   result?:(value:number | string | boolean) => void
+  staticCalendar?: boolean
+  clearContract?: boolean
   maxDate?:boolean
   theme?: string
   toFix?: number
-  moddable?:boolean
+  placeholder?: string
+  textAlign?: 'left' | 'center' | 'right'
+  modalInitData?: any
+  summaryType?: any
+  modalType?: boolean
+  readonly?: boolean
+  load?: string
+  title?: string
+  subTitle?:string
+  url?: string
+  headerType?:any[]
+  toolType?: 'register'
+  callback?: (data : any) => void
+  idx?:number
+  headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][]
+  action?:string
+  doubleClick?:() => void
+  mi_id?:number
   hide?:boolean
   version?:number
+  moddable?:boolean
 }
 
 export interface IResponseType {

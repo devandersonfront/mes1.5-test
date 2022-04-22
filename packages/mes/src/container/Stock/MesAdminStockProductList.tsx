@@ -1,16 +1,15 @@
 import React, {useEffect, useState} from 'react'
-import {IExcelHeaderType} from '../../../../main/common/@types/type'
 import {columnlist} from '../../../../main/common/columnInit'
 import moment from 'moment'
 import Notiflix from 'notiflix'
 import {
-    excelDownload,
-    ExcelTable,
-    Header as PageHeader,
-    ProductTitleFomatter,
-    ProfileHeader,
-    RequestMethod,
-    UnitContainer
+  excelDownload,
+  ExcelTable,
+  Header as PageHeader, IExcelHeaderType,
+  ProductTitleFomatter,
+  ProfileHeader,
+  RequestMethod,
+  UnitContainer
 } from 'shared'
 import {ScrollSyncPane} from 'react-scroll-sync'
 // @ts-ignore

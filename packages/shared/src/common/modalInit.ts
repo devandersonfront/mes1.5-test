@@ -25,10 +25,10 @@ import { BomInfoModal } from '../components/Modal/BomInfoModal'
 
 export const searchModalList: any  = {
   member: [
-    {key: 'name', name: '성명', formatter: LineBorderContainer},
-    {key: 'appointment', name: '직책', formatter: LineBorderContainer},
-    {key: 'authority', name: '권한', formatter: LineBorderContainer},
-    {key: 'id', name: '아이디', formatter: LineBorderContainer},
+    {key: 'name', name: '성명', formatter: LineBorderContainer, placeholder:"-"},
+    {key: 'appointment', name: '직책', formatter: LineBorderContainer, placeholder:"-"},
+    {key: 'authority', name: '권한', formatter: LineBorderContainer, placeholder:"-"},
+    {key: 'id', name: '아이디', formatter: LineBorderContainer, placeholder:"-"},
   ],
   product: [
     {key: 'customer_name', name: '거래처명', formatter: LineBorderContainer},
@@ -51,7 +51,7 @@ export const searchModalList: any  = {
     {key: 'crn', name: '사업자 번호', formatter: LineBorderContainer},
   ],
   authority: [
-    {key: 'name', name: '권한명', formatter: LineBorderContainer},
+    {key: 'name', name: '권한명', formatter: LineBorderContainer,},
   ]
   ,process: [
     {key: 'name', name: '공정명', formatter: LineBorderContainer},
@@ -98,8 +98,9 @@ export const searchModalList: any  = {
 
   factoryInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'name', name: '세분화명', width: 576, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '세분화명 입력'},
+    {key: 'name', name: '세분화명', width: 576, formatter: LineBorderContainer, editor: TextEditor,  textType: 'Modal', placeholder: '세분화명 입력'},
     {key: 'manager_name', name: '담당자', width: 392, formatter: ManagerSearchModal, type:"modal", placeholder: "-"},
+    // {key: 'manager_name', name: '담당자', width: 392, formatter: SearchModalTest, type:"user", placeholder: "-"},
     {key: 'appointment', name: '직책', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력'},
     {key: 'telephone', name: '전화번호', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력'},
     {key: 'description', name: '비고', width: 370, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '내용 입력'},
@@ -324,7 +325,8 @@ export const searchModalList: any  = {
     {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 1, name: '여'},
         {pk: 0, name: '부'},
-      ], type: 'Modal' },
+      ], modalType: true, type:"Modal"
+    },
     {key: 'isDefault', name: '기본/스페어', width: 160, formatter: LineBorderContainer, textAlign: 'left'},
     {key: 'type', name: '품목 종류', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'unit', name: '단위', formatter: LineBorderContainer, textAlign: 'center'},
@@ -332,7 +334,8 @@ export const searchModalList: any  = {
     // {key: 'disturbance', name: '소요량', formatter: LineBorderContainer, textAlign: 'center'},
     // {key: 'stock', name: '재고량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center',placeholder: '-'},
-    {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' , type : 'readonly', modalType: 'modal' },
+    {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' ,modalType: true , type : 'readonly' },
+    // {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' , type : 'readonly', modalType: 'modal' },
   ],
   InputInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
@@ -488,20 +491,20 @@ export const searchModalList: any  = {
     {key: 'model', name: '모델명', formatter: LineBorderContainer ,placeholder:"-", },
   ],
   rawmaterialSearch: [
-    {key: 'code', name: '원자재 CODE'},
-    {key: 'name', name: '원자재 품명'},
-    {key: 'texture', name: '재질'},
-    {key: 'depth', name: '두께'},
-    {key: 'width', name: '가로(COIL 폭)'},
-    {key: 'height', name: '세로(Feeder)'},
-    {key: 'type', name: '재질 종류'},
-    {key: 'customer', name: '거래처'},
+    {key: 'code', formatter: LineBorderContainer , name: '원자재 CODE' ,placeholder:"-",},
+    {key: 'name', formatter: LineBorderContainer , name: '원자재 품명' ,placeholder:"-",},
+    {key: 'texture', formatter: LineBorderContainer , name: '재질' ,placeholder:"-",},
+    {key: 'depth', formatter: LineBorderContainer , name: '두께' ,placeholder:"-",},
+    {key: 'width', formatter: LineBorderContainer , name: '가로(COIL 폭)' ,placeholder:"-",},
+    {key: 'height', formatter: LineBorderContainer , name: '세로(Feeder)' ,placeholder:"-",},
+    {key: 'type', formatter: LineBorderContainer , name: '재질 종류' ,placeholder:"-",},
+    {key: 'customer', formatter: LineBorderContainer , name: '거래처' ,placeholder:"-",},
   ],
   submaterialSearch: [
-    {key: 'code', name: '부자재 CODE'},
-    {key: 'name', name: '부자재 품명'},
-    {key: 'unit', name: '단위'},
-    {key: 'customer', name: '거래처'},
+    {key: 'code', formatter: LineBorderContainer, name: '부자재 CODE' ,placeholder:"-",},
+    {key: 'name', formatter: LineBorderContainer, name: '부자재 품명' ,placeholder:"-",},
+    {key: 'unit', formatter: LineBorderContainer, name: '단위' ,placeholder:"-",},
+    {key: 'customer', formatter: LineBorderContainer, name: '거래처' ,placeholder:"-",},
   ],
   moldSearch: [
     {key: 'code', name: 'CODE'},
@@ -514,15 +517,15 @@ export const searchModalList: any  = {
     {key: 'current', name: '현재 타수'},
   ],
   machineSearch: [
-    {key: 'mfrCode', name: '제조번호'},
-    {key: 'name', name: '기계 이름'},
-    {key: 'type', name: '기계 종류'},
-    {key: 'weldingType', name: '용접 종류'},
-    {key: 'mfrName', name: '기계 제조사'},
-    {key: 'tons', name: '톤 수'},
-    {key: 'volt', name: '사용 전압'},
-    {key: 'factory_id', name: '공장명'},
-    {key: 'affiliated_id', name: '공장 세분화명'},
+    {key: 'mfrCode', formatter: LineBorderContainer, placeholder:"-", name: '제조번호'},
+    {key: 'name', formatter: LineBorderContainer, placeholder:"-", name: '기계 이름'},
+    {key: 'type', formatter: LineBorderContainer, placeholder:"-", name: '기계 종류'},
+    {key: 'weldingType', formatter: LineBorderContainer, placeholder:"-", name: '용접 종류'},
+    {key: 'mfrName', formatter: LineBorderContainer, placeholder:"-", name: '기계 제조사'},
+    {key: 'tons', formatter: LineBorderContainer, placeholder:"-", name: '톤 수'},
+    {key: 'volt', formatter: LineBorderContainer, placeholder:"-", name: '사용 전압'},
+    {key: 'factory_id', formatter: LineBorderContainer, placeholder:"-", name: '공장명'},
+    {key: 'affiliated_id', formatter: LineBorderContainer, placeholder:"-", name: '공장 세분화명'},
   ],
   deviceSearch: [
     {key: 'mfrCode', name: '제조번호'},

@@ -11,6 +11,7 @@ import {AxiosResponse} from 'axios'
 import styled from 'styled-components'
 import {useDispatch} from "react-redux";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {IExcelHeaderType} from "shared/src/common/@types/type";
 
 export interface IProps {
   children?: any
@@ -255,7 +256,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
           <ExcelTable
             clickable
             width={280}
-            headerList={[{key: 'name', width: 280, name: '권한명(필수)', editor: TextEditor}]}
+            headerList={[{key: 'name', width: 280, name: '권한명(필수)', editor: TextEditor}] as Array<IExcelHeaderType>}
             row={row}
             setRow={(row) => competeAuthority(row)}
             setSelectRow={(index) => {

@@ -3,10 +3,10 @@ import {
     columnlist,
     ExcelTable,
     Header as PageHeader,
-    IExcelHeaderType,
     MidrangeFormReviewModal,
     RequestMethod, TextEditor
 } from "shared";
+import {IExcelHeaderType} from 'shared/src/common/@types/type'
 import {MidrangeButton} from "shared/src/styles/styledComponents";
 import Notiflix from "notiflix";
 import {useRouter} from "next/router";

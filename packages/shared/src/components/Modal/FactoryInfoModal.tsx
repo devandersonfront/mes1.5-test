@@ -276,13 +276,13 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>공장명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{changeData("name")}</HeaderTableText>
+              <HeaderTableText>{changeData("name") ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>공장 주소</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 786}}>
-              <HeaderTableText>{changeData("address")}</HeaderTableText>
+              <HeaderTableText>{changeData("address") ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -290,19 +290,19 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>담당자</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{changeData("manager")}</HeaderTableText>
+              <HeaderTableText>{changeData("manager") ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>직책</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{changeData("appointment")}</HeaderTableText>
+              <HeaderTableText>{changeData("appointment") ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>전화번호</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 480}}>
-              <HeaderTableText>{changeData("telephone")}</HeaderTableText>
+              <HeaderTableText>{changeData("telephone") ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
