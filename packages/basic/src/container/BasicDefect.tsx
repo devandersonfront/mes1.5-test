@@ -115,7 +115,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
   }
 
   const LoadBasic = async () => {
-    Notiflix.Loading.standard();
+    Notiflix.Loading.circle();
     const res = await RequestMethod('get', `processList`,{
       path: {
         page: 1,
@@ -255,7 +255,7 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
         return
       case 3 :
         // let validation = true;
-        Notiflix.Loading.standard();
+        Notiflix.Loading.circle();
         let saveDefectBasicRow:any[] = [];
         validateSaveRequestBody()
           .map((value,i)=>{

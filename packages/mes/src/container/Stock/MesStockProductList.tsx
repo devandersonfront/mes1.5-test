@@ -76,7 +76,7 @@ const MesStockProductList = ({page, keyword, option}) => {
   }
 
   const LoadMenu = async() => {
-    Notiflix.Loading.standard();
+    Notiflix.Loading.circle();
     const res = await RequestMethod('get', 'loadMenu', {
       path:{
         tab: 'ROLE_STK_02'
@@ -87,7 +87,7 @@ const MesStockProductList = ({page, keyword, option}) => {
   }
 
   const LoadData = async(menus?: any[] ) => {
-    Notiflix.Loading.standard();
+    Notiflix.Loading.circle();
     const res = await RequestMethod('get', 'stockProductList', {
       params:{
         keyword:keyword,

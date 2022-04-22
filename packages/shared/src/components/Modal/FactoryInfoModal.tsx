@@ -101,7 +101,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
       setSearchList([...searchList])
   }
   const saveSubFactory = async () => {
-    Notiflix.Loading.standard();
+    Notiflix.Loading.circle();
 
     let nameCheck = true;
 

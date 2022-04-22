@@ -150,7 +150,7 @@ const Stock = ({page, keyword, option}: IProps) => {
 
 
     const LoadBasic = async(page?:number) => {
-        Notiflix.Loading.standard();
+        Notiflix.Loading.circle();
         const res = await RequestMethod('get', "stockList",
             {
                 path:
@@ -226,7 +226,7 @@ const Stock = ({page, keyword, option}: IProps) => {
 
 
     useEffect(() => {
-        Notiflix.Loading.standard();
+        Notiflix.Loading.circle();
         setOptionIndex(option)
         if(keyword){
             SearchList(keyword, option, page)
