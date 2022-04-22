@@ -102,6 +102,8 @@ export {TitleFileUpload} from './components/FileUpload/TitleFileUpload'
 //textArea
 export {TitleTextArea} from './components/TextAreaBox/TitleTextArea'
 
+// export {TreeView} from './components/TreeView/TreeView'
+
 //formatter
 export {NumberingBox} from "./components/Formatter/NumberingBox"
 export {ProductTitleFomatter} from "./components/Formatter/ProductTitleFomatter"

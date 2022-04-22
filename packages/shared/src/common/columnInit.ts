@@ -433,11 +433,7 @@ export const columnlist: any = {
     {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',width: 118},
     {key: 'customer_id', name: '거래처', width: 118},
     {key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118},
-    {key: 'is_complete', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소', onClickEvent: async (body:any) => {
-      body.is_complete ? body.onClickEvent(body)
-        : Notiflix.Confirm.show(`재고 수량이 '0'으로 변경됩니다. 진행 하시겠습니까?`, '*사용완료 처리된 자재는 작업이력 수정 시 수정불가해집니다.', '예','아니오', () => body.onClickEvent(body), ()=>{},
-          {width: '400px'})
-    }}
+    {key: 'exhaustion', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소'}
   ],
 
   rawstockModify: [
