@@ -91,6 +91,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
       className={'cell'}
       columns={headerList}
       rows={row}
+      components={{ noRowsFallback: <div style={{ textAlign: 'center', gridColumn: '1/-1' }} >데이터가 없습니다!</div> }}
       onColumnResize={(v, i) => {
         tempData.map((time,i)=>{
             clearTimeout(time)

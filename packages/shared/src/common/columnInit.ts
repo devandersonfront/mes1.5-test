@@ -140,7 +140,7 @@ export const columnlist: any = {
   machineV2:[ //기계기준정보
     {key: 'mfrName',name: '기계 제조사',  editor: TextEditor, width: 118, formatter: PlaceholderBox, placeholder:"제조사 입력"},
     {key: 'name', name: '기계 이름', editor: TextEditor, width: 118, formatter: PlaceholderBox, placeholder:"이름 입력"},
-    {key: 'type', name: '기계 종류', formatter: DropDownEditor, headerRenderer: HeaderFilter,
+    {key: 'type', name: '기계 종류', editor: DropDownEditor, editorOptions:{editOnClick: true}, headerRenderer: HeaderFilter,
       options:[
         {status: undefined, name: "기계 종류"},
         {status: 0, name: "선택없음"},
