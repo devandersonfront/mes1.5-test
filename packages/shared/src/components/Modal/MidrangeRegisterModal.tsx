@@ -182,7 +182,9 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
                             </div>
                             <div
                                 onClick={() => {
-                                    recordInspectFrameUpdate()
+                                    Notiflix.Report.success("저장되었습니다.","","확인", () => {
+                                        recordInspectFrameUpdate()
+                                    })
                                 }}
                                 style={{width: "50%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                             >
@@ -214,8 +216,10 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
                         </div>
                         <div
                             onClick={() => {
-                                setMidrangeUpdate(true)
-                                recordInspectFrameSave()
+                                Notiflix.Report.success("저장되었습니다.","","확인",() => {
+                                    setMidrangeUpdate(true)
+                                    recordInspectFrameSave()
+                                })
                             }}
                             style={{width: "50%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >

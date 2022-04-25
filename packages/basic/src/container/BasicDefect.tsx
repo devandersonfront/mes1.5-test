@@ -409,7 +409,6 @@ const BasicDefect = ({page, keyword, option}: IProps) => {
           setState(true)
           setDefectBasicRow(e)
         }}
-        width={1570}
         height={440}
         // setSelectList={changeSetSelectList}
         //@ts-ignore
