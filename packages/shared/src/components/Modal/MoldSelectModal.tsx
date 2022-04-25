@@ -144,12 +144,12 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
     })
     if(res){
       setSearchList([...res].map((v, index) => {
-        return {
-          ...v.mold,
-          sequence: index+1,
-          setting: '부',
-        }
-      }))
+            return {
+              ...v.mold,
+              sequence: index+1,
+              setting: v.setting
+            }
+          }))
     }
   }
 

@@ -74,16 +74,20 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     setPageInfo({page:1,total:1})
   }
 
-  useEffect(() => {
+  const loadPage = (page:number) => {
     if(keyword){
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+      SearchBasic(keyword, optionIndex, page).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
-      LoadBasic(pageInfo.page).then(() => {
+      LoadBasic(page).then(() => {
         Notiflix.Loading.remove()
       })
     }
+  }
+
+  useEffect(() => {
+    loadPage(pageInfo.page)
   }, [pageInfo.page, keyword, nzState, selectDate, expState,order])
 
   useEffect(() => {
@@ -175,7 +179,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     if(res){
       // setFirst(false);
       setPageInfo({
-        ...pageInfo,
         page: res.page,
         total: res.totalPages
       })
@@ -219,7 +222,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
     if(res){
       setPageInfo({
-        ...pageInfo,
         page: res.page,
         total: res.totalPages
       })
@@ -334,18 +336,21 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         expiration: row.raw_material.expiration,
         exhaustion: row.current ? '-' : '사용완료',
         current: row.is_complete? 0 : row.current,
+        realCurrent: row.current,
         ...appendAdditional,
         id: `rawin_${random_id}`,
-        onClickEvent: (data) => SaveBasic(data)
+        onClickEvent: (row) =>  row.is_complete ? SaveBasic(row)
+          : Notiflix.Confirm.show(`재고 수량이 '0'으로 변경됩니다. 진행 하시겠습니까?`, '*사용완료 처리된 자재는 작업이력 수정 시 수정불가해집니다.', '예','아니오', () => SaveBasic(row), ()=>{},
+            {width: '400px'})
       }
     })
     setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
-  const SaveBasic = async (row: any) => {
+  async function SaveBasic(row: any) {
     let res: any
-    res = await RequestMethod('post', `lotRmComplete`,{...row, is_complete: !row.is_complete})
+    res = await RequestMethod('post', `lotRmComplete`,{...row, current: row.realCurrent, is_complete: !row.is_complete})
       .catch((error) => {
         if(error.status === 409){
           Notiflix.Report.warning("경고", error.data.message, "확인",)
@@ -356,15 +361,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
-        if(keyword){
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+        loadPage(1)
       });
     }
   }
@@ -407,18 +404,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
     if(res) {
       Notiflix.Report.success('삭제되었습니다.','','확인', () => {
-        if(keyword){
-          setSelectList(new Set)
-          SearchBasic(keyword, option, pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          setSelectList(new Set)
-          LoadBasic(pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
-
+        loadPage(1)
+        setSelectList(new Set)
       });
     }
 

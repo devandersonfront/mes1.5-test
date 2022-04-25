@@ -462,6 +462,7 @@ export const ArrowImageWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  marginLeft: 16
 `
 
 export const TopMenuTitle = styled.p`

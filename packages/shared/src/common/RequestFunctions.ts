@@ -383,6 +383,7 @@ const ApiList = {
   lotRmList: `/api/v1/lot-rm/list`,
   lotSmList: `/api/v1/lot-sm/list`,
   recordGroupList: `/api/v1/record/groups`,
+  recordGroupListByContract: `/api/v1/record/groups/with-contract`,
   stockAdminList: '/api/v1/stock/admin/summary',
   qualityRecordInspectList: '/cnc/api/v1/quality/record/inspect/list',
   toolList: `/cnc/api/v1/tool/list`,

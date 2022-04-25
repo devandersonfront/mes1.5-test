@@ -148,7 +148,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
 
                 return
             case 1:
-                Notiflix.Loading.standard();
+                Notiflix.Loading.circle();
                 let check = false;
                 let count = 0;
                 basicRow.map((v) => {
