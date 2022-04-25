@@ -32,48 +32,52 @@ const TreeViewTable = ({item, setItem, selectIndex}: IProps) => {
     setMenu(item)
   }, [item])
 
-  const setChecked = (menuItem:IMenu) => {
+  const cascadeChecked = (childItems: IMenu[], parentCheck: boolean) => (
+    childItems.map(childItem => ({...childItem, check: parentCheck, child: childItem.child?.length > 0 ? cascadeChecked(childItem.child, parentCheck) : childItem.child}))
+  )
+
+  const setChecked = (menuItem:IMenu, checkStatus: boolean, noCascade?: boolean) => {
     const hasChildren = menuItem.child.length > 0
-    const recursiveCheck = (childItems: IMenu[], parentCheck: boolean) => (
-      childItems.map(childItem => ({...childItem, check: parentCheck, child: childItem.child?.length > 0 ? recursiveCheck(childItem.child, parentCheck) : childItem.child}))
-    )
-    const checked = !menuItem.check
-    return {...menuItem, check: checked, child: hasChildren ? recursiveCheck(menuItem.child, checked) : menuItem.child}
+    return {...menuItem, check: checkStatus, child: hasChildren && !noCascade ? cascadeChecked(menuItem.child, checkStatus) : menuItem.child}
   }
 
-  const recursiveCheck = (menuList: IMenu[],  menuIndexTree:number[], parentCheck: boolean) => {
+  const setShow = (menuItem:IMenu) => ({...menuItem, show:!menuItem.show})
+
+  const eventToDown = (menuList: IMenu[],  menuIndexTree:number[], targetDepth:number, currentDepth: number, eventCallBack) => {
     const indexSize = menuIndexTree.length
     if(indexSize === 0) return
-    const menuIndex = menuIndexTree.shift()
-    if(indexSize === 1){
-      menuList[menuIndex] = setChecked(menuList[menuIndex])
+    const menuIndex = menuIndexTree[currentDepth]
+    if(targetDepth === currentDepth){
+      menuList[menuIndex] = eventCallBack(menuList[menuIndex])
     } else {
-      if(parentCheck) menuList[menuIndex] = {...menuList[menuIndex], check: !parentCheck}
-      recursiveCheck(menuList[menuIndex].child, menuIndexTree, parentCheck)
+      currentDepth++
+      eventToDown(menuList[menuIndex].child, menuIndexTree, targetDepth, currentDepth, eventCallBack)
     }
   }
 
-  const recursiveShow = (menuList: IMenu[],  menuIndexTree:number[]) => {
-    const indexSize = menuIndexTree.length
-    if(indexSize === 0) return
-    const menuIndex = menuIndexTree.shift()
-    if(indexSize === 1){
-      menuList[menuIndex] = {...menuList[menuIndex], show:!menuList[menuIndex].show}
-    } else {
-      recursiveShow(menuList[menuIndex].child, menuIndexTree)
+  const setParentChecked = (menuList: IMenu[],  menuIndexTree:number[], willCheck: boolean) => {
+    const parentIndex= menuIndexTree.length -2
+    for (let i = parentIndex; i > -1; i--) {
+      const parentCallBack = (menuItem:IMenu) => (
+        willCheck ? menuItem.child?.every(childMenu => childMenu.check) ? setChecked(menuItem, true, true) : menuItem
+        : menuItem.child?.some(childMenu => !childMenu.check) ? setChecked(menuItem, false, true) : menuItem
+    )
+      eventToDown(menuList, menuIndexTree, i, 0, parentCallBack)
     }
   }
 
   const onClickMenu = (menuIndexTree:number[]) => {
     let tmp = menu
-    recursiveShow(menu, menuIndexTree)
+    eventToDown(tmp, menuIndexTree, menuIndexTree.length - 1, 0, setShow)
     setMenu([...tmp])
   }
 
   const onClickCheckBox = (menuIndexTree:number[], parentCheck: boolean) => {
     let tmp = menu
-    recursiveCheck(menu, menuIndexTree, parentCheck)
+    eventToDown(tmp, menuIndexTree,menuIndexTree.length - 1, 0, (menuItem: IMenu) => setChecked(menuItem, !menuItem.check))
+    setParentChecked(tmp, menuIndexTree, !parentCheck)
     setMenu([...tmp])
+    setItem([...tmp])
   }
 
   const RecursiveTreeView = (menus: IMenu[], depth: number, menuIndexTree: number[],  titleStyles?: React.CSSProperties) => (
