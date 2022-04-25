@@ -277,7 +277,6 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
           setState(true)
           setPauseBasicRow(e)
         }}
-        width={1570}
         height={440}
         // setSelectList={changeSetSelectList}
         setSelectList={setSelectList}

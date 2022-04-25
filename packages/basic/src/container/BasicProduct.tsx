@@ -654,6 +654,7 @@ const BasicProduct = ({}: IProps) => {
         return false
       }
     })
+
   }
 
   const handleModal = (open:boolean) => {

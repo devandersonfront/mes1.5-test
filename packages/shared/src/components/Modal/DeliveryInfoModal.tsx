@@ -58,7 +58,7 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     let tmpData = {
       ...row,
       customer_id: row.product?.customer?.name,
-      cm_id: row.product?.model.model,
+      cm_id: row.product?.model?.model,
       product_id: row.product?.code,
       name: row.product?.name,
       type: TransferCodeToValue(row.product?.type, 'product'),

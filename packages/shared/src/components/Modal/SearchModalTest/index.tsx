@@ -89,7 +89,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         // console.log("searchModalInit : ", searchModalInit)
         setSearchModalColumn(
             [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column) => {
-              return ({...column, doubleClick: confirmFunction()})
+              return ({...column, doubleClick: confirmFunction})
             })])
       }
 
@@ -106,24 +106,19 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         return option
       }
     }
-
     return option
-
-
   }
 
   useEffect(() => {
     if(isOpen){
       LoadBasic(pageInfo.page);
+    }else{
+      setPageInfo({page:1, total:1})
+      setSearchList([{}])
     }
   }, [isOpen, searchModalInit, pageInfo.page])
 
 
-  const filterList = (result) => {
-  return result.map((list)=>(
-      {...list , customer : list.customer?.name}
-    ))
-  }
 
   const LoadBasic = async (page:number) => {
     Notiflix.Loading.circle();
@@ -327,6 +322,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   const confirmFunction = () => {
     setIsOpen(false)
+    console.log("here")
     if(selectRow !== undefined){
       const selectNameFunction = (type:string) => {
         switch(type){
@@ -461,7 +457,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }
 
     }
-
   }
 
   return (

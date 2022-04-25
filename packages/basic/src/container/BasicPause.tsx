@@ -40,6 +40,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
     if(processBasicRow.length > 0){
       LoadPauseList(processBasicRow[selectRow].process_id);
     }
+    console.log("pauseBasicRow : ", pauseBasicRow)
   },[selectRow])
 
   useEffect(() => {
@@ -405,7 +406,6 @@ const BasicPause = ({page, keyword, option}: IProps) => {
             setState(true)
             setPauseBasicRow(e)
           }}
-          width={1576}
           height={440}
           // setSelectList={changeSetSelectList}
           //@ts-ignore
