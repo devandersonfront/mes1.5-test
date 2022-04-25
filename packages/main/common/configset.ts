@@ -41,7 +41,7 @@ export const SF_ENDPOINT_RESOURCE = `http://${isLocalhost()}:8285`
 export const SF_PORT = ``
 
 export const AUTHORITY_LIST = [
-  { title: "HOME", show: false, checkable: false, check: false, child: [
+  { title: "HOME", show: false, checkable: false, check: true, child: [
       { title: "HOME", show: false, checkable: false, check: true, child: [], value: "ROLE_HOME" },
     ], },
   { title: "기준정보 관리", show: false, checkable: true, check: false, child: [
@@ -96,8 +96,8 @@ export const AUTHORITY_LIST = [
 
       { title: "공구 관리", show: false, checkable: true, check: false, child: [
           { title: "공구 입고 등록", show: false, checkable: true, check: false, child: [], value: "ROLE_TOOL_01" },
-          { title: "공구 입고 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_TOOL_03" },
-          { title: "공구 재고 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_TOOL_02" },
+          { title: "공구 입고 리스트", show: false, checkable: true, check: false, child: [], value: "ROLE_TOOL_02" },
+          { title: "공구 재고 현황", show: false, checkable: true, check: false, child: [], value: "ROLE_TOOL_03" },
       ] },
 
       { title: "품질 관리", show: false, checkable: true, check: false, child: [

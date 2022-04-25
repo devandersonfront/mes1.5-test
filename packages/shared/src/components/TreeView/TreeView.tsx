@@ -21,7 +21,6 @@ type TreeViewProps = {
 }
 
 const TreeView = ({title, titleStyles, style, onClickCheckBox, onClickArrow, hasChildren, checkable, open, checked}:TreeViewProps) => {
-  console.log(titleStyles)
   const onClickCheck = () => {
     checkable ? onClickCheckBox() : Notiflix.Report.warning('경고', '수정할 수 없습니다.','확인')
   }
