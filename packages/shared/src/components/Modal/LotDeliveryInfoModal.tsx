@@ -130,9 +130,10 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const SearchBasic = async () => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `recordGroupList`,{
+    const res = await RequestMethod('get', row.contract?.contract_id? `recordGroupListByContract` : `recordGroupList` ,{
       path: {
         product_id: row.product.product_id,
+        contract_id: row.contract?.contract_id?? null,
         page: 1,
         renderItem: 18,
       },
@@ -163,6 +164,11 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
       </UploadButton>
   )
 
+  const onClickCloseEvent = () => {
+    setIsOpen(false)
+    setPageInfo({page:1, total:1})
+    setSearchList([{seq: 1}])
+  }
 
   return (
     <SearchModalWrapper >
@@ -198,9 +204,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               margin: 0,
             }}>LOT별 납품 정보</p>
             <div style={{display: 'flex'}}>
-              <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
-                setIsOpen(false)
-              }}>
+              <div style={{cursor: 'pointer', marginLeft: 20}} onClick={onClickCloseEvent}>
                 <img style={{width: 20, height: 20}} src={IcX}/>
               </div>
             </div>
@@ -340,9 +344,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
             : <div style={{height:45 , width: '100%', display: 'flex', flexWrap:'wrap',flexDirection:'row'}}>
               <div
-                onClick={() => {
-                  setIsOpen(false)
-                }}
+                onClick={onClickCloseEvent}
                 style={{
                   flex:1,
                   height: '100%',
