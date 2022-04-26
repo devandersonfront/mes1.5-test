@@ -35,6 +35,11 @@ const CellButtonComponent = ({ row, column, setRow}: IProps) => {
   }, [column.key])
   return (
       <ContentBox>
+        <div style={{
+          padding: '3.5px 0px 0px 3.5px',
+          width: '100%',
+          opacity : column.type === 'inspection' && !!!row.machine_id && !!!row.mold_id ? .3 : 1
+        }}>
         <UploadButton hoverColor={POINT_COLOR} haveId={row?.form_id} onClick={() =>{
           if(column.type === "inspection"){
             let typeID = "";
@@ -76,6 +81,7 @@ const CellButtonComponent = ({ row, column, setRow}: IProps) => {
         }}>
           <p>{row.form_id ? "양식 보기" : title}</p>
         </UploadButton>
+        </div>
       </ContentBox>
   );
 }

@@ -143,10 +143,10 @@ export const ContentsItem = styled.div`
   margin-right: 1px;
 `
 
-export const UploadButton = styled.div<{hoverColor?:string, haveId?:boolean, status?: "table" | "modal"}>`
+export const UploadButton = styled.div<{hoverColor?:string, haveId?:boolean, status?: "table" | "modal", newRow?:boolean}>`
   width:112px;
   height: 32px;
-  background-color: ${({haveId}) => haveId ? "none" : "#19B9DF"};
+  background-color: ${({haveId, newRow}) => haveId ? "none" : newRow ? "#19B9DF" : "#19B9DF"};
   cursor: pointer;
   display: flex;
   justify-content: center;

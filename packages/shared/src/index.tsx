@@ -82,7 +82,7 @@ export {setToken} from "./common/tokenManager"
 
 //버튼
 export {AddlButton} from "./components/Buttons/AddlButton"
-export {CellButtonComponent} from "./components/Buttons/CellButtom"
+export {CellButtonComponent} from "./components/Buttons/CellButton"
 export {FinishButton} from "./components/Buttons/FinishButton"
 export {FinishCancelButton} from "./components/Buttons/FinishCancelButton"
 export {OrderRegisterButton} from "./components/Buttons/OrderRegisterButton"
