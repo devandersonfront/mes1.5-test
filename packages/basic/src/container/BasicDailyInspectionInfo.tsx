@@ -346,7 +346,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
         <div>
             <DailyInspectionModal isOpen={infoModalOpen} setIsOpen={setInfoModalOpen} basicRow={basicRow} setBasicRow={changeSetBasicRow} modalType={machine_id ? "machine" : "mold"} modalSelectOption={modalSelectOption}/>
             <PageHeader
-                title={"일상점검 정보 등록"}
+                title={`${machine_id ? '기계' : '금형'} 일상점검 정보 등록`}
                 buttons={
                     ["점검 양식 검토", "저장하기"]
                 }
