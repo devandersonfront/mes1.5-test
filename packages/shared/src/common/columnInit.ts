@@ -312,7 +312,7 @@ export const columnlist: any = {
   moldV2: [
     {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력' },
     {key: 'name', name: '금형명', editor: TextEditor,formatter: PlaceholderBox, placeholder: '금형명 입력'},
-    {key: 'cavity', name: '캐비티',editor: TextEditor,formatter: UnitContainer, unitData: 'EA', placeholder: '0',type:"number"},
+    {key: 'cavity', name: '캐비티',editor: TextEditor,formatter: UnitContainer, unitData: 'EA', placeholder: '1',type:"number"},
     {key: 'spm', name: 'SPM',editor: TextEditor,formatter: PlaceholderBox, placeholder: '0',type:"number"},
     {key: 'slideHeight', name: '슬라이드 위치',editor: TextEditor,formatter: PlaceholderBox, placeholder: '0',type:"number"},
     {key: 'limit', name: '최대타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력',type:"number"},
