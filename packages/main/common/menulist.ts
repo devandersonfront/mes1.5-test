@@ -174,8 +174,8 @@ const PMS_MENUS: IMenuType[] = [
       { title : '설비 수리 완료 리스트' , url : '/pms/v2/press/maintenance/complete'},
       { title : '설비 수리 완료 리스트(관리자용)' , url : '/pms/v2/press/maintenance/complete/admin'},
       { title : '설비 문제 유형 등록' , url : '/pms/v2/press/maintenance/problem'},
-      { title : '프레스 일상정검 등록' , url : '/pms/v2/press/maintenance/PressDailyRegister'},
-      { title : '프레스 일상정검 일일현황' , url : '/pms/v2/press/maintenance/PressDailyStatus'}
+      { title : '프레스 일상점검 등록' , url : '/pms/v2/press/maintenance/PressDailyRegister'},
+      { title : '프레스 일상점검 일일현황' , url : '/pms/v2/press/maintenance/PressDailyStatus'}
 
     ]
   },
