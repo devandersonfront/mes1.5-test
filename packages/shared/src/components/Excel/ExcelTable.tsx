@@ -71,10 +71,8 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
   useEffect(() => {
     let allWidth = 0
     headerList.map((v: any) => {
-      console.log("v.width : ", v.width )
       allWidth += v.width
     })
-    console.log("allWidth : ", allWidth)
   }, [headerList])
 
   function isAtBottom({ currentTarget }: React.UIEvent<HTMLDivElement>): boolean {
@@ -92,8 +90,6 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
   const autoWidth:number = headerList.map((col) => col.width).reduce(
       (previousValue, currentValue) => previousValue + currentValue,
   )
-
-  console.log(width, headerList,autoWidth)
 
   const showDataGrid = () => {
 

@@ -40,7 +40,6 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) SearchBasic(searchKeyword, optionIndex, 1).then(() => {
       Notiflix.Loading.remove()
-      console.log(searchModalColumn)
       setSearchModalColumn([...searchModalColumn].map((column) => {
         return {...column, doubleClick:confirmFunction}
       }))

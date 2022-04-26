@@ -322,7 +322,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   const confirmFunction = () => {
     setIsOpen(false)
-    console.log("here")
     if(selectRow !== undefined){
       const selectNameFunction = (type:string) => {
         switch(type){
@@ -513,7 +512,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               rowHeight={32}
               height={640}
               setSelectRow={(e) => {
-                console.log(e, searchList)
                 // dispatch(changeSearchModalNumber(e))
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{

@@ -20,9 +20,6 @@ interface IProps {
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
 
   const cleanValue = (type?:string) => {
-    // console.log("row : ", row)
-    // console.log("column : ", column)
-    // console.log("type : ", type)
     switch(type){
       case "spare":
         // 22/01/24 수정

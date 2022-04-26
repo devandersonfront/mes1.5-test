@@ -63,7 +63,6 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen){
       LoadBasic(row.productId)
-      console.log("row : ", row)
       setSummaryData({
         // ...res.parent
         identification: row.identification,
