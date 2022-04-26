@@ -22,6 +22,7 @@ import {SearchIcon} from "../../../styles/styledComponents";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../reducer";
 import {changeSearchModalNumber} from "../../../reducer/searchModalState";
+import {NoSelectContainer} from "../../Formatter/NoSelectFomatter";
 
 
 interface IProps {
@@ -53,8 +54,15 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             setSearchModalInit(SearchInit.rawmaterial)
             // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
             setSearchModalColumn(
-                [...searchModalList[`${SearchInit.rawmaterial.excelColumnType}Search`].map((column) => {
-                  return ({...column, doubleClick: confirmFunction})
+                [...searchModalList[`${SearchInit.rawmaterial.excelColumnType}Search`].map((column, index) => {
+                  if(index === 0) return ({...column, doubleClick: confirmFunction, colSpan(args) {
+                      if(args.row?.first){
+                        return searchModalList[`${SearchInit.rawmaterial.excelColumnType}Search`].length
+                      }else{
+                        return undefined
+                      }
+                    }})
+                  else return ({...column, doubleClick: confirmFunction})
                 })])
             break;
           }
@@ -62,16 +70,30 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             setSearchModalInit(SearchInit.submaterial)
             // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
             setSearchModalColumn(
-                [...searchModalList[`${SearchInit.submaterial.excelColumnType}Search`].map((column) => {
-                  return ({...column, doubleClick: confirmFunction})
+                [...searchModalList[`${SearchInit.submaterial.excelColumnType}Search`].map((column, index) => {
+                  if(index === 0) return ({...column, doubleClick: confirmFunction, colSpan(args) {
+                      if(args.row?.first){
+                        return searchModalList[`${SearchInit.submaterial.excelColumnType}Search`].length
+                      }else{
+                        return undefined
+                      }
+                    }})
+                  else return ({...column, doubleClick: confirmFunction})
                 })])
             break;
           }
           case 2:{
             setSearchModalInit(SearchInit.product)
             setSearchModalColumn(
-                [...searchModalList[`${SearchInit.product.excelColumnType}Search`].map((column) => {
-                    return ({...column, doubleClick: confirmFunction})
+                [...searchModalList[`${SearchInit.product.excelColumnType}Search`].map((column, index) => {
+                  if(index === 0) return ({...column, doubleClick: confirmFunction, colSpan(args) {
+                      if(args.row?.first){
+                        return searchModalList[`${SearchInit.product.excelColumnType}Search`].length
+                      }else{
+                        return undefined
+                      }
+                    }})
+                  else return ({...column, doubleClick: confirmFunction})
             })])
             break;
           }
@@ -79,18 +101,31 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         if(tab === null){
           setSearchModalInit(SearchInit[column.type])
           // console.log("searchModalInit : ", searchModalInit)
-          setSearchModalColumn(
-              [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column) => {
-                return ({...column, doubleClick: confirmFunction})
-              })])
+            setSearchModalColumn(
+                [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column, index) => {
+                    if(index === 0) return ({...column, doubleClick: confirmFunction, colSpan(args) {
+                            if(args.row?.first){
+                                return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
+                            }else{
+                                return undefined
+                            }
+                        }})
+                    else return ({...column, doubleClick: confirmFunction})
+                })])
         }
       }else{
         setSearchModalInit(SearchInit[column.type])
-        // console.log("searchModalInit : ", searchModalInit)
-        setSearchModalColumn(
-            [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column) => {
-              return ({...column, doubleClick: confirmFunction})
-            })])
+          setSearchModalColumn(
+              [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((col, index) => {
+                  if(index === 0) return ({...col, doubleClick: confirmFunction, colSpan(args) {
+                          if(args.row?.first){
+                              return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
+                          }else{
+                              return undefined
+                          }
+                      }, formatter:NoSelectContainer})
+                  else return ({...col, doubleClick: confirmFunction})
+              })])
       }
 
   }, [column.type, tab])
@@ -167,16 +202,16 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
     if(res){
       if(searchModalInit.excelColumnType === "toolProduct"){
-        setSearchList([...SearchResultSort(res, searchModalInit.excelColumnType)])
+        setSearchList([...SearchResultSort([{first: true}, ...res], searchModalInit.excelColumnType)])
         setPageInfo({page:res.page, total:res.totalPages});
         Notiflix.Loading.remove()
       }else
         if(res.page !== 1){
-          setSearchList([ ...searchList,...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
+          setSearchList([ ...searchList,...SearchResultSort([{first:true}, ...res.info_list], searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
           Notiflix.Loading.remove()
         }else{
-          setSearchList([...SearchResultSort(res.info_list, searchModalInit.excelColumnType)])
+          setSearchList([...SearchResultSort([{first:true, name:"선택없음"}, ...res.info_list], searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
           Notiflix.Loading.remove()
         }

@@ -7,7 +7,7 @@ export const SearchResultSort = (infoList, type: string) => {
       return infoList.map((v) => {
         return {
           ...v,
-          ca_name: v.ca_id.name,
+          ca_name: v?.ca_id?.name,
         }
       })
     }

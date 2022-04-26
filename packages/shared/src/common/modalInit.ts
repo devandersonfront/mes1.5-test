@@ -535,7 +535,14 @@ export const searchModalList: any  = {
     {key: 'segment', name: '공장 세분화명'},
   ],
   productSearch: [
-    {key: 'customer_name', name: '거래처', formatter: LineBorderContainer ,placeholder:"-",},
+    {key: 'customer_name', name: '거래처', formatter: LineBorderContainer ,placeholder:"-", colSpan(args) {
+        if(args.row?.first){
+          console.log("첫줄")
+          return 6
+        }else{
+          return undefined
+        }
+      },},
     {key: 'model_name', name: '모델', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'code', name: 'CODE', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'name', name: '품명', formatter: LineBorderContainer ,placeholder:"-",},
