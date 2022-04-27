@@ -283,7 +283,7 @@ const BasicFactory = ({}: IProps) => {
             Notiflix.Report.success('삭제되었습니다.','','확인');
             setBasicRow(Array.from(map.values()))
             setSelectList(new Set())
-            setPageInfo({page: 1, total: 1})
+            setPageInfo({page: pageInfo.page, total: pageInfo.total})
         }
 
     }
