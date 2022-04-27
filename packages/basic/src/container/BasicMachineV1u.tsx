@@ -278,14 +278,18 @@ const BasicMachineV1u = ({option}: IProps) => {
 
     if(haveIdRows.length > 0){
       deletable = await RequestMethod('delete','machineDelete', filterData)
-    }
+      LoadBasic(1)
 
-    if(deletable){
-      selectedRows.forEach((row)=>{ map.delete(row.id)})
-      Notiflix.Report.success('삭제되었습니다.','','확인');
+    }else{
+
+      selectedRows.forEach((row)=>{map.delete(row.id)})
       setBasicRow(Array.from(map.values()))
       setPageInfo({page: pageInfo.page, total: pageInfo.total})
       setSelectList(new Set())
+    }
+
+    if(deletable){
+      Notiflix.Report.success('삭제되었습니다.','','확인');
     }
   }
 

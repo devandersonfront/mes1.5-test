@@ -309,14 +309,19 @@ const BasicModel = ({}: IProps) => {
           }).filter(v => v)
           ]}
       )))
-    }
 
-    if(deletable){
-      selectedRows.forEach((row)=>{ map.delete(row.id)})
-      Notiflix.Report.success('삭제되었습니다.','','확인');
+      LoadBasic(1)
+
+    }else{
+
+      selectedRows.forEach((row)=>{map.delete(row.id)})
       setBasicRow(Array.from(map.values()))
       setPageInfo({page: pageInfo.page, total: pageInfo.total})
       setSelectList(new Set())
+    }
+
+    if(deletable){
+      Notiflix.Report.success('삭제되었습니다.','','확인');
     }
 
   }
