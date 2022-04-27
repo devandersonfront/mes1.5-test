@@ -59,21 +59,23 @@ const ToolModal = ({column, row, onRowChange}: IProps) => {
     }
 
 
-    const convertRowToData = () => {
+    async function convertRowToData() {
         if(row.products?.length > 0){
             switch(column.type){
                 case "tool" :
-                    setData(row.products.map(async(product) => ({...product,
-                        average: getToolAverage(product.product_id, row.tool_id),
-                        customerData : product?.customer,
-                        customer : product?.customer?.name,
-                        modelData : product?.model,
-                        model : product?.model?.model,
-                        type_id : product?.type,
-                        product_type : getProductType(product?.type),
-                        unit : product?.unit,
-                        stock : product?.stock
-                    })))
+                    const products = await Promise.all(await row.products.map( async product => (
+                      {...product,
+                            average: await getToolAverage(product.product_id, row.tool_id),
+                            customerData : product?.customer,
+                            customer : product?.customer?.name,
+                            modelData : product?.model,
+                            model : product?.model?.model,
+                            type_id : product?.type,
+                            product_type : getProductType(product?.type),
+                            unit : product?.unit,
+                            stock : product?.stock
+                        })))
+                    setData(products)
                     return
                 default :
                     break;
@@ -83,7 +85,7 @@ const ToolModal = ({column, row, onRowChange}: IProps) => {
         }
     }
 
-    const getToolAverage = async(productId:number, toolId:number) => {
+    async function getToolAverage(productId:number, toolId:number) {
             const res = await RequestMethod("get", "toolAverage", {
                 path:{
                     product_id: productId,
