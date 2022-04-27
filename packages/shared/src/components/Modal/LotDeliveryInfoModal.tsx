@@ -14,7 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from "../../styles/styledComponents";
-import {NoAmountValidation, OverAmountValidation} from '../../validations/validation'
+import {NoAmountValidation, OverAmountValidation} from '../../validations/Validation'
 
 interface IProps {
   column: IExcelHeaderType
