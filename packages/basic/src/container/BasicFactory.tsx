@@ -276,16 +276,19 @@ const BasicFactory = ({}: IProps) => {
                     }).filter(v => v)
                     ]}
             )))
+            LoadBasic(1)
+
+        }else{
+
+            selectedRows.forEach((row)=>{map.delete(row.id)})
+            setBasicRow(Array.from(map.values()))
+            setPageInfo({page: pageInfo.page, total: pageInfo.total})
+            setSelectList(new Set())
         }
 
         if(deletable){
-            selectedRows.forEach((row)=>{ map.delete(row.id)})
             Notiflix.Report.success('삭제되었습니다.','','확인');
-            setBasicRow(Array.from(map.values()))
-            setSelectList(new Set())
-            setPageInfo({page: pageInfo.page, total: pageInfo.total})
         }
-
     }
 
     const LoadBasic = async (page?: number) => {
@@ -500,7 +503,7 @@ const BasicFactory = ({}: IProps) => {
                         '확인',
                     );
                 }
-                Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소", ()=> DeleteBasic())
+                Notiflix.Confirm.show("경고","삭제하시겠습니까?(기존 데이터를 삭제할 경우 저장하지 않은 데이터는 모두 사라집니다.)","확인","취소", ()=> DeleteBasic())
                 break;
         }
     }
