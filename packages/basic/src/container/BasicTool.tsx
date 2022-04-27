@@ -208,10 +208,11 @@ const BasicTool = ({page, search, option}: IProps) => {
         // }
     }
 
-    const LoadBasic = async() => {
+    const LoadBasic = async(page?: number) => {
+        Notiflix.Loading.circle()
         const res = await RequestMethod("get", "toolList", {
             path:{
-                page:pageInfo.page ?? 1,
+                page: (page || page !== 0) ? page : 1,
                 renderItem:18
             },
             params:{
@@ -238,14 +239,23 @@ const BasicTool = ({page, search, option}: IProps) => {
             //     productIdArrayList.push(productList);
             // })
             cleanUpData(res);
-            setPageInfo({...pageInfo, total:res.totalPages});
+            setPageInfo({
+                ...pageInfo,
+                page: res.page,
+                total: res.totalPages
+            })
         }
+        setSelectList(new Set())
     }
 
-    const SearchBasic = async() => {
+    const SearchBasic = async(keyword: any, option: number, isPaging?: number) => {
+        Notiflix.Loading.circle()
+        if(!isPaging){
+            setOptionIndex(option)
+        }
         const res = await RequestMethod("get", "toolSearch",{
             path:{
-                page:pageInfo.page,
+                page:isPaging ?? 1,
                 renderItem:18
             },
             params:{
@@ -276,12 +286,17 @@ const BasicTool = ({page, search, option}: IProps) => {
             })
 
             cleanUpData(res, productIdArrayList);
-            setPageInfo({...pageInfo, total:res.totalPages});
+            setPageInfo({
+                ...pageInfo,
+                page: res.page,
+                total: res.totalPages
+            })
 
             // const resultData = cleanUpData(res);
             // console.log(resultData,'resultData')
             // setBasicRow(resultData);
         }
+        setSelectList(new Set())
     }
 
     const SelectData = () => {
@@ -334,7 +349,7 @@ const BasicTool = ({page, search, option}: IProps) => {
             if(res){
                 Notiflix.Loading.remove(300)
                 Notiflix.Report.success("저장되었습니다.","","확인",() => {
-                    LoadBasic();
+                    LoadBasic(1);
                 })
             }else{
                 Notiflix.Loading.remove(300)
@@ -383,13 +398,18 @@ const BasicTool = ({page, search, option}: IProps) => {
 
         if(haveIdRows.length > 0){
             deletable = await RequestMethod('delete','toolDelete', SaveCleanUpData(haveIdRows))
+            LoadBasic(1)
+
+        }else{
+
+            selectedRows.forEach((row)=>{map.delete(row.id)})
+            setBasicRow(Array.from(map.values()))
+            setPageInfo({page: pageInfo.page, total: pageInfo.total})
+            setSelectList(new Set())
         }
 
         if(deletable){
-            selectedRows.forEach((row)=>{ map.delete(row.id)})
             Notiflix.Report.success('삭제되었습니다.','','확인');
-            setBasicRow(Array.from(map.values()))
-            setSelectList(new Set())
         }
     }
 
@@ -436,7 +456,7 @@ const BasicTool = ({page, search, option}: IProps) => {
                     );
                 }
 
-                Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+                Notiflix.Confirm.show("경고","삭제하시겠습니까?(기존 데이터를 삭제할 경우 저장하지 않은 데이터는 모두 사라집니다.)","확인","취소",
                     ()=>{DeleteBasic()}
                     ,()=>{}
                 )
@@ -490,9 +510,13 @@ const BasicTool = ({page, search, option}: IProps) => {
     useEffect(() => {
         // setOptionIndex(option)
         if(keyword){
-            SearchBasic();
+            SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
         }else{
-            LoadBasic();
+            LoadBasic(pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
         }
     }, [pageInfo.page,keyword])
 
