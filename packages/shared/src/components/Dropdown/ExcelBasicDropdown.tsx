@@ -5,6 +5,7 @@ import Notiflix from 'notiflix'
 import filterOpenB from '../../../public/images/filter_open_b.png'
 //@ts-ignore
 import filterOpenW from '../../../public/images/filter_open_w.png'
+import {isBoolean} from "lodash";
 
 interface IProps {
   column: IExcelHeaderType
@@ -33,6 +34,13 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
       case "setting" :
         return (row[column.key] === 1 || row[column.key] === "여")
             ? "여" : "부"
+      case "interwork":
+        if(isBoolean(row[column.key])){
+          return row[column.key] ? "유" : "무"
+        }else{
+          return row[column.key]
+        }
+
       default:
         return row[column.key] ?? "무"
     }

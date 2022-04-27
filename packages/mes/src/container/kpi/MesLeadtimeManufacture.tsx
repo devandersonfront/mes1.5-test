@@ -103,7 +103,6 @@ const MesLeadtimeManufacture = () => {
 
     // Date 변화에 따른 API 요청
     React.useEffect(()=>{
-        console.log("processBasicRow : ", processBasicRow)
         if(processBasicRow.id){
             productLeadTimeListLoad(processBasicRow.id)
         }

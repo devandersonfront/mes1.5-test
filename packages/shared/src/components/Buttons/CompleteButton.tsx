@@ -1,22 +1,17 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 import {CellButton} from '../../styles/styledComponents'
-import Notiflix from 'notiflix'
-import {RequestMethod} from '../../common/RequestFunctions'
 
 interface IProps {
   row: any
   column: IExcelHeaderType
-  onRowChange: (row: any) => void
 }
 
-const CompleteButton = ({ row, column, onRowChange}: IProps) => {
-  const [title, setTitle] = useState<string>("")
-
+const CompleteButton = ({ row, column}: IProps) => {
   const afterCompleteUi = () => {
     return <CellButton
       onClick={() => {
-        column.onClickEvent(row)
+        row.onClickEvent(row)
       }
       }>{column.afterEventTitle}</CellButton>
   }
@@ -24,7 +19,7 @@ const CompleteButton = ({ row, column, onRowChange}: IProps) => {
   const beforeCompleteUi = () => {
     return <CellButton
       onClick={() => {
-      column.onClickEvent(row)
+      row.onClickEvent(row)
     }
     }>{column.beforeEventTitle}</CellButton>
   }

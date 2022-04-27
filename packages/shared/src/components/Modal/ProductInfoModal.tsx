@@ -164,7 +164,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
       }
   }
 
-
   const ModalContents = () => (
       <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
         setIsOpen(true)

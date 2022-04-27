@@ -268,7 +268,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   }
 
   useEffect(() => {
-    Notiflix.Loading.standard();
+    Notiflix.Loading.circle();
     listItem(code)
     if(checkValidation()){
 

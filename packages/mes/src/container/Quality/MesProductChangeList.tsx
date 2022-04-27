@@ -148,7 +148,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
 
                 return
             case 1:
-                Notiflix.Loading.standard();
+                Notiflix.Loading.circle();
                 let check = false;
                 let count = 0;
                 basicRow.map((v) => {
@@ -227,7 +227,8 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 selectList={selectList}
                 //@ts-ignore
                 setSelectList={setSelectList}
-                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+                width={1576}
+                height={basicRow.length > 0 ? basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56 : 86}
                 scrollEnd={(value) => {
                     if(value){
                         if(pageInfo.total > pageInfo.page){

@@ -7,6 +7,7 @@ import {SearchModalStyle} from '../../styles/styledComponents'
 import {RequestMethod} from "../../common/RequestFunctions";
 //@ts-ignore
 import ScrollState from "AdazzleReactDataGrid.ScrollState";
+import {columnlist} from "../../common/columnInit";
 
 interface IProps {
   headerList: Array<IExcelHeaderType>
@@ -78,6 +79,17 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
     return currentTarget.scrollTop >= currentTarget.scrollHeight - currentTarget.clientHeight;
   }
 
+  function EmptyRowsRenderer() {
+    return (
+        <div style={{ display:"flex", justifyContent:"center", alignItems:"center",background:"#353B48", height:40, gridColumn: '1/-1' }}>
+          데이터가 없습니다.
+        </div>
+    );
+  }
+
+  const autoWidth:number = headerList.map((col) => col.width).reduce(
+      (previousValue, currentValue) => previousValue + currentValue,
+  )
 
   const showDataGrid = () => {
 
@@ -90,7 +102,8 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
       //@ts-ignore
       className={'cell'}
       columns={headerList}
-      rows={row}
+      rows={row.length > 0 ? row : []}
+      emptyRowsRenderer={() => EmptyRowsRenderer()}
       onColumnResize={(v, i) => {
         tempData.map((time,i)=>{
             clearTimeout(time)
@@ -133,7 +146,6 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
         editable: editable,
       }}
       onRowsChange={setRow}
-      emptyRowsView={() => <div>empty</div>}
       onSelectedRowsChange={setSelectedRows}
       selectedRows={selectedRows}
       onRowChange={(e:any)=>{
@@ -145,7 +157,8 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
       style={{
         border:"none",
         overflow:scrollOnOff ? "hidden" : "auto",
-        width: width ?? 1576,
+        // width: width ?? autoWidth ?? 1576,
+        width: width ?? autoWidth ?? 1576,
         maxWidth: maxWidth,
         height: height ?? 760,
         maxHeight:maxHeight,

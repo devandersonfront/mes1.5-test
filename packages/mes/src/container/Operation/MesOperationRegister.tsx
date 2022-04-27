@@ -19,7 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {SearchModalResult, SearchResultSort} from "shared/src/Functions/SearchResultSort";
 import {delete_operation_searchKey} from "shared/src/reducer/operationRegisterState";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
-import {NoneSelectedValidation, RequiredValidation, NoAmountValidation} from "shared/src/validations/validation";
+import {NoneSelectedValidation, RequiredValidation, NoAmountValidation} from "shared/src/validations/Validation";
 
 interface IProps {
   page?: number

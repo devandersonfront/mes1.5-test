@@ -141,13 +141,12 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
         productId: productId
       },
     })
-
     if(res){
       setSearchList([...res].map((v, index) => {
             return {
-              ...v,
+              ...v.mold,
               sequence: index+1,
-              setting: '부',
+              setting: v.setting
             }
           }))
     }

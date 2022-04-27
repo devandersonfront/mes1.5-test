@@ -150,7 +150,7 @@ const BasicProduct = ({}: IProps) => {
       return result;
     }
 
-    Notiflix.Loading.standard();
+    Notiflix.Loading.circle();
     let result = basicRow.map((row, i) => {
 
       if(selectList.has(row.id)){
@@ -654,6 +654,7 @@ const BasicProduct = ({}: IProps) => {
         return false
       }
     })
+
   }
 
   const handleModal = (open:boolean) => {

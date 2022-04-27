@@ -115,6 +115,45 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     setSearchList(rows)
   }
 
+  const confirmFunction = () => {
+    const isValidation = executeValidation()
+    if(!isValidation){
+      if(selectRow !== undefined && selectRow !== null){
+
+        if(column.name === '금형'){
+          onRowChange({
+            ...row,
+            molds: searchList.map((v, i) => {
+
+              return {
+                sequence: i+1,
+                setting : v.setting,
+                mold: v
+              }
+            }),
+            name: row.name,
+            isChange: true
+          })
+        }else{
+
+          onRowChange({
+            ...row,
+            molds: searchList.map((v, i) => {
+              return {
+                sequence: i+1,
+                mold: {mold: {...v}}
+              }
+            }),
+            name: row.name,
+            isChange: true
+          })
+        }
+
+      }
+      setIsOpen(false)
+    }
+
+  }
 
   const ModalContents = () => (
             <UploadButton onClick={() => {
@@ -240,20 +279,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 tmpRow[selectRow] = tmpRow[selectRow - 1]
                 tmpRow[selectRow - 1] = tmp
 
-                // setSearchList([...tmpRow.map((v, i) => {
-                //   if(!searchList[selectRow-1].border){
-                //     searchList.map((v,i)=>{
-                //       v.border = false;
-                //     })
-                //     searchList[selectRow-1].border = true
-                //     setSearchList([...searchList])
-                //   }
-                //   setSelectRow(selectRow -1)
-                //   return {
-                //     ...v,
-                //     seq: i+1
-                //   }
-                // })])
                 setSelectRow((prevSelectRow)=> prevSelectRow - 1)
                 setSearchList([...tmpRow.map((v, i) => {
                   return {
@@ -273,20 +298,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 tmpRow[selectRow] = tmpRow[selectRow + 1]
                 tmpRow[selectRow + 1] = tmp
 
-                // setSearchList([...tmpRow.map((v, i) => {
-                //   if(!searchList[selectRow+1].border){
-                //     searchList.map((v,i)=>{
-                //       v.border = false;
-                //     })
-                //     searchList[selectRow+1].border = true
-                //     setSearchList([...searchList])
-                //   }
-                //   setSelectRow(selectRow +1)
-                //   return {
-                //     ...v,
-                //     seq: i+1
-                //   }
-                // })])
                 setSelectRow((prevSelectRow)=> prevSelectRow + 1)
                 setSearchList([...tmpRow.map((v, i) => {
                   return {
@@ -299,12 +310,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>아래로</p>
               </Button>
               <Button style={{marginLeft: 16}} onClick={() => {
-                // let tmpRow = [...searchList]
-                // if(selectRow){
-                //   tmpRow.splice(selectRow, 1)
-                //   setSelectRow(undefined);
-                //   setSearchList([...tmpRow])
-                // }
                 if(selectRow === -1){
                   return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
                 }
@@ -329,9 +334,6 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   width={1746}
                   rowHeight={32}
                   height={552}
-                  // setSelectRow={(e) => {
-                  //   setSelectRow(e)
-                  // }}
                   setSelectRow={(e) => {
                     if(!searchList[e].border){
                       searchList.map((v,i)=>{
@@ -355,47 +357,44 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               >
                 <p>취소</p>
               </div>
-              <div
+              <div onClick={() => {
 
-                  onClick={() => {
+                const isValidation = executeValidation()
+                if(!isValidation){
+                  if(selectRow !== undefined && selectRow !== null){
 
-                    const isValidation = executeValidation()
-                    if(!isValidation){
-                      if(selectRow !== undefined && selectRow !== null){
+                    if(column.name === '금형'){
+                      onRowChange({
+                        ...row,
+                        molds: searchList.map((v, i) => {
 
-                        if(column.name === '금형'){
-                          onRowChange({
-                            ...row,
-                            molds: searchList.map((v, i) => {
+                          return {
+                            sequence: i+1,
+                            setting : v.setting,
+                            mold: v
+                          }
+                        }),
+                        name: row.name,
+                        isChange: true
+                      })
+                    }else{
 
-                              return {
-                                sequence: i+1,
-                                setting : v.setting,
-                                mold: v
-                              }
-                            }),
-                            name: row.name,
-                            isChange: true
-                          })
-                        }else{
-
-                          onRowChange({
-                            ...row,
-                            molds: searchList.map((v, i) => {
-                              return {
-                                sequence: i+1,
-                                mold: {mold: {...v}}
-                              }
-                            }),
-                            name: row.name,
-                            isChange: true
-                          })
-                        }
-
-                      }
-                      setIsOpen(false)
+                      onRowChange({
+                        ...row,
+                        molds: searchList.map((v, i) => {
+                          return {
+                            sequence: i+1,
+                            mold: {mold: {...v}}
+                          }
+                        }),
+                        name: row.name,
+                        isChange: true
+                      })
                     }
-                  }}
+                  }
+                  setIsOpen(false)
+                }
+              }}
                   style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
               >
                 <p>등록하기</p>

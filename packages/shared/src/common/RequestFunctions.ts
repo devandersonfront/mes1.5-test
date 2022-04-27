@@ -105,7 +105,6 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           }else if(error.response.status === 422 || error.response.status === 409){
             Notiflix.Report.warning('경고', error.response.data.message, '확인')
           }else if (error.response?.status === 423){
-            console.log("error 423 : ", error)
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('버전 에러', '잠시 후 다시 시도해주세요.', '확인', () => window.location.reload())
             return false
@@ -383,6 +382,7 @@ const ApiList = {
   lotRmList: `/api/v1/lot-rm/list`,
   lotSmList: `/api/v1/lot-sm/list`,
   recordGroupList: `/api/v1/record/groups`,
+  recordGroupListByContract: `/api/v1/record/groups/search`,
   stockAdminList: '/api/v1/stock/admin/summary',
   qualityRecordInspectList: '/cnc/api/v1/quality/record/inspect/list',
   toolList: `/cnc/api/v1/tool/list`,

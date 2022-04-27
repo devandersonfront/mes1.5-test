@@ -432,7 +432,7 @@ const MesDeliveryList = ({page, search, option}: IProps) => {
           (e) => {
             switch(e){
               case 1:
-                Notiflix.Loading.standard();
+                Notiflix.Loading.circle();
                 let check = false;
                 basicRow.map((v) => {
                   if(selectList.has(v.id)){

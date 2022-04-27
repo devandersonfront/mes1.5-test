@@ -109,7 +109,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
   }
 
   const LoadBasic = async () => {
-    Notiflix.Loading.standard();
+    Notiflix.Loading.circle();
     // const res = await
     RequestMethod('get', `processList`,{
       path: {
@@ -257,7 +257,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         return
 
       case 3 :
-        Notiflix.Loading.standard();
+        Notiflix.Loading.circle();
         let savePauseBasicRow:any[] = [];
         validateSaveRequestBody()
           .map((value,index)=>{
@@ -405,7 +405,6 @@ const BasicPause = ({page, keyword, option}: IProps) => {
             setState(true)
             setPauseBasicRow(e)
           }}
-          width={1576}
           height={440}
           // setSelectList={changeSetSelectList}
           //@ts-ignore

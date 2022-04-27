@@ -16,6 +16,7 @@ import menuClose from "../../public/images/ic_monitoring_close.png"
 //@ts-ignore
 import checkIcon from "../../public/images/ic_check.png"
 import Notiflix from 'notiflix'
+import TreeView from '../../../shared/src/components/TreeView/TreeView'
 
 interface IProps {
   item: IMenu[]
@@ -28,193 +29,68 @@ const TreeViewTable = ({item, setItem, selectIndex}: IProps) => {
   const [menu, setMenu] = React.useState<IMenu[]>([{title: "", show: false, checkable: false, value: "", child: []}])
 
   React.useEffect(() => {
-    setMenu(recursiveMenu(item))
-
+    setMenu(item)
   }, [item])
 
+  const cascadeChecked = (childItems: IMenu[], parentCheck: boolean) => (
+    childItems.map(childItem => ({...childItem, check: parentCheck, child: childItem.child?.length > 0 ? cascadeChecked(childItem.child, parentCheck) : childItem.child}))
+  )
 
-  const recursiveMenu = (menu : IMenu[]) => {
-
-    if(menu.length === 0){
-      return [];
-    }
-    const recursiveData = menu.map((data,i)=>{
-      if(data.title !== 'HOME'){
-        return data 
-      }
-      return {...data , child : recursiveMenu(data.child.map((v,i)=>({...v ,checkable : false , check : true})))}
-    })
-
-    return recursiveData
+  const setChecked = (menuItem:IMenu, checkStatus: boolean, noCascade?: boolean) => {
+    const hasChildren = menuItem.child.length > 0
+    return {...menuItem, check: checkStatus, child: hasChildren && !noCascade ? cascadeChecked(menuItem.child, checkStatus) : menuItem.child}
   }
 
-  
+  const setShow = (menuItem:IMenu) => ({...menuItem, show:!menuItem.show})
 
-  const onClickMenu = (depth: number, i: number[]) => {
-    let tmp = menu
-
-    switch (depth) {
-      case 1:
-        tmp[i[0]] = {...tmp[i[0]], show: !tmp[i[0]].show}
-        break;
-      case 2:
-        tmp[i[0]].child[i[1]] = {...tmp[i[0]].child[i[1]], show: !tmp[i[0]].child[i[1]].show}
-        break;
-      case 3:
-        tmp[i[0]].child[i[1]].child[i[2]] = {...tmp[i[0]].child[i[1]].child[i[2]], show: !tmp[i[0]].child[i[1]].child[i[2]].show}
-        break;
+  const eventToDown = (menuList: IMenu[],  menuIndexTree:number[], targetDepth:number, currentDepth: number, eventCallBack) => {
+    const indexSize = menuIndexTree.length
+    if(indexSize === 0) return
+    const menuIndex = menuIndexTree[currentDepth]
+    if(targetDepth === currentDepth){
+      menuList[menuIndex] = eventCallBack(menuList[menuIndex])
+    } else {
+      currentDepth++
+      eventToDown(menuList[menuIndex].child, menuIndexTree, targetDepth, currentDepth, eventCallBack)
     }
+  }
 
+  const setParentChecked = (menuList: IMenu[],  menuIndexTree:number[], willCheck: boolean) => {
+    const parentIndex= menuIndexTree.length -2
+    for (let i = parentIndex; i > -1; i--) {
+      const parentCallBack = (menuItem:IMenu) => (
+        willCheck ? menuItem.child?.every(childMenu => childMenu.check) ? setChecked(menuItem, true, true) : menuItem
+        : menuItem.child?.some(childMenu => !childMenu.check) ? setChecked(menuItem, false, true) : menuItem
+    )
+      eventToDown(menuList, menuIndexTree, i, 0, parentCallBack)
+    }
+  }
+
+  const onClickMenu = (menuIndexTree:number[]) => {
+    let tmp = menu
+    eventToDown(tmp, menuIndexTree, menuIndexTree.length - 1, 0, setShow)
     setMenu([...tmp])
   }
 
-  const onClickCheckbox = (top: number, depth: number, i: number[], nowCheck?: boolean) => {
+  const onClickCheckBox = (menuIndexTree:number[], parentCheck: boolean) => {
     let tmp = menu
-    switch (depth) {
-      case 1:
-        let allClick = nowCheck !== undefined ? nowCheck : !tmp[top].child[i[0]].check
-        tmp[top].child[i[0]].check = allClick
-        tmp[top].child[i[0]].child.map((v, index) => {
-          // tmp[top].child[i[0]].child[index].check = allClick
-          onClickCheckbox(top, depth+1, [...i, index], allClick)
-        })
-        break;
-      case 2:
-        if(tmp[top].child[i[0]].child[i[1]].child.length){
-          let allClick = nowCheck !== undefined ? nowCheck : !tmp[top].child[i[0]].child[i[1]].check
-          // tmp[top].child[i[0]].child[i[1]].check = allClick
-          tmp[top].child[i[0]].child[i[1]].child.map((v, index) => {
-            tmp[top].child[i[0]].child[i[1]].child[index].check = allClick
-            onClickCheckbox(top, depth+1, [...i, index], allClick)
-          })
-          break;
-        }else{
-          let cnt = 0
-          tmp[top].child[i[0]].child[i[1]].check = !tmp[top].child[i[0]].child[i[1]].check
-          tmp[top].child[i[0]].child.map((v) => {
-            if(v.check){
-              cnt++
-            }
-          })
-
-          if(nowCheck !== undefined){
-            tmp[top].child[i[0]].child[i[1]].check = nowCheck
-          }else{
-            tmp[top].child[i[0]].check =
-                cnt === tmp[top].child[i[0]].child.length;
-          }
-
-          break;
-        }
-      case 3:
-        let cnt1 = 0
-        tmp[top].child[i[0]].child[i[1]].child[i[2]].check = !tmp[top].child[i[0]].child[i[1]].child[i[2]].check
-        tmp[top].child[i[0]].child[i[1]].child.map((v) => {
-          if(v.check){
-            cnt1++
-          }
-        })
-
-        if(nowCheck !== undefined){
-          tmp[top].child[i[0]].child[i[1]].check = nowCheck
-        }else {
-          tmp[top].child[i[0]].child[i[1]].check =
-              cnt1 === tmp[top].child[i[0]].child[i[1]].child.length;
-        }
-        break;
-    }
-
+    eventToDown(tmp, menuIndexTree,menuIndexTree.length - 1, 0, (menuItem: IMenu) => setChecked(menuItem, !menuItem.check))
+    setParentChecked(tmp, menuIndexTree, !parentCheck)
+    setMenu([...tmp])
     setItem([...tmp])
   }
 
-  const TreeViewItem = (value: IMenu, key: string, depth: number, indexList: number[]) => {
-    return (
-      <div>
-        <SecendMenuView
-          style={{paddingLeft: 48+((depth-2)*40)}}
-          onClick={() => {
-            if(value.child.length){
-              onClickMenu(depth, indexList)
-            }
-          }}
-        >
-
-          {
-            value.checkable ?
-              <>
-                <label
-                  htmlFor={`check${key}`}
-                  style={{
-                    backgroundColor: value.check ? '#19b9df' :'white',
-                    width: 14,
-                    height: 14,
-                    marginRight: 16,
-                    cursor: "pointer",
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 0
-                  }}
-                >
-                  {
-                    value.check && <img src={checkIcon} style={{width: 14, height: 14}} alt={'treeview-checked'} />
-                  }
-                </label>
-                <input
-                  hidden
-                  type="checkbox"
-                  id={`check${key}`}
-                  onChange={() => {
-                    onClickCheckbox(indexList[0], depth-1, indexList.slice(1))
-                  }}
-                />
-              </>
-              : <>
-                  <label
-                  htmlFor={`check${key}`}
-                  style={{
-                    backgroundColor: value.check ? '#19b9df' :'white',
-                    width: 14,
-                    height: 14,
-                    marginRight: 16,
-                    cursor: "pointer",
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 0
-                  }}
-                  >
-                  {
-                    value.check && <img src={checkIcon} style={{width: 14, height: 14}} alt={'treeview-checked'} />
-                  }
-                  </label>
-                  <input
-                    hidden
-                    type="checkbox"
-                    id={`check${key}`}
-                    onChange={() => {
-                      Notiflix.Report.warning('오류', '이 메뉴는 수정하실수 없습니다' , '확인')
-                    }}
-                  />
-                </>
-          }
-          <p style={{color: 'white'}}>{value.title}</p>
-          {
-            value.child.length ?
-              <ArrowImageWrapper style={{marginLeft: 16}}>
-                <img src={value.show ? menuClose : menuOpen} style={{width: 16, height: 16}} alt={'treeview-alter1'}/>
-              </ArrowImageWrapper>
-              : null
-          }
-        </SecendMenuView>
-        {
-          value.show && value.child.length && value.child.map((treeItem, index) => {
-            return TreeViewItem(treeItem, key+`${index}`, depth+1, [...indexList, index])
-          })
-        }
-      </div>
+  const RecursiveTreeView = (menus: IMenu[], depth: number, menuIndexTree: number[],  titleStyles?: React.CSSProperties) => (
+    menus.map((menu, mIdx) => {
+        const UpdatedIndexTree = [...menuIndexTree, mIdx]
+        const isChild = depth > 0
+        const hasChildren = menu.child?.length > 0
+      return [ <div style={{marginLeft: `${depth * 30}px`}}><TreeView open={menu.show} checked={menu.check} hasChildren={hasChildren} checkable={menu.checkable} style={(isChild ? {height: '40px'} : null)}
+                    onClickCheckBox={() => onClickCheckBox(UpdatedIndexTree, menu.check)} onClickArrow={() => onClickMenu(UpdatedIndexTree)} title={menu.title}
+                              titleStyles={titleStyles}/></div>, menu.show && menu.child && RecursiveTreeView(menu.child, depth + 1, UpdatedIndexTree) ]
+      }
     )
-  }
+  )
 
   return (
     <TreeViewWrapper>
@@ -223,16 +99,7 @@ const TreeViewTable = ({item, setItem, selectIndex}: IProps) => {
       </TreeViewHeader>
       <TreeViewContainer>
         {
-          menu && item && selectIndex !== -1 && menu.map((outerMenu, outerIndex) => menu[outerIndex] && <div style={{height: "100%"}}>
-              <TopMenuView onClick={() => onClickMenu(1, [outerIndex])}>
-                  <ArrowImageWrapper style={{marginRight: 16}}>
-                      <img src={menu[outerIndex].show ? menuClose : menuOpen} style={{width: 16, height: 16}} alt={'treeview-alter2'} />
-                  </ArrowImageWrapper>
-                  <TopMenuTitle>{outerMenu.title}</TopMenuTitle>
-              </TopMenuView>
-            { outerMenu.show && outerMenu.child && outerMenu.child.map((innerMenu, innerIndex) =>
-                TreeViewItem(innerMenu, `key-${outerIndex}-${innerIndex}`, 2, [outerIndex, innerIndex]))}
-          </div> )
+          menu && item && selectIndex !== -1 && RecursiveTreeView(menu, 0, [],{ fontWeight: 'bold', fontSize: '18px', color: 'white' })
         }
       </TreeViewContainer>
     </TreeViewWrapper>

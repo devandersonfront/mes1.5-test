@@ -42,7 +42,7 @@ const InputWithDropDown = ({row, column, onRowChange} : ExcelType) => {
     }
 
     const handleChange = (e) => {
-        onRowChange({...row , [column.key] : Number(e.target.value)})
+        onRowChange({...row , [column.key] : Number(e.target.value) , isChange: true})
     }
 
     const handleDayChange = (e) => {

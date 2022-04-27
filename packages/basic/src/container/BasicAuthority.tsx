@@ -51,7 +51,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
     let tmpMenu = auth
     const MenuDivide = (dmenu: IMenu) => {
       let tmp = dmenu
-      if (tmp.value) tmp.check = list.indexOf(tmp.value) !== -1;
+      if (tmp.value && tmp.value !== 'ROLE_HOME') tmp.check = list.indexOf(tmp.value) !== -1;
       // using stack structure, recursively add authorities
 
       tmp.child = tmp.child.map(inner => MenuDivide(inner))
@@ -194,11 +194,10 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
 
 
   const saveAppointmentAuthorityDetails = async () => {
-
     if(row[selectIndex].name === ''){
         return Notiflix.Report.warning('오류', '권한명은 필수적으로 들어가야하는 값 입니다.', '확인')
     }
-    Notiflix.Loading.hourglass('권한을 저장하고 있습니다..')
+    Notiflix.Loading.circle()
     new Promise( async (resolve) => {
       if (selectIndex !== -1 && row[selectIndex].ca_id) {
         await updateAuth(row[selectIndex])
@@ -207,8 +206,6 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
       }
       resolve(true)
     }).then(() => Notiflix.Loading.remove(1000))
-
-
   }
 
   const competeAuthority = (rows) => {
@@ -237,6 +234,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
         title={title}
         buttonsOnclick={saveAppointmentAuthorityDetails}
         leftButtonOnClick={leftButtonOnClick}
+        pageHelper={"권한 등록, 삭제는 하나씩 가능"}
       />
       <div style={{display: 'flex', justifyContent: 'space-between', paddingRight: 40, marginBottom: 16}}>
         <div style={{display: 'flex'}}>

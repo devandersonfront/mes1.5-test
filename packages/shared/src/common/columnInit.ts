@@ -1,7 +1,7 @@
 import {TextEditor} from '../components/InputBox/ExcelBasicInputBox'
 import {DropDownEditor} from '../components/Dropdown/ExcelBasicDropdown'
 import {CalendarBox} from '../components/CalendarBox/CalendarBox'
-import {CellButtonComponent} from '../components/Buttons/CellButtom'
+import {CellButtonComponent} from '../components/Buttons/CellButton'
 import {UnitContainer} from '../components/Unit/UnitContainer'
 import {MoveButtons} from "../components/MoveButtons";
 import {FileEditer} from '../components/FileUpload/ExcelBasicFileUpload'
@@ -140,7 +140,7 @@ export const columnlist: any = {
   machineV2:[ //기계기준정보
     {key: 'mfrName',name: '기계 제조사',  editor: TextEditor, width: 118, formatter: PlaceholderBox, placeholder:"제조사 입력"},
     {key: 'name', name: '기계 이름', editor: TextEditor, width: 118, formatter: PlaceholderBox, placeholder:"이름 입력"},
-    {key: 'type', name: '기계 종류', formatter: DropDownEditor, headerRenderer: HeaderFilter,
+    {key: 'type', name: '기계 종류', editor: DropDownEditor, editorOptions:{editOnClick: true}, headerRenderer: HeaderFilter,
       options:[
         {status: undefined, name: "기계 종류"},
         {status: 0, name: "선택없음"},
@@ -312,7 +312,7 @@ export const columnlist: any = {
   moldV2: [
     {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력' },
     {key: 'name', name: '금형명', editor: TextEditor,formatter: PlaceholderBox, placeholder: '금형명 입력'},
-    {key: 'cavity', name: '캐비티',editor: TextEditor,formatter: UnitContainer, unitData: 'EA', placeholder: '0',type:"number"},
+    {key: 'cavity', name: '캐비티',editor: TextEditor,formatter: UnitContainer, unitData: 'EA', placeholder: '1',type:"number"},
     {key: 'spm', name: 'SPM',editor: TextEditor,formatter: PlaceholderBox, placeholder: '0',type:"number"},
     {key: 'slideHeight', name: '슬라이드 위치',editor: TextEditor,formatter: PlaceholderBox, placeholder: '0',type:"number"},
     {key: 'limit', name: '최대타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력',type:"number"},
@@ -434,11 +434,7 @@ export const columnlist: any = {
     {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',width: 118},
     {key: 'customer_id', name: '거래처', width: 118},
     {key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118},
-    {key: 'is_complete', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소', onClickEvent: async (body:any) => {
-      body.is_complete ? body.onClickEvent(body)
-        : Notiflix.Confirm.show(`재고 수량이 '0'으로 변경됩니다. 진행 하시겠습니까?`, '*사용완료 처리된 자재는 작업이력 수정 시 수정불가해집니다.', '예','아니오', () => body.onClickEvent(body), ()=>{},
-          {width: '400px'})
-    }}
+    {key: 'exhaustion', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소'}
   ],
 
   rawstockModify: [
@@ -1057,7 +1053,7 @@ export const columnlist: any = {
     {key:"type", name:"품목 종류", width: 118, formatter: PlaceholderBox, placeholder: '자동입력'   },
     {key:"unit", name:"단위", width: 118 , formatter: PlaceholderBox, placeholder: '자동입력'  },
     {key:"date", name:"납품 날짜", width: 118, formatter: CalendarBox   },
-    {key:"lot_number", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base'   },
+    {key:"lot_number", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base', searchType: 'code'   },
     {key:"amount", name:"총 납품 수량", width: 118, formatter: PlaceholderBox, placeholder: '0', type:"placeholder" },
   ],
   deliveryIdentificationRegister: [
@@ -1069,7 +1065,7 @@ export const columnlist: any = {
     {key:"type", name:"품목 종류", width: 118, formatter: PlaceholderBox, placeholder: '자동입력'   },
     {key:"unit", name:"단위", width: 118 , formatter: PlaceholderBox, placeholder: '자동입력'  },
     {key:"date", name:"납품 날짜", width: 118, formatter: CalendarBox   },
-    {key:"lot_number", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base'   },
+    {key:"lot_number", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base', searchType: 'contract'     },
     {key:"amount", name:"총 납품 수량", width: 118, formatter: PlaceholderBox, placeholder: '0', type:"placeholder" },
   ],
   deliveryList: [
