@@ -7,6 +7,7 @@ import {MidrangeDatetimePickerBox} from "../CalendarBox/MidrangeDatetimePickerBo
 import {MidrangeMemberSearchModal} from "../Modal/MidrangeMemberSearchModal";
 import cookie from "react-cookies";
 
+type inspectionType = 'beginning' | 'middle' | 'end'
 interface IProps {
     formReviewData: any
     inspectFrameData: (e) => void
@@ -112,7 +113,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
 
     let arr = new Array(10).fill(undefined).map((val,idx) => idx);
 
-    const itemDataResultTextChange = (inspection_type: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLInputElement>, itemIndex, dataResultIndex) => {
+    const itemDataResultTextChange = (inspection_type: inspectionType, e: ChangeEvent<HTMLInputElement>, itemIndex, dataResultIndex) => {
         const temp = testData
 
         if(inspection_type === 'beginning') {
@@ -151,7 +152,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
         setTestData({...testData,temp})
     }
 
-    const itemDataResultDropdownChange = (inspection_type: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLSelectElement>, itemIndex, dataResultIndex) => {
+    const itemDataResultDropdownChange = (inspection_type: inspectionType, e: ChangeEvent<HTMLSelectElement>, itemIndex, dataResultIndex) => {
 
         const temp = testData
         if(inspection_type === 'beginning') {
@@ -190,7 +191,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
     }
 
 
-    const dataResultDropdownChange = (inspection_type: 'beginning' | 'middle' | 'end', e: ChangeEvent<HTMLSelectElement>, resultIndex) => {
+    const dataResultDropdownChange = (inspection_type: inspectionType, e: ChangeEvent<HTMLSelectElement>, resultIndex) => {
 
         const temp = testData
         if(inspection_type === 'beginning') {
@@ -257,24 +258,26 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
                 </div>
             ))
     }
-
-    const formItemResult = (inspection_infoType: InspectionInfo[], type: 'beginning' | 'middle' | 'end') => {
+    console.log('update',midrangeUpdate)
+    const formItemResult = (inspection_infoType: InspectionInfo[], type: inspectionType) => {
+        console.log(inspection_infoType)
         return (
             inspection_infoType.map((value,index)=>
                 <div style={{display: "flex"}}>
                     {arr.map((v,i)=>
                         <ExampleNumber style={{borderBottom: 0, }}>
-                            {value.type === 0 ?
-                                <input style={{ width: '100%', height: '100%', border: "none", zIndex: 10, display: "flex", alignItems: "center", textAlign: "center"}} type={"number"}
+                            {value.type === 0
+                              ? <input style={{ width: '100%', height: '100%', border: "none", zIndex: 10, display: "flex", alignItems: "center", textAlign: "center"}} type={"number"}
                                        value={inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ? value.data_result[i].value : '' : '-'}
                                        key={type+'input'+index+'static'+i}
                                        readOnly={midrangeUpdate}
                                        placeholder={inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ? value.data_result[i].value : '0' : '-'}
                                        onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } onChange={(e)=>itemDataResultTextChange(type,e,index,i)}/>
-                                :
-                                value.data_result[i] && inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ?
-                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={value.data_result[i].value} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)} readOnly={midrangeUpdate}/> :
-                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)} readOnly={midrangeUpdate}/> : <p>-</p>
+                              : value.data_result[i] && inspection_infoType[0].samples > i
+                                ? value.data_result[i] !== undefined
+                                    ? <MidrangeExcelDropdown contents={testData.legendary_list} value={value.data_result[i].value} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)} readOnly={midrangeUpdate}/>
+                                    : <MidrangeExcelDropdown contents={testData.legendary_list} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)} readOnly={midrangeUpdate}/>
+                                : <p>-</p>
                             }
                         </ExampleNumber>
                     )}
@@ -283,7 +286,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
         )
     }
 
-    const resultRow = (inspection_info: InspectionInfo[], inspection_result: InspectionFinalDataResult[], type: 'beginning' | 'middle' | 'end') => {
+    const resultRow = (inspection_info: InspectionInfo[], inspection_result: InspectionFinalDataResult[], type: inspectionType) => {
         return(
             arr.map((v,i)=>
                 <ExampleNumber>
