@@ -343,6 +343,7 @@ const BasicProduct = ({}: IProps) => {
       )))
 
       LoadBasic(1)
+      setKeyword('')
 
     }else{
 
@@ -521,7 +522,7 @@ const BasicProduct = ({}: IProps) => {
         process_id: row.process?.name,
         processArray: row.process,
         type_id: row.type,
-        type: column[4].selectList[row.type].name,
+        type: columnlist["productV1u"][4].selectList[row.type].name,
         id: `mold_${random_id}`,
       }
     })

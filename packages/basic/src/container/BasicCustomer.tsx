@@ -257,6 +257,7 @@ const BasicCustomer = ({}: IProps) => {
       )))
 
       LoadBasic(1)
+setKeyword('')
 
     }else{
 

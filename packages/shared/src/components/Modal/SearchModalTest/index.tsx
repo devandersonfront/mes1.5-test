@@ -37,7 +37,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
-  const [tab, setTab] = useState<number>(null)
+  const [tab, setTab] = useState<number>(0)
   const [searchModalInit, setSearchModalInit] = useState<any>()
   const [searchModalColumn, setSearchModalColumn] = useState<Array<IExcelHeaderType>>()
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
@@ -227,6 +227,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         column.type === 'bom' && <div style={{marginLeft: 20}}>
             <Select value={tab ?? 0} onChange={(e) => {
               setTab(Number(e.target.value))
+              setOptionIndex(0)
+              setKeyword('')
             }}>
               <option key={'0'} value={0}>원자재</option>
               <option key={'1'} value={1}>부자재</option>
@@ -251,6 +253,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   }
 
   const SearchBox = () => {
+
+    console.log(searchModalInit,'searchModalInit')
     return <div style={{
       width: '100%', height: 32, margin: '16px 0 16px 16px',
       display: 'flex',
@@ -260,8 +264,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         backgroundColor: '#F4F6FA', border: '0.5px solid #B3B3B3',
         borderRight: 'none',
       }}>
-        <select
-          defaultValue={'-'}
+        <select key={searchModalInit?.searchFilter[0]}
+          defaultValue={searchModalInit?.searchFilter[0]}
           onChange={(e) => {
             const option = switchOption(Number(e.target.value))
             setOptionIndex(option)
@@ -278,6 +282,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             fontWeight: 'bold'
           }}
         >
+
           {
             searchModalInit && searchModalInit.searchFilter.map((v, i) => {
               if(v !== ""){
