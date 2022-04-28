@@ -103,6 +103,27 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
     const getSummaryInfo = (info) => {
         return summaryData[info.key] ?? '-'
     }
+    const confirmFunction = () => {
+        if(searchList[0]?.name !== undefined) {
+            onRowChange({
+                ...row,
+                tools: searchList.map((v, i) => {
+                    return {
+                        ...row.tools === undefined ? undefined : {...row.tools[i]},
+                        record_id: row.record_id,
+                        tool: {
+                            ...row.tools === undefined ? undefined : {...row.tools[i]?.tool},
+                            tool: {...v}
+                        },
+                    }
+                }),
+                name: row.name,
+                isChange: true
+            })
+        }
+        // }
+        setIsOpen(false)
+    }
 
     return (
         <SearchModalWrapper >
@@ -233,6 +254,13 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                     searchList[e].border = true
                                     setSearchList([...searchList])
                                 }
+                                setSearchList([...searchList.map((row, index) => {
+                                    if(index === e) {
+                                        row.doubleClick = confirmFunction
+                                        return row
+                                    }
+                                    else return row
+                                })])
                                 setSelectRow(e)
                             }}
                             type={'searchModal'}
@@ -249,28 +277,7 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                             <p style={{color: '#717C90'}}>취소</p>
                         </div>
                         <div
-                            onClick={() => {
-                                // if(selectRow !== undefined && selectRow !== null){
-                                if(searchList[0]?.name !== undefined) {
-                                    onRowChange({
-                                        ...row,
-                                        tools: searchList.map((v, i) => {
-                                            return {
-                                                ...row.tools === undefined ? undefined : {...row.tools[i]},
-                                                record_id: row.record_id,
-                                                tool: {
-                                                    ...row.tools === undefined ? undefined : {...row.tools[i]?.tool},
-                                                    tool: {...v}
-                                                },
-                                            }
-                                        }),
-                                        name: row.name,
-                                        isChange: true
-                                    })
-                                }
-                                // }
-                                setIsOpen(false)
-                            }}
+                            onClick={() => confirmFunction()}
                             style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >
                             <p>선택 완료</p>

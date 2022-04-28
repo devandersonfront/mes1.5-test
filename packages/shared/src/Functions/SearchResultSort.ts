@@ -7,7 +7,7 @@ export const SearchResultSort = (infoList, type: string) => {
       return infoList.map((v) => {
         return {
           ...v,
-          ca_name: v.ca_id.name,
+          ca_name: v?.ca_id?.name,
         }
       })
     }
@@ -15,8 +15,8 @@ export const SearchResultSort = (infoList, type: string) => {
       return infoList.map((v) => {
         return {
           ...v,
-          customer_id: v.name,
-          customer: v.customer_id,
+          customer_id: v?.name,
+          customer: v?.customer_id,
           customerArray: v
         }
       })
@@ -25,11 +25,11 @@ export const SearchResultSort = (infoList, type: string) => {
       return infoList.map((v) => {
         return {
           ...v,
-          customer_id: v.customer.name,
-          customer: v.customer.name,
-          customerArray: v.customer,
-          rep: v.customer.rep,
-          crn: v.customer.crn,
+          customer_id: v?.customer?.name,
+          customer: v?.customer?.name,
+          customerArray: v?.customer,
+          rep: v?.customer?.rep,
+          crn: v?.customer?.crn,
         }
       })
     }
@@ -71,8 +71,8 @@ export const SearchResultSort = (infoList, type: string) => {
       return infoList ? infoList.map((v) => {
         return {
           ...v,
-          managerArray: v.manager,
-          manager: v.manager?.name,
+          managerArray: v?.manager,
+          manager: v?.manager?.name,
         }
       }) : []
     }
@@ -80,12 +80,12 @@ export const SearchResultSort = (infoList, type: string) => {
       return infoList ? infoList.map((v) => {
         return {
           ...v,
-          customer_name: v.product.customer?.name,
-          model_name: v.product.model?.model,
-          product_code: v.product.code,
-          product_name: v.product.name,
-          product_type: TransferCodeToValue(v.product.type, 'product'),
-          product_unit: v.product.unit,
+          customer_name: v.product?.customer?.name,
+          model_name: v.product?.model?.model,
+          product_code: v.product?.code,
+          product_name: v.product?.name,
+          product_type: TransferCodeToValue(v.product?.type, 'product'),
+          product_unit: v.product?.unit,
         }
       }) : []
     }

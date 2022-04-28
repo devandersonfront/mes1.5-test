@@ -173,7 +173,7 @@ const BasicFactory = ({}: IProps) => {
                             ...row,
                             // id: row.tmpId,
                             authority: row.authorityPK,
-                            manager: row.user,
+                            manager: row.user.user_id ? row.user : null,
                             version: row.version ?? null,
                             additional: [
                                 ...additional.map((v, index)=>{
