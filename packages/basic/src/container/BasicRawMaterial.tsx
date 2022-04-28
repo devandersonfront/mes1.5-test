@@ -457,6 +457,7 @@ const BasicRawMaterial = ({}: IProps) => {
           ], type:settingType(row.type)}
       )))
       LoadBasic(1)
+      setKeyword('')
 
     }else{
 

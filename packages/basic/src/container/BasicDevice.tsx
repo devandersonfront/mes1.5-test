@@ -535,6 +535,7 @@ const BasicDevice = ({}: IProps) => {
           ]}
       )))
       LoadBasic(1)
+setKeyword('')
     }else{
 
       selectedRows.forEach((row)=>{map.delete(row.id)})
