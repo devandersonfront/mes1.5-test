@@ -16,4 +16,7 @@ lerna-debug.log
 .idea/*.xml
 
 .DS_Store
-yarn-error.log
+# Logs
+yarn-error.log*
+
+

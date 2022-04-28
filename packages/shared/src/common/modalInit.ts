@@ -156,8 +156,8 @@ export const searchModalList: any  = {
   ],
   toolProductSearch: [
     {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '공구 품명', /*formatter: SearchModalTest,*/ type: 'mold', modalType: true },
-    {key: 'customer', name: '거래처'},
+    {key: 'name', name: '공구 품명', formatter: LineBorderContainer, type: 'mold', modalType: true },
+    {key: 'customer', name: '거래처', formatter: LineBorderContainer, },
     {key: 'stock', name: '재고량', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
   ],
   toolSearch: [
@@ -226,7 +226,7 @@ export const searchModalList: any  = {
   ],
   toolUse: [
     {key: 'sequence', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'code', name: '공구 CODE', width: 160, formatter: SearchModalTest, placeholder: '-', type: 'searchToolModal', textAlign: 'center', modalType: true },
+    {key: 'code', name: '공구 CODE', width: 160, formatter: SearchModalTest, placeholder: '-', type: 'searchToolModal', textAlign: 'center', modalType: true, noSelect:true },
     {key: 'name', name: '공구명', formatter: LineBorderContainer, placeholder: '-', type: 'Modal' },
     {key: 'customer', name: '거래처', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
     {key: 'used', name: '생산량', width: 160, formatter: LineBorderContainer, editor:TextEditor, placeholder: '생산량 입력', textAlign: 'center', textType:"Modal", type:"number" },

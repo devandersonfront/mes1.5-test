@@ -93,7 +93,6 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
     )
   }
 
-
   const showDataGrid = () => {
 
     return <DataGridTable

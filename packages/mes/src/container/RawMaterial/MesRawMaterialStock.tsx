@@ -162,15 +162,17 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           {
             exp: expState,
             nz:nzState,
+            completed: nzState,
             from:selectDate.from,
             to:selectDate.to
           }
           :
-              {
+          {
             sorts: 'date',
             order: order == 1 ? 'ASC' : 'DESC',
             exp: expState,
             nz:nzState,
+            completed: nzState,
             from:selectDate.from,
             to:selectDate.to
           }
@@ -202,6 +204,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
               {
                 exp: expState,
                 nz:nzState,
+                completed:nzState,
                 from:selectDate.from,
                 to:selectDate.to,
                 keyword: keyword ?? '',
@@ -213,6 +216,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
                 order: order == 1 ? 'ASC' : 'DESC',
                 exp: expState,
                 nz:nzState,
+                completed:nzState,
                 from:selectDate.from,
                 to:selectDate.to,
                 keyword: keyword ?? '',

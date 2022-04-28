@@ -105,7 +105,6 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
           }else if(error.response.status === 422 || error.response.status === 409){
             Notiflix.Report.warning('경고', error.response.data.message, '확인')
           }else if (error.response?.status === 423){
-            console.log("error 423 : ", error)
             Notiflix.Loading.remove(300)
             Notiflix.Report.failure('버전 에러', '잠시 후 다시 시도해주세요.', '확인', () => window.location.reload())
             return false

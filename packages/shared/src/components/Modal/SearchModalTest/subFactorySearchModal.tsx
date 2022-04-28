@@ -135,7 +135,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
             }
         }).then((res) => {
             // setSearchList([...SearchResultSort(res.info_list, "subFactory")])
-            const tempData = [];
+            const tempData = [{}];
             res.info_list.map((value)=>{
                 const tmpValue = {...value};
                 tmpValue.manager_info = value.manager;
@@ -335,22 +335,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                             <p style={{color: '#717C90'}}>취소</p>
                         </FooterButton>
                         <FooterButton
-                            onClick={() => {
-                                if(selectRow !== undefined){
-                                    onRowChange({
-                                        ...row,
-                                        // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
-                                        // name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
-                                        // tab: column.type === 'bom' ? tab : undefined,
-                                        // type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
-                                        // version: row.version,
-                                        subFactory: searchList[selectRow],
-                                        affiliated_id: searchList[selectRow]?.name,
-                                        isChange:true
-                                    })
-                                }
-                                setIsOpen(false)
-                            }}
+                            onClick={() => confirmFunction}
                             style={{backgroundColor: POINT_COLOR}}
                         >
                             <p style={{color: '#0D0D0D'}}>등록하기</p>

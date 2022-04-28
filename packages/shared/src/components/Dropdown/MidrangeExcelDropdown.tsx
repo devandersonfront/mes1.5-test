@@ -23,7 +23,7 @@ const MidrangeExcelDropdown = ({contents,value,onChange, readOnly}: IProps) => {
                 border: 0,
                 width: '100%',
                 padding: '0 8px 0 9px',
-                background: `url(${filterOpenB}) no-repeat right 9px center`,
+                background: readOnly ? null : `url(${filterOpenB}) no-repeat right 9px center`,
                 backgroundSize: '24px',
             }}
             value={/*column.key === "type" ? selectType() :*/  value}

@@ -182,7 +182,7 @@ const BasicRawMaterial = ({}: IProps) => {
           ...row,
           ...selectData,
           type:settingType(row.type),
-          // customer: row.customerArray,
+          customer: row.customerArray.customer_id ? row.customerArray : null,
           additional: [
             ...additional.map((v, index)=>{
               //if(!row[v.colName]) return undefined;
@@ -456,14 +456,18 @@ const BasicRawMaterial = ({}: IProps) => {
           }).filter(v => v)
           ], type:settingType(row.type)}
       )))
+      LoadBasic(1)
+
+    }else{
+
+      selectedRows.forEach((row)=>{map.delete(row.id)})
+      setBasicRow(Array.from(map.values()))
+      setPageInfo({page: pageInfo.page, total: pageInfo.total})
+      setSelectList(new Set())
     }
 
     if(deletable){
-      selectedRows.forEach((row)=>{ map.delete(row.id)})
       Notiflix.Report.success('삭제되었습니다.','','확인');
-      setBasicRow(Array.from(map.values()))
-      setPageInfo({page: 1, total: 1})
-      setSelectList(new Set())
     }
 
   }
@@ -524,7 +528,7 @@ const BasicRawMaterial = ({}: IProps) => {
         );
         }
 
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+        Notiflix.Confirm.show("경고","삭제하시겠습니까?(기존 데이터를 삭제할 경우 저장하지 않은 데이터는 모두 사라집니다.)","확인","취소",
           ()=>{DeleteBasic()}
           ,()=>{}
         )

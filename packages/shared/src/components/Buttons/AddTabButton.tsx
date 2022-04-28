@@ -23,7 +23,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   useEffect(() => {
     row.clicked && row.page !== 1 && loadMaterialLot(row.tab)
   }, [row.page])
-  const loadMaterialLot = async (type:number, initPage?: number) => {
+  const loadMaterialLot = async (type:number, initPage?: number, action?: string) => {
     let res
     switch(type){
       case 0:
@@ -38,7 +38,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
             option:0,
             // keyword:row.code,
             rm_id: row.rm_id,
-            nz: false
+            nz: action === 'register'?? false,
+            completed: action === 'register'?? false
           }
         })
         break;
@@ -139,7 +140,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
     }
     // if(row.bom_info !== null){
     else {
-      loadMaterialLot(row.tab, 1)
+      loadMaterialLot(row.tab, 1, row.action)
     }
   }
 
