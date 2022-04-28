@@ -416,12 +416,12 @@ const MesSubMaterialStock = ({page, search, option}: IProps) => {
   return (
     <div>
       <PageHeader
-        isNz
-        onChangeNz={(e) => {
-          setSelectList(new Set)
-          changeNzState(e)
-        }}
-        nz={nzState}
+        // isNz
+        // onChangeNz={(e) => {
+        //   setSelectList(new Set)
+        //   changeNzState(e)
+        // }}
+        // nz={nzState}
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
