@@ -182,7 +182,7 @@ const BasicRawMaterial = ({}: IProps) => {
           ...row,
           ...selectData,
           type:settingType(row.type),
-          customer: row.customerArray.customer_id ? row.customerArray : null,
+          customer: row.customerArray?.customer_id ? row.customerArray : null,
           additional: [
             ...additional.map((v, index)=>{
               //if(!row[v.colName]) return undefined;
@@ -651,7 +651,10 @@ const BasicRawMaterial = ({}: IProps) => {
           setRow={(e) => {
             let tmp: Set<any> = selectList
             e.map(v => {
-              if(v.isChange) tmp.add(v.id)
+              if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
             })
             setSelectList(tmp)
             competeRawMaterial(e)

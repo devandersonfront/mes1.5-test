@@ -471,7 +471,10 @@ const MesOperationList = ({page, search, option}: IProps) => {
       setRow={(e) => {
         let tmp: Set<any> = selectList
         let tmpRes = e.map(v => {
-          if(v.isChange) tmp.add(v.id)
+          if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
           if(v.update || v.finish){
             if(keyword){
               SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
