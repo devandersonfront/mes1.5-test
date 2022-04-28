@@ -170,7 +170,10 @@ const MesToolRegister = () => {
                     let tmpBasicRow = [...e]
 
                     e.map((v, index) => {
-                        if(v.isChange) tmp.add(v.id)
+                        if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
                         // if(basicRow[index].amount == v.amount) {
                             if (v.code) {
                                 tmpBasicRow[index].tool_id_save = v.tool_id
