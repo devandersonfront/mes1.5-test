@@ -277,6 +277,7 @@ const BasicFactory = ({}: IProps) => {
                     ]}
             )))
             LoadBasic(1)
+setKeyword('')
 
         }else{
 

@@ -269,6 +269,7 @@ const BasicProcess = ({}: IProps) => {
             ]}
       )))
       LoadBasic(1)
+setKeyword('')
 
     }else{
 
