@@ -290,7 +290,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   const SearchBox = () => {
 
-    console.log(searchModalInit,'searchModalInit')
     return <div style={{
       width: '100%', height: 32, margin: '16px 0 16px 16px',
       display: 'flex',

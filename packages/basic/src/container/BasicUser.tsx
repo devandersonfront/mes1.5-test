@@ -640,7 +640,6 @@ const BasicUser = ({}: IProps) => {
 
 
   const competeId = (rows) => {
-    console.log("competeId rows : ", rows);
 
     const tempRow = [...rows]
     const spliceRow = [...rows]

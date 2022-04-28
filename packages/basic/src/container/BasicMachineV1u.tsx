@@ -280,7 +280,6 @@ const BasicMachineV1u = ({option}: IProps) => {
     if(haveIdRows.length > 0){
       deletable = await RequestMethod('delete','machineDelete', filterData)
       LoadBasic(1)
-setKeyword('')
       setKeyword('')
 
     }else{
