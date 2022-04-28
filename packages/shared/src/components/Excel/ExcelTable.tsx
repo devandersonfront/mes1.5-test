@@ -50,7 +50,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
 
   const onePageHeight = 600;
   const rowKeyGetter = (row: any) => {
-    return row.id;
+    return row?.id;
   }
 
   const scrollState = () => {
@@ -71,10 +71,8 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
   useEffect(() => {
     let allWidth = 0
     headerList.map((v: any) => {
-      console.log("v.width : ", v.width )
       allWidth += v.width
     })
-    console.log("allWidth : ", allWidth)
   }, [headerList])
 
   function isAtBottom({ currentTarget }: React.UIEvent<HTMLDivElement>): boolean {
@@ -83,23 +81,24 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
 
   function EmptyRowsRenderer() {
     return (
-        <div style={{ display:"flex", justifyContent:"center", alignItems:"center",background:"#353B48", height:40, gridColumn: '1/-1' }}>
+        <div style={{ display:"flex", justifyContent:"center", alignItems:"center",background: type ? "white" : "#353B48", height:40, gridColumn: '1/-1' ,color: type ? "black" : "none"}}>
           데이터가 없습니다.
         </div>
     );
   }
 
-  const autoWidth:number = headerList.map((col) => col.width).reduce(
-      (previousValue, currentValue) => previousValue + currentValue,
-  )
+  const autoWidth:() => number = () => {
+    return headerList.map((col) => col?.width)?.reduce(
+        (previousValue, currentValue) => previousValue + currentValue,
+    )
+  }
 
-  console.log(width, headerList,autoWidth)
 
   const showDataGrid = () => {
 
     return <DataGridTable
       //@ts-ignore
-      rowClass={(row) => row.border ? 'selectRow' : undefined}
+      rowClass={(row) => row?.border ? 'selectRow' : undefined}
       headerRowHeight={40}
       //@ts-ignore
       rowKeyGetter={rowKeyGetter}
@@ -162,7 +161,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
         border:"none",
         overflow:scrollOnOff ? "hidden" : "auto",
         // width: width ?? autoWidth ?? 1576,
-        width: width ?? autoWidth ?? 1576,
+        width: width ?? autoWidth() ?? 1576,
         maxWidth: maxWidth,
         height: height ?? 760,
         maxHeight:maxHeight,
@@ -172,17 +171,8 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
       theme={scrollState}
       state={type}
       enableVirtualization={!disableVirtualization}
-      // onScroll={(e:any)=>{
-      //   console.log("scroll : ", e)
-      //   if(e.target.scrollTop > onePageHeight * (selectPage-1)){
-      //     setSelectPage(selectPage+1);
-      //   }
-      // }}
       //@ts-ignore
       onScroll={(e:ScrollState) => {
-        // console.log(e)
-        // console.log(isAtBottom(e))
-
         scrollEnd && scrollEnd(isAtBottom(e))
       }}
 

@@ -421,7 +421,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                     // }
                   }}
                   setRow={(e) => {
-                    console.log('setRow',e)
                     let tmp = e.map((v, index) => {
                       // if(v.newTab === true){
                       //   const newTabIndex = bomDummy.length+1

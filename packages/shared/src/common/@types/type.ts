@@ -48,6 +48,7 @@ export interface IExcelHeaderType {
   mi_id?:number
   hide?:boolean
   version?:number
+  noSelect?:boolean
 }
 
 export interface IResponseType {

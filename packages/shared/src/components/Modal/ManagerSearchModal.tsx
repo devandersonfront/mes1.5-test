@@ -104,9 +104,9 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
         total: res.totalPages,
       })
       if(nextPage){
-        setSearchList([...searchList,...nextList])
+        setSearchList([{name:""},...searchList,...nextList])
       }else{
-        setSearchList(nextList)
+        setSearchList([{name:""},...nextList])
       }
     }
   }
@@ -114,7 +114,6 @@ const ManagerSearchModal = ({column, row, onRowChange}: IProps) => {
   const contentView = () => {
     switch(column.type){
       case "board":
-
         return (
             <>
               <div style={{width: '100%', height: 40}} onClick={() => {}}>

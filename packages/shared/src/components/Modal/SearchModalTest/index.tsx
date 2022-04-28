@@ -202,16 +202,17 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
     if(res){
       if(searchModalInit.excelColumnType === "toolProduct"){
-        setSearchList([...SearchResultSort([{first: true}, ...res], searchModalInit.excelColumnType)])
+        setSearchList([...SearchResultSort(!column.noSelect ? [null, ...res] : res, searchModalInit.excelColumnType)])
         setPageInfo({page:res.page, total:res.totalPages});
         Notiflix.Loading.remove()
       }else
         if(res.page !== 1){
-          setSearchList([ ...searchList,...SearchResultSort([{first:true}, ...res.info_list], searchModalInit.excelColumnType)])
+          setSearchList([ ...searchList,...SearchResultSort(!column.noSelect ? [null, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
           Notiflix.Loading.remove()
         }else{
-          setSearchList([...SearchResultSort([{first:true, name:"선택없음"}, ...res.info_list], searchModalInit.excelColumnType)])
+          // setSearchList([...SearchResultSort(!column.noSelect ? [null, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
+          setSearchList([...SearchResultSort(!column.noSelect ? [{id:null, border:"abc"}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
           Notiflix.Loading.remove()
         }
@@ -357,7 +358,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   const confirmFunction = () => {
     setIsOpen(false)
-    console.log("here")
     if(selectRow !== undefined){
       const selectNameFunction = (type:string) => {
         switch(type){
@@ -548,7 +548,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               rowHeight={32}
               height={640}
               setSelectRow={(e) => {
-                console.log(e, searchList)
                 // dispatch(changeSearchModalNumber(e))
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{

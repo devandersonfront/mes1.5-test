@@ -279,7 +279,7 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
                     setRow={(e) => setSearchList([...e])}
                     width={1746}
                     rowHeight={32}
-                    height={591}
+                    height={491}
                     // setSelectRow={(e) => {
                     //   setSelectRow(e)
                     // }}

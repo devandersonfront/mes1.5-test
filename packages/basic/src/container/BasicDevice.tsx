@@ -231,7 +231,7 @@ const BasicDevice = ({}: IProps) => {
                 ...row,
                 ...selectData,
                 type:row.type_id,
-                manager: row.user,
+                manager: row.user.user_id ? row.user : null,
                 subFactory: row?.subFactory ? {...row?.subFactory, manager:row?.subFactory?.manager_info} : undefined,
                 photo: row?.photo?.uuid ?? row?.photo,
                 additional: [

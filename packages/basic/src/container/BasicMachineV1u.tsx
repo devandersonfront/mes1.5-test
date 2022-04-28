@@ -433,7 +433,8 @@ const BasicMachineV1u = ({option}: IProps) => {
     tempData.madeAt = value.madeAt ?? moment().format("YYYY-MM-DD")
     tempData.machine_id =  value.machine_idPK ?? value.machine_id;
     tempData.type = value.type_id;
-    tempData.manager = value.user ?? value.manager;
+    tempData.manager = value?.user?.user_id ? value.user : null;
+    tempData.factory = value?.factory?.factory_id ? value.factory : null;
     if(value.subFactory !== null && value.subFactory !== undefined){
       tempData.subFactory = {...value.subFactory, manager:value.subFactory.manager_info};
     }

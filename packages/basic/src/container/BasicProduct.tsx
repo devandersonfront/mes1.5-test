@@ -193,10 +193,10 @@ const BasicProduct = ({}: IProps) => {
         return {
           ...row,
           ...selectData,
-          customer: row.customerArray,
+          customer: row?.customerArray?.customer_id ? row.customerArray : null,
           // customer_id: row.customerArray.customer_id,
           customer_id: undefined,
-          model: row.modelArray,
+          model: row?.modelArray?.cm_id ? row.modelArray : null,
           // standard_uph: row.uph,
           molds:row?.molds?.map((mold)=>{
             return { setting:mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
