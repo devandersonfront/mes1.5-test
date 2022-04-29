@@ -182,7 +182,7 @@ const BasicRawMaterial = ({}: IProps) => {
           ...row,
           ...selectData,
           type:settingType(row.type),
-          customer: row.customerArray.customer_id ? row.customerArray : null,
+          customer: row.customerArray?.customer_id ? row.customerArray : null,
           additional: [
             ...additional.map((v, index)=>{
               //if(!row[v.colName]) return undefined;

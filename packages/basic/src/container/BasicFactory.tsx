@@ -571,9 +571,15 @@ setKeyword('')
                     competefactory(e)
                 }}
                 selectList={selectList}
+                setSelectList={(e) => {
+                    console.log("SelectList : ", e)
                 //@ts-ignore
-                setSelectList={setSelectList}
-                setSelectRow={setSelectRow}
+                    setSelectList(e)
+                }}
+                setSelectRow={(e)=> {
+                    console.log("SelectRow : ", e)
+                    setSelectRow(e)
+                }}
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
 
             />

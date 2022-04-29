@@ -316,7 +316,7 @@ const BasicTool = ({page, search, option}: IProps) => {
             tmpRow.code = rowData.code;
             tmpRow.name = rowData.name;
             tmpRow.stock = rowData?.stock;
-            tmpRow.customer = rowData.customer.customer_id ? rowData.customer : null;
+            tmpRow.customer = rowData.customer?.customer_id ? rowData.customer : null;
             tmpRow.additional = [
                 ...additional.map((v, index)=>{
                     if(!rowData[v.colName]) return undefined;

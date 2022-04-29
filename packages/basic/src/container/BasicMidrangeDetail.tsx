@@ -100,7 +100,10 @@ const BasicMidrangeDetail = () => {
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
                     e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
+                        if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
                     })
                     setSelectList(tmp)
                     setBasicRow(e)
@@ -118,7 +121,10 @@ const BasicMidrangeDetail = () => {
                 setRow={(e) => {
                     let tmp: Set<any> = sampleSelectList
                     e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
+                        if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
                     })
                     setSampleSelectList(tmp)
                     setSampleBasicRow(e)
@@ -136,7 +142,10 @@ const BasicMidrangeDetail = () => {
                 setRow={(e) => {
                     let tmp: Set<any> = legendarySelectList
                     e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
+                        if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
                     })
                     setLegendarySelectList(tmp)
                     setLegendaryBasicRow(e)
@@ -154,7 +163,10 @@ const BasicMidrangeDetail = () => {
                 setRow={(e) => {
                     let tmp: Set<any> = ItemSelectList
                     e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
+                        if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
                     })
                     setItemSelectList(tmp)
                     setItemBasicRow(e)

@@ -219,7 +219,10 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
                     e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
+                        if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
                     })
                     setSelectList(tmp)
                     setBasicRow(e)
