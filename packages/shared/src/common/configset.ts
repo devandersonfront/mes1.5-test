@@ -49,7 +49,7 @@ export const SF_PORT = ``
 // export const SF_ENDPOINT_BARCODE = `http://${isLocalhost()}:18080`
 
 // export const SF_ENDPOINT_PMS = `http://3.36.78.194:8999`
-export const SF_ENDPOINT_PMS = `http://3.34.98.247:8444`
+export const SF_ENDPOINT_PMS = `http://125.138.147.11:8444`
 
 export const AUTHORITY_LIST = [
   { title: "HOME", show: false, checkable: true, check: false, child: [
