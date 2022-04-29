@@ -82,8 +82,8 @@ export const searchModalList: any  = {
     {key: 'manger', name: '담당자명', formatter: LineBorderContainer},
   ],
   device: [
-    {key: 'name', name: '주변장치명'},
-    {key: 'mfrName', name: '제조사'},
+    {key: 'name', name: '주변장치명', formatter: LineBorderContainer, placeholder:"-"},
+    {key: 'mfrName', name: '제조사', formatter: LineBorderContainer, placeholder:"-"},
   ],
   mold: [
     {key: 'code', name: 'CODE', textAlign: 'center', formatter: LineBorderContainer},
@@ -106,12 +106,12 @@ export const searchModalList: any  = {
     {key: 'description', name: '비고', width: 370, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '내용 입력'},
   ],
   deviceInfo: [
-    {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
+    {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'mfrCode', name: '제조 번호', width: 440, formatter: DeviceSearchModal, type: 'Modal', placeholder: '주변장치를 선택해 주세요'},
     {key: 'name', name: '장치 이름', width: 440, formatter: LineBorderContainer, placeholder: '주변장치를 선택해 주세요' },
-    {key: 'mfrName', name: '제조사', width: 160, formatter: LineBorderContainer},
-    {key: 'type', name: '장치 종류', width: 160, formatter: LineBorderContainer},
-    {key: 'manager', name: '담당자', width: 160, formatter: LineBorderContainer},
+    {key: 'mfrName', name: '제조사', width: 160, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'type', name: '장치 종류', width: 160, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'manager', name: '담당자', width: 160, formatter: LineBorderContainer, placeholder: '-'},
   ],
   productToolInfo: [
     {key: 'code', name: '품목 CODE', formatter: LineBorderContainer, placeholder: '-' },
