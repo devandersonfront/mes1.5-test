@@ -325,12 +325,12 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 onChangeSearchKeyword={(keyword) => {
                     setSelectList(new Set)
                     setKeyword(keyword)
-                    setPageInfo({page:1,total:1})
+                    setPageInfo({...pageInfo,page:1})
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(index) => {
                     setOptionIndex(index);
-                    setPageInfo({page:1,total:1})
+                    setPageInfo({...pageInfo,page:1})
                 }}
             />
             <ExcelTable
