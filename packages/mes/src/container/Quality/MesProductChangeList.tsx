@@ -190,7 +190,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 onChangeSearchKeyword={(keyword) =>{
                     setSelectList(new Set)
                     setSearchKeyword(keyword)
-                    setPageInfo({page:1,total:1})
+                    setPageInfo({...pageInfo,page:1})
                 }}
                 onChangeSearchOption={(option) => {
                     setSelectList(new Set)

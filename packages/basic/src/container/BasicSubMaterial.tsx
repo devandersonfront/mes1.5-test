@@ -167,7 +167,7 @@ const BasicSubMaterial = ({}: IProps) => {
         return {
           ...row,
           ...selectData,
-          customer: row.customerArray.customer_id ? row.customerArray : null,
+          customer: row.customerArray?.customer_id ? row.customerArray : null,
           additional: [
             ...additional.map((v, index)=>{
               //if(!row[v.colName]) return undefined;
@@ -540,7 +540,7 @@ const BasicSubMaterial = ({}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             setKeyword(keyword);
-            setPageInfo({page:1,total:1})
+            setPageInfo({...pageInfo,page:1})
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {

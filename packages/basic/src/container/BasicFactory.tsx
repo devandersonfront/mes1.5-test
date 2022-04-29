@@ -536,7 +536,7 @@ setKeyword('')
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
-                    setPageInfo({page:1,total:1})
+                    setPageInfo({...pageInfo,page:1})
                     setKeyword(keyword)
                 }}
                 searchOptionList={optionList}
