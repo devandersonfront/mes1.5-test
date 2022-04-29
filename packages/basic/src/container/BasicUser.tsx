@@ -702,9 +702,9 @@ const BasicUser = ({}: IProps) => {
 
           e.map((v, i) => {
             if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
+              tmp.add(v.id)
+              v.isChange = false
+            }
           })
           setSelectList(tmp)
           competeId(e)

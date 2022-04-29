@@ -126,11 +126,6 @@ const MesWorkStandardList = ({search, option}: IProps)=> {
                 onChangeSearchKeyword={(keyword) => {
                     setPageInfo({page:1,total:1})
                     setKeyword(keyword)
-                    // if(keyword){
-                    //     router.push(`/mes/quality/work/standardlist?page=1&keyword=${keyword}&opt=${optionIndex}`)
-                    // }else{
-                    //     router.push(`/mes/quality/work/standardlist?page=1&keyword=`)
-                    // }
                 }}
                 searchOptionList={optionList}
                 onChangeSearchOption={(option) => {
@@ -142,32 +137,12 @@ const MesWorkStandardList = ({search, option}: IProps)=> {
                 headerList={column}
                 row={basicRow}
                 setRow={setBasicRow}
-                // setRow={(e) => {
-                //     let tmp: Set<any> = selectList
-                //     e.map(v => {
-                //         if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
-                //     })
-                //     setSelectList(tmp)
-                //     setBasicRow(e)
-                // }}
-                // selectList={selectList}
-                // //@ts-ignore
-                // setSelectList={setSelectList}
-                // height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
             />
             <PaginationComponent
                 currentPage={pageInfo.page}
                 totalPage={pageInfo.total}
                 setPage={(page) => {
                     setPageInfo({...pageInfo,page:page})
-                    // if(keyword){
-                    //     router.push(`/mes/quality/work/standardlist?page=${page}&keyword=${keyword}&opt=${option}`)
-                    // }else{
-                    //     router.push(`/mes/quality/work/standardlist?page=${page}`)
-                    // }
                 }}
             />
         </div>

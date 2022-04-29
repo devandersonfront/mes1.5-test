@@ -652,9 +652,9 @@ const BasicRawMaterial = ({}: IProps) => {
             let tmp: Set<any> = selectList
             e.map(v => {
               if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
+                tmp.add(v.id)
+                v.isChange = false
+              }
             })
             setSelectList(tmp)
             competeRawMaterial(e)
