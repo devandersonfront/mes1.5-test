@@ -268,7 +268,7 @@ const BasicProduct = ({}: IProps) => {
       }
     }).filter((v) => v)
 
-    if(codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
+    if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
       let res = await RequestMethod('post', `productSave`,result).catch((error)=>{
         return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
       })
