@@ -268,7 +268,7 @@ const BasicProduct = ({}: IProps) => {
       }
     }).filter((v) => v)
 
-    if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
+    if(codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
       let res = await RequestMethod('post', `productSave`,result).catch((error)=>{
         return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
       })
@@ -585,9 +585,9 @@ const BasicProduct = ({}: IProps) => {
         break;
 
       case '저장하기':
-        if(selectList.size > 1){
-          return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
-        }
+        // if(selectList.size > 1){
+        //   return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
+        // }
         SaveBasic()
 
         break;
