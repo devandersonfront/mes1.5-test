@@ -648,7 +648,7 @@ const BasicUser = ({}: IProps) => {
     const isCheck = spliceRow.some((row) => row.tmpId === tempRow[selectRow].tmpId && row.tmpId !== undefined && row.tmpId !== '')
 
 
-    let telephone_num_for_update = tempRow[selectRow].telephone.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
+    let telephone_num_for_update = tempRow[selectRow].telephone?.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
 
     if (spliceRow) {
       if (isCheck) {
@@ -660,11 +660,11 @@ const BasicUser = ({}: IProps) => {
       }
     }
 
-    setBasicRow(prevState => {
-      return prevState.map((item, index) => {
+    setBasicRow(
+      rows.map((item, index) => {
         return index === selectRow ? {...item, telephone: telephone_num_for_update } : item
       })
-    })
+    )
   }
 
 

@@ -514,6 +514,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
+        width={1576}
         height={basicRow.length * 50 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         scrollEnd={(value) => {
           if(value){
