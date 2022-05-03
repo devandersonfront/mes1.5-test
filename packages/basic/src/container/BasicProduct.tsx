@@ -585,9 +585,9 @@ const BasicProduct = ({}: IProps) => {
         break;
 
       case '저장하기':
-        if(selectList.size > 1){
-          return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
-        }
+        // if(selectList.size > 1){
+        //   return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
+        // }
         SaveBasic()
 
         break;
@@ -600,9 +600,9 @@ const BasicProduct = ({}: IProps) => {
         );
         }
 
-        if(selectList.size > 1){
-          return Notiflix.Report.warning('경고','삭제는 한 개만 하실수 있습니다.','확인')
-        }
+        // if(selectList.size > 1){
+        //   return Notiflix.Report.warning('경고','삭제는 한 개만 하실수 있습니다.','확인')
+        // }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?(기존 데이터를 삭제할 경우 저장하지 않은 데이터는 모두 사라집니다.)","확인","취소",
             ()=>{DeleteBasic()}

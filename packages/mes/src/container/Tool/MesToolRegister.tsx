@@ -86,7 +86,11 @@ const MesToolRegister = () => {
 
     const SaveCleanUpData = (data:any[]) => {
         let resultData = [];
+        let amountCheck = true
         data.map((rowData, index) => {
+            if(rowData.amount <= 0 || rowData.amount === undefined){
+                amountCheck = false
+            }
             let tmpRow:any = {};
             let toolObject:any = {};
             toolObject.tool_id = rowData.code;
@@ -104,7 +108,8 @@ const MesToolRegister = () => {
             // tmpRow.amount = rowData.amount;
             resultData.push(tmpRow);
         })
-        return resultData;
+        if(amountCheck) return resultData
+        else return Notiflix.Report.warning("경고","입고량을 입력해 주시기 바랍니다.","확인")
     }
 
     const SaveBasic = async(data:any) => {

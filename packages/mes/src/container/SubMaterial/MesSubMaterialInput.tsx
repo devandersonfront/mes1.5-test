@@ -108,6 +108,9 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
         if (v.lot_number === undefined) {
           return 2
         }
+        if (v.amount <= 0 || v.amount === undefined) {
+          return 3
+        }
       }
     })
 
@@ -117,7 +120,9 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
     if(error.includes(2)){
       return Notiflix.Report.warning("경고", "부자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
     }
-
+    if(error.includes(3)){
+      return Notiflix.Report.warning("경고", "입고량을 입력해 주시기 바랍니다.", "확인",)
+    }
     const arrLot = basicRow.map(v=> {return v.lot_number})
     const overlapCheckLot = new Set(arrLot)
 
