@@ -68,6 +68,7 @@ const DatetimePickerBox = ({ row, column, onRowChange, onClose }: IProps) => {
   const classes = useStyles()
 
   const onDateChange = (date?: Moment) => {
+
     setDate(date);
     onRowChange({
       ...row,
@@ -76,19 +77,20 @@ const DatetimePickerBox = ({ row, column, onRowChange, onClose }: IProps) => {
     })
   };
 
+
   return (
     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>
 
       <ThemeProvider theme={darkTheme}>
       <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
         <DateTimePicker
-          clearable
+          clearable={false}
           value={selectedDate ?? null}
           onChange={onDateChange}
           format={'yyyy-MM-DD HH:mm:ss'}
           InputProps={{ className: classes.input, disableUnderline: true}}
-          maxDate={column.type === "date" && row.end}
-          minDate={column.type === "deadline" && row.start}
+          maxDate={column.type === "standardEndDate" ? row.standardEndDate : row.end}
+          minDate={column.type === "standardStartDate" ? row.standardStartDate : row.start}
         />
       </MuiPickersUtilsProvider>
       </ThemeProvider>
