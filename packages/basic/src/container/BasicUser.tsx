@@ -645,8 +645,10 @@ const BasicUser = ({}: IProps) => {
     spliceRow.splice(selectRow, 1)
     const isCheck = spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId && row.tmpId !== undefined && row.tmpId !== '')
 
-    if(spliceRow){
-      if(isCheck){
+    let telephone_num_for_update = tempRow[selectRow].telephone?.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
+
+    if (spliceRow) {
+      if (isCheck) {
         return Notiflix.Report.warning(
             '아이디 경고',
             `중복되는 아이디가 존재합니다.`,
@@ -655,7 +657,11 @@ const BasicUser = ({}: IProps) => {
       }
     }
 
-    setBasicRow(rows)
+    setBasicRow(
+      rows.map((item, index) => {
+        return index === selectRow ? {...item, telephone: telephone_num_for_update } : item
+      })
+    )
   }
 
 

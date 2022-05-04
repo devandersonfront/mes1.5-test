@@ -621,6 +621,7 @@ setKeyword('')
             //@ts-ignore
             setSelectList={setSelectList}
             setSelectRow={setSelectRow}
+            width={1576}
             height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent
