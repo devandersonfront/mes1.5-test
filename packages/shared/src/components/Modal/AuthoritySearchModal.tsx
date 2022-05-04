@@ -271,7 +271,7 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
                 <p>취소</p>
               </div>
               <div
-                onClick={() => confirmFunction}
+                onClick={confirmFunction}
                 style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
               >
                 <p>등록하기</p>
