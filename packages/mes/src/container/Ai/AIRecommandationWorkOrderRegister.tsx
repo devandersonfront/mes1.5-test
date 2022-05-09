@@ -10,6 +10,7 @@ import {
     RequestMethod
 } from 'shared'
 
+// @ts-ignore
 import { SelectColumn } from 'react-data-grid'
 
 import moment from 'moment'
@@ -144,7 +145,7 @@ function AIRecommandationWorkOrderRegister() {
                 // row={rows}
                 row={basicRow}
                 maxHeight={360}
-
+                setRow={() => {}}
             />
         </>
     )
