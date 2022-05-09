@@ -258,7 +258,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         fontSize: 22,
         fontWeight: 'bold',
         margin: 0
-      }}>투입 자재 정보 (해당 제품을 만드는데 사용할 자재는 아래와 같습니다)</p>
+      }}>투입 자재 정보 (해당 제품을 만드는데 사용한 자재는 아래와 같습니다)</p>
       <div style={{display: 'flex'}}>
 
         <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
