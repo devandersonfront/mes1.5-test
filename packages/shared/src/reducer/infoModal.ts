@@ -158,7 +158,7 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
       // addState.code.push(addPayload.code);
       addState.index = addPayload.index;
 
-      addState.datas.push(addDataObject);
+      addState.datas.splice(addPayload.index, 0, addDataObject);
 
       return addState;
 
@@ -180,11 +180,12 @@ const infoModal = (state = initalState, {type, payload}:DefaultAction) => {
       // deleteState.code.splice(payload, 1);
       // deleteState.title.splice(payload, 1);
       deleteState.datas.splice(deletePayload, 1);
-
       if(deleteState.index === deletePayload){
         deleteState.index = deleteState.index-1;
       }else if(deleteState.datas.length === 1){
         deleteState.index = 0;
+      }else {
+        deleteState.index = deleteState.index < deletePayload ? deleteState.index : deleteState.index-1 ;
       }
 
       return deleteState;
