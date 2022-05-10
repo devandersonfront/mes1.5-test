@@ -108,7 +108,7 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
         if (v.lot_number === undefined) {
           return 2
         }
-        if (v.amount <= 0 || v.amount === undefined) {
+        if (v.warehousing <= 0 || v.warehousing === undefined) {
           return 3
         }
       }
