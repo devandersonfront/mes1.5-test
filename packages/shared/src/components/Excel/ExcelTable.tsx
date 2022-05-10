@@ -76,7 +76,8 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
   }, [headerList])
 
   function isAtBottom({ currentTarget }: React.UIEvent<HTMLDivElement>): boolean {
-    return currentTarget.scrollTop >= currentTarget.scrollHeight - currentTarget.clientHeight;
+
+    return Math.ceil(currentTarget.scrollTop) >= currentTarget.scrollHeight - currentTarget.clientHeight;
   }
 
   function EmptyRowsRenderer() {
