@@ -258,9 +258,7 @@ const MidrangeExcelFrameTable =  ({ formReviewData, inspectFrameData, midrangeUp
                 </div>
             ))
     }
-    console.log('update',midrangeUpdate)
     const formItemResult = (inspection_infoType: InspectionInfo[], type: inspectionType) => {
-        console.log(inspection_infoType)
         return (
             inspection_infoType.map((value,index)=>
                 <div style={{display: "flex"}}>

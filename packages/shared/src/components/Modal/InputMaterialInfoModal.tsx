@@ -308,7 +308,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
                         }}>{v.title}</p></>
                         : <>
                               <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
-                                console.log('index',i)
                                 deleteTab(i)
                               }}>
                               <img style={{width: 20, height: 20}} src={IcX}/>
@@ -320,7 +319,6 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
                           // loadRecordGroup(bomInfoList.datas[i].product_id)
                         }}>{v.title}</p>
                         <div style={{cursor: 'pointer', width: 20, height: 20}} onClick={() => {
-                          console.log('index',i)
 
                           deleteTab(i)
                         }}>
