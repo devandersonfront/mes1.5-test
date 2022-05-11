@@ -956,6 +956,7 @@ export const columnlist: any = {
     {key: 'total_poor_quantity', name: '총 불량 수량', width: 118, formatter: DefectInfoModal, type: 'readonly' ,load: 'sheet'},
     {key:"avg_uph", name:"총 UPH", width: 118},
   ],
+  //재고 관리 > 재고 현황
   stockV2: [
     {key:"customer_name", name:"거래처", width: 118},
     {key:"customer_model", name:"모델", width: 118},

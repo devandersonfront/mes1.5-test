@@ -152,7 +152,6 @@ export const SearchResultSort = (infoList, type: string) => {
 }
 
 export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean) => {
-
   switch(type) {
     case 'user': {
       return {
@@ -284,7 +283,8 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         raw_material: {
           ...selectData,
           customer: selectData.customerArray
-        }
+        },
+        usage: selectData.usage,
       }
     }
     case 'submaterial': {
@@ -297,7 +297,8 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         sub_material: {
           ...selectData,
           customer: selectData.customerArray
-        }
+        },
+        usage: selectData.usage,
       }
     }
     case 'factory': {

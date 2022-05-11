@@ -451,24 +451,26 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             }
         )
       }else if(column.type === "bom"){
-        const bomType = (tab:number) => {
-          switch (tab) {
-            case 0:
-              return "rawmaterial"
-            case 1:
-              return "submaterial"
-            case 2:
-              return "product"
-            default:
-              return "rawmaterial"
-          }
-        }
-
+        // const bomType = (tab:number) => {
+        //   switch (tab) {
+        //     case 0:
+        //       return "rawmaterial"
+        //     case 1:
+        //       return "submaterial"
+        //     case 2:
+        //       return "product"
+        //     default:
+        //       return "rawmaterial"
+        //   }
+        // }
+        console.log('row', row)
+        console.log('selected', searchList[selectRow])
+        const searchModalResult = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar)
         onRowChange(
             {
               ...row,
-              ...SearchModalResult(searchList[selectRow], bomType(tab === null ? 0 : tab), column.staticCalendar),
-              manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+              ...searchModalResult,
+              // manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
               name: selectNameFunction(column.type),
               tab: tab === null ? 0 : tab,
               // type_name: undefined,

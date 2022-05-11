@@ -317,6 +317,7 @@ export const searchModalList: any  = {
     {key: 'mold_name', name: '금형명'},
     {key: 'wip_name', name: '반제품명'},
   ],
+  //작업지시서 등록 > 자재 선택
   bomRegister: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'code', name: 'CODE', formatter: LineBorderContainer, textAlign: 'center'},
