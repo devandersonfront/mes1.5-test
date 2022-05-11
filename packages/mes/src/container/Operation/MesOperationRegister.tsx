@@ -138,6 +138,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         return {
           ...row,
           ...selectData,
+          contract: selectedData[0].contract,
           os_id: undefined,
           version: undefined,
           input_bom: [ ...row?.input_bom?.map((bom) => {
@@ -335,9 +336,12 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
       })
           .then(async(res) => {
-            await loadGraphSheet(res.info_list[0].productId,  SearchModalResult(SearchResultSort(res.info_list, "contract")[0], "receiveContract"))
+            const identification = res.info_list[0].identification
+            await loadGraphSheet(res.info_list[0]?.productId,  SearchModalResult(SearchResultSort(res.info_list, "contract")[0], "receiveContract"))
                 .then((res) => {
-                  setBasicRow(res)
+                  setBasicRow(res.map((row, index) => {
+                      return {...row, contract_id:identification}
+                  }))
                   setCodeCheck(false)
                   setFirstCheck(false)
                 })

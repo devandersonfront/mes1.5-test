@@ -86,6 +86,7 @@ export const SearchResultSort = (infoList, type: string) => {
           product_name: v.product?.name,
           product_type: TransferCodeToValue(v.product?.type, 'product'),
           product_unit: v.product?.unit,
+          stock: v.product?.stock,
         }
       }) : []
     }

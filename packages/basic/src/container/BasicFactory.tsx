@@ -173,7 +173,7 @@ const BasicFactory = ({}: IProps) => {
                             ...row,
                             // id: row.tmpId,
                             authority: row.authorityPK,
-                            manager: row.user.user_id ? row.user : null,
+                            manager: row.user?.user_id ? row.user : null,
                             version: row.version ?? null,
                             additional: [
                                 ...additional.map((v, index)=>{
@@ -572,12 +572,10 @@ setKeyword('')
                 }}
                 selectList={selectList}
                 setSelectList={(e) => {
-                    console.log("SelectList : ", e)
                 //@ts-ignore
                     setSelectList(e)
                 }}
                 setSelectRow={(e)=> {
-                    console.log("SelectRow : ", e)
                     setSelectRow(e)
                 }}
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
