@@ -396,7 +396,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 if(basicRow[0].product == undefined) return "first"
                 if(!equal) return eValue
               })
-              if(eData.length <= 0){
+              if(!eData[0]?.product?.product_id){
                 setBasicRow([...e])
               }else{
                 // if(codeCheck) {
