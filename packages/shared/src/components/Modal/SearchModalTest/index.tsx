@@ -218,6 +218,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         }
     }
   }
+  console.log('search',searchList)
   const getContents = () => {
     if(row[`${column.key}`]){
       if( typeof row[`${column.key}`] === "string"){

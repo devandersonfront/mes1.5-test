@@ -156,8 +156,8 @@ export const searchModalList: any  = {
   ],
   toolProductSearch: [
     {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '공구 품명', formatter: LineBorderContainer, type: 'mold', modalType: true },
-    {key: 'customer', name: '거래처', formatter: LineBorderContainer, },
+    {key: 'name', name: '공구 품명', formatter: LineBorderContainer, type: 'mold', modalType: true, placeholder: "-"  },
+    {key: 'customer', name: '거래처', formatter: LineBorderContainer, placeholder: '-' },
     {key: 'stock', name: '재고량', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
   ],
   toolSearch: [

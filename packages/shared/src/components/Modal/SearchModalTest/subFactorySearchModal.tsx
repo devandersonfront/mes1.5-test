@@ -17,6 +17,7 @@ import Notiflix from 'notiflix'
 import {Select} from '@material-ui/core'
 import {SearchInit} from './SearchModalInit'
 import {SearchIcon} from "../../../styles/styledComponents";
+import { SearchResultSort } from '../../../Functions/SearchResultSort'
 
 
 interface IProps {
@@ -119,7 +120,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 return undefined
         }
     }
-
     const LoadBasic = async (page?: number) => {
         Notiflix.Loading.circle()
 
@@ -134,17 +134,12 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 opt:optionFilter(optionIndex)
             }
         }).then((res) => {
-            // setSearchList([...SearchResultSort(res.info_list, "subFactory")])
-            const tempData = [{}];
-            res.info_list.map((value)=>{
-                const tmpValue = {...value};
-                tmpValue.manager_info = value.manager;
-                tmpValue.manager = value.manager?.name;
-                tmpValue.telephone = value.manager?.telephone;
-                tempData.push(tmpValue)
-            })
+            if(res.page > 1){
+                setSearchList([...searchList,...SearchResultSort([null, ...res.info_list], "subFactory")])
+            } else {
+                setSearchList([...SearchResultSort([ {id: null}, ...res.info_list], "subFactory")])
+            }
             Notiflix.Loading.remove()
-            return setSearchList(tempData);
         }).catch((err) => {
             if(err){
                 Notiflix.Report.failure("경고","공장을 선택해주시기 바랍니다.","확인",() => {setIsOpen(false)})
