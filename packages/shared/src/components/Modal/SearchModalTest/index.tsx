@@ -130,20 +130,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   }, [column.type, tab])
 
-
-  const switchOption = (option : number) => {
-
-    if(column.key === 'customer_id'){
-      switch(option){
-        case 3:
-        return 7
-        default :
-        return option
-      }
-    }
-    return option
-  }
-
   useEffect(() => {
     if(isOpen){
       LoadBasic(pageInfo.page);
@@ -152,8 +138,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       setSearchList([{}])
     }
   }, [isOpen, searchModalInit, pageInfo.page])
-
-
 
   const LoadBasic = async (page:number) => {
     Notiflix.Loading.circle();
@@ -289,6 +273,22 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   </div>
   }
 
+  const switchSearchOption = (option : number) => {
+    if(column.key === 'customer_id'){
+      switch(option){
+        case 3:
+          return 7
+        default :
+          return option
+      }
+    }
+    return option
+  }
+
+  const getDefaultSearchOptionIndex = column.type === 'product'? 2 : 0
+
+  console.log('searchfilter',searchModalInit?.searchFilter)
+  console.log('searchfilter',getDefaultSearchOptionIndex)
   const SearchBox = () => {
 
     return <div style={{
@@ -301,9 +301,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         borderRight: 'none',
       }}>
         <select key={searchModalInit?.searchFilter[0]}
-          defaultValue={searchModalInit?.searchFilter[0]}
+          defaultValue={searchModalInit?.searchFilter[getDefaultSearchOptionIndex]}
           onChange={(e) => {
-            const option = switchOption(Number(e.target.value))
+            const option = switchSearchOption(Number(e.target.value))
             setOptionIndex(option)
             setPageInfo({total:1, page:1});
             // SearchBasic('', Number(e.target.value))
@@ -322,7 +322,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           {
             searchModalInit && searchModalInit.searchFilter.map((v, i) => {
               if(v !== ""){
-                return (<option key={i.toString()} value={i}>{v}</option>)
+                return (<option key={i.toString()} value={v}>{v}</option>)
               }
             })
           }
@@ -490,7 +490,10 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               version: row.version,
               isChange: true,
               //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
-              returnType:column.key
+              returnType:column.key,
+              date:row?.date,
+              deadline:row?.deadline,
+              goal:row?.goal
             }
         )
       }
