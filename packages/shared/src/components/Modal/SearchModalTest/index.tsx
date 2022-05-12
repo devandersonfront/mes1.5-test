@@ -463,17 +463,14 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         //       return "rawmaterial"
         //   }
         // }
-        console.log('row', row)
-        console.log('selected', searchList[selectRow])
         const searchModalResult = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar)
+        delete searchModalResult.doubleClick
         onRowChange(
             {
               ...row,
               ...searchModalResult,
-              // manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
               name: selectNameFunction(column.type),
               tab: tab === null ? 0 : tab,
-              // type_name: undefined,
               version: row.version,
               isChange: true,
               //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
