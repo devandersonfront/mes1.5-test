@@ -117,9 +117,10 @@ const MesKpiManHour = () => {
     },[processBasicRow.id,selectDate])
 
     React.useEffect(() => {
-        setPauseBasicRow(pauseBasicRow.map(row => `${({...row, manDays: ((row.lead_time * processBasicRow.standard_production)/86400).toFixed(1)})}`))
+        setPauseBasicRow(pauseBasicRow.map(row => ({...row, manDays: `${((row.lead_time * processBasicRow.standard_production)/86400).toFixed(1)}`})))
     }, [processBasicRow.standard_production])
 
+    console.log(pauseBasicRow)
     React.useEffect(()=>{
 
         if(pauseBasicRow.length){
