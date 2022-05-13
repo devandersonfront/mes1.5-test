@@ -1224,7 +1224,7 @@ export const columnlist: any = {
     {key: "cm_id", name: '모델', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "code", name: 'CODE', width: 320, formatter: SearchModalTest,  type: 'product',noSelect:true},
     {key: "name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "standardUph", name: '기준 생산량', width: 208, formatter: PlaceholderBox ,placeholder: '숫자 입력'},
+    {key: "standard_production", name: '기준 생산량', width: 208, editor: TextEditor, formatter: UnitContainer, type:"number", unitData: 'EA' ,placeholder: '0'},
     {key: "manDays_average", name: '평균 작업공수 (일)', width: 150, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiManHourContent: [
