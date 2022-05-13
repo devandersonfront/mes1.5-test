@@ -132,6 +132,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen){
+      if(searchModalInit.excelColumnType === "product") setOptionIndex(2)
       LoadBasic(pageInfo.page);
     }else{
       setPageInfo({page:1, total:1})
@@ -202,7 +203,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         }
     }
   }
-  console.log('search',searchList)
   const getContents = () => {
     if(row[`${column.key}`]){
       if( typeof row[`${column.key}`] === "string"){
@@ -285,10 +285,16 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     return option
   }
 
-  const getDefaultSearchOptionIndex = column.type === 'product'? 2 : 0
+  const getDefaultSearchOptionIndex = (index:number) => {
+      if(column.type === 'product' && index === 0){
+          return 2
+      }else if(column.type === 'product' && index === 2){
+          return 0
+      }else{
+          return index
+      }
+  }
 
-  console.log('searchfilter',searchModalInit?.searchFilter)
-  console.log('searchfilter',getDefaultSearchOptionIndex)
   const SearchBox = () => {
 
     return <div style={{
@@ -301,7 +307,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         borderRight: 'none',
       }}>
         <select key={searchModalInit?.searchFilter[0]}
-          defaultValue={searchModalInit?.searchFilter[getDefaultSearchOptionIndex]}
+          defaultValue={searchModalInit?.searchFilter[getDefaultSearchOptionIndex(0)]}
           onChange={(e) => {
             const option = switchSearchOption(Number(e.target.value))
             setOptionIndex(option)
@@ -322,7 +328,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           {
             searchModalInit && searchModalInit.searchFilter.map((v, i) => {
               if(v !== ""){
-                return (<option key={i.toString()} value={v}>{v}</option>)
+                return (<option key={i.toString()} value={getDefaultSearchOptionIndex(i)}>{v}</option>)
               }
             })
           }
