@@ -92,7 +92,9 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
           ...v.machine,
           machineType: TransferCodeToValue(v.machine.type, 'machine'),
           sequence: index+1,
-          setting: v.setting,
+          // setting: v.setting,
+          setting: row?.machines ? row?.machines[index]?.machine.setting : 0,
+
         }
       }))
     }
@@ -242,7 +244,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                   }
                 })
                 if(settingUseArray > 1) {
-                  return Notiflix.Report.warning("경고", "금형을 하나만 선택해주시기 바랍니다.", "확인");
+                  return Notiflix.Report.warning("경고", "기계 하나만 선택해주시기 바랍니다.", "확인");
                 }
 
                 if(selectRow !== undefined && selectRow !== null){
@@ -255,7 +257,8 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                           machine: {
                             ...v
                           },
-                          setting: v.spare === '여' ? 0 : 1
+                          // setting: v.spare === '여' ? 0 : 1
+                          setting: v.setting
                         }
                       }
                     }),

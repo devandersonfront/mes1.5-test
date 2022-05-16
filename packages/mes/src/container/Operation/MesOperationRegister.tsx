@@ -39,6 +39,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     deadline: moment().format('YYYY-MM-DD'),first:true
   }])
 
+
+
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationCodeRegisterV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const getMenus = async () => {
@@ -289,7 +291,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
       }).filter(v => v)
 
-    ]
+      ]
     }
   }
 
@@ -403,9 +405,9 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               let tmp: Set<any> = selectList;
               e.map(v => {
                 if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
+                  tmp.add(v.id)
+                  v.isChange = false
+                }
               })
               // setSelectList(tmp)
               setSelectList(tmp)
