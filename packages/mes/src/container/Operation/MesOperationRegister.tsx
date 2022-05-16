@@ -387,7 +387,17 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             ]}
             row={basicRow}
             setRow={async(e) => {
-              if(!e[0]?.product?.product_id){
+             const eData = e.filter((eValue) => {
+                let equal = false;
+                basicRow.map((bValue)=>{
+                  if(eValue.product?.product_id === bValue.product?.product_id){
+                    equal = true
+                  }
+                })
+                if(basicRow[0].product == undefined) return "first"
+                if(!equal) return eValue
+              })
+              if(eData.length <= 0){
                 setBasicRow([...e])
               }else{
                 // if(codeCheck) {
