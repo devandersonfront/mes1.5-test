@@ -108,46 +108,46 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
   const validateSaveRequest = (selectedData: any[]) => {
     return NoneSelectedValidation(selectedData) ||
-        RequiredValidation('product_id', selectedData,"CODE OR 수주번호를 선택해주세요.") ||
-        RequiredValidation('input_bom', selectedData,"자재 보기를 눌러 BOM 등록을 해주세요.") ||
-        NoAmountValidation('goal', selectedData, "목표 생산량을 입력해 주세요.")
+    RequiredValidation('product_id', selectedData,"CODE OR 수주번호를 선택해주세요.") ||
+    RequiredValidation('input_bom', selectedData,"자재 보기를 눌러 BOM 등록을 해주세요.") ||
+    NoAmountValidation('goal', selectedData, "목표 생산량을 입력해 주세요.")
   }
 
   const SaveBasic = async (selectedData: any[]) => {
     if(validateSaveRequest(selectedData)) return
     let res: any
     res = await RequestMethod('post', `sheetSave`,
-        selectedData.map((row, i) => {
-          let selectKey: string[] = []
-          column.map((v) => {
-            if (v.selectList) {
-              selectKey.push(v.key)
-            }
-          })
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if (v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
-              }
-            }
-
-          })
-          return {
-            ...row,
-            ...selectData,
-            contract: selectedData[0].contract,
-            os_id: undefined,
-            version: undefined,
-            input_bom: [ ...row?.input_bom?.map((bom) => {
-              bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
-              return { ...bom }
-            }) ] ?? [],
-            status: 1,
+      selectedData.map((row, i) => {
+        let selectKey: string[] = []
+        column.map((v) => {
+          if (v.selectList) {
+            selectKey.push(v.key)
           }
-        }))
+        })
+        let selectData: any = {}
+
+        Object.keys(row).map(v => {
+          if (v.indexOf('PK') !== -1) {
+            selectData = {
+              ...selectData,
+              [v.split('PK')[0]]: row[v]
+            }
+          }
+
+        })
+        return {
+          ...row,
+          ...selectData,
+          contract: selectedData[0].contract,
+          os_id: undefined,
+          version: undefined,
+          input_bom: [ ...row?.input_bom?.map((bom) => {
+            bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
+            return { ...bom }
+          }) ] ?? [],
+          status: 1,
+        }
+      }))
     if (res) {
       Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
         router.push('/mes/operationV1u/list')
@@ -306,14 +306,14 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         if(selectList.size > 0) {
           Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
               () => {
-                const resultBasic = [...basicRow];
-                const result = resultBasic.filter((row, index) => {
-                  if (!selectList.has(row.id)) {
-                    return row
-                  }
-                })
-                result[0].first = true
-                setBasicRow([...result])
+                  const resultBasic = [...basicRow];
+                  const result = resultBasic.filter((row, index) => {
+                    if (!selectList.has(row.id)) {
+                      return row
+                    }
+                  })
+                  result[0].first = true
+                  setBasicRow([...result])
 
                 Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
                 })
@@ -368,10 +368,10 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             isCode
             onChangeCode={(value)=> {
               setCodeCheck(value),
-                  setBasicRow([{
-                    id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
-                    deadline: moment().format('YYYY-MM-DD'), first:true
-                  }])
+              setBasicRow([{
+                id: `operation_${Math.random()*1000}`, date: basicRow[0].date?? moment().format('YYYY-MM-DD'),
+                deadline: basicRow[0].deadline?? moment().format('YYYY-MM-DD'), first:true
+              }])
             }}
             code={codeCheck}
             title={"작업지시서 등록"}
@@ -387,17 +387,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             ]}
             row={basicRow}
             setRow={async(e) => {
-              const eData = e.filter((eValue) => {
-                let equal = false;
-                basicRow.map((bValue)=>{
-                  if(eValue.product?.product_id === bValue.product?.product_id){
-                    equal = true
-                  }
-                })
-                if(basicRow[0].product == undefined) return "first"
-                if(!equal) return eValue
-              })
-              if(eData.length <= 0){
+              if(!e[0]?.product?.product_id){
                 setBasicRow([...e])
               }else{
                 // if(codeCheck) {
