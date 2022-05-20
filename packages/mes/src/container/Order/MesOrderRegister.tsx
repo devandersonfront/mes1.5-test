@@ -228,6 +228,7 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
         />
         <ExcelTable
             editable
+            resizable
             headerList={[
               SelectColumn,
               ...column
@@ -254,6 +255,7 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
             selectList={selectList}
             //@ts-ignore
             setSelectList={setSelectList}
+            width={1576}
             height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         {/*<ExcelDownloadModal*/}

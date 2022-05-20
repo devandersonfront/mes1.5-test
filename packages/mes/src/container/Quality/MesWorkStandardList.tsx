@@ -155,7 +155,9 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
                 title={"작업 표준서 리스트"}
             />
             <ExcelTable
+                resizable
                 headerList={column}
+                width={1576}
                 row={basicRow}
                 setRow={setBasicRow}
             />

@@ -324,6 +324,7 @@ const MesToolList = ({page, search, option}: IProps) => {
                 optionIndex={optionIndex}
             />
             <ExcelTable
+                resizable
                 headerList={column}
                 row={basicRow}
                 setRow={(e) => {
@@ -338,6 +339,7 @@ const MesToolList = ({page, search, option}: IProps) => {
                     setBasicRow(e);
                 }}
                 height={750}
+                width={1576}
                 scrollEnd={(value) => {
                     if(value){
                         if(pageInfo.total > pageInfo.page){
@@ -349,10 +351,8 @@ const MesToolList = ({page, search, option}: IProps) => {
                 setSelectList={(selectedRows) => {
                     //@ts-ignore
                     setSelectList(selectedRows)
-                }
+                }}
 
-
-                }
             />
         </div>
     )

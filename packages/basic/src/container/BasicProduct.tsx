@@ -756,77 +756,73 @@ const BasicProduct = ({}: IProps) => {
   }, [selectList.size]);
 
   return (
-    <div>
-      <PageHeader
-        isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          setKeyword(keyword);
-          // hs0316
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          });
-          // setPageInfo({ page: 1, total: 1 });
-        }}
-        searchOptionList={optionList}
-        onChangeSearchOption={(option) => {
-          setOptionIndex(option);
-        }}
-        optionIndex={optionIndex}
-        title={"제품 등록 관리"}
-        pageHelper={"제품 등록, 삭제는 하나씩 가능"}
-        buttons={buttonList}
-        buttonsOnclick={
-          // () => {}
-          onClickHeaderButton
-        }
-      />
-      <ExcelTable
-        editable
-        resizable
-        headerList={[SelectColumn, ...column]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList;
-          e.map((v) => {
-            if (v.isChange) {
-              tmp.add(v.id);
-              v.isChange = false;
-            }
-          });
-          setSelectList(tmp);
-          competeProductV1u(e);
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={(p) => {
-          setSelectList(p as any);
-        }}
-        setSelectRow={setSelectRow}
-        height={
-          basicRow.length * 40 >= 40 * 18 + 56
-            ? 40 * 19
-            : basicRow.length * 40 + 56
-        }
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          setPageInfo({ ...pageInfo, page: page });
-        }}
-      />
+      <div>
+        <PageHeader
+          isSearch
+          searchKeyword={keyword}
+          onChangeSearchKeyword={(keyword) => {
+            setKeyword(keyword)
+            setPageInfo({...pageInfo,page:1})
+          }}
+          searchOptionList={optionList}
+          onChangeSearchOption={(option) => {
+            setOptionIndex(option)
+          }}
+          optionIndex={optionIndex}
+          title={"제품 등록 관리"}
+          pageHelper={"제품 등록, 삭제는 하나씩 가능"}
+          buttons={buttonList}
+          buttonsOnclick={
+            // () => {}
+            onClickHeaderButton
+          }
+        />
+        <ExcelTable
+          editable
+          resizable
+          resizeSave
+          headerList={[
+            SelectColumn,
+            ...column
+          ]}
+          row={basicRow}
+          // setRow={setBasicRow}
+          setRow={(e) => {
+            let tmp: Set<any> = selectList
+            e.map(v => {
+              if(v.isChange) {
+                tmp.add(v.id)
+                v.isChange = false
+              }
+            })
+            setSelectList(tmp)
+            competeProductV1u(e)
+          }}
+          selectList={selectList}
+          //@ts-ignore
+          setSelectList={ (p) => {
+            setSelectList(p as any)
+          }}
+          setSelectRow={setSelectRow}
+          width={1576}
+          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        />
+        <PaginationComponent
+            currentPage={pageInfo.page}
+            totalPage={pageInfo.total}
+            setPage={(page) => {
+              setPageInfo({...pageInfo,page:page})
+            }}
+        />
 
-      <BarcodeModal
-        title={"바코드 미리보기"}
-        handleBarcode={handleBarcode}
-        handleModal={handleModal}
-        isOpen={barcodeOpen}
-        type={"product"}
-        data={selectRow}
-      />
-
+        <BarcodeModal
+              title={'바코드 미리보기'}
+              handleBarcode={handleBarcode}
+              handleModal={handleModal}
+              isOpen={barcodeOpen}
+              type={'product'}
+              data={selectRow}
+              />
       {/* <ExcelDownloadModal
         isOpen={excelOpen}
         column={column}

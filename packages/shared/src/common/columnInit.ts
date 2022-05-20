@@ -961,8 +961,8 @@ export const columnlist: any = {
   stockV2: [
     {key:"customer_name", name:"거래처", width: 118},
     {key:"customer_model", name:"모델", width: 118},
-    {key:"code", name:"CODE", width: 118 },
-    {key:"name", name:"품명", width: 118 },
+    {key:"code", name:"CODE", width: 250 },
+    {key:"name", name:"품명", width: 470 },
     {key:"type", name:"품목 종류", width: 118 },
     {key:"unit", name:"단위", width: 118   },
     {key: 'bom', name: 'BOM', formatter: BomInfoModal, width: 118, type: 'readonly'},

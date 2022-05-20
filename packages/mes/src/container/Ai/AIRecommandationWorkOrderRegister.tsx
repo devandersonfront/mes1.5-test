@@ -10,6 +10,7 @@ import {
   RequestMethod
 } from 'shared'
 
+// @ts-ignore
 import { SelectColumn } from 'react-data-grid'
 
 import moment from 'moment'
@@ -126,8 +127,6 @@ function AIRecommandationWorkOrderRegister() {
 
   const LoadBasic = async (page?: number) => {
 
-    console.log("excute check !!");
-    
     const res = await RequestMethod('get', `productSearch`, {
       path: {
         page:  page ?? 1,
@@ -139,10 +138,8 @@ function AIRecommandationWorkOrderRegister() {
 
       }
     })
-    console.log("res for ai by productSearch : ", res);
 
     if (res) {
-
       if (res.totalPages < page) {
         LoadBasic(page - 1)
       } else {
@@ -158,14 +155,8 @@ function AIRecommandationWorkOrderRegister() {
   }
 
   useEffect(() => {
-    console.log("useEffect : ", useEffect);
-    
     LoadBasic(pageInfo.page).then(() => { })
-
   }, [pageInfo.page])
-
-  // console.log("SelectColumn ; ", SelectColumn);
-  // console.log("column ; ", column);
 
   return (
     <>
@@ -176,35 +167,28 @@ function AIRecommandationWorkOrderRegister() {
       <ExcelTable
         editable
         selectList={selectList}
+          // @ts-ignore
         setSelectList={setSelectList}
         headerList={[
           SelectColumn,                  // react-data-grid 에서 제공하는 row 에 대한 select column 설정을 위한 props 
           ...column                      // 헤더 컬럼, 포매터등의 옵션으로 row 의 기본 형식 지정 옵션도 포함
         ]}
-        // 1
-        // row={rows}
         row={basicRow}
-        // maxHeight={360}
         rowHeight={32}
         height={400}
         scrollEnd={(value) => {
-          console.log("scroll end");          
-          console.log("pageinfo.total : ", pageInfo.total);
           if(value){
             if(pageInfo.total > pageInfo.page){
               setPageInfo({...pageInfo, page:pageInfo.page+1})
             }
           } else {
-            console.log("page info not updated");
-            
+
           }
 
         }}
         setRow = {(e)=> {
-          console.log("e at ai : ", e);
           let tmp: Set<any> = selectList;
           e.map(v => {
-            console.log("v.id : ", v.id);
             if (v.isChange) tmp.add(v.id);
           })
           // setSelectList(tmp)
@@ -213,11 +197,9 @@ function AIRecommandationWorkOrderRegister() {
           // setSelectList()
         }}
         onRowClick = {(e) => {
-          console.log("onRowClick e = " + e);
         }}
 
         onSelectedRowsChange = {(e) => {
-          console.log("onSelectedRowsChange e = " + e);
         }}
 
       />
