@@ -13,7 +13,6 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
-import {MachineInfoModal} from './MachineInfoModal'
 import {TransferCodeToValue} from "../../common/TransferFunction";
 import {UploadButton} from "../../styles/styledComponents";
 
@@ -87,16 +86,26 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
     })
 
     if(res){
-      setSearchList([...res].map((v, index) => {
-        return {
-          ...v.machine,
-          machineType: TransferCodeToValue(v.machine.type, 'machine'),
-          sequence: index+1,
-          // setting: v.setting,
-          setting: row?.machines ? row?.machines[index]?.machine.setting : 0,
+      if(row.machines){
+        setSearchList(row.machines.map((v, index) => {
+          return {
+            ...v.machine.machine,
+            machineType: TransferCodeToValue(v.machine.machine.type, 'machine'),
+            sequence: index+1,
+            setting: v.machine.setting,
+          }
+        }))
+      }else{
+        setSearchList([...res].map((v, index) =>{
+          return {
+            ...v.machine,
+            machineType: TransferCodeToValue(v.machine.type, 'machine'),
+            sequence: index+1,
+            setting: row?.machines ? row?.machines[index]?.machine.setting : 0,
 
-        }
-      }))
+          }
+        }))
+      }
     }
   }
 
