@@ -62,18 +62,30 @@ const BasicDevice = ({}: IProps) => {
     setTypesState(value);
   }
 
+  // useEffect(() => {
+  //   if(keyword){
+  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+  //       Notiflix.Loading.remove()
+  //     })
+  //   }else{
+  //     LoadBasic(pageInfo.page).then(() => {
+  //       Notiflix.Loading.remove()
+  //     })
+  //   }
+  // }, [pageInfo.page, keyword, typesState])
+
   useEffect(() => {
-    // setOptionIndex(option)
-    if(keyword){
+    if (keyword) {
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove()
-      })
-    }else{
+        Notiflix.Loading.remove();
+      });
+    } else {
       LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove()
-      })
+        Notiflix.Loading.remove();
+      });
     }
-  }, [pageInfo.page, keyword, typesState])
+  }, [pageInfo.page,]);
+
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"주변장치 기준정보",sub:""}))
@@ -637,6 +649,10 @@ const BasicDevice = ({}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             setKeyword(keyword)
+                      // hs0316
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+            Notiflix.Loading.remove()
+          })
             setPageInfo({page:1, total:1})
           }}
           searchOptionList={optionList}

@@ -46,17 +46,30 @@ const BasicModel = ({}: IProps) => {
   })
   const [selectRow , setSelectRow] = useState<number>(0);
 
+  // useEffect(() => {
+  //   if(keyword){
+  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+  //       Notiflix.Loading.remove()
+  //     })
+  //   }else{
+  //     LoadBasic(pageInfo.page).then(() => {
+  //       Notiflix.Loading.remove()
+  //     })
+  //   }
+  // }, [pageInfo.page, keyword])
+
   useEffect(() => {
-    if(keyword){
+    if (keyword) {
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove()
-      })
-    }else{
+        Notiflix.Loading.remove();
+      });
+    } else {
       LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove()
-      })
+        Notiflix.Loading.remove();
+      });
     }
-  }, [pageInfo.page, keyword])
+  }, [pageInfo.page,]);
+
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"거래처 관리",sub:router.pathname}))
@@ -621,7 +634,10 @@ const BasicModel = ({}: IProps) => {
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
           setKeyword(keyword)
-          setPageInfo({page:1,total:1})
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+            Notiflix.Loading.remove()
+          })
+          // setPageInfo({page:1,total:1})
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {

@@ -45,17 +45,30 @@ const BasicProcess = ({}: IProps) => {
   })
   const [selectRow , setSelectRow] = useState<number>(0);
 
+  // useEffect(() => {
+  //   if(keyword){
+  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+  //       Notiflix.Loading.remove()
+  //     })
+  //   }else{
+  //     LoadBasic(pageInfo.page).then(() => {
+  //       Notiflix.Loading.remove()
+  //     })
+  //   }
+  // }, [pageInfo.page, keyword])
+
   useEffect(() => {
-    if(keyword){
+    if (keyword) {
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove()
-      })
-    }else{
+        Notiflix.Loading.remove();
+      });
+    } else {
       LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove()
-      })
+        Notiflix.Loading.remove();
+      });
     }
-  }, [pageInfo.page, keyword])
+  }, [pageInfo.page,]);
+
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"공정 관리",sub:router.pathname}))
@@ -586,7 +599,13 @@ const BasicProcess = ({}: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          setPageInfo({page:1,total:1})
+          // setPageInfo({page:1,total:1})
+
+          // hs0316
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+            Notiflix.Loading.remove()
+          })          
+
           setKeyword(keyword)
         }}
         searchOptionList={optionList}
