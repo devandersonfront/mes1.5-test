@@ -784,7 +784,7 @@ export const columnlist: any = {
       ]},
     {key: 'unit', name: '단위', width: 120},
     {key: 'process_id', name: '생산 공정', width: 120},
-    {key: 'ln_id', name: 'LOT 번호', },
+    {key: 'ln_id', name: 'LOT 번호', width:120},
     {key: 'worker', name: '작업자', width: 120 },
     {key: 'start', name: '작업 시작 일시', width: 164},
     {key: 'end', name: '작업 종료 일시', width: 164},
