@@ -502,7 +502,6 @@ const BasicTool = ({ page, search, option }: IProps) => {
 
   const valueExistence = () => {
     const selectedRows = filterSelectedRows();
-
     if (selectedRows.length > 0) {
       const nameCheck = selectedRows.every((data) => data.code);
 
@@ -571,60 +570,55 @@ const BasicTool = ({ page, search, option }: IProps) => {
     };
   }, []);
 
-  return (
+return (
     <div>
       <PageHeader
-        title={"공구 기준정보"}
-        isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          setKeyword(keyword);
-
-          // hs0316
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
-
-          //   setPageInfo({ page: 1, total: 1 });
-          setSelectList(new Set());
-        }}
-        searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
-        onChangeSearchOption={(option) => {
-          setOptionIndex(option);
-        }}
-        optionIndex={optionIndex}
-        buttons={["항목관리", "행 추가", "저장하기", "삭제"]}
-        buttonsOnclick={buttonsEvent}
+          title={"공구 기준정보"}
+          isSearch
+          searchKeyword={keyword}
+          onChangeSearchKeyword={(keyword) => {
+            setKeyword(keyword)
+            setPageInfo({...pageInfo,page:1})
+            setSelectList(new Set)
+          }}
+          searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
+          onChangeSearchOption={(option) => {
+            setOptionIndex(option);
+          }}
+          optionIndex={optionIndex}
+          buttons={["항목관리","행 추가","저장하기","삭제"]}
+          buttonsOnclick={buttonsEvent}
       />
       <ExcelTable
-        resizable
-        headerList={[SelectColumn, ...column]}
-        row={basicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList;
-          e.map((v) => {
-            if (v.isChange) tmp.add(v.id);
-          });
-          setSelectList(tmp);
-          competeTool(e);
-          // setBasicRow(e)
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        setSelectRow={setSelectRow}
-        height={700}
+          resizable
+          headerList={[SelectColumn, ...column]}
+          row={basicRow}
+          setRow={(e) => {
+            let tmp: Set<any> = selectList
+            e.map(v => {
+              if(v.isChange) {
+                tmp.add(v.id)
+                v.isChange = false
+              }
+            })
+            setSelectList(tmp)
+            competeTool(e)
+            // setBasicRow(e)
+          }}
+          selectList={selectList}
+          //@ts-ignore
+          setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
+          width={1576}
+          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+
       />
-      <PaginationComponent
-        totalPage={pageInfo.total}
-        currentPage={pageInfo.page}
-        setPage={(page) => {
-          setSelectList(new Set());
-          setPageInfo({ ...pageInfo, page: page });
-        }}
-      />
+      <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => {
+        setSelectList(new Set)
+        setPageInfo({...pageInfo, page: page})
+      }} />
     </div>
-  );
+)
 };
 
 export { BasicTool };

@@ -608,14 +608,11 @@ const BasicFactory = ({}: IProps) => {
           competefactory(e);
         }}
         selectList={selectList}
-        //@ts-ignore
+        width={1576}
+        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+          //@ts-ignore
         setSelectList={setSelectList}
         setSelectRow={setSelectRow}
-        height={
-          basicRow.length * 40 >= 40 * 18 + 56
-            ? 40 * 19
-            : basicRow.length * 40 + 56
-        }
       />
       <PaginationComponent
         currentPage={pageInfo.page}
