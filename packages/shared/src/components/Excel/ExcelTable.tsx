@@ -82,7 +82,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
 
   function EmptyRowsRenderer() {
     return (
-        <div style={{ display:"flex", justifyContent:"center", alignItems:"center",background: type ? "white" : "#353B48", height:40, gridColumn: '1/-1' ,color: type ? "black" : "none"}}>
+        <div style={{ display:"flex", justifyContent:"center", alignItems:"center",background: type ? "white" : "#353B48", height:40, width: headerList.map(header => header.width).reduce(((prev, curr) => prev + curr)), gridColumn: '1/-1' ,color: type ? "black" : "none"}}>
           데이터가 없습니다.
         </div>
     );

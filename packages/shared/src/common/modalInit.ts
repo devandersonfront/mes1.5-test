@@ -156,8 +156,8 @@ export const searchModalList: any  = {
   ],
   toolProductSearch: [
     {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '공구 품명', formatter: LineBorderContainer, type: 'mold', modalType: true },
-    {key: 'customer', name: '거래처', formatter: LineBorderContainer, },
+    {key: 'name', name: '공구 품명', formatter: LineBorderContainer, type: 'mold', modalType: true, placeholder: "-"  },
+    {key: 'customer', name: '거래처', formatter: LineBorderContainer, placeholder: '-' },
     {key: 'stock', name: '재고량', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
   ],
   toolSearch: [
@@ -317,6 +317,7 @@ export const searchModalList: any  = {
     {key: 'mold_name', name: '금형명'},
     {key: 'wip_name', name: '반제품명'},
   ],
+  //작업지시서 등록 > 자재 선택
   bomRegister: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'code', name: 'CODE', formatter: LineBorderContainer, textAlign: 'center'},
@@ -558,6 +559,8 @@ export const searchModalList: any  = {
     {key: 'product_type', name: '품목 종류', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'product_unit', name: '단위', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'amount', name: '수주량', formatter: LineBorderContainer ,placeholder:"-",},
+    {key: 'stock', name: '재고량', formatter: LineBorderContainer ,placeholder:"-",},
+
   ],
   lotStock: [
     {key: 'seq', name: '번호', width: 32, textAlign: 'center'},

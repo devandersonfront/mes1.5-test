@@ -784,7 +784,7 @@ export const columnlist: any = {
       ]},
     {key: 'unit', name: '단위', width: 120},
     {key: 'process_id', name: '생산 공정', width: 120},
-    {key: 'ln_id', name: 'LOT 번호', },
+    {key: 'ln_id', name: 'LOT 번호', width:120},
     {key: 'worker', name: '작업자', width: 120 },
     {key: 'start', name: '작업 시작 일시', width: 164},
     {key: 'end', name: '작업 종료 일시', width: 164},
@@ -956,6 +956,7 @@ export const columnlist: any = {
     {key: 'total_poor_quantity', name: '총 불량 수량', width: 118, formatter: DefectInfoModal, type: 'readonly' ,load: 'sheet'},
     {key:"avg_uph", name:"총 UPH", width: 118},
   ],
+  //재고 관리 > 재고 현황
   stockV2: [
     {key:"customer_name", name:"거래처", width: 118},
     {key:"customer_model", name:"모델", width: 118},
@@ -1223,7 +1224,7 @@ export const columnlist: any = {
     {key: "cm_id", name: '모델', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "code", name: 'CODE', width: 320, formatter: SearchModalTest,  type: 'product',noSelect:true},
     {key: "name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "standardUph", name: '기준 생산량', width: 208, formatter: PlaceholderBox ,placeholder: '숫자 입력'},
+    {key: "standard_production", name: '기준 생산량', width: 208, editor: TextEditor, formatter: UnitContainer, type:"number", unitData: 'EA' ,placeholder: '0'},
     {key: "manDays_average", name: '평균 작업공수 (일)', width: 150, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiManHourContent: [

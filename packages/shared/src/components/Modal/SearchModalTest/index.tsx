@@ -55,14 +55,14 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
             setSearchModalColumn(
                 [...searchModalList[`${SearchInit.rawmaterial.excelColumnType}Search`].map((column, index) => {
-                  if(index === 0) return ({...column, doubleClick: confirmFunction, colSpan(args) {
+                  if(index === 0) return ({...column, colSpan(args) {
                       if(args.row?.first){
                         return searchModalList[`${SearchInit.rawmaterial.excelColumnType}Search`].length
                       }else{
                         return undefined
                       }
                     }})
-                  else return ({...column, doubleClick: confirmFunction})
+                  else return ({...column})
                 })])
             break;
           }
@@ -71,14 +71,14 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
             setSearchModalColumn(
                 [...searchModalList[`${SearchInit.submaterial.excelColumnType}Search`].map((column, index) => {
-                  if(index === 0) return ({...column, doubleClick: confirmFunction, colSpan(args) {
+                  if(index === 0) return ({...column, colSpan(args) {
                       if(args.row?.first){
                         return searchModalList[`${SearchInit.submaterial.excelColumnType}Search`].length
                       }else{
                         return undefined
                       }
                     }})
-                  else return ({...column, doubleClick: confirmFunction})
+                  else return ({...column})
                 })])
             break;
           }
@@ -86,14 +86,14 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             setSearchModalInit(SearchInit.product)
             setSearchModalColumn(
                 [...searchModalList[`${SearchInit.product.excelColumnType}Search`].map((column, index) => {
-                  if(index === 0) return ({...column, doubleClick: confirmFunction, colSpan(args) {
+                  if(index === 0) return ({...column, colSpan(args) {
                       if(args.row?.first){
                         return searchModalList[`${SearchInit.product.excelColumnType}Search`].length
                       }else{
                         return undefined
                       }
                     }})
-                  else return ({...column, doubleClick: confirmFunction})
+                  else return ({...column})
             })])
             break;
           }
@@ -103,57 +103,42 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           // console.log("searchModalInit : ", searchModalInit)
             setSearchModalColumn(
                 [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column, index) => {
-                    if(index === 0) return ({...column, doubleClick: confirmFunction, colSpan(args) {
+                    if(index === 0) return ({...column, colSpan(args) {
                             if(args.row?.first){
                                 return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
                             }else{
                                 return undefined
                             }
                         }})
-                    else return ({...column, doubleClick: confirmFunction})
+                    else return ({...column})
                 })])
         }
       }else{
         setSearchModalInit(SearchInit[column.type])
           setSearchModalColumn(
               [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((col, index) => {
-                  if(index === 0) return ({...col, doubleClick: confirmFunction, colSpan(args) {
+                  if(index === 0) return ({...col, colSpan(args) {
                           if(args.row?.first){
                               return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
                           }else{
                               return undefined
                           }
-                      }, formatter:NoSelectContainer})
-                  else return ({...col, doubleClick: confirmFunction})
+                      }})
+                  else return ({...col})
               })])
       }
 
   }, [column.type, tab])
 
-
-  const switchOption = (option : number) => {
-
-    if(column.key === 'customer_id'){
-      switch(option){
-        case 3:
-        return 7
-        default :
-        return option
-      }
-    }
-    return option
-  }
-
   useEffect(() => {
     if(isOpen){
+      if(searchModalInit.excelColumnType === "product") setOptionIndex(2)
       LoadBasic(pageInfo.page);
     }else{
       setPageInfo({page:1, total:1})
       setSearchList([{}])
     }
   }, [isOpen, searchModalInit, pageInfo.page])
-
-
 
   const LoadBasic = async (page:number) => {
     Notiflix.Loading.circle();
@@ -207,12 +192,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         Notiflix.Loading.remove()
       }else
         if(res.page !== 1){
-          setSearchList([ ...searchList,...SearchResultSort(!column.noSelect ? [null, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
+          setSearchList([ ...searchList,...SearchResultSort(!column.noSelect ? [ { noneSelected: true }, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
           Notiflix.Loading.remove()
         }else{
           // setSearchList([...SearchResultSort(!column.noSelect ? [null, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
-          setSearchList([...SearchResultSort(!column.noSelect ? [{id:null, }, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
+          setSearchList([...SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
           Notiflix.Loading.remove()
         }
@@ -288,6 +273,28 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   </div>
   }
 
+  const switchSearchOption = (option : number) => {
+    if(column.key === 'customer_id'){
+      switch(option){
+        case 3:
+          return 7
+        default :
+          return option
+      }
+    }
+    return option
+  }
+
+  const getDefaultSearchOptionIndex = (index:number) => {
+      if(column.type === 'product' && index === 0){
+          return 2
+      }else if(column.type === 'product' && index === 2){
+          return 0
+      }else{
+          return index
+      }
+  }
+
   const SearchBox = () => {
 
     return <div style={{
@@ -300,9 +307,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         borderRight: 'none',
       }}>
         <select key={searchModalInit?.searchFilter[0]}
-          defaultValue={searchModalInit?.searchFilter[0]}
+          defaultValue={searchModalInit?.searchFilter[getDefaultSearchOptionIndex(0)]}
           onChange={(e) => {
-            const option = switchOption(Number(e.target.value))
+            const option = switchSearchOption(Number(e.target.value))
             setOptionIndex(option)
             setPageInfo({total:1, page:1});
             // SearchBasic('', Number(e.target.value))
@@ -321,7 +328,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           {
             searchModalInit && searchModalInit.searchFilter.map((v, i) => {
               if(v !== ""){
-                return (<option key={i.toString()} value={i}>{v}</option>)
+                return (<option key={i.toString()} value={getDefaultSearchOptionIndex(i)}>{v}</option>)
               }
             })
           }
@@ -451,27 +458,26 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             }
         )
       }else if(column.type === "bom"){
-        const bomType = (tab:number) => {
-          switch (tab) {
-            case 0:
-              return "rawmaterial"
-            case 1:
-              return "submaterial"
-            case 2:
-              return "product"
-            default:
-              return "rawmaterial"
-          }
-        }
-
+        // const bomType = (tab:number) => {
+        //   switch (tab) {
+        //     case 0:
+        //       return "rawmaterial"
+        //     case 1:
+        //       return "submaterial"
+        //     case 2:
+        //       return "product"
+        //     default:
+        //       return "rawmaterial"
+        //   }
+        // }
+        const searchModalResult = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar)
+        delete searchModalResult.doubleClick
         onRowChange(
             {
               ...row,
-              ...SearchModalResult(searchList[selectRow], bomType(tab === null ? 0 : tab), column.staticCalendar),
-              manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
+              ...searchModalResult,
               name: selectNameFunction(column.type),
               tab: tab === null ? 0 : tab,
-              // type_name: undefined,
               version: row.version,
               isChange: true,
               //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
@@ -491,8 +497,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               isChange: true,
               //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
               returnType:column.key,
-                date : row.date,
-                deadline : row.deadline,
+              date:row?.date,
+              deadline:row?.deadline,
+              goal:row?.goal
             }
         )
       }

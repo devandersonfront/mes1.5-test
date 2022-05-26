@@ -18,7 +18,7 @@ interface IProps {
 const ModalButton = ({style, onClickCloseButton, onClickConfirmButton, imgStyle, buttonType, closeButtonTitle, confirmButtonTitle} : IProps) => {
 
   const readOnlyButton = () => {
-    return <div style={{height: 84, display: 'flex', alignItems: 'flex-end'}}>
+    return <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
       <div
         onClick={onClickCloseButton}
         style={{
@@ -36,7 +36,7 @@ const ModalButton = ({style, onClickCloseButton, onClickConfirmButton, imgStyle,
   }
 
   const confirmButtons = () => {
-    return <div style={{height: 84, display: 'flex', alignItems: 'flex-end'}}>
+    return <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
       <div
         onClick={onClickCloseButton}
         style={{

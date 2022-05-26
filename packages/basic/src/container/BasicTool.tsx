@@ -566,7 +566,9 @@ const BasicTool = ({page, search, option}: IProps) => {
                 //@ts-ignore
                 setSelectList={setSelectList}
                 setSelectRow={setSelectRow}
-                height={700}
+                width={1576}
+                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+
             />
             <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => {
                 setSelectList(new Set)

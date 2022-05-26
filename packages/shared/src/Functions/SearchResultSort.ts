@@ -1,20 +1,30 @@
 import {TransferCodeToValue} from '../common/TransferFunction'
 import {LineBorderContainer} from "../components/Formatter/LineBorderContainer";
+import { searchModalList } from '../common/modalInit'
 
 export const SearchResultSort = (infoList, type: string) => {
+  const noneSelected = '(선택 없음)'
   switch(type) {
     case 'user': {
+      const columnKeys = searchModalList.userSearch.map(columns => columns.key)
       return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
-          ca_name: v?.ca_id?.name,
+          ...obj,
+          ca_name: v?.ca_id?.name === undefined ? noneSelected : v?.ca_id?.name,
         }
       })
     }
     case 'customer': {
+      const columnKeys = searchModalList.customerSearch.map(columns => columns.key)
       return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
           customer_id: v?.name,
           customer: v?.customer_id,
           customerArray: v
@@ -22,21 +32,29 @@ export const SearchResultSort = (infoList, type: string) => {
       })
     }
     case 'model': {
+      const columnKeys = searchModalList.modelSearch.map(columns => columns.key)
       return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
           customer_id: v?.customer?.name,
-          customer: v?.customer?.name,
+          customer: v?.customer?.name === undefined ? noneSelected : v?.customer?.name,
           customerArray: v?.customer,
-          rep: v?.customer?.rep,
-          crn: v?.customer?.crn,
+          rep: v?.customer?.rep === undefined ? noneSelected : v?.customer?.rep,
+          crn: v?.customer?.crn === undefined ? noneSelected : v?.customer?.crn
         }
       })
     }
     case 'product': {
+      const columnKeys = searchModalList.productSearch.map(columns => columns.key)
       return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
           customer_name: v.customer ? v.customer.name : "",
           model_name: v.model ? v.model.model : "",
           type_name: TransferCodeToValue(v.type, 'productType'),
@@ -45,9 +63,13 @@ export const SearchResultSort = (infoList, type: string) => {
       })
     }
     case 'rawmaterial': {
+      const columnKeys = searchModalList.rawmaterialSearch.map(columns => columns.key)
       return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
           customerArray: v.customer,
           customer: v.customer?.name ?? "",
           rawName: v.name,
@@ -58,41 +80,72 @@ export const SearchResultSort = (infoList, type: string) => {
       })
     }
     case 'submaterial': {
+      const columnKeys = searchModalList.submaterialSearch.map(columns => columns.key)
       return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
           customerArray: v.customer,
           customer: v.customer ? v.customer.name : "",
           subName: v.name,
         }
       })
     }
-    case 'factory': {
-      return infoList ? infoList.map((v) => {
+    case 'subFactory': {
+      const columnKeys = searchModalList.subFactorySearch.map(columns => columns.key)
+      return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
+          manager_info : v.manager,
+          manager : v.manager?.name === undefined ? noneSelected : v.manager?.name,
+          telephone : v.manager?.telephone === undefined ? noneSelected : v.manager?.telephone
+        }
+      })
+    }
+    case 'factory': {
+      const columnKeys = searchModalList.factorySearch.map(columns => columns.key)
+      return infoList ? infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
+        return {
+          ...v,
+          ...obj,
           managerArray: v?.manager,
-          manager: v?.manager?.name,
+          manager: v?.manager?.name === undefined && !!!v.factory_id ? noneSelected : v?.manager?.name,
         }
       }) : []
     }
     case 'contract': {
+      const columnKeys = searchModalList.contractSearch.map(columns => columns.key)
       return infoList ? infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
           customer_name: v.product?.customer?.name,
           model_name: v.product?.model?.model,
           product_code: v.product?.code,
           product_name: v.product?.name,
           product_type: TransferCodeToValue(v.product?.type, 'product'),
           product_unit: v.product?.unit,
+          stock: v.product?.stock,
         }
       }) : []
     }
     case 'receiveContract': {
+      const columnKeys = searchModalList.contractSearch.map(columns => columns.key)
       return infoList ? infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
           customer_name: v.product.customer?.name,
           model_name: v.product.model?.model,
           product_code: v.product.code,
@@ -103,9 +156,13 @@ export const SearchResultSort = (infoList, type: string) => {
       }) : []
     }
     case 'machine': {
+      const columnKeys = searchModalList.machineSearch.map(columns => columns.key)
       return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
           factory_id: v.factory?.name,
           affiliated_id: v.subFactory?.name,
           type_id : v.type,
@@ -116,9 +173,13 @@ export const SearchResultSort = (infoList, type: string) => {
       })
     }
     case 'tool' : {
+      const columnKeys = searchModalList.toolSearch.map(columns => columns.key)
       return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
           customer: v.customer?.name,
           customerArray: v.customer,
         }
@@ -126,9 +187,13 @@ export const SearchResultSort = (infoList, type: string) => {
     }
 
     case 'toolProduct' : {
+      const columnKeys = searchModalList.toolSearch.map(columns => columns.key)
       return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
           customer: v.customer?.name,
           customerArray: v.customer,
           name: v?.name,
@@ -137,9 +202,13 @@ export const SearchResultSort = (infoList, type: string) => {
       })
     }
     case 'toolProductSearch' :{
+      const columnKeys = searchModalList.toolProductSearch.map(columns => columns.key)
       return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
         return {
           ...v,
+          ...obj,
           product_id:v.product_id
         }
       })
@@ -152,7 +221,6 @@ export const SearchResultSort = (infoList, type: string) => {
 }
 
 export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean) => {
-
   switch(type) {
     case 'user': {
       return {
@@ -284,7 +352,8 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         raw_material: {
           ...selectData,
           customer: selectData.customerArray
-        }
+        },
+        usage: selectData.usage,
       }
     }
     case 'submaterial': {
@@ -297,7 +366,8 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         sub_material: {
           ...selectData,
           customer: selectData.customerArray
-        }
+        },
+        usage: selectData.usage,
       }
     }
     case 'factory': {

@@ -64,15 +64,16 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
     if(isOpen) {
       if(!!row.machines && row.machines.length){
         setSearchList([...row.machines.map((v, index) => {
-
-          return {
-            seq: index+1,
-            ...v,
-            ...v.machine,
-            ...v.machine.machine,
-            type: TransferCodeToValue(v.machine.machine.type, 'machine'),
+          if(v.machine.setting === 1){
+            return {
+              seq: index+1,
+              ...v,
+              ...v.machine,
+              ...v.machine.machine,
+              type: TransferCodeToValue(v.machine.machine.type, 'machine'),
+            }
           }
-        })])
+        }).filter((v) => v)])
       }else{
         setSearchList([])
       }

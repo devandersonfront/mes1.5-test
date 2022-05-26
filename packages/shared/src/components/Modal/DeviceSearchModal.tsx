@@ -51,14 +51,8 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
   }, [pageInfo.page])
 
   const confirmFunction = () => {
-    console.log(searchList, selectRow)
     // if(selectRow !== undefined && selectRow !== null){
       onRowChange({
-        ...row,
-        ...searchList[selectRow],
-        isChange: true
-      })
-      console.log({
         ...row,
         ...searchList[selectRow],
         isChange: true
@@ -264,7 +258,6 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
                   searchList[e].border = true
                   setSearchList([...searchList])
                 }
-                console.log("e : ", e)
                 setSelectRow(e)
               }}
               type={'searchModal'}
