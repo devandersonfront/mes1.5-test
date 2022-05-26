@@ -75,20 +75,29 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   }
 
   const loadPage = (page:number) => {
-    if(keyword){
-      SearchBasic(keyword, optionIndex, page).then(() => {
-        Notiflix.Loading.remove()
-      })
-    }else{
-      LoadBasic(page).then(() => {
-        Notiflix.Loading.remove()
-      })
+    // if(keyword){
+    //   SearchBasic(keyword, optionIndex, page).then(() => {
+    //     Notiflix.Loading.remove()
+    //   })
+    // }else{
+    //   LoadBasic(page).then(() => {
+    //     Notiflix.Loading.remove()
+    //   })
+    // }
+    if (keyword) {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+        Notiflix.Loading.remove();
+      });
+    } else {
+      LoadBasic(pageInfo.page).then(() => {
+        Notiflix.Loading.remove();
+      });
     }
   }
 
   useEffect(() => {
     loadPage(pageInfo.page)
-  }, [pageInfo.page, keyword, nzState, selectDate, expState,order])
+  }, [pageInfo.page, ])
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"원자재 관리",sub:router.pathname}))
@@ -155,7 +164,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     const res = await RequestMethod('get', `rawInList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params:
           order == 0 ?
@@ -197,7 +206,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     const res = await RequestMethod('get', `rawInListSearch`,{
       path: {
         page: isPaging ?? 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params:
           order == 0 ?
@@ -466,10 +475,14 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          setSelectList(new Set)
-          setKeyword(keyword)
-          setPageInfo({page:1, total:1})
+          setKeyword(keyword);
+          // hs0316
+          SearchBasic(keyword, optionIndex, 1).then(() => {
+            Notiflix.Loading.remove();
+          });
+          // setPageInfo({ page: 1, total: 1 });
         }}
+
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)

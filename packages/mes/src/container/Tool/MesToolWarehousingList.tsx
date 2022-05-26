@@ -325,7 +325,10 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 onChangeSearchKeyword={(keyword) => {
                     setSelectList(new Set)
                     setKeyword(keyword)
-                    setPageInfo({page:1,total:1})
+                    SearchBasic().then(() => {
+                        Notiflix.Loading.remove();
+                      });
+                    // setPageInfo({page:1,total:1})
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(index) => {

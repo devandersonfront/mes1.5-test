@@ -17,6 +17,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
 
   return (
     <div style={{display: 'flex', }}>
+
       <MenuNavigation pageType={'MES'}/>
       <div style={{paddingBottom: 40}}>
         <ProfileHeader/>

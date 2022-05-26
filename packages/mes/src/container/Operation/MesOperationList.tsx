@@ -171,7 +171,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
     const res = await RequestMethod('get', `operationSearch`,{
       path: {
         page: pageInfo.page ?? 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params: order == 0 ?
           {
@@ -407,7 +407,10 @@ const MesOperationList = ({page, search, option}: IProps) => {
         onChangeSearchKeyword={(keyword) => {
           setSelectList(new Set)
           setKeyword(keyword);
-          setPageInfo({page:1, total:1})
+          SearchBasic(keyword, optionIndex, 1).then(() => {
+            Notiflix.Loading.remove();
+          });
+          // setPageInfo({page:1, total:1})
         }}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)

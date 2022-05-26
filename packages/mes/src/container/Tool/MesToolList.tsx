@@ -239,7 +239,7 @@ const MesToolList = ({page, search, option}: IProps) => {
         const res = await RequestMethod("get", "toolSearch", {
             path:{
                 page:pageInfo.page,
-                renderItem:18
+                renderItem:22
             },
             params:{
                 // from:selectDate.from,
@@ -294,7 +294,7 @@ const MesToolList = ({page, search, option}: IProps) => {
             LoadBasic()
         }
 
-    },[pageInfo.page, selectDate, keyword])
+    },[pageInfo.page, selectDate])
 
     useEffect(() => {
         dispatch(setSelectMenuStateChange({main:"공구 관리",sub:router.pathname}))
@@ -312,7 +312,10 @@ const MesToolList = ({page, search, option}: IProps) => {
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
                     setKeyword(keyword)
-                    setPageInfo({page:1, total:1})
+                    SearchBasic().then(() => {
+                        Notiflix.Loading.remove();
+                      });
+                    // setPageInfo({page:1, total:1})
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(option) => {

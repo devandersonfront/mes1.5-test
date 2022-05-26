@@ -46,7 +46,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 Notiflix.Loading.remove()
             })
         }
-    }, [pageInfo.page, searchKeyword, option, selectDate])
+    }, [pageInfo.page])
 
     useEffect(() => {
         dispatch(setSelectMenuStateChange({main:"품질 관리",sub:router.pathname}))
@@ -182,6 +182,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
 
     return (
         <div>
+            1234 1234
             <PageHeader
                 isSearch
                 isCalendar
@@ -190,7 +191,10 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 onChangeSearchKeyword={(keyword) =>{
                     setSelectList(new Set)
                     setSearchKeyword(keyword)
-                    setPageInfo({page:1,total:1})
+                    SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+                        Notiflix.Loading.remove()
+                    })
+                    // setPageInfo({page:1,total:1})
                 }}
                 onChangeSearchOption={(option) => {
                     setSelectList(new Set)
