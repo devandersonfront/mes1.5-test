@@ -490,7 +490,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               version: row.version,
               isChange: true,
               //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
-              returnType:column.key
+              returnType:column.key,
+                date : row.date,
+                deadline : row.deadline,
             }
         )
       }

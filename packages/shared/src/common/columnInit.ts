@@ -867,8 +867,8 @@ export const columnlist: any = {
   operationModifyV2: [
     {key:"contract_id", name:"수주 번호", width: 118},
     {key:"identification", name:"지시 고유 번호", width: 118   },
-    {key:"date", name:"지시 날짜", formatter: CalendarBox, },
-    {key:"deadline", name:"작업 기한", formatter: CalendarBox,},
+    {key:"date", name:"지시 날짜", formatter: CalendarBox, type : 'date'},
+    {key:"deadline", name:"작업 기한", formatter: CalendarBox, type : 'deadline'},
     {key:"customer_id", name:"거래처", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput'},
     {key:"cm_id", name:"모델", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput' },
     {key:"product_id", name:"CODE", formatter: SearchModalTest, type: 'product', placeholder: '검색', disableType:"true"},
