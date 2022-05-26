@@ -68,8 +68,8 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
           <BoxWrap style={{backgroundColor: 'white', flexDirection: 'row', display: 'flex'}}>
             <div  style={{display: 'inline-block', float: 'left', flex: 1, marginRight: 20}}>
               <Calendar
-                maxDate={column.type === "date" ? moment(row.deadline).subtract(1, 'days').toDate() : moment('2999-12-31').subtract(1, 'days').toDate() }
-                minDate={column.type === "deadline" ? moment(row.date).subtract(1, 'days').toDate() : moment('1900-01-01').subtract(1, 'days').toDate()}
+                  maxDate={column.type === "date" ? moment(row.deadline).toDate() : moment('2999-12-31').subtract(1, 'days').toDate() }
+                  minDate={column.type === "deadline" ? moment(row.date).toDate() : moment('1900-01-01').subtract(1, 'days').toDate()}
                 onChange={(date) => {
                   setSelect(date)
                 }}

@@ -406,8 +406,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 // }else{
                 const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
                 if(resultData === undefined) setBasicRow([{
-                  id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
-                  deadline: moment().format('YYYY-MM-DD'),first:true
+                  id: `operation_${Math.random()*1000}`, date: e[0].date ?? moment().format('YYYY-MM-DD'),
+                  deadline: e[0].deadline ?? moment().format('YYYY-MM-DD'),first:true
                 }])
                 else setBasicRow([...resultData])
                 // }
