@@ -172,6 +172,14 @@ const MesMidrangeList = ({ option }: IProps) => {
 
     }
 
+    const settingHeight = (length:number) => {
+        switch (length){
+            case 0:
+                return 80
+            default :
+                return basicRow.length * 40 + 56
+        }
+    }
 
     return (
         <div>
@@ -195,8 +203,8 @@ const MesMidrangeList = ({ option }: IProps) => {
                 selectDate={selectDate}
                 //@ts-ignore
                 setSelectDate={(date) => {
-                    setSelectDate(date as { from: string, to: string })
-                    setPageInfo({ page: 1, total: 1 })
+                    setSelectDate(date as {from:string, to:string})
+                    setPageInfo({page:1, total:pageInfo.total})
                 }}
                 title={"초ㆍ중ㆍ종 검사 리스트"}
             />
@@ -220,7 +228,7 @@ const MesMidrangeList = ({ option }: IProps) => {
                 //@ts-ignore
                 setSelectList={setSelectList}
                 width={1576}
-                height={basicRow.length * 40 >= 40 * 18 + 56 ? 40 * 19 : basicRow.length * 40 + 56}
+                height={settingHeight(basicRow.length)}
                 scrollEnd={(value) => {
                     if (value) {
                         if (pageInfo.total > pageInfo.page) {

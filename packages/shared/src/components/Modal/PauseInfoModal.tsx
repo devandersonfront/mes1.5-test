@@ -289,7 +289,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     const numMinute = v.minute === undefined ? 0 : Number(v.minute)
                     const numSecond = v.second === undefined ? 0 : Number(v.second)
 
-                    time_sec = (numHour*3600)+(numMinute*60)+(numSecond)
+                    time_sec = (numHour*3600)+(numMinute*60)+(Math.floor(numSecond))
 
                     total = total+time_sec
                   }

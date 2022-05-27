@@ -30,30 +30,34 @@ export interface IProps {
 }
 
 const BasicFactory = ({}: IProps) => {
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const [excelOpen, setExcelOpen] = useState<boolean>(false);
+    const router = useRouter()
+    const dispatch = useDispatch()
+    const [excelOpen, setExcelOpen] = useState<boolean>(false)
+    const [basicRow, setBasicRow] = useState<Array<any>>([])
+    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["factory"])
+    const [selectList, setSelectList] = useState<Set<number>>(new Set())
+    const [optionList, setOptionList] = useState<string[]>(['공장명','주소', '담당자명', '담당자 직책', '담당자 휴대폰 번호'])
+    const [optionIndex, setOptionIndex] = useState<number>(0)
+    const [selectRow , setSelectRow] = useState<number>(0);
+    const [keyword, setKeyword] = useState<string>();
+    const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
+        page: 1,
+        total: 1
+    })
+    const [weatherToRun, setWeatherToRun] = useState(false);
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([]);
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(
-    columnlist["factory"]
-  );
-  const [selectList, setSelectList] = useState<Set<number>>(new Set());
-  const [optionList, setOptionList] = useState<string[]>([
-    "공장명",
-    "주소",
-    "담당자명",
-    "담당자 직책",
-    "담당자 휴대폰 번호",
-  ]);
-  const [optionIndex, setOptionIndex] = useState<number>(0);
-  const [selectRow, setSelectRow] = useState<number>(0);
-  const [keyword, setKeyword] = useState<string>();
-  const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
-    page: 1,
-    total: 1,
-  });
-  const [weatherToRun, setWeatherToRun] = useState(false);
+    useEffect(() => {
+        // setOptionIndex(option)
+        if(keyword){
+            SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
+        }else{
+            LoadBasic(pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
+        }
+    }, [pageInfo.page, keyword])
 
   useEffect(() => {
     if (keyword && !weatherToRun) {
@@ -555,6 +559,8 @@ const BasicFactory = ({}: IProps) => {
         row.name === tempRow[selectRow].name &&
         row.name !== undefined &&
         row.name !== ""
+
+
     );
 
     if (spliceRow) {
@@ -569,6 +575,15 @@ const BasicFactory = ({}: IProps) => {
 
     setBasicRow(rows);
   };
+
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 80
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
 
   return (
     <div>
@@ -609,7 +624,7 @@ const BasicFactory = ({}: IProps) => {
         }}
         selectList={selectList}
         width={1576}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        height={settingHeight(basicRow.length)}
           //@ts-ignore
         setSelectList={setSelectList}
         setSelectRow={setSelectRow}

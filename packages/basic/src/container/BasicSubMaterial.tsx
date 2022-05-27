@@ -586,8 +586,18 @@ const BasicSubMaterial = ({ }: IProps) => {
       }
     }
 
-    setBasicRow(rows);
-  };
+    setBasicRow(rows)
+  }
+
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 80
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
+
   return (
     <div>
       <PageHeader
@@ -640,23 +650,23 @@ const BasicSubMaterial = ({ }: IProps) => {
             }
           })
 
-          // setBasicRow([...basicRow])
-          competeSubMaterial(e)
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        setSelectRow={setSelectRow}
-        width={1576}
-        height={basicRow.length * 40 >= 40 * 18 + 56 ? 40 * 19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          setPageInfo({ ...pageInfo, page: page })
-        }}
-      />
+            // setBasicRow([...basicRow])
+            competeSubMaterial(e)
+          }}
+          selectList={selectList}
+          //@ts-ignore
+          setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
+          width={1576}
+          height={settingHeight(basicRow.length)}
+        />
+        <PaginationComponent
+          currentPage={pageInfo.page}
+          totalPage={pageInfo.total}
+          setPage={(page) => {
+            setPageInfo({...pageInfo, page:page})
+          }}
+        />
       {/*<ExcelDownloadModal*/}
       {/*  isOpen={excelOpen}*/}
       {/*  column={column}*/}

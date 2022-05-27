@@ -594,6 +594,15 @@ setKeyword('')
     setBasicRow(rows)
   }
 
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 80
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
+
   return (
     <div>
       <PageHeader
@@ -648,7 +657,7 @@ setKeyword('')
         setSelectRow={setSelectRow}
         loadEvent={LoadBasic}
         width={1576}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        height={settingHeight(basicRow.length)}
       />
       <PaginationComponent
         currentPage={pageInfo.page}

@@ -485,20 +485,28 @@ const BasicTool = ({ page, search, option }: IProps) => {
         }
 
         Notiflix.Confirm.show(
-          "경고",
-          "삭제하시겠습니까?(기존 데이터를 삭제할 경우 저장하지 않은 데이터는 모두 사라집니다.)",
-          "확인",
-          "취소",
-          () => {
-            DeleteBasic();
-          },
-          () => {}
+            "경고",
+            "삭제하시겠습니까?(기존 데이터를 삭제할 경우 저장하지 않은 데이터는 모두 사라집니다.)",
+            "확인",
+            "취소",
+            () => {
+              DeleteBasic();
+            },
+            () => {}
         );
         break;
       default:
         break;
     }
   };
+    const settingHeight = (length:number) => {
+        switch (length){
+            case 0:
+                return 80
+            default :
+                return basicRow.length * 40 + 56
+        }
+    }
 
   const valueExistence = () => {
     const selectedRows = filterSelectedRows();
@@ -570,55 +578,54 @@ const BasicTool = ({ page, search, option }: IProps) => {
     };
   }, []);
 
-return (
-    <div>
-      <PageHeader
-          title={"공구 기준정보"}
-          isSearch
-          searchKeyword={keyword}
-          onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword)
-            setPageInfo({...pageInfo,page:1})
-            setSelectList(new Set)
-          }}
-          searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
-          onChangeSearchOption={(option) => {
-            setOptionIndex(option);
-          }}
-          optionIndex={optionIndex}
-          buttons={["항목관리","행 추가","저장하기","삭제"]}
-          buttonsOnclick={buttonsEvent}
-      />
-      <ExcelTable
-          resizable
-          headerList={[SelectColumn, ...column]}
-          row={basicRow}
-          setRow={(e) => {
-            let tmp: Set<any> = selectList
-            e.map(v => {
-              if(v.isChange) {
-                tmp.add(v.id)
-                v.isChange = false
-              }
-            })
-            setSelectList(tmp)
-            competeTool(e)
-            // setBasicRow(e)
-          }}
-          selectList={selectList}
-          //@ts-ignore
-          setSelectList={setSelectList}
-          setSelectRow={setSelectRow}
-          width={1576}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-
-      />
-      <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => {
-        setSelectList(new Set)
-        setPageInfo({...pageInfo, page: page})
-      }} />
-    </div>
-)
+          return (
+              <div>
+                <PageHeader
+                    title={"공구 기준정보"}
+                    isSearch
+                    searchKeyword={keyword}
+                    onChangeSearchKeyword={(keyword) => {
+                      setKeyword(keyword)
+                      setPageInfo({...pageInfo,page:1})
+                      setSelectList(new Set)
+                    }}
+                    searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
+                    onChangeSearchOption={(option) => {
+                      setOptionIndex(option);
+                    }}
+                    optionIndex={optionIndex}
+                    buttons={["항목관리","행 추가","저장하기","삭제"]}
+                    buttonsOnclick={buttonsEvent}
+                />
+                <ExcelTable
+                    resizable
+                    headerList={[SelectColumn, ...column]}
+                    row={basicRow}
+                    setRow={(e) => {
+                      let tmp: Set<any> = selectList
+                      e.map(v => {
+                        if(v.isChange) {
+                          tmp.add(v.id)
+                          v.isChange = false
+                        }
+                      })
+                      setSelectList(tmp)
+                      competeTool(e)
+                      // setBasicRow(e)
+                    }}
+                    selectList={selectList}
+                    //@ts-ignore
+                    setSelectList={setSelectList}
+                    setSelectRow={setSelectRow}
+                    width={1576}
+                    height={settingHeight(basicRow.length)}
+                />
+                <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => {
+                  setSelectList(new Set)
+                  setPageInfo({...pageInfo, page: page})
+                }} />
+              </div>
+          )
 };
 
 export { BasicTool };
