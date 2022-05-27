@@ -231,8 +231,9 @@ const BasicDevice = ({}: IProps) => {
                 ...row,
                 ...selectData,
                 type:row.type_id,
-                manager: row.user,
-                subFactory: row?.subFactory ? {...row?.subFactory, manager:row?.subFactory?.manager_info} : undefined,
+                manager: row.user?.user_id ? row.user : null,
+                factory: row.factory?.factory_id ? row.factory : null,
+                subFactory: row?.subFactory?.sf_id ? {...row?.subFactory, manager:row?.subFactory?.manager_info} : null,
                 photo: row?.photo?.uuid ?? row?.photo,
                 additional: [
                   ...additional.map((v, index)=>{
@@ -534,6 +535,7 @@ const BasicDevice = ({}: IProps) => {
           ]}
       )))
       LoadBasic(1)
+setKeyword('')
     }else{
 
       selectedRows.forEach((row)=>{map.delete(row.id)})
@@ -662,7 +664,10 @@ const BasicDevice = ({}: IProps) => {
           setRow={(e) => {
             let tmp: Set<any> = selectList
             e.map(v => {
-              if(v.isChange) tmp.add(v.id)
+              if(v.isChange) {
+                tmp.add(v.id)
+                v.isChange = false
+              }
             })
             setSelectList(tmp)
             competeDevice(e)
@@ -671,6 +676,7 @@ const BasicDevice = ({}: IProps) => {
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
+          width={1576}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent

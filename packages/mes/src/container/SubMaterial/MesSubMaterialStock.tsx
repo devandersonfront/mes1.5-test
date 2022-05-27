@@ -151,11 +151,15 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   };
 
   const LoadBasic = async (page?: number) => {
+
+    console.log("loadbaisc for 부자재 재고 현황");
+    
+
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", `subInList`, {
       path: {
         page: page || page !== 0 ? page : 1,
-        renderItem: 18,
+        renderItem: 22,
       },
       params:
         order == 0
@@ -171,6 +175,9 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
               to: selectDate.to,
             },
     });
+
+    console.log("res : ", res);
+    
 
     if (res) {
       setFirst(false);
@@ -188,6 +195,9 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     option: number,
     isPaging?: number
   ) => {
+
+    console.log("무조건 search basic 만 실행 !!");
+    
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", `lotSmSearch`, {
       path: {

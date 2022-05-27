@@ -13,7 +13,6 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
-import {MachineInfoModal} from './MachineInfoModal'
 import {TransferCodeToValue} from "../../common/TransferFunction";
 import {UploadButton} from "../../styles/styledComponents";
 
@@ -87,14 +86,26 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
     })
 
     if(res){
-      setSearchList([...res].map((v, index) => {
-        return {
-          ...v.machine,
-          machineType: TransferCodeToValue(v.machine.type, 'machine'),
-          sequence: index+1,
-          setting: v.setting,
-        }
-      }))
+      if(row.machines){
+        setSearchList(row.machines.map((v, index) => {
+          return {
+            ...v.machine.machine,
+            machineType: TransferCodeToValue(v.machine.machine.type, 'machine'),
+            sequence: index+1,
+            setting: v.machine.setting,
+          }
+        }))
+      }else{
+        setSearchList([...res].map((v, index) =>{
+          return {
+            ...v.machine,
+            machineType: TransferCodeToValue(v.machine.type, 'machine'),
+            sequence: index+1,
+            setting: row?.machines ? row?.machines[index]?.machine.setting : 0,
+
+          }
+        }))
+      }
     }
   }
 
@@ -242,7 +253,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                   }
                 })
                 if(settingUseArray > 1) {
-                  return Notiflix.Report.warning("경고", "금형을 하나만 선택해주시기 바랍니다.", "확인");
+                  return Notiflix.Report.warning("경고", "기계 하나만 선택해주시기 바랍니다.", "확인");
                 }
 
                 if(selectRow !== undefined && selectRow !== null){
@@ -255,7 +266,8 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                           machine: {
                             ...v
                           },
-                          setting: v.spare === '여' ? 0 : 1
+                          // setting: v.spare === '여' ? 0 : 1
+                          setting: v.setting
                         }
                       }
                     }),

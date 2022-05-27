@@ -24,62 +24,47 @@ import {
 } from "../../reducer/infoModal";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../reducer";
+import ModalButton from '../Buttons/ModalButton'
 
 interface IProps {
   column: IExcelHeaderType
   row: any
   onRowChange: (e: any) => void
-  modify?: boolean
-  update?: (e:boolean) => void
 }
 
-const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
+const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
   const tabStore = useSelector((rootState: RootState) => rootState.infoModal)
   const dispatch = useDispatch();
 
-
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [selectRow, setSelectRow] = useState<number>(null)
   const [searchList, setSearchList] = useState<any[]>([])
-
-
-  const [focusIndex, setFocusIndex] = useState<number>(0)
-
   const [headerData, setHeaderData] = useState<any>();
 
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
-      // if(row.bom_root_id){
-
-      if(column.type ==='bomRegister'){
-        if(row.product_id){
-          SearchBasic().then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
-      }else{
-        if(row.process_id || row.processId){
-          SearchBasic().then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+      if(row.bom_root_id) {
+        SearchBasic().then(() => {
+          Notiflix.Loading.remove()
+        })
       }
     }else{
       dispatch(reset_summary_info());
     }
   }, [isOpen])
 
-  useEffect(() => {
-    if(tabStore.datas.length <= 0){
-      setIsOpen(false);
-    }
-  },[tabStore])
+  // useEffect(() => {
+  //   if(tabStore.datas.length === 0){
+  //     setIsOpen(false);
+  //   }
+  // },[tabStore])
 
+
+  console.log('tabstore', tabStore)
   useEffect(() => {
     if(isOpen) {
-
       if(row.process_id || row.processId){
         getModalData()
       }
@@ -110,7 +95,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     let row = [];
     if(typeof tmpRow === 'string'){
       let tmpRowArray = tmpRow.split('\n')
-
       row = tmpRowArray.map(v => {
         if(v !== ""){
           let tmp = JSON.parse(v)
@@ -174,24 +158,13 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     return tmpData
   }
 
-  const SearchBasic = async (selectKey?:string) => {
+  const SearchBasic = async () => {
 
     Notiflix.Loading.circle()
-    let res;
-    if(selectKey){
-      res = await RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
-
-      let searchList = changeRow(res)
-      dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
-      setSearchList([...searchList])
-
-    }else{
-      res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
-      let searchList = changeRow(res)
-
-      dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
-      setSearchList(searchList.length > 0 ? searchList : [])
-    }
+    const res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
+    let searchList = changeRow(res)
+    dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
+    setSearchList(searchList.length > 0 ? searchList : [])
   }
 
 
@@ -362,7 +335,6 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
       if(body.length !== 0){
         const res = await RequestMethod('post', `bomSave`, body)
         if(res) {
-          modify && update(true)
           Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
         }
       }
@@ -370,72 +342,35 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
   }
 
   const ModalContents = () => {
-    if(modify){
-      return <>
-        <div style={{
-          padding: '3.5px 0px 0px 3.5px',
-          width: 112
-        }}>
-          <Button onClick={() => {
-            setIsOpen(true)
-          }}>
-            <p>BOM 수정</p>
-          </Button>
-        </div>
-      </>
-    }else{
-      if(column.type === 'readonly' || row.bom_root_id){
-        return(
-            <UploadButton  onClick={() => {
-              if (row.bom_root_id) {
-                setIsOpen(true)
-              } else {
-                Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
-                })
-              }
-            }}
-               hoverColor={'#19B9DF'} haveId status={column.modalType ? "modal" : "table"}
-            >
-              <p>BOM 보기</p>
-            </UploadButton>
-          )
-
-      }else{
-        return (
-            <UploadButton
-            onClick={() => {
-              if(row.code){
-                setIsOpen(true)
-              }else{
-                Notiflix.Report.warning("경고","BOM을 등록하시려면 CODE가 입력 되어야합니다.","확인",)
-              }
-            }}>
-                  <p>BOM 등록</p>
-            </UploadButton>
+    if(column.type === 'readonly' || row.bom_root_id){
+      return(
+          <UploadButton  onClick={() => {
+            if (row.bom_root_id) {
+              setIsOpen(true)
+            } else {
+              Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {
+              })
+            }
+          }}
+             hoverColor={'#19B9DF'} haveId status={column.modalType ? "modal" : "table"}
+          >
+            <p>BOM 보기</p>
+          </UploadButton>
         )
-
-      }
+    }else{
+      return (
+          <UploadButton
+          onClick={() => {
+            if(row.code){
+              setIsOpen(true)
+            }else{
+              Notiflix.Report.warning("경고","BOM을 등록하시려면 CODE가 입력 되어야합니다.","확인",)
+            }
+          }}>
+            <p>BOM 등록</p>
+          </UploadButton>
+      )
     }
-  }
-
-  const typeCheck = (data:any) => {
-
-    const result = data.map((row) => {
-      switch(row.tab){
-        case 0:
-          row.type_name = row.type;
-          return row;
-        case 1:
-          row.type_name = "-";
-          return row
-        case 2:
-          row.type_name = row.type;
-          return row
-        default:
-          return row
-      }
-    })
-    return result;
   }
 
   // 중복되는거 없는지 판단하자..
@@ -460,10 +395,16 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
     setSearchList(rows)
   }
 
+  const deleteTab = (index: number) => {
+    if(tabStore.datas.length === 1 || index === 0) {
+      return setIsOpen(false)
+    }
+    dispatch(delete_summary_info(index))
+  }
+
   const getBomTab = () => {
     return tabStore.datas.map((v, i) => {
       return <TabBox ref={i === 0 ? tabRef : null} style={
-        // focusIndex === i ? {
         tabStore.index === i ? {
           backgroundColor: '#19B9DF',
           opacity: 1
@@ -473,27 +414,25 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
         }
       }>
         {
+          //크롬처럼 탭 개수 많아졌을 경우 활성화된 탭은 x, 나머지는 타이틀 앞부분만
           tabRef.current && tabRef.current.clientWidth < 63 ?
-            // focusIndex !== i ?
             tabStore.index !== i ?
-              <p onClick={() => {setFocusIndex(i)}}>{v.title}</p>
-              // <p onClick={() => {setFocusIndex(i)}}>{tabStore.datas[i].title}</p>
+              <p onClick={() => dispatch(change_summary_info_index(i))}>{v.title}</p>
               :
               <div style={{cursor: 'pointer', marginLeft: 20, width: 20, height: 20}} onClick={() => {
-                dispatch(delete_summary_info(i));
+                deleteTab(i)
               }}>
                 <img style={{width: 20, height: 20}} src={IcX}/>
               </div>
             :
             <>
               <p onClick={() => {
-                setFocusIndex(i)
                 dispatch(change_summary_info_index(i));
               }}
                  style={{color: tabStore.index === i ? "white" : '#353B48'}}
-              >{tabStore.datas[i].title}</p>
+              >{v.title}</p>
               <div style={{cursor: 'pointer', width: 20, height: 20}} onClick={() => {
-                dispatch(delete_summary_info(i));
+                deleteTab(i)
               }}>
                 <img style={{width: 20, height: 20}} src={IcX}/>
               </div>
@@ -721,6 +660,7 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                       }
                     })
                     // typeCheck(tmp)
+                    console.log(e)
                     competeBom([...tmp])
                     // setSearchList([...tmp])
                   }}
@@ -744,52 +684,44 @@ const BomInfoModal = ({column, row, onRowChange, modify, update}: IProps) => {
                   headerAlign={'center'}
               />
             </div>
-            <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
-              {
-                column.type !== 'readonly' && <div
-                    onClick={() => {
-                      setIsOpen(false)
-                    }}
-                    style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                >
-                  <p style={{color: '#717C90'}}>취소</p>
-                </div>
-              }
-              <div
-                  onClick={() => {
-                    if(column.type !== 'readonly' && tabStore.index === 0){
-                      if(row.product_id){
-                        return SaveBasic()
-                      }else{
-                        const isValidation = executeValidation()
-                        if(!isValidation){
-                          onRowChange(
-                              column.type === "bomRegister" ?
-                                  {
-                                    ...row,
-                                    isChange: true,
-                                    bom : filterList()
-                                  }
-                                  :
-                                  {
-                                    ...row,
-                                    ...searchList[selectRow],
-                                    name: row.name,
-                                    isChange: true
-                                  }
-                          )
-                          Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
-                        }
-                      }
-                    }else {
-                      setIsOpen(false)
-                    }
-                  }}
-                  style={{width: column.type === 'readonly' ? '100%' : '50%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-              >
-                <p>{column.type !== 'readonly' && tabStore.index === 0 ? '등록하기' : '확인'}</p>
-              </div>
-            </div>
+            {
+              column.type === 'readonly' ?
+                <ModalButton buttonType={'readOnly'} closeButtonTitle={'확인'}
+                             onClickCloseButton={() => setIsOpen(false)}/>
+                :
+                <ModalButton buttonType={'confirm'} onClickCloseButton={() => setIsOpen(false)}
+                             closeButtonTitle={'취소'}
+                             confirmButtonTitle={column.type !== 'readonly' && tabStore.index === 0 ? '등록하기' : '확인'}
+                             onClickConfirmButton={() => {
+                               if (column.type !== 'readonly' && tabStore.index === 0) {
+                                 if (row.product_id) {
+                                   return SaveBasic()
+                                 } else {
+                                   const isValidation = executeValidation()
+                                   if (!isValidation) {
+                                     onRowChange(
+                                       column.type === "bomRegister" ?
+                                         {
+                                           ...row,
+                                           isChange: true,
+                                           bom: filterList()
+                                         }
+                                         :
+                                         {
+                                           ...row,
+                                           ...searchList[selectRow],
+                                           name: row.name,
+                                           isChange: true
+                                         }
+                                     )
+                                     Notiflix.Report.success("저장되었습니다.", "", "확인", () => setIsOpen(false))
+                                   }
+                                 }
+                               } else {
+                                 setIsOpen(false)
+                               }
+                             }}/>
+            }
           </div>
         </Modal>
       </SearchModalWrapper>

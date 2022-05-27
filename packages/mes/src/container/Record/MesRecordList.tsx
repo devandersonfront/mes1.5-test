@@ -171,6 +171,10 @@ const MesRecordList = ({ page, search, option }: IProps) => {
             },
     });
 
+
+    console.log("Res : at recordv2 list", res);
+    
+
     if (res) {
       setPageInfo({
         ...pageInfo,
@@ -450,7 +454,7 @@ const MesRecordList = ({ page, search, option }: IProps) => {
         setSelectDate={(date) => {
           setSelectList(new Set());
           setSelectDate(date as { from: string; to: string });
-          setPageInfo({ page: 1, total: 1 });
+          // setPageInfo({ page: 1, total: 1 });
         }}
         title={"작업 일보 리스트"}
         buttons={["", "수정하기", "삭제"]}

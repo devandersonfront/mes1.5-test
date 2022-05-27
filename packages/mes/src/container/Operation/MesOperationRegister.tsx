@@ -138,6 +138,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         return {
           ...row,
           ...selectData,
+          contract: selectedData[0].contract,
           os_id: undefined,
           version: undefined,
           input_bom: [ ...row?.input_bom?.map((bom) => {
@@ -274,8 +275,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             id: "operation_"+random_id,
             bom_root_id: v.child_product.bom_root_id,
             product: v.child_product,
-            date: moment().format('YYYY-MM-DD'),
-            deadline: moment().format('YYYY-MM-DD'),
+            date: object?.date ?? moment().format('YYYY-MM-DD'),
+            deadline: object?.deadline ?? moment().format('YYYY-MM-DD'),
             customer_id: v.child_product.customer?.name,
             cm_id: v.child_product.model?.model,
             name: v.child_product.name ?? v.product_name,
@@ -290,7 +291,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
       }).filter(v => v)
 
-    ]
+      ]
     }
   }
 
@@ -335,9 +336,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         }
       })
           .then(async(res) => {
-            await loadGraphSheet(res.info_list[0].productId,  SearchModalResult(SearchResultSort(res.info_list, "contract")[0], "receiveContract"))
+            const identification = res.info_list[0].identification
+            const goal = res.info_list[0].amount
+            await loadGraphSheet(res.info_list[0]?.productId,  SearchModalResult(SearchResultSort(res.info_list, "contract")[0], "receiveContract"))
                 .then((res) => {
-                  setBasicRow(res)
+                  setBasicRow(res.map((row, index) => {
+                      return {...row, contract_id:identification, goal}
+                  }))
                   setCodeCheck(false)
                   setFirstCheck(false)
                 })
@@ -364,8 +369,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             onChangeCode={(value)=> {
               setCodeCheck(value),
               setBasicRow([{
-                id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
-                deadline: moment().format('YYYY-MM-DD'), first:true
+                id: `operation_${Math.random()*1000}`, date: basicRow[0].date?? moment().format('YYYY-MM-DD'),
+                deadline: basicRow[0].deadline?? moment().format('YYYY-MM-DD'), first:true
               }])
             }}
             code={codeCheck}
@@ -382,7 +387,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             ]}
             row={basicRow}
             setRow={async(e) => {
-              const eData = e.filter((eValue) => {
+             const eData = e.filter((eValue) => {
                 let equal = false;
                 basicRow.map((bValue)=>{
                   if(eValue.product?.product_id === bValue.product?.product_id){
@@ -400,12 +405,19 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 //   setBasicRow([...resultData])
                 // }else{
                 const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
-                setBasicRow([...resultData])
+                if(resultData === undefined) setBasicRow([{
+                  id: `operation_${Math.random()*1000}`, date: e[0].date ?? moment().format('YYYY-MM-DD'),
+                  deadline: e[0].deadline ?? moment().format('YYYY-MM-DD'),first:true
+                }])
+                else setBasicRow([...resultData])
                 // }
               }
               let tmp: Set<any> = selectList;
               e.map(v => {
-                if(v.isChange) tmp.add(v.id)
+                if(v.isChange) {
+                  tmp.add(v.id)
+                  v.isChange = false
+                }
               })
               // setSelectList(tmp)
               setSelectList(tmp)

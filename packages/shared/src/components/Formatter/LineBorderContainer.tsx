@@ -10,7 +10,7 @@ interface IProps {
 
 const LineBorderContainer = ({row, column, setRow}: IProps) => {
   return(
-    <Background style={{background:row.border ? "#19B9DF80" :  row.color ? row.color :"white"}} onClick={()=>{
+    <Background style={{background: row.border ? "#19B9DF80" : row.noneSelected ? '#C3C4C6' : row.color ? row.color :"white"}} onClick={()=>{
     }} onDoubleClick={() => {
       if(row.doubleClick){
         row.doubleClick()

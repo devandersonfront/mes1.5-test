@@ -516,7 +516,10 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         setRow={(e) => {
           let tmp: Set<any> = selectList
           e.map(v => {
-            if(v.isChange) tmp.add(v.id)
+            if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
           })
           setSelectList(tmp)
           setBasicRow(e)
@@ -524,6 +527,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
+        width={1576}
         height={basicRow.length * 50 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         scrollEnd={(value) => {
           if(value){

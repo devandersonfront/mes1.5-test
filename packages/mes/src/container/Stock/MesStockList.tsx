@@ -311,7 +311,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
           });
-          // setPageInfo({ page: 1, total: 1 });
+          setPageInfo({ page: 1, total: 1 });
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
@@ -327,12 +327,15 @@ const MesStockList = ({ page, search, option }: IProps) => {
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {
-          let tmp: Set<any> = selectList;
-          e.map((v) => {
-            if (v.isChange) tmp.add(v.id);
-          });
-          setSelectList(tmp);
-          setBasicRow(e);
+          let tmp: Set<any> = selectList
+          e.map(v => {
+            if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
+          })
+          setSelectList(tmp)
+          setBasicRow(e)
         }}
         selectList={selectList}
         //@ts-ignore

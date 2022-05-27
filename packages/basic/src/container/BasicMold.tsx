@@ -298,6 +298,7 @@ const BasicMold = ({}: IProps) => {
       )))
 
       LoadBasic(1)
+setKeyword('')
 
     }else{
       selectedRows.forEach((row)=>{map.delete(row.id)})
@@ -541,7 +542,7 @@ const BasicMold = ({}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             setKeyword(keyword)
-            setPageInfo({page:1,total:1})
+            setPageInfo({...pageInfo,page:1})
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -566,7 +567,10 @@ const BasicMold = ({}: IProps) => {
           setRow={(e) => {
             let tmp: Set<any> = selectList
             e.map(v => {
-              if(v.isChange) tmp.add(v.id)
+              if(v.isChange) {
+                tmp.add(v.id)
+                v.isChange = false
+              }
             })
             setSelectList(tmp)
             competeMoldV1u(e)

@@ -326,11 +326,11 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const LotListColumns = () => {
     const defaultColumns = isProduct ? searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
     return column.type === 'readonly' ? defaultColumns
-        : isModify? defaultColumns.map(column =>
+        : isModify? defaultColumns?.map(column =>
             column.key === 'amount'?
             {...column, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', type:'number', disabledCase: [{ key: 'current', value: 0}, {key:'is_complete', value: true}]}
-            : column).push({key: 'isComplete', name: '사용완료 상태', formatter: LineBorderContainer, textAlign: 'center'},)
-        : defaultColumns.map(column =>
+            : column).concat({key: 'isComplete', name: '사용완료 상태', formatter: LineBorderContainer, textAlign: 'center'},)
+        : defaultColumns?.map(column =>
             column.key === 'amount'?
           {...column, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', type:'number', disabledCase: { key: 'current', value: 0}}
           : column)
@@ -495,6 +495,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
                   headerList={LotListColumns()}
+                  // headerList={[]}
                   row={lotList ?? [{}]}
                   setRow={(e) => {
                     const allAmount = lodash.sum(e.map(v=>Number(v.amount)).filter(v=>v))

@@ -59,7 +59,7 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page, keyword, option]);
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(
@@ -133,60 +133,42 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
     setBasicRow([...tmpRow]);
   };
 
-  return (
-    <div>
-      <PageHeader
-        isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          setPageInfo({ page: 1, total: 1 });
-          setKeyword(keyword);
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          });
-          // if(keyword){
-          //     router.push(`/mes/quality/work/standardlist?page=1&keyword=${keyword}&opt=${optionIndex}`)
-          // }else{
-          //     router.push(`/mes/quality/work/standardlist?page=1&keyword=`)
-          // }
-        }}
-        searchOptionList={optionList}
-        onChangeSearchOption={(option) => {
-          setOptionIndex(option);
-        }}
-        title={"작업 표준서 리스트"}
-      />
-      <ExcelTable
-        headerList={column}
-        row={basicRow}
-        setRow={setBasicRow}
-        // setRow={(e) => {
-        //     let tmp: Set<any> = selectList
-        //     e.map(v => {
-        //         if(v.isChange) tmp.add(v.id)
-        //     })
-        //     setSelectList(tmp)
-        //     setBasicRow(e)
-        // }}
-        // selectList={selectList}
-        // //@ts-ignore
-        // setSelectList={setSelectList}
-        // height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          setPageInfo({ ...pageInfo, page: page });
-          // if(keyword){
-          //     router.push(`/mes/quality/work/standardlist?page=${page}&keyword=${keyword}&opt=${option}`)
-          // }else{
-          //     router.push(`/mes/quality/work/standardlist?page=${page}`)
-          // }
-        }}
-      />
-    </div>
-  );
+
+    return (
+        <div>
+            <PageHeader
+                isSearch
+                searchKeyword={keyword}
+                onChangeSearchKeyword={(keyword) => {
+                    setPageInfo({...pageInfo,page:1})
+
+                    setKeyword(keyword)
+                    SearchBasic(keyword, optionIndex, 1).then(() => {
+                        Notiflix.Loading.remove();
+                      });
+
+                }}
+                searchOptionList={optionList}
+                onChangeSearchOption={(option) => {
+                    setOptionIndex(option)
+                }}
+                title={"작업 표준서 리스트"}
+            />
+            <ExcelTable
+                headerList={column}
+                row={basicRow}
+                setRow={setBasicRow}
+            />
+            <PaginationComponent
+                currentPage={pageInfo.page}
+                totalPage={pageInfo.total}
+                setPage={(page) => {
+                    setPageInfo({...pageInfo,page:page})
+                }}
+            />
+        </div>
+    );
+
 };
 
 export { MesWorkStandardList };

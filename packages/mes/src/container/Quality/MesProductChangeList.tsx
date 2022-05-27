@@ -38,9 +38,9 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
     useEffect(() => {
         // setOptionIndex(option)
         if(searchKeyword){
-            SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
-                Notiflix.Loading.remove()
-            })
+            // SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+            //     Notiflix.Loading.remove()
+            // })
         }else{
             LoadBasic(pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
@@ -86,6 +86,11 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
 
 
     const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
+
+        // alert("keyword : "+ keyword)
+        console.log("keyword 22 : ", keyword);
+        
+
         Notiflix.Loading.circle()
         if(!isPaging){
             setOptionIndex(option)
@@ -102,6 +107,10 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 to: selectDate.to,
             }
         })
+
+
+        console.log("res : ", res);
+        
 
         if(res){
             setPageInfo({
@@ -182,16 +191,17 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
 
     return (
         <div>
-            1234 1234
             <PageHeader
                 isSearch
                 isCalendar
                 searchKeyword={keyword}
                 searchOptionList={optionList}
-                onChangeSearchKeyword={(keyword) =>{
+                onChangeSearchKeyword={async (keyword) =>{
                     setSelectList(new Set)
-                    setSearchKeyword(keyword)
-                    SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+                    console.log("keyworkd 11: ", keyword);
+                    
+                    await setSearchKeyword(keyword)
+                    await SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
                         Notiflix.Loading.remove()
                     })
                     // setPageInfo({page:1,total:1})

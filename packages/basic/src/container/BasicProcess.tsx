@@ -269,6 +269,7 @@ const BasicProcess = ({}: IProps) => {
             ]}
       )))
       LoadBasic(1)
+setKeyword('')
 
     }else{
 
@@ -586,7 +587,7 @@ const BasicProcess = ({}: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          setPageInfo({page:1,total:1})
+          setPageInfo({...pageInfo,page:1})
           setKeyword(keyword)
         }}
         searchOptionList={optionList}
@@ -612,7 +613,10 @@ const BasicProcess = ({}: IProps) => {
         setRow={(e) => {
           let tmp: Set<any> = selectList
           e.map(v => {
-            if(v.isChange) tmp.add(v.id)
+            if(v.isChange) {
+              tmp.add(v.id)
+              v.isChange = false
+            }
           })
           setSelectList(tmp)
           // setBasicRow(e)

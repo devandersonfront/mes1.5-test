@@ -332,6 +332,7 @@ const BasicUser = ({}: IProps) => {
       )))
 
       LoadBasic(1)
+      setKeyword('')
 
     }else{
       selectedRows.forEach((row)=>{map.delete(row.id)})
@@ -639,24 +640,30 @@ const BasicUser = ({}: IProps) => {
 
 
   const competeId = (rows) => {
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
+    const isCheck = spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId && row.tmpId !== undefined && row.tmpId !== '')
 
-      const tempRow = [...rows]
-      const spliceRow = [...rows]
-      spliceRow.splice(selectRow, 1)
-      const isCheck = spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId && row.tmpId !== undefined && row.tmpId !== '')
+    let telephone_num_for_update = tempRow[selectRow].telephone?.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
 
-      if(spliceRow){
-        if(isCheck){
-          return Notiflix.Report.warning(
+    if (spliceRow) {
+      if (isCheck) {
+        return Notiflix.Report.warning(
             '아이디 경고',
             `중복되는 아이디가 존재합니다.`,
             '확인'
-          );
-        }
+        );
       }
+    }
 
-      setBasicRow(rows)
+    setBasicRow(
+      rows.map((item, index) => {
+        return index === selectRow ? {...item, telephone: telephone_num_for_update } : item
+      })
+    )
   }
+
 
   return (
     <div>
@@ -691,7 +698,10 @@ const BasicUser = ({}: IProps) => {
           let tmp: Set<any> = selectList
 
           e.map((v, i) => {
-            if(v.isChange) tmp.add(v.id)
+            if(v.isChange) {
+              tmp.add(v.id)
+              v.isChange = false
+            }
           })
           setSelectList(tmp)
           competeId(e)
@@ -700,6 +710,7 @@ const BasicUser = ({}: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
+        width={1576}
         height={basicRow.length * 40 >= 40*18+40 ? 40*19+16 : basicRow.length * 40 + 56}
       />
       <PaginationComponent

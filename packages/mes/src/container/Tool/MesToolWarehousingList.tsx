@@ -224,6 +224,9 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
             }
         })
 
+        console.log("res : 공구 입구 리스트 ", res);
+        
+
         if(res){
             setPageInfo({...pageInfo, total: res.totalPages })
             cleanUpData(res);
@@ -243,6 +246,10 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 opt:optionIndex
             }
         })
+
+        console.log("res : ", res);
+        
+
         if(res){
             setPageInfo({...pageInfo, total: res.totalPages })
             cleanUpData(res);
@@ -305,6 +312,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
 
     return (
         <div>
+            
             <PageHeader
                 title={"공구 입고 리스트"}
                 buttons={
@@ -328,12 +336,12 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                     SearchBasic().then(() => {
                         Notiflix.Loading.remove();
                       });
-                    // setPageInfo({page:1,total:1})
+                    // setPageInfo({...pageInfo,page:1})
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(index) => {
                     setOptionIndex(index);
-                    setPageInfo({page:1,total:1})
+                    setPageInfo({...pageInfo,page:1})
                 }}
             />
             <ExcelTable
@@ -342,7 +350,10 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
                     e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
+                        if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
                     })
                     setSelectList(tmp)
                     setBasicRow(e);
@@ -357,6 +368,8 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                         setPageInfo({...pageInfo, page: pageInfo.page + 1})
                     }
                 }}
+                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+
             />
             {/*<PaginationComponent totalPage={} currentPage={} setPage={} />*/}
         </div>

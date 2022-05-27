@@ -206,12 +206,9 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   const deleteTab = (index: number) => {
     if(bomInfoList.datas.length - 1 === focusIndex){
       setFocusIndex(focusIndex-1)
-    }else if(bomInfoList.datas.length === 1) {
+    }else if(bomInfoList.datas.length === 1 || index === 0) {
       return setIsOpen(false)
     }
-
-    let tmp = bomInfoList
-    tmp.datas.splice(index, 1)
     dispatch(delete_summary_info(index))
   }
 

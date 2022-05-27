@@ -193,10 +193,10 @@ const BasicProduct = ({}: IProps) => {
         return {
           ...row,
           ...selectData,
-          customer: row.customerArray,
+          customer: row?.customerArray?.customer_id ? row.customerArray : null,
           // customer_id: row.customerArray.customer_id,
           customer_id: undefined,
-          model: row.modelArray,
+          model: row?.modelArray?.cm_id ? row.modelArray : null,
           // standard_uph: row.uph,
           molds:row?.molds?.map((mold)=>{
             return { setting:mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
@@ -343,6 +343,7 @@ const BasicProduct = ({}: IProps) => {
       )))
 
       LoadBasic(1)
+      setKeyword('')
 
     }else{
 
@@ -521,7 +522,7 @@ const BasicProduct = ({}: IProps) => {
         process_id: row.process?.name,
         processArray: row.process,
         type_id: row.type,
-        type: column[4].selectList[row.type].name,
+        type: columnlist["productV1u"][4].selectList[row.type].name,
         id: `mold_${random_id}`,
       }
     })
@@ -584,9 +585,9 @@ const BasicProduct = ({}: IProps) => {
         break;
 
       case '저장하기':
-        if(selectList.size > 1){
-          return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
-        }
+        // if(selectList.size > 1){
+        //   return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
+        // }
         SaveBasic()
 
         break;
@@ -599,9 +600,9 @@ const BasicProduct = ({}: IProps) => {
         );
         }
 
-        if(selectList.size > 1){
-          return Notiflix.Report.warning('경고','삭제는 한 개만 하실수 있습니다.','확인')
-        }
+        // if(selectList.size > 1){
+        //   return Notiflix.Report.warning('경고','삭제는 한 개만 하실수 있습니다.','확인')
+        // }
 
         Notiflix.Confirm.show("경고","삭제하시겠습니까?(기존 데이터를 삭제할 경우 저장하지 않은 데이터는 모두 사라집니다.)","확인","취소",
             ()=>{DeleteBasic()}
@@ -682,7 +683,7 @@ const BasicProduct = ({}: IProps) => {
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             setKeyword(keyword)
-            setPageInfo({page:1,total:1})
+            setPageInfo({...pageInfo,page:1})
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -723,6 +724,7 @@ const BasicProduct = ({}: IProps) => {
             setSelectList(p as any)
           }}
           setSelectRow={setSelectRow}
+          width={1576}
           height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent

@@ -79,9 +79,7 @@ const MesKpiManHour = () => {
                     good_quantity: v.good_quantity,
                     poor_quantity: v.poor_quantity,
                     manufacturing_leadtime: v.lead_time,
-
-
-                    manDays : `${((v.lead_time * processBasicRow.standardUph)/86400).toFixed(1)}`
+                    manDays : `${((v.lead_time * processBasicRow.standard_production)/86400).toFixed(1)}`
                 }
             })
             setPauseBasicRow(filterResponse)
@@ -118,20 +116,17 @@ const MesKpiManHour = () => {
 
     },[processBasicRow.id,selectDate])
 
+    React.useEffect(() => {
+        setPauseBasicRow(pauseBasicRow.map(row => ({...row, manDays: `${((row.lead_time * processBasicRow.standard_production)/86400).toFixed(1)}`})))
+    }, [processBasicRow.standard_production])
 
+    console.log(pauseBasicRow)
     React.useEffect(()=>{
 
         if(pauseBasicRow.length){
-
-            const rowLenth = pauseBasicRow.length;
-            let sum = 0;
-            if(rowLenth){
-                pauseBasicRow.map((row)=> {
-                    sum += Number(row.manDays)
-                })
-
-                setProcessBasicRow({...processBasicRow , manDays_average : `${Math.round(sum/rowLenth)}`})
-            }
+            const rowLength = pauseBasicRow.length;
+            const sum = pauseBasicRow.map(row => Number(row.manDays)).reduce((prev, curr) => prev + curr)
+            setProcessBasicRow({...processBasicRow , manDays_average : `${(sum/rowLength).toFixed(1)}`})
         }else{
 
             setProcessBasicRow({...processBasicRow , manDays_average : '-'})
@@ -158,12 +153,12 @@ const MesKpiManHour = () => {
                 row={[processBasicRow]}
                 setRow={(row) => {
                     setProcessBasicRow({...processBasicRow,
-                        id : row[0].product.product_id,
+                        id : row[0].product?.product_id?? row[0].id,
                         customer_id : row[0].customer_id,
                         cm_id : row[0].cm_id,
                         code : row[0].code,
-                        name: row[0].product_name,
-                        standardUph : String(row[0].standard_uph)
+                        name: row[0].product_name?? row[0].name,
+                        standard_production : row[0].standard_production?? 0
                     })
                 }}
                 selectList={selectList}

@@ -173,7 +173,7 @@ const BasicFactory = ({}: IProps) => {
                             ...row,
                             // id: row.tmpId,
                             authority: row.authorityPK,
-                            manager: row.user,
+                            manager: row.user?.user_id ? row.user : null,
                             version: row.version ?? null,
                             additional: [
                                 ...additional.map((v, index)=>{
@@ -277,6 +277,7 @@ const BasicFactory = ({}: IProps) => {
                     ]}
             )))
             LoadBasic(1)
+setKeyword('')
 
         }else{
 
@@ -535,7 +536,7 @@ const BasicFactory = ({}: IProps) => {
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
-                    setPageInfo({page:1,total:1})
+                    setPageInfo({...pageInfo,page:1})
                     setKeyword(keyword)
                 }}
                 searchOptionList={optionList}
@@ -561,15 +562,23 @@ const BasicFactory = ({}: IProps) => {
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
                     e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
+                        if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
                     })
                     setSelectList(tmp)
                     competefactory(e)
                 }}
                 selectList={selectList}
+                setSelectList={(e) => {
                 //@ts-ignore
-                setSelectList={setSelectList}
-                setSelectRow={setSelectRow}
+                    setSelectList(e)
+                }}
+                setSelectRow={(e)=> {
+                    setSelectRow(e)
+                }}
+                width={1576}
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
 
             />

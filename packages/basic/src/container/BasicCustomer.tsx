@@ -257,6 +257,7 @@ const BasicCustomer = ({}: IProps) => {
       )))
 
       LoadBasic(1)
+setKeyword('')
 
     }else{
 
@@ -582,7 +583,7 @@ const BasicCustomer = ({}: IProps) => {
             searchKeyword={keyword}
             onChangeSearchKeyword={(keyword) => {
               setKeyword(keyword)
-              setPageInfo({page:1,total:1})
+              setPageInfo({...pageInfo, page:1})
             }}
             searchOptionList={optionList}
             onChangeSearchOption={(option) => {
@@ -608,7 +609,10 @@ const BasicCustomer = ({}: IProps) => {
             setRow={(e) => {
               let tmp: Set<any> = selectList
               e.map(v => {
-                if(v.isChange) tmp.add(v.id)
+                if(v.isChange) {
+                  tmp.add(v.id)
+                  v.isChange = false
+                }
               })
               setSelectList(tmp)
               competeCustom(e)
@@ -617,6 +621,7 @@ const BasicCustomer = ({}: IProps) => {
             //@ts-ignore
             setSelectList={setSelectList}
             setSelectRow={setSelectRow}
+            width={1576}
             height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
         <PaginationComponent

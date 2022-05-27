@@ -100,6 +100,9 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         if (v.lot_number === undefined) {
           return 2
         }
+        if (v.amount <= 0 || v.amount === undefined) {
+          return 3
+        }
       }
     })
 
@@ -108,6 +111,9 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
     }
     if(error.includes(2)){
       return Notiflix.Report.warning("경고", "원자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
+    }
+    if(error.includes(3)){
+      return Notiflix.Report.warning("경고", "입고량을 입력해 주시기 바랍니다.", "확인",)
     }
 
     const arrLot = basicRow.map(v=> {return v.lot_number})
@@ -245,7 +251,10 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         setRow={(e) => {
           let tmp: Set<any> = selectList
           e.map(v => {
-            if(v.isChange) tmp.add(v.id)
+            if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
           })
           setSelectList(tmp)
           setBasicRow(e)

@@ -17,6 +17,7 @@ import Notiflix from 'notiflix'
 import {Select} from '@material-ui/core'
 import {SearchInit} from './SearchModalInit'
 import {SearchIcon} from "../../../styles/styledComponents";
+import { SearchResultSort } from '../../../Functions/SearchResultSort'
 
 
 interface IProps {
@@ -36,10 +37,26 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
     const [tab, setTab] = useState<number>(0)
 
     const [searchModalInit, setSearchModalInit] = useState<any>()
-
+    const [searchModalColumn, setSearchModalColumn] = useState<Array<IExcelHeaderType>>([])
     // useEffect(() => {
     // }, [column.type, tab])
 
+    const confirmFunction = () => {
+        if(selectRow !== undefined){
+            onRowChange({
+                ...row,
+                // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
+                // name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
+                // tab: column.type === 'bom' ? tab : undefined,
+                // type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
+                // version: row.version,
+                subFactory: searchList[selectRow],
+                affiliated_id: searchList[selectRow]?.name,
+                isChange:true
+            })
+        }
+        setIsOpen(false)
+    }
 
     useEffect(() => {
         setSearchModalInit(SearchInit[column.type])
@@ -50,6 +67,17 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
         if(isOpen ){
             if(row.factory?.factory_id){
                 LoadBasic();
+                setSearchModalColumn(
+                    [...searchModalList[`${SearchInit.subFactory.excelColumnType}Search`].map((column, index) => {
+                        if(index === 0) return ({...column, colSpan(args) {
+                                if(args.row?.first){
+                                    return searchModalList[`${SearchInit.subFactory.excelColumnType}Search`].length
+                                }else{
+                                    return undefined
+                                }
+                            }})
+                        else return ({...column,})
+                    })])
             }else{
                 Notiflix.Report.failure("경고","공장을 먼저 선택하시기 바랍니다.","확인", () => setIsOpen(false))
             }
@@ -92,7 +120,6 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 return undefined
         }
     }
-
     const LoadBasic = async (page?: number) => {
         Notiflix.Loading.circle()
 
@@ -107,24 +134,17 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 opt:optionFilter(optionIndex)
             }
         }).then((res) => {
-            // setSearchList([...SearchResultSort(res.info_list, "subFactory")])
-            const tempData = [];
-            res.info_list.map((value)=>{
-                const tmpValue = {...value};
-                tmpValue.manager_info = value.manager;
-                tmpValue.manager = value.manager?.name;
-                tmpValue.telephone = value.manager?.telephone;
-                tempData.push(tmpValue)
-            })
+            if(res.page > 1){
+                setSearchList([...searchList,...SearchResultSort([null, ...res.info_list], "subFactory")])
+            } else {
+                setSearchList([...SearchResultSort([ {id: null}, ...res.info_list], "subFactory")])
+            }
             Notiflix.Loading.remove()
-            return setSearchList(tempData);
         }).catch((err) => {
             if(err){
                 Notiflix.Report.failure("경고","공장을 선택해주시기 바랍니다.","확인",() => {setIsOpen(false)})
             }
         })
-
-
     }
 
     return (
@@ -269,7 +289,8 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                         </div>
                         <div style={{padding: '0 16px 0 16px',}}>
                             <ExcelTable
-                                headerList={searchModalList[`subFactorySearch`]}
+                                // headerList={searchModalList[`subFactorySearch`]}
+                                headerList={searchModalInit && searchModalColumn}
                                 row={searchList ?? []}
                                 width={1744}
                                 rowHeight={32}
@@ -283,6 +304,13 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                         searchList[e].border = true
                                         setSearchList([...searchList])
                                     }
+                                    setSearchList([...searchList.map((row, index) => {
+                                        if(index === e) {
+                                            row.doubleClick = confirmFunction
+                                            return row
+                                        }
+                                        else return row
+                                    })])
                                     setSelectRow(e)
                                 }}
                                 type={'searchModal'}
@@ -302,22 +330,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                             <p style={{color: '#717C90'}}>취소</p>
                         </FooterButton>
                         <FooterButton
-                            onClick={() => {
-                                if(selectRow !== undefined){
-                                    onRowChange({
-                                        ...row,
-                                        // ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType),
-                                        // name: row.name ?? SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name,
-                                        // tab: column.type === 'bom' ? tab : undefined,
-                                        // type_name: column.type === 'bom' ? TransferCodeToValue(tab, 'material') : undefined,
-                                        // version: row.version,
-                                        subFactory: searchList[selectRow],
-                                        affiliated_id: searchList[selectRow]?.name,
-                                        isChange:true
-                                    })
-                                }
-                                setIsOpen(false)
-                            }}
+                            onClick={() => confirmFunction}
                             style={{backgroundColor: POINT_COLOR}}
                         >
                             <p style={{color: '#0D0D0D'}}>등록하기</p>

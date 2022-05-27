@@ -316,7 +316,7 @@ const BasicTool = ({page, search, option}: IProps) => {
             tmpRow.code = rowData.code;
             tmpRow.name = rowData.name;
             tmpRow.stock = rowData?.stock;
-            tmpRow.customer = rowData.customer;
+            tmpRow.customer = rowData.customer?.customer_id ? rowData.customer : null;
             tmpRow.additional = [
                 ...additional.map((v, index)=>{
                     if(!rowData[v.colName]) return undefined;
@@ -535,7 +535,7 @@ const BasicTool = ({page, search, option}: IProps) => {
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
                     setKeyword(keyword)
-                    setPageInfo({page:1,total:1})
+                    setPageInfo({...pageInfo,page:1})
                     setSelectList(new Set)
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
@@ -553,7 +553,10 @@ const BasicTool = ({page, search, option}: IProps) => {
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
                     e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
+                        if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
                     })
                     setSelectList(tmp)
                     competeTool(e)
@@ -563,7 +566,9 @@ const BasicTool = ({page, search, option}: IProps) => {
                 //@ts-ignore
                 setSelectList={setSelectList}
                 setSelectRow={setSelectRow}
-                height={700}
+                width={1576}
+                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+
             />
             <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => {
                 setSelectList(new Set)

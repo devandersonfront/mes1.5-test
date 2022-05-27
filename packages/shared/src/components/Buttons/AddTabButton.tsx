@@ -124,7 +124,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           date,
           elapsed,
           warehousing,
-          current: v.amount,
+          current: v.current,
+          amount: v.amount,
           seq: i+1,
         }
       })]

@@ -50,13 +50,25 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
     }
   }, [pageInfo.page])
 
+  const confirmFunction = () => {
+    // if(selectRow !== undefined && selectRow !== null){
+      onRowChange({
+        ...row,
+        ...searchList[selectRow],
+        isChange: true
+      })
+    // }
+    setIsOpen(false)
+  }
+
   const changeRow = (row: any, key?: string) => {
     let tmpData = {
       ...row,
       machine_id: row.name,
       machine_idPK: row.machine_id,
       manager: row.manager ? row.manager.name : null,
-      manager_data: row.manager
+      manager_data: row.manager,
+      doubleClick:confirmFunction
     }
 
     return tmpData
@@ -250,16 +262,16 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
               }}
               type={'searchModal'}
             />
-            <PaginationComponent
-              currentPage={pageInfo.page}
-              totalPage={pageInfo.total}
-              themeType={'modal'}
-              setPage={(page) => {
-                SearchBasic(searchKeyword, optionIndex, page).then(() => {
-                  Notiflix.Loading.remove()
-                })
-              }}
-            />
+            {/*<PaginationComponent*/}
+            {/*  currentPage={pageInfo.page}*/}
+            {/*  totalPage={pageInfo.total}*/}
+            {/*  themeType={'modal'}*/}
+            {/*  setPage={(page) => {*/}
+            {/*    SearchBasic(searchKeyword, optionIndex, page).then(() => {*/}
+            {/*      Notiflix.Loading.remove()*/}
+            {/*    })*/}
+            {/*  }}*/}
+            {/*/>*/}
           </div>
           <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
             <div
@@ -271,16 +283,7 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
               <p>취소</p>
             </div>
             <div
-              onClick={() => {
-                if(selectRow !== undefined && selectRow !== null){
-                  onRowChange({
-                    ...row,
-                    ...searchList[selectRow],
-                    isChange: true
-                  })
-                }
-                setIsOpen(false)
-              }}
+              onClick={() => confirmFunction()}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>등록하기</p>
