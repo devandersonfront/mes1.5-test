@@ -212,6 +212,7 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList
               pageHelper && <span style={{fontSize: 12, color: 'white'}}>*{pageHelper}</span>
             }
             </div>
+
             <ButtonWrapper style={{  marginTop: 20}}>
                 {
                   isCode && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>

@@ -1,7 +1,7 @@
 //mes
 //작업지시서
-
 export {MesOperationRegister} from './container/Operation/MesOperationRegister'
+export {AIRecommandationWorkOrderRegister} from './container/Ai/AIRecommandationWorkOrderRegister'
 export {MesOperationList} from './container/Operation/MesOperationList'
 export {MesOperationModify} from './container/Operation/MesOperationModify'
 //작업 일보

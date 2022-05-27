@@ -45,17 +45,30 @@ const BasicProcess = ({}: IProps) => {
   })
   const [selectRow , setSelectRow] = useState<number>(0);
 
+  // useEffect(() => {
+  //   if(keyword){
+  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+  //       Notiflix.Loading.remove()
+  //     })
+  //   }else{
+  //     LoadBasic(pageInfo.page).then(() => {
+  //       Notiflix.Loading.remove()
+  //     })
+  //   }
+  // }, [pageInfo.page, keyword])
+
   useEffect(() => {
-    if(keyword){
+    if (keyword) {
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove()
-      })
-    }else{
+        Notiflix.Loading.remove();
+      });
+    } else {
       LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove()
-      })
+        Notiflix.Loading.remove();
+      });
     }
-  }, [pageInfo.page, keyword])
+  }, [pageInfo.page,]);
+
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"공정 관리",sub:router.pathname}))
@@ -587,7 +600,17 @@ setKeyword('')
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
+<<<<<<< HEAD
           setPageInfo({...pageInfo,page:1})
+=======
+          // setPageInfo({page:1,total:1})
+
+          // hs0316
+          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+            Notiflix.Loading.remove()
+          })          
+
+>>>>>>> origin/hyun_dev
           setKeyword(keyword)
         }}
         searchOptionList={optionList}
