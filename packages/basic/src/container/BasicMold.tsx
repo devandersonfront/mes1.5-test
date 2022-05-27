@@ -402,6 +402,15 @@ const BasicMold = ({}: IProps) => {
     }
   }
 
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 80
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
+
   const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["moldV2"];
     let tmpRow = [];

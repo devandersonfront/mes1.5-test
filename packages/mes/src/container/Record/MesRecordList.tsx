@@ -423,20 +423,12 @@ const MesRecordList = ({ page, search, option }: IProps) => {
         id: `sheet_${random_id}`,
         loadPage,
         // paused_time: row.pause_reasons && lodash.sum(row.pause_reasons?.map(reason => reason.amount))
-      };
-    });
-    setSelectList(new Set());
-    setBasicRow([...tmpBasicRow]);
-  };
-
-  const settingHeight = (length:number) => {
-    switch (length){
-      case 0:
-        return 90
-      default :
-        return basicRow.length * 40 + 56
-    }
+      }
+    })
+    setSelectList(new Set)
+    setBasicRow([...tmpBasicRow])
   }
+
 
   return (
     <div>
@@ -531,7 +523,7 @@ const MesRecordList = ({ page, search, option }: IProps) => {
             //@ts-ignore
             setSelectList={setSelectList}
             width={1576}
-            height={settingHeight(basicRow.length)}
+            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
             scrollEnd={(value) => {
               if(value){
                 if(pageInfo.total > pageInfo.page){

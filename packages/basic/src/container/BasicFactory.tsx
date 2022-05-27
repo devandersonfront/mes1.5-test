@@ -484,171 +484,167 @@ const BasicFactory = ({}: IProps) => {
       let random_id = Math.random() * 1000;
       return {
         ...row,
-        ...appendAdditional,
-        user: row.manager ?? undefined,
-        managerPk: row.manager ? row.manager.user_id : "",
-        manager: row.manager ? row.manager.name : "",
-        appointment: row.manager ? row.manager.appointment : "",
-        telephone: row.manager ? row.manager.telephone : "",
-        id: `factory_${random_id}`,
-      };
-    });
-    setBasicRow([...tmpBasicRow]);
-  };
-
-  const downloadExcel = () => {
-    let tmpSelectList: boolean[] = [];
-    basicRow.map((row) => {
-      tmpSelectList.push(selectList.has(row.id));
-    });
-    excelDownload(column, basicRow, `mold`, "mold", tmpSelectList);
-  };
-
-  const onClickHeaderButton = (index: number) => {
-    switch (index) {
-      case 0:
-        setExcelOpen(true);
-        break;
-      case 1:
-        router.push(`/mes/item/manage/factory`);
-
-        break;
-      case 2:
-        // SaveBasic()
-        router.push(`/mes/item/manage/factory`);
-        break;
-      case 3:
-        const random_id = Math.random() * 1000;
-
-        setBasicRow([
-          {
-            id: `factory_${random_id}`,
-            additional: [],
-          },
-          ...basicRow,
-        ]);
-        break;
-      case 4:
-        SaveBasic();
-        break;
-      case 5:
-        if (selectList.size === 0) {
-          return Notiflix.Report.warning(
-            "경고",
-            "선택된 정보가 없습니다.",
-            "확인"
-          );
-        }
-        Notiflix.Confirm.show(
-          "경고",
-          "삭제하시겠습니까?(기존 데이터를 삭제할 경우 저장하지 않은 데이터는 모두 사라집니다.)",
-          "확인",
-          "취소",
-          () => DeleteBasic()
-        );
-        break;
-    }
-  };
-
-  const competefactory = (rows) => {
-    const tempRow = [...rows];
-    const spliceRow = [...rows];
-    spliceRow.splice(selectRow, 1);
-    const isCheck = spliceRow.some(
-      (row) =>
-        row.name === tempRow[selectRow].name &&
-        row.name !== undefined &&
-        row.name !== ""
-
-
-    );
-
-    if (spliceRow) {
-      if (isCheck) {
-        return Notiflix.Report.warning(
-          "공장명 경고",
-          `중복된 공장명을 입력할 수 없습니다`,
-          "확인"
-        );
-      }
-    }
-
-    setBasicRow(rows);
-  };
-
-  const settingHeight = (length:number) => {
-    switch (length){
-      case 0:
-        return 80
-      default :
-        return basicRow.length * 40 + 56
-    }
+              ...appendAdditional,
+              user: row.manager ?? undefined,
+              managerPk: row.manager ? row.manager.user_id : '',
+              manager: row.manager ? row.manager.name : '',
+              appointment: row.manager ? row.manager.appointment : '',
+              telephone: row.manager ? row.manager.telephone : '',
+              id: `factory_${random_id}`,
+          }
+      })
+      setBasicRow([...tmpBasicRow])
   }
 
-  return (
-    <div>
-      <PageHeader
-        isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          setPageInfo({ page: 1, total: 1 });
-          setKeyword(keyword);
-          // hs0316
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
+    const downloadExcel = () => {
+        let tmpSelectList: boolean[] = []
+        basicRow.map(row => {
+            tmpSelectList.push(selectList.has(row.id))
+        })
+        excelDownload(column, basicRow, `mold`, "mold", tmpSelectList)
+    }
 
-        }}
-        searchOptionList={optionList}
-        onChangeSearchOption={(option) => {
-          setOptionIndex(option);
-        }}
-        optionIndex={optionIndex}
-        title={"공장 기준정보"}
-        buttons={["", "", "항목관리", "행추가", "저장하기", "삭제"]}
-        buttonsOnclick={onClickHeaderButton}
-      />
-      <ExcelTable
-        editable
-        resizable
-        headerList={[SelectColumn, ...column]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList;
-          e.map((v) => {
-            if (v.isChange) tmp.add(v.id);
-          });
-          setSelectList(tmp);
-          competefactory(e);
-        }}
-        selectList={selectList}
-        width={1576}
-        height={settingHeight(basicRow.length)}
-          //@ts-ignore
-        setSelectList={setSelectList}
-        setSelectRow={setSelectRow}
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          setPageInfo({ ...pageInfo, page: page });
-        }}
-      />
-      {/*<ExcelDownloadModal*/}
-      {/*    isOpen={excelOpen}*/}
-      {/*    column={column}*/}
-      {/*    basicRow={basicRow}*/}
-      {/*    filename={`금형기준정보`}*/}
-      {/*    sheetname={`금형기준정보`}*/}
-      {/*    selectList={selectList}*/}
-      {/*    tab={'ROLE_BASE_07'}*/}
-      {/*    setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
-    </div>
-  );
-};
+    const onClickHeaderButton = (index: number) => {
+        switch(index){
+            case 0:
+                setExcelOpen(true)
+                break;
+            case 1:
+
+                router.push(`/mes/item/manage/factory`)
+
+                break;
+            case 2:
+                // SaveBasic()
+                router.push(`/mes/item/manage/factory`)
+                break;
+            case 3:
+                const random_id = Math.random()*1000
+
+                setBasicRow([
+                    {
+                        id: `factory_${random_id}`,
+                        additional: [],
+                    },
+                    ...basicRow
+                ])
+                break;
+            case 4:
+                SaveBasic();
+                break;
+            case 5:
+
+                if(selectList.size === 0){
+                    return Notiflix.Report.warning(
+                        '경고',
+                        '선택된 정보가 없습니다.',
+                        '확인',
+                    );
+                }
+                Notiflix.Confirm.show("경고","삭제하시겠습니까?(기존 데이터를 삭제할 경우 저장하지 않은 데이터는 모두 사라집니다.)","확인","취소", ()=> DeleteBasic())
+                break;
+        }
+    }
+
+    const competefactory = (rows) => {
+
+        const tempRow = [...rows]
+        const spliceRow = [...rows]
+        spliceRow.splice(selectRow, 1)
+        const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined && row.name !== '')
+
+        if(spliceRow){
+            if(isCheck){
+                return Notiflix.Report.warning(
+                    '공장명 경고',
+                    `중복된 공장명을 입력할 수 없습니다`,
+                    '확인'
+                );
+            }
+        }
+
+        setBasicRow(rows)
+    }
+
+    const settingHeight = (length:number) => {
+        switch (length){
+            case 0:
+                return 80
+            default :
+                return basicRow.length * 40 + 56
+        }
+    }
+
+    return (
+        <div>
+            <PageHeader
+                isSearch
+                searchKeyword={keyword}
+                onChangeSearchKeyword={(keyword) => {
+                    setPageInfo({...pageInfo,page:1})
+                    setKeyword(keyword)
+                }}
+                searchOptionList={optionList}
+                onChangeSearchOption={(option) => {
+                    setOptionIndex(option)
+                }}
+                optionIndex={optionIndex}
+                title={"공장 기준정보"}
+                buttons={
+                    ['', '', '항목관리', '행추가', '저장하기', '삭제']
+                }
+                buttonsOnclick={onClickHeaderButton}
+            />
+            <ExcelTable
+                editable
+                resizable
+                headerList={[
+                    SelectColumn,
+                    ...column
+                ]}
+                row={basicRow}
+                // setRow={setBasicRow}
+                setRow={(e) => {
+                    let tmp: Set<any> = selectList
+                    e.map(v => {
+                        if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
+                    })
+                    setSelectList(tmp)
+                    competefactory(e)
+                }}
+                selectList={selectList}
+                setSelectList={(e) => {
+                //@ts-ignore
+                    setSelectList(e)
+                }}
+                setSelectRow={(e)=> {
+                    setSelectRow(e)
+                }}
+                width={1576}
+                height={settingHeight(basicRow.length)}
+            />
+            <PaginationComponent
+                currentPage={pageInfo.page}
+                totalPage={pageInfo.total}
+                setPage={(page) => {
+                    setPageInfo({...pageInfo,page:page})
+                }}
+            />
+            {/*<ExcelDownloadModal*/}
+            {/*    isOpen={excelOpen}*/}
+            {/*    column={column}*/}
+            {/*    basicRow={basicRow}*/}
+            {/*    filename={`금형기준정보`}*/}
+            {/*    sheetname={`금형기준정보`}*/}
+            {/*    selectList={selectList}*/}
+            {/*    tab={'ROLE_BASE_07'}*/}
+            {/*    setIsOpen={setExcelOpen}*/}
+            {/*/>*/}
+        </div>
+    );
 
 export const getServerSideProps = (ctx: NextPageContext) => {
   return {

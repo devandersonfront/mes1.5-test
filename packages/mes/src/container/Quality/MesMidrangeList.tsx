@@ -194,6 +194,8 @@ const MesMidrangeList = ({ option }: IProps) => {
                         Notiflix.Loading.remove()
                     })
                     // setPageInfo({page:1, total:1})
+                    setKeyword(keyword);
+                    setPageInfo({page:1, total:pageInfo.total})
                 }}
                 onChangeSearchOption={(option) => {
                     setOptionIndex(option)
