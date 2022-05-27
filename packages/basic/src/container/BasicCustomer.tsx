@@ -278,34 +278,6 @@ const BasicCustomer = ({}: IProps) => {
         }))
       );
 
-<<<<<<< HEAD
-    const map = convertDataToMap()
-    const selectedRows = filterSelectedRows()
-    const haveIdRows = classfyNormalAndHave(selectedRows)
-    const additional = setAdditionalData()
-    let deletable = true
-
-    if(haveIdRows.length > 0){
-
-      deletable = await RequestMethod('delete','customerDelete', haveIdRows.map((row) => (
-          {...row , additional : [...additional.map(v => {
-            if(row[v.name]) {
-              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
-            }
-          }).filter(v => v)
-          ]}
-      )))
-
-      LoadBasic(1)
-setKeyword('')
-
-    }else{
-
-      selectedRows.forEach((row)=>{map.delete(row.id)})
-      setBasicRow(Array.from(map.values()))
-      setPageInfo({page: pageInfo.page, total: pageInfo.total})
-      setSelectList(new Set())
-=======
       LoadBasic(1);
     } else {
       selectedRows.forEach((row) => {
@@ -314,7 +286,6 @@ setKeyword('')
       setBasicRow(Array.from(map.values()));
       setPageInfo({ page: pageInfo.page, total: pageInfo.total });
       setSelectList(new Set());
->>>>>>> origin/hyun_dev
     }
 
     if (deletable) {
@@ -644,63 +615,6 @@ setKeyword('')
   };
 
   return (
-<<<<<<< HEAD
-      <div>
-        <PageHeader
-            isSearch
-            searchKeyword={keyword}
-            onChangeSearchKeyword={(keyword) => {
-              setKeyword(keyword)
-              setPageInfo({...pageInfo, page:1})
-            }}
-            searchOptionList={optionList}
-            onChangeSearchOption={(option) => {
-              setOptionIndex(option)
-            }}
-            optionIndex={optionIndex}
-            title={"거래처 정보 관리"}
-            buttons={
-              ["",'', '항목관리', '행 추가', '저장하기', '삭제']
-              // ["",'엑셀로 받기', '항목관리', '행 추가', '저장하기', '삭제']
-            }
-            buttonsOnclick={onClickHeaderButton}
-        />
-        <ExcelTable
-            editable
-            resizable
-            headerList={[
-              SelectColumn,
-              ...column
-            ]}
-            row={basicRow}
-            // setRow={setBasicRow}
-            setRow={(e) => {
-              let tmp: Set<any> = selectList
-              e.map(v => {
-                if(v.isChange) {
-                  tmp.add(v.id)
-                  v.isChange = false
-                }
-              })
-              setSelectList(tmp)
-              competeCustom(e)
-            }}
-            selectList={selectList}
-            //@ts-ignore
-            setSelectList={setSelectList}
-            setSelectRow={setSelectRow}
-            width={1576}
-            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-        />
-        <PaginationComponent
-            currentPage={pageInfo.page}
-            totalPage={pageInfo.total}
-            setPage={(page) => {
-              setPageInfo({...pageInfo,page:page})
-            }}
-        />
-      </div>
-=======
     <div>
       <PageHeader
         isSearch
@@ -757,7 +671,6 @@ setKeyword('')
         }}
       />
     </div>
->>>>>>> origin/hyun_dev
   );
 };
 

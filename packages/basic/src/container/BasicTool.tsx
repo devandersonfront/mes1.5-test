@@ -268,68 +268,6 @@ const BasicTool = ({ page, search, option }: IProps) => {
     if (!isPaging) {
       setOptionIndex(option);
     }
-<<<<<<< HEAD
-
-    const SaveCleanUpData = (data:any[]) => {
-        let resultData = [];
-        let additional = [];
-        column.map((col)=>{
-            if(col.type === "additional") additional.push(col)
-        })
-        data.map((rowData, index) => {
-            let tmpRow:any = {};
-            tmpRow.unit = rowData.unit;
-            tmpRow.tool_id = rowData?.tool_id;
-            tmpRow.code = rowData.code;
-            tmpRow.name = rowData.name;
-            tmpRow.stock = rowData?.stock;
-            tmpRow.customer = rowData.customer?.customer_id ? rowData.customer : null;
-            tmpRow.additional = [
-                ...additional.map((v, index)=>{
-                    if(!rowData[v.colName]) return undefined;
-                    return {
-                        mi_id: v.id,
-                        title: v.name,
-                        value: rowData[v.colName] ?? "",
-                        unit: v.unit,
-                        version:rowData.additional[index]?.version ?? undefined
-                    }
-                }).filter((v) => v)
-            ];
-            tmpRow.version = rowData?.version ?? undefined;
-
-            resultData.push(tmpRow);
-        })
-        return resultData;
-    }
-
-    const SaveBasic = async() => {
-
-        const existence = valueExistence()
-
-        if(!existence){
-            const res = await RequestMethod("post", "toolSave",SaveCleanUpData(SelectData())).catch((error)=>{
-                return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
-            })
-
-
-            if(res){
-                Notiflix.Loading.remove(300)
-                Notiflix.Report.success("저장되었습니다.","","확인",() => {
-                    LoadBasic(1);
-                })
-            }else{
-                Notiflix.Loading.remove(300)
-                Notiflix.Report.failure("에러입니다.","","확인",)
-            }
-        }else{
-            return Notiflix.Report.warning(
-                '경고',
-                `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
-                '확인',
-              );
-        }
-=======
     const res = await RequestMethod("get", "toolSearch", {
       path: {
         page: isPaging ?? 1,
@@ -369,7 +307,6 @@ const BasicTool = ({ page, search, option }: IProps) => {
       // const resultData = cleanUpData(res);
       // console.log(resultData,'resultData')
       // setBasicRow(resultData);
->>>>>>> origin/hyun_dev
     }
     setSelectList(new Set());
   };
@@ -574,78 +511,6 @@ const BasicTool = ({ page, search, option }: IProps) => {
       }
     }
 
-<<<<<<< HEAD
-    useEffect(() => {
-        // setOptionIndex(option)
-        if(keyword){
-            SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-                Notiflix.Loading.remove()
-            })
-        }else{
-            LoadBasic(pageInfo.page).then(() => {
-                Notiflix.Loading.remove()
-            })
-        }
-    }, [pageInfo.page,keyword])
-
-    useEffect(() => {
-        dispatch(setSelectMenuStateChange({main:"공구 기준정보",sub:""}))
-        return (() => {
-            dispatch(deleteSelectMenuState())
-        })
-    },[])
-
-    return (
-        <div>
-            <PageHeader
-                title={"공구 기준정보"}
-                isSearch
-                searchKeyword={keyword}
-                onChangeSearchKeyword={(keyword) => {
-                    setKeyword(keyword)
-                    setPageInfo({...pageInfo,page:1})
-                    setSelectList(new Set)
-                }}
-                searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
-                onChangeSearchOption={(option) => {
-                    setOptionIndex(option);
-                }}
-                optionIndex={optionIndex}
-                buttons={["항목관리","행 추가","저장하기","삭제"]}
-                buttonsOnclick={buttonsEvent}
-            />
-            <ExcelTable
-                resizable
-                headerList={[SelectColumn, ...column]}
-                row={basicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = selectList
-                    e.map(v => {
-                        if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
-                    })
-                    setSelectList(tmp)
-                    competeTool(e)
-                    // setBasicRow(e)
-                }}
-                selectList={selectList}
-                //@ts-ignore
-                setSelectList={setSelectList}
-                setSelectRow={setSelectRow}
-                width={1576}
-                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-
-            />
-            <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => {
-                setSelectList(new Set)
-                setPageInfo({...pageInfo, page: page})
-            }} />
-        </div>
-    )
-}
-=======
     return false;
   };
 
@@ -670,7 +535,6 @@ const BasicTool = ({ page, search, option }: IProps) => {
         );
       }
     }
->>>>>>> origin/hyun_dev
 
     setBasicRow(rows);
   };

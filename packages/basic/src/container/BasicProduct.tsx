@@ -200,81 +200,6 @@ const BasicProduct = ({}: IProps) => {
             }
           });
 
-<<<<<<< HEAD
-        return {
-          ...row,
-          ...selectData,
-          customer: row?.customerArray?.customer_id ? row.customerArray : null,
-          // customer_id: row.customerArray.customer_id,
-          customer_id: undefined,
-          model: row?.modelArray?.cm_id ? row.modelArray : null,
-          // standard_uph: row.uph,
-          molds:row?.molds?.map((mold)=>{
-            return { setting:mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
-          }).filter((mold) => mold.mold.mold_id) ?? [],
-          tools:[
-            ...row?.tools?.map((tool) => {
-              return {...tool,
-                tool:{tool_id:tool.tool.tool_id, code: tool.tool.code, name: tool.tool.name, customer:tool.tool.customerData, additional:tool.tool.additional},
-                setting:tool.setting}
-            }).filter((tool) => tool.tool.tool_id) ?? [],
-          ],
-          machines:[
-            ...row?.machines?.map((machine)=>{
-              // console.log(machine,'machinemachine')
-              return {
-                sequence : machine.sequence,
-                setting: machine.setting,
-                // machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
-                machine : {
-                  machine_id : machine.machine.machine_id,
-                  mfrName : machine.machine.mfrName,
-                  name : machine.machine.name,
-                  type : machine.machine.type_id,
-                  weldingType : machine.machine.weldingType_id,
-                  madeAt:machine.machine.madeAt,
-                  mfrCode:machine.machine.mfrCode,
-                  manager:machine.machine.manager,
-                  photo:machine.machine.photo,
-                  capacity:machine.machine.capacity,
-                  qualify:machine.machine.qualify,
-                  guideline:machine.machine.guideline,
-                  interwork:machine.machine.interwork,
-                  devices:machine.machine.devices,
-                  factory:machine.machine.factory,
-                  subFactory:machine.machine.subFactory,
-                  additional :machine.machine.additional,
-                }
-              }
-            }).filter((machine) => machine.machine.machine_id)?? []
-          ],
-          // tools:[
-          //     ...row.tools?.map((tool)=>{
-          //       return {
-          //         ...tool,
-          //         setting:tool.tool.setting,
-          //         tool:{
-          //           ...tool.tool,
-          //           customer:tool.tool.customerArray
-          //         }
-          //       }
-          //     })
-          // ],
-          type:row.type_id ?? row.typeId ?? row.typePK,
-          additional: [
-            ...additional.map((v, index)=>{
-              //if(!row[v.colName]) return undefined;
-              return {
-                mi_id: v.id,
-                title: v.name,
-                value: row[v.colName] ?? "",
-                unit: v.unit,
-                ai_id: searchAiID(row.additional, index) ?? undefined,
-                version:row.additional[index]?.version ?? undefined
-              }
-            }).filter((v) => v)
-          ]
-=======
           return {
             ...row,
             ...selectData,
@@ -370,7 +295,6 @@ const BasicProduct = ({}: IProps) => {
                 .filter((v) => v),
             ],
           };
->>>>>>> origin/hyun_dev
         }
       })
       .filter((v) => v);
@@ -449,34 +373,6 @@ const BasicProduct = ({}: IProps) => {
       if (row.product_id) {
         haveIdRows.push(row);
       }
-<<<<<<< HEAD
-    })
-
-    return haveIdRows
-  }
-  const DeleteBasic = async() => {
-
-    const map = convertDataToMap()
-    const selectedRows = filterSelectedRows()
-    const haveIdRows = classfyNormalAndHave(selectedRows)
-    let deletable = true
-
-    if(haveIdRows.length > 0){
-
-      deletable = await RequestMethod('delete','productDelete', haveIdRows.map((row) => (
-          {...row , type : row.type_id}
-      )))
-
-      LoadBasic(1)
-      setKeyword('')
-
-    }else{
-
-      selectedRows.forEach((row)=>{map.delete(row.id)})
-      setBasicRow(Array.from(map.values()))
-      setPageInfo({page: pageInfo.page, total: pageInfo.total})
-      setSelectList(new Set())
-=======
     });
 
     return haveIdRows;
@@ -502,7 +398,6 @@ const BasicProduct = ({}: IProps) => {
       setBasicRow(Array.from(map.values()));
       setPageInfo({ page: pageInfo.page, total: pageInfo.total });
       setSelectList(new Set());
->>>>>>> origin/hyun_dev
     }
 
     if (deletable) {
@@ -738,13 +633,6 @@ const BasicProduct = ({}: IProps) => {
         ]);
         break;
 
-<<<<<<< HEAD
-      case '저장하기':
-        // if(selectList.size > 1){
-        //   return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
-        // }
-        SaveBasic()
-=======
       case "저장하기":
         if (selectList.size > 1) {
           return Notiflix.Report.warning(
@@ -754,7 +642,6 @@ const BasicProduct = ({}: IProps) => {
           );
         }
         SaveBasic();
->>>>>>> origin/hyun_dev
 
         break;
       case "삭제":
@@ -766,11 +653,6 @@ const BasicProduct = ({}: IProps) => {
           );
         }
 
-<<<<<<< HEAD
-        // if(selectList.size > 1){
-        //   return Notiflix.Report.warning('경고','삭제는 한 개만 하실수 있습니다.','확인')
-        // }
-=======
         if (selectList.size > 1) {
           return Notiflix.Report.warning(
             "경고",
@@ -778,7 +660,6 @@ const BasicProduct = ({}: IProps) => {
             "확인"
           );
         }
->>>>>>> origin/hyun_dev
 
         Notiflix.Confirm.show(
           "경고",
@@ -875,74 +756,6 @@ const BasicProduct = ({}: IProps) => {
   }, [selectList.size]);
 
   return (
-<<<<<<< HEAD
-      <div>
-        <PageHeader
-          isSearch
-          searchKeyword={keyword}
-          onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword)
-            setPageInfo({...pageInfo,page:1})
-          }}
-          searchOptionList={optionList}
-          onChangeSearchOption={(option) => {
-            setOptionIndex(option)
-          }}
-          optionIndex={optionIndex}
-          title={"제품 등록 관리"}
-          pageHelper={"제품 등록, 삭제는 하나씩 가능"}
-          buttons={buttonList}
-          buttonsOnclick={
-            // () => {}
-            onClickHeaderButton
-          }
-        />
-        <ExcelTable
-          editable
-          resizable
-          headerList={[
-            SelectColumn,
-            ...column
-          ]}
-          row={basicRow}
-          // setRow={setBasicRow}
-          setRow={(e) => {
-            let tmp: Set<any> = selectList
-            e.map(v => {
-              if(v.isChange) {
-                tmp.add(v.id)
-                v.isChange = false
-              }
-            })
-            setSelectList(tmp)
-            competeProductV1u(e)
-          }}
-          selectList={selectList}
-          //@ts-ignore
-          setSelectList={ (p) => {
-            setSelectList(p as any)
-          }}
-          setSelectRow={setSelectRow}
-          width={1576}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-        />
-        <PaginationComponent
-            currentPage={pageInfo.page}
-            totalPage={pageInfo.total}
-            setPage={(page) => {
-              setPageInfo({...pageInfo,page:page})
-            }}
-        />
-
-        <BarcodeModal
-              title={'바코드 미리보기'}
-              handleBarcode={handleBarcode}
-              handleModal={handleModal}
-              isOpen={barcodeOpen}
-              type={'product'}
-              data={selectRow}
-              />
-=======
     <div>
       <PageHeader
         isSearch
@@ -1013,7 +826,6 @@ const BasicProduct = ({}: IProps) => {
         type={"product"}
         data={selectRow}
       />
->>>>>>> origin/hyun_dev
 
       {/* <ExcelDownloadModal
         isOpen={excelOpen}

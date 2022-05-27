@@ -635,14 +635,10 @@ setKeyword('')
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
           setKeyword(keyword)
-<<<<<<< HEAD
-          setPageInfo({...pageInfo,page:1})
-=======
           SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
             Notiflix.Loading.remove()
           })
           // setPageInfo({page:1,total:1})
->>>>>>> origin/hyun_dev
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
