@@ -183,6 +183,11 @@ export type {RootState}
 //redux
 export {setModifyInitData, SET_MENU_STATE} from "./reducer/modifyInfo"
 
+//test
+export {TestToolSelectModal} from './components/Modal/TestToolSelectModal'
+export {TestWorkRegisterModal} from './components/Modal/TestWorkRegisterModal'
+export {TestSearchModalTest} from "./components/Modal/SearchModalTest/TestSearchModalTest"
+
 export type {
   IMenuType,
   IExcelHeaderType,

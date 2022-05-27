@@ -68,6 +68,7 @@ import { InputWithDropDown } from '../components/Dropdown/InputWithDropDown'
 import {ToolModal} from "../components/Modal/ToolModal";
 import { RequestMethod } from './RequestFunctions'
 import Notiflix from 'notiflix'
+import {TestWorkRegisterModal} from "../components/Modal/TestWorkRegisterModal";
 
 
 export const columnlist: any = {
@@ -857,7 +858,7 @@ export const columnlist: any = {
     {key:"process_id", name:"생산 공정", width: 118},
     {key:"goal", name:"목표 생산량", width: 118},
     {key: 'input', name: '투입 자재', formatter: InputMaterialInfoModal, width: 118, type: 'readonly'},
-    {key: 'route_record_register', name: '작업 일보 등록', formatter: WorkRegisterModal, width: 118},
+    {key: 'route_record_register', name: '작업 일보 등록', formatter: TestWorkRegisterModal, width: 118},
     {key: 'route_record_list', name: '작업 이력', formatter: WorkListModal, width: 118, modalInitData: BomRegisterInit },
     {key: 'total_counter', name: '총 카운터', width: 118 },
     {key: 'total_good_quantity', name: '총 양품 수량', width: 118 },
