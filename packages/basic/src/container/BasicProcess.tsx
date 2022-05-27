@@ -600,9 +600,6 @@ setKeyword('')
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-<<<<<<< HEAD
-          setPageInfo({...pageInfo,page:1})
-=======
           // setPageInfo({page:1,total:1})
 
           // hs0316
@@ -610,7 +607,6 @@ setKeyword('')
             Notiflix.Loading.remove()
           })          
 
->>>>>>> origin/hyun_dev
           setKeyword(keyword)
         }}
         searchOptionList={optionList}

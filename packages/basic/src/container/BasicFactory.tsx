@@ -167,56 +167,6 @@ const BasicFactory = ({}: IProps) => {
       return Notiflix.Report.warning("경고", "선택된 정보가 없습니다.", "확인");
     }
 
-<<<<<<< HEAD
-            let res: any
-            res = await RequestMethod('post', `factorySave`,
-                basicRow.map((row, i) => {
-                    if(selectList.has(row.id)){
-                        let additional:any[] = []
-                        column.map((v) => {
-                            if(v.type === 'additional'){
-                                additional.push(v)
-                            }
-                        })
-                        return {
-                            ...row,
-                            // id: row.tmpId,
-                            authority: row.authorityPK,
-                            manager: row.user?.user_id ? row.user : null,
-                            version: row.version ?? null,
-                            additional: [
-                                ...additional.map((v, index)=>{
-                                    //if(!row[v.colName]) return undefined;
-                                    // result.push(
-                                    return {
-                                        // mi_id: v.id,
-                                        title: v.name,
-                                        value: row[v.colName] ?? "",
-                                        unit: v.unit,
-                                        ai_id: searchAiID(row.additional, index) ?? undefined,
-                                        version:row.additional[index]?.version ?? undefined
-                                    }
-                                    // )
-                                }).filter((v) => v)
-                            ]
-                        }
-
-                    }
-                }).filter((v) => v)).catch((error)=>{
-                return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
-            })
-
-            if(res){
-                Notiflix.Report.success('저장되었습니다.','','확인');
-                if(keyword){
-                    SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-                        Notiflix.Loading.remove()
-                    })
-                }else{
-                    LoadBasic(pageInfo.page).then(() => {
-                        Notiflix.Loading.remove()
-                    })
-=======
     if (!existence) {
       const searchAiID = (rowAdditional: any[], index: number) => {
         let result: number = undefined;
@@ -240,7 +190,6 @@ const BasicFactory = ({}: IProps) => {
               column.map((v) => {
                 if (v.type === "additional") {
                   additional.push(v);
->>>>>>> origin/hyun_dev
                 }
               });
               return {
@@ -411,42 +360,6 @@ const BasicFactory = ({}: IProps) => {
     if (!isPaging) {
       setOptionIndex(option);
     }
-<<<<<<< HEAD
-
-
-    const   DeleteBasic = async () => {
-
-        const map = convertDataToMap()
-        const selectedRows = filterSelectedRows()
-        const haveIdRows = classfyNormalAndHave(selectedRows)
-        const additional = setAdditionalData()
-        let deletable = true
-
-        if(haveIdRows.length > 0){
-
-            deletable = await RequestMethod('delete','factoryDelete', haveIdRows.map((row) => (
-                {...row , manager: row.user , additional : [...additional.map(v => {
-                        if(row[v.name]) {
-                            return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
-                        }
-                    }).filter(v => v)
-                    ]}
-            )))
-            LoadBasic(1)
-setKeyword('')
-
-        }else{
-
-            selectedRows.forEach((row)=>{map.delete(row.id)})
-            setBasicRow(Array.from(map.values()))
-            setPageInfo({page: pageInfo.page, total: pageInfo.total})
-            setSelectList(new Set())
-        }
-
-        if(deletable){
-            Notiflix.Report.success('삭제되었습니다.','','확인');
-        }
-=======
     const res = await RequestMethod("get", `factorySearch`, {
       path: {
         page: isPaging ?? 1,
@@ -466,7 +379,6 @@ setKeyword('')
         total: res.totalPages,
       });
       cleanUpData(res);
->>>>>>> origin/hyun_dev
     }
 
     setWeatherToRun(true);
@@ -716,85 +628,6 @@ setKeyword('')
             ? 40 * 19
             : basicRow.length * 40 + 56
         }
-<<<<<<< HEAD
-
-        setBasicRow(rows)
-    }
-
-
-    return (
-        <div>
-            <PageHeader
-                isSearch
-                searchKeyword={keyword}
-                onChangeSearchKeyword={(keyword) => {
-                    setPageInfo({...pageInfo,page:1})
-                    setKeyword(keyword)
-                }}
-                searchOptionList={optionList}
-                onChangeSearchOption={(option) => {
-                    setOptionIndex(option)
-                }}
-                optionIndex={optionIndex}
-                title={"공장 기준정보"}
-                buttons={
-                    ['', '', '항목관리', '행추가', '저장하기', '삭제']
-                }
-                buttonsOnclick={onClickHeaderButton}
-            />
-            <ExcelTable
-                editable
-                resizable
-                headerList={[
-                    SelectColumn,
-                    ...column
-                ]}
-                row={basicRow}
-                // setRow={setBasicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = selectList
-                    e.map(v => {
-                        if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
-                    })
-                    setSelectList(tmp)
-                    competefactory(e)
-                }}
-                selectList={selectList}
-                setSelectList={(e) => {
-                //@ts-ignore
-                    setSelectList(e)
-                }}
-                setSelectRow={(e)=> {
-                    setSelectRow(e)
-                }}
-                width={1576}
-                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-
-            />
-            <PaginationComponent
-                currentPage={pageInfo.page}
-                totalPage={pageInfo.total}
-                setPage={(page) => {
-                    setPageInfo({...pageInfo,page:page})
-                }}
-            />
-            {/*<ExcelDownloadModal*/}
-            {/*    isOpen={excelOpen}*/}
-            {/*    column={column}*/}
-            {/*    basicRow={basicRow}*/}
-            {/*    filename={`금형기준정보`}*/}
-            {/*    sheetname={`금형기준정보`}*/}
-            {/*    selectList={selectList}*/}
-            {/*    tab={'ROLE_BASE_07'}*/}
-            {/*    setIsOpen={setExcelOpen}*/}
-            {/*/>*/}
-        </div>
-    );
-}
-=======
       />
       <PaginationComponent
         currentPage={pageInfo.page}
@@ -816,7 +649,6 @@ setKeyword('')
     </div>
   );
 };
->>>>>>> origin/hyun_dev
 
 export const getServerSideProps = (ctx: NextPageContext) => {
   return {

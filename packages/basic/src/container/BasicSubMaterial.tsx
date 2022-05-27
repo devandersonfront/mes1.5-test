@@ -189,25 +189,6 @@ const BasicSubMaterial = ({}: IProps) => {
             }
           });
 
-<<<<<<< HEAD
-        return {
-          ...row,
-          ...selectData,
-          customer: row.customerArray?.customer_id ? row.customerArray : row.customer ?? null,
-          additional: [
-            ...additional.map((v, index)=>{
-              //if(!row[v.colName]) return undefined;
-              return {
-                mi_id: v.id,
-                title: v.name,
-                value: row[v.colName] ?? "",
-                unit: v.unit,
-                ai_id: searchAiID(row.additional, index) ?? undefined,
-                version:row.additional[index]?.version ?? undefined
-              }
-            }).filter((v) => v)
-          ]
-=======
           return {
             ...row,
             ...selectData,
@@ -228,7 +209,6 @@ const BasicSubMaterial = ({}: IProps) => {
                 .filter((v) => v),
             ],
           };
->>>>>>> origin/hyun_dev
         }
       })
       .filter((v) => v);
@@ -302,34 +282,6 @@ const BasicSubMaterial = ({}: IProps) => {
   };
 
   const DeleteBasic = async () => {
-<<<<<<< HEAD
-
-    const map = convertDataToMap()
-    const selectedRows = filterSelectedRows()
-    const haveIdRows = classfyNormalAndHave(selectedRows)
-    const additional = setAdditionalData()
-    let deletable = true
-
-    if(haveIdRows.length > 0){
-
-      deletable =  await RequestMethod('delete','subMaterialDelete', haveIdRows.map((row) => (
-          {...row , customer: row.customerArray, additional : [...additional.map(v => {
-            if(row[v.name]) {
-                return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
-              }
-            }).filter(v => v)]
-          }
-      )))
-      LoadBasic(1)
-      setKeyword('')
-
-    }else{
-
-      selectedRows.forEach((row)=>{map.delete(row.id)})
-      setBasicRow(Array.from(map.values()))
-      setPageInfo({page: pageInfo.page, total: pageInfo.total})
-      setSelectList(new Set())
-=======
     const map = convertDataToMap();
     const selectedRows = filterSelectedRows();
     const haveIdRows = classfyNormalAndHave(selectedRows);
@@ -367,7 +319,6 @@ const BasicSubMaterial = ({}: IProps) => {
       setBasicRow(Array.from(map.values()));
       setPageInfo({ page: pageInfo.page, total: pageInfo.total });
       setSelectList(new Set());
->>>>>>> origin/hyun_dev
     }
 
     if (deletable) {
@@ -639,70 +590,6 @@ const BasicSubMaterial = ({}: IProps) => {
   };
   return (
     <div>
-<<<<<<< HEAD
-        <PageHeader
-          isSearch
-          searchKeyword={keyword}
-          onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword);
-            setPageInfo({...pageInfo,page:1})
-          }}
-          searchOptionList={optionList}
-          onChangeSearchOption={(option) => {
-            setOptionIndex(option)
-          }}
-          optionIndex={optionIndex}
-          title={"부자재 기준정보"}
-          buttons={
-            ['', '', '항목관리', '행추가', '저장하기', '삭제']
-          }
-          buttonsOnclick={
-            // () => {}
-            onClickHeaderButton
-          }
-        />
-        <ExcelTable
-          editable
-          resizable
-          headerList={[
-            SelectColumn,
-            ...column
-          ]}
-          row={basicRow}
-          // setRow={setBasicRow}
-          setRow={(e) => {
-            let tmp: Set<any> = selectList
-            e.map(v => {
-              if(v.isChange) {
-                tmp.add(v.id)
-                v.isChange = false
-              }
-            })
-
-            setSelectList(tmp)
-            e.map((value, index)=>{
-              if(value.customerArray){
-                basicRow[index].customer = value;
-              }
-            })
-
-            // setBasicRow([...basicRow])
-            competeSubMaterial(e)
-          }}
-          selectList={selectList}
-          //@ts-ignore
-          setSelectList={setSelectList}
-          setSelectRow={setSelectRow}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-        />
-        <PaginationComponent
-          currentPage={pageInfo.page}
-          totalPage={pageInfo.total}
-          setPage={(page) => {
-            setPageInfo({...pageInfo, page:page})
-          }}
-        />
-=======
       <PageHeader
         isSearch
         searchKeyword={keyword}
@@ -767,7 +654,6 @@ const BasicSubMaterial = ({}: IProps) => {
           setPageInfo({ ...pageInfo, page: page });
         }}
       />
->>>>>>> origin/hyun_dev
       {/*<ExcelDownloadModal*/}
       {/*  isOpen={excelOpen}*/}
       {/*  column={column}*/}

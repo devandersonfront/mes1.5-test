@@ -367,33 +367,6 @@ const BasicUser = ({}: IProps) => {
         }))
       );
 
-<<<<<<< HEAD
-    const map = convertDataToMap()
-    const selectedRows = filterSelectedRows()
-    const haveIdRows = classfyNormalAndHave(selectedRows)
-    const additional = setAdditionalData()
-    let deletable = true
-
-    if(haveIdRows.length > 0){
-
-      deletable = await RequestMethod('delete','memberDelete', haveIdRows.map((row) => (
-          {...row , id: row.tmpId , authority: row.authorityPK, additional : [...additional.map(v => {
-            if(row[v.name]) {
-              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
-            }
-          }).filter(v => v)
-          ]}
-      )))
-
-      LoadBasic(1)
-      setKeyword('')
-
-    }else{
-      selectedRows.forEach((row)=>{map.delete(row.id)})
-      setBasicRow(Array.from(map.values()))
-      setPageInfo({page: pageInfo.page, total: pageInfo.total})
-      setSelectList(new Set())
-=======
       LoadBasic(1);
     } else {
       selectedRows.forEach((row) => {
@@ -402,7 +375,6 @@ const BasicUser = ({}: IProps) => {
       setBasicRow(Array.from(map.values()));
       setPageInfo({ page: pageInfo.page, total: pageInfo.total });
       setSelectList(new Set());
->>>>>>> origin/hyun_dev
     }
 
     if (deletable) {
@@ -716,14 +688,6 @@ const BasicUser = ({}: IProps) => {
   };
 
   const competeId = (rows) => {
-<<<<<<< HEAD
-    const tempRow = [...rows]
-    const spliceRow = [...rows]
-    spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.tmpId === tempRow[selectRow].tmpId && row.tmpId !== undefined && row.tmpId !== '')
-
-    let telephone_num_for_update = tempRow[selectRow].telephone?.replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
-=======
     const tempRow = [...rows];
     const spliceRow = [...rows];
     spliceRow.splice(selectRow, 1);
@@ -733,35 +697,19 @@ const BasicUser = ({}: IProps) => {
         row.tmpId !== undefined &&
         row.tmpId !== ""
     );
->>>>>>> origin/hyun_dev
 
     if (spliceRow) {
       if (isCheck) {
         return Notiflix.Report.warning(
-<<<<<<< HEAD
-            '아이디 경고',
-            `중복되는 아이디가 존재합니다.`,
-            '확인'
-=======
           "아이디 경고",
           `중복되는 아이디가 존재합니다.`,
           "확인"
->>>>>>> origin/hyun_dev
         );
       }
     }
 
-<<<<<<< HEAD
-    setBasicRow(
-      rows.map((item, index) => {
-        return index === selectRow ? {...item, telephone: telephone_num_for_update } : item
-      })
-    )
-  }
-=======
     setBasicRow(rows);
   };
->>>>>>> origin/hyun_dev
 
 
   return (
@@ -793,35 +741,20 @@ const BasicUser = ({}: IProps) => {
           let tmp: Set<any> = selectList;
 
           e.map((v, i) => {
-<<<<<<< HEAD
-            if(v.isChange) {
-              tmp.add(v.id)
-              v.isChange = false
-            }
-          })
-          setSelectList(tmp)
-          competeId(e)
-=======
             if (v.isChange) tmp.add(v.id);
           });
           setSelectList(tmp);
           competeId(e);
->>>>>>> origin/hyun_dev
         }}
         setSelectRow={setSelectRow}
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
-<<<<<<< HEAD
-        width={1576}
-        height={basicRow.length * 40 >= 40*18+40 ? 40*19+16 : basicRow.length * 40 + 56}
-=======
         height={
           basicRow.length * 40 >= 40 * 18 + 40
             ? 40 * 19 + 16
             : basicRow.length * 40 + 56
         }
->>>>>>> origin/hyun_dev
       />
       <PaginationComponent
         currentPage={pageInfo.page}
