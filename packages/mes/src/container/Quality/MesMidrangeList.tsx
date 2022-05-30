@@ -202,6 +202,7 @@ const MesMidrangeList = ({option}:IProps) => {
             />
             <ExcelTable
                 editable
+                resizable
                 headerList={column}
                 row={basicRow}
                 setRow={(e) => {

@@ -499,8 +499,11 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
       />
       <ExcelTable
         editable
-        // resizable
-        headerList={[SelectColumn, ...column]}
+        resizable
+        headerList={[
+          SelectColumn,
+          ...column
+        ]}
         row={basicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList;
@@ -513,11 +516,8 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
-        height={
-          basicRow.length * 40 >= 40 * 18 + 56
-            ? 40 * 19
-            : basicRow.length * 40 + 56
-        }
+        width={1576}
+        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         scrollEnd={(value) => {
           if (value) {
             if (pageInfo.total > pageInfo.page) {

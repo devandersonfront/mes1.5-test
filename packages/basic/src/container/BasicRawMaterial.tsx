@@ -678,67 +678,68 @@ const BasicRawMaterial = ({}: IProps) => {
 
   return (
     <div>
-      <PageHeader
-        isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          setKeyword(keyword);
-          // hs0316
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
+        <PageHeader
+          isSearch
+          searchKeyword={keyword}
+          onChangeSearchKeyword={(keyword) => {
+            setKeyword(keyword)
+            setPageInfo({...pageInfo,page:1})
+          }}
+          searchOptionList={optionList}
+          onChangeSearchOption={(option) => {
+            setOptionIndex(option)
+          }}
+          optionIndex={optionIndex}
+          title={"원자재 기준정보"}
+          buttons={buttonList}
+          buttonsOnclick={
+            onClickHeaderButton
+          }
+        />
+        <ExcelTable
+          editable
+          resizable
+          resizeSave
+          headerList={[
+            SelectColumn,
+            ...column
+          ]}
+          row={basicRow}
+          // setRow={setBasicRow}
+          setRow={(e) => {
+            let tmp: Set<any> = selectList
+            e.map(v => {
+              if(v.isChange) {
+                tmp.add(v.id)
+                v.isChange = false
+              }
+            })
+            setSelectList(tmp)
+            competeRawMaterial(e)
+          }}
+          selectList={selectList}
+          setSelectRow={setSelectRow}
+          //@ts-ignore
+          setSelectList={setSelectList}
+          width={1576}
+          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        />
+        <PaginationComponent
+          currentPage={pageInfo.page}
+          totalPage={pageInfo.total}
+          setPage={(page) => {
+            setPageInfo({...pageInfo, page:page})
+          }}
+        />
 
-          // setPageInfo({ page: 1, total: 1 });
-        }}
-        searchOptionList={optionList}
-        onChangeSearchOption={(option) => {
-          setOptionIndex(option);
-        }}
-        optionIndex={optionIndex}
-        title={"원자재 기준정보"}
-        buttons={buttonList}
-        buttonsOnclick={onClickHeaderButton}
-      />
-      <ExcelTable
-        editable
-        resizable
-        headerList={[SelectColumn, ...column]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList;
-          e.map((v) => {
-            if (v.isChange) tmp.add(v.id);
-          });
-          setSelectList(tmp);
-          competeRawMaterial(e);
-        }}
-        selectList={selectList}
-        setSelectRow={setSelectRow}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        height={
-          basicRow.length * 40 >= 40 * 18 + 56
-            ? 40 * 19
-            : basicRow.length * 40 + 56
-        }
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          setPageInfo({ ...pageInfo, page: page });
-        }}
-      />
-
-      <BarcodeModal
-        title={"바코드 미리보기"}
-        handleBarcode={handleBarcode}
-        handleModal={handleModal}
-        isOpen={barcodeOpen}
-        type={"rawMaterial"}
-        data={selectRow}
-      />
+          <BarcodeModal
+          title={'바코드 미리보기'}
+          handleBarcode={handleBarcode}
+          handleModal={handleModal}
+          isOpen={barcodeOpen}
+          type={'rawMaterial'}
+          data={selectRow}
+        />
 
       {/* <ExcelDownloadModal
         isOpen={excelOpen}

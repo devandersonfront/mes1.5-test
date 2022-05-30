@@ -68,6 +68,7 @@ import { InputWithDropDown } from '../components/Dropdown/InputWithDropDown'
 import {ToolModal} from "../components/Modal/ToolModal";
 import { RequestMethod } from './RequestFunctions'
 import Notiflix from 'notiflix'
+import {TestWorkRegisterModal} from "../components/Modal/TestWorkRegisterModal";
 
 
 export const columnlist: any = {
@@ -857,7 +858,7 @@ export const columnlist: any = {
     {key:"process_id", name:"생산 공정", width: 118},
     {key:"goal", name:"목표 생산량", width: 118},
     {key: 'input', name: '투입 자재', formatter: InputMaterialInfoModal, width: 118, type: 'readonly'},
-    {key: 'route_record_register', name: '작업 일보 등록', formatter: WorkRegisterModal, width: 118},
+    {key: 'route_record_register', name: '작업 일보 등록', formatter: TestWorkRegisterModal, width: 118},
     {key: 'route_record_list', name: '작업 이력', formatter: WorkListModal, width: 118, modalInitData: BomRegisterInit },
     {key: 'total_counter', name: '총 카운터', width: 118 },
     {key: 'total_good_quantity', name: '총 양품 수량', width: 118 },
@@ -960,8 +961,8 @@ export const columnlist: any = {
   stockV2: [
     {key:"customer_name", name:"거래처", width: 118},
     {key:"customer_model", name:"모델", width: 118},
-    {key:"code", name:"CODE", width: 118 },
-    {key:"name", name:"품명", width: 118 },
+    {key:"code", name:"CODE", width: 250 },
+    {key:"name", name:"품명", width: 470 },
     {key:"type", name:"품목 종류", width: 118 },
     {key:"unit", name:"단위", width: 118   },
     {key: 'bom', name: 'BOM', formatter: BomInfoModal, width: 118, type: 'readonly'},

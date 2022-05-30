@@ -584,64 +584,65 @@ const BasicMold = ({}: IProps) => {
 
   return (
     <div>
-      <PageHeader
-        isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          setKeyword(keyword);
 
-          // hs0316
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
-
-          // setPageInfo({ page: 1, total: 1 });
-        }}
-        searchOptionList={optionList}
-        onChangeSearchOption={(option) => {
-          setOptionIndex(option);
-        }}
-        optionIndex={optionIndex}
-        title={"금형 기준정보"}
-        buttons={["", "", "항목관리", "행추가", "저장하기", "삭제"]}
-        buttonsOnclick={onClickHeaderButton}
-      />
-      <ExcelTable
-        editable
-        resizable
-        headerList={[SelectColumn, ...column]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList;
-          e.map((v) => {
-            if (v.isChange) tmp.add(v.id);
-          });
-          setSelectList(tmp);
-          competeMoldV1u(e);
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        setSelectRow={setSelectRow}
-        height={
-          basicRow.length * 40 >= 40 * 18 + 56
-            ? 40 * 19
-            : basicRow.length * 40 + 56
-        }
-      />
-      <PaginationComponent
-        currentPage={pageInfo.page}
-        totalPage={pageInfo.total}
-        setPage={(page) => {
-          // if(keyword){
-          //   router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${option}`)
-          setPageInfo({ ...pageInfo, page: page });
-          // }else{
-          //   router.push(`/mes/basic/moldV1u?page=${page}`)
-          // }
-        }}
-      />
+        <PageHeader
+          isSearch
+          searchKeyword={keyword}
+          onChangeSearchKeyword={(keyword) => {
+            setKeyword(keyword)
+            setPageInfo({...pageInfo,page:1})
+          }}
+          searchOptionList={optionList}
+          onChangeSearchOption={(option) => {
+            setOptionIndex(option)
+          }}
+          optionIndex={optionIndex}
+          title={"금형 기준정보"}
+          buttons={
+            ['', '', '항목관리', '행추가', '저장하기', '삭제']
+          }
+          buttonsOnclick={onClickHeaderButton}
+        />
+        <ExcelTable
+          editable
+          resizable
+          resizeSave
+          headerList={[
+            SelectColumn,
+            ...column
+          ]}
+          row={basicRow}
+          // setRow={setBasicRow}
+          setRow={(e) => {
+            let tmp: Set<any> = selectList
+            e.map(v => {
+              if(v.isChange) {
+                tmp.add(v.id)
+                v.isChange = false
+              }
+            })
+            setSelectList(tmp)
+            competeMoldV1u(e)
+          }}
+          selectList={selectList}
+          //@ts-ignore
+          setSelectList={setSelectList}
+          setSelectRow={setSelectRow}
+          width={1576}
+          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        />
+        <PaginationComponent
+          currentPage={pageInfo.page}
+          totalPage={pageInfo.total}
+          setPage={(page) => {
+            // if(keyword){
+            //   router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${option}`)
+              setPageInfo({...pageInfo,page:page})
+            // }else{
+            //   router.push(`/mes/basic/moldV1u?page=${page}`)
+            // }
+          }}
+        />
       {/*<ExcelDownloadModal*/}
       {/*  isOpen={excelOpen}*/}
       {/*  column={column}*/}

@@ -18,10 +18,12 @@ import {MachineListModal} from '../components/Modal/MachineListModal'
 import {SearchModalTest} from '../components/Modal/SearchModalTest'
 import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
 import {LotNumberRegister} from '../components/Cell/LotNumberRegister'
+import {TestToolSelectModal} from "../components/Modal/TestToolSelectModal";
 import {ToolSelectModal} from "../components/Modal/ToolSelectModal";
 import {ToolListModal} from "../components/Modal/ToolListModal";
 import {LotInputInfoModal} from "../components/Modal/LotInputInfoModal";
 import { BomInfoModal } from '../components/Modal/BomInfoModal'
+import {TestSearchModalTest} from "../components/Modal/SearchModalTest/TestSearchModalTest";
 
 export const searchModalList: any  = {
   member: [
@@ -226,7 +228,7 @@ export const searchModalList: any  = {
   ],
   toolUse: [
     {key: 'sequence', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'code', name: '공구 CODE', width: 160, formatter: SearchModalTest, placeholder: '-', type: 'searchToolModal', textAlign: 'center', modalType: true, noSelect:true },
+    {key: 'code', name: '공구 CODE', width: 160, formatter: TestSearchModalTest, placeholder: '-', type: 'searchToolModal', textAlign: 'center', modalType: true, noSelect:true },
     {key: 'name', name: '공구명', formatter: LineBorderContainer, placeholder: '-', type: 'Modal' },
     {key: 'customer', name: '거래처', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
     {key: 'used', name: '생산량', width: 160, formatter: LineBorderContainer, editor:TextEditor, placeholder: '생산량 입력', textAlign: 'center', textType:"Modal", type:"number" },
@@ -405,7 +407,7 @@ export const searchModalList: any  = {
     {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center', modalType:true, action:'register'},
     {key: 'molds', name: '금형', formatter: MoldSelectModal, textAlign: 'center', modalType:true},
     {key: 'machines', name: '기계', formatter: MachineSelectModal, textAlign: 'center', modalType:true},
-    {key: 'tool', name: '공구', formatter: ToolSelectModal, textAlign: 'center', modalType:true},
+    {key: 'tool', name: '공구', formatter: TestToolSelectModal, textAlign: 'center', modalType:true},
   ],
   workModify: [
     {key: 'sequence', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},

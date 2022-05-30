@@ -20,6 +20,7 @@ interface IProps {
   maxHeight?:number
   editable?: boolean
   resizable?: boolean
+  resizeSave?:boolean
   selectable?: boolean
   setRow: (row: Array<any>) => void
   setSelectRow?: (index: number) => void
@@ -36,7 +37,7 @@ interface IProps {
   scrollOnOff?:boolean
 }
 
-const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff}: IProps) => {
+const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff}: IProps) => {
   const [ selectedRows, setSelectedRows ] = useState<ReadonlySet<number>>(selectList ?? new Set())
 
 
@@ -76,7 +77,6 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
   }, [headerList])
 
   function isAtBottom({ currentTarget }: React.UIEvent<HTMLDivElement>): boolean {
-
     return Math.ceil(currentTarget.scrollTop) >= currentTarget.scrollHeight - currentTarget.clientHeight;
   }
 
@@ -130,7 +130,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
                 tmpHeader.push(tmpOneLine);
               })
               headerList[v] = {...headerList[v], mi_id: headerList[v].id, width:i <= 80 ? 80 : i, }
-              RequestMethod("post", "itemSave", tmpHeader.filter(v=>v.key)
+              if(resizeSave) RequestMethod("post", "itemSave", tmpHeader.filter(v=>v.key)
               // {
               //         mi_id:headerList[v].id, width:i <= 80 ? 80 : i,title:tmpHeader, hide:false, unit:headerList[v].unitData, moddable: headerList[v].moddable
               //       }

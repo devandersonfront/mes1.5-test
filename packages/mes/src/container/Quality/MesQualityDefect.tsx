@@ -231,7 +231,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
       <PageHeader title={"불량 통계 (자주검사 관리)"} />
       <ExcelTable
         editable
-        // resizable
+        resizable
         headerList={[
           SelectColumn,
           ...processColumn
@@ -249,6 +249,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
+        width={1576}
         height={80}
       />
       <div style={{display:"flex", justifyContent:"space-between", margin:"15px 0"}}>
@@ -268,6 +269,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
       </div>
       <ExcelTable
         editable
+        resizable
         headerList={[
           SelectColumn,
           ...pauseColumn
@@ -277,6 +279,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
           setState(true)
           setPauseBasicRow(e)
         }}
+        width={1576}
         height={440}
         // setSelectList={changeSetSelectList}
         setSelectList={setSelectList}

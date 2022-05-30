@@ -165,6 +165,7 @@ const MesToolRegister = () => {
             />
 
             <ExcelTable
+                resizable
                 headerList={[
                     SelectColumn,
                     ...column
@@ -195,6 +196,7 @@ const MesToolRegister = () => {
                 selectList={selectList}
                 //@ts-ignore
                 setSelectList={setSelectList}
+                width={1576}
             />
             {/*<PaginationComponent currentPage={} setPage={} totalPage={}  />*/}
         </div>

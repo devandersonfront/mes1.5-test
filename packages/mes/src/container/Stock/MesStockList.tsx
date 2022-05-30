@@ -322,7 +322,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
       />
       <ExcelTable
         editable
-        // resizable
+        resizable
         headerList={column}
         row={basicRow}
         // setRow={setBasicRow}

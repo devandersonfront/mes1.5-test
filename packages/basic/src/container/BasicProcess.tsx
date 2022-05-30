@@ -620,6 +620,7 @@ setKeyword('')
       <ExcelTable
         editable
         resizable
+        resizeSave
         pageInfo={pageInfo}
         headerList={[
           SelectColumn,

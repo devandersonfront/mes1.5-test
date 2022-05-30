@@ -496,50 +496,43 @@ const MesRecordList = ({ page, search, option }: IProps) => {
               break;
             }
           }
+        }}
+        />
+        <ExcelTable
+            editable
+            resizable
+            headerList={[
+              SelectColumn,
+              ...column
+            ]}
+            row={basicRow}
+            // setRow={setBasicRow}
+            setRow={(e) => {
+              let tmp: Set<any> = selectList
+              e.map(v => {
+                if(v.isChange) {
+                            tmp.add(v.id)
+                            v.isChange = false
+                        }
+              })
+              setSelectList(tmp)
+              setBasicRow(e)
+            }}
+            selectList={selectList}
+            //@ts-ignore
+            setSelectList={setSelectList}
+            width={1576}
+            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+            scrollEnd={(value) => {
+              if(value){
+                if(pageInfo.total > pageInfo.page){
+                  setSelectList(new Set)
+                  setPageInfo({...pageInfo, page:pageInfo.page+1})
+                }
+              }
+            }}
+        />
 
-          // switch (e) {
-          //   case 1: {
-          //     if (selectList.size === 1) {
-          //       setExcelOpen(true)
-          //     } else {
-          //       Notiflix.Report.warning("경고", "작업일보는 한 개씩만 수정 가능합니다.", "확인")
-          //     }
-          //   }
-          //     // onClickHeaderButton
-          // }
-        }}
-      />
-      <ExcelTable
-        editable
-        // resizable
-        headerList={[SelectColumn, ...column]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList;
-          e.map((v) => {
-            if (v.isChange) tmp.add(v.id);
-          });
-          setSelectList(tmp);
-          setBasicRow(e);
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        height={
-          basicRow.length * 40 >= 40 * 18 + 56
-            ? 40 * 19
-            : basicRow.length * 40 + 56
-        }
-        scrollEnd={(value) => {
-          if (value) {
-            if (pageInfo.total > pageInfo.page) {
-              setSelectList(new Set());
-              setPageInfo({ ...pageInfo, page: pageInfo.page + 1 });
-            }
-          }
-        }}
-      />
       {excelOpen && (
         <WorkModifyModal
           row={[
