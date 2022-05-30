@@ -142,7 +142,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       const spliceRow = [...rows]
       spliceRow.splice(selectRow, 1)
 
-      const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow]?.name && row.name !==undefined && row.name !=='')
+      const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow]?.mfrCode && row.mfrCode !== undefined && row.mfrCode !=='')
 
       if(spliceRow){
         if(isCheck){
