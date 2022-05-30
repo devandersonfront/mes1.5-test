@@ -32,28 +32,19 @@ interface IProps {
 
 let now = moment().format("YYYY-MM-DD");
 
-const MesRecordList = ({ page, search, option }: IProps) => {
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const [excelOpen, setExcelOpen] = useState<boolean>(false);
-
-  const [basicRow, setBasicRow] = useState<Array<any>>([]);
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(
-    columnlist["cncRecordListV2"]
-  );
-  const [selectList, setSelectList] = useState<Set<number>>(new Set());
-  const [optionList, setOptionList] = useState<string[]>([
-    "수주번호",
-    "지시 고유 번호",
-    "CODE",
-    "품명",
-    "LOT 번호",
-    "작업자",
-  ]);
-  const [optionIndex, setOptionIndex] = useState<number>(0);
-  const [selectDate, setSelectDate] = useState<{ from: string; to: string }>({
-    from: moment().subtract(1, "month").format("YYYY-MM-DD"),
-    to: moment().format("YYYY-MM-DD"),
+const MesRecordList = ({page, search, option}: IProps) => {
+  const router = useRouter()
+  const dispatch = useDispatch()
+  const [excelOpen, setExcelOpen] = useState<boolean>(false)
+  const [recordState, setRecordState] = useState<number>(0)
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["cncRecordListV2"])
+  const [selectList, setSelectList] = useState<Set<number>>(new Set())
+  const [optionList, setOptionList] = useState<string[]>(['수주번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자'])
+  const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
+    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    to: moment().format('YYYY-MM-DD')
   });
 
   const [keyword, setKeyword] = useState<string>("");
@@ -67,21 +58,22 @@ const MesRecordList = ({ page, search, option }: IProps) => {
     setOrder(value);
   };
 
-  const loadPage = (page: number) => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    } else {
+  const loadPage = (page:number) => {
+    // if(keyword){
+    //   SearchBasic(keyword, optionIndex, page).then(() => {
+    //     Notiflix.Loading.remove()
+    //   })
+    // }else{
       LoadBasic(page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    }
-  };
+        Notiflix.Loading.remove()
+      })
+    // }
+  }
 
   useEffect(() => {
-    loadPage(pageInfo.page);
-  }, [pageInfo.page, selectDate, order]);
+    loadPage(pageInfo.page)
+  }, [pageInfo.page, selectDate, keyword, order, recordState])
+
 
   useEffect(() => {
     dispatch(
@@ -91,6 +83,73 @@ const MesRecordList = ({ page, search, option }: IProps) => {
       dispatch(deleteSelectMenuState());
     };
   }, []);
+
+  const setRequestParams = (recordState?:number ,order?:number, opt?:number , keyword?:string, from?:string, to?:string ) => {
+    // http://3.36.78.194:8443/cnc/api/v1/record/list/1/22?rangeNeeded=false&fin=false
+    const params:any = {
+      from,
+      to,
+    }
+
+
+    if(order){
+      params.sorts = "end"
+      params.order = order == 1 ? "asc" : "desc"
+    }
+
+    if(recordState == 1){
+      params.rangeNeeded = false
+      params.fin=false
+      params.from = undefined
+      params.to = undefined
+    }
+    if(keyword){
+      params.opt = opt
+      params.keyword = keyword
+    }
+
+    return params
+    // if(keyword){
+    //   params.keyword = keyword
+    }
+
+    // order == 0 ?
+    //     {
+    //       from: selectDate.from,
+    //       to: selectDate.to,
+    //     }
+    //     :
+    //     {
+    //       sorts: 'end',
+    //       order: order == 1 ? 'asc' : 'desc',
+    //       from: selectDate.from,
+    //       to: selectDate.to,
+    //     }
+
+  //   {
+  //     keyword: keyword,
+  //         opt: optionIndex,
+  //       from: selectDate.from,
+  //       to: selectDate.to,
+  //   }
+  // :
+  //   {
+  //     sorts: 'end',
+  //         order: order == 1 ? 'asc' : 'desc',
+  //       keyword: keyword,
+  //       opt: optionIndex,
+  //       from: selectDate.from,
+  //       to: selectDate.to,
+  //   }
+  //   switch (recordState){
+  //     case 0:
+  //
+  //     case 1:
+  //       // http://3.36.78.194:8443/cnc/api/v1/record/list/1/22?rangeNeeded=false&fin=false
+  //     default:
+  //       return
+  //   }
+  // }
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -153,23 +212,24 @@ const MesRecordList = ({ page, search, option }: IProps) => {
         page: page || page !== 0 ? page : 1,
         renderItem: 22,
       },
-      params:
-        order == 0
-          ? {
-              keyword: keyword,
-              opt: optionIndex,
-              from: selectDate.from,
-              to: selectDate.to,
-            }
-          : {
-              sorts: "end",
-              order: order == 1 ? "asc" : "desc",
-              keyword: keyword,
-              opt: optionIndex,
-              from: selectDate.from,
-              to: selectDate.to,
-            },
-    });
+      params:setRequestParams(recordState, order, optionIndex, keyword, selectDate.from, selectDate.to)
+          // order == 0 ?
+          //     {
+          //       keyword: keyword,
+          //       opt: optionIndex,
+          //       from: selectDate.from,
+          //       to: selectDate.to,
+          //     }
+          //     :
+          //     {
+          //       sorts: 'end',
+          //       order: order == 1 ? 'asc' : 'desc',
+          //       keyword: keyword,
+          //       opt: optionIndex,
+          //       from: selectDate.from,
+          //       to: selectDate.to,
+          //     }
+    })
 
 
     // console.log("Res : at recordv2 list", res);
@@ -193,20 +253,21 @@ const MesRecordList = ({ page, search, option }: IProps) => {
         page: page || page !== 0 ? page : 1,
         renderItem: 22,
       },
-      params:
-        order == 0
-          ? {
-              from: selectDate.from,
-              to: selectDate.to,
-            }
-          : {
-              sorts: "end",
-              order: order == 1 ? "asc" : "desc",
-              from: selectDate.from,
-              to: selectDate.to,
-            },
-    });
-    if (res) {
+      params: setRequestParams(recordState, order, optionIndex, keyword, selectDate.from, selectDate.to)
+          // order == 0 ?
+          //     {
+          //       from: selectDate.from,
+          //       to: selectDate.to,
+          //     }
+          //     :
+          //     {
+          //       sorts: 'end',
+          //       order: order == 1 ? 'asc' : 'desc',
+          //       from: selectDate.from,
+          //       to: selectDate.to,
+          //     }
+    })
+    if(res){
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -435,6 +496,10 @@ const MesRecordList = ({ page, search, option }: IProps) => {
       <PageHeader
         isSearch
         isCalendar
+        isRadio
+        radioTexts={["종료","미완료"]}
+        radioValue={recordState}
+        onChangeRadioValues={setRecordState}
         searchKeyword={keyword}
         searchOptionList={optionList}
         onChangeSearchOption={(e) => {

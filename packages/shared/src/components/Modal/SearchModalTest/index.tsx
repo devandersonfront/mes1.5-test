@@ -400,7 +400,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             }
         )
       }else if(column.type === "searchToolModal"){
-        onRowChange(searchList[selectRow])
+        onRowChange({...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar)})
       }else if(column.type === 'customer'){
         onRowChange(
             {

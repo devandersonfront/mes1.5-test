@@ -12,6 +12,17 @@ interface IProps {
 
 const FinishButton = ({ row, column, onRowChange}: IProps) => {
   const [title, setTitle] = useState<string>("작업 종료")
+    console.log(column)
+    const selectApi = () => {
+        switch(column.key){
+            case "force_kill":
+                return "sheetFinish"
+            case "finishButton":
+                return ""
+            default:
+                break;
+        }
+    }
 
   const SaveBasic = async () => {
     let res: any

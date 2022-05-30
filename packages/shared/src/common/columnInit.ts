@@ -914,6 +914,7 @@ export const columnlist: any = {
   cncRecordListV2: [
     {key:"contract_id", name:"수주 번호", width: 118},
     {key:"identification", name:"지시 고유 번호", width: 118   },
+    {key:"finish", name:"작업 종료", width: 118, formatter:FinishButton },
     {key:"product_id", name:"CODE", width: 118},
     {key:"name", name:"품명", width: 118},
     {key:"type", name:"품목 종류", width: 118},

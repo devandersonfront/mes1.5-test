@@ -97,7 +97,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         if (v.rm_id === undefined) {
           return 1
         }
-        if (v.lot_number === undefined) {
+        if (v.lot_number === undefined || v.lot_number === "") {
           return 2
         }
         if (v.amount <= 0 || v.amount === undefined) {
