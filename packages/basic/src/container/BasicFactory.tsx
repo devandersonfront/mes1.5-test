@@ -55,18 +55,6 @@ const BasicFactory = ({}: IProps) => {
   });
   const [weatherToRun, setWeatherToRun] = useState(false);
 
-  //   useEffect(() => {
-  //     if (keyword) {
-  //       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //         Notiflix.Loading.remove();
-  //       });
-  //     } else {
-  //       LoadBasic(pageInfo.page).then(() => {
-  //         Notiflix.Loading.remove();
-  //       });
-  //     }
-  //   }, [pageInfo.page, keyword]);
-
   useEffect(() => {
     if (keyword && !weatherToRun) {
       SearchBasic(keyword, optionIndex, pageInfo.page);

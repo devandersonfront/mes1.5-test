@@ -167,7 +167,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
         page: res.page,
         total: res.totalPages,
       });
-      console.log("SearchBasic res : ", res);
+      // console.log("SearchBasic res : ", res);
       // setBasicRow([]);
       cleanUpData(res);
     }

@@ -135,6 +135,9 @@ const MesOperationList = ({page, search, option}: IProps) => {
         page: pageInfo.page ?? 1,
         renderItem: 22,
       },
+
+      
+
       params: order == 0 ?
           {
             from: selectDate.from,
@@ -150,6 +153,8 @@ const MesOperationList = ({page, search, option}: IProps) => {
             status: '0,1'
           }
     })
+
+    console.log("res operation: ", res);
 
 
     if(res){

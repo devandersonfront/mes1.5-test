@@ -172,7 +172,7 @@ const MesRecordList = ({ page, search, option }: IProps) => {
     });
 
 
-    console.log("Res : at recordv2 list", res);
+    // console.log("Res : at recordv2 list", res);
     
 
     if (res) {
