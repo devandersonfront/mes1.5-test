@@ -57,7 +57,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         })
       }
     }
-  }, [pageInfo.page, keyword, selectDate])
+  }, [pageInfo.page, selectDate])
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
@@ -312,8 +312,11 @@ const MesFinishList = ({page, search, option}: IProps) => {
         optionIndex={optionIndex}
         onChangeSearchKeyword={(keyword) => {
           setSelectList(new Set)
-          setKeyword(keyword)
-          setPageInfo({page:1, total:1})
+          // setKeyword(keyword)
+          // setPageInfo({page:1, total:1})
+          SearchBasic(keyword, optionIndex, 1).then(() => {
+            Notiflix.Loading.remove();
+          });
         }}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)

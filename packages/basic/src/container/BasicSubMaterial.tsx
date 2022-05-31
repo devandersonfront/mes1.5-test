@@ -29,7 +29,7 @@ export interface IProps {
   option?: number;
 }
 
-const BasicSubMaterial = ({}: IProps) => {
+const BasicSubMaterial = ({ }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [excelOpen, setExcelOpen] = useState<boolean>(false);
@@ -424,24 +424,24 @@ const BasicSubMaterial = ({}: IProps) => {
 
     let additionalMenus = res.menus
       ? res.menus
-          .map((menu: any) => {
-            if (menu.colName === null && !menu.hide) {
-              return {
-                id: menu.mi_id,
-                name: menu.title,
-                width: menu.width,
-                // key: menu.title,
-                key: menu.mi_id,
-                editor: TextEditor,
-                type: "additional",
-                unit: menu.unit,
-                tab: menu.tab,
-                version: menu.version,
-                colName: menu.mi_id,
-              };
-            }
-          })
-          .filter((v: any) => v)
+        .map((menu: any) => {
+          if (menu.colName === null && !menu.hide) {
+            return {
+              id: menu.mi_id,
+              name: menu.title,
+              width: menu.width,
+              // key: menu.title,
+              key: menu.mi_id,
+              editor: TextEditor,
+              type: "additional",
+              unit: menu.unit,
+              tab: menu.tab,
+              version: menu.version,
+              colName: menu.mi_id,
+            };
+          }
+        })
+        .filter((v: any) => v)
       : [];
 
     tmpRow = res.info_list;
@@ -559,7 +559,7 @@ const BasicSubMaterial = ({}: IProps) => {
           () => {
             DeleteBasic();
           },
-          () => {}
+          () => { }
         );
         break;
     }
@@ -590,70 +590,73 @@ const BasicSubMaterial = ({}: IProps) => {
   };
   return (
     <div>
-        <PageHeader
-          isSearch
-          searchKeyword={keyword}
-          onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword);
-            setPageInfo({...pageInfo,page:1})
-          }}
-          searchOptionList={optionList}
-          onChangeSearchOption={(option) => {
-            setOptionIndex(option)
-          }}
-          optionIndex={optionIndex}
-          title={"부자재 기준정보"}
-          buttons={
-            ['', '', '항목관리', '행추가', '저장하기', '삭제']
-          }
-          buttonsOnclick={
-            // () => {}
-            onClickHeaderButton
-          }
-        />
-        <ExcelTable
-          editable
-          resizable
-          resizeSave
-          headerList={[
-            SelectColumn,
-            ...column
-          ]}
-          row={basicRow}
-          // setRow={setBasicRow}
-          setRow={(e) => {
-            let tmp: Set<any> = selectList
-            e.map(v => {
-              if(v.isChange) {
-                tmp.add(v.id)
-                v.isChange = false
-              }
-            })
+      <PageHeader
+        isSearch
+        searchKeyword={keyword}
+        onChangeSearchKeyword={(keyword) => {
+          setKeyword(keyword);
+          // setPageInfo({...pageInfo,page:1})
+          SearchBasic(keyword, optionIndex, 1).then(() => {
+            Notiflix.Loading.remove();
+          });
+        }}
+        searchOptionList={optionList}
+        onChangeSearchOption={(option) => {
+          setOptionIndex(option)
+        }}
+        optionIndex={optionIndex}
+        title={"부자재 기준정보"}
+        buttons={
+          ['', '', '항목관리', '행추가', '저장하기', '삭제']
+        }
+        buttonsOnclick={
+          // () => {}
+          onClickHeaderButton
+        }
+      />
+      <ExcelTable
+        editable
+        resizable
+        resizeSave
+        headerList={[
+          SelectColumn,
+          ...column
+        ]}
+        row={basicRow}
+        // setRow={setBasicRow}
+        setRow={(e) => {
+          let tmp: Set<any> = selectList
+          e.map(v => {
+            if (v.isChange) {
+              tmp.add(v.id)
+              v.isChange = false
+            }
+          })
 
-            setSelectList(tmp)
-            e.map((value, index)=>{
-              if(value.customerArray){
-                basicRow[index].customer = value;
-              }
-            })
+          setSelectList(tmp)
+          e.map((value, index) => {
+            if (value.customerArray) {
+              basicRow[index].customer = value;
+            }
+          })
 
-            // setBasicRow([...basicRow])
-            competeSubMaterial(e)
-          }}
-          selectList={selectList}
-          //@ts-ignore
-          setSelectList={setSelectList}
-          setSelectRow={setSelectRow}
-          width={1576}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-        />
-        <PaginationComponent
-          currentPage={pageInfo.page}
-          totalPage={pageInfo.total}
-          setPage={(page) => {
-            setPageInfo({...pageInfo, page:page})
-          }}
-        />
+          // setBasicRow([...basicRow])
+          competeSubMaterial(e)
+        }}
+        selectList={selectList}
+        //@ts-ignore
+        setSelectList={setSelectList}
+        setSelectRow={setSelectRow}
+        width={1576}
+        height={basicRow.length * 40 >= 40 * 18 + 56 ? 40 * 19 : basicRow.length * 40 + 56}
+      />
+      <PaginationComponent
+        currentPage={pageInfo.page}
+        totalPage={pageInfo.total}
+        setPage={(page) => {
+          setPageInfo({ ...pageInfo, page: page })
+        }}
+      />
       {/*<ExcelDownloadModal*/}
       {/*  isOpen={excelOpen}*/}
       {/*  column={column}*/}

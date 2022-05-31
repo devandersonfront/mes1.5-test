@@ -38,15 +38,15 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
     useEffect(() => {
         // setOptionIndex(option)
         if(searchKeyword){
-            // SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
-            //     Notiflix.Loading.remove()
-            // })
+            SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
         }else{
             LoadBasic(pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
             })
         }
-    }, [pageInfo.page])
+    }, [pageInfo.page, selectDate])
 
     useEffect(() => {
         dispatch(setSelectMenuStateChange({main:"품질 관리",sub:router.pathname}))
@@ -198,13 +198,11 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 searchOptionList={optionList}
                 onChangeSearchKeyword={async (keyword) =>{
                     setSelectList(new Set)
-                    console.log("keyworkd 11: ", keyword);
-                    
-                    await setSearchKeyword(keyword)
+                    // await setSearchKeyword(keyword)
+                    // setPageInfo({page:1,total:1})
                     await SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
                         Notiflix.Loading.remove()
                     })
-                    // setPageInfo({page:1,total:1})
                 }}
                 onChangeSearchOption={(option) => {
                     setSelectList(new Set)

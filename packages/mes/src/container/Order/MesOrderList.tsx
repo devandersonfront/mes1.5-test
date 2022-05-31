@@ -85,7 +85,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page]);
+  }, [pageInfo.page, selectDate]);
 
   useEffect(() => {
     dispatch(

@@ -81,7 +81,7 @@ const BasicMachineV1u = ({option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, keyword, typesState])
+  }, [pageInfo.page, typesState])
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"기계 기준정보",sub:""}))
@@ -568,8 +568,11 @@ const BasicMachineV1u = ({option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword)
-            setPageInfo({...pageInfo,page:1})
+            // setKeyword(keyword)
+            // setPageInfo({...pageInfo,page:1})
+            SearchBasic(keyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove();
+            });
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {

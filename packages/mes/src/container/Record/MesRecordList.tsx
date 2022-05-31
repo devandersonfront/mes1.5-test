@@ -81,7 +81,7 @@ const MesRecordList = ({ page, search, option }: IProps) => {
 
   useEffect(() => {
     loadPage(pageInfo.page);
-  }, [pageInfo.page, keyword, selectDate, order]);
+  }, [pageInfo.page, selectDate, order]);
 
   useEffect(() => {
     dispatch(
@@ -441,7 +441,7 @@ const MesRecordList = ({ page, search, option }: IProps) => {
         }}
         onChangeSearchKeyword={(keyword) => {
           setSelectList(new Set());
-          setKeyword(keyword);
+          // setKeyword(keyword);
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
           });
