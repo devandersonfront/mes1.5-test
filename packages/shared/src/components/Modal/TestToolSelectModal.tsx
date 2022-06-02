@@ -231,7 +231,7 @@ const TestToolSelectModal = ({column, row, onRowChange}: IProps) => {
                         <ExcelTable
                             headerList={searchModalList.toolUse}
                             row={searchList}
-                            setRow={(e) => {
+                            setRow={(e) => {                                
 
                                 if(e[0].stock === 0){
                                     return Notiflix.Report.warning("경고", "재고량이 없습니다.", "확인",  );
@@ -239,6 +239,10 @@ const TestToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                 const convertList = e.map((data, index) => (
                                     {...data , sequence : index + 1 , product_id : row.productId}
                                 ))
+
+                                console.log("converlist : ", convertList);
+                                
+
                                 setSearchList(convertList)
                             }}
                             width={1746}
@@ -261,14 +265,25 @@ const TestToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                     })
                                     console.log(convertList,'convertList')
                                     setSearchList(convertList)
+                                    // hyun 11111111111
                                 }else{
-                                    const convertList = searchList.map((row,index) => {
-                                        if(index === e) return {...row , doubleClick : confirmFunction}
-                                        else return {...row}
-                                    })
+                                    console.log("searchList :::::: ", searchList);
+                                    
+                                    // const convertList = searchList.map((row,index) => {                                        
+                                    //     if(index === e) return {...row , doubleClick : confirmFunction}
+                                    //     else return {...row}
+                                    // })
 
-                                    console.log(convertList,'convertList2')
-                                    setSearchList(convertList)
+                                    // const convertList = searchList.map((v,i)=>{
+                                    //     if(i === e){
+                                    //         return {...v , border : true , id : row.id}
+                                    //     }else{
+                                    //         return {...v , border : false , id : row.id }
+                                    //     }
+                                    // })
+
+                                    // console.log("convertList :::::::::::::::: ", convertList)
+                                    // setSearchList(convertList)
                                 }
                                 setSelectRow(e)
                             }}
