@@ -121,12 +121,12 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
   const SaveBasic = async () => {
     let checkPoint = true;
     searchList.map((row) => {
-      let a = '00:00:00'
+      let time = '00:00:00'
       let seconds
       if(row.pause_time !== undefined ){
-        a = row.pause_time.split(':')
+        time = row.pause_time.split(':')
       }
-      seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2])
+      seconds = (+time[0]) * 60 * 60 + (+time[1]) * 60 + (+time[2])
 
       if(!row.lot_number){
         Notiflix.Report.warning("경고","LOT번호를 입력해주시기 바랍니다.","확인",)
