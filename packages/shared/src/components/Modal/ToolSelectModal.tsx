@@ -232,12 +232,11 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                 if(e[0].stock === 0){
                                     return Notiflix.Report.warning("경고", "재고량이 없습니다.", "확인",  );
                                 }
-                                const tmpData = [...e]
-                                tmpData.map((data, index) => {
-                                    data.sequence = index+1
-                                    data.product_id = row.productId
-                                })
-                                setSearchList([...tmpData])
+                                const update = e.map((data, index) => {
+                                    return { ...data, sequence: index + 1, productId: row.productId }
+                                });
+
+                                setSearchList(update)
                             }}
                             width={1746}
                             rowHeight={32}

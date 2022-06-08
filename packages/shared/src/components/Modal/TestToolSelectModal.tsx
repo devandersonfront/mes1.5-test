@@ -248,9 +248,6 @@ const TestToolSelectModal = ({column, row, onRowChange}: IProps) => {
                             //   setSelectRow(e)
                             // }}
                             setSelectRow={(e) => {
-
-                                console.log(e,'eeeeee')
-                                console.log(searchList,'searchList')
                                 if(!searchList[e].border){
                                     const convertList = searchList.map((v,i)=>{
                                         if(i === e){
@@ -259,15 +256,6 @@ const TestToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                             return {...v , border : false , id : row.id }
                                         }
                                     })
-                                    console.log(convertList,'convertList')
-                                    setSearchList(convertList)
-                                }else{
-                                    const convertList = searchList.map((row,index) => {
-                                        if(index === e) return {...row , doubleClick : confirmFunction}
-                                        else return {...row}
-                                    })
-
-                                    console.log(convertList,'convertList2')
                                     setSearchList(convertList)
                                 }
                                 setSelectRow(e)

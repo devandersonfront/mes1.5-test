@@ -561,22 +561,21 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               rowHeight={32}
               height={640}
               setSelectRow={(e) => {
-                // dispatch(changeSearchModalNumber(e))
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                    v.id = row.id
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
-                setSearchList([...searchList.map((row, index) => {
-                  if(index === e) {
-                    row.doubleClick = confirmFunction
-                    return row
-                  }
-                  else return row
-                })])
+                const update = searchList.map(
+                  (row, index) => index === e
+                    ? {
+                      ...row,
+                      doubleClick: confirmFunction,
+                      border: true,
+                    }
+                    : {
+                      ...row,
+                      border: false
+                    }
+                );
+
+                setSearchList(update)
+
                 setSelectRow(e)
               }}
               type={'searchModal'}

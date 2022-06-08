@@ -240,20 +240,21 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
                 rowHeight={32}
                 height={642}
                 setSelectRow={(e) => {
-                  setSearchList([...searchList.map((row, index) => {
-                    if(index === e) {
-                      row.doubleClick = confirmFunction
-                      return row
-                    }
-                    else return row
-                  })])
-                  if(!searchList[e].border){
-                    searchList.map((v,i)=>{
-                      v.border = false;
-                    })
-                    searchList[e].border = true
-                    setSearchList([...searchList])
-                  }
+                  const update = searchList.map(
+                      (row, index) => index === e
+                          ? {
+                            ...row,
+                            doubleClick: confirmFunction,
+                            border: true,
+                          }
+                          : {
+                            ...row,
+                            border: false
+                          }
+                  );
+
+                  setSearchList(update)
+
                   setSelectRow(e)
                 }}
                 type={'searchModal'}
@@ -288,4 +289,4 @@ const SearchModalWrapper = styled.div`
   width: 100%;
 `
 
-export {AuthoritySearchModal}
+export { AuthoritySearchModal }
