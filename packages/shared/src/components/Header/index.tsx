@@ -62,6 +62,10 @@ interface IProps {
   isCode?: boolean
   onChangeCode?: (code:boolean) => void
   code?: boolean
+  isRadio?:boolean
+  radioTexts?:string[]
+  radioValue?:number
+  onChangeRadioValues?:(radioValues:number) => void
 }
 
 const useStyles = makeStyles(_ => {
@@ -156,7 +160,8 @@ const lightTheme = createTheme({
 const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList, buttonsOnclick, isSearch, style, leftButton, onClickMenu, menuIndex,
                       searchKeyword, onChangeSearchKeyword, searchOptionList, onChangeSearchOption, filterList, onChangeFilter,
                       serviceFilterButton, onClickServiceButton, leftButtonOnClick, basicMachineType, typeListOnClick, isCalendar, onChangeSelectDate,
-                      calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code}: IProps) => {
+                      calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code,
+                  isRadio, radioTexts, radioValue, onChangeRadioValues}: IProps) => {
 
   const [machineCheck, setMachineCheck] = React.useState<any>({
     all: true,
@@ -214,6 +219,30 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList
             </div>
 
             <ButtonWrapper style={{  marginTop: 20}}>
+                      <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
+              {
+                  isRadio &&
+                  radioTexts.map((text, index) =>
+                      <>
+                        <input id={`radio_${index}`} name={`radio`}  type={'radio'} style={{display: 'none'}} onClick={() => {
+                            onChangeRadioValues && onChangeRadioValues(index)
+                        }}/>
+                        <label htmlFor={`radio_${index}`}>
+                          <div style={{display:"flex", alignItems:"center",}}>
+                            {
+                              radioValue === index
+                                  ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
+                                  : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
+                            }
+
+                            <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>{radioTexts[index]}</p>
+                          </div>
+                        </label>
+                      </>
+                  )
+              }
+                      </div>
+
                 {
                   isCode && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
                     <input id='codeTrue' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {

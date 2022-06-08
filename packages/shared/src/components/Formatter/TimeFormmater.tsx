@@ -19,7 +19,7 @@ const TimeFormatter = ({row, column, setRow,onRowChange}: IProps) => {
                 :
                 <input readOnly={isReadOnly} placeholder={'0'} type={'number'} value={row['minute']} style={{width: '30px'}} onChange={(e)=>{if(Number(e.target.value) < 60){onRowChange({...row, minute: RemoveFirstZero(e.target.value)})}}}/>
                 :
-                <input readOnly={isReadOnly} placeholder={'0'} type={'number'} value={row['second']} style={{width: '30px'}} onChange={(e)=>{if(Number(e.target.value) < 60) {onRowChange({...row, second: RemoveFirstZero(e.target.value)})}}}/>
+                <input readOnly={isReadOnly} placeholder={'0'} type={'number'} value={Math.floor(row['second'])} style={{width: '30px'}} onChange={(e)=>{if(Number(e.target.value) < 60) {onRowChange({...row, second: RemoveFirstZero(e.target.value)})}}}/>
             </p>
         </Background>
     )

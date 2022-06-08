@@ -750,11 +750,8 @@ const BasicUser = ({}: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
-        height={
-          basicRow.length * 40 >= 40 * 18 + 40
-            ? 40 * 19 + 16
-            : basicRow.length * 40 + 56
-        }
+        width={1576}
+        height={basicRow.length * 40 >= 40*18+40 ? 40*19+16 : basicRow.length * 40 + 56}
       />
       <PaginationComponent
         currentPage={pageInfo.page}

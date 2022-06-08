@@ -188,6 +188,14 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
         }
     }
 
+    const settingHeight = (length:number) => {
+        switch (length){
+            case 0:
+                return 80
+            default :
+                return basicRow.length * 40 + 56
+        }
+    }
 
     return (
         <div>
@@ -240,7 +248,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 //@ts-ignore
                 setSelectList={setSelectList}
                 width={1576}
-                height={basicRow.length > 0 ? basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56 : 86}
+                height={settingHeight(basicRow.length)}
                 scrollEnd={(value) => {
                     if(value){
                         if(pageInfo.total > pageInfo.page){

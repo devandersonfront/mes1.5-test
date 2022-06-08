@@ -166,7 +166,7 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
       />
       <ExcelTable
         editable
-        width={1500}
+        width={1576}
         resizable
         headerList={[
           SelectColumn,

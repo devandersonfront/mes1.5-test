@@ -561,6 +561,14 @@ const BasicMachineV1u = ({option}: IProps) => {
     setBasicRow(rows)
   }
 
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 90
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
 
   return (
       <div>
@@ -611,7 +619,7 @@ const BasicMachineV1u = ({option}: IProps) => {
             setSelectList={setSelectList}
             setSelectRow={setSelectRow}
             width={1576}
-            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+            height={settingHeight(basicRow.length)}
         />
         <PaginationComponent
           currentPage={pageInfo.page}
