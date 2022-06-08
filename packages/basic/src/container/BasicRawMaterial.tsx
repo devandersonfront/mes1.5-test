@@ -685,15 +685,6 @@ const BasicRawMaterial = ({}: IProps) => {
     }
   }
 
-  const settingHeight = (length:number) => {
-    switch (length){
-      case 0:
-        return 80
-      default :
-        return basicRow.length * 40 + 56
-    }
-  }
-
   return (
     <div>
         <PageHeader

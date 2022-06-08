@@ -614,14 +614,6 @@ const BasicCustomer = ({}: IProps) => {
     setBasicRow(rows);
   };
 
-  const settingHeight = (length:number) => {
-    switch (length){
-      case 0:
-        return 80
-      default :
-        return basicRow.length * 40 + 56
-    }
-  }
 
   const settingHeight = (length:number) => {
     switch (length){

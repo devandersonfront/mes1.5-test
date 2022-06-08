@@ -197,7 +197,9 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
-        router.push("/mes/rawmaterialV1u/stock")
+        setTimeout(() => {
+          router.push("/mes/rawmaterialV1u/stock")
+        }, 300)
       });
     }
   }

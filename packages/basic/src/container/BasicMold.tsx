@@ -310,28 +310,6 @@ const BasicMold = ({}: IProps) => {
     const additional = setAdditionalData();
     let deletable = true;
 
-    // if (haveIdRows.length > 0) {
-    //   deletable = await RequestMethod(
-    //     "delete",
-    //     "moldDelete",
-    //     haveIdRows.map((row) => ({
-    //       ...row,
-    //       additional: [
-    //         ...additional
-    //           .map((v) => {
-    //             if (row[v.name]) {
-    //               return {
-    //                 id: v.id,
-    //                 title: v.name,
-    //                 value: row[v.name],
-    //                 unit: v.unit,
-    //               };
-    //             }
-    //           })
-    //           .filter((v) => v),
-    //       ],
-    //     }))
-    //   );
 
     if(haveIdRows.length > 0){
 
@@ -392,15 +370,6 @@ const BasicMold = ({}: IProps) => {
 
     setSelectList(new Set());
   };
-
-  const settingHeight = (length:number) => {
-    switch (length){
-      case 0:
-        return 80
-      default :
-        return basicRow.length * 40 + 56
-    }
-  }
 
   const settingHeight = (length:number) => {
     switch (length){

@@ -599,6 +599,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
                 />
                 <ExcelTable
                     resizable
+                    resizeSave
                     headerList={[SelectColumn, ...column]}
                     row={basicRow}
                     setRow={(e) => {
