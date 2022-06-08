@@ -421,12 +421,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
                   searchList[e].border = true
                   setSearchList([...searchList])
                 }
-                // if(selectList.has(searchList[e].id)){
-                //   selectList.delete(searchList[e].id)
-                // }else{
-                //   selectList.add(searchList[e].id)
-                // }
-                // setSelectList(selectList);
                 setSelectRow(e)
               }}
 

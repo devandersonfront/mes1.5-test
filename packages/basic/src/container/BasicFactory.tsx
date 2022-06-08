@@ -593,6 +593,7 @@ const BasicFactory = ({}: IProps) => {
         buttons={["", "", "항목관리", "행추가", "저장하기", "삭제"]}
         buttonsOnclick={onClickHeaderButton}
       />
+
       <ExcelTable
         editable
         resizable

@@ -156,9 +156,11 @@ export const searchModalList: any  = {
     // {key: 'spm', name: 'SPM', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     // {key: 'slideHeight', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
   ],
+
+  // 최종 헤더
   toolProductSearch: [
     {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '공구 품명', formatter: LineBorderContainer, type: 'mold', modalType: true, placeholder: "-"  },
+    {key: 'name', name: '공구 품명2', formatter: LineBorderContainer, type: 'mold', modalType: true, placeholder: "-"  },
     {key: 'customer', name: '거래처', formatter: LineBorderContainer, placeholder: '-' },
     {key: 'stock', name: '재고량', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
   ],

@@ -271,6 +271,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
             </div>
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
+
             <ExcelTable
                 headerList={searchModalList.workModify}
                 row={searchList ?? [{}]}
