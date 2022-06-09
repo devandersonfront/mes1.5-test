@@ -234,16 +234,13 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                 }
                                 const update = e.map((data, index) => {
                                     return { ...data, sequence: index + 1, productId: row.productId }
-                                });
+                                })
 
                                 setSearchList(update)
                             }}
                             width={1746}
                             rowHeight={32}
                             height={552}
-                            // setSelectRow={(e) => {
-                            //   setSelectRow(e)
-                            // }}
                             setSelectRow={(e) => {
                                 if(!searchList[e].border){
 
@@ -253,13 +250,6 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                     searchList[e].border = true
                                     setSearchList([...searchList])
                                 }
-                                setSearchList([...searchList.map((row, index) => {
-                                    if(index === e) {
-                                        row.doubleClick = confirmFunction
-                                        return row
-                                    }
-                                    else return row
-                                })])
                                 setSelectRow(e)
                             }}
                             type={'searchModal'}
