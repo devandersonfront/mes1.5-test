@@ -499,7 +499,10 @@ const MesRecordList = ({page, search, option}: IProps) => {
         isRadio
         radioTexts={["종료","미완료"]}
         radioValue={recordState}
-        onChangeRadioValues={setRecordState}
+        onChangeRadioValues={(e) => {
+          setRecordState(e)
+          setPageInfo({...pageInfo, page:1})
+        }}
         searchKeyword={keyword}
         searchOptionList={optionList}
         onChangeSearchOption={(e) => {
