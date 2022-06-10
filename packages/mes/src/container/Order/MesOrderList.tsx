@@ -574,7 +574,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
           //@ts-ignore
           setSelectList={setSelectList}
           width={1576}
-          height={settingHeight(basicRow.length)}
+          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
           scrollEnd={(value) => {
             if(value){
               if(pageInfo.total > pageInfo.page){
