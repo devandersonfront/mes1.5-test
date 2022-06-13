@@ -599,6 +599,7 @@ const BasicFactory = ({}: IProps) => {
             <ExcelTable
                 editable
                 resizable
+                resizeSave
                 headerList={[
                     SelectColumn,
                     ...column

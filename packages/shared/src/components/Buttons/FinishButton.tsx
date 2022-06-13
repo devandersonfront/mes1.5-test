@@ -13,17 +13,6 @@ interface IProps {
 
 const FinishButton = ({ row, column, onRowChange}: IProps) => {
   const [title, setTitle] = useState<string>("작업 종료")
-    console.log(column)
-    const selectApi = () => {
-        switch(column.key){
-            case "force_kill":
-                return "sheetFinish"
-            case "finishButton":
-                return ""
-            default:
-                break;
-        }
-    }
 
   const SaveBasic = async () => {
     let res: any
@@ -36,19 +25,16 @@ const FinishButton = ({ row, column, onRowChange}: IProps) => {
             Notiflix.Report.failure("에러",err.data.message,"확인")
         })
       }else{
-          // bom_root_id: row[0].operation_sheet.product.bom_root_id,
-          // productId: row[0].product.product_id,
-          // modify: true,
-          // worker: row[0].worker_object,
-          // worker_object: null
-          // res = await RequestMethod("post", 'recordSave',
-          //     [{...row, end:moment(new Date).format("YYYY-MM-DD hh:mm:ss")}])
-          Notiflix.Report.warning("","개발중입니다.","확인")
+          res = await RequestMethod("post", 'recordEnd',
+              undefined,undefined,undefined,undefined,row.record_id)
+              .catch((err) => {
+                  Notiflix.Report.failure("에러",err?.data?.message,"확인")
+              })
       }
 
 
     if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인', ()=>  onRowChange({
+      Notiflix.Report.success(`${column.key !== "finish" ? "저장" : "종료"}되었습니다.`,'','확인', ()=>  onRowChange({
         ...row,
         finish: true
       }));

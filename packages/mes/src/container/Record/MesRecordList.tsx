@@ -279,14 +279,10 @@ const MesRecordList = ({page, search, option}: IProps) => {
   };
 
   const DeleteBasic = async () => {
-    let res = await RequestMethod(
-      "delete",
-      `cncRecordeDelete`,
-      basicRow
-        .map((row, i) => {
-          if (selectList.has(row.id)) {
-            let selectKey: string[] = [];
-            let additional: any[] = [];
+    let res = await RequestMethod('delete', `recodeDelete`, basicRow.map((row, i) => {
+          if(selectList.has(row.id)){
+            let selectKey: string[] = []
+            let additional:any[] = []
             column.map((v) => {
               if (v.selectList) {
                 selectKey.push(v.key);
@@ -577,15 +573,8 @@ const MesRecordList = ({page, search, option}: IProps) => {
             row={basicRow}
             // setRow={setBasicRow}
             setRow={(e) => {
-              let tmp: Set<any> = selectList
-              e.map(v => {
-                if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
-              })
-              setSelectList(tmp)
-              setBasicRow(e)
+              const deleteCheck = e.every(prop => prop.finish === false);
+              if(!deleteCheck) loadPage(1)
             }}
             selectList={selectList}
             //@ts-ignore

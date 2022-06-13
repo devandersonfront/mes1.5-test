@@ -734,6 +734,7 @@ const BasicUser = ({}: IProps) => {
       <ExcelTable
         editable
         resizable
+        resizeSave
         headerList={[SelectColumn, ...column]}
         row={basicRow}
         // setRow={setBasicRow}

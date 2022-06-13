@@ -680,6 +680,7 @@ setKeyword('')
         <ExcelTable
           editable
           resizable
+          resizeSave
           headerList={[
             SelectColumn,
             ...column
