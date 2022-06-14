@@ -5,5 +5,4 @@
     "allowSyntheticDefaultImports": true,
     "jsx": "preserve",
   },
-  "include": ["**/*.ts", "**/*.tsx"],
 }

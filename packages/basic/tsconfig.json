@@ -3,6 +3,6 @@
   "compilerOptions": {
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
-    "jsx": "React",
-  }
+    "jsx": "preserve",
+  },
 }
