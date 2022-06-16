@@ -264,6 +264,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
             }
             buttonsOnclick={onClickHeaderButton}
         />
+
         <ExcelTable
             editable
             resizable

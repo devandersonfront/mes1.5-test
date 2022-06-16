@@ -314,7 +314,18 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               }}
               type={'searchModal'}
               headerAlign={'center'}
+              scrollEnd={(value) => {
+                if (value) {
+                  if (pageInfo.total > pageInfo.page) {
+                    setPageInfo({ ...pageInfo, page: pageInfo.page + 1 })
+                  }
+                }
+              }}
+              
             />
+
+
+            
           </div>
           { column.type === "readonly" || column.type === "baseReadonly" ?
             <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
