@@ -23,6 +23,7 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [select, setSelect] = useState<Date>(moment().toDate())
   const ref = useOnclickOutside(() => setIsOpen(false))
+
   React.useEffect(() => {
     if(isOpen){
       if(row[column.key]) setSelect(moment(row[column.key]).toDate())

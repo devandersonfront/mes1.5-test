@@ -97,7 +97,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         if (v.rm_id === undefined) {
           return 1
         }
-        if (v.lot_number === undefined) {
+        if (v.lot_number === undefined || v.lot_number === "") {
           return 2
         }
         if (v.amount <= 0 || v.amount === undefined) {
@@ -197,7 +197,9 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
-        router.push("/mes/rawmaterialV1u/stock")
+        setTimeout(() => {
+          router.push("/mes/rawmaterialV1u/stock")
+        }, 300)
       });
     }
   }

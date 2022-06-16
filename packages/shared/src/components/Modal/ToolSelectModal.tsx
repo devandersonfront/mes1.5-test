@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { IExcelHeaderType } from '../../common/@types/type'
+import React, {useEffect, useState} from 'react'
+import {IExcelHeaderType} from '../../common/@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
-import { POINT_COLOR } from '../../common/configset'
+import {POINT_COLOR} from '../../common/configset'
 //@ts-ignore
 import IcSearchButton from '../../../public/images/ic_search.png'
 //@ts-ignore
 import IcX from '../../../public/images/ic_x.png'
-import { ExcelTable } from '../Excel/ExcelTable'
-import { searchModalList } from '../../common/modalInit'
+import {ExcelTable} from '../Excel/ExcelTable'
+import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
-import { RequestMethod } from '../../common/RequestFunctions'
+import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
-import { MachineInfoModal } from './MachineInfoModal'
-import { TransferCodeToValue } from "../../common/TransferFunction";
-import { UploadButton } from "../../styles/styledComponents";
-import { Data } from 'react-data-grid-addons'
+import {MachineInfoModal} from './MachineInfoModal'
+import {TransferCodeToValue} from "../../common/TransferFunction";
+import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
     column: IExcelHeaderType
@@ -24,38 +23,38 @@ interface IProps {
     onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호', '제조사명', '기계명', '', '담당자명']
+const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
-const headerItems: { title: string, infoWidth: number, key: string, unit?: string }[][] = [
+const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
     [
-        { title: '지시 고유 번호', infoWidth: 144, key: 'identification' },
-        { title: 'LOT 번호', infoWidth: 144, key: 'lot_number' },
-        { title: '거래처', infoWidth: 144, key: 'customer' },
-        { title: '모델', infoWidth: 144, key: 'model' },
+        {title: '지시 고유 번호', infoWidth: 144, key: 'identification'},
+        {title: 'LOT 번호', infoWidth: 144, key: 'lot_number'},
+        {title: '거래처', infoWidth: 144, key: 'customer'},
+        {title: '모델', infoWidth: 144, key: 'model'},
     ],
     [
-        { title: 'CODE', infoWidth: 144, key: 'code' },
-        { title: '품명', infoWidth: 144, key: 'name' },
-        { title: '품목 종류', infoWidth: 144, key: 'type' },
-        { title: '생산 공정', infoWidth: 144, key: 'process' },
+        {title: 'CODE', infoWidth: 144, key: 'code'},
+        {title: '품명', infoWidth: 144, key: 'name'},
+        {title: '품목 종류', infoWidth: 144, key: 'type'},
+        {title: '생산 공정', infoWidth: 144, key: 'process'},
     ],
     [
-        { title: '단위', infoWidth: 144, key: 'unit' },
-        { title: '목표 생산량', infoWidth: 144, key: 'goal' },
-        { title: '작업자', infoWidth: 144, key: 'worker_name' },
-        { title: '양품 수량', infoWidth: 144, key: 'good_quantity' },
-        { title: '불량 수량', infoWidth: 144, key: 'poor_quantity' },
+        {title: '단위', infoWidth: 144, key: 'unit'},
+        {title: '목표 생산량', infoWidth: 144, key: 'goal'},
+        {title: '작업자', infoWidth: 144, key: 'worker_name'},
+        {title: '양품 수량', infoWidth: 144, key: 'good_quantity'},
+        {title: '불량 수량', infoWidth: 144, key: 'poor_quantity'},
     ],
 ]
 
-const ToolSelectModal = ({ column, row, onRowChange }: IProps) => {
+const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<any[]>([])
     const [summaryData, setSummaryData] = useState<any>({})
 
     useEffect(() => {
-        if (isOpen) {
+        if(isOpen) {
             setSummaryData({
                 // ...res.parent
                 identification: row.identification,
@@ -72,10 +71,10 @@ const ToolSelectModal = ({ column, row, onRowChange }: IProps) => {
                 good_quantity: row.good_quantity ?? 0,
                 poor_quantity: row.poor_quantity ?? 0,
             })
-            if (row?.tools) {
+            if(row?.tools){
                 const tools = []
-                row.tools.map(({ tool }) => {
-                    let toolObject: any = { ...tool.tool }
+                row.tools.map(({tool}) => {
+                    let toolObject:any = {...tool.tool}
                     toolObject.sequence = tool?.sequence
                     toolObject.code = tool.tool?.code
                     toolObject.name = tool.tool?.name
@@ -87,11 +86,11 @@ const ToolSelectModal = ({ column, row, onRowChange }: IProps) => {
                     tools.push(toolObject)
                 })
                 setSearchList(tools)
-            } else {
-                setSearchList([{ sequence: 1, product_id: row.productId }])
+            }else{
+                setSearchList([{sequence: 1, product_id:row.productId}])
             }
         }
-    }, [isOpen,])
+    }, [isOpen, ])
 
     const ModalContents = () => (
         <UploadButton onClick={() => {
@@ -105,16 +104,16 @@ const ToolSelectModal = ({ column, row, onRowChange }: IProps) => {
         return summaryData[info.key] ?? '-'
     }
     const confirmFunction = () => {
-        if (searchList[0]?.name !== undefined) {
+        if(searchList[0]?.name !== undefined) {
             onRowChange({
                 ...row,
                 tools: searchList.map((v, i) => {
                     return {
-                        ...row.tools === undefined ? undefined : { ...row.tools[i] },
+                        ...row.tools === undefined ? undefined : {...row.tools[i]},
                         record_id: row.record_id,
                         tool: {
-                            ...row.tools === undefined ? undefined : { ...row.tools[i]?.tool },
-                            tool: { ...v }
+                            ...row.tools === undefined ? undefined : {...row.tools[i]?.tool},
+                            tool: {...v}
                         },
                     }
                 }),
@@ -128,7 +127,7 @@ const ToolSelectModal = ({ column, row, onRowChange }: IProps) => {
 
     return (
         <SearchModalWrapper >
-            {ModalContents()}
+            { ModalContents() }
             <Modal isOpen={isOpen} style={{
                 content: {
                     top: '50%',
@@ -158,15 +157,15 @@ const ToolSelectModal = ({ column, row, onRowChange }: IProps) => {
                             fontSize: 22,
                             fontWeight: 'bold',
                             margin: 0,
-                        }}>공구 정보 (해당 제품 생산하는데 사용한 공구를 입력해주세요. 11)</p>
-                        <div style={{ display: 'flex' }}>
+                        }}>공구 정보 (해당 제품 생산하는데 사용한 공구를 입력해주세요.)</p>
+                        <div style={{display: 'flex'}}>
                             {/*<Button>*/}
                             {/*  <p>엑셀로 받기</p>*/}
                             {/*</Button>*/}
-                            <div style={{ cursor: 'pointer', marginLeft: 20 }} onClick={() => {
+                            <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                                 setIsOpen(false)
                             }}>
-                                <img style={{ width: 20, height: 20 }} src={IcX} />
+                                <img style={{width: 20, height: 20}} src={IcX}/>
                             </div>
                         </div>
                     </div>
@@ -179,14 +178,14 @@ const ToolSelectModal = ({ column, row, onRowChange }: IProps) => {
                                             return (
                                                 <>
                                                     <HeaderTableTitle>
-                                                        <HeaderTableText style={{ fontWeight: 'bold' }}>{info.title}</HeaderTableText>
+                                                        <HeaderTableText style={{fontWeight: 'bold'}}>{info.title}</HeaderTableText>
                                                     </HeaderTableTitle>
-                                                    <HeaderTableTextInput style={{ width: info.infoWidth }}>
+                                                    <HeaderTableTextInput style={{width: info.infoWidth}}>
                                                         <HeaderTableText>
                                                             {getSummaryInfo(info)}
                                                             {/*-*/}
                                                         </HeaderTableText>
-                                                        {info.unit && <div style={{ marginRight: 8, fontSize: 15 }}>{info.unit}</div>}
+                                                        {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                                                     </HeaderTableTextInput>
                                                 </>
                                             )
@@ -196,19 +195,19 @@ const ToolSelectModal = ({ column, row, onRowChange }: IProps) => {
                             )
                         })
                     }
-                    <div style={{ display: 'flex', justifyContent: 'space-between', height: 64 }}>
-                        <div style={{ height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16, }}>
-                            <div style={{ display: 'flex', width: 1200 }}>
-                                <p style={{ fontSize: 22, padding: 0, margin: 0 }}>사용 가능 공구 리스트</p>
+                    <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
+                        <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
+                            <div style={{ display: 'flex', width: 1200}}>
+                                <p style={{fontSize: 22, padding: 0, margin: 0}}>사용 가능 공구 리스트</p>
                             </div>
                         </div>
-                        <div style={{ width: "250px", display: "flex", justifyContent: "space-between", margin: "24px 48px 8px 0px" }}>
+                        <div style={{width:"250px", display: "flex", justifyContent: "space-between", margin: "24px 48px 8px 0px"}}>
                             <Button onClick={() => {
                                 setSearchList([
                                     ...searchList,
                                     {
                                         sequence: searchList.length + 1,
-                                        product_id: row.productId
+                                        product_id:row.productId
                                     }
                                 ])
                             }}>
@@ -216,7 +215,7 @@ const ToolSelectModal = ({ column, row, onRowChange }: IProps) => {
                             </Button>
                             <Button onClick={() => {
                                 let tmp = searchList
-                                tmp.splice(tmp.length - 1, 1)
+                                tmp.splice(tmp.length-1, 1)
                                 setSearchList([
                                     ...tmp
                                 ])
@@ -225,71 +224,50 @@ const ToolSelectModal = ({ column, row, onRowChange }: IProps) => {
                             </Button>
                         </div>
                     </div>
-                    <div style={{ padding: '0 16px', width: 1776 }}>
-
-                        123411
+                    <div style={{padding: '0 16px', width: 1776}}>
                         <ExcelTable
                             headerList={searchModalList.toolUse}
-                            row={searchList ?? []}
+                            row={searchList ?? [{}]}
                             setRow={(e) => {
-                                console.log("e 111111 : ", e);
-
-                                if (e[0].stock === 0) {
-                                    return Notiflix.Report.warning("경고", "재고량이 없습니다.", "확인",);
+                                if(e[0].stock === 0){
+                                    return Notiflix.Report.warning("경고", "재고량이 없습니다.", "확인",  );
                                 }
-
-                                // hyun 1111
                                 const update = e.map((data, index) => {
                                     return { ...data, sequence: index + 1, productId: row.productId }
-                                });
+                                })
 
-                                // {  
-                                //     data.sequence = index + 1
-                                //     data.product_id = row.productId
-                                // }
-
-                                setSearchList(prev => [...update])
+                                setSearchList(update)
                             }}
                             width={1746}
                             rowHeight={32}
                             height={552}
-                            // setSelectRow={(e) => {
-                            //   setSelectRow(e)
-                            // }}
                             setSelectRow={(e) => {
-                                if (!searchList[e].border) {
+                                if(!searchList[e].border){
 
-                                    searchList.map((v, i) => {
+                                    searchList.map((v,i)=>{
                                         v.border = false;
                                     })
                                     searchList[e].border = true
                                     setSearchList([...searchList])
                                 }
-                                setSearchList([...searchList.map((row, index) => {
-                                    if (index === e) {
-                                        row.doubleClick = confirmFunction
-                                        return row
-                                    }
-                                    else return row
-                                })])
                                 setSelectRow(e)
                             }}
                             type={'searchModal'}
                             headerAlign={'center'}
                         />
                     </div>
-                    <div style={{ height: 45, display: 'flex', alignItems: 'flex-end' }}>
+                    <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
                         <div
                             onClick={() => {
                                 setIsOpen(false)
                             }}
-                            style={{ width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                            style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >
-                            <p style={{ color: '#717C90' }}>취소</p>
+                            <p style={{color: '#717C90'}}>취소</p>
                         </div>
                         <div
                             onClick={() => confirmFunction()}
-                            style={{ width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                            style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >
                             <p>선택 완료</p>
                         </div>
@@ -352,4 +330,4 @@ const HeaderTableTitle = styled.div`
   align-items: center;
 `
 
-export { ToolSelectModal }
+export {ToolSelectModal}

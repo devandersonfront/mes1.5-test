@@ -397,6 +397,14 @@ const MesOperationList = ({page, search, option}: IProps) => {
     setBasicRow([...tmpBasicRow])
   }
 
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 90
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
 
   return (
     <div>
