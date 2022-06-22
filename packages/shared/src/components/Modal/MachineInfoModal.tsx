@@ -91,12 +91,27 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     return dataCheck
   }
 
+  const checkValidation = () => {
+    let settingCheck = true
+    let doubleCheck = true
+
+    searchList.map((v,i)=>{
+      if(v.setting){
+        doubleCheck = false
+      }else if(!doubleCheck){
+        settingCheck = false
+      }
+    })
+
+    return settingCheck
+  }
+
   const executeValidation = () => {
 
     let isValidation = false
-    // const haveList = searchList.length === 0
     const haveData = haveDataValidation()
     const haveBasic = haveBasicValidation()
+    const settingCheck = checkValidation()
 
     if(!haveData){
         isValidation = true
@@ -104,8 +119,11 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }else if(!haveBasic){
         isValidation = true
         Notiflix.Report.warning("경고","기본설정은 최소 한개 이상 필요합니다.","확인",)
+    }else if(!settingCheck){
+      isValidation = true
+      Notiflix.Report.warning("경고","기계는 하나만 설정 가능합니다.","확인",)
     }
-
+    checkValidation()
     return isValidation
 
   }

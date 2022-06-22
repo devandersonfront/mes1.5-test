@@ -62,7 +62,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   // },[tabStore])
 
 
-  console.log('tabstore', tabStore)
   useEffect(() => {
     if(isOpen) {
       if(row.process_id || row.processId){
