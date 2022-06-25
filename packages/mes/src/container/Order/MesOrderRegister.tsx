@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { columnlist, ExcelDownloadModal, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod } from 'shared'
+import { columnlist, ExcelDownloadModal, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod , } from 'shared'
 // @ts-ignore
 import { SelectColumn } from 'react-data-grid'
 import Notiflix from "notiflix";
@@ -230,6 +230,7 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
         break;
     }
   }
+  console.log("basicRow2[0].product_id : ", basicRow2[0].product_id);
 
   return (
     <div>
@@ -322,9 +323,13 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
 
       <h2 style={{color: "white", fontSize: "21px"}}>검색 결과</h2>
 
+        
+
       {basicRow.length >= 1 ? (
+        // searchResultTable
         <ExcelTable
           customHeaderRowHeight={1}
+          rowHeight={basicRow2[0].product_id ? 40 : 0}
           editable
           resizable
           headerList={[
