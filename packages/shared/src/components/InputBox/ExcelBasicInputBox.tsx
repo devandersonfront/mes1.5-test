@@ -82,6 +82,8 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           }
           dispatch(insert_machine_list({...selector}))
         }else{
+          // console.log("check : " , column.key , eventValue);
+          
           onRowChange({ ...row, [column.key]: eventValue, isChange: true })
         }
       }}

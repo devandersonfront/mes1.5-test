@@ -492,6 +492,7 @@ export const searchModalList: any  = {
     {key: 'crn', name: '사업자 번호', formatter: LineBorderContainer ,placeholder:"-", },
     {key: 'model', name: '모델명', formatter: LineBorderContainer ,placeholder:"-", },
   ],
+  
   rawmaterialSearch: [
     {key: 'code', formatter: LineBorderContainer , name: '원자재 CODE' ,placeholder:"-",},
     {key: 'name', formatter: LineBorderContainer , name: '원자재 품명' ,placeholder:"-",},

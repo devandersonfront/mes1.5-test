@@ -35,9 +35,10 @@ interface IProps {
   clickable?:boolean
   scrollEnd?:(value:boolean) => void
   scrollOnOff?:boolean
+  customHeaderRowHeight?: number
 }
 
-const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff}: IProps) => {
+const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff}: IProps) => {
   const [ selectedRows, setSelectedRows ] = useState<ReadonlySet<number>>(selectList ?? new Set())
 
 
@@ -99,7 +100,7 @@ const ExcelTable = ({headerList, setHeaderList, row, width, maxWidth, rowHeight,
     return <DataGridTable
       //@ts-ignore
       rowClass={(row) => row?.border ? 'selectRow' : undefined}
-      headerRowHeight={40}
+      headerRowHeight={customHeaderRowHeight ?? 40}
       //@ts-ignore
       rowKeyGetter={rowKeyGetter}
       //@ts-ignore
