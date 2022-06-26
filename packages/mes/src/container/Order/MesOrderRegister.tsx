@@ -6,8 +6,14 @@ import Notiflix from "notiflix";
 import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
 import moment from 'moment'
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 import { deleteSelectMenuState, setSelectMenuStateChange } from "shared/src/reducer/menuSelectState";
+
+import { useDispatch, useSelector } from "react-redux";
+import {RootState} from 'shared/src/reducer'
+import {add_product_ids_for_selected_rows} from "shared/src/reducer/product_ids_for_selected_rows_state";
+
+
 
 interface IProps {
   children?: any
@@ -33,6 +39,9 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
 
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["orderRegister"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
+
+  const selector = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state)
+  const product_ids_for_selected_rows = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state.product_ids_for_selected_rows)
 
 
   // useEffect(() => {
@@ -230,7 +239,7 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
         break;
     }
   }
-  console.log("basicRow2[0].product_id : ", basicRow2[0].product_id);
+  // console.log("basicRow2[0].product_id : ", basicRow2[0].product_id);
 
   return (
     <div>
@@ -284,15 +293,12 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
             return row.product_id
           })
 
-          console.log("current_rows_product_ids ; ", current_rows_product_ids);
+          // console.log("current_rows_product_ids ; ", current_rows_product_ids);
 
           console.log("e[0] : ", e[0]);
           if (e[0].length > 1) {
 
-            console.log("basic_row2 : ", basicRow2);
-
             const result_ids = basicRow2.map(row => row.product_id)
-
 
             if (basicRow2.length > 1) {
               const rows_for_update = e[0].filter((row) => {
@@ -302,12 +308,59 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
               })
               setBasicRow2((prev) => [...prev, ...rows_for_update])
             } else {
-              setBasicRow2(e[0]);
+              // alert("여러줄")
+              if(!product_ids_for_selected_rows.includes(e[0].product_id)){
+
+                setBasicRow2(e[0]);
+              }else{
+                console.log("여기 실행되면 아무것도 추가 안됨");
+                // console.log(e);
+              }              
             }
 
           } else {
-            setBasicRow2(e);
-            console.log("hi2");
+            // alert(" 한줄")
+            // console.log("e :::::::", e);
+            // console.log("basicRow2 : ", basicRow2);
+
+            if(basicRow2[0].product_id){
+
+              if(e[0].product_id !== undefined){
+                console.log("여기 실행 11 !!");
+                
+                setBasicRow2(e)
+              } else {
+                console.log("여기 실행 22 !!");
+                setBasicRow2(e[0]);
+              }
+
+            } else {
+
+              const basicrow_product_ids = basicRow2.map((row)=> {
+                return row.product_id;
+              })
+
+              console.log("basicrow_product_ids : ", basicrow_product_ids);
+              
+
+              if(basicrow_product_ids.includes(e[0].product_id)){
+                console.log("기존 로우에 있음");
+                
+                setBasicRow2((prev)=> [...prev, e[0]])
+                
+              } else {
+                console.log("기존 로우에 없음");
+
+                setBasicRow2(e)
+              }
+
+            }
+            
+
+
+            // console.log("basicrow_product_ids : ", basicrow_product_ids);
+
+
           }
 
 
@@ -329,7 +382,7 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
         // searchResultTable
         <ExcelTable
           customHeaderRowHeight={1}
-          rowHeight={basicRow2[0].product_id ? 40 : 0}
+          rowHeight={basicRow2.length > 0  ? 40 : 0}
           editable
           resizable
           headerList={[
@@ -338,57 +391,6 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
           ]}
           row={basicRow2}
           setRow={(e) => {
-            console.log("e : ", e);
-            let tmp: Set<any> = selectList
-
-            e.map((row) => {
-
-              if (row.length > 1) {
-                row.map(el => {
-                  if (el.isChange) {
-                    tmp.add(el.id)
-                    el.isChange = false
-                  }
-                })
-              }
-
-            })
-
-            e.map(v => {
-              if (v.isChange) {
-                tmp.add(v.id)
-                v.isChange = false
-              }
-            })
-
-            setSelectList(tmp)
-
-            const current_rows_product_ids = basicRow.map((row) => {
-              console.log("row.product_id : ", row.product_id);
-              return row.product_id
-            })
-
-            console.log("current_rows_product_ids ; ", current_rows_product_ids);
-
-            console.log("e[0] : ", e[0]);
-            if (e[0].length > 1) {
-              console.log("hi1");
-
-              const basicRow_ids = basicRow.map(row => row.product_id)
-
-              const rows_for_update = e[0].filter((row) => {
-                if (!basicRow_ids.includes(row.product_id)) {
-                  return row;
-                }
-              })
-
-              setBasicRow2((prev) => [...prev, ...rows_for_update])
-
-            } else {
-              setBasicRow2(e);
-              console.log("hi2");
-            }
-
 
           }}
           selectList={selectList}

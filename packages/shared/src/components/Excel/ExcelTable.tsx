@@ -95,7 +95,7 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
     )
   }
 
-  console.log("rowHeight : ", rowHeight);
+  console.log("rowHeight ::::: " , row);
   
 
   const showDataGrid = () => {
