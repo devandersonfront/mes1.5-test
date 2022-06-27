@@ -84,28 +84,33 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
         productId: productId
       },
     })
-
+    let selectMachine
+    row.machines.map((machine, index) => {
+      if(machine.machine.setting){
+        selectMachine = machine.machine.machine.machine_id
+      }
+    })
     if(res){
-      if(row.machines){
-        setSearchList(row.machines.map((v, index) => {
-          return {
-            ...v.machine.machine,
-            machineType: TransferCodeToValue(v?.machine.machine.type, 'machine'),
-            sequence: index+1,
-            setting: v?.machine.machine.setting,
-          }
-        }))
-      }else{
+      // if(row.machines){
+      //   setSearchList(row.machines.map((v, index) => {
+      //     return {
+      //       ...v.machine.machine,
+      //       machineType: TransferCodeToValue(v?.machine.machine.type, 'machine'),
+      //       sequence: index+1,
+      //       setting: v?.machine.machine.setting,
+      //     }
+      //   }))
+      // }else{
         setSearchList([...res].map((v, index) =>{
           return {
             ...v.machine,
             machineType: TransferCodeToValue(v.machine.type, 'machine'),
             sequence: index+1,
-            setting: row?.machines ? row?.machines[index]?.machine.setting : 0,
-
+            // setting: row?.machines ? row?.machines[index]?.machine.setting : 0,
+            setting: v.machine.machine_id === selectMachine ? 1 : 0
           }
         }))
-      }
+      // }
     }
   }
 

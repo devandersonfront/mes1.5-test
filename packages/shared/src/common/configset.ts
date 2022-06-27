@@ -21,7 +21,10 @@ export const POINT_COLOR_3: string = '#e7e9eb' as const
 
 export const SF_ADDRESS = "3.36.78.194"
 
+
+// CNC 주소
 // export const SF_ADDRESS = "3.37.196.98"
+
 
 let hostname
 if (typeof window !== 'undefined') {

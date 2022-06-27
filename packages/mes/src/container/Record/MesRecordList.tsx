@@ -60,7 +60,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
   const loadPage = (page:number) => {
     if(keyword){
-      SearchBasic(page,optionIndex).then(() => {
+      SearchBasic(keyword, page,optionIndex).then(() => {
         Notiflix.Loading.remove()
       })
     }else{
@@ -507,6 +507,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         }}
         onChangeSearchKeyword={(keyword) => {
           setSelectList(new Set());
+          console.log("keyword : ", keyword)
           setKeyword(keyword);
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();

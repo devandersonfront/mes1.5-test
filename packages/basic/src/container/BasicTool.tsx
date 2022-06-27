@@ -589,6 +589,8 @@ const BasicTool = ({ page, search, option }: IProps) => {
       setPageInfo({...pageInfo,page:1})
     }
   }
+
+
           return (
               <div>
                 <PageHeader
