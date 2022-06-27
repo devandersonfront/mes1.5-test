@@ -660,11 +660,10 @@ setKeyword('')
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             setKeyword(keyword)
-                      // hs0316
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })
-            setPageInfo({page:1, total:1})
+            SearchBasic(keyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove()
+            })
+            // setPageInfo({page:1, total:1})
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
