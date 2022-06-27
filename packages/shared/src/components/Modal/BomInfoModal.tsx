@@ -232,7 +232,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const filterList = () => {
 
-    if(row.id.includes('operation')){
+    if(row.id?.includes('operation')){
       return searchList.map((v, i) => (
           {
             seq: i+1,

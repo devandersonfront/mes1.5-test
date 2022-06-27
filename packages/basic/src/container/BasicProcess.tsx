@@ -67,7 +67,7 @@ const BasicProcess = ({}: IProps) => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page,]);
+  }, [pageInfo.page]);
 
 
   useEffect(() => {
@@ -610,13 +610,10 @@ setKeyword('')
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
           // setPageInfo({page:1,total:1})
-
-          // hs0316
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })          
-
           setKeyword(keyword)
+          SearchBasic(keyword, optionIndex, 1).then(() => {
+            Notiflix.Loading.remove()
+          })
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {

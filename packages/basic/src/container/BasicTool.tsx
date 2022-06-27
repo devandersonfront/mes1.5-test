@@ -578,17 +578,23 @@ const BasicTool = ({ page, search, option }: IProps) => {
     };
   }, []);
 
+  const searchValidation = (searchKeyword) => {
+    setKeyword(searchKeyword)
+    if(keyword === searchKeyword || pageInfo.page === 1){
+      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+        Notiflix.Loading.remove();
+      })
+    }else{
+      setPageInfo({...pageInfo,page:1})
+    }
+  }
           return (
               <div>
                 <PageHeader
                     title={"공구 기준정보"}
                     isSearch
                     searchKeyword={keyword}
-                    onChangeSearchKeyword={(keyword) => {
-                      setKeyword(keyword)
-                      setPageInfo({...pageInfo,page:1})
-                      setSelectList(new Set)
-                    }}
+                    onChangeSearchKeyword={searchValidation}
                     searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                     onChangeSearchOption={(option) => {
                       setOptionIndex(option);

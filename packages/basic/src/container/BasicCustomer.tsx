@@ -624,15 +624,23 @@ const BasicCustomer = ({}: IProps) => {
     }
   }
 
+  const searchValidation = (searchKeyword) => {
+    setKeyword(searchKeyword)
+    if(keyword === searchKeyword || pageInfo.page === 1){
+      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+        Notiflix.Loading.remove();
+      })
+    }else{
+      setPageInfo({...pageInfo,page:1})
+    }
+  }
+
   return (
       <div>
         <PageHeader
             isSearch
             searchKeyword={keyword}
-            onChangeSearchKeyword={(keyword) => {
-              setKeyword(keyword)
-              setPageInfo({...pageInfo, page:1})
-            }}
+            onChangeSearchKeyword={searchValidation}
             searchOptionList={optionList}
             onChangeSearchOption={(option) => {
               setOptionIndex(option)

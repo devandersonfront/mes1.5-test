@@ -18,7 +18,7 @@ import ic_wms from '../../public/images/ic_wms.png'
 import ic_ums from '../../public/images/ic_ums.png'
 //@ts-ignore
 import ic_setting from '../../public/images/ic_setting.png'
-import {useRouter} from 'next/router'
+import Router,{useRouter} from 'next/router'
 import {useDispatch, useSelector} from 'react-redux'
 import {RootState} from 'shared/src/reducer'
 import {setMenuStateChange} from "shared/src/reducer/menuState";

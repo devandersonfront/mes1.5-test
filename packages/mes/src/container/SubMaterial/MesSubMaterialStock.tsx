@@ -480,7 +480,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          // setKeyword(keyword);
+          setKeyword(keyword);
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
           });
