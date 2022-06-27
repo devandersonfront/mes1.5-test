@@ -159,6 +159,7 @@ const MesKpiDefect = () => {
             <PageHeader title={"품질 불량률(Q)"} />
             <ExcelTable
                 editable
+                resizable
                 headerList={[
                     ...processColumn
                 ]}
@@ -195,6 +196,7 @@ const MesKpiDefect = () => {
             </div>
             <ExcelTable
                 editable
+                resizable
                 headerList={[
                     SelectColumn,
                     ...pauseColumn

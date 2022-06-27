@@ -499,6 +499,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
         break;
     }
   };
+
     const settingHeight = (length:number) => {
         switch (length){
             case 0:

@@ -142,6 +142,7 @@ const MesLeadtimeManufacture = () => {
             <PageHeader title={"제조리드타임(P)"} />
             <ExcelTable
                 editable
+                resizable
                 headerList={[
                     ...processColumn
                 ]}
@@ -177,6 +178,7 @@ const MesLeadtimeManufacture = () => {
             </div>
             <ExcelTable
                 editable
+                resizable
                 headerList={[
                     SelectColumn,
                     ...pauseColumn

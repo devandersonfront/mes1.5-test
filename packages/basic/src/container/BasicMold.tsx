@@ -580,6 +580,7 @@ const BasicMold = ({}: IProps) => {
     setBasicRow(rows);
   };
 
+
   const searchValidation = (searchKeyword) => {
     setKeyword(searchKeyword)
     if(keyword === searchKeyword || pageInfo.page === 1){
