@@ -499,9 +499,12 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         selectDate={selectDate}
         //@ts-ignore
         setSelectDate={(date) => {
-          setSelectList(new Set());
-          setSelectDate(date as { from: string; to: string });
-          setPageInfo({ page: 1, total: 1 });
+          setSelectList(new Set)
+          setSelectDate(date as {from:string, to:string})
+          // setPageInfo({page:1, total:1})
+          SearchBasic(keyword, optionIndex, 1).then(() => {
+            Notiflix.Loading.remove();
+          });
         }}
         title={"수주 현황"}
         buttons={["", "수정하기", "삭제"]}
