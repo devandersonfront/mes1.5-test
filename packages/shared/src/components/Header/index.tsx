@@ -435,10 +435,7 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList
                         placeholder="검색어를 2글자 이상 입력해주세요."
                         onChange={(e) => {setKeyword(e.target.value)}}
                         onKeyDown={(e) => {
-                          console.log(e.key)
                           if(e.key === 'Enter'){
-                            console.log("why??!?!?!?!?!?!?!?!?!?!?")
-                            console.log(onChangeSearchKeyword)
                             onChangeSearchKeyword && onChangeSearchKeyword(keyword ?? "")
                           }
                         }}
