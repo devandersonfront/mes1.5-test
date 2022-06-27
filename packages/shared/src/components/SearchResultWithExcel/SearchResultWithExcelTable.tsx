@@ -38,7 +38,7 @@ interface IProps {
   customHeaderRowHeight?: number
 }
 
-const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff}: IProps) => {
+const SearchResultWithExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff}: IProps) => {
   const [ selectedRows, setSelectedRows ] = useState<ReadonlySet<number>>(selectList ?? new Set())
 
 
@@ -94,9 +94,6 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
         (previousValue, currentValue) => previousValue + currentValue,
     )
   }
-
-  console.log("rowHeight ::::: " , row);
-  
 
   const showDataGrid = () => {
 
@@ -320,4 +317,4 @@ const DataGridTable = styled(DataGrid)`
   
 `;
 
-export {ExcelTable};
+export {SearchResultWithExcelTable};

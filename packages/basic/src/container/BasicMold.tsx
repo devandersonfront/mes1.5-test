@@ -310,37 +310,26 @@ const BasicMold = ({}: IProps) => {
     const additional = setAdditionalData();
     let deletable = true;
 
-    if (haveIdRows.length > 0) {
-      deletable = await RequestMethod(
-        "delete",
-        "moldDelete",
-        haveIdRows.map((row) => ({
-          ...row,
-          additional: [
-            ...additional
-              .map((v) => {
-                if (row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit,
-                  };
-                }
-              })
-              .filter((v) => v),
-          ],
-        }))
-      );
 
-      LoadBasic(1);
-    } else {
-      selectedRows.forEach((row) => {
-        map.delete(row.id);
-      });
-      setBasicRow(Array.from(map.values()));
-      setPageInfo({ page: pageInfo.page, total: pageInfo.total });
-      setSelectList(new Set());
+    if(haveIdRows.length > 0){
+
+      deletable = await RequestMethod('delete','moldDelete', haveIdRows.map((row) => (
+          {...row , additional : [...additional.map(v => {
+            if(row[v.name]) {
+              return {id : v.id, title: v.name, value: row[v.name] , unit: v.unit}
+            }
+          }).filter(v => v)
+          ]}
+      )))
+
+      LoadBasic(1)
+      setKeyword('')
+
+    }else{
+      selectedRows.forEach((row)=>{map.delete(row.id)})
+      setBasicRow(Array.from(map.values()))
+      setPageInfo({page: pageInfo.page, total: pageInfo.total})
+      setSelectList(new Set())
     }
 
     if (deletable) {
@@ -381,6 +370,15 @@ const BasicMold = ({}: IProps) => {
 
     setSelectList(new Set());
   };
+
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 80
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
 
   const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["moldV2"];
@@ -589,8 +587,11 @@ const BasicMold = ({}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword)
-            setPageInfo({...pageInfo,page:1})
+            // setKeyword(keyword)
+            // setPageInfo({...pageInfo,page:1})
+            SearchBasic(keyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove();
+            });
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -629,7 +630,7 @@ const BasicMold = ({}: IProps) => {
           setSelectList={setSelectList}
           setSelectRow={setSelectRow}
           width={1576}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+          height={settingHeight(basicRow.length)}
         />
         <PaginationComponent
           currentPage={pageInfo.page}

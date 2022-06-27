@@ -676,14 +676,26 @@ const BasicRawMaterial = ({}: IProps) => {
       });
   };
 
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 80
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
+
   return (
     <div>
         <PageHeader
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword)
-            setPageInfo({...pageInfo,page:1})
+            // setKeyword(keyword)
+            // setPageInfo({...pageInfo,page:1})
+            SearchBasic(keyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove();
+            });
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -722,7 +734,7 @@ const BasicRawMaterial = ({}: IProps) => {
           //@ts-ignore
           setSelectList={setSelectList}
           width={1576}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+          height={settingHeight(basicRow.length)}
         />
         <PaginationComponent
           currentPage={pageInfo.page}

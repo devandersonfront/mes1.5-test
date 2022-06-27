@@ -259,18 +259,19 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                 if(selectRow !== undefined && selectRow !== null){
                   onRowChange({
                     ...row,
-                    machines: searchList.map(v => {
-                      return {
-                        machine: {
-                          sequence: v.sequence,
-                          machine: {
-                            ...v
-                          },
-                          // setting: v.spare === '여' ? 0 : 1
-                          setting: v.setting
-                        }
-                      }
-                    }),
+                    machines: searchList.filter(v => {
+                              if(v.setting === 1){
+                                  return {
+                                      machine: {
+                                          sequence: v.sequence,
+                                          machine: {
+                                              ...v
+                                          },
+                                          setting: v.setting
+                                      }
+                                  }
+                              }
+                          }),
                     name: row.name,
                     isChange: true
                   })

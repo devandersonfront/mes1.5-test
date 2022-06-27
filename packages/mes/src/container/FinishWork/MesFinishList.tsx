@@ -57,7 +57,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         })
       }
     }
-  }, [pageInfo.page, keyword, selectDate])
+  }, [pageInfo.page, selectDate])
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
@@ -302,6 +302,15 @@ const MesFinishList = ({page, search, option}: IProps) => {
     }
   }
 
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 90
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
+
   return (
     <div>
       <PageHeader
@@ -312,8 +321,11 @@ const MesFinishList = ({page, search, option}: IProps) => {
         optionIndex={optionIndex}
         onChangeSearchKeyword={(keyword) => {
           setSelectList(new Set)
-          setKeyword(keyword)
-          setPageInfo({page:1, total:1})
+          // setKeyword(keyword)
+          // setPageInfo({page:1, total:1})
+          SearchBasic(keyword, optionIndex, 1).then(() => {
+            Notiflix.Loading.remove();
+          });
         }}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
@@ -371,7 +383,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         width={1576}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        height={settingHeight(basicRow.length)}
         scrollEnd={(value) => {
           if(value){
             if(pageInfo.total > pageInfo.page){

@@ -75,6 +75,15 @@ const MesOrderList = ({ page, search, option }: IProps) => {
     }
   };
 
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 90
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
+
   useEffect(() => {
     if (keyword) {
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -85,7 +94,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page]);
+  }, [pageInfo.page, selectDate, order]);
 
   useEffect(() => {
     dispatch(

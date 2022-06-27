@@ -67,7 +67,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, keyword, selectDate, order])
+  }, [pageInfo.page, selectDate, order])
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
@@ -397,6 +397,14 @@ const MesOperationList = ({page, search, option}: IProps) => {
     setBasicRow([...tmpBasicRow])
   }
 
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 90
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
 
   return (
     <div>
@@ -411,7 +419,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
         selectDate={selectDate}
         onChangeSearchKeyword={(keyword) => {
           setSelectList(new Set)
-          setKeyword(keyword);
+          // setKeyword(keyword);
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
           });

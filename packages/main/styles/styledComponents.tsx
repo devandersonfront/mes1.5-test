@@ -23,7 +23,6 @@ export const Profile = styled.img`
   object-fit: cover;
 
 `
-
 export const MainWrapper = styled.div`
   background: linear-gradient(90deg, #202E4A, #0F1722);
   width: 100vw;

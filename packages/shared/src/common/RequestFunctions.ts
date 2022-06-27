@@ -8,7 +8,7 @@ type RequestType = 'get' | 'post' | 'delete' | 'put'
 
 export const requestApi = async (type: RequestType,url: string, data?: any, token?: any, contentsType?: 'blob', params?: any, path?:any) => {
   Notiflix.Loading.circle()
-
+  console.log(data)
   const ENDPOINT = `${SF_ENDPOINT}`
 
   switch(type){
@@ -470,4 +470,6 @@ const ApiList = {
 
   //전력사용량 list
   statisticsPressElectricPower: `/api/v2/statistics/press/electric-power`,
+
+  recordEnd: `/cnc/api/v1/record/complete`,
 }

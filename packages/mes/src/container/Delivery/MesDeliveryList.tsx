@@ -76,7 +76,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page]);
+  }, [pageInfo.page, selectDate]);
 
   useEffect(() => {
     dispatch(
@@ -430,6 +430,15 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
       setBasicRow([...tmpBasicRow]);
     }
   };
+
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 80
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
 
   return (
     <div>

@@ -738,13 +738,22 @@ const BasicProduct = ({}: IProps) => {
       });
   };
 
-  const handleModal = (open: boolean) => {
-    setBarcodeOpen(!open);
-  };
+  const handleModal = (open:boolean) => {
+    setBarcodeOpen(!open)
+  }
 
-  React.useEffect(() => {
-    if (selectList.size > 1) {
-      return setButtonList(["항목관리", "행추가", "저장하기", "삭제"]);
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 90
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
+
+  React.useEffect(()=>{
+    if(selectList.size > 1){
+      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
     }
     return setButtonList([
       "바코드 미리보기",
@@ -761,8 +770,11 @@ const BasicProduct = ({}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword)
-            setPageInfo({...pageInfo,page:1})
+            // setKeyword(keyword)
+            // setPageInfo({...pageInfo,page:1})
+            SearchBasic(keyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove();
+            });
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -805,7 +817,7 @@ const BasicProduct = ({}: IProps) => {
           }}
           setSelectRow={setSelectRow}
           width={1576}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+          height={settingHeight(basicRow.length)}
         />
         <PaginationComponent
             currentPage={pageInfo.page}

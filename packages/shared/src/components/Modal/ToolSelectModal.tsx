@@ -232,19 +232,15 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                 if(e[0].stock === 0){
                                     return Notiflix.Report.warning("경고", "재고량이 없습니다.", "확인",  );
                                 }
-                                const tmpData = [...e]
-                                tmpData.map((data, index) => {
-                                    data.sequence = index+1
-                                    data.product_id = row.productId
+                                const update = e.map((data, index) => {
+                                    return { ...data, sequence: index + 1, productId: row.productId }
                                 })
-                                setSearchList([...tmpData])
+
+                                setSearchList(update)
                             }}
                             width={1746}
                             rowHeight={32}
                             height={552}
-                            // setSelectRow={(e) => {
-                            //   setSelectRow(e)
-                            // }}
                             setSelectRow={(e) => {
                                 if(!searchList[e].border){
 
@@ -254,13 +250,6 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                     searchList[e].border = true
                                     setSearchList([...searchList])
                                 }
-                                setSearchList([...searchList.map((row, index) => {
-                                    if(index === e) {
-                                        row.doubleClick = confirmFunction
-                                        return row
-                                    }
-                                    else return row
-                                })])
                                 setSelectRow(e)
                             }}
                             type={'searchModal'}

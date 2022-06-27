@@ -38,15 +38,15 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
     useEffect(() => {
         // setOptionIndex(option)
         if(searchKeyword){
-            // SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
-            //     Notiflix.Loading.remove()
-            // })
+            SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
         }else{
             LoadBasic(pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
             })
         }
-    }, [pageInfo.page])
+    }, [pageInfo.page, selectDate])
 
     useEffect(() => {
         dispatch(setSelectMenuStateChange({main:"품질 관리",sub:router.pathname}))
@@ -188,6 +188,14 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
         }
     }
 
+    const settingHeight = (length:number) => {
+        switch (length){
+            case 0:
+                return 80
+            default :
+                return basicRow.length * 40 + 56
+        }
+    }
 
     return (
         <div>
@@ -198,13 +206,11 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 searchOptionList={optionList}
                 onChangeSearchKeyword={async (keyword) =>{
                     setSelectList(new Set)
-                    console.log("keyworkd 11: ", keyword);
-                    
-                    await setSearchKeyword(keyword)
+                    // await setSearchKeyword(keyword)
+                    // setPageInfo({page:1,total:1})
                     await SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
                         Notiflix.Loading.remove()
                     })
-                    // setPageInfo({page:1,total:1})
                 }}
                 onChangeSearchOption={(option) => {
                     setSelectList(new Set)
@@ -242,7 +248,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 //@ts-ignore
                 setSelectList={setSelectList}
                 width={1576}
-                height={basicRow.length > 0 ? basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56 : 86}
+                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
                 scrollEnd={(value) => {
                     if(value){
                         if(pageInfo.total > pageInfo.page){

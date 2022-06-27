@@ -8,9 +8,11 @@
 	  "start": "next start"
 	},
 	"dependencies": {
-	  "basic": "^1.0.0",
-	  "mes": "^1.0.0",
-	  "shared": "^1.0.0"
+	  	"basic": "^1.0.0",
+	  	"mes": "^1.0.0",
+	  	"shared": "^1.0.0",
+	  	"regenerator-runtime": "^0.13.9",
+	  	"core-js": "^3.23.0"
 	},
 	"devDependencies": {
 		"@types/node": "^15.12.2",

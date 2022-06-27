@@ -338,7 +338,7 @@ const MesToolList = ({page, search, option}: IProps) => {
                     setSelectList(tmp)
                     setBasicRow(e);
                 }}
-                height={750}
+                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
                 width={1576}
                 scrollEnd={(value) => {
                     if(value){

@@ -85,7 +85,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page]);
+  }, [pageInfo.page, selectDate]);
 
   useEffect(() => {
     dispatch(
@@ -153,7 +153,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   const LoadBasic = async (page?: number) => {
 
     console.log("loadbaisc for 부자재 재고 현황");
-    
+
 
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", `subInList`, {
@@ -164,20 +164,20 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
       params:
         order == 0
           ? {
-              nz: nzState,
-              from: selectDate.from,
-              to: selectDate.to,
-            }
+            nz: nzState,
+            from: selectDate.from,
+            to: selectDate.to,
+          }
           : {
-              sorts: "date",
-              order: order == 1 ? "ASC" : "DESC",
-              from: selectDate.from,
-              to: selectDate.to,
-            },
+            sorts: "date",
+            order: order == 1 ? "ASC" : "DESC",
+            from: selectDate.from,
+            to: selectDate.to,
+          },
     });
 
     console.log("res : ", res);
-    
+
 
     if (res) {
       setFirst(false);
@@ -197,7 +197,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   ) => {
 
     console.log("무조건 search basic 만 실행 !!");
-    
+
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", `lotSmSearch`, {
       path: {
@@ -207,21 +207,21 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
       params:
         order == 0
           ? {
-              keyword: keyword ?? "",
-              opt: option ?? 0,
-              nz: nzState,
-              from: selectDate.from,
-              to: selectDate.to,
-            }
+            keyword: keyword ?? "",
+            opt: option ?? 0,
+            nz: nzState,
+            from: selectDate.from,
+            to: selectDate.to,
+          }
           : {
-              sorts: "date",
-              order: order == 1 ? "ASC" : "DESC",
-              keyword: keyword ?? "",
-              opt: option ?? 0,
-              nz: nzState,
-              from: selectDate.from,
-              to: selectDate.to,
-            },
+            sorts: "date",
+            order: order == 1 ? "ASC" : "DESC",
+            keyword: keyword ?? "",
+            opt: option ?? 0,
+            nz: nzState,
+            from: selectDate.from,
+            to: selectDate.to,
+          },
     });
 
     if (res) {
@@ -272,20 +272,20 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
 
     let additionalMenus = res.menus
       ? res.menus
-          .map((menu: any) => {
-            if (menu.colName === null) {
-              return {
-                id: menu.id,
-                name: menu.title,
-                width: menu.width,
-                key: menu.title,
-                editor: TextEditor,
-                type: "additional",
-                unit: menu.unit,
-              };
-            }
-          })
-          .filter((v: any) => v)
+        .map((menu: any) => {
+          if (menu.colName === null) {
+            return {
+              id: menu.id,
+              name: menu.title,
+              width: menu.width,
+              key: menu.title,
+              editor: TextEditor,
+              type: "additional",
+              unit: menu.unit,
+            };
+          }
+        })
+        .filter((v: any) => v)
       : [];
 
     if (pageInfo.page > 1) {
@@ -453,11 +453,20 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
           () => {
             DeleteBasic();
           },
-          () => {}
+          () => { }
         );
         break;
     }
   };
+
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 80
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
 
   return (
     <div>
@@ -471,8 +480,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
-          setKeyword(keyword);
-          // hs0316
+          // setKeyword(keyword);
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
           });

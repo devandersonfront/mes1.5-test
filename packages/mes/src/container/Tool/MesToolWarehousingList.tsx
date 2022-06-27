@@ -301,7 +301,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         }else{
             LoadBasic()
         }
-    },[selectDate, keyword])
+    },[selectDate, ])
 
     useEffect(() => {
         dispatch(setSelectMenuStateChange({main:"공구 관리",sub:router.pathname}))
@@ -332,11 +332,11 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
                     setSelectList(new Set)
-                    setKeyword(keyword)
+                    // setKeyword(keyword)
+                    // setPageInfo({...pageInfo,page:1})
                     SearchBasic().then(() => {
                         Notiflix.Loading.remove();
                       });
-                    // setPageInfo({...pageInfo,page:1})
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(index) => {

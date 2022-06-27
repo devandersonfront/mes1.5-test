@@ -43,6 +43,7 @@ const BasicDevice = ({}: IProps) => {
   const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
+  const [state, setState] = useState<number>(1)
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["device"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -75,6 +76,7 @@ const BasicDevice = ({}: IProps) => {
   // }, [pageInfo.page, keyword, typesState])
 
   useEffect(() => {
+    // console.log(state)
     if (keyword) {
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove();
@@ -644,6 +646,15 @@ setKeyword('')
     setBasicRow(rows)
   }
 
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 80
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
+
   return (
     <div>
         <PageHeader
@@ -671,6 +682,7 @@ setKeyword('')
         <ExcelTable
           editable
           resizable
+          resizeSave
           headerList={[
             SelectColumn,
             ...column
@@ -685,15 +697,15 @@ setKeyword('')
                 v.isChange = false
               }
             })
-            setSelectList(tmp)
-            competeDevice(e)
+            // setSelectList(tmp)
+            // competeDevice(e)
           }}
           setSelectRow={setSelectRow}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
           width={1576}
-          height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+          height={settingHeight(basicRow.length)}
         />
         <PaginationComponent
           currentPage={pageInfo.page}

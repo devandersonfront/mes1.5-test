@@ -81,7 +81,7 @@ const BasicMachineV1u = ({option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, keyword, typesState])
+  }, [pageInfo.page, typesState])
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"기계 기준정보",sub:""}))
@@ -561,6 +561,14 @@ const BasicMachineV1u = ({option}: IProps) => {
     setBasicRow(rows)
   }
 
+  const settingHeight = (length:number) => {
+    switch (length){
+      case 0:
+        return 90
+      default :
+        return basicRow.length * 40 + 56
+    }
+  }
 
   return (
       <div>
@@ -568,8 +576,11 @@ const BasicMachineV1u = ({option}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword)
-            setPageInfo({...pageInfo,page:1})
+            // setKeyword(keyword)
+            // setPageInfo({...pageInfo,page:1})
+            SearchBasic(keyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove();
+            });
           }}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
@@ -608,7 +619,7 @@ const BasicMachineV1u = ({option}: IProps) => {
             setSelectList={setSelectList}
             setSelectRow={setSelectRow}
             width={1576}
-            height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+            height={settingHeight(basicRow.length)}
         />
         <PaginationComponent
           currentPage={pageInfo.page}
