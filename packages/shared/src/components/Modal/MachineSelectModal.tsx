@@ -90,9 +90,9 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
         setSearchList(row.machines.map((v, index) => {
           return {
             ...v.machine.machine,
-            machineType: TransferCodeToValue(v.machine.machine.type, 'machine'),
+            machineType: TransferCodeToValue(v?.machine.machine.type, 'machine'),
             sequence: index+1,
-            setting: v.machine.setting,
+            setting: v?.machine.machine.setting,
           }
         }))
       }else{
@@ -253,14 +253,12 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                   }
                 })
                 if(settingUseArray > 1) {
-                  return Notiflix.Report.warning("경고", "기계 하나만 선택해주시기 바랍니다.", "확인");
+                  return Notiflix.Report.warning("경고", "기계를 하나만 선택해주시기 바랍니다.", "확인");
                 }
-
                 if(selectRow !== undefined && selectRow !== null){
                   onRowChange({
                     ...row,
-                    machines: searchList.filter(v => {
-                              if(v.setting === 1){
+                    machines: searchList.map(v => {
                                   return {
                                       machine: {
                                           sequence: v.sequence,
@@ -269,7 +267,6 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                                           },
                                           setting: v.setting
                                       }
-                                  }
                               }
                           }),
                     name: row.name,

@@ -135,6 +135,7 @@ const MesKpiUph = () => {
             <PageHeader title={"UPH(P)"} />
             <ExcelTable
                 editable
+                resizable
                 headerList={[
                     ...processColumn
                 ]}
@@ -170,6 +171,7 @@ const MesKpiUph = () => {
             </div>
             <ExcelTable
                 editable
+                resizable
                 headerList={[
                     SelectColumn,
                     ...pauseColumn

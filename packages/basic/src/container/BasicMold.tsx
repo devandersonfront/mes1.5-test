@@ -592,6 +592,18 @@ const BasicMold = ({}: IProps) => {
   }
 
 
+  const searchValidation = (searchKeyword) => {
+    setKeyword(searchKeyword)
+    if(keyword === searchKeyword || pageInfo.page === 1){
+      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
+        Notiflix.Loading.remove();
+      })
+    }else{
+      setPageInfo({...pageInfo,page:1})
+    }
+  }
+
+
   return (
     <div>
 

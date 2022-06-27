@@ -145,6 +145,7 @@ const MesKpiOperation = () => {
             <PageHeader title={"설비가동률(P)"} />
             <ExcelTable
                 editable
+                resizable
                 headerList={processColumn}
                 row={[processBasicRow]}
                 setRow={(row) => {
@@ -179,6 +180,7 @@ const MesKpiOperation = () => {
             </div>
             <ExcelTable
                 editable
+                resizable
                 headerList={[
                     SelectColumn,
                     ...pauseColumn

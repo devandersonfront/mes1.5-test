@@ -147,6 +147,7 @@ const MesKpiManHour = () => {
             <PageHeader title={"작업공수(C)"} />
             <ExcelTable
                 editable
+                resizable
                 headerList={[
                     ...processColumn
                 ]}
@@ -183,6 +184,7 @@ const MesKpiManHour = () => {
             </div>
             <ExcelTable
                 editable
+                resizable
                 headerList={[
                     SelectColumn,
                     ...pauseColumn

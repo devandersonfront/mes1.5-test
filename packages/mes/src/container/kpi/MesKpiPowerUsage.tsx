@@ -145,6 +145,7 @@ const MesKpiPowerUsage = () => {
             <PageHeader title={"전력 사용량(E)"} />
             <ExcelTable
                 editable
+                resizable
                 headerList={[
                     ...processColumn
                 ]}
@@ -180,6 +181,7 @@ const MesKpiPowerUsage = () => {
             </div>
             <ExcelTable
                 editable
+                resizable
                 headerList={[
                     SelectColumn,
                     ...pauseColumn
