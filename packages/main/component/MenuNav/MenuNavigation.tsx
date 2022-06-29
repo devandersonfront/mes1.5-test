@@ -131,6 +131,7 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
                       if(v.subMenu && v.subMenu.length){
                         let tmpSubMenus = selector.sub
 
+                        // 있으면 비우고 없으면 채워라 
                         if(tmpSubMenus[i].length){
                           tmpSubMenus[i] = []
                         }else{

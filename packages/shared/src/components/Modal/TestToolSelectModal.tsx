@@ -232,7 +232,6 @@ const TestToolSelectModal = ({column, row, onRowChange}: IProps) => {
                             headerList={searchModalList.toolUse}
                             row={searchList}
                             setRow={(e) => {
-
                                 if(e[0].stock === 0){
                                     return Notiflix.Report.warning("경고", "재고량이 없습니다.", "확인",  );
                                 }
@@ -255,6 +254,12 @@ const TestToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                         }else{
                                             return {...v , border : false , id : row.id }
                                         }
+                                    })
+                                    setSearchList(convertList)
+                                }else{
+                                    const convertList = searchList.map((row,index) => {
+                                        if(index === e) return {...row , doubleClick : confirmFunction}
+                                        else return {...row}
                                     })
                                     setSearchList(convertList)
                                 }

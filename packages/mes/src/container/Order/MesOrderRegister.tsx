@@ -221,10 +221,7 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
             buttons={
               ['행추가', '저장하기', '삭제']
             }
-            buttonsOnclick={
-              // () => {}
-              onClickHeaderButton
-            }
+            buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
             editable
@@ -238,10 +235,7 @@ const MesOrderRegister = ({page, keyword, option}: IProps) => {
             setRow={(e) => {
               let tmp: Set<any> = selectList
               e.map(v => {
-                if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
+                if(v.isChange) tmp.add(v.id)
               })
               setSelectList(tmp)
               setBasicRow(e.map((v, index) => ({

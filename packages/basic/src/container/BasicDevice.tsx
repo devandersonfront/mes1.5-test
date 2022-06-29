@@ -43,6 +43,7 @@ const BasicDevice = ({}: IProps) => {
   const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
+  const [state, setState] = useState<number>(1)
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["device"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -75,6 +76,7 @@ const BasicDevice = ({}: IProps) => {
   // }, [pageInfo.page, keyword, typesState])
 
   useEffect(() => {
+    // console.log(state)
     if (keyword) {
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove();
@@ -694,8 +696,8 @@ setKeyword('')
                 v.isChange = false
               }
             })
-            setSelectList(tmp)
-            competeDevice(e)
+            // setSelectList(tmp)
+            // competeDevice(e)
           }}
           setSelectRow={setSelectRow}
           selectList={selectList}

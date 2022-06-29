@@ -577,8 +577,9 @@ const BasicMold = ({}: IProps) => {
       }
     }
 
-    setBasicRow(rows);
-  };
+    setBasicRow(rows)
+  }
+
 
   const searchValidation = (searchKeyword) => {
     setKeyword(searchKeyword)

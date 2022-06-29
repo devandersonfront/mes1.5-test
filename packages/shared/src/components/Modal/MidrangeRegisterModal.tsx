@@ -100,6 +100,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
         <SearchModalWrapper >
             <Modal isOpen={isOpen} style={{
                 content: {
+                    height: 800,
                     top: '50%',
                     left: '50%',
                     right: 'auto',
@@ -111,11 +112,13 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
                 overlay: {
                     background: 'rgba(0,0,0,.6)',
                     zIndex: 5
-                }
+                },
+
             }}>
+                <div style={{display : 'flex' , justifyContent : 'flex-end' , flexDirection : 'column'}}>
                 <div style={{
                     width: 1776,
-                    height: 800
+                    height: '100%'
                 }}>
                     <div style={{
                         margin: '24px 16px 16px',
@@ -195,7 +198,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
                         <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
                             <div
                                 onClick={() => {
-                                    setMidrangeUpdate(true)
+                                    setMidrangeUpdate(false)
                                     setIsOpen(false)
                                 }}
                                 style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
@@ -227,6 +230,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
                         </div>
                     </div>
                 }
+                </div>
             </Modal>
         </SearchModalWrapper>
     )

@@ -40,8 +40,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         }else{
           return row[column.key]
         }
-
-      default:
+      default :
         return row[column.key] ?? "무"
     }
   }

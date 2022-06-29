@@ -484,6 +484,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         isSearch
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
+          setSelectList(new Set)
           setKeyword(keyword);
           // 
           SearchBasic(keyword, optionIndex, 1).then(() => {

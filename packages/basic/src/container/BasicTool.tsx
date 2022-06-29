@@ -499,6 +499,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
         break;
     }
   };
+
     const settingHeight = (length:number) => {
         switch (length){
             case 0:
@@ -588,6 +589,8 @@ const BasicTool = ({ page, search, option }: IProps) => {
       setPageInfo({...pageInfo,page:1})
     }
   }
+
+
           return (
               <div>
                 <PageHeader

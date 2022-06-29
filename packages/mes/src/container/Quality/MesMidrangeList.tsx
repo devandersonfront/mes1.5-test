@@ -189,13 +189,12 @@ const MesMidrangeList = ({ option }: IProps) => {
                 searchKeyword={""}
                 searchOptionList={optionList}
                 onChangeSearchKeyword={(keyword) => {
-                    // setKeyword(keyword);
+                    setKeyword(keyword);
                     searchQualityRecordInspect(keyword, optionIndex, pageInfo.page).then(() => {
                         Notiflix.Loading.remove()
                     })
                     // setPageInfo({page:1, total:1})
-                    setKeyword(keyword);
-                    setPageInfo({page:1, total:pageInfo.total})
+                    // setPageInfo({page:1, total:pageInfo.total})
                 }}
                 onChangeSearchOption={(option) => {
                     setOptionIndex(option)

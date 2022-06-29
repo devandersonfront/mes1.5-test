@@ -231,7 +231,7 @@ export const searchModalList: any  = {
     {key: 'code', name: '공구 CODE', width: 160, formatter: TestSearchModalTest, placeholder: '-', type: 'searchToolModal', textAlign: 'center', modalType: true, noSelect:true },
     {key: 'name', name: '공구명', formatter: LineBorderContainer, placeholder: '-', type: 'Modal' },
     {key: 'customer', name: '거래처', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
-    {key: 'used', name: '생산량', width: 160, formatter: LineBorderContainer, editor:TextEditor, placeholder: '생산량 입력', textAlign: 'center', textType:"Modal", type:"number" },
+    {key: 'used', name: '생산량', width: 160, editor:TextEditor, placeholder: '생산량 입력', textAlign: 'center', textType:"Modal", type:"number" },
   ],
   moldList: [
     {key: 'sequence', name: '번호', width: 64, textAlign: 'center', formatter: LineBorderContainer},
@@ -492,6 +492,7 @@ export const searchModalList: any  = {
     {key: 'crn', name: '사업자 번호', formatter: LineBorderContainer ,placeholder:"-", },
     {key: 'model', name: '모델명', formatter: LineBorderContainer ,placeholder:"-", },
   ],
+  
   rawmaterialSearch: [
     {key: 'code', formatter: LineBorderContainer , name: '원자재 CODE' ,placeholder:"-",},
     {key: 'name', formatter: LineBorderContainer , name: '원자재 품명' ,placeholder:"-",},

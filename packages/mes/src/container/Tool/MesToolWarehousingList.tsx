@@ -323,7 +323,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
                     setSelectList(new Set)
-                    // setKeyword(keyword)
+                    setKeyword(keyword)
                     // setPageInfo({...pageInfo,page:1})
                     SearchBasic().then(() => {
                         Notiflix.Loading.remove();

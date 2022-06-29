@@ -69,6 +69,7 @@ import {ToolModal} from "../components/Modal/ToolModal";
 import { RequestMethod } from './RequestFunctions'
 import Notiflix from 'notiflix'
 import {TestWorkRegisterModal} from "../components/Modal/TestWorkRegisterModal";
+import { OrderInfoReigesterModalButton } from '../components/Modal/OrderInfoReigesterModalButton'
 
 
 export const columnlist: any = {
@@ -970,12 +971,13 @@ export const columnlist: any = {
     {key: 'lot_number', name: 'LOT별 재고', formatter: LotInfoModal, width: 118, type: 'readonly'},
     {key:"stock", name:"재고량", width: 118},
   ],
+  
   orderRegister: [
     {key:"date", name:"수주 날짜", formatter: CalendarBox, width: 118, type:"date"},
     {key:"deadline", name:"납품 기한", formatter: CalendarBox, width: 118, type:"deadline"},
     {key:"customer_id", name:"거래처", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     {key:"cm_id", name:"모델", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
-    {key:"product_id", name:"CODE", width: 118, formatter: SearchModalTest, type: 'product', noSelect:true},
+    {key:"product_id", name:"CODE", width: 118, formatter: OrderInfoReigesterModalButton, type: 'product', noSelect:true},
     {key:"name", name:"품명", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     {key:"type", name:"품목 종류", width: 118, formatter: PlaceholderBox, placeholder: '자동입력'   },
     {key:"unit", name:"단위", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
@@ -1311,7 +1313,7 @@ export const columnlist: any = {
     {key: "cm_id", name: '모델', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "code", name: 'CODE', width: 472, formatter: SearchModalTest,  type: 'product',noSelect:true},
     {key: "name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "uph_average", name: '평균 UPH(시간당 샌산량)', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
+    {key: "uph_average", name: '평균 UPH(시간당 생산량)', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiUphContent: [
     {key: 'osd_id', name: '지시 고유 번호', width:126},

@@ -11,6 +11,7 @@ import toolInfo from './toolInfo'
 import OperationRegisterState from "./operationRegisterState";
 import menuSelectState from "./menuSelectState";
 import searchModalState from "./searchModalState"
+import product_ids_for_selected_rows_state from "./product_ids_for_selected_rows_state"
 
 const rootReducer = combineReducers({
   mainUserInfo,
@@ -24,7 +25,9 @@ const rootReducer = combineReducers({
   toolInfo,
   OperationRegisterState,
   menuSelectState,
-  searchModalState
+  searchModalState,
+  product_ids_for_selected_rows_state
+  // searchRowState,
 })
 
 export {rootReducer};
