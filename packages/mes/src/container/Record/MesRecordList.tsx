@@ -59,15 +59,15 @@ const MesRecordList = ({page, search, option}: IProps) => {
   };
 
   const loadPage = (page:number) => {
-    // if(keyword){
-    //   SearchBasic(keyword, optionIndex, page).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }else{
+    if(keyword){
+      SearchBasic(page,optionIndex).then(() => {
+        Notiflix.Loading.remove()
+      })
+    }else{
       LoadBasic(page).then(() => {
         Notiflix.Loading.remove()
       })
-    // }
+    }
   }
 
   useEffect(() => {
@@ -89,6 +89,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
     const params:any = {
       from,
       to,
+      rangeNeeded: true
     }
 
 
@@ -98,7 +99,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
     }
 
     if(recordState == 1){
-      params.rangeNeeded = false
+      // params.rangeNeeded = false
       params.fin=false
       params.from = undefined
       params.to = undefined
