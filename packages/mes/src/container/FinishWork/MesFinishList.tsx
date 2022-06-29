@@ -321,7 +321,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         optionIndex={optionIndex}
         onChangeSearchKeyword={(keyword) => {
           setSelectList(new Set)
-          // setKeyword(keyword)
+          setKeyword(keyword)
           // setPageInfo({page:1, total:1})
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();

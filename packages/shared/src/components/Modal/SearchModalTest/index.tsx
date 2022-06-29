@@ -367,7 +367,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   }
 
 
-  const confirmFunction = () => {
+  const confirmFunction = (e) => {
+      console.log(e)
     setIsOpen(false)
     if(selectRow !== undefined){
       const selectNameFunction = (type:string) => {
@@ -601,7 +602,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               <p style={{color: '#717C90'}}>취소</p>
             </FooterButton>
             <FooterButton
-              onClick={() => {confirmFunction()}}
+              onClick={confirmFunction}
               style={{backgroundColor: POINT_COLOR}}
             >
               <p style={{color: '#0D0D0D'}}>등록하기</p>

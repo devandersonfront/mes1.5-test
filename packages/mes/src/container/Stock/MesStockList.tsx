@@ -311,7 +311,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
           });
-          setPageInfo({ page: 1, total: 1 });
+          // setPageInfo({ page: 1, total: 1 });
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {

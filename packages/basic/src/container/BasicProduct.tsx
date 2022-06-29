@@ -770,7 +770,7 @@ const BasicProduct = ({}: IProps) => {
           isSearch
           searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
-            // setKeyword(keyword)
+            setKeyword(keyword)
             // setPageInfo({...pageInfo,page:1})
             SearchBasic(keyword, optionIndex, 1).then(() => {
               Notiflix.Loading.remove();
@@ -784,10 +784,7 @@ const BasicProduct = ({}: IProps) => {
           title={"제품 등록 관리"}
           pageHelper={"제품 등록, 삭제는 하나씩 가능"}
           buttons={buttonList}
-          buttonsOnclick={
-            // () => {}
-            onClickHeaderButton
-          }
+          buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
           editable

@@ -419,7 +419,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
         selectDate={selectDate}
         onChangeSearchKeyword={(keyword) => {
           setSelectList(new Set)
-          // setKeyword(keyword);
+          setKeyword(keyword);
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
           });
