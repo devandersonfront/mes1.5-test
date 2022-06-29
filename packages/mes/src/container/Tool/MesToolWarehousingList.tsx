@@ -216,16 +216,13 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         const res = await RequestMethod("get", "lotToolList",{
             path:{
                 page:pageInfo.page,
-                renderItem:22
+                renderItem:20
             },
             params:{
                 from: selectDate.from,
                 to: selectDate.to
             }
         })
-
-        console.log("res : 공구 입구 리스트 ", res);
-        
 
         if(res){
             setPageInfo({...pageInfo, total: res.totalPages })
@@ -237,7 +234,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         const res = await RequestMethod("get", "lotToolSearch", {
             path:{
                 page:pageInfo.page,
-                renderItem:22
+                renderItem:20
             },
             params:{
                 from:selectDate.from,
@@ -246,9 +243,6 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 opt:optionIndex
             }
         })
-
-        console.log("res : ", res);
-        
 
         if(res){
             setPageInfo({...pageInfo, total: res.totalPages })
@@ -287,9 +281,6 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",()=>DeleteBasic())
 
                 return
-            // case 2:
-            //     console.log(2)
-            //     return
             default:
                 return
         }
