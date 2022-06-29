@@ -484,6 +484,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         searchKeyword={keyword}
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) => {
+          setSelectList(new Set)
           setKeyword(keyword);
           // hs0316
           SearchBasic(keyword, optionIndex, 1).then(() => {
