@@ -152,8 +152,8 @@ const MesStockList = ({ page, search, option }: IProps) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", `stockSearch`, {
       path: {
-        page: pageInfo.page ?? 1,
-        renderItem: 22,
+        page: isPaging ?? pageInfo.page ?? 1,
+        renderItem: 20,
       },
       params: {
         keyword: keyword ?? "",
@@ -169,11 +169,11 @@ const MesStockList = ({ page, search, option }: IProps) => {
       });
       // console.log("SearchBasic res : ", res);
       // setBasicRow([]);
-      cleanUpData(res);
+      cleanUpData(res, isPaging ?? pageInfo);
     }
   };
 
-  const cleanUpData = (res: any) => {
+  const cleanUpData = (res: any , page?) => {
     let tmpColumn = columnlist["stockV2"];
     let tmpRow = [];
     tmpColumn = tmpColumn
@@ -294,10 +294,10 @@ const MesStockList = ({ page, search, option }: IProps) => {
 
     // setBasicRow([...basicRow, ...tmpBasicRow])
 
-    if (pageInfo.page > 1) {
-      setBasicRow([...basicRow, ...tmpBasicRow]);
+    if (page) {
+      setBasicRow([...tmpBasicRow])
     } else {
-      setBasicRow([...tmpBasicRow]);
+      setBasicRow([...basicRow, ...tmpBasicRow])
     }
   };
 

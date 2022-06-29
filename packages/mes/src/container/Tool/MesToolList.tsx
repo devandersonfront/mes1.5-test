@@ -221,7 +221,7 @@ const MesToolList = ({page, search, option}: IProps) => {
         const res = await RequestMethod("get", "toolList",{
             path:{
                 page:pageInfo.page,
-                renderItem:18
+                renderItem:20
             },
             // params:{
             //     from: selectDate.from,
@@ -235,11 +235,11 @@ const MesToolList = ({page, search, option}: IProps) => {
         }
     }
 
-    const SearchBasic = async() => {
+    const SearchBasic = async(keyword : string) => {
         const res = await RequestMethod("get", "toolSearch", {
             path:{
                 page:pageInfo.page,
-                renderItem:22
+                renderItem:20
             },
             params:{
                 // from:selectDate.from,
@@ -289,7 +289,7 @@ const MesToolList = ({page, search, option}: IProps) => {
 
     useEffect(()=>{
         if(keyword){
-            SearchBasic()
+            SearchBasic(keyword)
         }else{
             LoadBasic()
         }
@@ -312,7 +312,7 @@ const MesToolList = ({page, search, option}: IProps) => {
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
                     setKeyword(keyword)
-                    SearchBasic().then(() => {
+                    SearchBasic(keyword).then(() => {
                         Notiflix.Loading.remove();
                       });
                     // setPageInfo({page:1, total:1})
