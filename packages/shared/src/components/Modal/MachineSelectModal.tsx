@@ -85,7 +85,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
       },
     })
     let selectMachine
-    row.machines.map((machine, index) => {
+    row?.machines?.map((machine, index) => {
       if(machine.machine.setting){
         selectMachine = machine.machine.machine.machine_id
       }
