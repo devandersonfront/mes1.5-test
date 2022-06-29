@@ -1313,7 +1313,7 @@ export const columnlist: any = {
     {key: "cm_id", name: '모델', width: 480, formatter: PlaceholderBox ,placeholder: '자동 입력'},
     {key: "code", name: 'CODE', width: 472, formatter: SearchModalTest,  type: 'product',noSelect:true},
     {key: "name", name: '품명', width: 296, formatter: PlaceholderBox ,placeholder: '자동 입력'},
-    {key: "uph_average", name: '평균 UPH(시간당 샌산량)', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
+    {key: "uph_average", name: '평균 UPH(시간당 생산량)', width: 208, formatter: PlaceholderBox ,placeholder: '자동 입력'}
   ],
   kpiUphContent: [
     {key: 'osd_id', name: '지시 고유 번호', width:126},

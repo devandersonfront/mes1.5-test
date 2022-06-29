@@ -137,6 +137,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         onChange={async (e) => {
           if(e.target.files && e.target.files.length !== 0) {
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
+              e.target.value = ''
               if(uploadImg !== undefined){
                   if(column.key.includes("photo")){
                       onRowChange({
