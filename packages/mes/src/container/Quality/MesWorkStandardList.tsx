@@ -140,7 +140,7 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
-                    setPageInfo({...pageInfo,page:1})
+                    // setPageInfo({...pageInfo,page:1})
 
                     setKeyword(keyword)
                     SearchBasic(keyword, optionIndex, 1).then(() => {

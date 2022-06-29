@@ -719,7 +719,9 @@ const BasicUser = ({}: IProps) => {
         searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
           setKeyword(keyword);
-          SearchBasic(keyword, optionIndex, pageInfo.page);
+          SearchBasic(keyword, optionIndex, 1).then(() => {
+            Notiflix.Loading.remove();
+          })
           // setPageInfo({ page: 1, total: pageInfo.total });
         }}
         searchOptionList={optionList}

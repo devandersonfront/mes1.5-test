@@ -448,8 +448,8 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
         searchKeyword={""}
         searchOptionList={optionList}
         onChangeSearchKeyword={(keyword) => {
+          setSelectList(new Set)
           setKeyword(keyword);
-          // hs0316
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
           });
