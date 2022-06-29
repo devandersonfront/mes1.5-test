@@ -171,6 +171,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                     }
                   }}
               }).filter(v=>v.tool.tool.code),
+              machines: v?.machines.filter((machine) => machine.machine.setting == 1),
               // input_bom: [],
               status: 0,
               version: undefined

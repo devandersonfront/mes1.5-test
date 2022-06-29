@@ -642,9 +642,7 @@ const BasicCustomer = ({}: IProps) => {
             searchKeyword={keyword}
             onChangeSearchKeyword={searchValidation}
             searchOptionList={optionList}
-            onChangeSearchOption={(option) => {
-              setOptionIndex(option)
-            }}
+            onChangeSearchOption={setOptionIndex}
             optionIndex={optionIndex}
             title={"거래처 정보 관리"}
             buttons={

@@ -67,8 +67,7 @@ const BasicProcess = ({}: IProps) => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page]);
-
+  }, [pageInfo.page])
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"공정 관리",sub:router.pathname}))
