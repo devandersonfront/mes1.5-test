@@ -592,7 +592,6 @@ const BasicMold = ({}: IProps) => {
     }
   }
 
-
   return (
     <div>
 

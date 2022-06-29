@@ -209,11 +209,7 @@ const MesToolList = ({page, search, option}: IProps) => {
                 customer_id:row?.customer?.name,
             }
         })
-        if(pageInfo.page > 1){
-            setBasicRow([...basicRow,...tmpBasicRow])
-        }else{
-            setBasicRow([...tmpBasicRow])
-        }
+        setBasicRow([...tmpBasicRow])
 
     }
 
@@ -279,9 +275,6 @@ const MesToolList = ({page, search, option}: IProps) => {
                 DeleteBasic()
 
                 return
-            // case 2:
-            //     console.log(2)
-            //     return
             default:
                 return
         }
@@ -294,7 +287,7 @@ const MesToolList = ({page, search, option}: IProps) => {
             LoadBasic()
         }
 
-    },[pageInfo.page, selectDate])
+    },[pageInfo.page])
 
     useEffect(() => {
         dispatch(setSelectMenuStateChange({main:"공구 관리",sub:router.pathname}))
@@ -348,10 +341,8 @@ const MesToolList = ({page, search, option}: IProps) => {
                         }
                     }
                 }}
-                setSelectList={(selectedRows) => {
-                    //@ts-ignore
-                    setSelectList(selectedRows)
-                }}
+                //@ts-ignore
+                setSelectList={setSelectList}
 
             />
         </div>
