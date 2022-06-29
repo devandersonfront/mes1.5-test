@@ -21,8 +21,8 @@ import { TransferCodeToValue } from '../../../common/TransferFunction'
 import { SearchIcon } from "../../../styles/styledComponents";
 import { changeSearchModalNumber } from "../../../reducer/searchModalState";
 import { NoSelectContainer } from "../../Formatter/NoSelectFomatter";
+// @ts-ignore
 import { SelectColumn } from 'react-data-grid'
-
 import { RootState } from "../../../reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { add_product_ids_for_selected_rows, remove_product_ids_for_selected_rows, remove_all_product_ids_for_selected_rows } from "../../../reducer/product_ids_for_selected_rows_state";
