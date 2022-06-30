@@ -17,6 +17,7 @@ import {useRouter} from 'next/router'
 import styled from 'styled-components'
 import {useDispatch} from "react-redux";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import { settingHeight } from 'shared/src/common/Util';
 
 export interface IProps {
   children?: any
@@ -626,15 +627,6 @@ setKeyword('')
     }
 
     setBasicRow(rows)
-  }
-
-  const settingHeight = (length:number) => {
-    switch (length){
-      case 0:
-        return 80
-      default :
-        return basicRow.length * 40 + 56
-    }
   }
 
   return (

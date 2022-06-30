@@ -20,6 +20,7 @@ import {NextPageContext} from 'next'
 import axios from 'axios';
 import {useDispatch} from "react-redux";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import { settingHeight } from 'shared/src/common/Util';
 
 export interface IProps {
   children?: any
@@ -664,15 +665,6 @@ const BasicProduct = ({}: IProps) => {
 
   const handleModal = (open:boolean) => {
     setBarcodeOpen(!open)
-  }
-
-  const settingHeight = (length:number) => {
-    switch (length){
-      case 0:
-        return 90
-      default :
-        return basicRow.length * 40 + 56
-    }
   }
 
   React.useEffect(()=>{

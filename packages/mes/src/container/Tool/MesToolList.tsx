@@ -19,6 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "shared";
 import {setToolDataAdd, ToolUploadInterface} from "shared/src/reducer/toolInfo";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import { settingHeight } from 'shared/src/common/Util'
 
 interface IProps {
     children?: any
@@ -331,7 +332,7 @@ const MesToolList = ({page, search, option}: IProps) => {
                     setSelectList(tmp)
                     setBasicRow(e);
                 }}
-                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+                height={settingHeight(basicRow.length)}
                 width={1576}
                 scrollEnd={(value) => {
                     if(value){
