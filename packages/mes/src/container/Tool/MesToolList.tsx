@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
     columnlist,
@@ -10,9 +10,9 @@ import {
     TextEditor
 } from "shared";
 //@ts-ignore
-import {SelectColumn} from "react-data-grid";
+import { SelectColumn } from "react-data-grid";
 import moment from "moment";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 //@ts-ignore
 import Notiflix from "notiflix"
 import {useDispatch, useSelector} from "react-redux";
@@ -29,27 +29,27 @@ interface IProps {
 }
 
 interface SelectParameter {
-    from:string
-    to:string
+    from: string
+    to: string
 }
 
-const MesToolList = ({page, search, option}: IProps) => {
+const MesToolList = ({ page, search, option }: IProps) => {
     const router = useRouter();
     const dispatch = useDispatch();
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [column, setColumn] = useState<any>(columnlist.toolList)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [selectDate, setSelectDate] = useState<SelectParameter>({from:moment().subtract(1, "month").format("YYYY-MM-DD"), to:moment().format("YYYY-MM-DD")})
+    const [selectDate, setSelectDate] = useState<SelectParameter>({ from: moment().subtract(1, "month").format("YYYY-MM-DD"), to: moment().format("YYYY-MM-DD") })
     const [optionIndex, setOptionIndex] = useState<number>(0);
-    const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:1});
+    const [pageInfo, setPageInfo] = useState<{ page: number, total: number }>({ page: 1, total: 1 });
     const [keyword, setKeyword] = useState<string>();
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {
-            if(v.selectList && v.selectList.length === 0){
+            if (v.selectList && v.selectList.length === 0) {
                 let tmpKey = v.key
 
                 let res: any
-                res = await RequestMethod('get', `${tmpKey}List`,{
+                res = await RequestMethod('get', `${tmpKey}List`, {
                     path: {
                         page: 1,
                         renderItem: MAX_VALUE,
@@ -60,7 +60,7 @@ const MesToolList = ({page, search, option}: IProps) => {
                 let pk = "";
 
                 res.results.info_list && res.results.info_list.length && Object.keys(res.results.info_list[0]).map((v) => {
-                    if(v.indexOf('_id') !== -1){
+                    if (v.indexOf('_id') !== -1) {
                         pk = v
                     }
                 })
@@ -75,14 +75,14 @@ const MesToolList = ({page, search, option}: IProps) => {
                     })]
                 }
 
-            }else{
-                if(v.selectList){
+            } else {
+                if (v.selectList) {
                     return {
                         ...v,
                         pk: v.unit_id,
                         // result: changeNzState
                     }
-                }else{
+                } else {
                     return v
                 }
             }
@@ -95,32 +95,32 @@ const MesToolList = ({page, search, option}: IProps) => {
         // }
     }
 
-    const cleanUpData = (info_list:any) => {
+    const cleanUpData = (info_list: any) => {
         let tmpColumn = columnlist["toolList"];
-        let tmpRow:Array<any> = []
+        let tmpRow: Array<any> = []
         tmpColumn = tmpColumn.map((column: any) => {
             let menuData: object | undefined;
             info_list.menus && info_list.menus.map((menu: any) => {
-                if(!menu.hide){
-                    if(menu.colName === column.key){
+                if (!menu.hide) {
+                    if (menu.colName === column.key) {
                         menuData = {
                             id: menu.mi_id,
                             name: menu.title,
                             width: menu.width,
-                            tab:menu.tab,
-                            unit:menu.unit,
+                            tab: menu.tab,
+                            unit: menu.unit,
                             moddable: !menu.moddable,
                             version: menu.version,
                             sequence: menu.sequence,
                             hide: menu.hide
                         }
-                    } else if(menu.colName === 'id' && column.key === 'tmpId'){
+                    } else if (menu.colName === 'id' && column.key === 'tmpId') {
                         menuData = {
                             id: menu.mi_id,
                             name: menu.title,
                             width: menu.width,
-                            tab:menu.tab,
-                            unit:menu.unit,
+                            tab: menu.tab,
+                            unit: menu.unit,
                             moddable: !menu.moddable,
                             version: menu.version,
                             sequence: menu.sequence,
@@ -130,16 +130,16 @@ const MesToolList = ({page, search, option}: IProps) => {
                 }
             })
 
-            if(menuData){
+            if (menuData) {
                 return {
                     ...column,
                     ...menuData
                 }
             }
-        }).filter((v:any) => v)
+        }).filter((v: any) => v)
 
-        let additionalMenus = info_list.menus ? info_list.menus.map((menu:any) => {
-            if(menu.colName === null && !menu.hide){
+        let additionalMenus = info_list.menus ? info_list.menus.map((menu: any) => {
+            if (menu.colName === null && !menu.hide) {
                 return {
                     id: menu.mi_id,
                     name: menu.title,
@@ -156,11 +156,11 @@ const MesToolList = ({page, search, option}: IProps) => {
             }
         }).filter((v: any) => v) : []
 
-        if(pageInfo.page > 1){
-            tmpRow = [...basicRow,...info_list.info_list]
-          }else{
+        if (pageInfo.page > 1) {
+            tmpRow = [...basicRow, ...info_list.info_list]
+        } else {
             tmpRow = info_list.info_list
-          }
+        }
 
 
         loadAllSelectItems([
@@ -172,13 +172,13 @@ const MesToolList = ({page, search, option}: IProps) => {
         let selectKey = ""
         let additionalData: any[] = []
         tmpColumn.map((v: any) => {
-            if(v.selectList){
+            if (v.selectList) {
                 selectKey = v.key
             }
         })
 
         additionalMenus.map((v: any) => {
-            if(v.type === 'additional'){
+            if (v.type === 'additional') {
                 additionalData.push(v.key)
             }
         })
@@ -198,104 +198,115 @@ const MesToolList = ({page, search, option}: IProps) => {
                 }
             })
 
-            let random_id = Math.random()*1000;
+            let random_id = Math.random() * 1000;
             return {
                 ...row,
                 ...appendAdditional,
                 id: `tool_${random_id}`,
                 tool_id: row?.tool_id,
-                elapsed: row?.elapsed  === 0 ? "0" : row?.elapsed,
+                elapsed: row?.elapsed === 0 ? "0" : row?.elapsed,
                 name: row?.name,
-                unit:row?.unit,
-                customer_id:row?.customer?.name,
+                unit: row?.unit,
+                customer_id: row?.customer?.name,
             }
         })
+        setSelectList(new Set)
         setBasicRow([...tmpBasicRow])
 
     }
 
-    const LoadBasic = async() => {
-        const res = await RequestMethod("get", "toolList",{
-            path:{
-                page:pageInfo.page,
-                renderItem:20
+    const LoadBasic = async (page?: number) => {
+        console.log(page)
+        Notiflix.Loading.circle()
+        const res = await RequestMethod("get", "toolList", {
+            path: {
+                page: (page || page !== 0) ? page : 1,
+                renderItem: 22
             },
-            // params:{
-            //     from: selectDate.from,
-            //     to: selectDate.to
-            // }
         })
 
-        if(res){
-            setPageInfo({...pageInfo, total: res.totalPages })
+        if (res) {
+            setPageInfo({ ...pageInfo, page: res.page, total: res.totalPages })
+            setSelectList(new Set)
             cleanUpData(res);
         }
     }
 
-    const SearchBasic = async(keyword : string) => {
+    const SearchBasic = async (keyword, opt, page?: number) => {
+        Notiflix.Loading.circle()
         const res = await RequestMethod("get", "toolSearch", {
-            path:{
-                page:pageInfo.page,
-                renderItem:20
+            path: {
+                page: (page || page !== 0) ? page : 1,
+                renderItem: 22
             },
-            params:{
+            params: {
                 // from:selectDate.from,
                 // to: selectDate.to,
-                keyword:keyword,
-                opt:optionIndex
+                keyword: keyword,
+                opt: optionIndex
             }
         })
-        if(res){
-            setPageInfo({...pageInfo, total: res.totalPages })
+        if (res) {
+            setPageInfo({ ...pageInfo, page: res.page, total: res.totalPages })
+            setSelectList(new Set)
             cleanUpData(res);
         }
     }
 
-    const DeleteBasic = async() => {
-        const res = await RequestMethod("delete", "lotToolDelete", basicRow.filter((row)=>selectList.has(row.id)))
+    const DeleteBasic = async () => {
+        const res = await RequestMethod("delete", "lotToolDelete", basicRow.filter((row) => selectList.has(row.id)))
 
-        if(res){
-            Notiflix.Report.success("삭제되었습니다.","","확인",() => {
-                LoadBasic()
+        if (res) {
+            Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
+                LoadBasic(1).then(() => {
+                    Notiflix.Loading.remove()
+                })
             });
         }
     }
 
-    const ButtonEvents = (index:number) => {
-        switch(index) {
+    const ButtonEvents = (index: number) => {
+        switch (index) {
             case 0:
-                if(selectList && selectList.size > 0){
+                if (selectList && selectList.size > 0) {
                     // @ts-ignore
-                    dispatch(setToolDataAdd(basicRow.filter((row)=>selectList.has(row.id))));
+                    dispatch(setToolDataAdd(basicRow.filter((row) => selectList.has(row.id))));
                     router.push("/mes/tool/update")
-                }else{
-                    Notiflix.Report.warning("데이터를 선택해주시기 바랍니다.","","확인")
+                } else {
+                    Notiflix.Report.warning("데이터를 선택해주시기 바랍니다.", "", "확인")
                 }
                 return
             case 1:
                 DeleteBasic()
 
                 return
+            // case 2:
+            //     console.log(2)
+            //     return
             default:
                 return
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         if(keyword){
-            SearchBasic(keyword)
+            SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
         }else{
-            LoadBasic()
+            LoadBasic(pageInfo.page).then(() => {
+                Notiflix.Loading.remove()
+            })
         }
 
-    },[pageInfo.page])
+    }, [pageInfo.page, selectDate])
 
     useEffect(() => {
-        dispatch(setSelectMenuStateChange({main:"공구 관리",sub:router.pathname}))
-        return(() => {
+        dispatch(setSelectMenuStateChange({ main: "공구 관리", sub: router.pathname }))
+        return (() => {
             dispatch(deleteSelectMenuState())
         })
-    },[])
+    }, [])
 
     return (
         <div>
@@ -305,11 +316,12 @@ const MesToolList = ({page, search, option}: IProps) => {
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
+                    setSelectList(new Set());
                     setKeyword(keyword)
-                    SearchBasic(keyword).then(() => {
-                        Notiflix.Loading.remove();
-                      });
                     // setPageInfo({page:1, total:1})
+                    SearchBasic(keyword, optionIndex, 1).then(() => {
+                        Notiflix.Loading.remove();
+                    });
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(option) => {
@@ -324,10 +336,7 @@ const MesToolList = ({page, search, option}: IProps) => {
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
                     e.map(v => {
-                        if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
+                        if (v.isChange) tmp.add(v.id)
                     })
                     setSelectList(tmp)
                     setBasicRow(e);
@@ -335,19 +344,21 @@ const MesToolList = ({page, search, option}: IProps) => {
                 height={settingHeight(basicRow.length)}
                 width={1576}
                 scrollEnd={(value) => {
-                    if(value){
-                        if(pageInfo.total > pageInfo.page){
-                        setSelectList(new Set)
-                        setPageInfo({...pageInfo, page:pageInfo.page+1})
+                    if (value) {
+                        if (pageInfo.total > pageInfo.page) {
+                            setSelectList(new Set)
+                            setPageInfo({ ...pageInfo, page: pageInfo.page + 1 })
                         }
                     }
                 }}
-                //@ts-ignore
-                setSelectList={setSelectList}
+                setSelectList={(selectedRows) => {
+                    //@ts-ignore
+                    setSelectList(selectedRows)
+                }}
 
             />
         </div>
     )
 }
 
-export {MesToolList};
+export { MesToolList };
