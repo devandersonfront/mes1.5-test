@@ -230,7 +230,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         }
     }
 
-    const SearchBasic = async() => {
+    const SearchBasic = async(keyword) => {
         const res = await RequestMethod("get", "lotToolSearch", {
             path:{
                 page:pageInfo.page,
@@ -288,11 +288,11 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
 
     useEffect(()=>{
         if(keyword){
-            SearchBasic()
+            SearchBasic(keyword)
         }else{
             LoadBasic()
         }
-    },[selectDate, ])
+    },[selectDate])
 
     useEffect(() => {
         dispatch(setSelectMenuStateChange({main:"공구 관리",sub:router.pathname}))
@@ -325,7 +325,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                     setSelectList(new Set)
                     setKeyword(keyword)
                     // setPageInfo({...pageInfo,page:1})
-                    SearchBasic().then(() => {
+                    SearchBasic(keyword).then(() => {
                         Notiflix.Loading.remove();
                       });
                 }}
