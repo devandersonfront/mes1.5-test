@@ -18,6 +18,7 @@ import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from "react-redux";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import { settingHeight } from 'shared/src/common/Util'
 
 interface IProps {
   children?: any
@@ -299,15 +300,6 @@ const MesFinishList = ({page, search, option}: IProps) => {
     }else{
       setSelectList(new Set)
       setBasicRow([...tmpBasicRow])
-    }
-  }
-
-  const settingHeight = (length:number) => {
-    switch (length){
-      case 0:
-        return 90
-      default :
-        return basicRow.length * 40 + 56
     }
   }
 

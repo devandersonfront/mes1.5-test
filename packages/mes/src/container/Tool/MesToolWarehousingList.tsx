@@ -19,6 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "shared";
 import {setToolDataAdd, ToolUploadInterface} from "shared/src/reducer/toolInfo";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import { settingHeight } from 'shared/src/common/Util'
 
 interface IProps {
     children?: any
@@ -361,7 +362,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                         setPageInfo({...pageInfo, page: pageInfo.page + 1})
                     }
                 }}
-                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+                height={settingHeight(basicRow.length)}
 
             />
             {/*<PaginationComponent totalPage={} currentPage={} setPage={} />*/}

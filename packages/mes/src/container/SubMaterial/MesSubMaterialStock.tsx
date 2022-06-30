@@ -23,6 +23,7 @@ import {
   deleteSelectMenuState,
   setSelectMenuStateChange,
 } from "../../../../shared/src/reducer/menuSelectState";
+import { settingHeight } from 'shared/src/common/Util'
 
 interface IProps {
   children?: any;
@@ -459,15 +460,6 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     }
   };
 
-  const settingHeight = (length:number) => {
-    switch (length){
-      case 0:
-        return 80
-      default :
-        return basicRow.length * 40 + 56
-    }
-  }
-
   return (
     <div>
       <PageHeader
@@ -525,7 +517,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         width={1576}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+        height={settingHeight(basicRow.length) }
         scrollEnd={(value) => {
           if (value) {
             if (pageInfo.total > pageInfo.page) {

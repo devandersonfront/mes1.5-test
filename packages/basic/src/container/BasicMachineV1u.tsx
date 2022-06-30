@@ -20,6 +20,7 @@ import moment from "moment"
 import {useDispatch} from "react-redux";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 import {subFactorySearchModal} from "shared/src/components/Modal/SearchModalTest/subFactorySearchModal";
+import { settingHeight } from 'shared/src/common/Util';
 
 export interface IProps {
   children?: any
@@ -559,15 +560,6 @@ const BasicMachineV1u = ({option}: IProps) => {
     }
 
     setBasicRow(rows)
-  }
-
-  const settingHeight = (length:number) => {
-    switch (length){
-      case 0:
-        return 90
-      default :
-        return basicRow.length * 40 + 56
-    }
   }
 
   const searchValidation = (searchKeyword) => {

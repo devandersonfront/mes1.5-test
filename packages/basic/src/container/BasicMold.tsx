@@ -21,6 +21,7 @@ import {
   deleteSelectMenuState,
   setSelectMenuStateChange,
 } from "shared/src/reducer/menuSelectState";
+import { settingHeight } from "shared/src/common/Util";
 
 export interface IProps {
   children?: any;
@@ -370,15 +371,6 @@ const BasicMold = ({}: IProps) => {
 
     setSelectList(new Set());
   };
-
-  const settingHeight = (length:number) => {
-    switch (length){
-      case 0:
-        return 80
-      default :
-        return basicRow.length * 40 + 56
-    }
-  }
 
   const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["moldV2"];
