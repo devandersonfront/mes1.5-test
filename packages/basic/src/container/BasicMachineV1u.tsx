@@ -401,8 +401,8 @@ const BasicMachineV1u = ({option}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
-        type: row.type ? machineList[row.type].name : '선택없음',
-        type_id: row.type ? machineList[row.type].pk : 0,
+        type: row.type ? machineList[row.type]?.name : '선택없음',
+        type_id: row.type ? machineList[row.type]?.pk : 0,
         weldingType: row.weldingType ? weldingType[row.weldingType].name : "선택없음",
         factory_id: row.factory?.name,
         affiliated_id: row.subFactory?.name,
