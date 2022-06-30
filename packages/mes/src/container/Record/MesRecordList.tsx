@@ -77,7 +77,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
   useEffect(() => {
     dispatch(
-      setSelectMenuStateChange({ main: "생산관리 등록", sub: router.pathname })
+        setSelectMenuStateChange({ main: "생산관리 등록", sub: router.pathname })
     );
     return () => {
       dispatch(deleteSelectMenuState());
@@ -110,47 +110,8 @@ const MesRecordList = ({page, search, option}: IProps) => {
     }
 
     return params
-    // if(keyword){
-    //   params.keyword = keyword
-    }
 
-    // order == 0 ?
-    //     {
-    //       from: selectDate.from,
-    //       to: selectDate.to,
-    //     }
-    //     :
-    //     {
-    //       sorts: 'end',
-    //       order: order == 1 ? 'asc' : 'desc',
-    //       from: selectDate.from,
-    //       to: selectDate.to,
-    //     }
-
-  //   {
-  //     keyword: keyword,
-  //         opt: optionIndex,
-  //       from: selectDate.from,
-  //       to: selectDate.to,
-  //   }
-  // :
-  //   {
-  //     sorts: 'end',
-  //         order: order == 1 ? 'asc' : 'desc',
-  //       keyword: keyword,
-  //       opt: optionIndex,
-  //       from: selectDate.from,
-  //       to: selectDate.to,
-  //   }
-  //   switch (recordState){
-  //     case 0:
-  //
-  //     case 1:
-  //       // http://3.36.78.194:8443/cnc/api/v1/record/list/1/22?rangeNeeded=false&fin=false
-  //     default:
-  //       return
-  //   }
-  // }
+  }
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -168,12 +129,12 @@ const MesRecordList = ({page, search, option}: IProps) => {
         let pk = "";
 
         res.info_list &&
-          res.info_list.length &&
-          Object.keys(res.info_list[0]).map((v) => {
-            if (v.indexOf("_id") !== -1) {
-              pk = v;
-            }
-          });
+        res.info_list.length &&
+        Object.keys(res.info_list[0]).map((v) => {
+          if (v.indexOf("_id") !== -1) {
+            pk = v;
+          }
+        });
         return {
           ...v,
           selectList: [
@@ -199,11 +160,9 @@ const MesRecordList = ({page, search, option}: IProps) => {
       }
     });
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then((res) => {
       setColumn([...res]);
     });
-    // }
   };
 
   const SearchBasic = async (keyword, opt, page?: number) => {
@@ -214,28 +173,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         renderItem: 22,
       },
       params:setRequestParams(recordState, order, optionIndex, keyword, selectDate.from, selectDate.to)
-          // order == 0 ?
-          //     {
-          //       keyword: keyword,
-          //       opt: optionIndex,
-          //       from: selectDate.from,
-          //       to: selectDate.to,
-          //     }
-          //     :
-          //     {
-          //       sorts: 'end',
-          //       order: order == 1 ? 'asc' : 'desc',
-          //       keyword: keyword,
-          //       opt: optionIndex,
-          //       from: selectDate.from,
-          //       to: selectDate.to,
-          //     }
     })
-
-
-    // console.log("Res : at recordv2 list", res);
-    
-
     if (res) {
       setPageInfo({
         ...pageInfo,
@@ -243,6 +181,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         total: res.totalPages,
       });
       setSelectList(new Set());
+      convertColumn(res)
       cleanUpData(res);
     }
   };
@@ -255,18 +194,6 @@ const MesRecordList = ({page, search, option}: IProps) => {
         renderItem: 22,
       },
       params: setRequestParams(recordState, order, optionIndex, keyword, selectDate.from, selectDate.to)
-          // order == 0 ?
-          //     {
-          //       from: selectDate.from,
-          //       to: selectDate.to,
-          //     }
-          //     :
-          //     {
-          //       sorts: 'end',
-          //       order: order == 1 ? 'asc' : 'desc',
-          //       from: selectDate.from,
-          //       to: selectDate.to,
-          //     }
     })
     if(res){
       setPageInfo({
@@ -275,6 +202,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
         total: res.totalPages,
       });
       setSelectList(new Set());
+      convertColumn(res)
       cleanUpData(res);
     }
   };
@@ -324,22 +252,22 @@ const MesRecordList = ({page, search, option}: IProps) => {
               worker: row.user,
               additional: [
                 ...additional
-                  .map((v) => {
-                    if (row[v.name]) {
-                      return {
-                        id: v.id,
-                        title: v.name,
-                        value: row[v.name],
-                        unit: v.unit,
-                      };
-                    }
-                  })
-                  .filter((v) => v),
+                    .map((v) => {
+                      if (row[v.name]) {
+                        return {
+                          id: v.id,
+                          title: v.name,
+                          value: row[v.name],
+                          unit: v.unit,
+                        };
+                      }
+                    })
+                    .filter((v) => v),
               ],
             };
           }
         })
-        .filter((v) => v)
+            .filter((v) => v)
     );
 
     if (res) {
@@ -352,111 +280,78 @@ const MesRecordList = ({page, search, option}: IProps) => {
     }
   };
 
-  const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["cncRecordListV2"];
-    let tmpRow = [];
-    tmpColumn = tmpColumn
-      .map((column: any) => {
-        let menuData: object | undefined;
-        res.menus &&
-          res.menus.map((menu: any) => {
-            if (menu.colName === column.key) {
-              menuData = {
-                id: menu.id,
-                name: menu.title,
-                width: menu.width,
-                tab: menu.tab,
-                unit: menu.unit,
-              };
-            } else if (menu.colName === "id" && column.key === "tmpId") {
-              menuData = {
-                id: menu.id,
-                name: menu.title,
-                width: menu.width,
-                tab: menu.tab,
-                unit: menu.unit,
-              };
-            }
-          });
 
-        if (menuData) {
-          return {
-            ...column,
-            ...menuData,
+  const convertColumn = (res) => {
+
+    let tmpColumn = columnlist["cncRecordListV2"];
+    const convertColumn = tmpColumn.map((column: any) => {
+      let menuData: object | undefined;
+      res.menus &&
+      res.menus.map((menu: any) => {
+        if (menu.colName === column.key) {
+          menuData = {
+            id: menu.id,
+            name: menu.title,
+            width: menu.width,
+            tab: menu.tab,
+            unit: menu.unit,
+          };
+        } else if (menu.colName === "id" && column.key === "tmpId") {
+          menuData = {
+            id: menu.id,
+            name: menu.title,
+            width: menu.width,
+            tab: menu.tab,
+            unit: menu.unit,
           };
         }
-      })
-      .filter((v: any) => v);
+      });
+
+      if (menuData) {
+        return {
+          ...column,
+          ...menuData,
+        };
+      }
+    })
+        .filter((v: any) => v);
 
     let additionalMenus = res.menus
-      ? res.menus
-          .map((menu: any) => {
-            if (menu.colName === null) {
-              return {
-                id: menu.id,
-                name: menu.title,
-                width: menu.width,
-                key: menu.title,
-                editor: TextEditor,
-                type: "additional",
-                unit: menu.unit,
-              };
-            }
-          })
-          .filter((v: any) => v)
-      : [];
+        ? res.menus
+            .map((menu: any) => {
+              if (menu.colName === null) {
+                return {
+                  id: menu.id,
+                  name: menu.title,
+                  width: menu.width,
+                  key: menu.title,
+                  editor: TextEditor,
+                  type: "additional",
+                  unit: menu.unit,
+                };
+              }
+            })
+            .filter((v: any) => v)
+        : [];
 
-    if (pageInfo.page > 1) {
-      tmpRow = [...basicRow, ...res.info_list];
-    } else {
-      tmpRow = res.info_list;
-    }
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
+    loadAllSelectItems([...convertColumn, ...additionalMenus]);
+  }
 
-    let selectKey = "";
-    let additionalData: any[] = [];
-    tmpColumn.map((v: any) => {
-      if (v.selectList) {
-        selectKey = v.key;
-      }
-    });
+  const cleanUpData = (res: any) => {
 
-    additionalMenus.map((v: any) => {
-      if (v.type === "additional") {
-        additionalData.push(v.key);
-      }
-    });
-
-    let pk = "";
-    Object.keys(tmpRow).map((v) => {
-      if (v.indexOf("_id") !== -1) {
-        pk = v;
-      }
-    });
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+    let tmpBasicRow = res.info_list.map((row: any, index: number) => {
       let appendAdditional: any = {};
 
       row.additional &&
-        row.additional.map((v: any) => {
-          appendAdditional = {
-            ...appendAdditional,
-            [v.title]: v.value,
-          };
-        });
+      row.additional.map((v: any) => {
+        appendAdditional = {
+          ...appendAdditional,
+          [v.title]: v.value,
+        };
+      });
 
       let random_id = Math.random() * 1000;
-
-      let worker;
-
-      if (typeof row.worker === "string") {
-        worker = row.worker;
-      } else if (typeof row.worker === "object") {
-        worker = row.worker?.name;
-      } else {
-        worker = "-";
-      }
 
       return {
         ...row,
@@ -469,101 +364,106 @@ const MesRecordList = ({page, search, option}: IProps) => {
         product_id: row.operation_sheet?.product?.code ?? "-",
         name: row.operation_sheet?.product?.name ?? "-",
         type:
-          row.operation_sheet?.product?.type !== null
-            ? TransferCodeToValue(row.operation_sheet.product.type, "product")
-            : "-",
+            row.operation_sheet?.product?.type !== null
+                ? TransferCodeToValue(row.operation_sheet.product.type, "product")
+                : "-",
         unit: row.operation_sheet?.product?.unit,
         process_id: row.operation_sheet?.product?.process?.name ?? "-",
         user: row.worker,
         sic_id: row.inspection_category,
-        worker: worker,
+        worker: row.worker.name,
         worker_object: row.worker_object ?? row.worker,
         id: `sheet_${random_id}`,
         loadPage,
-        // paused_time: row.pause_reasons && lodash.sum(row.pause_reasons?.map(reason => reason.amount))
+
       }
     })
+
+    if (pageInfo.page > 1) {
+      setBasicRow([...basicRow, ...tmpBasicRow]);
+    } else {
+      setBasicRow([...tmpBasicRow]);
+    }
+
     setSelectList(new Set)
-    setBasicRow([...tmpBasicRow])
   }
 
-
   return (
-    <div>
-      <PageHeader
-        isSearch
-        isCalendar
-        isRadio
-        radioTexts={["종료","미완료"]}
-        radioValue={recordState}
-        onChangeRadioValues={(e) => {
-          setRecordState(e)
-          setPageInfo({...pageInfo, page:1})
-        }}
-        searchKeyword={keyword}
-        searchOptionList={optionList}
-        onChangeSearchOption={(e) => {
-          setOptionIndex(e);
-        }}
-        onChangeSearchKeyword={(keyword) => {
-          setSelectList(new Set());
-          console.log("keyword : ", keyword)
-          setKeyword(keyword);
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          });
-          // setPageInfo({page:1, total:1})
-        }}
-        calendarTitle={"종료일"}
-        calendarType={"period"}
-        selectDate={selectDate}
-        //@ts-ignore
-        setSelectDate={(date) => {
-          setSelectList(new Set());
-          setSelectDate(date as { from: string; to: string });
-          // setPageInfo({ page: 1, total: 1 });
-        }}
-        title={"작업 일보 리스트"}
-        buttons={["", "수정하기", "삭제"]}
-        buttonsOnclick={(e) => {
-          switch (e) {
-            case 1: {
-              if (selectList.size === 1) {
-                setExcelOpen(true);
-              } else if (selectList.size === 0) {
-                Notiflix.Report.warning(
-                  "경고",
-                  "데이터를 선택해 주시기 바랍니다.",
-                  "확인"
-                );
-              } else {
-                Notiflix.Report.warning(
-                  "경고",
-                  "작업일보는 한 개씩만 수정 가능합니다.",
-                  "확인"
-                );
+      <div>
+        <PageHeader
+            isSearch
+            isCalendar
+            isRadio
+            radioTexts={["종료","미완료"]}
+            radioValue={recordState}
+            onChangeRadioValues={(e) => {
+              setRecordState(e)
+              setPageInfo({...pageInfo, page:1})
+            }}
+            searchKeyword={keyword}
+            searchOptionList={optionList}
+            onChangeSearchOption={(e) => {
+              setOptionIndex(e);
+            }}
+            onChangeSearchKeyword={(keyword) => {
+              setSelectList(new Set());
+              console.log("keyword : ", keyword)
+              setKeyword(keyword);
+              SearchBasic(keyword, optionIndex, 1).then(() => {
+                Notiflix.Loading.remove();
+              });
+              // setPageInfo({page:1, total:1})
+            }}
+            calendarTitle={"종료일"}
+            calendarType={"period"}
+            selectDate={selectDate}
+            //@ts-ignore
+            setSelectDate={(date) => {
+              setSelectList(new Set());
+              setSelectDate(date as { from: string; to: string });
+              // setPageInfo({ page: 1, total: 1 });
+            }}
+            title={"작업 일보 리스트"}
+            buttons={["", "수정하기", "삭제"]}
+            buttonsOnclick={(e) => {
+              switch (e) {
+                case 1: {
+                  if (selectList.size === 1) {
+                    setExcelOpen(true);
+                  } else if (selectList.size === 0) {
+                    Notiflix.Report.warning(
+                        "경고",
+                        "데이터를 선택해 주시기 바랍니다.",
+                        "확인"
+                    );
+                  } else {
+                    Notiflix.Report.warning(
+                        "경고",
+                        "작업일보는 한 개씩만 수정 가능합니다.",
+                        "확인"
+                    );
+                  }
+                  break;
+                }
+                case 2: {
+                  if (selectList.size === 0) {
+                    return Notiflix.Report.warning(
+                        "경고",
+                        "데이터를 선택해 주시기 바랍니다.",
+                        "확인"
+                    );
+                  }
+                  Notiflix.Confirm.show(
+                      "경고",
+                      "삭제하시겠습니까?",
+                      "확인",
+                      "취소",
+                      () => DeleteBasic()
+                  );
+                  break;
+                }
               }
-              break;
-            }
-            case 2: {
-              if (selectList.size === 0) {
-                return Notiflix.Report.warning(
-                  "경고",
-                  "데이터를 선택해 주시기 바랍니다.",
-                  "확인"
-                );
-              }
-              Notiflix.Confirm.show(
-                "경고",
-                "삭제하시겠습니까?",
-                "확인",
-                "취소",
-                () => DeleteBasic()
-              );
-              break;
-            }
-          }
-        }}
+            }}
         />
         <ExcelTable
             editable
@@ -593,41 +493,41 @@ const MesRecordList = ({page, search, option}: IProps) => {
             }}
         />
 
-      {excelOpen && (
-        <WorkModifyModal
-          row={[
-            ...basicRow
-              .map((v) => {
-                if (selectList.has(v.id)) {
-                  return {
-                    ...v,
-                    worker: v.user,
-                    worker_name: v.user.name,
-                    sum: v.poor_quantity + v.good_quantity,
-                    input_bom: v.operation_sheet.input_bom,
-                  };
-                }
-              })
-              .filter((v) => v),
-          ]}
-          onRowChange={() => {
-            setOptionIndex(option);
-            if (keyword) {
-              // SearchBasic(keyword, option, page).then(() => {
-              //   Notiflix.Loading.remove()
-              // })
-            } else {
-              LoadBasic(page).then(() => {
-                Notiflix.Loading.remove();
-                setSelectList(new Set());
-              });
-            }
-          }}
-          isOpen={excelOpen}
-          setIsOpen={setExcelOpen}
-        />
-      )}
-    </div>
+        {excelOpen && (
+            <WorkModifyModal
+                row={[
+                  ...basicRow
+                      .map((v) => {
+                        if (selectList.has(v.id)) {
+                          return {
+                            ...v,
+                            worker: v.user,
+                            worker_name: v.user.name,
+                            sum: v.poor_quantity + v.good_quantity,
+                            input_bom: v.operation_sheet.input_bom,
+                          };
+                        }
+                      })
+                      .filter((v) => v),
+                ]}
+                onRowChange={() => {
+                  setOptionIndex(option);
+                  if (keyword) {
+                    // SearchBasic(keyword, option, page).then(() => {
+                    //   Notiflix.Loading.remove()
+                    // })
+                  } else {
+                    LoadBasic(page).then(() => {
+                      Notiflix.Loading.remove();
+                      setSelectList(new Set());
+                    });
+                  }
+                }}
+                isOpen={excelOpen}
+                setIsOpen={setExcelOpen}
+            />
+        )}
+      </div>
   );
 };
 
