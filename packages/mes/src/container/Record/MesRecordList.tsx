@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
     columnlist,
-    ExcelTable,
+    ExcelTable, FinishButton,
     Header as PageHeader,
     IExcelHeaderType,
     MAX_VALUE,
@@ -72,7 +72,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
     useEffect(() => {
         loadPage(pageInfo.page)
-    }, [pageInfo.page, selectDate, keyword, order, recordState])
+    }, [pageInfo.page, selectDate, order, recordState])
 
 
     useEffect(() => {
@@ -160,9 +160,16 @@ const MesRecordList = ({page, search, option}: IProps) => {
             }
         });
 
-        Promise.all(tmpColumn).then((res) => {
-            setColumn([...res]);
-        });
+        Promise.all(tmpColumn).then(res => {
+            const newColumn = lodash.cloneDeep(res)
+            console.log(newColumn,'newColumnnewColumn')
+            if(recordState){
+                newColumn.splice(2, 0, {key: "finish", name: "작업 종료", width: 118, formatter: FinishButton})
+            }
+
+            console.log(newColumn,'newColumnnewColumnnewColumn')
+            setColumn(newColumn)
+        })
     };
 
     const SearchBasic = async (keyword, opt, page?: number) => {
