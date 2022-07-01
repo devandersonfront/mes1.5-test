@@ -244,7 +244,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               type: row.type_id ?? row.type === '완제품' ? 2 : 1,
               product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
               code: row.code,
-              customer: row.customer === '' ? null : row.customerData
+              customer: row.customer === '' || row.customer?.id === null ? null : row.customerData
             },
             child_product: v.tab === 2 ? {
               ...v.product
@@ -276,7 +276,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               type: row.type_id ?? row.type === '완제품' ? 2 : 1,
               product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
               code: row.code,
-              customer: row.customer === '' ? null : row.customer
+              customer: row.customer === '' || row.customer?.id === null ? null : row.customer
             },
             child_product: v.tab === 2 ? {
               ...v.product
