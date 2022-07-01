@@ -97,7 +97,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         // }
     }
 
-    const cleanUpData = (info_list:any) => {
+    const cleanUpData = (info_list:any, page?:number) => {
         let tmpColumn = columnlist["toolWarehousingList"];
         let tmpRow:Array<any> = []
         tmpColumn = tmpColumn.map((column: any) => {
@@ -157,10 +157,11 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 }
             }
         }).filter((v: any) => v) : []
-
-        tmpRow = info_list.info_list
-
-
+        if (pageInfo.page > 1) {
+            tmpRow = [...basicRow, ...info_list.info_list]
+        } else {
+            tmpRow = info_list.info_list
+        }
         loadAllSelectItems([
             ...tmpColumn,
             ...additionalMenus
@@ -217,7 +218,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         const res = await RequestMethod("get", "lotToolList",{
             path:{
                 page:pageInfo.page,
-                renderItem:20
+                renderItem:22
             },
             params:{
                 from: selectDate.from,
@@ -231,11 +232,11 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         }
     }
 
-    const SearchBasic = async(keyword) => {
+    const SearchBasic = async(keyword, page?) => {
         const res = await RequestMethod("get", "lotToolSearch", {
             path:{
-                page:pageInfo.page,
-                renderItem:20
+                page:page ?? pageInfo.page,
+                renderItem:22
             },
             params:{
                 from:selectDate.from,
@@ -246,8 +247,8 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         })
 
         if(res){
-            setPageInfo({...pageInfo, total: res.totalPages })
-            cleanUpData(res);
+            setPageInfo({...pageInfo, page:res.page, total: res.totalPages })
+            cleanUpData(res, page);
         }
     }
 
@@ -293,7 +294,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         }else{
             LoadBasic()
         }
-    },[selectDate])
+    },[pageInfo.page, selectDate])
 
     useEffect(() => {
         dispatch(setSelectMenuStateChange({main:"공구 관리",sub:router.pathname}))
@@ -323,10 +324,11 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 isSearch
                 searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
+                    console.log(keyword)
                     setSelectList(new Set)
                     setKeyword(keyword)
                     // setPageInfo({...pageInfo,page:1})
-                    SearchBasic(keyword).then(() => {
+                    SearchBasic(keyword, 1).then(() => {
                         Notiflix.Loading.remove();
                       });
                 }}
