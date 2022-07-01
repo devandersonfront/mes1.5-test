@@ -977,7 +977,7 @@ export const columnlist: any = {
     {key:"deadline", name:"납품 기한", formatter: CalendarBox, width: 118, type:"deadline"},
     {key:"customer_id", name:"거래처", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     {key:"cm_id", name:"모델", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
-    {key:"product_id", name:"CODE", width: 118, formatter: OrderInfoReigesterModalButton, type: 'product', noSelect:true},
+    {key:"product_id", name:"CODE", width: 118, formatter: SearchModalTest, type: 'product', noSelect:true},
     {key:"name", name:"품명", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     {key:"type", name:"품목 종류", width: 118, formatter: PlaceholderBox, placeholder: '자동입력'   },
     {key:"unit", name:"단위", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
