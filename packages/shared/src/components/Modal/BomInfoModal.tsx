@@ -45,6 +45,11 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
+      if(!!!row.bom_root_id && row.bom?.length > 0){
+        setSearchList(changeRow(row.bom))
+      } else {
+        setSearchList([])
+      }
       if(row.bom_root_id) {
         SearchBasic().then(() => {
           Notiflix.Loading.remove()
@@ -101,7 +106,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
         }
       }).filter(v=>v)
     }else{
-      row = [{...tmpRow}]
+      row = tmpRow
     }
 
     tmpData = row.map((v, i) => {
@@ -124,7 +129,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
       }
-
       return {
         ...childData,
         seq: i+1,
@@ -247,14 +251,17 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               customer: row.customer === '' || row.customer?.id === null ? null : row.customerData
             },
             child_product: v.tab === 2 ? {
-              ...v.product
+              ...v.product,
+              border:false
             } : null,
             child_rm: v.tab === 0 ? {
               ...v.raw_material,
+              border:false,
               type:v.raw_material.type_id
             } : null,
             child_sm: v.tab === 1 ? {
-              ...v.sub_material
+              ...v.sub_material,
+              border:false
             } : null,
             type: v.tab,
             key: row.bom_root_id,
@@ -279,14 +286,17 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               customer: row.customer === '' || row.customer?.id === null ? null : row.customer
             },
             child_product: v.tab === 2 ? {
-              ...v.product
+              ...v.product,
+              border: false
             } : null,
             child_rm: v.tab === 0 ? {
               ...v.raw_material,
-              type:v.raw_material.type_id
+              type:v.raw_material.type_id,
+              border: false
             } : null,
             child_sm: v.tab === 1 ? {
-              ...v.sub_material
+              ...v.sub_material,
+              border: false
             } : null,
             type: v.tab,
             key: row.bom_root_id,
