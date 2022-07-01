@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
     columnlist,
-    ExcelTable, FinishButton,
+    ExcelTable,
     Header as PageHeader,
     IExcelHeaderType,
     MAX_VALUE,
@@ -72,7 +72,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
     useEffect(() => {
         loadPage(pageInfo.page)
-    }, [pageInfo.page, selectDate, order, recordState])
+    }, [pageInfo.page, selectDate, keyword, order, recordState])
 
 
     useEffect(() => {
@@ -110,8 +110,47 @@ const MesRecordList = ({page, search, option}: IProps) => {
         }
 
         return params
-
+        // if(keyword){
+        //   params.keyword = keyword
     }
+
+    // order == 0 ?
+    //     {
+    //       from: selectDate.from,
+    //       to: selectDate.to,
+    //     }
+    //     :
+    //     {
+    //       sorts: 'end',
+    //       order: order == 1 ? 'asc' : 'desc',
+    //       from: selectDate.from,
+    //       to: selectDate.to,
+    //     }
+
+    //   {
+    //     keyword: keyword,
+    //         opt: optionIndex,
+    //       from: selectDate.from,
+    //       to: selectDate.to,
+    //   }
+    // :
+    //   {
+    //     sorts: 'end',
+    //         order: order == 1 ? 'asc' : 'desc',
+    //       keyword: keyword,
+    //       opt: optionIndex,
+    //       from: selectDate.from,
+    //       to: selectDate.to,
+    //   }
+    //   switch (recordState){
+    //     case 0:
+    //
+    //     case 1:
+    //       // http://3.36.78.194:8443/cnc/api/v1/record/list/1/22?rangeNeeded=false&fin=false
+    //     default:
+    //       return
+    //   }
+    // }
 
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {
@@ -160,16 +199,11 @@ const MesRecordList = ({page, search, option}: IProps) => {
             }
         });
 
-        Promise.all(tmpColumn).then(res => {
-            const newColumn = lodash.cloneDeep(res)
-            console.log(newColumn,'newColumnnewColumn')
-            if(recordState){
-                newColumn.splice(2, 0, {key: "finish", name: "작업 종료", width: 118, formatter: FinishButton})
-            }
-
-            console.log(newColumn,'newColumnnewColumnnewColumn')
-            setColumn(newColumn)
-        })
+        // if(type !== 'productprocess'){
+        Promise.all(tmpColumn).then((res) => {
+            setColumn([...res]);
+        });
+        // }
     };
 
     const SearchBasic = async (keyword, opt, page?: number) => {
@@ -180,7 +214,28 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 renderItem: 22,
             },
             params:setRequestParams(recordState, order, optionIndex, keyword, selectDate.from, selectDate.to)
+            // order == 0 ?
+            //     {
+            //       keyword: keyword,
+            //       opt: optionIndex,
+            //       from: selectDate.from,
+            //       to: selectDate.to,
+            //     }
+            //     :
+            //     {
+            //       sorts: 'end',
+            //       order: order == 1 ? 'asc' : 'desc',
+            //       keyword: keyword,
+            //       opt: optionIndex,
+            //       from: selectDate.from,
+            //       to: selectDate.to,
+            //     }
         })
+
+
+        // console.log("Res : at recordv2 list", res);
+
+
         if (res) {
             setPageInfo({
                 ...pageInfo,
@@ -188,7 +243,6 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 total: res.totalPages,
             });
             setSelectList(new Set());
-            convertColumn(res)
             cleanUpData(res);
         }
     };
@@ -201,6 +255,18 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 renderItem: 22,
             },
             params: setRequestParams(recordState, order, optionIndex, keyword, selectDate.from, selectDate.to)
+            // order == 0 ?
+            //     {
+            //       from: selectDate.from,
+            //       to: selectDate.to,
+            //     }
+            //     :
+            //     {
+            //       sorts: 'end',
+            //       order: order == 1 ? 'asc' : 'desc',
+            //       from: selectDate.from,
+            //       to: selectDate.to,
+            //     }
         })
         if(res){
             setPageInfo({
@@ -209,7 +275,6 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 total: res.totalPages,
             });
             setSelectList(new Set());
-            convertColumn(res)
             cleanUpData(res);
         }
     };
@@ -287,40 +352,40 @@ const MesRecordList = ({page, search, option}: IProps) => {
         }
     };
 
-
-    const convertColumn = (res) => {
-
+    const cleanUpData = (res: any) => {
         let tmpColumn = columnlist["cncRecordListV2"];
-        const convertColumn = tmpColumn.map((column: any) => {
-            let menuData: object | undefined;
-            res.menus &&
-            res.menus.map((menu: any) => {
-                if (menu.colName === column.key) {
-                    menuData = {
-                        id: menu.id,
-                        name: menu.title,
-                        width: menu.width,
-                        tab: menu.tab,
-                        unit: menu.unit,
-                    };
-                } else if (menu.colName === "id" && column.key === "tmpId") {
-                    menuData = {
-                        id: menu.id,
-                        name: menu.title,
-                        width: menu.width,
-                        tab: menu.tab,
-                        unit: menu.unit,
+        let tmpRow = [];
+        tmpColumn = tmpColumn
+            .map((column: any) => {
+                let menuData: object | undefined;
+                res.menus &&
+                res.menus.map((menu: any) => {
+                    if (menu.colName === column.key) {
+                        menuData = {
+                            id: menu.id,
+                            name: menu.title,
+                            width: menu.width,
+                            tab: menu.tab,
+                            unit: menu.unit,
+                        };
+                    } else if (menu.colName === "id" && column.key === "tmpId") {
+                        menuData = {
+                            id: menu.id,
+                            name: menu.title,
+                            width: menu.width,
+                            tab: menu.tab,
+                            unit: menu.unit,
+                        };
+                    }
+                });
+
+                if (menuData) {
+                    return {
+                        ...column,
+                        ...menuData,
                     };
                 }
-            });
-
-            if (menuData) {
-                return {
-                    ...column,
-                    ...menuData,
-                };
-            }
-        })
+            })
             .filter((v: any) => v);
 
         let additionalMenus = res.menus
@@ -341,13 +406,36 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 .filter((v: any) => v)
             : [];
 
+        if (pageInfo.page > 1) {
+            tmpRow = [...basicRow, ...res.info_list];
+        } else {
+            tmpRow = res.info_list;
+        }
 
-        loadAllSelectItems([...convertColumn, ...additionalMenus]);
-    }
+        loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
-    const cleanUpData = (res: any) => {
+        let selectKey = "";
+        let additionalData: any[] = [];
+        tmpColumn.map((v: any) => {
+            if (v.selectList) {
+                selectKey = v.key;
+            }
+        });
 
-        let tmpBasicRow = res.info_list.map((row: any, index: number) => {
+        additionalMenus.map((v: any) => {
+            if (v.type === "additional") {
+                additionalData.push(v.key);
+            }
+        });
+
+        let pk = "";
+        Object.keys(tmpRow).map((v) => {
+            if (v.indexOf("_id") !== -1) {
+                pk = v;
+            }
+        });
+
+        let tmpBasicRow = tmpRow.map((row: any, index: number) => {
             let appendAdditional: any = {};
 
             row.additional &&
@@ -359,6 +447,16 @@ const MesRecordList = ({page, search, option}: IProps) => {
             });
 
             let random_id = Math.random() * 1000;
+
+            let worker;
+
+            if (typeof row.worker === "string") {
+                worker = row.worker;
+            } else if (typeof row.worker === "object") {
+                worker = row.worker?.name;
+            } else {
+                worker = "-";
+            }
 
             return {
                 ...row,
@@ -378,22 +476,17 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 process_id: row.operation_sheet?.product?.process?.name ?? "-",
                 user: row.worker,
                 sic_id: row.inspection_category,
-                worker: row.worker.name,
+                worker: worker,
                 worker_object: row.worker_object ?? row.worker,
                 id: `sheet_${random_id}`,
                 loadPage,
-
+                // paused_time: row.pause_reasons && lodash.sum(row.pause_reasons?.map(reason => reason.amount))
             }
         })
-
-        if (pageInfo.page > 1) {
-            setBasicRow([...basicRow, ...tmpBasicRow]);
-        } else {
-            setBasicRow([...tmpBasicRow]);
-        }
-
         setSelectList(new Set)
+        setBasicRow([...tmpBasicRow])
     }
+
 
     return (
         <div>
