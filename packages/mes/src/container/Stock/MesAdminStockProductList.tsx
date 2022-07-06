@@ -27,6 +27,9 @@ const MesAdminStockProductList = () => {
 
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set());
 
+  //수정한 데이터만 넣어놓는 곳
+  const [updateData, setUpdateData] = useState<any[]>([])
+
   const [selectMonth, setSelectMonth] = useState<string>(moment(new Date()).startOf("month").format('YYYY-MM'))
 
   const changeSelectMonth = (value:string) => {
@@ -206,7 +209,7 @@ const MesAdminStockProductList = () => {
         if(res.summaries.length > 0){
           tmpColumn = res.summaries[0].statistics?.logs?.map((col)=>{
             result.push(
-              {key:col.date, name:col.date, editor: TextEditor, formatter: UnitContainer, unitData: 'EA', width:100},
+              {key:col.date, name:col.date, editor: TextEditor, formatter: UnitContainer, unitData: 'EA', width:118, type:"stockAdmin"},
             );
           })
           setDateColumn([
@@ -228,22 +231,19 @@ const MesAdminStockProductList = () => {
     }
 
     tmpRow = res.summaries
-
     let tmpBasicRow_model = tmpRow.map((row: any, index: number) => {
-      let random_id = Math.random()*1000;
-      const summary_id = res.summary_id ?? undefined;
-
       return {
         ...row,
         customer_id: row.product?.model?.customer?.name ?? "-",
+        customer_name: row.product?.model?.customer?.name ?? "-",
         customer_idPK: row.product?.model?.customer?.id ?? "-",
         cm_id:row.product?.model?.model ?? "-",
         cm_idPK:row.product?.model?.model ?? "-",
-        model:row.product?.model?.model ?? "-",
+        customer_model:row.product?.model?.model ?? "-",
         code:row.product?.code ?? "-",
         name: row.product?.name ?? "-",
 
-        id: `product_${random_id}`,
+        id: row.product.product_id,
       }
     })
 
@@ -264,12 +264,14 @@ const MesAdminStockProductList = () => {
       tmpRow_date.push({
         title:"생산",
         id: `product_${random}`,
+        product_id:row.product.product_id,
         ...tmp_row_produced
       })
 
       tmpRow_date.push({
         title:"납품",
         id: `product_${random+1}`,
+        product_id:row.product.product_id,
         ...tmp_row_shipped
       })
     })
@@ -323,48 +325,44 @@ const MesAdminStockProductList = () => {
         setOnDataLoadModal(true)
         return
       case 1:
-        // setOnTitleModal(true);
-
         let summaries = [];
         const summary_id = rowData[0].summary_id ?? undefined;
-
-        rowData.map((data) => {
-          summaries.push({
-            ...data,
-            cm_id: data.cm_idPK,
-            customer_id: data.customer_idPK,
-            product_id: data.product.product_id,
-          })
-        })
-        let result = {
-          from: selectDate.from,
-          to: selectDate.to,
-          summaries:summaries,
-          summary_id:summary_id
-        };
-
-        await RequestMethod('post', "stockSummarySave", [
-          ...result.summaries
-        ], undefined, undefined, {
-          from: result.from,
-          to: result.to
-        });
-
-        Notiflix.Report.success("저장되었습니다.", "", "확인", () => {
-          LoadMenu().then((menus) => {
-            LoadData(menus).then(() => {
-              Notiflix.Loading.remove()
-            }).then(() => {
-              Notiflix.Loading.remove()
+        dateData.map((rowData) => {
+          // if(selectList.has(rowData.product_id)){
+            let rowDataArray = []
+            rowData?.changeRows?.map((oneRow) => {
+              let oneData:{date:string, product_id:string, type:string, count:number} = {date:"", product_id:"", type:"", count:0}
+              oneData.date = oneRow
+              oneData.product_id = rowData.product_id
+              oneData.type = rowData.title === "생산" ? "produced" : "shipped"
+              oneData.count = Number(rowData[oneRow])
+              rowDataArray.push(oneData)
             })
-          })
-        });
+            summaries.push(...rowDataArray)
+          // }
+        })
+          console.log("summaries : ", summaries)
+
+        // await RequestMethod('post', "stockSummarySave", summaries);
+
+        // Notiflix.Report.success("저장되었습니다.", "", "확인", () => {
+        //   LoadMenu().then((menus) => {
+        //     LoadData(menus).then(() => {
+        //       Notiflix.Loading.remove()
+        //     }).then(() => {
+        //       Notiflix.Loading.remove()
+        //     })
+        //   })
+        // });
+
         return
       default:
         return
 
     }
   }
+
+
 
   useEffect(()=>{
     if(state === "local"){
@@ -385,25 +383,26 @@ const MesAdminStockProductList = () => {
     column.map((v)=>{
       modelWidth += v.width;
     })
-    modelWidth += 36;
+    // modelWidth += 36;
     setExcelTableWidths({...excelTableWidths,data:1576-modelWidth, model:modelWidth})
 
   },[column])
 
-  useEffect(()=>{
-    dateData.map((v,i)=>{
-      Object.keys(v).map((key,index)=>{
-        if(index > 2 && index < Object.keys(v).length-2 && rowData[Math.floor(i/2)].statistics.logs[index-2]){
-          if(v.title === "생산"){
-            rowData[Math.floor(i/2)].statistics.logs[index-3].produced = Number(v[key]);
-          }else if(v.title === "납품"){
-            rowData[Math.floor(i/2)].statistics.logs[index-3].shipped = Number(v[key]);
-          }
-        }
-      })
-    })
-    setRowData([...rowData])
-  },[dateData])
+  // useEffect(()=>{
+  //   console.log("dateData : ", dateData, rowData)
+  //   dateData.map((v,i)=>{
+  //     Object.keys(v).map((key,index)=>{
+  //       if(index > 2 && index < Object.keys(v).length-2 && rowData[Math.floor(i/2)].statistics.logs[index-2]){
+          // if(v.title === "생산"){
+          //   rowData[Math.floor(i/2)].statistics.logs[index-3].produced = Number(v[key]);
+          // }else if(v.title === "납품"){
+          //   rowData[Math.floor(i/2)].statistics.logs[index-3].shipped = Number(v[key]);
+          // }
+        // }
+      // })
+    // })
+    // setRowData([...rowData])
+  // },[dateData])
 
   return (<div style={{width:1576}}>
     {onTitleModal && <TitleCreateModal title={"저장할 데이터 제목"} changeState={setOnTitleModal} selectList={selectList} selectDate={selectDate} rowData={rowData} LoadData={LoadData} />}
@@ -439,12 +438,8 @@ const MesAdminStockProductList = () => {
       }
       <div style={{display:"flex",justifyContent:"center"}}>
         <ScrollSyncPane>
-          <ExcelTable headerList={[
-            SelectColumn,
-            ...column
-          ]}
+          <ExcelTable headerList={column}
                       setHeaderList={(value) => {
-                        // value.splice(0,1);
                         value.map((v,i)=>{
                           if(v.name === ""){
                             value.splice(i, 1);
@@ -459,7 +454,9 @@ const MesAdminStockProductList = () => {
           />
         </ScrollSyncPane>
         <ScrollSyncPane>
-          <ExcelTable headerList={dateColumn} row={dateData} setRow={setDateData} maxWidth={excelTableWidths.data} rowHeight={40} />
+          <ExcelTable headerList={dateColumn} row={dateData} setRow={(e) => {
+            setDateData(e)
+          }} maxWidth={excelTableWidths.data} rowHeight={40} />
         </ScrollSyncPane>
       </div>
     </div>)
