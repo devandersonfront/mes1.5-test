@@ -331,10 +331,10 @@ const MesAdminStockProductList = () => {
           // if(selectList.has(rowData.product_id)){
             let rowDataArray = []
             rowData?.changeRows?.map((oneRow) => {
-              let oneData:{date:string, product_id:string, type:string, count:number} = {date:"", product_id:"", type:"", count:0}
+              let oneData:{date:string, product_id:string, type:number, count:number} = {date:"", product_id:"", type:1, count:0}
               oneData.date = oneRow
               oneData.product_id = rowData.product_id
-              oneData.type = rowData.title === "생산" ? "produced" : "shipped"
+              oneData.type = rowData.title === "생산" ? 1 : 2
               oneData.count = Number(rowData[oneRow])
               rowDataArray.push(oneData)
             })
@@ -343,7 +343,13 @@ const MesAdminStockProductList = () => {
         })
           console.log("summaries : ", summaries)
 
-        // await RequestMethod('post', "stockSummarySave", summaries);
+        await RequestMethod('post', "stockSummarySave", summaries)
+            .then((res) => {
+              console.log(res)
+            })
+            .catch((err) => {
+              console.log(err)
+            })
 
         // Notiflix.Report.success("저장되었습니다.", "", "확인", () => {
         //   LoadMenu().then((menus) => {
