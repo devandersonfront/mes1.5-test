@@ -106,7 +106,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
         }
       }).filter(v=>v)
     }else{
-      row = tmpRow
+      row = [tmpRow]
     }
 
     tmpData = row.map((v, i) => {
