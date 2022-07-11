@@ -59,7 +59,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
       dispatch(reset_summary_info());
     }
   }, [isOpen])
-
   // useEffect(() => {
   //   if(tabStore.datas.length === 0){
   //     setIsOpen(false);
@@ -669,7 +668,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
                       }
                     })
                     // typeCheck(tmp)
-                    console.log(e)
                     competeBom([...tmp])
                     // setSearchList([...tmp])
                   }}

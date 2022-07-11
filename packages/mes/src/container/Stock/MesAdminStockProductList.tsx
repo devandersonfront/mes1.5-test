@@ -56,7 +56,6 @@ const MesAdminStockProductList = () => {
 
   const [excelTableWidths, setExcelTableWidths] = useState<{model:number, data:number}>({model:0, data:0});
 
-  const [onHide, setOnHide] = useState<boolean>(false);
 
   const LoadMenu = async() => {
     Notiflix.Loading.circle();
@@ -104,7 +103,7 @@ const MesAdminStockProductList = () => {
       cleanUpData(tmpRes, "model")
       cleanUpData(tmpRes, "date");
 
-      Notiflix.Loading.remove(300);
+      // Notiflix.Loading.remove(300);
     }
   }
 
@@ -128,35 +127,10 @@ const MesAdminStockProductList = () => {
       cleanUpData(res, "model");
       cleanUpData(res, "date");
       // }
-      Notiflix.Loading.remove(300);
+      // Notiflix.Loading.remove(300);
     }
   }
 
-  const SummarySave = async() => {
-
-    Notiflix.Loading.circle();
-    const res = await RequestMethod('get', 'summarySave', {
-      path:{
-        tab:"ROLE_STK_03",
-        summary_id:modalResult.summary_id,
-      },
-      params:{
-        keyword:keyword ?? "",
-        opt:option,
-        from:modalResult.from,
-        to:modalResult.to
-      }
-    },
-      undefined, undefined,
-      {from: modalResult.from, to: modalResult.to})
-    if(res){
-      // if(res.results.summaries.length > 0){
-      cleanUpData(res, "model");
-      cleanUpData(res, "date");
-      // }
-      Notiflix.Loading.remove(300);
-    }
-  }
 
   const cleanUpData = async(res: any, version:string) => {
     let tmpColumn = columnlist.stockProduct;
@@ -201,7 +175,7 @@ const MesAdminStockProductList = () => {
         })
         setExcelTableWidths({data:1576-totalWidth, model:totalWidth})
         setColumn([...tmpColumn]);
-
+        // Notiflix.Loading.remove(300);
         break;
         return
       case "date":
@@ -218,6 +192,7 @@ const MesAdminStockProductList = () => {
             {key:"total", name:"합계", width:100, formatter: UnitContainer, unitData:"EA", frozen:true},
             ...result,
           ]);
+          // Notiflix.Loading.remove(300);
           result = [];
         }else{
           result = [];
@@ -284,40 +259,6 @@ const MesAdminStockProductList = () => {
     }
   }
 
-  const downloadExcel = () => {
-    let tmpSelectList: boolean[] = []
-    let tmpSelectListData:any[] = []
-    rowData.map(row => {
-      tmpSelectList.push(selectList.has(row.id))
-      tmpSelectList.push(selectList.has(row.id))
-      // if(selectList.has(row.id)){
-      let sumProducedObject:any = {};
-      let sumShippedObject:any = {};
-      Object.keys(row).map((value)=>{
-        if(value === "statistics"){
-          row[value].logs.map((data)=>{
-            sumProducedObject[data.date] =  data.produced;
-            sumShippedObject[data.date] = data.shipped;
-          })
-        }else{
-          sumProducedObject[value] = row[value];
-        }
-      })
-
-      sumProducedObject["title"] = "생산";
-      sumProducedObject["carryforward"] = row.statistics.carryforward;
-      sumProducedObject["total"] = row.statistics.total_produced;
-
-      sumShippedObject["title"] = "납품";
-      // sumShippedObject["carryforward"] = row.statistics.carryforward;
-      sumShippedObject["total"] = row.statistics.total_shipped;
-
-      tmpSelectListData.push(sumProducedObject);
-      tmpSelectListData.push(sumShippedObject);
-      // }
-    })
-    excelDownload([...column, ...dateColumn], tmpSelectListData, `${selectDate.from} ~ ${selectDate.to} 생산/납품 현황(관리자)`, `${selectDate.from} ~ ${selectDate.to}`, tmpSelectList)
-  }
 
   const buttonClickEvents = async(number:number) => {
     switch (number){
@@ -331,8 +272,8 @@ const MesAdminStockProductList = () => {
           // if(selectList.has(rowData.product_id)){
             let rowDataArray = []
             rowData?.changeRows?.map((oneRow) => {
-              let oneData:{date:string, product_id:string, type:number, count:number} = {date:"", product_id:"", type:1, count:0}
-              oneData.date = oneRow
+              let oneData:{run_date:string, product_id:string, type:number, count:number} = {run_date:"", product_id:"", type:1, count:0}
+              oneData.run_date = oneRow
               oneData.product_id = rowData.product_id
               oneData.type = rowData.title === "생산" ? 1 : 2
               oneData.count = Number(rowData[oneRow])
@@ -341,7 +282,6 @@ const MesAdminStockProductList = () => {
             summaries.push(...rowDataArray)
           // }
         })
-          console.log("summaries : ", summaries)
 
         await RequestMethod('post', "stockSummarySave", summaries)
             .then((res) => {
@@ -374,7 +314,7 @@ const MesAdminStockProductList = () => {
     if(state === "local"){
       LoadMenu().then((menus) => {
         LoadData(menus).then(() => {
-          Notiflix.Loading.remove()
+          // Notiflix.Loading.remove()
         }).then(() => {
           Notiflix.Loading.remove()
         })

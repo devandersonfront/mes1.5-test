@@ -1,6 +1,6 @@
 import Axios, {AxiosError} from 'axios'
 import cookie from 'react-cookies'
-import {SF_ENDPOINT, SF_ENDPOINT_EXCEL} from './configset'
+import {isLocalhost, SF_ENDPOINT, SF_ENDPOINT_EXCEL} from './configset'
 import Notiflix from 'notiflix'
 import Router from 'next/router'
 
@@ -8,7 +8,6 @@ type RequestType = 'get' | 'post' | 'delete' | 'put'
 
 export const requestApi = async (type: RequestType,url: string, data?: any, token?: any, contentsType?: 'blob', params?: any, path?:any) => {
   Notiflix.Loading.circle()
-  console.log(data)
   const ENDPOINT = `${SF_ENDPOINT}`
 
   switch(type){
@@ -269,7 +268,7 @@ const ApiList = {
   rawinSave: `/api/v1/rawmaterial/warehouse/save`,
   rawstockSave: `/api/v1/rawmaterial/warehouse/save`,
   productprocessSave: `/api/v1/product/process/save`,
-  stockSummarySave: `/api/v1/stock/summary`,
+  stockSummarySave: `/api/v1/stock/admin/summary`,
   operationSave: `/api/v1/sheet/save`,
   recordSave: `/cnc/api/v1/record/save`,
   factorySave: `/api/v1/factory/save`,
@@ -383,8 +382,8 @@ const ApiList = {
   lotSmList: `/api/v1/lot-sm/list`,
   recordGroupList: `/api/v1/record/groups`,
   recordGroupListByContract: `/api/v1/record/groups/search`,
-  // stockAdminList: '/api/v1/stock/admin/summary',
-  stockAdminList: '/api/v1/stock/summary',
+  stockAdminList: '/api/v1/stock/admin/summary',
+  // stockAdminList: '/api/v1/stock/summary',
   qualityRecordInspectList: '/cnc/api/v1/quality/record/inspect/list',
   toolList: `/cnc/api/v1/tool/list`,
   lotToolList: `/cnc/api/v1/lot-tool/list`,
