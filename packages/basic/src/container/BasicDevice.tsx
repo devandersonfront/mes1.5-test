@@ -679,7 +679,6 @@ setKeyword('')
             ...column
           ]}
           row={basicRow}
-          // setRow={setBasicRow}
           setRow={(e) => {
             let tmp: Set<any> = selectList
             e.map(v => {
@@ -688,8 +687,6 @@ setKeyword('')
                 v.isChange = false
               }
             })
-            // setSelectList(tmp)
-            // competeDevice(e)
           }}
           setSelectRow={setSelectRow}
           selectList={selectList}
