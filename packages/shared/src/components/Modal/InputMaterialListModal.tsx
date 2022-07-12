@@ -214,7 +214,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                 bom.lots?.map(lot => {
                   if (Number(lot.amount)) {
                     totalAmount += Number(lot.amount)
-
                     bomToSave.push({
                       ...inputBomIdMap.get(bom.bomKey),
                       // record_id: lot?.record_id ?? undefined,
@@ -228,7 +227,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                         warehousing: lot.warehousing,
                         date: lot.date,
                         current: lot.current,
-                        amount: Number(lot.amount) > lot.current ? 0 : lot.amount,
+                        amount: Number(lot.amount) * lot.usage > lot.current ? 0 : lot.amount,
                         version: lot?.version ?? undefined
                       }
                     })
@@ -253,7 +252,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                         warehousing: lot.warehousing,
                         date: lot.date,
                         current: lot.current,
-                        amount: Number(lot.amount) > lot.current ? 0 : lot.amount,
+                        amount: Number(lot.amount) * lot.usage > lot.current ? 0 : lot.amount,
                         version: lot?.version ?? undefined
                       }
                     })
