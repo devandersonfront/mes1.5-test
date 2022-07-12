@@ -679,7 +679,6 @@ setKeyword('')
             ...column
           ]}
           row={basicRow}
-          // setRow={setBasicRow}
           setRow={(e) => {
             let tmp: Set<any> = selectList
             e.map(v => {
