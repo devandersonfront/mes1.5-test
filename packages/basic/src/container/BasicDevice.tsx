@@ -550,7 +550,7 @@ const BasicDevice = ({}: IProps) => {
           ]}
       )))
       LoadBasic(1)
-setKeyword('')
+      setKeyword('')
     }else{
 
       selectedRows.forEach((row)=>{map.delete(row.id)})
@@ -666,7 +666,7 @@ setKeyword('')
           optionIndex={optionIndex}
           title={"주변장치 기준정보"}
           buttons={
-            ['', '', '항목관리', '행추가', '저장하기', '삭제']
+            ['', '엑셀', '항목관리', '행추가', '저장하기', '삭제']
           }
           buttonsOnclick={onClickHeaderButton}
         />
@@ -702,16 +702,13 @@ setKeyword('')
             setPageInfo({...pageInfo,page:page})
           }}
         />
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`금형기준정보`}*/}
-      {/*  sheetname={`금형기준정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
+      <ExcelDownloadModal
+        isOpen={excelOpen}
+        category={"device"}
+        title={"주변장치 기준정보"}
+        setIsOpen={setExcelOpen}
+        resetFunction={() => LoadBasic(1)}
+      />
     </div>
   );
 }

@@ -14,16 +14,17 @@ import cookie from 'react-cookies'
 import axios from "axios";
 import {SF_ENDPOINT, SF_ENDPOINT_EXCEL} from "../../common/configset";
 import Axios from "axios";
-
+import Notiflix from "notiflix"
 
 interface IProps {
   isOpen: boolean
   category:string
   title:string
   setIsOpen: (ioOpen: boolean) => void
+  resetFunction:() => void
 }
 
-const ExcelDownloadModal = ({isOpen, category, title, setIsOpen}: IProps) => {
+const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction}: IProps) => {
   const token = cookie.load('userInfo')?.token
     const ref = useRef(null)
     const convertBlobToBase64 = (blob) => new Promise((resolve, reject) => {
@@ -89,8 +90,8 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen}: IProps) => {
       const formData = new FormData()
 
       formData.append("file", file)
-      await axios.post(`http://192.168.0.30:8399/api/v1/upload/${category}`, formData,{
-        // await Axios.post(`${SF_ENDPOINT_EXCEL}/api/v1/upload/${category}`, formData,{
+      // await axios.post(`http://192.168.0.30:8399/api/v1/upload/${category}`, formData,{
+        await Axios.post(`${SF_ENDPOINT_EXCEL}/api/v1/upload/${category}`, formData,{
                 headers:
                     {
                         "Content-Type": "multipart/form-data",
@@ -98,9 +99,12 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen}: IProps) => {
                     }
             })
           .then((res) => {
+              resetFunction()
+              setIsOpen(false)
               console.log(res)
               // blobData = res.data
           }).catch((err) => {
+              Notiflix.Report.failure("실패","업로드에 실패했습니다.","확인")
               console.log(err)
           })
   }
@@ -159,7 +163,7 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen}: IProps) => {
                 }}
                 onClick={()=>ref.current.click()}
             >
-                <input type={"file"} ref={ref} style={{display:"none", position:"absolute"}} onChange={(e) => excelUpload(e.target.files[0])} />
+                <input type={"file"} ref={ref} accept={".xlsx, .xls"} style={{display:"none", position:"absolute"}} onChange={(e) => excelUpload(e.target.files[0])} />
                 업로드
             </CellButton>
           </div>

@@ -759,6 +759,7 @@ const BasicRawMaterial = ({}: IProps) => {
         category={"raw_material"}
         title={"원자재 기준정보"}
         setIsOpen={setExcelOpen}
+        resetFunction={() => LoadBasic(1)}
       />
     </div>
   );
