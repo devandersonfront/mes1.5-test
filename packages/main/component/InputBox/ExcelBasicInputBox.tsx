@@ -21,6 +21,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   const dispatch = useDispatch();
   const selector = useSelector((state:RootState) => state.MachineSelectReducer);
 
+
   return (
     <input
       style={{textAlign: 'center', color: column.textType ? 'black' : 'white' }}
@@ -31,6 +32,15 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
         if(column.searchType === 'record' && row.osd_id){
           onClose(true)
           Notiflix.Report.warning('수정할 수 없습니다.', '작업지시 고유 번호가 있으면 수정할 수 없습니다.', '확인', )
+        }
+        if(column.type === "stockAdmin"){
+          if(row?.changeRows && !row.changeRows?.includes(column.key)){
+            onRowChange({...row, changeRows:[...row.changeRows, column.key]})
+          }else if(row?.changeRows){
+            //아무것도 return 없음
+          }else{
+            onRowChange({...row, changeRows:[column.key]})
+          }
         }
       }}
       onChange={(event) => {
@@ -57,7 +67,9 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onRowChange({ ...row, [column.key]: event.target.value, isChange: true })
         }
       }}
-      onBlur={() => onClose(true)}
+      onBlur={() => {
+        onClose(true)
+      }}
     />
   );
 }

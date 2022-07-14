@@ -59,7 +59,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
       dispatch(reset_summary_info());
     }
   }, [isOpen])
-
   // useEffect(() => {
   //   if(tabStore.datas.length === 0){
   //     setIsOpen(false);
@@ -97,16 +96,18 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpData = []
     let row = [];
-    if(typeof tmpRow === 'string'){
+    if(typeof tmpRow === 'string') {
       let tmpRowArray = tmpRow.split('\n')
       row = tmpRowArray.map(v => {
-        if(v !== ""){
+        if (v !== "") {
           let tmp = JSON.parse(v)
           return tmp
         }
-      }).filter(v=>v)
-    }else{
+      }).filter(v => v)
+    } else if(Array.isArray(tmpRow)){
       row = tmpRow
+    } else {
+      row = [tmpRow]
     }
 
     tmpData = row.map((v, i) => {
@@ -669,7 +670,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
                       }
                     })
                     // typeCheck(tmp)
-                    console.log(e)
                     competeBom([...tmp])
                     // setSearchList([...tmp])
                   }}

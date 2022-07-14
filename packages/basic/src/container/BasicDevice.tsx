@@ -687,6 +687,8 @@ const BasicDevice = ({}: IProps) => {
                 v.isChange = false
               }
             })
+            setSelectList(tmp)
+            competeDevice(e)
           }}
           setSelectRow={setSelectRow}
           selectList={selectList}

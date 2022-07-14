@@ -74,7 +74,7 @@ const MesKpiOperation = () => {
         }
         const res = await RequestMethod('get', `productCapacityUtilizationList`,{
             params: {
-                productIds: productId,
+                machineIds: productId,
                 from: selectDate.from,
                 sorts : 'date',
                 to: selectDate.to,

@@ -124,7 +124,7 @@ const MES_MENUS: IMenuType[] = [
     subMenu: [
       {title: '재고 현황', url: '/mes/stockV2/list'},
       {title: '생산/납품 현황', url: '/mes/stock/productlist'},
-      // {title: '생산/납품 현황(관리자용)', url: '/mes/stock/admin'},
+      {title: '생산/납품 현황(관리자용)', url: '/mes/stock/admin'},
     ]
   },
   {
