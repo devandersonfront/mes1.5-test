@@ -48,7 +48,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
               return false
             }else if (error.response?.status === 401){
               Notiflix.Loading.remove(300)
-              Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
+              Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.push("/"))
               return false
             }else if (error.response?.status === 423){
               Notiflix.Loading.remove(300)
@@ -149,7 +149,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
                 return false
               }else if (error.response.status === 401){
                 Notiflix.Loading.remove(300)
-                Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.back())
+                Notiflix.Report.failure('권한 에러', '토큰이 없습니다.', '확인', () => Router.push("/"))
                 return false
               }else if(error.response.status === 500){
                 Notiflix.Loading.remove(300)
