@@ -13,6 +13,11 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import {UploadButton} from "../../styles/styledComponents";
+import Notiflix from "notiflix";
+// @ts-ignore
+import {SelectColumn} from "react-data-grid";
+import {BarcodeDataType} from "../../common/barcodeType";
+import {BarcodeModal} from "./BarcodeModal";
 
 interface IProps {
   column: IExcelHeaderType
@@ -44,6 +49,11 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
   ],
 ]
 
+type ModalType = {
+  type : 'barcode' | 'quantity'
+  isVisible : boolean
+}
+
 const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
 
@@ -63,6 +73,12 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     total: 1
   })
   const [focusIndex, setFocusIndex] = useState<number>(0)
+  const [selectList, setSelectList] = useState<Set<number>>(new Set())
+  const [barcodeData , setBarcodeData] = useState<BarcodeDataType[]>([])
+  const [modal , setModal] = useState<ModalType>({
+    type : 'barcode',
+    isVisible : false
+  })
 
   useEffect(() => {
     if(isOpen && row.os_id) {
@@ -132,31 +148,17 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const SearchBasic = async () => {
-    // setKeyword(keyword)
-    // setOptionIndex(option)
+
     const res = await RequestMethod('get', `recordAll`,{
       params: {
         sheetIds: row.os_id
       }
     })
-    // const res = await RequestMethod('get', `recordSearch`,{
-    //   path:{
-    //     page:1,
-    //     item:19
-    //   },
-    //   params: {
-    //     identification:row.os_id
-    //     // sheetIds: row.os_id
-    //   }
-    // })
     if(res){
       let tmpList = changeRow(res)
-
       setSearchList([...tmpList?.map(v => {
-        return {
-          ...row,
-          ...v,
-        }
+        let random_id = Math.random()*1000;
+        return {...row, ...v , id : `List_${random_id}`}
       })])
     }
   }
@@ -192,6 +194,90 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           <p style={{margin:0, padding: 0, textDecoration: 'underline'}}>이력 보기</p>
         </UploadButton>
     </>
+  }
+
+  const printBarcodes = async (barcodes : string[], ip : string) => {
+    const convertBarcodes = barcodes.map((barcode)=>(filterBarcode(barcode)))
+    convertBarcodes.map(async (data)=>{
+      await requestPrintApi(ip,data)
+    })
+  }
+
+
+  const printBarcode = async (barcode : string , ip : string) => {
+    const convertBarcode = filterBarcode(barcode)
+    await requestPrintApi(ip,convertBarcode)
+  }
+
+  const filterBarcode = (barcode : string) => {
+
+    return {
+      "functions":
+          {"func0":{"checkLabelStatus":[]},
+            "func1":{"clearBuffer":[]},
+            "func2":{"drawBitmap":[barcode,20,0,800,0]},
+            "func3":{"printBuffer":[]}
+          }
+    }
+  }
+
+  const requestPrintApi = async (clientIP,data) => {
+    await fetch(`http://${clientIP}:18080/WebPrintSDK/Printer1`,{
+      method : 'POST',
+      headers : {
+        'Content-Type' : 'application/x-www-form-urlencoded'
+      },
+      body : JSON.stringify(data)
+    }).then((res)=>{
+      Notiflix.Loading.remove(2000)
+    }).catch((error) => {
+      Notiflix.Loading.remove()
+      if(error){
+        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        return false
+      }
+    })
+  }
+
+  const handleBarcode = async (dataurl: string[] | string, clientIP : string) => {
+    typeof dataurl === 'string' ? await printBarcode(dataurl,clientIP) : await printBarcodes(dataurl,clientIP)
+  }
+
+  const handleModal = (type : 'barcode',isVisible) => {
+    setModal({type , isVisible})
+  }
+
+  const getCheckItems= () => {
+    const tempList = []
+    searchList.map((data) => selectList.has(data.id) && tempList.push(data))
+    return tempList
+  }
+
+  const convertBarcodeData = (items) => {
+    return items.map((item)=>(
+        {
+          material_id: item.productId,
+          material_type: 5,
+          material_lot_id : item.record_id,
+          material_lot_number: item.lot_number,
+          material_quantity : item.good_quantity,
+          material_name: item.name ?? "-",
+          material_code: item.code,
+          material_customer: item.worker?.name ?? "-",
+          material_model: item.model ?? "-",
+        }
+    ))
+  }
+
+  const openBarcodeModal = () => {
+    if(selectList.size > 0){
+      const items = getCheckItems()
+      const convertedData = convertBarcodeData(items)
+      setBarcodeData(convertedData)
+      setModal({type : 'barcode' , isVisible : true})
+    }else{
+      Notiflix.Report.warning("경고", "데이터를 선택해주세요.", "확인")
+    }
   }
 
   return (
@@ -260,10 +346,11 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
               )
             })
           }
-          <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
-            <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
-              <div style={{ display: 'flex', width: 1200}}>
+          <div style={{width : '100%', display: 'flex', justifyContent: 'space-between', height: 64}}>
+            <div style={{width : '100%' , height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
+              <div style={{ display: 'flex', width: '100%' , alignItems : 'center' , justifyContent : 'space-between', marginBottom : 10}}>
                 <p style={{fontSize: 22, padding: 0, margin: 0}}>작업 이력</p>
+                <BarcodeButton onClick={openBarcodeModal}>바코드 미리보기</BarcodeButton>
               </div>
             </div>
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
@@ -272,7 +359,10 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={searchModalList.workList}
+                headerList={[
+                  SelectColumn,
+                  ...searchModalList.workList
+                ]}
               row={searchList ?? [{}]}
               setRow={(e) => {
                 let tmp = e.map((v, index) => {
@@ -307,6 +397,11 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
               }}
               type={'searchModal'}
               headerAlign={'center'}
+                selectList={selectList}
+                //@ts-ignore
+                setSelectList={(p) => {
+                  setSelectList(p as any)
+                }}
             />
           </div>
           <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
@@ -321,6 +416,14 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           </div>
         </div>
       </Modal>
+      <BarcodeModal
+          title={'바코드 미리보기'}
+          handleBarcode={handleBarcode}
+          handleModal={handleModal}
+          type={'record'}
+          data={barcodeData}
+          isVisible={modal.type === 'barcode' && modal.isVisible}
+      />
     </SearchModalWrapper>
   )
 }
@@ -406,6 +509,21 @@ const HeaderTableTitle = styled.div`
   padding: 0 8px;
   display: flex;
   align-items: center;
+`
+
+const BarcodeButton = styled.button`
+    height:32px;
+    color:white;
+    border-radius:6px;
+    font-size:15px;
+    font-weight:bold;
+    background:#717C90;
+    padding: 0 20px;
+    cursor: pointer;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border: 0px;
 `
 
 export {WorkListModal}

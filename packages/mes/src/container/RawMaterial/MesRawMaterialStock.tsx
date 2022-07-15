@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from 'react'
 import {
-    columnlist,
-    excelDownload,
-    ExcelDownloadModal,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    PaginationComponent,
-    RequestMethod,
-    setModifyInitData,
-    TextEditor
+  BarcodeModal,
+  columnlist,
+  excelDownload,
+  ExcelDownloadModal,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  MAX_VALUE,
+  PaginationComponent,
+  RequestMethod,
+  setModifyInitData,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -22,12 +23,19 @@ import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from 'react-redux'
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util';
+import {BarcodeDataType} from "shared/src/common/barcodeType";
+import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 
 interface IProps {
   children?: any
   page?: number
   search?: string
   option?: number
+}
+
+type ModalType = {
+  type : 'barcode' | 'quantity'
+  isVisible : boolean
 }
 
 const MesRawMaterialStock = ({page, search, option}: IProps) => {
@@ -58,6 +66,11 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   const [nzState, setNzState] = useState<boolean>(false);
   const [order, setOrder] = useState<number>(0);
   const [expState, setExpState] = useState<boolean>(false);
+  const [barcodeData , setBarcodeData] = useState<BarcodeDataType[]>([])
+  const [modal , setModal] = useState<ModalType>({
+    type : 'barcode',
+    isVisible : false
+  })
 
   const changeNzState = (value:boolean) => {
     setSelectList(new Set)
@@ -339,6 +352,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       let random_id = Math.random()*1000;
       return {
         ...row,
+        code : row.raw_material.rm_id,
         rm_id: row.raw_material.code,
         name: row.raw_material.name,
         texture: row.raw_material.texture,
@@ -440,6 +454,9 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     }
     switch(index){
       case 0:
+        setModal({type : 'quantity' , isVisible : true})
+        return;
+      case 1:
         const selectedRows = basicRow.filter(v => selectList.has(v.id))
         const completeSelected = selectedRows.some(row => row.is_complete )
         if(completeSelected){
@@ -452,10 +469,76 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           router.push('/mes/rawmaterialV1u/modify')
         }
         return;
-      case 1:
+      case 2:
         Notiflix.Confirm.show("경고","데이터를 삭제하시겠습니까?", "확인", "취소", () => DeleteBasic())
         return;
     }
+  }
+
+  const handleBarcode = async (dataurl : string , clientIP : string) => {
+    Notiflix.Loading.circle()
+    const data = {
+      "functions":
+          {"func0":{"checkLabelStatus":[]},
+            "func1":{"clearBuffer":[]},
+            "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+            "func3":{"printBuffer":[]}
+          }
+    }
+
+    await fetch(`http://${clientIP}:18080/WebPrintSDK/Printer1`,{
+      method : 'POST',
+      headers : {
+        'Content-Type' : 'application/x-www-form-urlencoded'
+      },
+      body : JSON.stringify(data)
+    }).then((res)=>{
+      Notiflix.Loading.remove(2000)
+    }).catch((error) => {
+      Notiflix.Loading.remove()
+      if(error){
+        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        return false
+      }
+    })
+  }
+
+  const handleModal = (type : 'barcode',isVisible) => {
+    setModal({type , isVisible})
+  }
+
+  const convertBarcodeData = (quantityData) => {
+    console.log(quantityData,'quantityDataquantityDataquantityData')
+    return [{
+      material_id: quantityData.code ?? 0,
+      material_type: 0,
+      material_lot_id : quantityData.lot_rm_id,
+      material_lot_number: quantityData.lot_number,
+      material_quantity : quantityData.quantity,
+      material_name: quantityData.name ?? "-",
+      material_code: quantityData.rm_id,
+      material_customer: quantityData.customer_id ?? "-",
+      material_model: quantityData.model ?? "-",
+    }]
+  }
+
+
+  const getCheckItems= () => {
+    const tempList = []
+    basicRow.map((data) => selectList.has(data.id) && tempList.push(data))
+    return tempList
+  }
+
+  const onClickQuantity = (quantity) => {
+    const items = getCheckItems()
+    const item = items[0]
+    const convertedData = convertBarcodeData({...item , quantity})
+    setBarcodeData(convertedData)
+    setModal({isVisible : true , type : 'barcode'})
+  }
+
+  const onCloseQuantity = () => {
+    setModal({isVisible : false , type : 'quantity'})
   }
 
   return (
@@ -502,7 +585,10 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         }}
         title={"원자재 재고 현황"}
         buttons={
-          [ '수정하기', '삭제']
+          selectList.size > 1
+              ?
+              ['', '수정하기', '삭제']:
+              ['바코드 미리보기', '수정하기', '삭제']
         }
         buttonsOnclick={onClickHeaderButton}
       />
@@ -539,6 +625,19 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
             }
           }
         }}
+      />
+      <BarcodeModal
+          title={'바코드 미리보기'}
+          handleBarcode={handleBarcode}
+          handleModal={handleModal}
+          type={'rawMaterial'}
+          data={barcodeData}
+          isVisible={modal.type === 'barcode' && modal.isVisible}
+      />
+      <QuantityModal
+          onClick={onClickQuantity}
+          onClose={onCloseQuantity}
+          isVisible={modal.type === 'quantity' && modal.isVisible}
       />
       {/*<ExcelDownloadModal*/}
       {/*  isOpen={excelOpen}*/}
