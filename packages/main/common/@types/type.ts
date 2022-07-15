@@ -10,7 +10,7 @@ export interface IExcelHeaderType {
   width?: number
   editor?: any
   selectList?: any[]
-  type?: 'additional'
+  type?: 'additional' | 'stockAdmin'
   unitData?: string
   searchType?: string
   tab?:string

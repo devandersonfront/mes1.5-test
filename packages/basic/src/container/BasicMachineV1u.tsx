@@ -194,6 +194,7 @@ const BasicMachineV1u = ({option}: IProps) => {
           }
     })
     if(res){
+      console.log(res)
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -586,7 +587,7 @@ const BasicMachineV1u = ({option}: IProps) => {
           optionIndex={optionIndex}
           title={"기계 기준정보"}
           buttons={
-            ['', '', '항목관리', '행추가', '저장하기', '삭제']
+            ['', '엑셀', '항목관리', '행추가', '저장하기', '삭제']
           }
           buttonsOnclick={onClickHeaderButton}
         />
@@ -624,6 +625,13 @@ const BasicMachineV1u = ({option}: IProps) => {
           setPage={(page) => {
             setPageInfo({...pageInfo,page:page})
           }}
+        />
+        <ExcelDownloadModal
+            isOpen={excelOpen}
+            category={"machine"}
+            title={"기계 기준정보"}
+            setIsOpen={setExcelOpen}
+            resetFunction={() => LoadBasic(1)}
         />
       </div>
   );

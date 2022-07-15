@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useRef} from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 import Modal from 'react-modal'
 //@ts-ignore
@@ -11,47 +11,102 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import {CellButton} from '../../styles/styledComponents'
 import {excelDownload} from '../../common/excelDownloadFunction'
 import cookie from 'react-cookies'
+import axios from "axios";
+import {SF_ENDPOINT, SF_ENDPOINT_EXCEL} from "../../common/configset";
+import Axios from "axios";
+import Notiflix from "notiflix"
 
 interface IProps {
   isOpen: boolean
-  column: IExcelHeaderType[]
-  tab: string
-  basicRow: any[]
-  filename: string
-  sheetname: string
-  selectList: any
+  category:string
+  title:string
   setIsOpen: (ioOpen: boolean) => void
+  resetFunction:() => void
 }
 
-const ExcelDownloadModal = ({isOpen, tab, column, basicRow, filename, sheetname, selectList, setIsOpen}: IProps) => {
+const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction}: IProps) => {
+  const token = cookie.load('userInfo')?.token
+    const ref = useRef(null)
+    const convertBlobToBase64 = (blob) => new Promise((resolve, reject) => {
+        const reader = new FileReader;
+        reader.onerror = reject;
+        reader.onload = () => {
+            resolve(reader.result);
+        };
+        reader.readAsDataURL(blob);
+    });
 
-  const selectExcelDownload = () => {
-    let tmpSelectList = []
-    basicRow.map(row => {
-      tmpSelectList.push(selectList.has(row.id))
+  const formExcelDownload = async() => {
+    let blobData:Blob
+    await axios.get(`${SF_ENDPOINT_EXCEL}/api/v1/download/form/${category}`, {
+      headers:{
+        'Content-Type': "ms-vnd/excel",
+        Authorization: token
+      },
+      responseType:"blob"
     })
-    excelDownload(column, basicRow, filename, sheetname, tmpSelectList)
+        .then((res) => {
+            blobData = res.data
+        }).catch((err) => {
+          console.log(err)
+        })
+
+      if(blobData){
+          const down = document.createElement("a")
+          let blob = await convertBlobToBase64(blobData) as string
+          down.href = blob
+          down.setAttribute("download", title + '_Form.xls')
+
+          down.click()
+      }
   }
 
   const allExcelDownload = async () => {
-    const res = await RequestMethod('get', 'excelFormatDownload', {
-      path: {
-        tab: tab
-      },
-      params: {
-        id: cookie.load('userInfo').token
-      }
-    }, undefined, 'blob')
+      let blobData:Blob
+      await axios.get(`${SF_ENDPOINT_EXCEL}/api/v1/download/${category}`, {
+          headers:{
+              'Content-Type': "ms-vnd/excel",
+              Authorization: token
+          },
+          responseType:"blob"
+      }, )
+          .then((res) => {
+              blobData = res.data
+          }).catch((err) => {
+              console.log(err)
+          })
 
-    if (res) {
-      const downloadUrl = window.URL.createObjectURL(new Blob([res]));
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.setAttribute('download', `${filename}.xls`); //any other extension
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    }
+      if(blobData){
+          const down = document.createElement("a")
+          let blob = await convertBlobToBase64(blobData) as string
+          down.href = blob
+          down.setAttribute("download", title + '.xls')
+
+          down.click()
+      }
+  }
+
+    const excelUpload = async(file:File) => {
+      const formData = new FormData()
+
+      formData.append("file", file)
+      // await axios.post(`http://192.168.0.30:8399/api/v1/upload/${category}`, formData,{
+        await Axios.post(`${SF_ENDPOINT_EXCEL}/api/v1/upload/${category}`, formData,{
+                headers:
+                    {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: token,
+                    }
+            })
+          .then((res) => {
+              resetFunction()
+              setIsOpen(false)
+              console.log(res)
+              // blobData = res.data
+          }).catch((err) => {
+              Notiflix.Report.failure("실패","업로드에 실패했습니다.","확인")
+              console.log(err)
+          })
   }
 
   return (
@@ -91,15 +146,26 @@ const ExcelDownloadModal = ({isOpen, tab, column, basicRow, filename, sheetname,
                 width: 200,
                 height: 80
               }}
-              onClick={() => selectExcelDownload()}
-            >선택항목 다운로드</CellButton>
+              onClick={formExcelDownload}
+            >양식 다운로드</CellButton>
             <CellButton
               style={{
                 width: 200,
                 height: 80
               }}
-              onClick={() => allExcelDownload()}
+              onClick={allExcelDownload}
             >전체 다운로드</CellButton>
+
+            <CellButton
+                style={{
+                  width: 200,
+                  height: 80
+                }}
+                onClick={()=>ref.current.click()}
+            >
+                <input type={"file"} ref={ref} accept={".xlsx, .xls"} style={{display:"none", position:"absolute"}} onChange={(e) => excelUpload(e.target.files[0])} />
+                업로드
+            </CellButton>
           </div>
         </div>
       </Modal>

@@ -517,7 +517,10 @@ const BasicRawMaterial = ({}: IProps) => {
 
   const onClickHeaderButton = (index: number) => {
     switch (buttonList[index]) {
-      case "바코드 미리보기":
+      case "엑셀":
+        setExcelOpen(true)
+
+        return
       case "바코드 미리보기":
         if (selectList.size === 0) {
           return Notiflix.Report.warning(
@@ -602,11 +605,12 @@ const BasicRawMaterial = ({}: IProps) => {
 
   React.useEffect(() => {
     if (selectList.size > 1) {
-      return setButtonList(["항목관리", "행추가", "저장하기", "삭제"]);
+      return setButtonList(["엑셀", "항목관리", "행추가", "저장하기", "삭제"]);
     }
 
     return setButtonList([
       "바코드 미리보기",
+      "엑셀",
       "항목관리",
       "행추가",
       "저장하기",
@@ -750,16 +754,13 @@ const BasicRawMaterial = ({}: IProps) => {
           data={selectRow}
         />
 
-      {/* <ExcelDownloadModal
+      <ExcelDownloadModal
         isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`원자재 기준정보`}
-        sheetname={`원자재 기준정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
+        category={"raw_material"}
+        title={"원자재 기준정보"}
         setIsOpen={setExcelOpen}
-      /> */}
+        resetFunction={() => LoadBasic(1)}
+      />
     </div>
   );
 };

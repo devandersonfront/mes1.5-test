@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  ExcelDownloadModal,
   ExcelTable,
   Header as PageHeader,
   IExcelHeaderType,
@@ -32,6 +33,7 @@ export interface IProps {
 const BasicTool = ({ page, search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [column, setColumn] = useState<any>(columnlist.toolRegister);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
@@ -438,9 +440,12 @@ const BasicTool = ({ page, search, option }: IProps) => {
   const buttonsEvent = (index: number) => {
     switch (index) {
       case 0:
+        setExcelOpen(true)
+        return
+      case 1:
         router.push(`/mes/item/manage/tool`);
         return;
-      case 1:
+      case 2:
         let items = {};
 
         column.map((value) => {
@@ -466,7 +471,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
           ...basicRow,
         ]);
         return;
-      case 2:
+      case 3:
         if (selectList.size === 0) {
           return Notiflix.Report.warning(
             "경고",
@@ -476,7 +481,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
         }
         SaveBasic();
         return;
-      case 3:
+      case 4:
         if (selectList.size === 0) {
           return Notiflix.Report.warning(
             "경고",
@@ -595,7 +600,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
                       setOptionIndex(option);
                     }}
                     optionIndex={optionIndex}
-                    buttons={["항목관리","행 추가","저장하기","삭제"]}
+                    buttons={["엑셀" ,"항목관리","행 추가","저장하기","삭제"]}
                     buttonsOnclick={buttonsEvent}
                 />
                 <ExcelTable
@@ -626,6 +631,13 @@ const BasicTool = ({ page, search, option }: IProps) => {
                   setSelectList(new Set)
                   setPageInfo({...pageInfo, page: page})
                 }} />
+                <ExcelDownloadModal
+                    isOpen={excelOpen}
+                    category={"tool"}
+                    title={"공구 기준정보"}
+                    setIsOpen={setExcelOpen}
+                    resetFunction={() => LoadBasic(1)}
+                />
               </div>
           )
 };

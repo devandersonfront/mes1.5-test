@@ -518,11 +518,11 @@ const MesRecordList = ({page, search, option}: IProps) => {
                             .filter((v) => v),
                     ]}
                     onRowChange={() => {
-                        setOptionIndex(option);
+                        // setOptionIndex(option);
                         if (keyword) {
-                            // SearchBasic(keyword, option, page).then(() => {
-                            //   Notiflix.Loading.remove()
-                            // })
+                            SearchBasic(keyword, option, page).then(() => {
+                              Notiflix.Loading.remove()
+                            })
                         } else {
                             LoadBasic(page).then(() => {
                                 Notiflix.Loading.remove();
