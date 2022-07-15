@@ -136,7 +136,9 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Pr
                                 Notiflix.Report.warning("경고","첫 페이지입니다.","확인")
                             }
                         }}>
-                            <span className="material-symbols-outlined">arrow_back_ios</span>
+                           <span className="material-symbols-outlined">
+                                keyboard_double_arrow_left
+                           </span>
                         </div>
                         <div style={{display : 'flex' , flexDirection : 'column' , alignItems :"center"}}>
                             {printBarcode()}
@@ -152,7 +154,9 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Pr
                                 Notiflix.Report.warning("경고","마지막 페이지입니다.","확인")
                             }
                         }}>
-                            <span className="material-symbols-outlined">arrow_forward_ios</span>
+                            <span className="material-symbols-outlined">
+                                keyboard_double_arrow_right
+                            </span>
                         </div>
                     </>
                     :
