@@ -702,7 +702,7 @@ const BasicRawMaterial = ({}: IProps) => {
       material_name: quantityData.name ?? '-',
       material_code: quantityData.code,
       material_customer: quantityData.customer?.name ?? "-",
-      material_model: quantityData.model ?? "-",
+      material_model: quantityData.model?.model ?? "-",
     }]
   }
 

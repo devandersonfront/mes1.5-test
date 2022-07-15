@@ -518,7 +518,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       material_name: quantityData.name ?? "-",
       material_code: quantityData.rm_id,
       material_customer: quantityData.customer_id ?? "-",
-      material_model: quantityData.model ?? "-",
+      material_model: quantityData.model?.model ?? "-",
     }]
   }
 

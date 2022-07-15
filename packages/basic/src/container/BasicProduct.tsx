@@ -677,6 +677,8 @@ const BasicProduct = ({}: IProps) => {
 
   const convertBarcodeData = (quantityData) => {
 
+    console.log(quantityData,'quantityDataquantityData')
+
     return [{
       material_id: quantityData.product_id,
       material_type: 2,
@@ -686,7 +688,7 @@ const BasicProduct = ({}: IProps) => {
       material_name: quantityData.name ?? "-",
       material_code: quantityData.code,
       material_customer: quantityData.customer?.name ?? "-",
-      material_model: quantityData.model ?? "-",
+      material_model: quantityData.model?.model ?? "-",
     }]
   }
 
