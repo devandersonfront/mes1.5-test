@@ -41,6 +41,8 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
     if(column.type !== 'readonly') {
       if(isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount) === -1) {
         loadDefectList()
+      }else{
+        setTotalCount(row.poor_quantity)
       }
     } else {
       if(hasData) {

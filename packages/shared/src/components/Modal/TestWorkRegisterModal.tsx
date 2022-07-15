@@ -66,8 +66,8 @@ const TestWorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         modify: true,
         osId: row.os_id,
         sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
-        start: row.date,
-        end: row.date,
+        start: row.date + " 00:00:00",
+        end: row.date + " 00:00:00",
         standardStartDate : row.date,
         standardEndDate : moment('2999-12-31').subtract(1, 'days').toDate(),
         ...row,
@@ -122,6 +122,7 @@ const TestWorkRegisterModal = ({column, row, onRowChange}: IProps) => {
     })
 
     if(checkPoint){
+      console.log("searchList : ", searchList)
       let res = await RequestMethod('post', `recordSave`,
           searchList.map((v, i) => {
             let selectData: any = {}

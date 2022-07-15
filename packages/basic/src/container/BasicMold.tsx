@@ -50,19 +50,6 @@ const BasicMold = ({}: IProps) => {
     total: 1,
   });
 
-  // useEffect(() => {
-  //   setOptionIndex(optionIndex);
-  //   if (keyword) {
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove();
-  //     });
-  //   } else {
-  //     LoadBasic(pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove();
-  //     });
-  //   }
-  // }, [pageInfo.page, keyword]);
-
   useEffect(() => {
     if (keyword) {
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -598,7 +585,7 @@ const BasicMold = ({}: IProps) => {
           optionIndex={optionIndex}
           title={"금형 기준정보"}
           buttons={
-            ['', '', '항목관리', '행추가', '저장하기', '삭제']
+            ['', '엑셀', '항목관리', '행추가', '저장하기', '삭제']
           }
           buttonsOnclick={onClickHeaderButton}
         />
@@ -642,16 +629,13 @@ const BasicMold = ({}: IProps) => {
             // }
           }}
         />
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`금형기준정보`}*/}
-      {/*  sheetname={`금형기준정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
+      <ExcelDownloadModal
+        isOpen={excelOpen}
+        resetFunction={() => LoadBasic(1)}
+        category={"mold"}
+        title={"금형 기준정보"}
+        setIsOpen={setExcelOpen}
+      />
     </div>
   );
 };

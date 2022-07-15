@@ -144,7 +144,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                           ...row,
                           [column.key]: {
                               ...row[column.key],
-                              name:e.target.files[0].name,
+                              name:e.target.files[0]?.name,
                               uuid: uploadImg.UUID,
                               url:uploadImg.url,
                               sequence: column.idx,

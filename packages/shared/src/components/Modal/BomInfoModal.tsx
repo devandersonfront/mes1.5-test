@@ -45,6 +45,11 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       setSelectRow(null)
+      if(!!!row.bom_root_id && row.bom?.length > 0){
+        setSearchList(changeRow(row.bom))
+      } else {
+        setSearchList([])
+      }
       if(row.bom_root_id) {
         SearchBasic().then(() => {
           Notiflix.Loading.remove()
@@ -54,7 +59,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
       dispatch(reset_summary_info());
     }
   }, [isOpen])
-
   // useEffect(() => {
   //   if(tabStore.datas.length === 0){
   //     setIsOpen(false);
@@ -92,16 +96,18 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   const changeRow = (tmpRow: any, key?: string) => {
     let tmpData = []
     let row = [];
-    if(typeof tmpRow === 'string'){
+    if(typeof tmpRow === 'string') {
       let tmpRowArray = tmpRow.split('\n')
       row = tmpRowArray.map(v => {
-        if(v !== ""){
+        if (v !== "") {
           let tmp = JSON.parse(v)
           return tmp
         }
-      }).filter(v=>v)
-    }else{
-      row = [{...tmpRow}]
+      }).filter(v => v)
+    } else if(Array.isArray(tmpRow)){
+      row = tmpRow
+    } else {
+      row = [tmpRow]
     }
 
     tmpData = row.map((v, i) => {
@@ -124,7 +130,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
       }
-
       return {
         ...childData,
         seq: i+1,
@@ -244,17 +249,20 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               type: row.type_id ?? row.type === '완제품' ? 2 : 1,
               product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
               code: row.code,
-              customer: row.customer === '' ? null : row.customerData
+              customer: row.customer === '' || row.customer?.id === null ? null : row.customerData
             },
             child_product: v.tab === 2 ? {
-              ...v.product
+              ...v.product,
+              border:false
             } : null,
             child_rm: v.tab === 0 ? {
               ...v.raw_material,
+              border:false,
               type:v.raw_material.type_id
             } : null,
             child_sm: v.tab === 1 ? {
-              ...v.sub_material
+              ...v.sub_material,
+              border:false
             } : null,
             type: v.tab,
             key: row.bom_root_id,
@@ -276,17 +284,20 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               type: row.type_id ?? row.type === '완제품' ? 2 : 1,
               product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
               code: row.code,
-              customer: row.customer === '' ? null : row.customer
+              customer: row.customer === '' || row.customer?.id === null ? null : row.customer
             },
             child_product: v.tab === 2 ? {
-              ...v.product
+              ...v.product,
+              border: false
             } : null,
             child_rm: v.tab === 0 ? {
               ...v.raw_material,
-              type:v.raw_material.type_id
+              type:v.raw_material.type_id,
+              border: false
             } : null,
             child_sm: v.tab === 1 ? {
-              ...v.sub_material
+              ...v.sub_material,
+              border: false
             } : null,
             type: v.tab,
             key: row.bom_root_id,
@@ -659,7 +670,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
                       }
                     })
                     // typeCheck(tmp)
-                    console.log(e)
                     competeBom([...tmp])
                     // setSearchList([...tmp])
                   }}

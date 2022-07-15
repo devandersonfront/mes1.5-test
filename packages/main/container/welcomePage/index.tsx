@@ -2,6 +2,7 @@ import React from 'react'
 import {NextPage} from 'next'
 import DefaultButton from '../../component/DefaultButton'
 import {useRouter} from 'next/router'
+import cookie from "react-cookies";
 
 interface IProps {
   // router: NextRouter
@@ -10,6 +11,12 @@ interface IProps {
 const WelcomePage: NextPage<IProps> = () => {
 
   const router = useRouter()
+
+  React.useEffect(() => {
+      if(cookie.load("userInfo")){
+          router.push("/mes/dashboard/")
+      }
+  },[])
 
   return (
     <div style={{
