@@ -21,6 +21,8 @@ import axios from 'axios';
 import {useDispatch} from "react-redux";
 import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util';
+import { BarcodeDataType } from "shared/src/common/barcodeType";
+import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 
 export interface IProps {
   children?: any
@@ -29,27 +31,35 @@ export interface IProps {
   option?: number
 }
 
+type ModalType = {
+  type : 'barcode' | 'quantity'
+  isVisible : boolean
+}
+
+
 const BasicProduct = ({}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처', '모델', '코드', '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [barcodeOpen , setBarcodeOpen] = useState<boolean>(false)
   const [selectRow , setSelectRow ] = useState<any>(0)
   const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+  const [modal , setModal] = useState<ModalType>({
+    type : 'barcode',
+    isVisible : false
+  })
 
 
   const [buttonList , setButtonList ] = useState<string[]>([])
-
+  const [barcodeData , setBarcodeData] = useState<BarcodeDataType[]>([])
 
   useEffect(() => {
     if(keyword){
@@ -548,8 +558,7 @@ const BasicProduct = ({}: IProps) => {
               '선택을 하셔야 합니다.',
               'Okay',)
         }
-        setBarcodeOpen(true)
-        selectedData()
+        setModal({type : 'quantity' , isVisible : true})
         break;
       case '항목관리':
         router.push(`/mes/item/manage/product`)
@@ -633,10 +642,9 @@ const BasicProduct = ({}: IProps) => {
     setBasicRow(rows)
   }
 
-  const handleBarcode = async (dataurl : string , id : string , clientIP : string) => {
+  const handleBarcode = async (dataurl : string, clientIP : string) => {
     Notiflix.Loading.circle()
     const data = {
-      "id":id,
       "functions":
           {"func0":{"checkLabelStatus":[]},
             "func1":{"clearBuffer":[]},
@@ -663,9 +671,44 @@ const BasicProduct = ({}: IProps) => {
 
   }
 
-  const handleModal = (open:boolean) => {
-    setBarcodeOpen(!open)
+  const handleModal = (type : 'barcode',isVisible) => {
+    setModal({type , isVisible})
   }
+
+  const convertBarcodeData = (quantityData) => {
+
+    return [{
+      material_id: quantityData.product_id,
+      material_type: 2,
+      material_lot_id : 0,
+      material_lot_number: '0',
+      material_quantity : quantityData.quantity,
+      material_name: quantityData.name ?? "-",
+      material_code: quantityData.code,
+      material_customer: quantityData.customer?.name ?? "-",
+      material_model: quantityData.model ?? "-",
+    }]
+  }
+
+
+  const getCheckItems= () => {
+    const tempList = []
+    basicRow.map((data) => selectList.has(data.id) && tempList.push(data))
+    return tempList
+  }
+
+  const onClickQuantity = (quantity) => {
+    const items = getCheckItems()
+    const item = items[0]
+    const convertedData = convertBarcodeData({...item , quantity})
+    setBarcodeData(convertedData)
+    setModal({isVisible : true , type : 'barcode'})
+  }
+
+  const onCloseQuantity = () => {
+    setModal({isVisible : false , type : 'quantity'})
+  }
+
 
   React.useEffect(()=>{
     if(selectList.size > 1){
@@ -740,9 +783,15 @@ const BasicProduct = ({}: IProps) => {
             title={'바코드 미리보기'}
             handleBarcode={handleBarcode}
             handleModal={handleModal}
-            isOpen={barcodeOpen}
             type={'product'}
-            data={selectRow}
+            data={barcodeData}
+            isVisible={modal.type === 'barcode' && modal.isVisible}
+        />
+
+        <QuantityModal
+            onClick={onClickQuantity}
+            onClose={onCloseQuantity}
+            isVisible={modal.type === 'quantity' && modal.isVisible}
         />
 
         {/* <ExcelDownloadModal
