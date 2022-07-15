@@ -264,7 +264,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           material_name: item.name ?? "-",
           material_code: item.code,
           material_customer: item.worker?.name ?? "-",
-          material_model: item.model ?? "-",
+          material_model: item.model?.model ?? "-",
         }
     ))
   }
