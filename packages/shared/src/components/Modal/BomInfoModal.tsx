@@ -59,12 +59,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
       dispatch(reset_summary_info());
     }
   }, [isOpen])
-  // useEffect(() => {
-  //   if(tabStore.datas.length === 0){
-  //     setIsOpen(false);
-  //   }
-  // },[tabStore])
-
 
   useEffect(() => {
     if(isOpen) {
