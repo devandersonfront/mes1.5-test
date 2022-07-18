@@ -18,10 +18,11 @@ import { TransferCodeToValue } from "shared/src/common/TransferFunction";
 import { WorkModifyModal } from "../../../../shared/src/components/Modal/WorkModifyModal";
 import lodash from "lodash";
 import {
-    deleteSelectMenuState,
-    setSelectMenuStateChange,
+    deleteMenuSelectState,
+    setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { useDispatch } from "react-redux";
+import { settingHeight } from "shared/src/common/Util";
 
 interface IProps {
     children?: any;
@@ -77,10 +78,10 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
     useEffect(() => {
         dispatch(
-            setSelectMenuStateChange({ main: "생산관리 등록", sub: router.pathname })
+            setMenuSelectState({ main: "생산관리 등록", sub: router.pathname })
         );
         return () => {
-            dispatch(deleteSelectMenuState());
+            dispatch(deleteMenuSelectState());
         };
     }, []);
 
@@ -346,7 +347,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
     }
 
     const cleanUpData = (res: any) => {
-
+        console.log('record search',res)
         let tmpBasicRow = res.info_list.map((row: any, index: number) => {
             let appendAdditional: any = {};
 
@@ -394,7 +395,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
         setSelectList(new Set)
     }
-
+    console.log('list',basicRow)
     return (
         <div>
             <PageHeader
@@ -430,6 +431,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
                     setSelectDate(date as { from: string; to: string });
                     // setPageInfo({ page: 1, total: 1 });
                 }}
+                //실제사용
                 title={"작업 일보 리스트"}
                 buttons={["", "수정하기", "삭제"]}
                 buttonsOnclick={(e) => {
@@ -489,7 +491,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 //@ts-ignore
                 setSelectList={setSelectList}
                 width={1576}
-                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
+                height={settingHeight(basicRow.length)}
                 scrollEnd={(value) => {
                     if(value){
                         if(pageInfo.total > pageInfo.page){

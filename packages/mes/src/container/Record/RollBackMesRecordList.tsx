@@ -18,8 +18,8 @@ import { TransferCodeToValue } from "shared/src/common/TransferFunction";
 import { WorkModifyModal } from "../../../../shared/src/components/Modal/WorkModifyModal";
 import lodash from "lodash";
 import {
-    deleteSelectMenuState,
-    setSelectMenuStateChange,
+    deleteMenuSelectState,
+    setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { useDispatch } from "react-redux";
 
@@ -77,10 +77,10 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
     useEffect(() => {
         dispatch(
-            setSelectMenuStateChange({ main: "생산관리 등록", sub: router.pathname })
+            setMenuSelectState({ main: "생산관리 등록", sub: router.pathname })
         );
         return () => {
-            dispatch(deleteSelectMenuState());
+            dispatch(deleteMenuSelectState());
         };
     }, []);
 

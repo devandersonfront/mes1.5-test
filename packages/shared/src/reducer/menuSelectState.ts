@@ -1,47 +1,33 @@
 import {IMenuType} from '../common/@types/type'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-export const initalState = {
-    main: "",
-    sub: "",
-}
-
-export const SET_SELECT_MENU_STATE = 'SET_SELECT_MENU_STATE'
-export const DELETE_SELECT_MENU_STATE = 'DELETE_SELECT_MENU_STATE'
-
-interface IMenuStateType {
-    main?:string,
+export type MenuSelectState = {
+    main?: string
     sub?: string
 }
 
-export const setSelectMenuStateChange = (menuState: IMenuStateType) => {
-    return {
-        type: SET_SELECT_MENU_STATE,
-        menuState: menuState
-    }
+const initialState : MenuSelectState = {
+    sub: '',
+    main: ''
 }
 
-export const deleteSelectMenuState = () => ({
-    type: DELETE_SELECT_MENU_STATE,
-    menuState: null
+export const selectedMenuSlice = createSlice({
+    name: 'menuSelectState',
+    initialState,
+    reducers: {
+        setMenuSelectState(state, action: PayloadAction<MenuSelectState>) {
+            state.main = action.payload.main ? action.payload.main : state.main
+            state.sub = action.payload.sub ? action.payload.sub : state.sub
+        },
+        deleteMenuSelectState(state) {
+            state.main = initialState.main
+            state.sub = initialState.sub
+        }
+    }
 })
 
-type DefaultAction = ReturnType<typeof setSelectMenuStateChange> | ReturnType<typeof deleteSelectMenuState>
+export const selectMenuState = (state) => state.menuState
+export const { setMenuSelectState, deleteMenuSelectState } = selectedMenuSlice.actions
+export default selectedMenuSlice.reducer
 
-const reducer = (state: IMenuStateType=initalState, action:DefaultAction) => {
-    switch(action.type){
-        case SET_SELECT_MENU_STATE:
-            const select_menu = {...state};
-            const action_menu = action.menuState
-            select_menu.main = action_menu?.main ?? select_menu.main
-            select_menu.sub = action_menu?.sub ?? select_menu.sub
 
-            return select_menu
-        case DELETE_SELECT_MENU_STATE:
-
-            return {main:"",sub:""}
-        default:
-            return state
-    }
-}
-
-export default reducer

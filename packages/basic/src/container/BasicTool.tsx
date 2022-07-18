@@ -17,8 +17,8 @@ import Notiflix from "notiflix";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import {
-  deleteSelectMenuState,
-  setSelectMenuStateChange,
+  deleteMenuSelectState,
+  setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
 
@@ -565,9 +565,9 @@ const BasicTool = ({ page, search, option }: IProps) => {
   }, [pageInfo.page]);
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({ main: "공구 기준정보", sub: "" }));
+    dispatch(setMenuSelectState({ main: "공구 기준정보", sub: "" }));
     return () => {
-      dispatch(deleteSelectMenuState());
+      dispatch(deleteMenuSelectState());
     };
   }, []);
 

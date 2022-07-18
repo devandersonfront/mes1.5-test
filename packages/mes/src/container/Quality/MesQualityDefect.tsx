@@ -9,7 +9,7 @@ import moment from 'moment'
 import PeriodSelectCalendar from '../../../../main/component/Header/PeriodSelectCalendar'
 import ButtonGroup from '../../../../main/component/ButtonGroup'
 import {useDispatch} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 
 interface SelectParameter {
   from:string
@@ -73,9 +73,9 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
   }, [processBasicRow, selectDate, headerStatus])
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({main:"품질 관리",sub:router.pathname}))
+    dispatch(setMenuSelectState({main:"품질 관리",sub:router.pathname}))
     return (() => {
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   },[])
 

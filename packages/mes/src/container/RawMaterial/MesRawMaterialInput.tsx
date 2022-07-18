@@ -7,7 +7,7 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {useDispatch} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -29,9 +29,9 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     getMenus()
-    dispatch(setSelectMenuStateChange({main:"원자재 관리",sub:router.pathname}))
+    dispatch(setMenuSelectState({main:"원자재 관리",sub:router.pathname}))
     return(() => {
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   },[])
 

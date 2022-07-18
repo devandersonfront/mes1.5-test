@@ -9,7 +9,7 @@ import moment from 'moment'
 import {useDispatch, useSelector} from "react-redux";
 import {delete_delivery_identification} from "../../../../shared/src/reducer/deliveryRegisterState";
 import {TransferCodeToValue} from "shared/src/common/TransferFunction";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -74,9 +74,9 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   }, [codeCheck])
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({main:"영업 관리",sub:router.pathname}))
+    dispatch(setMenuSelectState({main:"영업 관리",sub:router.pathname}))
     return (() => {
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   },[])
 

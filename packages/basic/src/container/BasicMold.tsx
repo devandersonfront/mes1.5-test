@@ -18,8 +18,8 @@ import { useRouter } from "next/router";
 import { NextPageContext } from "next";
 import { useDispatch } from "react-redux";
 import {
-  deleteSelectMenuState,
-  setSelectMenuStateChange,
+  deleteMenuSelectState,
+  setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { settingHeight } from "shared/src/common/Util";
 
@@ -77,9 +77,9 @@ const BasicMold = ({}: IProps) => {
 
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({ main: "금형 기준정보", sub: "" }));
+    dispatch(setMenuSelectState({ main: "금형 기준정보", sub: "" }));
     return () => {
-      dispatch(deleteSelectMenuState());
+      dispatch(deleteMenuSelectState());
     };
   }, []);
 

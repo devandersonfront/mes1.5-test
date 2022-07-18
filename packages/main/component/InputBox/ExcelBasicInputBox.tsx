@@ -2,8 +2,8 @@ import React from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../reducer";
-import {insert_machine_list} from "../../reducer/machineSelect";
+import {RootState} from "shared";
+import {insert_machine_list} from 'shared/src/reducer/machineSelect'
 
 interface IProps {
   row: any

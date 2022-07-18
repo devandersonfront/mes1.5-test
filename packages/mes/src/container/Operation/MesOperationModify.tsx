@@ -14,7 +14,7 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {useDispatch, useSelector} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -149,9 +149,9 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
     }, [selector])
 
     useEffect(() => {
-        dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:"/mes/operationV1u/list"}))
+        dispatch(setMenuSelectState({main:"생산관리 등록",sub:"/mes/operationV1u/list"}))
         return(() => {
-            dispatch(deleteSelectMenuState())
+            dispatch(deleteMenuSelectState())
         })
     },[])
 

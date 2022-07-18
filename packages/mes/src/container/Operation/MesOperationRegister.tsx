@@ -18,7 +18,7 @@ import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch, useSelector} from "react-redux";
 import {SearchModalResult, SearchResultSort} from "shared/src/Functions/SearchResultSort";
 import {delete_operation_searchKey} from "shared/src/reducer/operationRegisterState";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import {NoneSelectedValidation, RequiredValidation, NoAmountValidation} from "shared/src/validations/Validation";
 
 interface IProps {
@@ -355,10 +355,10 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   }, [codeCheck])
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
+    dispatch(setMenuSelectState({main:"생산관리 등록",sub:router.pathname}))
     return(() => {
       dispatch(delete_operation_searchKey())
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   },[])
 

@@ -17,7 +17,7 @@ import {TransferCodeToValue} from '../../common/TransferFunction'
 import moment from "moment"
 import lodash from 'lodash'
 import Big from 'big.js'
-import { getBomObject, getUsageType, ParseResponse } from '../../common/Util'
+import { getBomObject, ParseResponse } from '../../common/Util'
 import {UploadButton} from "../../styles/styledComponents";
 import { LineBorderContainer } from '../Formatter/LineBorderContainer'
 import { TextEditor } from '../InputBox/ExcelBasicInputBox'
@@ -28,8 +28,8 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-//작업일보 등록 투입 자재 모달
-const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: string}[][] = [
+//작업일보 등록/수정 투입 자재 모달
+const headerItems: {title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
     {title: '지시 고유번호', infoWidth: 144, key: 'identification'},
     {title: 'LOT 번호', infoWidth: 144, key: 'lot_number'},
@@ -55,32 +55,30 @@ const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: st
 
 const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [summaryData, setSummaryData] = useState<any>({})
-  const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([])
-  const [lotList, setLotList] = useState<any[]>([])
-  const [selectProduct, setSelectProduct] = useState<string>('')
-  const [selectType, setSelectType] = useState<string>('')
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
+  const [headerItemsValue, setHeaderItemsValue] = useState<any>({})
+  const [selected, setSelected] = useState<{index: number | null, product:string, type:string}>({
+    index: null,
+    product: '',
+    type: ''
   })
-
+  const [inputMaterialList, setInputMaterialList] = useState<any[]>([])
+  const [lotList, setLotList] = useState<any[]>([])
+  const [inputMaterial, setInputMaterial] = useState<any>()
   const isModify = column.action === 'modify'
 
+  console.log(inputMaterialList)
   useEffect(() => {
-    if(isOpen && row.modify){
-      modifyLoadRecordGroup(row.osId, row.bom_root_id)
-      setSummaryData({
-        // ...res.parent
+    if(isOpen){
+      getInputMaterialList(row.osId, row.bom_root_id)
+      setHeaderItemsValue({
         identification: row.identification,
         lot_number: row.lot_number ?? '-',
         customer: row.product?.customer?.name,
         model: row.product?.model?.model,
         code: row.product?.code,
         name: row.product?.name,
-        process: row.product?.process?.name,
         type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+        process: row.product?.process?.name,
         unit: row.product?.unit,
         goal: row.goal,
         worker_name: row?.worker?.name ?? row?.worker ?? '-',
@@ -90,8 +88,17 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     }
   },[isOpen])
 
-  const modifyLoadRecordGroup = async (os_id: number | string, key: string) => {
-    // Notiflix.Loading.circle()
+  useEffect(() => {
+    if(inputMaterial) {
+      setLotList(toLotList(inputMaterial))
+      delete inputMaterial.lotList
+      let tmpInput = inputMaterialList
+      tmpInput[selected.index] = inputMaterial
+      setInputMaterialList(tmpInput)
+    }
+  }, [ inputMaterial ])
+
+  const getInputMaterialList = async (os_id: number | string, key: string) => {
     const res = await RequestMethod('get', `sheetBomLoad`,{
       path: {
         os_id: os_id,
@@ -101,8 +108,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     })
 
     if(res){
-      let tmpSearchList = changeRow(res,row)
-      setSearchList([...tmpSearchList])
+      const inputMaterialList = toInputMaterialList(res)
+      setInputMaterialList(inputMaterialList)
     }
   }
 
@@ -110,71 +117,131 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     const bomIdMap = new Map<string, any[]>()
     row.bom?.map((bom) => {
       const bomObject = getBomObject(bom.bom)
-      let bomLotList = []
       if(bomIdMap.has(bomObject.bomKey)){
         bomIdMap.get(bomObject.bomKey).push(bom.lot)
         bomIdMap.set(bomObject.bomKey, bomIdMap.get(bomObject.bomKey))
       } else {
-        bomLotList.push(bom.lot)
-        bomIdMap.set(bomObject.bomKey, bomLotList)
+        bomIdMap.set(bomObject.bomKey, [bom.lot])
       }
     })
     return bomIdMap
   }
 
-  const changeRow = (tmpRow: any, parent?:any) => {
-    let tmpData = []
-    let totalBom = row.bom_info ?? []
+  const toInputMaterialList = (sheetBom: any) => {
+    const inputMaterialList = ParseResponse(sheetBom)
     const sumQuantity = row.sum
-    const bomIdAndLotMap = getBomLotMap()
-    const bomList = ParseResponse(tmpRow)
-    tmpData = bomList.map((v, i) => {
-      const bomObject = getBomObject(v)
-      switch(bomObject.typeName){
+    const firstModify = !!!row.bom_info && isModify
+    const bomIdAndLotMap = firstModify && getBomLotMap()
+    return inputMaterialList.map((inputMaterial, index) => {
+      const bom = getBomObject(inputMaterial)
+      let bom_info, originalBom
+      switch(bom.typeName){
         case 'rawmaterial':{
-          isModify && totalBom.push(bomIdAndLotMap.get(`rm${v.childRmId}`)?.map((lots) => ({...lots.child_lot_rm, amount: lots.amount})))
+          if(!!row.bom_info) {
+            bom_info = row.bom_info.filter(bom => bom[0].rmId === inputMaterial.childRmId)?.[0]
+          } else if (firstModify)
+          {
+            bom_info = bomIdAndLotMap.get(`rm${inputMaterial.childRmId}`)?.map((lots) => ({...lots.child_lot_rm, amount: lots.amount}))
+          }
+          originalBom = row.originalBom ? row.originalBom.filter(bom => bom[0].rmId === inputMaterial.childRmId)?.[0] : bom_info
           break;
         }
         case 'submaterial':{
-          isModify && totalBom.push(bomIdAndLotMap.get(`sm${v.childSmId}`)?.map((lots) => ({...lots.child_lot_sm, amount: lots.amount})))
+          if(!!row.bom_info) {
+            bom_info = row.bom_info.filter(bom => bom[0].smId === inputMaterial.childSmId)?.[0]
+          } else if (firstModify)
+          {
+            bom_info = bomIdAndLotMap.get(`sm${inputMaterial.childSmId}`)?.map((lots) => ({...lots.child_lot_sm, amount: lots.amount}))
+          }
+          originalBom = row.originalBom ? row.originalBom.filter(bom => bom[0].smId === inputMaterial.childSmId)?.[0] : bom_info
           break;
         }
         case 'product':{
-          isModify && totalBom.push(bomIdAndLotMap.get(`p${v.childProductId}`)?.map((lots) => ({...lots.child_lot_record, amount: lots.amount})))
+          if(!!row.bom_info) {
+            bom_info = row.bom_info.filter(bom => bom[0].operation_sheet?.productId === inputMaterial.childProductId)?.[0]
+          } else if (firstModify)
+          {
+            bom_info = bomIdAndLotMap.get(`p${inputMaterial.childProductId}`)?.map((lots) => ({...lots.child_lot_record, amount: lots.amount}))
+          }
+          originalBom = row.originalBom ? row.originalBom.filter(bom => bom[0].operation_sheet?.productId === inputMaterial.childProductId)?.[0] : bom_info
           break;
         }
       }
 
-      const modifyAndNoStock = isModify && bomObject.object.stock === 0
-      const detailedType = TransferCodeToValue(bomObject.object?.type, bomObject.typeName)
-      const totalUsage = new Big(sumQuantity).times(bomObject.usage).toNumber()
+      const modifyAndNoStock = isModify && bom.detail.stock === 0
+      const typeName = TransferCodeToValue(bom.detail?.type, bom.typeName)
+      const totalUsage = new Big(sumQuantity).times(bom.usage).toNumber()
       return {
-        ...bomObject,
-        ...bomObject.object,
-        ...pageInfo,
-        bom_info: totalBom !== undefined ? totalBom[i] : null,
-        seq: i+1,
-        tab: bomObject.type,
-        type_name: detailedType,
-        process: bomObject.object.process ? bomObject.object.process.name : null,
-        product: bomObject.typeName === 'product' ?{
-          ...bomObject.object,
+        ...bom,
+        ...bom.detail,
+        seq: index+1,
+        type_name: typeName,
+        bom_info: bom_info ?? null,
+        tab: bom.type,
+        process: bom.detail.process ? bom.detail.process.name : null,
+        product: bom.typeName === 'product' ?{
+          ...bom.detail,
         }: null,
-        setting: getUsageType(v.setting),
         disturbance: sumQuantity ?? 0,
-        real_disturbance: isNaN(sumQuantity * v.usage) ? 0 : totalUsage,
-        stock : modifyAndNoStock ? totalUsage : isModify ? new Big(bomObject.object.stock).plus(totalUsage).toNumber() : bomObject.object.stock,
+        real_disturbance: isNaN(totalUsage) ? 0 : totalUsage,
+        originalBom : originalBom ?? null,
+        originalStock : isModify ? row.originalQty ? new Big(row.originalQty).times(bom.usage).plus(bom.detail.stock).toNumber() : bom.detail.stock : bom.detail.stock,
+        stock : isModify ? row.originalQty ? new Big(row.originalQty).times(bom.usage).plus(bom.detail.stock).minus(totalUsage).toNumber() : bom.detail.stock : new Big(bom.detail.stock).minus(totalUsage).toNumber(),
         action : modifyAndNoStock ? 'modifyAndNoStock' : column.action,
         bom: modifyAndNoStock ? row.bom : null,
+        page: 1,
+        total: 1
       }
     })
-    return tmpData
   }
-  //
-  // React.useEffect(()=>{
-  // },[searchList])
-  const getSummaryInfo = (info) => {
-    return summaryData[info.key] ?? '-'
+
+  const toLotList = (input) => {
+    const lotAmountChanged : boolean = input.lots
+    const bomSaved: boolean = input.bom_info
+    const bomSavedAndUnChanged: boolean = bomSaved && !lotAmountChanged
+    const lotNumAndLotMap = new Map()
+    const originalLotNumAndLotMap = new Map()
+    input.originalBom && input.originalBom.map((lot) => originalLotNumAndLotMap.set(lot.lot_number, lot))
+    if(lotAmountChanged){
+      input.lots.map((lot) => lotNumAndLotMap.set(lot.lot_number, lot))
+    }
+    if(bomSavedAndUnChanged){
+      input.bom_info.map((lot) => lotNumAndLotMap.set(lot.lot_number, lot))
+    }
+    return input.lotList.map((lot,lotIdx) => {
+      const lotAmount = lotNumAndLotMap.get(lot.lot_number)?.amount ?? "0"
+      const originalAmount = originalLotNumAndLotMap.get(lot.lot_number)?.amount ?? "0"
+      const totalUsage = new Big(Number(lotAmount)).times(input.usage)
+      const originalTotalUsage = new Big(Number(originalAmount)).times(input.usage)
+      return bomSavedAndUnChanged ? {
+          ...lot,
+          seq: lotIdx + 1,
+          usage: input.usage,
+          date: lot.date ?? moment(lot.end).format("YYYY-MM-DD"),
+          warehousing: lot.warehousing ?? lot.good_quantity,
+          amount: lotAmount,
+          originalAmount: originalAmount,
+          originalCurrent: Number(lot.current),
+          current: isModify? new Big(Number(lot.current)).plus(originalTotalUsage).minus(totalUsage).toNumber() : new Big(Number(lot.current)).minus(totalUsage).toNumber(),
+          isComplete: lot.is_complete ? '사용완료' : '-'
+        }
+        : {
+          ...lot,
+          seq: lotIdx + 1,
+          usage: input.usage,
+          date: lot.date ?? moment(lot.end).format("YYYY-MM-DD"),
+          warehousing: lot.warehousing ?? lot.good_quantity,
+          amount: lotAmount,
+          originalAmount: originalAmount,
+          originalCurrent: Number(lot.current),
+          current: isModify ? new Big(Number(lot.current)).plus(originalTotalUsage).minus(totalUsage).toNumber() : new Big(Number(lot.current)).minus(totalUsage).toNumber(),
+          isComplete: lot.is_complete ? '사용완료' : '-'
+        }
+    })
+  }
+
+  const getHeaderItemValue = (headerItem) => {
+    return headerItemsValue[headerItem.key] ?? '-'
   }
 
   const ModalContents = () => (
@@ -204,11 +271,14 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             let disturbance = 0
             let quantity = 0
             const inputBomIdMap = new Map()
+            const originalBom = row.originalBom ?? inputMaterialList.map((v) => {
+              return v.bom_info
+            })
             row.input_bom?.map((bom) => {
               let bomObject = getBomObject(bom.bom)
               inputBomIdMap.set(bomObject.bomKey, bom)
             })
-            searchList.map((bom, index) => {
+            inputMaterialList.map((bom, index) => {
               let totalAmount = 0
               if(bom.lots !== undefined) {
                 bom.lots?.map(lot => {
@@ -216,7 +286,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                     totalAmount += Number(lot.amount)
                     bomToSave.push({
                       ...inputBomIdMap.get(bom.bomKey),
-                      // record_id: lot?.record_id ?? undefined,
                       record_id: undefined,
                       lot: {
                         elapsed: lot.elapsed,
@@ -226,8 +295,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                         child_lot_record: bom.tab === 2 ? {...lot} : null,
                         warehousing: lot.warehousing,
                         date: lot.date,
-                        current: lot.current,
-                        amount: Number(lot.amount) * lot.usage > lot.current ? 0 : lot.amount,
+                        current: lot.originalCurrent,
+                        amount: new Big(lot.amount).times(bom.usage).toNumber() > lot.originalCurrent ? 0 : lot.amount,
                         version: lot?.version ?? undefined
                       }
                     })
@@ -241,7 +310,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
                     bomToSave.push({
                       ...inputBomIdMap.get(bom.bomKey),
-                      // record_id: lot?.child_lot_record?.record_id ?? undefined,
                       record_id: undefined,
                       lot: {
                         elapsed: lot.elapsed,
@@ -251,8 +319,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                         child_lot_record: bom.tab === 2 ? {...lot} : null,
                         warehousing: lot.warehousing,
                         date: lot.date,
-                        current: lot.current,
-                        amount: Number(lot.amount) * lot.usage > lot.current ? 0 : lot.amount,
+                        current: lot.originalCurrent,
+                        amount: lot.amount,
                         version: lot?.version ?? undefined
                       }
                     })
@@ -270,19 +338,20 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               quantity = totalAmount
             })
 
-            const disturbanceArray = searchList.map((v)=>v.disturbance)
+            const disturbanceArray = inputMaterialList.map((v)=>v.disturbance)
             const allEqual = arr => arr.every( v => v === arr[0] )
+
             if(disturbance === 0){
               if(disturbanceArray.every((value) => value === 0)){
                 Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
               }else if(allEqual(disturbanceArray)){
                 let bomLotInfo
-                if(searchList.map((v)=> {return v.lots}).filter(v=>v).length === 0){
-                  bomLotInfo = searchList.map((v) => {
+                if(inputMaterialList.map((v)=> {return v.lots}).filter(v=>v).length === 0){
+                  bomLotInfo = inputMaterialList.map((v) => {
                     return v.bom_info
                   })
                 }else {
-                  bomLotInfo = searchList.map((v) => {
+                  bomLotInfo = inputMaterialList.map((v) => {
                     return v.lots
                   })
                 }
@@ -291,9 +360,12 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   bom: bomToSave,
                   bom_info: bomLotInfo,
                   quantity: quantity,
-                  good_quantity: quantity
+                  good_quantity: quantity,
+                  originalQty : row.originalQty ?? row.sum,
+                  originalBom: originalBom,
                 })
                 setIsOpen(false)
+                setLotList([])
               }else {
                 Notiflix.Report.warning(`각 BOM의 생산량을 일치시켜 주세요.`, '', '확인')
               }
@@ -312,26 +384,27 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   const onCancelEvent = () => {
     setLotList([])
-    setSelectRow(undefined)
-    setSelectProduct(undefined)
-    setSelectType(undefined)
-    setSearchList([])
-    setPageInfo({page:1, total:1})
+    setSelected({
+      index: null,
+      product: '',
+      type: ''
+    })
+    setInputMaterialList([])
     setIsOpen(false)
   }
 
-  const isProduct = selectType === '반제품' || selectType === '재공품' || selectType === '완제품'
+  const isProduct = selected.type === '반제품' || selected.type === '재공품' || selected.type === '완제품'
 
   const LotListColumns = () => {
     const defaultColumns = isProduct ? searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
     return column.type === 'readonly' ? defaultColumns
         : isModify? defaultColumns?.map(column =>
             column.key === 'amount'?
-            {...column, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', type:'number', disabledCase: [{ key: 'current', value: 0}, {key:'is_complete', value: true}]}
+            {...column, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', type:'number', disabledCase: [{key:'is_complete', value: true}]}
             : column).concat({key: 'isComplete', name: '사용완료 상태', formatter: LineBorderContainer, textAlign: 'center'},)
         : defaultColumns?.map(column =>
             column.key === 'amount'?
-          {...column, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', type:'number', disabledCase: { key: 'current', value: 0}}
+          {...column, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', type:'number'}
           : column)
   }
 
@@ -376,7 +449,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
             {
-              headerWorkItems && headerWorkItems.map((infos, index) => {
+              headerItems && headerItems.map((infos, index) => {
                 return (
                     <HeaderTable>
                       {
@@ -388,7 +461,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                                 </HeaderTableTitle>
                                 <HeaderTableTextInput style={{width: info.infoWidth}}>
                                   <HeaderTableText>
-                                    {getSummaryInfo(info)}
+                                    {getHeaderItemValue(info)}
                                   </HeaderTableText>
                                   {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                                 </HeaderTableTextInput>
@@ -413,65 +486,33 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
                   headerList={column.type === 'readonly' ? searchModalList.InputListReadonly : searchModalList.InputList}
-                  row={searchList ?? [{}]}
-                  setRow={(e) => {
-                    let tmp = e.map((input, inputIdx) => {
-                      if(input.lotList){
-                        const lotAmountChanged : boolean = input.lots
-                        const bomSaved: boolean = input.bom_info
-                        const lotSavedAndUnChanged: boolean = bomSaved && !lotAmountChanged
-                        const lotNumAndLotMap = new Map()
-                        if(lotAmountChanged){
-                          input.lots.map((lot) => lotNumAndLotMap.set(lot.lot_number, lot))
-                        }
-                        if(lotSavedAndUnChanged){
-                          input.bom_info.map((lot) => lotNumAndLotMap.set(lot.lot_number, lot))
-                        }
-                        setSelectType(input.type_name)
-                        setSelectProduct(input.code)
-                        setLotList([...input.lotList.map((lot,lotIdx) => {
-                          const lotAmount = lotNumAndLotMap.get(lot.lot_number)?.amount ?? "0"
-                          return lotSavedAndUnChanged ? {
-                              ...lot,
-                              usage: input.usage,
-                              date: lot.date ?? moment(lot.end).format("YYYY-MM-DD"),
-                              warehousing: lot.warehousing ?? lot.good_quantity,
-                              // amount: lot.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
-                              amount: lotAmount,
-                              current: isModify ? new Big(input.usage).times(lotAmount).plus(lot.current).toNumber(): Number(lot.current),
-                              seq: lotIdx + 1,
-                              isComplete: lot.is_complete ? '사용완료' : '-'
-                            }
-                            : {
-                              ...lot,
-                              usage: input.usage,
-                              date: lot.date ?? moment(lot.end).format("YYYY-MM-DD"),
-                              warehousing: lot.warehousing ?? lot.good_quantity,
-                              amount: lotAmount,
-                              current: isModify ? new Big(input.usage).times(lotAmount).plus(lot.current).toNumber(): lot.current,
-                              // amount: v.lot_number === e[0].lotList[i].lot_number ? e[0][lotList[i]].amount : "0",
-                              // amount: v.lot_number === row.bom[i]?.lot?.child_lot_rm?.lot_number ? row.bom[i]?.lot.amount : "0",
-                              seq: lotIdx + 1,
-                              isComplete: lot.is_complete ? '사용완료' : '-'
-                            }
-                        })])
+                  row={inputMaterialList ?? [{}]}
+                  setRow={(inputMaterials) => {
+                    let tmp = inputMaterials.map((input, inputIdx) => {
+                      if(input.lotList && selected.index === inputIdx ){
+                        setSelected({...selected, type: input.type_name, product: input.code})
+                        setLotList(toLotList(input))
                       }
-                      return {
-                        ...input,
-                        lotList: undefined,
-                        newTab: false
-                      }
+                      delete input.lotList
+                      return input
                     })
-                    setSearchList([...tmp])
+                    setInputMaterialList([...tmp])
                   }}
                   width={1746}
                   rowHeight={32}
                   height={288}
-                  // setSelectRow={(e) => {
-                  //   setSelectRow(e)
-                  // }}
                   setSelectRow={(e) => {
-                    setSelectRow(e)
+                    const tmpInputMaterialList = inputMaterialList
+                    tmpInputMaterialList[selected.index] = {
+                      ...tmpInputMaterialList[selected.index],
+                      page: 1,
+                      total: 1
+                    }
+                    setInputMaterialList(tmpInputMaterialList)
+                    setSelected({
+                      ...selected,
+                      index: e
+                    })
                   }}
                   type={'searchModal'}
                   headerAlign={'center'}
@@ -480,9 +521,9 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
               <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                 <div style={{ display: 'flex', width: 1200}}>
-                  <p style={{fontSize: 22, padding: 0, margin: 0}}> LOT 리스트 ({selectProduct}) </p>
+                  <p style={{fontSize: 22, padding: 0, margin: 0}}> LOT 리스트 ({selected.product}) </p>
                   {
-                    isModify && selectType === '원자재' &&
+                    isModify && selected.type === '원자재' &&
                     <p style={{color: 'red',fontSize: 13, paddingLeft: 20, paddingTop:5, margin:0}}> *사용완료 처리된 원자재는 수정할 수 없습니다. </p>
                   }
                 </div>
@@ -494,43 +535,38 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
                   headerList={LotListColumns()}
-                  // headerList={[]}
-                  row={lotList ?? [{}]}
-                  setRow={(e) => {
-                    const allAmount = lodash.sum(e.map(v=>Number(v.amount)).filter(v=>v))
-                    const isOverStock = e.some(lotRow => {
-                      if(!!lotRow.amount && lotRow.current < new Big(lotRow.amount).times(lotRow.usage).toNumber()) {
+                  row={lotList ?? []}
+                  setRow={(lots) => {
+                    const isUsageOverStock = lots.some(lot => {
+                      if(!!lot.amount && new Big(lot.originalCurrent).plus(new Big(lot.originalAmount).times(lot.usage)).toNumber() < new Big(lot.amount).times(lot.usage).toNumber()) {
                         Notiflix.Report.warning("경고", "LOT 재고량 보다 소요량이 많습니다.", "확인")
                         return true
                       }
                       return false
                     })
-                    if(isOverStock) return
-
-                    let selectTmp = searchList.map((v)=>{
-                      if(v.code === selectProduct){
-                        return {...v, disturbance: allAmount, real_disturbance: new Big(allAmount).times(v.usage).toNumber()}
-                      }else{
-                        return v
+                    if(!isUsageOverStock) {
+                      const newLotList = lots.map((lot) => {
+                        return {
+                          ...lot,
+                          current: !!lot.amount ? isModify ? new Big(lot.originalCurrent).plus(new Big(Number(lot.originalAmount)).times(lot.usage)).minus(new Big(Number(lot.amount)).times(lot.usage)).toNumber()
+                            : new Big(lot.originalCurrent).minus(new Big(Number(lot.amount)).times(lot.usage)).toNumber() : lot.originalCurrent,
+                        }
+                      })
+                      const allAmount = lodash.sum(lots.map(lot => Number(lot.amount)).filter(lotAmount => lotAmount))
+                      const originalAllAmount = isModify ? lodash.sum(inputMaterialList[selected.index]?.originalBom?.map(lot => Number(lot.amount))) : null
+                      const originalTotalUsage = isModify ? new Big(originalAllAmount).times(inputMaterialList[selected.index].usage) : null
+                      const totalUsage = new Big(allAmount).times(inputMaterialList[selected.index].usage)
+                      let newInputMaterialList = inputMaterialList.slice()
+                      newInputMaterialList[selected.index] = {
+                        ...newInputMaterialList[selected.index],
+                        disturbance: allAmount,
+                        real_disturbance: totalUsage.toNumber(),
+                        stock: isModify ? new Big(newInputMaterialList[selected.index].originalStock).plus(originalTotalUsage).minus(totalUsage).toNumber() : new Big(newInputMaterialList[selected.index].originalStock).minus(totalUsage).toNumber(),
+                        lots: newLotList,
                       }
-                    })
-                    let tmp = e.map((v, index) => {
-                      return {
-                        ...v,
-                        // spare: '여',
-                        newTab: false
-                      }
-                    })
-                    let tmpSearchList = [...selectTmp]
-                    if(selectRow >= 0) {
-                      tmpSearchList[selectRow] = {
-                        ...tmpSearchList[selectRow],
-                        lots: tmp,
-                      }
-                    }
-                    setSearchList([...tmpSearchList])
-                    setLotList([...tmp])
-                  }}
+                      setInputMaterialList(newInputMaterialList)
+                      setLotList(newLotList)
+                    }}}
                   width={1746}
                   rowHeight={32}
                   height={192}
@@ -538,14 +574,11 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   headerAlign={'center'}
                   scrollEnd={(value) => {
                     if(value){
-                      if(searchList[selectRow].total > searchList[selectRow].page){
-                        if(selectRow >= 0) {
-                          let tmpSearchList = searchList
-                           tmpSearchList[selectRow] = {
-                            ...tmpSearchList[selectRow],
-                             page: tmpSearchList[selectRow].page+1,
-                          }
-                          setSearchList([...tmpSearchList ])
+                      if(inputMaterialList[selected.index].total > inputMaterialList[selected.index].page){
+                        if(selected.index >= 0) {
+                          const tmpInputMaterialList = inputMaterialList
+                          let selectedMaterial = tmpInputMaterialList[selected.index]
+                          selectedMaterial.loadMaterialLot(selectedMaterial.tab, selectedMaterial.page+1, selectedMaterial.action, selectedMaterial, setInputMaterial)
                         }
                       }
                     }
@@ -568,46 +601,6 @@ const SearchModalWrapper = styled.div`
   justify-content:center;
   align-items:center;
 `
-
-const Button = styled.button`
-    width:112px;
-    height:32px;
-    color:white;
-    font-size:15px;
-    border:none;
-    border-radius:6px;
-    background:#717C90;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-
-`;
-
-const TabBox = styled.button`
-  max-width: 214.5px;
-  min-width: 40px;
-  height: 32px;
-  background-color: #19B9DF;
-  opacity: 0.5;
-  border: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-right: 4px;
-  cursor: pointer;
-  flex: 1;
-  p {
-    font-size: 15px;
-    width: 168px;
-    text-overflow: ellipsis;
-    color: white;
-    padding-left: 8px;
-    text-align: left;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-`;
 
 const HeaderTable = styled.div`
   width: 1744px;

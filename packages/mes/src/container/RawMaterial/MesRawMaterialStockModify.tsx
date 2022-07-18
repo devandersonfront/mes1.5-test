@@ -18,7 +18,7 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {useDispatch, useSelector} from 'react-redux'
-import {deleteSelectMenuState, setSelectMenuStateChange} from "../../../../shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "../../../../shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -52,9 +52,9 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
   }, [selector])
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({main:"원자재 관리",sub:"/mes/rawmaterialV1u/stock"}))
+    dispatch(setMenuSelectState({main:"원자재 관리",sub:"/mes/rawmaterialV1u/stock"}))
     return(() => {
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   },[])
 

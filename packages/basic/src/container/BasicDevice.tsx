@@ -17,7 +17,7 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import {useDispatch} from "react-redux";
 import { settingHeight } from 'shared/src/common/Util';
 
@@ -91,9 +91,9 @@ const BasicDevice = ({}: IProps) => {
 
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({main:"주변장치 기준정보",sub:""}))
+    dispatch(setMenuSelectState({main:"주변장치 기준정보",sub:""}))
     return (() => {
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   },[])
 

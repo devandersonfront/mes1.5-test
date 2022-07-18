@@ -6,7 +6,7 @@ import { SelectColumn } from "react-data-grid";
 import Notiflix from "notiflix";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-import { deleteSelectMenuState, setSelectMenuStateChange } from "shared/src/reducer/menuSelectState";
+import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util';
 
 interface IProps {
@@ -52,9 +52,9 @@ const MesMidrangeList = ({ option }: IProps) => {
     }, [pageInfo.page, selectDate])
 
     useEffect(() => {
-        dispatch(setSelectMenuStateChange({ main: "품질 관리", sub: router.pathname }))
+        dispatch(setMenuSelectState({ main: "품질 관리", sub: router.pathname }))
         return (() => {
-            dispatch(deleteSelectMenuState())
+            dispatch(deleteMenuSelectState())
         })
     }, [])
 

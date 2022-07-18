@@ -41,21 +41,21 @@ export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) 
       typeName: 'rawmaterial',
       bomKey: `rm${bom.childRmId}`,
       id: bom.childRmId,
-      object: {...bom.child_rm, unit: getRawMaterialUnit(bom.child_rm.type)},
+      detail: {...bom.child_rm, unit: getRawMaterialUnit(bom.child_rm.type)},
       }
     case 1: return {
       ...bom,
       typeName: 'submaterial',
       bomKey: `sm${bom.childSmId}`,
       id: bom.childSmId,
-      object: bom.child_sm
+      detail: bom.child_sm
     }
     case 2: return {
       ...bom,
       typeName: 'product',
       bomKey: `p${bom.childProductId}`,
       id: bom.childProductId,
-      object: bom.child_product
+      detail: bom.child_product
     }
   }
 }

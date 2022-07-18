@@ -19,8 +19,8 @@ import moment from "moment";
 import { TransferCodeToValue } from "shared/src/common/TransferFunction";
 import { useDispatch } from "react-redux";
 import {
-  deleteSelectMenuState,
-  setSelectMenuStateChange,
+  deleteMenuSelectState,
+  setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
 
@@ -81,10 +81,10 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
 
   useEffect(() => {
     dispatch(
-      setSelectMenuStateChange({ main: "영업 관리", sub: router.pathname })
+      setMenuSelectState({ main: "영업 관리", sub: router.pathname })
     );
     return () => {
-      dispatch(deleteSelectMenuState());
+      dispatch(deleteMenuSelectState());
     };
   }, []);
 

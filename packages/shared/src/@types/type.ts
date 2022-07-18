@@ -197,5 +197,5 @@ export interface BomObjectType extends BomType {
   typeName : TransferType| null
   bomKey: string | null,
   id: number | null,
-  object: any | null
+  detail: any | null
 }

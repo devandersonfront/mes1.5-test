@@ -17,7 +17,7 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
 
 interface IProps {
@@ -61,9 +61,9 @@ const MesFinishList = ({page, search, option}: IProps) => {
   }, [pageInfo.page, selectDate])
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
+    dispatch(setMenuSelectState({main:"생산관리 등록",sub:router.pathname}))
     return(() => {
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   },[])
 

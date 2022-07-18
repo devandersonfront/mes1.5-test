@@ -14,7 +14,7 @@ import Search_icon from '../../../../public/images/btn_search.png'
 import {RequestMethod} from '../../../common/RequestFunctions'
 import {UploadButton} from '../../../styles/styledComponents'
 import {useDispatch, useSelector} from 'react-redux'
-import {RootState} from '../../../../../main/reducer'
+import {RootState} from '../../../../../shared'
 import {InfoInit, InfoInitType, SummaryInfoInit} from './InfoModalInit'
 
 interface IProps {

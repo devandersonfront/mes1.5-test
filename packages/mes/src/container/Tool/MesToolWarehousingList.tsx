@@ -18,7 +18,7 @@ import Notiflix from "notiflix"
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "shared";
 import {setToolDataAdd, ToolUploadInterface} from "shared/src/reducer/toolInfo";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
 
 interface IProps {
@@ -297,9 +297,9 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
     },[pageInfo.page, selectDate])
 
     useEffect(() => {
-        dispatch(setSelectMenuStateChange({main:"공구 관리",sub:router.pathname}))
+        dispatch(setMenuSelectState({main:"공구 관리",sub:router.pathname}))
         return (() => {
-            dispatch(deleteSelectMenuState())
+            dispatch(deleteMenuSelectState())
         })
     },[])
 

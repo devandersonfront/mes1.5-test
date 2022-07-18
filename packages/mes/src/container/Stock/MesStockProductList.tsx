@@ -16,7 +16,7 @@ import {ScrollSyncPane} from 'react-scroll-sync'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {useDispatch} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "../../../../shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "../../../../shared/src/reducer/menuSelectState";
 
 const MesStockProductList = ({page, keyword, option}) => {
   const router = useRouter();
@@ -64,9 +64,9 @@ const MesStockProductList = ({page, keyword, option}) => {
   }, [page, keyword, option, selectDate])
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({main:"재고 관리",sub:router.pathname}))
+    dispatch(setMenuSelectState({main:"재고 관리",sub:router.pathname}))
     return(() => {
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   },[])
 

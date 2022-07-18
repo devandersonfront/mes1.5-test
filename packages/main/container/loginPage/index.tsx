@@ -8,7 +8,7 @@ import {requestApi} from 'shared'
 import {setToken} from '../../common/tokenManager'
 import Notiflix from 'notiflix'
 import {useDispatch} from 'react-redux'
-import {setUserInfoAction} from '../../reducer/userInfo'
+import { setUserInfo } from 'shared/src/reducer/userInfo'
 
 interface IProps {
   children?: any
@@ -33,7 +33,7 @@ const LoginPage: NextPage<IProps> = ({children, data, setData }) => {
 
       if(res) {
         setToken( res )
-        dispatch(setUserInfoAction({
+        dispatch(setUserInfo({
           name: res.name,
           profile: res.profile,
           authority : res.ca_id.name

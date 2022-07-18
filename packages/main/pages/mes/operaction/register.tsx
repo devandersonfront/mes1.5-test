@@ -16,13 +16,14 @@ import {excelDownload} from '../../../common/excelDownloadFunction'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../../reducer";
+import { RootState } from 'shared'
 import {
   delete_all_machine_list,
   delete_machine_list,
   insert_machine_list,
   insert_machine_list_index
-} from "../../../reducer/machineSelect";
+} from 'shared/src/reducer/machineSelect'
+
 
 const title = '작업지시서 등록'
 const optList = ['거래처명', '모델명', 'CODE', '품명', '공정', '기계', 'Lot번호']

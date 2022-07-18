@@ -8,7 +8,7 @@ import Notiflix from "notiflix";
 import moment from "moment";
 import {useRouter} from "next/router";
 import {useDispatch} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
     children?: any
@@ -195,9 +195,9 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
     },[doc_id])
 
     useEffect(() => {
-        dispatch(setSelectMenuStateChange({main:"문서 관리",sub:""}))
+        dispatch(setMenuSelectState({main:"문서 관리",sub:""}))
         return (() => {
-            dispatch(deleteSelectMenuState())
+            dispatch(deleteMenuSelectState())
         })
     },[])
 

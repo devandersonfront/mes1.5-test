@@ -8,7 +8,7 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import ButtonGroup from '../../../main/component/ButtonGroup'
 import {useDispatch} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
   children?: any
@@ -43,9 +43,9 @@ const BasicPause = ({page, keyword, option}: IProps) => {
   },[selectRow])
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({main:"공정 관리",sub:router.pathname}))
+    dispatch(setMenuSelectState({main:"공정 관리",sub:router.pathname}))
     return (() => {
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   },[])
 

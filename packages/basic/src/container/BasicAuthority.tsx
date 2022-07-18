@@ -10,7 +10,7 @@ import {AUTHORITY_LIST} from '../../../main/common/configset'
 import {AxiosResponse} from 'axios'
 import styled from 'styled-components'
 import {useDispatch} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import {IExcelHeaderType} from "shared/src/common/@types/type";
 
 export interface IProps {
@@ -31,10 +31,10 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
 
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({main:"사용자 권한 관리", sub:router.pathname}))
+    dispatch(setMenuSelectState({main:"사용자 권한 관리", sub:router.pathname}))
     loadAuthorityList().then(() => Notiflix.Loading.remove())
     return (() => {
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   }, [])
 

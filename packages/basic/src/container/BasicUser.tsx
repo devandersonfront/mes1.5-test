@@ -15,8 +15,8 @@ import Notiflix from "notiflix";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import {
-  deleteSelectMenuState,
-  setSelectMenuStateChange,
+  deleteMenuSelectState,
+  setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 
 export interface IProps {
@@ -68,13 +68,13 @@ const BasicUser = ({}: IProps) => {
 
   useEffect(() => {
     dispatch(
-      setSelectMenuStateChange({
+      setMenuSelectState({
         main: "사용자 권한 관리",
         sub: router.pathname,
       })
     );
     return () => {
-      dispatch(deleteSelectMenuState());
+      dispatch(deleteMenuSelectState());
     };
   }, []);
 

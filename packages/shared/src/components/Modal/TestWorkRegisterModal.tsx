@@ -313,6 +313,7 @@ const TestWorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                       newTab: false
                     }
                   })
+                  console.log('parent', tmp)
                   setSearchList([...tmp.map(v => {
                     return {
                       ...v,

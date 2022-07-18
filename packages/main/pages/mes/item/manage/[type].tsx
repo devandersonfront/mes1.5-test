@@ -13,8 +13,6 @@ import ItemManageBox from '../../../../component/ItemManage/ItemManageBox'
 //@ts-ignore
 import Notiflix from "notiflix";
 import {RequestMethod, RootState} from "shared";
-import {useDispatch, useSelector} from "react-redux";
-// import { getUserInfoAction } from '../../../../reducer/userInfo'
 import { useRouter } from 'next/router'
 import cookie from 'react-cookies'
 
@@ -139,8 +137,6 @@ let unitData = [
 
 const ItemManagePage = ({title, type, code}: IProps) => {
 
-  const dispatch = useDispatch()
-  const user = useSelector((state : RootState)=> state.mainUserInfo)
   const router = useRouter();
   const [baseItem, setBaseItem] = useState<IItemMenuType[]>([])
   const [addiItem, setAddiItem] = useState<IItemMenuType[]>([])

@@ -66,7 +66,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
-  const [focusIndex, setFocusIndex] = useState<number>(0)
   useEffect(() => {
     if(isOpen) {
       setSummaryData({
@@ -148,7 +147,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         setting: v.bom.setting,
         stock,
         bom_lot_list: tmpRow,
-        disturbance: new Big(row.good_quantity ?? 0)?.plus(row.poor_quantity ?? 0)?.times(v.bom.usage)?.toNumber(),
+        disturbance: row.good_quantity,
         processArray: childData.process ?? null,
         process: childData.process ? childData.process.name : '-',
         bom: bomLots,
@@ -165,9 +164,9 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     let stock = 0
     if(lots === null) {}
     else if(lots.length > 1){
-      stock = lodash.sum(lots.map((lot) => lot.lot.current))
+      stock = lodash.sum(lots.map((lot) => lot.lot.current - lot.lot.amount))
     }else {
-      stock = lots[0]?.lot.current
+      stock = lots[0]?.lot.current - lots[0]?.lot.amount
     }
     return stock
   }
@@ -183,55 +182,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       default:
         return null
     }
-  }
-
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    const res = await RequestMethod('get', `machineSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res && res.status === 200){
-      let searchList = res.results.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.results.page,
-        total: res.results.totalPages,
-      })
-
-      setSearchList([...searchList])
-    }
-  }
-
-  const addNewTab = (index: number) => {
-    let tmp = bomDummy
-    tmp.push({code: 'SU-20210701-'+index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
-    setBomDummy([...tmp])
-  }
-
-  const deleteTab = (index: number) => {
-    if(bomDummy.length - 1 === focusIndex){
-      setFocusIndex(focusIndex-1)
-    }
-    if(bomDummy.length === 1) {
-      return setIsOpen(false)
-    }
-
-    let tmp = bomDummy
-    tmp.splice(index, 1)
-    setBomDummy([...tmp])
   }
 
   const getSummaryInfo = (info) => {
@@ -272,71 +222,13 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const modalButtons = () => {
     return <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
-      {
-        column.type !== 'readonly' && <div
-              onClick={() => {
-                setIsOpen(false)
-              }}
-              style={{width: '50%', height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-          >
-            <p>취소</p>
-          </div>
-      }
       <div
         onClick={() =>{
-          if(column.type === 'readonly'){
             setIsOpen(false)
-          }else{
-            let bomList = []
-            let disturbance = 0
-            searchList.map((bom, index) => {
-              let totalAmount = 0
-              bom.lots?.map(lot => {
-                if(Number(lot.amount)){
-                  totalAmount += Number(lot.amount)
-
-                  if(Number(lot.amount) > lot.current){
-                    Notiflix.Report.warning("생산량이 재고량보다 큽니다.", "", "확인")
-                  }
-
-                  bomList.push({
-                    record_id: row.record_id,
-                    ...row.input_bom[index],
-                    lot: {
-                      elapsed: lot.elapsed,
-                      type: bom.tab,
-                      child_lot_rm: bom.tab === 0 ? {...lot} : null,
-                      child_lot_sm: bom.tab === 1 ? {...lot} : null,
-                      child_lot_record: bom.tab === 2 ? {...lot} : null,
-                      warehousing: lot.warehousing,
-                      date: lot.date,
-                      current: lot.current,
-                      amount: Number(lot.amount) > lot.current ? 0 : lot.amount
-                    }
-                  })
-                }
-              })
-
-              if(totalAmount !== bom.disturbance){
-                disturbance += 1
-              }
-            })
-
-            if(disturbance === 0){
-              onRowChange({
-                ...row,
-                bom: bomList
-              })
-              setIsOpen(false)
-            }else{
-              Notiflix.Report.warning(`소요량과 생산량 합계를 일치시켜 주세요`, '', '확인')
-            }
-
-          }
         }}
-        style={{width: column.type !== 'readonly' ? "50%" : '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+        style={{width: '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
       >
-        <p>{column.type !== 'readonly' ? '선택 완료' : '확인'}</p>
+        <p>{'확인'}</p>
       </div>
     </div>
   }
@@ -408,49 +300,28 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div id='body-root' style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
-                  headerList={column.type === 'readonly' ? searchModalList.InputListReadonly : searchModalList.InputList}
+                  headerList={searchModalList.InputListReadonly}
                   row={searchList ?? [{}]}
                   setSelectRow={(e) => {
                     setSelectRow(e)
-                    // if(!searchList[e].border){
-                    //   searchList.map((v,i)=>{
-                    //     v.border = false;
-                    //   })
-                    //   searchList[e].border = true
-                    //   setSearchList([...searchList])
-                    // }
                   }}
                   setRow={(e) => {
                     let tmp = e.map((v, index) => {
-                      // if(v.newTab === true){
-                      //   const newTabIndex = bomDummy.length+1
-                      //   addNewTab(newTabIndex)
-                      //   setFocusIndex(newTabIndex-1)
-                      // }
-                      // if(v.lotList){
-                      //   setSelectProduct(v.code)
-                      //   setLotList([...v.lotList.map((v,i) => ({
-                      //     ...v,
-                      //     seq: i+1
-                      //   }))])
-                      // }
+                      console.log('bm',v)
                       if(v.bom){
                         setSelectProduct(v.code)
-                          // setLotList([...v.bom.map((v,i) => ({
-                          //   ...v.lot,
-                          //   lot_number: /*v.lot.child_lot_rm.lot_number*/material_type_lot_number(v),
-                          //   seq: i+1
-                          // }))])
                         if(v.lotList){
+                          const newLots = v.lotList.map(lot => ({
+                            ...lot,
+                            current: lot.current - lot.amount
+                          }))
                           setSelectType(v.type_name)
-                          setLotList(v.lotList)
+                          setLotList(newLots)
                         }
                       }
-
+                      delete v.lotList
                       return {
                         ...v,
-                        lotList: undefined,
-                        newTab: false
                       }
                     })
                     setSearchList([...tmp])
@@ -458,10 +329,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                   width={1746}
                   rowHeight={32}
                   height={288}
-                  // setSelectRow={(e) => {
-                  //   setSelectRow(e)
-                  // }}
-
                   type={'searchModal'}
                   headerAlign={'center'}
               />
@@ -469,7 +336,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
             <div id='body-2-title' style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
               <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                 <div style={{ display: 'flex', width: 1200}}>
-                  {/*<p style={{fontSize: 22, padding: 0, margin: 0}}>자재 LOT 리스트 ({selectProduct})</p>*/}
                   <p style={{fontSize: 22, padding: 0, margin: 0}}>{selectType} LOT 리스트 ({selectProduct})</p>
                 </div>
               </div>
@@ -481,29 +347,16 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                   headerList={LotListColumns()}
                   row={lotList ?? [{}]}
                   setRow={(e) => {
-                    let tmp = e.map((v, index) => {
-                      if(v.newTab === true){
-                        const newTabIndex = bomDummy.length+1
-                        addNewTab(newTabIndex)
-                        setFocusIndex(newTabIndex-1)
-                      }
-
-                      return {
-                        ...v,
-                        // spare: '여',
-                        newTab: false
-                      }
-                    })
                     let tmpSearchList = [...searchList]
                     if(selectRow >= 0) {
 
                       tmpSearchList[selectRow] = {
                         ...tmpSearchList[selectRow],
-                        lots: tmp
+                        lots: e
                       }
                     }
                     setSearchList([...tmpSearchList])
-                    setLotList([...tmp])
+                    setLotList([...e])
                   }}
                   width={1746}
                   rowHeight={32}

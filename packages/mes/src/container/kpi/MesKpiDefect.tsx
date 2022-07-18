@@ -9,7 +9,7 @@ import DateRangeCalendar from "../../../../shared/src/components/Header/DateRang
 import Notiflix from "notiflix";
 import {useRouter} from "next/router";
 import {useDispatch} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 
 interface SelectParameter {
     from:string
@@ -148,9 +148,9 @@ const MesKpiDefect = () => {
     },[pauseBasicRow])
 
     React.useEffect(() => {
-        dispatch(setSelectMenuStateChange({main:"KPI",sub:router.pathname}))
+        dispatch(setMenuSelectState({main:"KPI",sub:router.pathname}))
         return (() => {
-            dispatch(deleteSelectMenuState())
+            dispatch(deleteMenuSelectState())
         })
     },[])
 

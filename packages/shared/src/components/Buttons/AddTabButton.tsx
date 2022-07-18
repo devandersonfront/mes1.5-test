@@ -19,71 +19,78 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   const dispatch = useDispatch();
   const [title, setTitle] = useState<string>(column.key === 'lot' ? "LOT 보기" : "BOM 보기")
   const selector = useSelector((state:RootState) => state.infoModal)
-
-  useEffect(() => {
-    row.clicked && row.page !== 1 && loadMaterialLot(row.tab)
-  }, [row.page])
-  const loadMaterialLot = async (type:number, initPage?: number, action?: string) => {
+    console.log('addtab')
+  // useEffect(() => {
+  //   row.clicked && row.page !== 1 && loadMaterialLot(row.tab, null, row.action)
+  // }, [row.page])
+  const loadMaterialLot = async (type:number, initPage?: number, action?: string, input?, setInput?) => {
     let res
+    const inputMaterial = input ?? row
+    const setInputMaterial = setInput ?? onRowChange
     switch(type){
       case 0:
         res = await RequestMethod('get', `lotRmSearch`, {
           path:{
-            page:initPage? initPage: row.page,
+            page:initPage? initPage: inputMaterial.page,
             renderItem:15
           },
           params: {
             from: "2000-01-01",
             to:moment().format("YYYY-MM-DD"),
             option:0,
-            // keyword:row.code,
-            rm_id: row.rm_id,
+            rm_id: inputMaterial.rm_id,
             nz: action === 'register'?? false,
-            completed: action === 'register'?? false
+            completed: action === 'register'?? false,
+            sorts: ['date','lotRmId'],
+            order: ['asc', 'asc'],
           }
         })
         break;
       case 1:
         res = await RequestMethod('get', `lotSmSearch`, {
           path:{
-            page:initPage? initPage: row.page,
+            page:initPage? initPage: inputMaterial.page,
             renderItem:15
           },
           params: {
-            // from: "2000-01-01",
-            // to:moment().format("YYYY-MM-DD"),
-            sm_id: row.sm_id,
-            // nz: false
+            from: "2000-01-01",
+            to:moment().format("YYYY-MM-DD"),
+            sm_id: inputMaterial.sm_id,
+            nz: action === 'register'?? false,
+            sorts: ['date','lotSmId'],
+            order: ['asc','asc'],
           }
         })
         break;
       case 2:
         res = await RequestMethod('get', `cncRecordSearch`, {
           path:{
-            page:initPage? initPage: row.page,
+            page:initPage? initPage: inputMaterial.page,
             renderItem:15
           },
           params: {
             from: "2000-01-01",
             to:moment().format("YYYY-MM-DD"),
-            productIds: row.product.product_id,
-            nz: false,
-            rangeNeeded:false
+            productIds: inputMaterial.product.product_id,
+            nz: action === 'register' ?? false,
+            rangeNeeded:true,
+            sorts:['end', 'recordId'],
+            order:['asc', 'asc']
           }
         })
         break;
     }
     if(res){
       const parsedRes = ParseResponse(res)
-      onRowChange({
-        ...row,
+      setInputMaterial({
+        ...inputMaterial,
         page: res.page,
         total: res.totalPages,
         clicked: true,
-        lotList: initPage? [...parsedRes] : [ ...row.rowLotList,...parsedRes],
-        rowLotList: initPage? [...parsedRes] : [ ...row.rowLotList,...parsedRes]
+        lotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.rowLotList,...parsedRes],
+        rowLotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.rowLotList,...parsedRes],
+        loadMaterialLot
       })
-      row.setLo
     }
   }
 

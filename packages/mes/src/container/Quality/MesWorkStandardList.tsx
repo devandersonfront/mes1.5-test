@@ -15,8 +15,8 @@ import { SelectColumn } from "react-data-grid";
 import Notiflix from "notiflix";
 import { useDispatch } from "react-redux";
 import {
-  deleteSelectMenuState,
-  setSelectMenuStateChange,
+  deleteMenuSelectState,
+  setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 
 interface IProps {
@@ -63,10 +63,10 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
 
   useEffect(() => {
     dispatch(
-      setSelectMenuStateChange({ main: "품질 관리", sub: router.pathname })
+      setMenuSelectState({ main: "품질 관리", sub: router.pathname })
     );
     return () => {
-      dispatch(deleteSelectMenuState());
+      dispatch(deleteMenuSelectState());
     };
   }, []);
 

@@ -16,8 +16,8 @@ import Notiflix from "notiflix";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import {
-  deleteSelectMenuState,
-  setSelectMenuStateChange,
+  deleteMenuSelectState,
+  setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { useDispatch } from "react-redux";
 import { settingHeight } from "shared/src/common/Util";
@@ -72,10 +72,10 @@ const BasicCustomer = ({}: IProps) => {
 
   useEffect(() => {
     dispatch(
-      setSelectMenuStateChange({ main: "거래처 관리", sub: router.pathname })
+      setMenuSelectState({ main: "거래처 관리", sub: router.pathname })
     );
     return () => {
-      dispatch(deleteSelectMenuState());
+      dispatch(deleteMenuSelectState());
     };
   }, []);
 

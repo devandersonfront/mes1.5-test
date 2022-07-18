@@ -18,8 +18,8 @@ import { NextPageContext } from "next";
 import { TransferCodeToValue } from "shared/src/common/TransferFunction";
 import { useDispatch } from "react-redux";
 import {
-  deleteSelectMenuState,
-  setSelectMenuStateChange,
+  deleteMenuSelectState,
+  setMenuSelectState,
 } from "../../../../shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
 
@@ -66,10 +66,10 @@ const MesStockList = ({ page, search, option }: IProps) => {
 
   useEffect(() => {
     dispatch(
-      setSelectMenuStateChange({ main: "재고 관리", sub: router.pathname })
+      setMenuSelectState({ main: "재고 관리", sub: router.pathname })
     );
     return () => {
-      dispatch(deleteSelectMenuState());
+      dispatch(deleteMenuSelectState());
     };
   }, []);
 

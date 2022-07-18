@@ -18,8 +18,8 @@ import { useRouter } from "next/router";
 import { NextPageContext } from "next";
 import { useDispatch } from "react-redux";
 import {
-  deleteSelectMenuState,
-  setSelectMenuStateChange,
+  deleteMenuSelectState,
+  setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { settingHeight } from "shared/src/common/Util";
 
@@ -75,10 +75,10 @@ const BasicFactory = ({}: IProps) => {
 
     useEffect(() => {
         dispatch(
-            setSelectMenuStateChange({main: "공장 기준정보", sub: router.pathname})
+            setMenuSelectState({main: "공장 기준정보", sub: router.pathname})
         );
         return () => {
-            dispatch(deleteSelectMenuState());
+            dispatch(deleteMenuSelectState());
         };
     }, []);
 

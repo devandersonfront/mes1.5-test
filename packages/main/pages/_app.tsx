@@ -13,20 +13,8 @@ import {ThemeProvider as StyledThemeProvider} from 'styled-components';
 // Utils
 import {theme} from '../common/theme';
 import {global as GlobalStyles} from '../common/global';
-import withRedux from 'next-redux-wrapper'
-import {applyMiddleware, compose, createStore} from 'redux';
-import reducer from '../reducer';
-
-// Redux
-// import { composeWithDevTools } from 'redux-devtools-extension';
-// import { applyMiddleware, createStore } from 'redux';
-// import { Provider } from 'react-redux';
-// import reducer from "../src/modules";
-// import Cookies from 'js-cookie';
-// import ThemeToggleBtn from "../src/components/ThemeToggleBtn";
-// const store = createStore(reducer, composeWithDevTools(applyMiddleware()))
 import '../styles/globals.css'
-import {composeWithDevTools} from 'redux-devtools-extension'
+import wrapper from '../store'
 
 const App = ({ Component, pageProps, store }: any) => {
   return (
@@ -59,18 +47,5 @@ export const getInitialProps = async ({ Component, router, ctx }: any) => {
   return { pageProps };
 }
 
-const configureStore = (initialState, options) => {
-  const middlewares = []
-  const enhancer = process.env.NODE_ENV === 'production' ?
-    compose(applyMiddleware(...middlewares)) :
-    composeWithDevTools(
-      applyMiddleware(...middlewares)
-    );
-
-  const store = createStore(reducer, initialState, enhancer);
-  return store;
-}
-
-// @ts-ignore
-export default withRedux(configureStore)(App)
+export default wrapper.withRedux(App)
 

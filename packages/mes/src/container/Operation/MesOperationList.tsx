@@ -17,7 +17,7 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from 'react-redux'
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util';
 
 interface IProps {
@@ -71,9 +71,9 @@ const MesOperationList = ({page, search, option}: IProps) => {
   }, [pageInfo.page, selectDate, order])
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({main:"생산관리 등록",sub:router.pathname}))
+    dispatch(setMenuSelectState({main:"생산관리 등록",sub:router.pathname}))
     return(() => {
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   },[])
 
@@ -426,6 +426,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
           setSelectDate(date as {from:string, to:string })
           setPageInfo({page:1, total:1})
         }}
+        //실제사용
         title={"작업지시서 리스트"}
         buttons={
           ['', '수정하기', '삭제']

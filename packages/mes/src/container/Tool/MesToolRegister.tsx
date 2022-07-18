@@ -9,7 +9,7 @@ import moment from "moment";
 import Notiflix from "notiflix";
 import {useRouter} from "next/router";
 import {useDispatch} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 
 const MesToolRegister = () => {
     const router = useRouter();
@@ -24,9 +24,9 @@ const MesToolRegister = () => {
 
     useEffect(() => {
         getMenus()
-        dispatch(setSelectMenuStateChange({main:"공구 관리",sub:router.pathname}))
+        dispatch(setMenuSelectState({main:"공구 관리",sub:router.pathname}))
         return(() => {
-            dispatch(deleteSelectMenuState())
+            dispatch(deleteMenuSelectState())
         })
     },[])
 

@@ -1,28 +1,24 @@
-export const initalState = {name: '', profile: ''}
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-export const GET_USER_INFO = 'GET_USER_INFO'
-export const SET_USER_INFO = 'SET_USER_INFO'
-
-interface userInfoType {
+export type UserInfoState = {
   name: string
   profile: string
+  authority? : string 
 }
+const initialState: UserInfoState = {name: '', profile: '' , authority :''}
 
-export const setUserInfoAction = (userInfo: userInfoType) => {
-  return {
-    type: SET_USER_INFO,
-    userInfo: userInfo
+export const userSlice = createSlice({
+  name: 'userInfo',
+  initialState,
+  reducers: {
+    setUserInfo(state, action: PayloadAction<UserInfoState>) {
+      state.name = action.payload.name
+      state.profile = action.payload.profile
+      state.authority = action.payload.authority
+    }
   }
-}
+})
 
-
-const reducer = (state: userInfoType=initalState, action) => {
-  switch(action.type){
-    case SET_USER_INFO:
-      return action.userInfo
-    default:
-      return state
-  }
-}
-
-export default reducer
+export const selectUserInfo = (state) => state.userInfo
+export const { setUserInfo } = userSlice.actions
+export default userSlice.reducer

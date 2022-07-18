@@ -7,26 +7,21 @@ import Notiflix from 'notiflix'
 //@ts-ignore
 import ic_profile from '../../../public/images/ic_profile.png'
 import {useDispatch, useSelector} from 'react-redux'
-import {setUserInfoAction} from '../../reducer/userInfo'
+import { selectUserInfo, setUserInfo } from '../../reducer/userInfo'
 import {SF_ENDPOINT_RESOURCE} from '../../common/configset'
 
-//웰컴, 로그인 페이지 네비게이션 컴포넌트
-
-interface IProps {
-  user: {
-    name: string
-  },
-}
+//안쓰는거 웰컴, 로그인 페이지 네비게이션 컴포넌트
 
 const ProfileHeader = () => {
   const router = useRouter()
   //@ts-ignore
-  const userInfo = useSelector(state => state.userInfo)
+  const userInfo = useSelector(selectUserInfo)
   const dispatch = useDispatch()
+  console.log('userInfo', userInfo)
 
   useEffect(() => {
     let userInfo = cookie.load('userInfo')
-    dispatch(setUserInfoAction({
+    dispatch(setUserInfo({
       name: userInfo ? userInfo.name : "",
       profile: userInfo ? userInfo.profilePath: ""
     }))

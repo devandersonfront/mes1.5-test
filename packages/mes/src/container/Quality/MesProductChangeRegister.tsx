@@ -14,7 +14,7 @@ import {SelectColumn} from "react-data-grid";
 import moment from "moment";
 import {useRouter} from "next/router";
 import {useDispatch} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 
 const MesProductChangeRegister = () => {
 
@@ -75,9 +75,9 @@ const MesProductChangeRegister = () => {
     }
 
     useEffect(() => {
-        dispatch(setSelectMenuStateChange({main:"품질 관리",sub:router.pathname}))
+        dispatch(setMenuSelectState({main:"품질 관리",sub:router.pathname}))
         return (() => {
-            dispatch(deleteSelectMenuState())
+            dispatch(deleteMenuSelectState())
         })
     },[])
 

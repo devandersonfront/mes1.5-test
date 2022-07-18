@@ -2,14 +2,11 @@ import React, { useEffect, useState } from "react";
 import {
   columnlist,
   excelDownload,
-  ExcelDownloadModal,
   ExcelTable,
   Header as PageHeader,
   IExcelHeaderType,
   MAX_VALUE,
-  PaginationComponent,
   RequestMethod,
-  setModifyInitData,
   TextEditor,
 } from "shared";
 // @ts-ignore
@@ -20,10 +17,11 @@ import { NextPageContext } from "next";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import {
-  deleteSelectMenuState,
-  setSelectMenuStateChange,
+  deleteMenuSelectState,
+  setMenuSelectState,
 } from "../../../../shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
+import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 
 interface IProps {
   children?: any;
@@ -90,10 +88,10 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
 
   useEffect(() => {
     dispatch(
-      setSelectMenuStateChange({ main: "부자재 관리", sub: router.pathname })
+      setMenuSelectState({ main: "부자재 관리", sub: router.pathname })
     );
     return () => {
-      dispatch(deleteSelectMenuState());
+      dispatch(deleteMenuSelectState());
     };
   }, []);
 

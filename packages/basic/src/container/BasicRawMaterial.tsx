@@ -23,8 +23,8 @@ import { NextPageContext } from "next";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import {
-  deleteSelectMenuState,
-  setSelectMenuStateChange,
+  deleteMenuSelectState,
+  setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
 
@@ -75,9 +75,9 @@ const BasicRawMaterial = ({}: IProps) => {
 
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({ main: "원자재 기준정보", sub: "" }));
+    dispatch(setMenuSelectState({ main: "원자재 기준정보", sub: "" }));
     return () => {
-      dispatch(deleteSelectMenuState());
+      dispatch(deleteMenuSelectState());
     };
   }, []);
 

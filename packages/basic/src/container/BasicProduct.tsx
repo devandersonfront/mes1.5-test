@@ -19,7 +19,7 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import axios from 'axios';
 import {useDispatch} from "react-redux";
-import {deleteSelectMenuState, setSelectMenuStateChange} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util';
 
 export interface IProps {
@@ -64,9 +64,9 @@ const BasicProduct = ({}: IProps) => {
   }, [pageInfo.page])
 
   useEffect(() => {
-    dispatch(setSelectMenuStateChange({main:"제품 등록 관리",sub:""}))
+    dispatch(setMenuSelectState({main:"제품 등록 관리",sub:""}))
     return (() => {
-      dispatch(deleteSelectMenuState())
+      dispatch(deleteMenuSelectState())
     })
   },[])
 

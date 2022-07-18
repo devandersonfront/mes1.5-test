@@ -1,12 +1,6 @@
-// export {AddlButton} from "./components/Buttons/AddlButton"
-//
-//
-// //EXCEL
-import {menuSelect} from './common/menulist'
 //캘린더
-import {rootReducer} from './reducer'
-import exp from "constants";
-
+export { rootReducer } from './reducer'
+export type { RootState } from './reducer';
 
 export {
   getMachineTypeList,
@@ -175,14 +169,6 @@ export {ProfileHeader} from "./components/Profile/ProfileHeader"
 export {BarcodeModal} from "./components/Modal/BarcodeModal"
 
 export {MidrangeFormReviewModal} from "./components/Modal/MidrangeFormReviewModal"
-
-export {rootReducer} from "./reducer"
-
-type RootState = ReturnType<typeof rootReducer>
-export type {RootState}
-
-//redux
-export {setModifyInitData, SET_MENU_STATE} from "./reducer/modifyInfo"
 
 //test
 export {TestToolSelectModal} from './components/Modal/TestToolSelectModal'

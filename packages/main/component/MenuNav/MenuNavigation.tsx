@@ -21,7 +21,7 @@ import ic_setting from '../../public/images/ic_setting.png'
 import Router,{useRouter} from 'next/router'
 import {useDispatch, useSelector} from 'react-redux'
 import {RootState} from 'shared/src/reducer'
-import {setMenuStateChange} from "shared/src/reducer/menuState";
+import { selectMenuState, setMenuState } from 'shared/src/reducer/menuState'
 
 type IMenu = 'HOME' | 'BASIC' | 'MES' | 'PMS' | 'WMS' | 'UMS' | 'SETTING' | "CNC" | ""
 
@@ -40,11 +40,13 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
   const [menuList, setMenuList] = useState<IMenuType[]>()
   const [subMenuList, setSubMenuList] = useState<IMenuType[][]>([])
 
-  const selector = useSelector((selector:RootState) => selector.menuState)
+  const selector = useSelector(selectMenuState)
   const selectMenu = useSelector((selector:RootState) => selector.menuSelectState)
   const dispatch = useDispatch()
   const router = useRouter()
 
+  console.log(subMenuList)
+  console.log('selector',selector)
   useEffect(() => {
     let tmpMenu =  menuSelect(menuType)
     setMenuList(tmpMenu)
@@ -60,14 +62,14 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
   const changeMenuType = (selectType: IMenu) => {
     if(menuType === selectType) {
       setMenuType("")
-      dispatch(setMenuStateChange({
+      dispatch(setMenuState({
         main: [],
         sub: [],
       }))
     }else{
       setMenuType(selectType)
       let tmpMenu = menuSelect(selectType)
-      dispatch(setMenuStateChange({
+      dispatch(setMenuState({
         main: tmpMenu,
         sub: new Array(tmpMenu?.length).fill([]).map((v, i) => {
           return []
@@ -129,15 +131,14 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
               selector.main && selector.main.map((v, i) => <>
                     <SideMenuItem onClick={() => {
                       if(v.subMenu && v.subMenu.length){
-                        let tmpSubMenus = selector.sub
-
-                        // 있으면 비우고 없으면 채워라 
+                        let tmpSubMenus = [...selector.sub]
+                        // 있으면 비우고 없으면 채워라
                         if(tmpSubMenus[i].length){
                           tmpSubMenus[i] = []
                         }else{
                           tmpSubMenus[i] = v.subMenu ?? []
                         }
-                        dispatch(setMenuStateChange({
+                        dispatch(setMenuState({
                           ...selector,
                           sub: [...tmpSubMenus],
                         }))
