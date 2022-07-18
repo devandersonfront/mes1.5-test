@@ -27,12 +27,19 @@ import {
   setSelectMenuStateChange,
 } from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
+import {BarcodeDataType} from "shared/src/common/barcodeType";
+import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 
 export interface IProps {
   children?: any;
   page?: number;
   keyword?: string;
   option?: number;
+}
+
+type ModalType = {
+  type : 'barcode' | 'quantity'
+  isVisible : boolean
 }
 
 const BasicRawMaterial = ({}: IProps) => {
@@ -55,6 +62,11 @@ const BasicRawMaterial = ({}: IProps) => {
   const [keyword, setKeyword] = useState<string>();
   const [selectRow, setSelectRow] = useState<any>(undefined);
   const [buttonList, setButtonList] = useState<string[]>([]);
+  const [barcodeData , setBarcodeData] = useState<BarcodeDataType[]>([])
+  const [modal , setModal] = useState<ModalType>({
+    type : 'barcode',
+    isVisible : false
+  })
 
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
     page: 1,
@@ -519,7 +531,6 @@ const BasicRawMaterial = ({}: IProps) => {
     switch (buttonList[index]) {
       case "엑셀":
         setExcelOpen(true)
-
         return
       case "바코드 미리보기":
         if (selectList.size === 0) {
@@ -529,10 +540,8 @@ const BasicRawMaterial = ({}: IProps) => {
             "Okay"
           );
         }
-        setBarcodeOpen(true);
-        selectedData();
+        setModal({type : 'quantity' , isVisible : true})
         break;
-
       case "항목관리":
         router.push(`/mes/item/manage/rawmaterial`);
         break;
@@ -588,9 +597,6 @@ const BasicRawMaterial = ({}: IProps) => {
         break;
     }
   };
-  const handleModal = (open: boolean) => {
-    setBarcodeOpen(!open);
-  };
 
   const selectedData = () => {
     let tmpSelectList: any[] = [];
@@ -641,45 +647,34 @@ const BasicRawMaterial = ({}: IProps) => {
     setBasicRow(rows);
   };
 
-  const handleBarcode = async (
-    dataurl: string,
-    id: string,
-    clientIP: string
-  ) => {
-    Notiflix.Loading.circle();
-
+  const handleBarcode = async (dataurl : string , clientIP : string) => {
+    Notiflix.Loading.circle()
     const data = {
-      id: id,
-      functions: {
-        func0: { checkLabelStatus: [] },
-        func1: { clearBuffer: [] },
-        func2: { drawBitmap: [dataurl, 20, 0, 800, 0] },
-        func3: { printBuffer: [] },
-      },
-    };
+      "functions":
+          {"func0":{"checkLabelStatus":[]},
+            "func1":{"clearBuffer":[]},
+            "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+            "func3":{"printBuffer":[]}
+          }
+    }
 
-    await fetch(`http://${clientIP}:18080/WebPrintSDK/Printer1`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+    await fetch(`http://${clientIP}:18080/WebPrintSDK/Printer1`,{
+      method : 'POST',
+      headers : {
+        'Content-Type' : 'application/x-www-form-urlencoded'
       },
-      body: JSON.stringify(data),
+      body : JSON.stringify(data)
+    }).then((res)=>{
+      Notiflix.Loading.remove(2000)
+    }).catch((error) => {
+      Notiflix.Loading.remove()
+      if(error){
+        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        return false
+      }
     })
-      .then((res) => {
-        Notiflix.Loading.remove(2000);
-      })
-      .catch((error) => {
-        Notiflix.Loading.remove();
-        if (error) {
-          Notiflix.Report.failure(
-            "서버 에러",
-            "서버 에러입니다. 관리자에게 문의하세요",
-            "확인"
-          );
-          return false;
-        }
-      });
-  };
+
+  }
 
   const searchValidation = (searchKeyword) => {
     setKeyword(searchKeyword)
@@ -691,6 +686,44 @@ const BasicRawMaterial = ({}: IProps) => {
       setPageInfo({...pageInfo,page:1})
     }
   }
+
+  const handleModal = (type : 'barcode',isVisible) => {
+    setModal({type , isVisible})
+  }
+
+  const convertBarcodeData = (quantityData) => {
+
+    return [{
+      material_id: quantityData.rm_id,
+      material_type: 0,
+      material_lot_id : 0,
+      material_lot_number: '0',
+      material_quantity : quantityData.quantity,
+      material_name: quantityData.name ?? '-',
+      material_code: quantityData.code,
+      material_customer: quantityData.customer?.name ?? "-",
+      material_model: quantityData.model?.model ?? "-",
+    }]
+  }
+
+  const getCheckItems= () => {
+    const tempList = []
+    basicRow.map((data) => selectList.has(data.id) && tempList.push(data))
+    return tempList
+  }
+
+  const onClickQuantity = (quantity) => {
+    const items = getCheckItems()
+    const item = items[0]
+    const convertedData = convertBarcodeData({...item , quantity})
+    setBarcodeData(convertedData)
+    setModal({isVisible : true , type : 'barcode'})
+  }
+
+  const onCloseQuantity = () => {
+    setModal({isVisible : false , type : 'quantity'})
+  }
+
 
   return (
     <div>
@@ -744,15 +777,20 @@ const BasicRawMaterial = ({}: IProps) => {
             setPageInfo({...pageInfo, page:page})
           }}
         />
-
-          <BarcodeModal
+      <BarcodeModal
           title={'바코드 미리보기'}
           handleBarcode={handleBarcode}
           handleModal={handleModal}
-          isOpen={barcodeOpen}
           type={'rawMaterial'}
-          data={selectRow}
-        />
+          data={barcodeData}
+          isVisible={modal.type === 'barcode' && modal.isVisible}
+      />
+
+      <QuantityModal
+          onClick={onClickQuantity}
+          onClose={onCloseQuantity}
+          isVisible={modal.type === 'quantity' && modal.isVisible}
+      />
 
       <ExcelDownloadModal
         isOpen={excelOpen}

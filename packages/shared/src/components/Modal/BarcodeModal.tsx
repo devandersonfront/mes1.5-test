@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useRef} from 'react'
 import Styled from 'styled-components'
 import BasicModal from "./BasicModal"
 //@ts-ignore
@@ -6,133 +6,163 @@ import Barcode from 'react-barcode';
 import axios from 'axios';
 import DomToImage from "dom-to-image";
 import Notiflix from "notiflix";
+import {BarcodeDataType} from '../../common/barcodeType'
+import {RequestMethod} from "../../Functions/RequestFunctions";
+import {result} from "lodash";
+
+
 
 interface Props {
-
     title : string,
-    handleBarcode : (url : string , id : string , clientIp : string) => void
-    handleModal : (isOpen : boolean) => void
-    isOpen : boolean
-    data : any
-    type : 'rawMaterial' | 'product'
-
+    handleBarcode : (url : any ,clientIp : string) => void
+    handleModal : (type : string , isVisible : boolean) => void
+    data : BarcodeDataType[]
+    type : 'rawMaterial' | 'product' | 'record'
+    isVisible : boolean
 }
 
-const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isOpen} : Props) => {
+const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Props) => {
 
+    const [selectIndex, setSelectIndex] = React.useState<number>(0)
+    const [imageSrc, setImageSrc] = React.useState<any>()
 
-    const numberOfType = (type : 'rawMaterial' | 'product') => {
+    const getLocalAddress = async () => {
 
-        switch(type){
-            case 'rawMaterial' :
-                return '001'
-            case 'product' :
-                return '002'
-            default :
-                return undefined
-        }
-    }
-
-    const makeBarcode = (barcodeId : string | number) => {
-
-        if(barcodeId){
-
-            const id = String(barcodeId).padStart(20, '0')
-            const delimit = "-"
-            const key = "78423304"
-            const typeCode = numberOfType(type)
-
-            return  typeCode + delimit + id
-        }
-
-    }
-
-    const onCaptureDOM = async (type,data) => {
-
-        const id = (type === 'rawMaterial' ? data?.rm_id : data?.product_id)
-        const dom  = document.getElementById('capture_dom')
-        const dataurl = await DomToImage.toPng(dom, {quality: 1})
-        await fetch('http://api.ipify.org/?format=json')
+        return await fetch('http://api.ipify.org/?format=json')
             .then(response => response.json())
-            .then(data => {
-                handleBarcode(dataurl,id,data.ip)
-            }).catch((error)=>{
+            .then(result => result)
+            .catch((error)=>{
                 if(error){
                     Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-                    return false
                 }
             })
     }
 
+    const onCaptureDOM = async () => {
+        const {ip}  = await getLocalAddress()
+        handleBarcode(imageSrc,ip)
+    }
 
+    const onCaptureAllDOM = async (data : BarcodeDataType[]) => {
+        const {ip} = await getLocalAddress()
+        const images = await Promise.all(
+            data.map((barcodeData)=> getBarcodeImage(barcodeData))
+        )
+        handleBarcode(images,ip)
+    }
+
+    const convertBlobToBase64 = (blob) => new Promise((resolve, reject) => {
+
+        const reader = new FileReader;
+        reader.onerror = reject;
+        reader.onload = () => {
+            resolve(reader.result);
+        };
+        reader.readAsDataURL(blob);
+
+    });
+
+    const getBarcodeImage = async (data : BarcodeDataType) => {
+        let blobData :Blob
+        Notiflix.Loading.circle()
+        await axios.post('http://220.126.8.137:29408/api/v1/barcode/generate', {
+                ...data,
+            },
+            {responseType:'blob'})
+            .then((res) => {
+                Notiflix.Loading.remove()
+                blobData = res.data
+            }).catch((err) => {
+                Notiflix.Loading.remove()
+            })
+
+        return await convertBlobToBase64(blobData)
+    }
 
     const onClose = () => {
-
-        handleModal(isOpen)
-
+        handleModal('barcode' ,false)
+        setSelectIndex(0)
     }
 
-    const convertDataToArray = (data : any) => {
-
-        if(type === 'rawMaterial'){
-            return [
-                {id : '1' , title : 'CODE' , value :data?.code ?? '-'},
-                {id : '2', title :'품명' , value : data?.name ?? '-'},
-                {id : '3' , title :'거래처', value : data?.customer_id ?? '-'},
-                {id : '4' ,title :'사용기준일(일)', value :data?.expiration ?? '-'}
-            ]
-
-        }else if(type === 'product'){
-
-            return [
-                {id : '1', title : '거래처' , value : data?.customer_id ?? '-'},
-                {id : '2' , title : '모델', value : data?.model?.model ?? '-'},
-                {id : '3' , title : 'CODE', value :data?.code ?? '-'},
-                {id : '4' , title : '품명', value : data?.name ?? '-'},
-                {id : '5' , title : '품목종류', value : data?.type ?? '-'}
-            ]
-        }
-
-    }
-
-    const printBarcode = (type : 'rawMaterial' | 'product' , data : any) => {
-
+    const printBarcode = () => {
         if(data){
-
-            const convertData = convertDataToArray(data)
-            const encrypt = makeBarcode(type === 'rawMaterial' ? data?.rm_id : data?.product_id )
-
             return (
-                    <BarcodeBox id={'capture_dom'}>
-                        {convertData.map((data)=>(
-                            <BarcodeItem key={data.id}>
-                                <Label htmlFor={data.title}>{data.title}</Label>
-                                <LabelValue id={data.title}>{data.value}</LabelValue>
-                            </BarcodeItem>
-                                ))
-                            }
-                        <Wrap>
-                            <Barcode value ={encrypt} displayValue={false} renderer={'canvas'} />
-                        </Wrap>
-                    </BarcodeBox>
+                <BarcodeBox id={'capture_dom'}>
+                    <Wrap>
+                        <img id={"barcode"} src={imageSrc} style={{width:"100%", height:"100%"}} />
+                    </Wrap>
+                </BarcodeBox>
             )
         }
-
     }
+
+    React.useEffect(() => {
+        (async () => {
+            if(isVisible){
+                const image = await getBarcodeImage(data[0])
+                setImageSrc(image)
+            }
+        })();
+    }, [isVisible]);
 
     return(
         <BasicModal
-            isOpen={isOpen}
+            isOpen={isVisible}
             onClose={onClose}
-            >
+        >
             <TitleContainer>
                 <TitleSpan>{title}</TitleSpan>
-                <Button onClick={() => onCaptureDOM(type,data)}>
-                    {'인쇄'}
-                </Button>
+                <ButtonList>
+                    <Button onClick={() => onCaptureDOM()}>
+                        {'해당 페이지 인쇄'}
+                    </Button>
+                    {
+                        type === 'record' &&
+                        <Button onClick={() => onCaptureAllDOM(data)}>
+                            {'모든 페이지 인쇄'}
+                        </Button>
+                    }
+                </ButtonList>
             </TitleContainer>
-            <div style={{display : 'flex' , justifyContent : 'center' , alignItems : 'center' , height : '100%'}}>
-                {printBarcode(type , data)}
+            <div style={{display : 'flex' , justifyContent : 'space-around' , alignItems : 'center' , height : '100%'}}>
+                {data?.length > 1 ?
+                    <>
+                        <div onClick={async () => {
+                            if(selectIndex){
+                                setSelectIndex((prev) => prev-1)
+                                const image = await getBarcodeImage(data[selectIndex - 1])
+                                setImageSrc(image)
+                            }else{
+                                Notiflix.Report.warning("경고","첫 페이지입니다.","확인")
+                            }
+                        }}>
+                           <span className="material-symbols-outlined">
+                                keyboard_double_arrow_left
+                           </span>
+                        </div>
+                        <div style={{display : 'flex' , flexDirection : 'column' , alignItems :"center"}}>
+                            {printBarcode()}
+                            <br/>
+                            {selectIndex + 1}/{data.length}
+                        </div>
+                        <div onClick={async () => {
+                            if(selectIndex < data.length - 1){
+                                setSelectIndex((prev) => prev + 1)
+                                const image = await getBarcodeImage(data[selectIndex + 1])
+                                setImageSrc(image)
+                            }else{
+                                Notiflix.Report.warning("경고","마지막 페이지입니다.","확인")
+                            }
+                        }}>
+                            <span className="material-symbols-outlined">
+                                keyboard_double_arrow_right
+                            </span>
+                        </div>
+                    </>
+                    :
+                    printBarcode()
+                }
+
             </div>
         </BasicModal>
 
@@ -160,6 +190,13 @@ const TitleSpan = Styled.span`
 
 `
 
+const ButtonList = Styled.div`
+    display : flex;
+    justify-content : space-between;
+    align-items: center;
+    width : 200px;
+`
+
 const Button = Styled.button`
 
     background-color : #3D414E;
@@ -168,11 +205,10 @@ const Button = Styled.button`
     justify-content : center;
     align-items : center;
     font-size : 13px;
-    width : 50px;
-    height: 30px;
-    padding: 0;
+    padding: 5px;
     border: none;
     cursor : pointer;
+    border-radius : 5px;
 `
 
 const BarcodeBox = Styled.div`
@@ -186,37 +222,6 @@ const BarcodeBox = Styled.div`
     justify-content : space-between;
 
 `
-
-const BarcodeItem = Styled.div`
-
-    display : flex;
-    justify-content : space-between;
-`
-
-const Label = Styled.label`
-
-    font-size : 40px;
-    font-weight: bold;
-    width : 300px;
-    height : 60px;
-    text-align : left;
-    display : flex;
-    align-items : center;
-
-`
-
-const LabelValue = Styled.span`
-
-    font-size : 40px;
-    width : 400px;
-    height : 60px;
-    text-align : left;
-    display : flex;
-    align-items : center;
-    line-height: 36px;
-
-`
-
 const Wrap = Styled.div`
 
     canvas {
@@ -224,4 +229,3 @@ const Wrap = Styled.div`
         height: 100px;
     }
 `;
-
