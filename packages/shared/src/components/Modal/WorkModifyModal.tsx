@@ -319,9 +319,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
               <p style={{color: '#717C90'}}>취소</p>
             </div>
             <div
-                onClick={() => {
-                  SaveBasic()
-                }}
+                onClick={SaveBasic}
                 style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>저장</p>

@@ -9,7 +9,6 @@ import {
     MAX_VALUE,
     RequestMethod,
     RootState,
-    setModifyInitData
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -19,6 +18,7 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {useDispatch, useSelector} from 'react-redux'
 import {deleteMenuSelectState, setMenuSelectState} from "../../../../shared/src/reducer/menuSelectState";
+import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 
 interface IProps {
   children?: any

@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react'
 import {Profile} from '../../styles/styledComponents'
-import {removeLocalstorage} from '../../common/localstorageFunc'
 import {useRouter} from 'next/router'
 import cookie from 'react-cookies'
 import Notiflix from 'notiflix'
@@ -16,12 +15,23 @@ const ProfileHeader = () => {
   const dispatch = useDispatch()
   useEffect(() => {
     let userInfo = cookie.load('userInfo')
-    dispatch(setUserInfo({
-      name: userInfo ? userInfo.name : "",
-      profile: userInfo ? userInfo.profile: "",
-      authority : userInfo ? userInfo.ca_id.name : ""
-    }))
+    if(userInfo === undefined){
+      router.push("/")
+    }
+    try {
+      dispatch(setUserInfo({
+        name: userInfo ? userInfo.name : "",
+        profile: userInfo ? userInfo.profile: "",
+        authority : userInfo ? userInfo.ca_id.name : ""
+      }))
+    } catch (e){
+      Notiflix.Report.failure("경고","잘못된 접근입니다.","확인", () => {
+        cookie.remove("userInfo")
+        router.push("/")
+      })
+    }
   }, [])
+
 
   return (
     <div style={{width: '100%', height: 50, display: 'flex', justifyContent: 'flex-end', paddingTop: 20}}>
@@ -46,7 +56,8 @@ const ProfileHeader = () => {
           cursor: 'pointer',
         }} onClick={() => {
           Notiflix.Loading.dots('MES System 로그아웃...')
-          removeLocalstorage(['userToken', 'userInfo'])
+          cookie.remove("userInfo",{path:"/"})
+          // removeLocalstorage(['userToken', 'userInfo'])
           router.push('/').then(() => Notiflix.Loading.remove(500))
         }}>
           Log out

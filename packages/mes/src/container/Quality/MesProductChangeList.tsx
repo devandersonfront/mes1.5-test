@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod, setModifyInitData} from "shared";
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
@@ -8,6 +8,7 @@ import Notiflix from "notiflix";
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
+import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 
 interface IProps {
     children?: any

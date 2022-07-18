@@ -8,7 +8,6 @@ import {
   IExcelHeaderType,
   MAX_VALUE,
   RequestMethod,
-  setModifyInitData,
   TextEditor,
 } from "shared";
 // @ts-ignore
@@ -24,6 +23,7 @@ import {
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
+import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 
 interface IProps {
   children?: any;

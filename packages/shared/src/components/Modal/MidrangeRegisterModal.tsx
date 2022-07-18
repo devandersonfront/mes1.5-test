@@ -152,7 +152,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
                             setRow={(e) => setSearchList([...e])}
                             width={1746}
                             rowHeight={32}
-                            height={552}
+                            height={400}
                             setSelectRow={(e) => {
                                 if(!searchList[e].border){
                                     searchList.map((v,i)=>{

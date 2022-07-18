@@ -609,12 +609,9 @@ const BasicSubMaterial = ({ }: IProps) => {
         optionIndex={optionIndex}
         title={"부자재 기준정보"}
         buttons={
-          ['', '', '항목관리', '행추가', '저장하기', '삭제']
+          ['', '엑셀', '항목관리', '행추가', '저장하기', '삭제']
         }
-        buttonsOnclick={
-          // () => {}
-          onClickHeaderButton
-        }
+        buttonsOnclick={onClickHeaderButton}
       />
       <ExcelTable
         editable
@@ -659,16 +656,13 @@ const BasicSubMaterial = ({ }: IProps) => {
             setPageInfo({...pageInfo, page:page})
           }}
         />
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`금형기준정보`}*/}
-      {/*  sheetname={`금형기준정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
+      <ExcelDownloadModal
+        isOpen={excelOpen}
+        setIsOpen={setExcelOpen}
+        category={"sub_material"}
+        title={"부자재 기준정보"}
+        resetFunction={() => LoadBasic(1)}
+      />
     </div>
   );
 };

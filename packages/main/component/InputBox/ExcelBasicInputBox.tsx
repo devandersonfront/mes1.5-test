@@ -32,6 +32,15 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onClose(true)
           Notiflix.Report.warning('수정할 수 없습니다.', '작업지시 고유 번호가 있으면 수정할 수 없습니다.', '확인', )
         }
+        if(column.type === "stockAdmin"){
+          if(row?.changeRows && !row.changeRows?.includes(column.key)){
+            onRowChange({...row, changeRows:[...row.changeRows, column.key]})
+          }else if(row?.changeRows){
+            //아무것도 return 없음
+          }else{
+            onRowChange({...row, changeRows:[column.key]})
+          }
+        }
       }}
       onChange={(event) => {
         if(column.key === 'mold_name') {
@@ -57,7 +66,9 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onRowChange({ ...row, [column.key]: event.target.value, isChange: true })
         }
       }}
-      onBlur={() => onClose(true)}
+      onBlur={() => {
+        onClose(true)
+      }}
     />
   );
 }

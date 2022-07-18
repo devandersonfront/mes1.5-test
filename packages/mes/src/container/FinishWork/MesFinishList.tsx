@@ -39,7 +39,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
     from: moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
   });
-
+  const [order, setOrder] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -58,7 +58,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         })
       }
     }
-  }, [pageInfo.page, selectDate])
+  }, [pageInfo.page, selectDate, order])
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"생산관리 등록",sub:router.pathname}))
@@ -76,7 +76,10 @@ const MesFinishList = ({page, search, option}: IProps) => {
 
     return !!res
   }
-
+  const changeOrder = (value:number) => {
+    setPageInfo({page:1,total:1})
+    setOrder(value);
+  }
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
@@ -104,7 +107,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
             return {
               ...value,
               name: tmpKey === 'model' ? value.model : value.name,
-              pk: value[pk]
+              pk: value[pk],
             }
           })]
         }
@@ -112,7 +115,8 @@ const MesFinishList = ({page, search, option}: IProps) => {
         if(v.selectList){
           return {
             ...v,
-            pk: v.unit_id
+            pk: v.unit_id,
+            result: changeOrder
           }
         }else{
           return v
@@ -138,6 +142,8 @@ const MesFinishList = ({page, search, option}: IProps) => {
         status: 2,
         from: selectDate.from,
         to: selectDate.to,
+        sorts: 'deadline',
+        order: order == 1 ? 'ASC' : 'DESC',
       }
     })
 

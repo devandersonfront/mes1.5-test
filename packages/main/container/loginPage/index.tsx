@@ -9,6 +9,7 @@ import {setToken} from '../../common/tokenManager'
 import Notiflix from 'notiflix'
 import {useDispatch} from 'react-redux'
 import { setUserInfo } from 'shared/src/reducer/userInfo'
+import cookie from "react-cookies";
 
 interface IProps {
   children?: any
@@ -49,6 +50,12 @@ const LoginPage: NextPage<IProps> = ({children, data, setData }) => {
     if (key === 'Enter')
       await onClickLogin().then(() => Notiflix.Loading.remove(500))
   }
+
+  React.useEffect(() => {
+    if(cookie.load("userInfo")){
+      router.push("/mes/dashboard/")
+    }
+  },[])
 
   return (
     <WelcomeContainer>
