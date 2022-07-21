@@ -454,7 +454,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     }
     switch(index){
       case 0:
-        setModal({type : 'quantity' , isVisible : true})
+        openBarcodeModal()
         return;
       case 1:
         const selectedRows = basicRow.filter(v => selectList.has(v.id))
@@ -507,14 +507,34 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     setModal({type , isVisible})
   }
 
+  const getCheckItems= () => {
+    const tempList = []
+    basicRow.map((data) => selectList.has(data.id) && tempList.push(data))
+    return tempList
+  }
+
+  const openBarcodeModal = () => {
+    if(selectList.size > 0){
+      const items = getCheckItems()
+      if(!items[0].is_complete){
+        const convertedData = convertBarcodeData(items[0])
+        setBarcodeData(convertedData)
+        setModal({type : 'barcode' , isVisible : true})
+      }else{
+        Notiflix.Report.warning("경고", "사용 완료된 원자재 재고입니다.", "확인")
+      }
+    }else{
+      Notiflix.Report.warning("경고", "데이터를 선택해주세요.", "확인")
+    }
+  }
+
   const convertBarcodeData = (quantityData) => {
-    console.log(quantityData,'quantityDataquantityDataquantityData')
     return [{
       material_id: quantityData.code ?? 0,
       material_type: 0,
       material_lot_id : quantityData.lot_rm_id,
       material_lot_number: quantityData.lot_number,
-      material_quantity : quantityData.quantity,
+      material_quantity : quantityData?.realCurrent ?? 0,
       material_name: quantityData.name ?? "-",
       material_code: quantityData.rm_id,
       material_customer: quantityData.customer_id ?? "-",
@@ -522,24 +542,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     }]
   }
 
-
-  const getCheckItems= () => {
-    const tempList = []
-    basicRow.map((data) => selectList.has(data.id) && tempList.push(data))
-    return tempList
-  }
-
-  const onClickQuantity = (quantity) => {
-    const items = getCheckItems()
-    const item = items[0]
-    const convertedData = convertBarcodeData({...item , quantity})
-    setBarcodeData(convertedData)
-    setModal({isVisible : true , type : 'barcode'})
-  }
-
-  const onCloseQuantity = () => {
-    setModal({isVisible : false , type : 'quantity'})
-  }
 
   return (
     <div>
@@ -634,11 +636,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           data={barcodeData}
           isVisible={modal.type === 'barcode' && modal.isVisible}
       />
-      <QuantityModal
-          onClick={onClickQuantity}
-          onClose={onCloseQuantity}
-          isVisible={modal.type === 'quantity' && modal.isVisible}
-      />
+
       {/*<ExcelDownloadModal*/}
       {/*  isOpen={excelOpen}*/}
       {/*  column={column}*/}
