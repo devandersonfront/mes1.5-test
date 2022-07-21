@@ -137,7 +137,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
         renderItem: 22,
       },
 
-      
+
 
       params: order == 0 ?
           {
@@ -155,7 +155,6 @@ const MesOperationList = ({page, search, option}: IProps) => {
           }
     })
 
-    console.log("res operation: ", res);
 
 
     if(res){

@@ -31,6 +31,7 @@ export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, 
                 })
           .then((res) => {
               result = res.data;
+              result.name = data.name
           }).
           catch((err)=>{
             if(err.response.status === 415){
