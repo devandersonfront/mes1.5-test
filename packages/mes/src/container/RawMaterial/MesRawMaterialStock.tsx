@@ -529,13 +529,14 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   }
 
   const convertBarcodeData = (quantityData) => {
+
     return [{
       material_id: quantityData.code ?? 0,
       material_type: 0,
       material_lot_id : quantityData.lot_rm_id,
       material_lot_number: quantityData.lot_number,
       material_quantity : quantityData?.realCurrent ?? 0,
-      material_name: quantityData.name ?? "-",
+      material_name: !!quantityData.name ? quantityData.name : '-',
       material_code: quantityData.rm_id,
       material_customer: quantityData.customer_id ?? "-",
       material_model: quantityData.model?.model ?? "-",
