@@ -86,7 +86,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page, selectDate]);
+  }, [pageInfo.page, selectDate, nzState, order]);
 
   useEffect(() => {
     dispatch(

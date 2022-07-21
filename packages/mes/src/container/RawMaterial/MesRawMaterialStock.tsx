@@ -111,7 +111,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   useEffect(() => {
     loadPage(pageInfo.page)
-  }, [pageInfo.page, selectDate])
+  }, [pageInfo.page, selectDate, nzState, expState, order])
 
   useEffect(() => {
     dispatch(setSelectMenuStateChange({main:"원자재 관리",sub:router.pathname}))
@@ -564,7 +564,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         onChangeSearchKeyword={(keyword) => {
           setSelectList(new Set)
           setKeyword(keyword);
-          // 
+          //
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
           });
