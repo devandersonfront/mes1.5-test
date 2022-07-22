@@ -71,6 +71,13 @@ const MidrangeMemberSearchModal = ({onChangeManger,value, readOnly}: IProps) => 
     }, [pageInfo.page])
 
 
+    const confirmFunction = ()=> {
+        if(selectRow !== undefined && selectRow !== null){
+            onChangeManger(searchList[selectRow])
+        }
+        setIsOpen(false)
+    }
+
     const SearchBasic = async (keyword: any, option: number, page: number) => {
         Notiflix.Loading.circle()
         const res = await RequestMethod('get', `memberSearch`,{
@@ -227,14 +234,22 @@ const MidrangeMemberSearchModal = ({onChangeManger,value, readOnly}: IProps) => 
                             width={1750}
                             rowHeight={32}
                             height={576}
-                            setSelectRow={(e) => {
-                                if(!searchList[e].border){
-                                    searchList.map((v,i)=>{
-                                        v.border = false;
-                                    })
-                                    searchList[e].border = true
-                                    setSearchList([...searchList])
-                                }
+                            onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
+                                const update = searchList.map(
+                                  (row, index) => index === e
+                                    ? {
+                                        ...row,
+                                        doubleClick: confirmFunction,
+                                        border: true,
+                                    }
+                                    : {
+                                        ...row,
+                                        border: false
+                                    }
+                                );
+
+                                setSearchList(update)
+
                                 setSelectRow(e)
                             }}
                             type={'searchModal'}
@@ -260,12 +275,7 @@ const MidrangeMemberSearchModal = ({onChangeManger,value, readOnly}: IProps) => 
                             <p>취소</p>
                         </div>
                         <div
-                            onClick={() => {
-                                if(selectRow !== undefined && selectRow !== null){
-                                    onChangeManger(searchList[selectRow])
-                                }
-                                setIsOpen(false)
-                            }}
+                            onClick={confirmFunction}
                             style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >
                             <p>등록하기</p>

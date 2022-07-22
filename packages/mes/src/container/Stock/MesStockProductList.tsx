@@ -1,16 +1,15 @@
 import React, {useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
-import {columnlist} from '../../../../main/common/columnInit'
 import moment from 'moment'
 import Notiflix from 'notiflix'
 import {
   excelDownload,
-  ExcelTable,
+  ExcelTable, columnlist,
   Header as PageHeader, IExcelHeaderType,
   ProductTitleFomatter,
   ProfileHeader,
   RequestMethod,
-  UnitContainer
+  UnitContainer, TextEditor
 } from 'shared'
 import {ScrollSyncPane} from 'react-scroll-sync'
 // @ts-ignore
@@ -18,7 +17,15 @@ import {SelectColumn} from 'react-data-grid'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "../../../../shared/src/reducer/menuSelectState";
 
-const MesStockProductList = ({page, keyword, option}) => {
+interface IProps {
+  children?: any
+  page?: number
+  keyword?: string
+  option?: number
+  type?: 'admin' | null
+}
+
+const MesStockProductList = ({type}: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch()
   const [rowData, setRowData] = useState<any[]>([]);
@@ -27,41 +34,23 @@ const MesStockProductList = ({page, keyword, option}) => {
   const [dateColumn, setDateColumn] = useState<Array<IExcelHeaderType>>(columnlist.stockDate);
 
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set());
-
-  // const [keyword, setKeyword] = useState<string>("");
-  // const [option, setOption] = useState<number>(0)
-  const [optionIndex, setOptionIndex] = useState<number>(option)
-
+  const [keyword, setKeyword] = useState<string>("");
+  const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectMonth, setSelectMonth] = useState<string>(moment(new Date()).startOf("month").format('YYYY-MM'))
 
   const changeSelectMonth = (value:string) => {
     setSelectMonth(value);
   }
-  const [modalResult, setModalResult] = useState<any>();
-
   const [excelTableWidths, setExcelTableWidths] = useState<{model:number, data:number}>({model:0, data:0});
-
+  const isAdminPage = type === 'admin'
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment(new Date()).startOf("month").format('YYYY-MM-DD'),
     to: moment(new Date()).endOf("month").format('YYYY-MM-DD')
   });
 
   useEffect(() => {
-    setOptionIndex(option)
-    // if(keyword){
-    //     SearchBasic(keyword, option, page).then(() => {
-    //         Notiflix.Loading.remove()
-    //     })
-    // }else{
-    LoadMenu().then((menus) => {
-      LoadData(menus).then(() => {
-        Notiflix.Loading.remove()
-      }).then(() => {
-        Notiflix.Loading.remove()
-      })
-    })
-    // }
-  }, [page, keyword, option, selectDate])
+    loadData()
+  }, [selectMonth])
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"재고 관리",sub:router.pathname}))
@@ -74,8 +63,7 @@ const MesStockProductList = ({page, keyword, option}) => {
     setSelectDate({from:from, to:to});
   }
 
-  const LoadMenu = async() => {
-    Notiflix.Loading.circle();
+  const loadMenu = async() => {
     const res = await RequestMethod('get', 'loadMenu', {
       path:{
         tab: 'ROLE_STK_02'
@@ -85,39 +73,37 @@ const MesStockProductList = ({page, keyword, option}) => {
     return res.bases
   }
 
-  const LoadData = async(menus?: any[] ) => {
+  const loadData = async() => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod('get', 'stockProductList', {
+    const res = await RequestMethod('get', isAdminPage ? 'stockAdminList' : 'stockProductList', {
       params:{
         keyword:keyword,
-        opt:option,
+        opt:optionIndex,
         from:selectDate.from,
         to:selectDate.to
       }
     });
 
-    if(res ){
-      let tmpRes = {}
-      let tmpRow = []
+    if(res){
+      let tmpRow
       if(typeof res === 'string'){
-        let tmpRowArray = res.split('\n')
+        let tmpRows = res.split('\n')
 
-        tmpRow = tmpRowArray.map(v => {
-          if(v !== ""){
-            let tmp = JSON.parse(v)
-            return tmp
+        tmpRow = tmpRows.map(row => {
+          if(row !== ""){
+            return JSON.parse(row)
           }
         }).filter(v=>v)
       }else{
-        tmpRow = [...res]
+        tmpRow = res
       }
-      tmpRes = {
-        menus: menus,
+      const newRes = {
+        menus: await loadMenu(),
         summaries: tmpRow
       }
 
-      cleanUpData(tmpRes, "model")
-      cleanUpData(tmpRes, "date");
+      cleanUpData(newRes, "model")
+      cleanUpData(newRes, "date");
       Notiflix.Loading.remove(300);
     }
   }
@@ -172,7 +158,8 @@ const MesStockProductList = ({page, keyword, option}) => {
         if(res.summaries.length > 0){
           tmpColumn = res.summaries[0]?.statistics?.logs?.map((col)=>{
             result.push(
-              {key:col.date, name:col.date.split('-')[0].substring(2)+"-"+col.date.split('-')[1]+"-"+col.date.split('-')[2], formatter: UnitContainer, unitData: 'EA', width:100},
+              isAdminPage ? {key:col.date, name:col.date, editor: TextEditor, formatter: UnitContainer, unitData: 'EA', width:118, inputType:'number', type:'stockAdmin'}
+              :{key:col.date, name:col.date, formatter: UnitContainer, unitData: 'EA', width:100},
             );
           })
           setDateColumn([
@@ -222,12 +209,14 @@ const MesStockProductList = ({page, keyword, option}) => {
 
       tmpRow_date.push({
         title:"생산",
+        product_id:row.product.product_id,
         id: `product_${random}`,
         ...tmp_row_produced
       })
 
       tmpRow_date.push({
         title:"납품",
+        product_id:row.product.product_id,
         id: `product_${random+1}`,
         ...tmp_row_shipped
       })
@@ -275,48 +264,50 @@ const MesStockProductList = ({page, keyword, option}) => {
     })
     excelDownload([...column, ...dateColumn], tmpSelectListData, `${selectDate.from} ~ ${selectDate.to} 생산/납품 현황`, `${selectDate.from} ~ ${selectDate.to}`, tmpSelectList)
   }
-  const buttonClickEvents = (number:number) => {
+  const buttonClickEvents = async (number:number) => {
     switch (number){
       case 0:
         downloadExcel()
+        return
+      case 1:
+        const postBody = dateData.map((data) => {
+          return data.changeRows?.map((date) => {
+            return {
+              run_date: date,
+              product_id: data.product_id,
+              type: data.title === "생산" ? 1 : 2,
+              count: Number(data[date])
+            }
+          })
+        }).flatMap(postBody => postBody).filter(postBody => postBody)
+        await RequestMethod('post', "stockSummarySave", postBody)
+          .then((res) => {
+            Notiflix.Report.success("저장되었습니다.", "", "확인");
+            loadData()
+          })
+          .catch((err) => {
+            console.log(err)
+          })
         return
       default:
         return
     }
   }
 
-
-  useEffect(()=>{
-    let modelWidth = 0;
-    column.map((v)=>{
-      modelWidth += v.width;
-    })
-    // modelWidth += 36;
-    setExcelTableWidths({...excelTableWidths,data:1576-modelWidth, model:modelWidth})
-
-  },[column])
-
   return (<div style={{width:1576}}>
     <ProfileHeader/>
     <PageHeader
-      title={"생산/납품 현황"}
-      buttons={[""]}
+      title={`생산/납품 현황${isAdminPage ? '(관리자용)' : ''}`}
+      buttons={isAdminPage ? ["", "저장하기"] : [""]}
       buttonsOnclick={buttonClickEvents}
       isSearch={true}
       searchOptionList={["거래처", "모델",'',"품명"]}
-      onChangeSearchOption={(option) => {
-
-        setOptionIndex(option)
+      onChangeSearchOption={(optionIndex) => {
+        setOptionIndex(optionIndex)
       }}
       isCalendar={true}
-      searchKeyword={keyword}
-      onChangeSearchKeyword={(keyword) => {
-        if(keyword){
-          router.push(`/mes/stock/productlist?page=1&keyword=${keyword}&opt=${optionIndex}`)
-        }else{
-          router.push(`/mes/stock/productlist?page=1&keyword=`)
-        }
-      }}
+      onChangeSearchKeyword={setKeyword}
+      onSearch={loadData}
       calendarType={"month"}
       onChangeSelectDate={changeSelectDate}
       selectDate={selectMonth}
@@ -343,7 +334,7 @@ const MesStockProductList = ({page, keyword, option}) => {
         />
       </ScrollSyncPane>
       <ScrollSyncPane>
-        <ExcelTable headerList={dateColumn} row={dateData} setRow={setRowData} maxWidth={excelTableWidths.data} rowHeight={40}   />
+        <ExcelTable headerList={dateColumn} row={dateData} setRow={setDateData} maxWidth={excelTableWidths.data} rowHeight={40}   />
       </ScrollSyncPane>
     </div>
   </div>)

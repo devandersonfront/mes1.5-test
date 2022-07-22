@@ -13,11 +13,9 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
-import {BomInfoModal} from './BomInfoModal'
 import {TransferCodeToValue} from '../../common/TransferFunction'
-import {useDispatch, useSelector} from 'react-redux'
+import {useDispatch} from 'react-redux'
 import {change_summary_info_index, insert_summary_info, reset_summary_info} from '../../reducer/infoModal'
-import {RootState} from '../../index'
 import {UploadButton} from "../../styles/styledComponents";
 
 interface IProps {
@@ -45,7 +43,6 @@ const summaryDummy = {customer: '-', model: '-', code: 'SU-20210701-3', name:'SU
 const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
   const dispatch = useDispatch()
-  const selector = useSelector((state:RootState) => state.infoModal)
 
 
 
@@ -75,19 +72,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
       dispatch(reset_summary_info());
     }
   }, [isOpen, /*row*/])
-
-  const setInfoModal = async (product: any, index: number) => {
-    if(selector){
-      await dispatch(insert_summary_info({
-        code: product.code,
-        title: product.name,
-        data:[],
-        headerData: {
-          ...row.parent,
-        }
-      }))
-    }
-  }
 
   const haveBasicValidation = () => {
 
@@ -417,17 +401,10 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
               width={1746}
               rowHeight={32}
               height={552}
-              // setSelectRow={(e) => {
+              // onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
               //   setSelectRow(e)
               // }}
-              setSelectRow={(e) => {
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
+              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                 setSelectRow(e)
               }}
               type={'searchModal'}
@@ -437,7 +414,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
           <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
             <div
               onClick={() => {
-                dispatch(reset_summary_info())
                 setIsOpen(false)
               }}
               style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
@@ -472,7 +448,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                     name: row.name,
                     isChange: true
                   })
-                  dispatch(reset_summary_info())
                   setIsOpen(false)
                 }
               }}

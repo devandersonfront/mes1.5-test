@@ -342,7 +342,6 @@ export const SearchModalStyle = styled.div`
     .rdg-cell{
         //border:none;
         border: 0.5px solid #B3B3B3;
-        margin-bottom:1px;
     }
     
     .rdg-header-row{

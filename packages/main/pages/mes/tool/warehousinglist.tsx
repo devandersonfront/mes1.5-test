@@ -1,8 +1,8 @@
 import React from "react";
-import MenuNavigation from "../../../../main/component/MenuNav/MenuNavigation";
 import {NextPageContext} from "next";
 import {MesToolWarehousingList} from "mes";
 import ProfileHeader from "../../../component/Profile/ProfileHeader";
+import MenuNavigation from '../../../component/MenuNav/MenuNavigation'
 
 interface IProps {
     children?: any

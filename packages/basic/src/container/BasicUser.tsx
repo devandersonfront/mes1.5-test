@@ -215,10 +215,8 @@ const BasicUser = ({}: IProps) => {
           });
           return result;
         };
-        console.log("basicRow  : ", basicRow);
 
         basicRow.map((row) => {
-          console.log("row : ", row);
         });
 
         let res = await RequestMethod(
@@ -265,8 +263,6 @@ const BasicUser = ({}: IProps) => {
             Notiflix.Report.warning("경고", `${error.data.message}`, "확인")
           );
         });
-
-        console.log("res  at user page: ", res);
 
         if (res) {
           Notiflix.Report.success("저장되었습니다.", "", "확인");
@@ -484,7 +480,7 @@ const BasicUser = ({}: IProps) => {
         ...row,
         ...realTableData,
         ...appendAdditional,
-        id: `process_${random_id}`,
+        id: `user_${random_id}`,
       };
     });
     setBasicRow([...tmpBasicRow]);
@@ -631,7 +627,7 @@ const BasicUser = ({}: IProps) => {
         setBasicRow([
           {
             ...items,
-            id: `member_${random_id}`,
+            id: `user_${random_id}`,
             name: null,
             additional: [],
           },
@@ -716,14 +712,10 @@ const BasicUser = ({}: IProps) => {
     <div>
       <PageHeader
         isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          setKeyword(keyword);
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          })
-          // setPageInfo({ page: 1, total: pageInfo.total });
-        }}
+        onChangeSearchKeyword={setKeyword}
+        onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+          Notiflix.Loading.remove();
+        })}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option);
@@ -737,6 +729,7 @@ const BasicUser = ({}: IProps) => {
         editable
         resizable
         resizeSave
+        selectable
         headerList={[SelectColumn, ...column]}
         row={basicRow}
         // setRow={setBasicRow}
@@ -749,7 +742,8 @@ const BasicUser = ({}: IProps) => {
           setSelectList(tmp);
           competeId(e);
         }}
-        setSelectRow={setSelectRow}
+        onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+              setSelectRow(e)}}
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}

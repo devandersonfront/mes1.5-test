@@ -64,20 +64,7 @@ const BasicDevice = ({}: IProps) => {
     setTypesState(value);
   }
 
-  // useEffect(() => {
-  //   if(keyword){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }else{
-  //     LoadBasic(pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page, keyword, typesState])
-
   useEffect(() => {
-    // console.log(state)
     if (keyword) {
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove();
@@ -476,7 +463,7 @@ const BasicDevice = ({}: IProps) => {
         type_id: row?.type,
         type: deviceList[row.type]?.name,
         user: row?.manager,
-        id: `mold_${random_id}`,
+        id: `device_${random_id}`,
       }
     })
 
@@ -595,7 +582,7 @@ const BasicDevice = ({}: IProps) => {
         setBasicRow([
           {
             ...items,
-            id: `process_${random_id}`,
+            id: `device_${random_id}`,
             name: null,
             additional: [],
             madeAt: moment().format("YYYY-MM-DD")
@@ -651,14 +638,14 @@ const BasicDevice = ({}: IProps) => {
     <div>
         <PageHeader
           isSearch
-          searchKeyword={keyword}
           onChangeSearchKeyword={(keyword) => {
             setKeyword(keyword)
+          }}
+          onSearch={() =>
             SearchBasic(keyword, optionIndex, 1).then(() => {
               Notiflix.Loading.remove()
             })
-            // setPageInfo({page:1, total:1})
-          }}
+          }
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
             setOptionIndex(option)
@@ -674,6 +661,7 @@ const BasicDevice = ({}: IProps) => {
           editable
           resizable
           resizeSave
+          selectable
           headerList={[
             SelectColumn,
             ...column
@@ -690,7 +678,8 @@ const BasicDevice = ({}: IProps) => {
             setSelectList(tmp)
             competeDevice(e)
           }}
-          setSelectRow={setSelectRow}
+          onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+              setSelectRow(e)}}
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}

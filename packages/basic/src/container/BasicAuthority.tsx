@@ -4,7 +4,6 @@ import {ExcelTable, Header as PageHeader, RequestMethod, TextEditor} from 'share
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import TreeViewTable from '../../../main/component/TreeView/TreeView'
 import {IMenu} from '../../../main/common/@types/type'
 import {AUTHORITY_LIST} from '../../../main/common/configset'
 import {AxiosResponse} from 'axios'
@@ -12,6 +11,7 @@ import styled from 'styled-components'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import {IExcelHeaderType} from "shared/src/common/@types/type";
+import TreeViewTable from 'shared/src/components/TreeView/TreeViewTable';
 
 export interface IProps {
   children?: any
@@ -195,7 +195,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
 
   const saveAppointmentAuthorityDetails = async () => {
     if(row[selectIndex].name === ''){
-        return Notiflix.Report.warning('오류', '권한명은 필수적으로 들어가야하는 값 입니다.', '확인')
+      return Notiflix.Report.warning('오류', '권한명은 필수적으로 들어가야하는 값 입니다.', '확인')
     }
     Notiflix.Loading.circle()
     new Promise( async (resolve) => {
@@ -210,22 +210,22 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
 
   const competeAuthority = (rows) => {
 
-      const tempRow = [...rows]
-      const spliceRow = [...rows]
-      spliceRow.splice(selectIndex, 1)
-      const isCheck = spliceRow.some((row)=> row.name === tempRow[selectIndex].name && row.name !== undefined && row.name !== '')
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectIndex, 1)
+    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectIndex].name && row.name !== undefined && row.name !== '')
 
-      if(spliceRow){
-        if(isCheck){
-          return Notiflix.Report.warning(
-            '권한명 경고',
-            `중복되는 권한명이 존재합니다.`,
-            '확인'
-          );
-        }
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '권한명 경고',
+          `중복되는 권한명이 존재합니다.`,
+          '확인'
+        );
       }
+    }
 
-      setRow(rows)
+    setRow(rows)
   }
 
   return (
@@ -259,7 +259,8 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
             headerList={[{key: 'name', width: 280, name: '권한명(필수)', editor: TextEditor}] as Array<IExcelHeaderType>}
             row={row}
             setRow={(row) => competeAuthority(row)}
-            setSelectRow={(index) => {
+            onRowClick={(clicked) => {
+              const index = row.indexOf(clicked)
               changeListToAuth(row[index].authorities ?? [])
               setSelectIndex(index)
               setRow([...row.map((v, i) => {

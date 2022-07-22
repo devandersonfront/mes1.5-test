@@ -53,17 +53,6 @@ const BasicSubMaterial = ({ }: IProps) => {
     total: 1,
   });
 
-  // useEffect(() => {
-  //   if (keyword) {
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove();
-  //     });
-  //   } else {
-  //     LoadBasic(pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove();
-  //     });
-  //   }
-  // }, [pageInfo.page, keyword]);
   useEffect(() => {
     if (keyword) {
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -193,7 +182,7 @@ const BasicSubMaterial = ({ }: IProps) => {
           return {
             ...row,
             ...selectData,
-            // customer: row.customerArray,
+            customer: row.customer?.id ? row.customer : null,
             additional: [
               ...additional
                 .map((v, index) => {
@@ -487,7 +476,7 @@ const BasicSubMaterial = ({ }: IProps) => {
         ...appendAdditional,
         // customer_id: row.customer?.name ?? "",
         customer_id: row.customer && row.customer.name,
-        id: `mold_${random_id}`,
+        id: `submaterial_${random_id}`,
       };
     });
     setBasicRow([...tmpBasicRow]);
@@ -531,7 +520,7 @@ const BasicSubMaterial = ({ }: IProps) => {
         setBasicRow([
           {
             ...items,
-            id: `process_${random_id}`,
+            id: `submaterial_${random_id}`,
             name: null,
             additional: [],
           },
@@ -594,14 +583,10 @@ const BasicSubMaterial = ({ }: IProps) => {
     <div>
       <PageHeader
         isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          setKeyword(keyword);
-          // setPageInfo({...pageInfo,page:1})
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          });
-        }}
+        onChangeSearchKeyword={setKeyword}
+        onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+          Notiflix.Loading.remove();
+        })}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
@@ -617,6 +602,7 @@ const BasicSubMaterial = ({ }: IProps) => {
         editable
         resizable
         resizeSave
+        selectable
         headerList={[
           SelectColumn,
           ...column
@@ -645,7 +631,8 @@ const BasicSubMaterial = ({ }: IProps) => {
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
-          setSelectRow={setSelectRow}
+          onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+              setSelectRow(e)}}
           width={1576}
           height={settingHeight(basicRow.length)}
         />

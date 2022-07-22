@@ -1,38 +1,20 @@
-export const CHANGE_SEARCH_NUMBER = "CHANGE_SEARCH_NUMBER";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-
-export interface SearchModalNumber {
+export type SearchModalState = {
     index:number
 }
+const initialState: SearchModalState = {  index:0 }
 
-
-export const initalState: SearchModalNumber = {
-    index:0
-}
-
-export const changeSearchModalNumber = (index: number) => {
-    return {
-        type: CHANGE_SEARCH_NUMBER,
-        payload: index
+export const searchModalSlice = createSlice({
+    name: 'searchModalState',
+    initialState,
+    reducers: {
+        changeSearchModalNumber(state, action: PayloadAction<SearchModalState>) {
+            return action.payload
+        }
     }
-}
+})
 
-type DefaultAction = ReturnType<typeof changeSearchModalNumber>
+export const { changeSearchModalNumber } = searchModalSlice.actions
+export default searchModalSlice.reducer
 
-const tooUploadReducer = (state:SearchModalNumber=initalState, action:DefaultAction) => {
-    switch(action.type){
-        case CHANGE_SEARCH_NUMBER:
-            const modifyInit = action.payload as any
-            // state.data = modifyInit;
-            return modifyInit
-
-        // case TEST_TOOL:
-        //     console.log(action.payload)
-        //     return action.payload
-
-        default:
-            return state
-    }
-}
-
-export default tooUploadReducer

@@ -65,7 +65,13 @@ const TestWorkRegisterModal = ({column, row, onRowChange}: IProps) => {
       setSearchList([{
         modify: true,
         osId: row.os_id,
-        sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
+        sequence: 1,
+        good_quantity: 0,
+        poor_quantity: 0,
+        processId: row.product?.process?.process_id,
+        input_bom: row.input_bom,
+        product: row.product,
+        goal: row.goal,
         start: row.date + " 00:00:00",
         end: row.date + " 00:00:00",
         standardStartDate : row.date,
@@ -122,7 +128,6 @@ const TestWorkRegisterModal = ({column, row, onRowChange}: IProps) => {
     })
 
     if(checkPoint){
-      console.log("searchList : ", searchList)
       let res = await RequestMethod('post', `recordSave`,
           searchList.map((v, i) => {
             let selectData: any = {}
@@ -313,10 +318,10 @@ const TestWorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                       newTab: false
                     }
                   })
-                  console.log('parent', tmp)
                   setSearchList([...tmp.map(v => {
                     return {
                       ...v,
+                      border:false,
                       good_quantity: Number(v.quantity ?? 0)-Number(v.poor_quantity ?? 0),
                       sum: Number(v.quantity ?? 0)
                     }
@@ -325,7 +330,7 @@ const TestWorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 width={1746}
                 rowHeight={32}
                 height={552}
-                setSelectRow={(e) => {
+                onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                   setSelectRow(e)
                 }}
                 type={'searchModal'}

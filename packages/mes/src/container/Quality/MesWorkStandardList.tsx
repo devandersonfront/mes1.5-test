@@ -138,16 +138,10 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
         <div>
             <PageHeader
                 isSearch
-                searchKeyword={keyword}
-                onChangeSearchKeyword={(keyword) => {
-                    // setPageInfo({...pageInfo,page:1})
-
-                    setKeyword(keyword)
-                    SearchBasic(keyword, optionIndex, 1).then(() => {
-                        Notiflix.Loading.remove();
-                      });
-
-                }}
+                onChangeSearchKeyword={setKeyword}
+                onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+                  Notiflix.Loading.remove();
+                })}
                 searchOptionList={optionList}
                 onChangeSearchOption={(option) => {
                     setOptionIndex(option)

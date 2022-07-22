@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import styled from 'styled-components'
 //@ts-ignore
-import Search_icon from '../public/images/btn_search.png'
+import Search_icon from '../../public/images/btn_search.png'
 import {FormControl, makeStyles, Select} from '@material-ui/core'
 import {createTheme, MuiThemeProvider} from '@material-ui/core/styles'
 import {POINT_COLOR} from "../common/configset";
@@ -249,7 +249,7 @@ const PageHeader = ({buttons, typeList, buttonsOnclick, isSearch, style, leftBut
 
                             {
                                 !leftButton && buttons && buttons.map((buttonTitle, buttonIndex) => {
-                                    return <HeaderButton onClick={() => buttonsOnclick && buttonsOnclick(buttonIndex)} key={`btn${buttonIndex}`}>{buttonTitle}</HeaderButton>
+                                    return !!buttonTitle && <HeaderButton onClick={() => buttonsOnclick && buttonsOnclick(buttonIndex)} key={`btn${buttonIndex}`}>{buttonTitle}</HeaderButton>
                                 })
                             }
                         </ButtonWrapper>

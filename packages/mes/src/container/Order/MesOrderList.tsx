@@ -385,7 +385,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         unit: row.product.unit,
         processArray: row.process,
         shipment_id: row.shipment_amount,
-        id: `mold_${random_id}`,
+        id: `order_${random_id}`,
       };
     });
     setSelectList(new Set());
@@ -473,16 +473,16 @@ const MesOrderList = ({ page, search, option }: IProps) => {
       <PageHeader
         isSearch
         isCalendar
-        searchKeyword={keyword}
         searchOptionList={optionList}
-        onChangeSearchKeyword={(keyword) => {
+        onChangeSearchKeyword={(keyword) =>
+        {
+          setKeyword(keyword)
+        }}
+        onSearch={() => {
           setSelectList(new Set)
-          setKeyword(keyword);
-          // hs0316
-          SearchBasic(keyword, optionIndex, 1).then(() => {
+          SearchBasic(keyword, optionIndex).then(() => {
             Notiflix.Loading.remove();
           });
-          // setPageInfo({ page: 1, total: 1 });
         }}
         onChangeSearchOption={(option) => {
           setOptionIndex(option);
@@ -494,10 +494,11 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         setSelectDate={(date) => {
           setSelectList(new Set)
           setSelectDate(date as {from:string, to:string})
+          setPageInfo({page: 1, total:1})
           // setPageInfo({page:1, total:1})
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          });
+          // SearchBasic(keyword, optionIndex, 1).then(() => {
+          //   Notiflix.Loading.remove();
+          // });
         }}
         title={"수주 현황"}
         buttons={["", "수정하기", "삭제"]}
@@ -549,6 +550,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         <ExcelTable
           editable
           resizable
+          selectable
           headerList={[
             SelectColumn,
             ...column

@@ -67,7 +67,7 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
             result.product_type = cleanType(data.type);
             result.unit = data.unit;
             result.stock = data.stock;
-
+            result.spare = data.molds.filter(mold => mold.mold.mold_id === row.mold_id)[0]?.setting == 1 ? '기본' : '스페어',
             moldArray.push(result);
           })
           setSearchList(moldArray);
@@ -271,25 +271,13 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
               <div style={{padding: '0 16px', width: 1776}}>
                 <ExcelTable
-                    // headerList={searchModalList.productInfo}
                     headerList={row.products ? searchModalList.productToolInfo : searchModalList.productInfo}
-                    // row={row.products ?? row.product_id ?? [{}]}
                     row={searchList}
                     setRow={(e) => setSearchList([...e])}
                     width={1746}
                     rowHeight={32}
                     height={491}
-                    // setSelectRow={(e) => {
-                    //   setSelectRow(e)
-                    // }}
-                    setSelectRow={(e) => {
-                      // if(!searchList[e].border){
-                      //   searchList.map((v,i)=>{
-                      //     v.border = false;
-                      //   })
-                      //   searchList[e].border = true
-                      //   setSearchList([...searchList])
-                      // }
+                    onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                       setSelectRow(e)
                     }}
                     type={'searchModal'}

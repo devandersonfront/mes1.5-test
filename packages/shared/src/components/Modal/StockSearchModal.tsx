@@ -3,16 +3,16 @@ import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'
 //@ts-ignore
-import IcSearchButton from '../../public/images/ic_search.png'
+import IcSearchButton from '../../../public/images/ic_search.png'
 //@ts-ignore
-import IcX from '../../public/images/ic_x.png'
-import ExcelTable from '../Excel/ExcelTable'
+import IcX from '../../../public/images/ic_x.png'
+import {ExcelTable} from '../Excel/ExcelTable'
 import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
-import Search_icon from '../../public/images/btn_search.png'
+import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 //@ts-ignore
-import Calendar_icon from "../../public/images/calendar_icon_black.png";
+import Calendar_icon from "../../../public/images/calendar_icon_black.png";
 import Calendar from "react-calendar";
 import moment from "moment";
 

@@ -407,7 +407,7 @@ const BasicMachineV1u = ({option}: IProps) => {
         weldingType: row.weldingType ? weldingType[row.weldingType].name : "선택없음",
         factory_id: row.factory?.name,
         affiliated_id: row.subFactory?.name,
-        id: `mold_${random_id}`,
+        id: `machine_${random_id}`,
       }
     })
     setBasicRow([...tmpBasicRow])
@@ -440,7 +440,7 @@ const BasicMachineV1u = ({option}: IProps) => {
     tempData.madeAt = value.madeAt ?? moment().format("YYYY-MM-DD")
     tempData.machine_id =  value.machine_idPK ?? value.machine_id;
     tempData.type = value.type_id;
-    tempData.manager = value?.user?.user_id ? value.user : value.manager ?? null;
+    tempData.manager = value?.user?.id ? value.user : null;
     tempData.factory = value?.factory?.factory_id ? value.factory : null;
     tempData.subFactory = value?.subFactory?.sf_id ? {...value.subFactory, manager:value.subFactory.manager_info} : null;
 
@@ -512,7 +512,7 @@ const BasicMachineV1u = ({option}: IProps) => {
         setBasicRow([
           {
             ...items,
-            id: `process_${random_id}`,
+            id: `machine_${random_id}`,
             name: null,
             additional: [],
           },
@@ -562,23 +562,14 @@ const BasicMachineV1u = ({option}: IProps) => {
     setBasicRow(rows)
   }
 
-  const searchValidation = (searchKeyword) => {
-    setKeyword(searchKeyword)
-    if(keyword === searchKeyword || pageInfo.page === 1){
-      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-        Notiflix.Loading.remove();
-      })
-    }else{
-      setPageInfo({...pageInfo,page:1})
-    }
-  }
-
   return (
       <div>
         <PageHeader
           isSearch
-          searchKeyword={keyword}
-          onChangeSearchKeyword={searchValidation}
+          onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+            Notiflix.Loading.remove();
+          })}
+          onChangeSearchKeyword={setKeyword}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
             setOptionIndex(option)
@@ -594,6 +585,7 @@ const BasicMachineV1u = ({option}: IProps) => {
             editable
             resizable
             resizeSave
+            selectable
             headerList={[
               SelectColumn,
               ...column
@@ -614,7 +606,8 @@ const BasicMachineV1u = ({option}: IProps) => {
             selectList={selectList}
             //@ts-ignore
             setSelectList={setSelectList}
-            setSelectRow={setSelectRow}
+            onRowClick={(clicked) => {const e = basicRow.indexOf(clicked)
+              setSelectRow(e)}}
             width={1576}
             height={settingHeight(basicRow.length)}
         />

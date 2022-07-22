@@ -209,7 +209,8 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
                 buttonsOnclick={buttonEvents}
             />
             <ExcelTable
-                headerList={[SelectColumn,
+              selectable
+              headerList={[SelectColumn,
                     ...columnlist.documentManage({
                         move: moveFolder
                     })]}

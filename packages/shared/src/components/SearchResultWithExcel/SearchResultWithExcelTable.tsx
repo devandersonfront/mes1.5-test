@@ -65,18 +65,6 @@ const SearchResultWithExcelTable = ({customHeaderRowHeight,headerList, setHeader
   }
 
   let tempData:any[] = [];
-
-
-
-
-
-  useEffect(() => {
-    let allWidth = 0
-    headerList.map((v: any) => {
-      allWidth += v.width
-    })
-  }, [headerList])
-
   function isAtBottom({ currentTarget }: React.UIEvent<HTMLDivElement>): boolean {
     return Math.ceil(currentTarget.scrollTop) >= currentTarget.scrollHeight - currentTarget.clientHeight;
   }

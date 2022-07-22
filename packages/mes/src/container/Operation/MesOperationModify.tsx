@@ -168,6 +168,7 @@ const MesOperationModify = ({page, keyword, option}: IProps) => {
         editable
         width={1576}
         resizable
+        selectable
         headerList={[
           SelectColumn,
           ...column

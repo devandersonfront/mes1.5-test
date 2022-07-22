@@ -420,7 +420,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
         unit: row.product?.unit ?? "-",
         process_id: row.product?.process?.name ?? "-",
         amount: tmpAmount,
-        id: `sheet_${random_id}`,
+        id: `delivery_${random_id}`,
       };
     });
 
@@ -437,15 +437,13 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
       <PageHeader
         isSearch
         isCalendar
-        searchKeyword={""}
         searchOptionList={optionList}
-        onChangeSearchKeyword={(keyword) => {
+        onChangeSearchKeyword={setKeyword}
+        onSearch={() => {
           setSelectList(new Set)
-          setKeyword(keyword);
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
-          });
-          // setPageInfo({ page: 1, total: 1 });
+          })
         }}
         onChangeSearchOption={(option) => {
           setOptionIndex(option);
@@ -513,6 +511,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
       <ExcelTable
         editable
         resizable
+        selectable
         headerList={[
           SelectColumn,
           ...column

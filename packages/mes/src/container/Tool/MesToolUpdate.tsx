@@ -111,6 +111,7 @@ const MesToolUpdate = () => {
 
             <ExcelTable
                 resizable
+                selectable
                 headerList={[
                     SelectColumn,
                     ...column

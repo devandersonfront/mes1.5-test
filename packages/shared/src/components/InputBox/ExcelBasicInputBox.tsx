@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {IExcelHeaderType} from '../../common/@types/type'
 import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../reducer";
-import {insert_machine_list} from "../../reducer/machineSelect";
+import { insert_machine_list, selectMachineList } from '../../reducer/machineSelect'
 import { RemoveFirstZero } from '../../common/Util'
 
 interface IProps {
@@ -16,8 +16,9 @@ interface IProps {
 
 const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   const dispatch = useDispatch();
-  const selector = useSelector((state:RootState) => state.MachineSelectReducer);
-  const isNumberInput = column.type === 'number'
+  const selector = useSelector(selectMachineList);
+  const isNumberInput = column.inputType === 'number'
+  const [ focus, setFocus ] = useState(false)
   useEffect(() => {
   }, [row])
   const checkIfNegative = (value: string) : boolean => {
@@ -25,13 +26,15 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   }
   const isDisabled: boolean = column.readonly || (column.disabledCase && column.disabledCase.length > 0 && column.disabledCase.some((dcase) => row[dcase.key] === dcase.value))
   const autoFocus = (input: HTMLInputElement | null) => {
-      input?.focus()
+    input?.focus()
   }
+  const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
   return (
     <input
       style={{textAlign: 'center', color: column.textType ? 'black' : 'white', border:"none" }}
       className={'editCell'}
       ref={autoFocus}
+      onCompositionStart={() => setFocus(true)}
       value={isNumberInput? RemoveFirstZero(row[column.key]) : row[column.key]}
       disabled={isDisabled}
       type={isNumberInput ? "number" : "text"}
@@ -51,10 +54,20 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onClose(true)
           return Notiflix.Report.warning('수정할 수 없습니다.', '', '확인')
         }
+        if(column.type === "stockAdmin"){
+          if(row?.changeRows && !row.changeRows?.includes(column.key)){
+            onRowChange({...row, changeRows:[...row.changeRows, column.key]})
+          }else if(row?.changeRows){
+            //아무것도 return 없음
+          }else{
+            onRowChange({...row, changeRows:[column.key]})
+          }
+        }
       }}
-
+      onKeyDown={(e) => e.key === 'Backspace' && setFocus(true)}
       onChange={(event) => {
         let eventValue = event.target.value
+        if(korean.test(eventValue) && !focus) return
         if(isNumberInput){
           if(checkIfNegative(event.target.value)){
             Notiflix.Report.warning('경고', '음수일 수 없습니다.', '확인')
@@ -70,24 +83,16 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
             isChange: true
           })
         }else if(column.key === "goal"){
+          const newMachineList = {...selector}
           onRowChange({ ...row, [column.key]: eventValue, isChange: true })
-          if(selector.selectRow === 1){
-            selector.machineList.map((v,i)=>{
-              if(i !== 0){
-                v.goal = Number(eventValue)
-              }
-            })
-          }else{
-            selector.machineList[selector.selectRow].goal = Number(eventValue);
-          }
-          dispatch(insert_machine_list({...selector}))
+          newMachineList[newMachineList.selectRow] = { ...newMachineList[newMachineList.selectRow], goal:Number(eventValue)};
+          dispatch(insert_machine_list(newMachineList))
         }else{
-          // console.log("check : " , column.key , eventValue);
-          
           onRowChange({ ...row, [column.key]: eventValue, isChange: true })
         }
       }}
-      onBlur={() => onClose && onClose(true)}
+      onBlur={() => {
+        onClose && onClose(true)}}
     />
   );
 }

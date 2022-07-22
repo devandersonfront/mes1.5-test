@@ -6,14 +6,14 @@ import {SelectColumn} from "react-data-grid";
 import Notiflix from "notiflix";
 import {ScrollSync} from "react-scroll-sync";
 import {MesAdminStockProductList} from '../../../../../mes/src/container/Stock/MesAdminStockProductList'
+import { MesStockProductList } from 'mes'
 
 const Productlist = () => {
     return(
         <ScrollSync >
             <div style={{display:"flex"}}>
-
-                <MenuNavigation pageType={'MES'} subType={3}/>
-                <MesAdminStockProductList/>
+              <MenuNavigation pageType={'MES'} subType={3}/>
+              <MesStockProductList type={'admin'}/>
             </div>
         </ScrollSync>
     );

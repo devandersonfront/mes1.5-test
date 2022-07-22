@@ -302,17 +302,17 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
               <ExcelTable
                   headerList={searchModalList.InputListReadonly}
                   row={searchList ?? [{}]}
-                  setSelectRow={(e) => {
+                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                     setSelectRow(e)
                   }}
                   setRow={(e) => {
                     let tmp = e.map((v, index) => {
-                      console.log('bm',v)
                       if(v.bom){
                         setSelectProduct(v.code)
                         if(v.lotList){
                           const newLots = v.lotList.map(lot => ({
                             ...lot,
+                            unit: v.unit,
                             current: lot.current - lot.amount
                           }))
                           setSelectType(v.type_name)
@@ -349,7 +349,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                   setRow={(e) => {
                     let tmpSearchList = [...searchList]
                     if(selectRow >= 0) {
-
                       tmpSearchList[selectRow] = {
                         ...tmpSearchList[selectRow],
                         lots: e

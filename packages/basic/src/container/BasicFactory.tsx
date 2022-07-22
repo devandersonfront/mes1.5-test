@@ -58,7 +58,7 @@ const BasicFactory = ({}: IProps) => {
                 Notiflix.Loading.remove()
             })
         }
-    }, [pageInfo.page, keyword])
+    }, [pageInfo.page])
 
     useEffect(() => {
         if (keyword && !weatherToRun) {
@@ -190,7 +190,7 @@ const BasicFactory = ({}: IProps) => {
                                 ...row,
                                 // id: row.tmpId,
                                 authority: row.authorityPK,
-                                manager: row.user,
+                                manager: row.user?.id ? row.user : null,
                                 version: row.version ?? null,
                                 additional: [
                                     ...additional
@@ -572,14 +572,12 @@ const BasicFactory = ({}: IProps) => {
         <div>
             <PageHeader
                 isSearch
-                searchKeyword={keyword}
                 onChangeSearchKeyword={(keyword) => {
-                    // setPageInfo({...pageInfo, page: 1})
                     setKeyword(keyword)
-                    SearchBasic(keyword, optionIndex, 1).then(() => {
-                        Notiflix.Loading.remove();
-                    });
                 }}
+                onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+                    Notiflix.Loading.remove();
+                })}
                 searchOptionList={optionList}
                 onChangeSearchOption={(option) => {
                     setOptionIndex(option)
@@ -595,6 +593,7 @@ const BasicFactory = ({}: IProps) => {
                 editable
                 resizable
                 resizeSave
+                selectable
                 headerList={[
                     SelectColumn,
                     ...column
@@ -617,7 +616,7 @@ const BasicFactory = ({}: IProps) => {
                     //@ts-ignore
                     setSelectList(e)
                 }}
-                setSelectRow={(e) => {
+                onRowClick={(clicked) => {const e = basicRow.indexOf(clicked)
                     setSelectRow(e)
                 }}
                 width={1576}

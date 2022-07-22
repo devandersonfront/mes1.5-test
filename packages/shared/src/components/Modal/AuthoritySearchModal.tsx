@@ -239,7 +239,7 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
                 width={1750}
                 rowHeight={32}
                 height={642}
-                setSelectRow={(e) => {
+                onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                   const update = searchList.map(
                       (row, index) => index === e
                           ? {

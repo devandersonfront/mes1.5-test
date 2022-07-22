@@ -41,7 +41,7 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
     if(column.type !== 'readonly') {
       if(isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount) === -1) {
         loadDefectList()
-      }else{
+      }else if(row.poor_quantity){
         setTotalCount(row.poor_quantity)
       }
     } else {
@@ -303,7 +303,7 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
               width={1746}
               rowHeight={32}
               height={718}
-              setSelectRow={(e) => {
+              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                 setSelectRow(e)
               }}
               type={'searchModal'}

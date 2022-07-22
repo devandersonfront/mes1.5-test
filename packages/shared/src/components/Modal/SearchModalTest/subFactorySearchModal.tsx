@@ -296,7 +296,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 rowHeight={32}
                                 height={632}
                                 setRow={()=>{}}
-                                setSelectRow={(e) => {
+                                onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                                     if(!searchList[e].border){
                                         searchList.map((v,i)=>{
                                             v.border = false;

@@ -6,10 +6,10 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
-import PeriodSelectCalendar from '../../../../main/component/Header/PeriodSelectCalendar'
-import ButtonGroup from '../../../../main/component/ButtonGroup'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
+import {PeriodSelectCalendar} from 'shared/src/components/Header/PeriodSelectCalendar';
+import ButtonGroup from 'shared/src/components/ButtonGroup';
 
 interface SelectParameter {
   from:string
@@ -232,6 +232,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
       <ExcelTable
         editable
         resizable
+        selectable
         headerList={[
           SelectColumn,
           ...processColumn
@@ -270,6 +271,7 @@ const MesQualityDefect = ({page, keyword, option}: IProps) => {
       <ExcelTable
         editable
         resizable
+        selectable
         headerList={[
           SelectColumn,
           ...pauseColumn

@@ -16,8 +16,7 @@ import {useRouter} from "next/router";
 //@ts-ignore
 import Notiflix from "notiflix"
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "shared";
-import {setToolDataAdd, ToolUploadInterface} from "shared/src/reducer/toolInfo";
+import {setToolDataAdd} from "shared/src/reducer/toolInfo";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
 
@@ -322,16 +321,12 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 }}
                 dataLimit
                 isSearch
-                searchKeyword={keyword}
-                onChangeSearchKeyword={(keyword) => {
-                    console.log(keyword)
+                onChangeSearchKeyword={setKeyword}
+                onSearch={() => {
                     setSelectList(new Set)
-                    setKeyword(keyword)
-                    // setPageInfo({...pageInfo,page:1})
                     SearchBasic(keyword, 1).then(() => {
-                        Notiflix.Loading.remove();
-                      });
-                }}
+                Notiflix.Loading.remove()
+                })}}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(index) => {
                     setOptionIndex(index);
@@ -340,6 +335,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
             />
             <ExcelTable
                 resizable
+                selectable
                 headerList={[SelectColumn,...column]}
                 row={basicRow}
                 setRow={(e) => {

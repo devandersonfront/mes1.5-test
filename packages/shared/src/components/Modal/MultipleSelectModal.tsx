@@ -42,7 +42,7 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
     })
     const [isFilter, setIsFilter] = useState<boolean>(false)
 
-    const selector = useSelector((state:RootState) => state.MulitpleSelectModal);
+    const selector = useSelector((state:RootState) => state.productSelect);
     const dispatch = useDispatch();
 
     const [saveList, setSaveList] = useState<any[]>([]);
@@ -328,10 +328,9 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
                                     width={"100%"}
                                     rowHeight={32}
                                     height={576}
-                                    setSelectRow={(e) => {
+                                    onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                                         setSelectRow(e)
                                         if(selectRow !== undefined && selectRow !== null){
-                                            // dispatch(insert_select_productData({...searchList[e], date:row.date, amount:row.amount, id:Math.random()+"product"}));
                                         }
 
                                         // if(selector.total_length > saveList.length){
@@ -363,7 +362,7 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
                                 width={"100%"}
                                 rowHeight={32}
                                 height={576}
-                                setSelectRow={(e) => {
+                                onRowClick={(clicked) => {const e = saveList.indexOf(clicked) 
                                     setSelectRow(e)
                                     dispatch(insert_select_productList(e));
                                 }}

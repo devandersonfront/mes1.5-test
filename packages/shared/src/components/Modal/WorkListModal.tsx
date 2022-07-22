@@ -233,7 +233,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     }).catch((error) => {
       Notiflix.Loading.remove()
       if(error){
-        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        Notiflix.Report.failure('프린터 없음', '프린터 연결을 확인해 주세요.', '확인')
         return false
       }
     })
@@ -359,6 +359,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
+              selectable
                 headerList={[
                   SelectColumn,
                   ...searchModalList.workList
@@ -382,17 +383,10 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
               width={1746}
               rowHeight={32}
               height={552}
-              // setSelectRow={(e) => {
+              // onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
               //   setSelectRow(e)
               // }}
-              setSelectRow={(e) => {
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
+              onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                 setSelectRow(e)
               }}
               type={'searchModal'}

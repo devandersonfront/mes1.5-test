@@ -80,18 +80,6 @@ const BasicProduct = ({}: IProps) => {
     })
   },[])
 
-  const selectedData = () => {
-
-    let tmpSelectList : any[] = []
-    basicRow.map(row => {
-      if(selectList.has(row.id)){
-        tmpSelectList.push(row)
-      }
-    })
-    setSelectRow(tmpSelectList[0])
-
-  }
-
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
@@ -222,7 +210,6 @@ const BasicProduct = ({}: IProps) => {
           ],
           machines:[
             ...row?.machines?.map((machine)=>{
-              // console.log(machine,'machinemachine')
               return {
                 sequence : machine.sequence,
                 setting: machine.setting,
@@ -527,13 +514,13 @@ const BasicProduct = ({}: IProps) => {
         ...appendAdditional,
         customer_id: row.customer?.name,
         customerArray: row.customer,
-        cm_id: row.model?.model ?? "-",
+        cm_id: row.model?.model,
         modelArray: row.model,
         process_id: row.process?.name,
         processArray: row.process,
         type_id: row.type,
         type: column[4].selectList[row.type].name,
-        id: `mold_${random_id}`,
+        id: `product_${random_id}`,
       }
     })
 
@@ -584,7 +571,7 @@ const BasicProduct = ({}: IProps) => {
         setBasicRow([
           {
             ...items,
-            id: `process_${random_id}`,
+            id: `product_${random_id}`,
             name: null,
             additional: [],
 
@@ -677,8 +664,6 @@ const BasicProduct = ({}: IProps) => {
 
   const convertBarcodeData = (quantityData) => {
 
-    console.log(quantityData,'quantityDataquantityData')
-
     return [{
       material_id: quantityData.product_id,
       material_type: 2,
@@ -724,14 +709,10 @@ const BasicProduct = ({}: IProps) => {
       <div>
         <PageHeader
             isSearch
-            searchKeyword={keyword}
-            onChangeSearchKeyword={(keyword) => {
-              setKeyword(keyword)
-              // setPageInfo({...pageInfo,page:1})
-              SearchBasic(keyword, optionIndex, 1).then(() => {
-                Notiflix.Loading.remove();
-              });
-            }}
+            onChangeSearchKeyword={setKeyword}
+            onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove();
+            })}
             searchOptionList={optionList}
             onChangeSearchOption={(option) => {
               setOptionIndex(option)
@@ -746,6 +727,7 @@ const BasicProduct = ({}: IProps) => {
             editable
             resizable
             resizeSave
+            selectable
             headerList={[
               SelectColumn,
               ...column
@@ -760,7 +742,6 @@ const BasicProduct = ({}: IProps) => {
                   v.isChange = false
                 }
               })
-              console.log(e)
               setSelectList(tmp)
               competeProductV1u(e)
             }}
@@ -769,7 +750,8 @@ const BasicProduct = ({}: IProps) => {
             setSelectList={ (p) => {
               setSelectList(p as any)
             }}
-            setSelectRow={setSelectRow}
+            onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+              setSelectRow(e)}}
             width={1576}
             height={settingHeight(basicRow.length)}
         />

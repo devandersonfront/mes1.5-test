@@ -16,7 +16,7 @@ import PaginationComponent from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {RootState} from "shared";
 import {useDispatch, useSelector} from "react-redux";
-import {insert_machine_list} from 'shared/src/reducer/machineSelect'
+import { insert_machine_list, selectMachineList } from 'shared/src/reducer/machineSelect'
 
 interface IProps {
     column: IExcelHeaderType
@@ -28,7 +28,7 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const MachineSearchModal = ({column, row, onRowChange}: IProps) => {
 
-    const selector = useSelector((state:RootState) => state.MachineSelectReducer);
+    const selector = useSelector(selectMachineList);
     const dispatch = useDispatch();
 
     const [isOpen, setIsOpen] = useState<boolean>(false)

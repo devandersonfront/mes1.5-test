@@ -32,7 +32,6 @@ interface IProps {
   style?: any
   onClickMenu?: (index: number) => void
   menuIndex?: number
-  searchKeyword?: string
   onChangeSearchKeyword?: (keyword: string) => void
   searchOptionList?: string[]
   onChangeSearchOption?: (option: number) => void
@@ -66,6 +65,7 @@ interface IProps {
   radioTexts?:string[]
   radioValue?:number
   onChangeRadioValues?:(radioValues:number) => void
+  onSearch?:() => void
 }
 
 const useStyles = makeStyles(_ => {
@@ -157,11 +157,10 @@ const lightTheme = createTheme({
   }
 })
 
-const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList, buttonsOnclick, isSearch, style, leftButton, onClickMenu, menuIndex,
-                  searchKeyword, onChangeSearchKeyword, searchOptionList, onChangeSearchOption, filterList, onChangeFilter,
-                  serviceFilterButton, onClickServiceButton, leftButtonOnClick, basicMachineType, typeListOnClick, isCalendar, onChangeSelectDate,
+const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList, buttonsOnclick, isSearch, style,
+                  onChangeSearchKeyword, searchOptionList, onChangeSearchOption, filterList, onChangeFilter, basicMachineType, typeListOnClick, isCalendar, onChangeSelectDate,
                   calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code,
-                  isRadio, radioTexts, radioValue, onChangeRadioValues}: IProps) => {
+                  isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch}: IProps) => {
 
   const [machineCheck, setMachineCheck] = React.useState<any>({
     all: true,
@@ -173,11 +172,10 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList
   //     moment(new Date()).format("yyyy.MM")
   // )
 
-  useEffect(() => {
-    setKeyword(searchKeyword)
-  }, [searchKeyword])
+  // useEffect(() => {
+  //   setKeyword(searchKeyword)
+  // }, [searchKeyword])
 
-  const classes = useStyles();
   const classes2 = useStyles2();
 
 
@@ -196,7 +194,7 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList
 
       case "period":
         return (
-            <PeriodSelectCalendar calendarTitle={calendarTitle} selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={dataLimit} />
+            <PeriodSelectCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={dataLimit} />
         )
       default:
         return
@@ -296,7 +294,8 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList
                                   backgroundColor: '#00000000',
                                   border: 0,
                                   height: 32,
-                                  width: 155
+                                  width: 155,
+                                  cursor:'pointer'
                                 }}
                             >
                               {
@@ -313,17 +312,20 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList
                           value={keyword ?? ""}
                           type={"text"}
                           placeholder="검색어를 2글자 이상 입력해주세요."
-                          onChange={(e) => {setKeyword(e.target.value)}}
+                          onChange={(e) => {
+                            setKeyword(e.target.value)
+                            onChangeSearchKeyword && onChangeSearchKeyword(e.target.value ?? "")
+                          }}
                           onKeyDown={(e) => {
                             if(e.key === 'Enter'){
-                              onChangeSearchKeyword && onChangeSearchKeyword(keyword ?? "")
+                              onSearch && onSearch()
                             }
                           }}
                           style={{width:"256px", height:"30px", borderRadius: '6px', paddingLeft:"10px", border:"none", backgroundColor: 'rgba(0,0,0,0)'}}
                       />
                       <div
-                          style={{background:"#19b9df", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center",borderRadius:"6px"}}
-                          onClick={() => {onChangeSearchKeyword && onChangeSearchKeyword(keyword ?? "")}}
+                          style={{background:"#19b9df", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center",borderRadius:"6px", cursor:'pointer'}}
+                          onClick={() => onSearch && onSearch()}
                       >
                         <img src={Search_icon} style={{width:"16.3px",height:"16.3px"}} />
                       </div>

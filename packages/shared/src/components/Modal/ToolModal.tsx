@@ -196,7 +196,7 @@ const ToolModal = ({column, row, onRowChange}: IProps) => {
                                 width={1746}
                                 rowHeight={32}
                                 height={591}
-                                setSelectRow={(e) => {
+                                onRowClick={(clicked) => {const e = data.indexOf(clicked) 
                                     setSelectRow(e)
                                 }}
                                 type={'searchModal'}

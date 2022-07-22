@@ -230,7 +230,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const filterList = () => {
-
     if(row.id?.includes('operation')){
       return searchList.map((v, i) => (
           {
@@ -267,6 +266,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
       ))
 
     }else{
+      if(!searchList.some(v => v.isChange)) return []
       return searchList.map((v, i) => (
           {
             seq: i+1,
@@ -274,7 +274,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               ...row,
               additional: row.additional ?? [],
               process: row.processArray,
-              model: row.model === '' ? null : row.model,
+              model: row.model?.id ? row.modal : null,
               type: row.type_id ?? row.type === '완제품' ? 2 : 1,
               product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
               code: row.code,
@@ -341,6 +341,8 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
         if(res) {
           Notiflix.Report.success("저장되었습니다.","","확인", () => setIsOpen(false))
         }
+      } else {
+        setIsOpen(false)
       }
     }
   }
@@ -484,6 +486,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
             setSelectRow(selectRow -1)
             return {
               ...v,
+              isChange: true,
               seq: i+1
             }
           })])
@@ -513,6 +516,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
           setSelectRow(selectRow +1)
           return {
             ...v,
+            isChange: true,
             seq: i+1
           }
         })])
@@ -533,7 +537,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
           tmpRow.splice(selectRow, 1)
 
           const filterRow = tmpRow.map((v , i)=>{
-            return {...v , seq : i + 1}
+            return {...v , seq : i + 1, isChange:true}
           })
           setSearchList(filterRow)
           setSelectRow(undefined)
@@ -670,17 +674,23 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
                   width={1746}
                   rowHeight={32}
                   height={552}
-                  // setSelectRow={(e) => {
+                  // onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                   //   setSelectRow(e)
                   // }}
-                  setSelectRow={(e) => {
-                    if(!searchList[e].border){
-                      searchList.map((v,i)=>{
-                        v.border = false;
-                      })
-                      searchList[e].border = true
-                      setSearchList([...searchList])
-                    }
+                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
+                    const update = searchList.map(
+                      (row, index) => index === e
+                        ? {
+                          ...row,
+                          border: true,
+                        }
+                        : {
+                          ...row,
+                          border: false
+                        }
+                    );
+                    setSearchList(update)
+
                     setSelectRow(e)
                   }}
                   type={'searchModal'}

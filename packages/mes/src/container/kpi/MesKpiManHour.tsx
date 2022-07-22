@@ -3,17 +3,14 @@ import {
     columnlist,
     ExcelTable,
     Header as PageHeader,
-    IExcelHeaderType, MemberSearchModal,
+    IExcelHeaderType,
     OperationSearchModal, PauseModal,
     RequestMethod, TextEditor, UnitContainer
 } from "shared";
 import moment from "moment";
-import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
-import ButtonGroup from "../../../../main/component/ButtonGroup";
+import ButtonGroup from 'shared/src/components/ButtonGroup';
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
-import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
-import {DatetimePickerBox} from "shared/src/components/CalendarBox/DatetimePickerBox";
 import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
 import Notiflix from "notiflix";
 import {useRouter} from "next/router";
@@ -120,7 +117,6 @@ const MesKpiManHour = () => {
         setPauseBasicRow(pauseBasicRow.map(row => ({...row, manDays: `${((row.lead_time * processBasicRow.standard_production)/86400).toFixed(1)}`})))
     }, [processBasicRow.standard_production])
 
-    console.log(pauseBasicRow)
     React.useEffect(()=>{
 
         if(pauseBasicRow.length){
@@ -185,6 +181,7 @@ const MesKpiManHour = () => {
             <ExcelTable
                 editable
                 resizable
+                selectable
                 headerList={[
                     SelectColumn,
                     ...pauseColumn

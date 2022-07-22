@@ -90,7 +90,7 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
                     }
                 }}
             >
-                <p>{row.inspection_category !== null ? "결과 보기" : "결과 등록"}</p>
+                <p>{row.inspection_cat록egory !== null ? "결과 보기" : "결과 등록"}</p>
             </UploadButton>
         </div>
     )

@@ -163,38 +163,6 @@ const InputInfoModal = ({column, row, onRowChange,}: IProps) =>{
 
                     <div style={{display: 'flex', justifyContent: 'space-between', margin: '24px 48px 8px 16px'}}>
                         <div style={{fontSize:"22px"}}>{column.subTitle}</div>
-                        {/*<div style={{display:"flex", justifyContent:"space-between", width:240}}>*/}
-                        {/*    <Button onClick={() => {*/}
-                        {/*        let random_id = Math.random()*1000;*/}
-                        {/*        setSearchList([*/}
-                        {/*            ...searchList,*/}
-                        {/*            {*/}
-                        {/*                seq: searchList.length+1,*/}
-                        {/*                id: `modalId_${random_id}`,*/}
-                        {/*            }*/}
-                        {/*        ])*/}
-                        {/*    }}>*/}
-                        {/*        <p>행 추가</p>*/}
-                        {/*    </Button>*/}
-                        {/*    <Button style={{marginLeft: 16}} onClick={() => {*/}
-                        {/*        let tmp = searchList*/}
-                        {/*        console.log(selectList, selectRow)*/}
-                        {/*        tmp.splice(selectRow,1);*/}
-                        {/*        tmp.map((row, index) => {*/}
-                        {/*            if(index+1 > selectRow){*/}
-                        {/*                row.seq -= 1*/}
-                        {/*            }*/}
-                        {/*        })*/}
-
-                        {/*        // deleteSubFactory()*/}
-                        {/*        setSearchList([*/}
-                        {/*          ...tmp,*/}
-                        {/*        ])*/}
-                        {/*    }}>*/}
-                        {/*        <p>행 삭제</p>*/}
-                        {/*    </Button>*/}
-
-                        {/*</div>*/}
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
                         <ExcelTable
@@ -214,14 +182,14 @@ const InputInfoModal = ({column, row, onRowChange,}: IProps) =>{
                             width={1746}
                             rowHeight={32}
                             height={568}
-                            // setSelectRow={(e) => {
+                            // onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                             //   setSelectRow(e)
                             // }}
                             selectList={selectList}
                             setSelectList={(e) => {
                                 setSelectList(e as Set<number>);
                             }}
-                            setSelectRow={(e) => {
+                            onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                                 if(!searchList[e].border){
                                     searchList.map((v,i)=>{
                                         v.border = false;

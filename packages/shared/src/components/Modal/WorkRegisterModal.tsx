@@ -326,7 +326,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 width={1746}
                 rowHeight={32}
                 height={552}
-                setSelectRow={(e) => {
+                onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                   setSelectRow(e)
                 }}
                 type={'searchModal'}

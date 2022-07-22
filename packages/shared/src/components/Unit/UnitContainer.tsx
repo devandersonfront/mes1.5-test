@@ -35,7 +35,6 @@ const UnitContainer = ({ row, column, setRow}: IProps) => {
         setTitle(fixNumber !== undefined ? fixNumber : "" )
     }, [row[column.key]])
 
-
   return (
     <UnitWrapper>
       <UnitValue>
@@ -44,7 +43,7 @@ const UnitContainer = ({ row, column, setRow}: IProps) => {
             ? <p style={{ color: column.textType === 'Modal' ? '#0000004d' : '#ffffff4d' }}>
               {column.placeholder}
             </p>
-            : <p style={{color: column.textType === 'Modal' ? 'black' : 'white'}}>{title}</p>
+            : <p style={{color: column.textType === 'Modal' ? 'black' : 'white', textAlign: column.textAlign ?? null}}>{title}</p>
         }
       </UnitValue>
       <UnitBox>

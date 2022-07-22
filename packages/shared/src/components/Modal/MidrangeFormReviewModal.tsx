@@ -23,11 +23,9 @@ interface IProps {
 const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<Array<any>>()
-
     React.useEffect(()=>{
         setSearchList([...formReviewData.basic])
     },[formReviewData])
-
     return (
         <SearchModalWrapper >
             <Modal isOpen={isOpen} style={{
@@ -79,7 +77,7 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
                             width={1746}
                             rowHeight={32}
                             height={552}
-                            setSelectRow={(e) => {
+                            onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                                 if(!searchList[e].border){
                                     searchList.map((v,i)=>{
                                         v.border = false;

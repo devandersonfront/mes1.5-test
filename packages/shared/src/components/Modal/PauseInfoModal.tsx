@@ -316,7 +316,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               width={1746}
               rowHeight={32}
               height={718}
-              setSelectRow={(e) => {
+              onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                 setSelectRow(e)
               }}
               type={'searchModal'}

@@ -615,23 +615,14 @@ const BasicCustomer = ({}: IProps) => {
     setBasicRow(rows);
   };
 
-  const searchValidation = (searchKeyword) => {
-    setKeyword(searchKeyword)
-    if(keyword === searchKeyword || pageInfo.page === 1){
-      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-        Notiflix.Loading.remove();
-      })
-    }else{
-      setPageInfo({...pageInfo,page:1})
-    }
-  }
-
   return (
       <div>
         <PageHeader
             isSearch
-            searchKeyword={keyword}
-            onChangeSearchKeyword={searchValidation}
+            onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove();
+            })}
+            onChangeSearchKeyword={(searchKeyword) => setKeyword(searchKeyword)}
             searchOptionList={optionList}
             onChangeSearchOption={setOptionIndex}
             optionIndex={optionIndex}
@@ -646,6 +637,7 @@ const BasicCustomer = ({}: IProps) => {
             editable
             resizable
             resizeSave
+            selectable
             headerList={[
               SelectColumn,
               ...column
@@ -666,7 +658,8 @@ const BasicCustomer = ({}: IProps) => {
             selectList={selectList}
             //@ts-ignore
             setSelectList={setSelectList}
-            setSelectRow={setSelectRow}
+            onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+              setSelectRow(e)}}
             width={1576}
             height={settingHeight(basicRow.length)}
         />

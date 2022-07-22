@@ -2,7 +2,7 @@ import userInfoReducer from './userInfo'
 import menuStateReducer from './menuState'
 import menuSelectStateReducer from "./menuSelectState";
 import MachineSelectReducer from "./machineSelect";
-import MulitpleSelectModal from "./ProductSelect";
+import productSelect from "./ProductSelect";
 import infoModal from './infoModal'
 import modifyInfo from './modifyInfo'
 import deliveryRegisterState from "./deliveryRegisterState";
@@ -25,7 +25,7 @@ const rootReducer= (state: any, action: AnyAction) : CombinedState<any>=> {
         menuState: menuStateReducer,
         menuSelectState: menuSelectStateReducer,
         MachineSelectReducer,
-        MulitpleSelectModal,
+        productSelect,
         infoModal,
         modifyInfo,
         deliveryRegisterState,

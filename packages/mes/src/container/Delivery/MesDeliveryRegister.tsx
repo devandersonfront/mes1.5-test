@@ -212,7 +212,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         let random_id = Math.random()*1000;
         setBasicRow([
           {
-            name: "", id: `delivery${random_id}`, date: moment().format('YYYY-MM-DD'),
+            name: "", id: `delivery_${random_id}`, date: moment().format('YYYY-MM-DD'),
             deadline: moment().format('YYYY-MM-DD')
           },
           ...basicRow
@@ -268,6 +268,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         <ExcelTable
             editable
             resizable
+            selectable
             headerList={[
               SelectColumn,
               ...column

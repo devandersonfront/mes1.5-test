@@ -45,8 +45,6 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
   const dispatch = useDispatch()
   const router = useRouter()
 
-  console.log(subMenuList)
-  console.log('selector',selector)
   useEffect(() => {
     let tmpMenu =  menuSelect(menuType)
     setMenuList(tmpMenu)

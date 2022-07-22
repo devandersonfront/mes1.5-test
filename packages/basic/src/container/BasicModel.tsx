@@ -633,13 +633,12 @@ setKeyword('')
     <div>
       <PageHeader
         isSearch
-        searchKeyword={keyword}
         onChangeSearchKeyword={(keyword) => {
           setKeyword(keyword)
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove()
-          })
         }}
+        onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+          Notiflix.Loading.remove()
+        })}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
@@ -655,6 +654,7 @@ setKeyword('')
         editable
         resizable
         resizeSave
+        selectable
         headerList={[
           SelectColumn,
           ...column

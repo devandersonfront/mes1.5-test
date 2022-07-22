@@ -129,6 +129,7 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
       <ExcelTable
         editable
         resizable
+        selectable
         headerList={[
           SelectColumn,
           ...column

@@ -211,7 +211,7 @@ const BasicRawMaterial = ({}: IProps) => {
             ...row,
             ...selectData,
             type: settingType(row.type),
-            // customer: row.customerArray,
+            customer: row.customer?.id ? row.customer : null,
             additional: [
               ...additional
                 .map((v, index) => {
@@ -564,7 +564,7 @@ const BasicRawMaterial = ({}: IProps) => {
         setBasicRow([
           {
             ...items,
-            id: `process_${random_id}`,
+            id: `rawmaterial_${random_id}`,
             name: null,
             additional: [],
           },
@@ -676,17 +676,6 @@ const BasicRawMaterial = ({}: IProps) => {
 
   }
 
-  const searchValidation = (searchKeyword) => {
-    setKeyword(searchKeyword)
-    if(keyword === searchKeyword || pageInfo.page === 1){
-      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-        Notiflix.Loading.remove();
-      })
-    }else{
-      setPageInfo({...pageInfo,page:1})
-    }
-  }
-
   const handleModal = (type : 'barcode',isVisible) => {
     setModal({type , isVisible})
   }
@@ -729,8 +718,10 @@ const BasicRawMaterial = ({}: IProps) => {
     <div>
         <PageHeader
           isSearch
-          searchKeyword={keyword}
-          onChangeSearchKeyword={searchValidation}
+          onChangeSearchKeyword={setKeyword}
+          onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+            Notiflix.Loading.remove();
+          })}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
             setOptionIndex(option)
@@ -746,6 +737,7 @@ const BasicRawMaterial = ({}: IProps) => {
           editable
           resizable
           resizeSave
+          selectable
           headerList={[
             SelectColumn,
             ...column
@@ -764,7 +756,8 @@ const BasicRawMaterial = ({}: IProps) => {
             competeRawMaterial(e)
           }}
           selectList={selectList}
-          setSelectRow={setSelectRow}
+          onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+              setSelectRow(e)}}
           //@ts-ignore
           setSelectList={setSelectList}
           width={1576}

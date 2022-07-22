@@ -49,6 +49,7 @@ export interface IExcelHeaderType {
   hide?:boolean
   version?:number
   noSelect?:boolean
+  inputType?: string
 }
 
 export interface IResponseType {
@@ -76,15 +77,19 @@ export interface IItemMenuType {
 }
 
 export type MachineType = {
-  machine_id:string | number
-  machine_idPK:string | number
-  seq: number,
-  process_id: number,
-  process_idPK: number | string,
-  mold_id: number,
-  ln_id: number| undefined,
-  goal: number,
-  last: boolean,
+  name?:string
+  id?: string
+  index?:number
+  date?:string
+  machine_id?:string | number
+  machine_idPK?:string | number
+  seq?: number,
+  process_id?: number,
+  process_idPK?: number | string,
+  mold_id?: number,
+  ln_id?: number| undefined,
+  goal?: number,
+  last?: boolean,
   mold?: {
     mold_id:number, name:string
   }

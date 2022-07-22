@@ -1,46 +1,21 @@
-export const SET_TOOL_DATA_ADD = "SET_TOOL_DATA_ADD";
-export const TEST_TOOL = "TEST_TOOL";
 
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-export interface ToolUploadInterface {
+export type ToolState = {
     data:string
 }
+const initialState: ToolState = { data: "" }
 
-
-export const initalState: any = {
-    data:""
-}
-
-export const setToolDataAdd = (updateToolData: any) => {
-    return {
-        type: SET_TOOL_DATA_ADD,
-        payload: updateToolData
+export const toolSlice = createSlice({
+    name: 'toolInfo',
+    initialState,
+    reducers: {
+        setToolDataAdd(state, action: PayloadAction<ToolState>) {
+            return action.payload
+        }
     }
-}
+})
 
-export const testTool = (any:any) => {
-    return {
-        type:TEST_TOOL,
-        payload:any
-    }
-}
+export const { setToolDataAdd } = toolSlice.actions
+export default toolSlice.reducer
 
-type DefaultAction = ReturnType<typeof testTool> | ReturnType<typeof setToolDataAdd>
-
-const tooUploadReducer = (state: ToolUploadInterface=initalState, action:DefaultAction) => {
-    switch(action.type){
-        case SET_TOOL_DATA_ADD:
-            const modifyInit = action.payload as any
-            // state.data = modifyInit;
-            return modifyInit
-
-        // case TEST_TOOL:
-        //     console.log(action.payload)
-        //     return action.payload
-
-        default:
-            return state
-    }
-}
-
-export default tooUploadReducer

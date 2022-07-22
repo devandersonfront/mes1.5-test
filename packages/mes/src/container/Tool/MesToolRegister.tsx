@@ -166,6 +166,7 @@ const MesToolRegister = () => {
 
             <ExcelTable
                 resizable
+                selectable
                 headerList={[
                     SelectColumn,
                     ...column

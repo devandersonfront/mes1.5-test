@@ -32,11 +32,11 @@ const BasicMidrangeRegister = () => {
 
     React.useEffect(()=>{
         const data = {
-            customer: router.query.customer_id,
-            model: router.query.cm_id,
-            code: router.query.code,
-            material_name: router.query.name,
-            type: router.query.type,
+            customer: !!router.query.customer_id ? router.query.customer_id : "-",
+            model: !!router.query.cm_id ? router.query.cm_id : "-",
+            code: !!router.query.code ? router.query.code : "-",
+            material_name: !!router.query.name ? router.query.name : "-",
+            type: !!router.query.type ? router.query.type : "-",
         }
         setBasicRow([data])
         setProductId(Number(router.query.product_id))
@@ -243,7 +243,9 @@ const BasicMidrangeRegister = () => {
                     +검사 항목 추가
                 </MidrangeButton>
             </div>
-            <MidrangeFormReviewModal formReviewData={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
+            {
+              isOpen && <MidrangeFormReviewModal formReviewData={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
+            }
         </div>
     );
 };

@@ -16,7 +16,7 @@ import {PaginationComponent} from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 import {RootState} from "../../reducer";
 import {useDispatch, useSelector} from "react-redux";
-import {insert_machine_list} from "../../reducer/machineSelect";
+import {insert_machine_list, selectMachineList} from "../../reducer/machineSelect";
 
 interface IProps {
     column: IExcelHeaderType
@@ -28,7 +28,7 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const OperationMachineSearchModal = ({column, row, onRowChange}: IProps) => {
 
-    const selector = useSelector((state:RootState) => state.MachineSelectReducer);
+    const selector = useSelector(selectMachineList);
     const dispatch = useDispatch();
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -265,7 +265,7 @@ const OperationMachineSearchModal = ({column, row, onRowChange}: IProps) => {
                                     width={850}
                                     rowHeight={32}
                                     height={576}
-                                    setSelectRow={(e) => {
+                                    onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                                         if(selectRow !== undefined){
                                             selector.machineList[selectRow].machine_id = searchList[e].machine_id;
                                             selector.machineList[selectRow].machine_idPK = searchList[e].machine_idPK;
@@ -313,7 +313,7 @@ const OperationMachineSearchModal = ({column, row, onRowChange}: IProps) => {
                                     width={850}
                                     rowHeight={32}
                                     height={576}
-                                    setSelectRow={(e) => {
+                                    onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                                         setSelectRow(e)
                                     }}
                                     type={'searchModal'}

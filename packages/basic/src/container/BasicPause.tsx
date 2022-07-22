@@ -6,9 +6,9 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
-import ButtonGroup from '../../../main/component/ButtonGroup'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
+import ButtonGroup from 'shared/src/components/ButtonGroup';
 
 export interface IProps {
   children?: any
@@ -369,7 +369,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           ]}
           row={processBasicRow}
           setRow={setProcessBasicRow}
-          setSelectRow={(e) => {
+          onRowClick={(clicked) => {const e = processBasicRow.indexOf(clicked)
             const clickedList = processBasicRow.map((data, index) => {
               if (e === index) {
                 return { ...data, onClicked: true }
@@ -391,6 +391,7 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         </div>
         <ExcelTable
           editable
+          selectable
           headerList={[
             SelectColumn,
             ...pauseColumn

@@ -377,7 +377,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                                 setBasicRow({...basicRow , legendary_list : e})
                                 setModalSelectOption(e)
                             }}
-                            setSelectRow={(index) => {
+                            onRowClick={(clicked) => {const index = basicRow?.legendary_list.indexOf(clicked)
                                 setSelectLegendaryIndex(index);
                             }}
                             height={basicRow.legendary_list?.length * 40 >= 40*18+56 ? 40*19 : basicRow.legendary_list?.length * 40 + 40}
@@ -425,7 +425,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                         basicRow.check_list = result
                         setBasicRow({...basicRow})
                     }}
-                    setSelectRow={(index) => {
+                    onRowClick={(clicked) => {const index = basicRow.check_list.indexOf(clicked)
                         setSelectCheckListIndex(index)
                     }}
                     height={basicRow.check_list?.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list?.length * 40 + 40}

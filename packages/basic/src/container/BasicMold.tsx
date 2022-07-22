@@ -468,6 +468,7 @@ const BasicMold = ({}: IProps) => {
         ...row,
         ...appendAdditional,
         id: `mold_${random_id}`,
+        readonly:true
       };
     });
 
@@ -500,7 +501,7 @@ const BasicMold = ({}: IProps) => {
           {
             period: 0,
             period_unit: 0,
-            id: `process_${random_id}`,
+            id: `mold_${random_id}`,
             name: null,
             additional: [],
           },
@@ -559,25 +560,15 @@ const BasicMold = ({}: IProps) => {
     setBasicRow(rows)
   }
 
-
-  const searchValidation = (searchKeyword) => {
-    setKeyword(searchKeyword)
-    if(keyword === searchKeyword || pageInfo.page === 1){
-      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-        Notiflix.Loading.remove();
-      })
-    }else{
-      setPageInfo({...pageInfo,page:1})
-    }
-  }
-
   return (
     <div>
 
         <PageHeader
           isSearch
-          searchKeyword={keyword}
-          onChangeSearchKeyword={searchValidation}
+          onChangeSearchKeyword={setKeyword}
+          onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+            Notiflix.Loading.remove()
+          })}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
             setOptionIndex(option)
@@ -593,6 +584,7 @@ const BasicMold = ({}: IProps) => {
           editable
           resizable
           resizeSave
+          selectable
           headerList={[
             SelectColumn,
             ...column
@@ -613,7 +605,8 @@ const BasicMold = ({}: IProps) => {
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
-          setSelectRow={setSelectRow}
+          onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+              setSelectRow(e)}}
           width={1576}
           height={settingHeight(basicRow.length)}
         />

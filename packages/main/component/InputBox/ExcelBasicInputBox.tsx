@@ -3,7 +3,7 @@ import {IExcelHeaderType} from '../../common/@types/type'
 import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "shared";
-import {insert_machine_list} from 'shared/src/reducer/machineSelect'
+import { insert_machine_list, selectMachineList } from 'shared/src/reducer/machineSelect'
 
 interface IProps {
   row: any
@@ -19,7 +19,7 @@ const autoFocusAndSelect = (input: HTMLInputElement | null) => {
 
 const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   const dispatch = useDispatch();
-  const selector = useSelector((state:RootState) => state.MachineSelectReducer);
+  const selector = useSelector(selectMachineList);
 
   return (
     <input

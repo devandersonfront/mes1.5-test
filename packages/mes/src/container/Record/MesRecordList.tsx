@@ -31,8 +31,6 @@ interface IProps {
     option?: number;
 }
 
-let now = moment().format("YYYY-MM-DD");
-
 const MesRecordList = ({page, search, option}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
@@ -163,12 +161,9 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
         Promise.all(tmpColumn).then(res => {
             const newColumn = lodash.cloneDeep(res)
-            console.log(newColumn,'newColumnnewColumn')
             if(recordState){
                 newColumn.splice(2, 0, {key: "finish", name: "작업 종료", width: 118, formatter: FinishButton})
             }
-
-            console.log(newColumn,'newColumnnewColumnnewColumn')
             setColumn(newColumn)
         })
     };
@@ -347,7 +342,6 @@ const MesRecordList = ({page, search, option}: IProps) => {
     }
 
     const cleanUpData = (res: any) => {
-        console.log('record search',res)
         let tmpBasicRow = res.info_list.map((row: any, index: number) => {
             let appendAdditional: any = {};
 
@@ -381,7 +375,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 sic_id: row.inspection_category,
                 worker: row.worker.name,
                 worker_object: row.worker_object ?? row.worker,
-                id: `sheet_${random_id}`,
+                id: `record_${random_id}`,
                 loadPage,
 
             }
@@ -395,7 +389,6 @@ const MesRecordList = ({page, search, option}: IProps) => {
 
         setSelectList(new Set)
     }
-    console.log('list',basicRow)
     return (
         <div>
             <PageHeader
@@ -408,19 +401,16 @@ const MesRecordList = ({page, search, option}: IProps) => {
                     setRecordState(e)
                     setPageInfo({...pageInfo, page:1})
                 }}
-                searchKeyword={keyword}
                 searchOptionList={optionList}
                 onChangeSearchOption={(e) => {
                     setOptionIndex(e);
                 }}
-                onChangeSearchKeyword={(keyword) => {
+                onChangeSearchKeyword={setKeyword}
+                onSearch={() => {
                     setSelectList(new Set());
-                    console.log("keyword : ", keyword)
-                    setKeyword(keyword);
                     SearchBasic(keyword, optionIndex, 1).then(() => {
                         Notiflix.Loading.remove();
-                    });
-                    // setPageInfo({page:1, total:1})
+                    })
                 }}
                 calendarTitle={"종료일"}
                 calendarType={"period"}
@@ -477,6 +467,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
             <ExcelTable
                 editable
                 resizable
+                selectable
                 headerList={[
                     SelectColumn,
                     ...column

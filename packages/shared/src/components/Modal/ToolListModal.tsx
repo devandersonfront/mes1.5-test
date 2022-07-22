@@ -200,10 +200,10 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
                             width={1746}
                             rowHeight={32}
                             height={552}
-                            // setSelectRow={(e) => {
+                            // onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                             //   setSelectRow(e)
                             // }}
-                            setSelectRow={(e) => {
+                            onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                                 if(!searchList[e].border){
                                     searchList.map((v,i)=>{
                                         v.border = false;

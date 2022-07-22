@@ -16,8 +16,7 @@ import { useRouter } from "next/router";
 //@ts-ignore
 import Notiflix from "notiflix"
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "shared";
-import {setToolDataAdd, ToolUploadInterface} from "shared/src/reducer/toolInfo";
+import {setToolDataAdd} from "shared/src/reducer/toolInfo";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { settingHeight } from 'shared/src/common/Util'
 
@@ -216,7 +215,6 @@ const MesToolList = ({ page, search, option }: IProps) => {
     }
 
     const LoadBasic = async (page?: number) => {
-        console.log(page)
         Notiflix.Loading.circle()
         const res = await RequestMethod("get", "toolList", {
             path: {
@@ -280,9 +278,6 @@ const MesToolList = ({ page, search, option }: IProps) => {
                 DeleteBasic()
 
                 return
-            // case 2:
-            //     console.log(2)
-            //     return
             default:
                 return
         }
@@ -314,14 +309,12 @@ const MesToolList = ({ page, search, option }: IProps) => {
                 title={"공구 재고 현황"}
                 dataLimit
                 isSearch
-                searchKeyword={keyword}
-                onChangeSearchKeyword={(keyword) => {
-                    setSelectList(new Set());
-                    setKeyword(keyword)
-                    // setPageInfo({page:1, total:1})
+                onChangeSearchKeyword={setKeyword}
+                onSearch={() => {
+                    setSelectList(new Set())
                     SearchBasic(keyword, optionIndex, 1).then(() => {
-                        Notiflix.Loading.remove();
-                    });
+                        Notiflix.Loading.remove()
+                    })
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={(option) => {

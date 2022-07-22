@@ -100,7 +100,6 @@ const TestSearchModalTest = ({column, row, onRowChange}: IProps) => {
             }
             if(tab === null){
                 setSearchModalInit(SearchInit[column.type])
-                // console.log("searchModalInit : ", searchModalInit)
                 setSearchModalColumn(
                     [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column, index) => {
                         if(index === 0) return ({...column, colSpan(args) {
@@ -560,7 +559,7 @@ const TestSearchModalTest = ({column, row, onRowChange}: IProps) => {
                             width={1744}
                             rowHeight={32}
                             height={640}
-                            setSelectRow={(e) => {
+                            onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                                 if(!searchList[e].border){
                                     const convertList = searchList.map((v,i)=>{
                                         if(i === e){

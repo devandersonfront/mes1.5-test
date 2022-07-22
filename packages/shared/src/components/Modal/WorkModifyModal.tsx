@@ -292,6 +292,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
                     const good_quantity = Number(v.quantity ??v.sum ?? 0)-Number(v.poor_quantity ?? 0)
                     return {
                       ...v,
+                      border:false,
                       good_quantity,
                       current: good_quantity,
                       sum: Number(v.quantity ?? v.sum ?? 0),
@@ -302,7 +303,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
                 width={1746}
                 rowHeight={32}
                 height={552}
-                setSelectRow={(e) => {
+                onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                   setSelectRow(e)
                 }}
                 type={'searchModal'}

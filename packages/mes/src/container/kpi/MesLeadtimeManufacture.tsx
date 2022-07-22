@@ -10,10 +10,7 @@ import {
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
-import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
-import ButtonGroup from "../../../../main/component/ButtonGroup";
-import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
-import {DatetimePickerBox} from "shared/src/components/CalendarBox/DatetimePickerBox";
+import ButtonGroup from 'shared/src/components/ButtonGroup';
 import Notiflix from "notiflix";
 import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
 import {useRouter} from "next/router";
@@ -179,6 +176,7 @@ const MesLeadtimeManufacture = () => {
             <ExcelTable
                 editable
                 resizable
+                selectable
                 headerList={[
                     SelectColumn,
                     ...pauseColumn

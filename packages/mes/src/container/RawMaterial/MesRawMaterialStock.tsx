@@ -111,7 +111,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   useEffect(() => {
     loadPage(pageInfo.page)
-  }, [pageInfo.page, selectDate])
+  }, [pageInfo.page, selectDate, expState, nzState])
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"원자재 관리",sub:router.pathname}))
@@ -214,9 +214,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
     Notiflix.Loading.circle()
-    // if(!isPaging){
-    //   setOptionIndex(option)
-    // }
     const res = await RequestMethod('get', `rawInListSearch`,{
       path: {
         page: isPaging ?? 1,
@@ -508,7 +505,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   }
 
   const convertBarcodeData = (quantityData) => {
-    console.log(quantityData,'quantityDataquantityDataquantityData')
     return [{
       material_id: quantityData.code ?? 0,
       material_type: 0,
@@ -557,17 +553,13 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           changeExpState(e)
         }}
         isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
+        onChangeSearchKeyword={setKeyword}
+        onSearch={() => {
           setSelectList(new Set)
-          setKeyword(keyword);
-          // 
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
-          });
-          // setPageInfo({ page: 1, total: 1 });
+          })
         }}
-
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
@@ -595,6 +587,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       <ExcelTable
         editable
         resizable
+        selectable
         headerList={[
           SelectColumn,
           ...column

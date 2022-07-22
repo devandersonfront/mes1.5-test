@@ -64,11 +64,6 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
   const selector = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state)
   const product_ids_for_selected_rows = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state.product_ids_for_selected_rows)
 
-  // console.log("selector.product_ids_for_selected_rows : ", selector.product_ids_for_selected_rows);
-  // console.log("product_ids_for_selected_rows : ", product_ids_for_selected_rows);
-
-
-
   useEffect(() => {
 
     if (column.type === "bom") {
@@ -130,7 +125,6 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
       }
       if (tab === null) {
         setSearchModalInit(SearchInit[column.type])
-        // console.log("searchModalInit : ", searchModalInit)
         setSearchModalColumn(
           [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column, index) => {
             if (index === 0) return ({
@@ -218,8 +212,6 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
       params: selectType()
     })
 
-    // console.log("res for modal row: ", res);
-
     // hyunsok
     let custom_info_list;
 
@@ -235,7 +227,6 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
     }
 
     // 2244
-    // console.log("custom_info_list : ", custom_info_list);
     // 고쳐야할 부분 1111
     if (res) {
       // alert("hi")
@@ -246,21 +237,10 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
         Notiflix.Loading.remove()
       } else
         if (res.page !== 1) {
-
-          console.log("hihi");
-          
           setSearchList([...searchList, ...SearchResultSort(!column.noSelect ? [{ noneSelected: true }, ...custom_info_list] : custom_info_list, searchModalInit.excelColumnType)])
           setPageInfo({ page: res.page, total: res.totalPages });
           Notiflix.Loading.remove()
         } else {
-          // console.log(custom_info_list)
-
-          // console.log("custom_info_list : ", custom_info_list);
-
-
-          console.log("selector.product_ids_for_selected_rows : ", selector.product_ids_for_selected_rows);
-          console.log("custom_info_list : ", custom_info_list);
-
           let tmp: Set<any> = selectList
 
               tmp.add(row.product_id)
@@ -283,7 +263,6 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
             }
           })
           
-          console.log("new_rows ::::", new_rows);
           setSearchList([...SearchResultSort(!column.noSelect ? [{ id: null, noneSelected: false }, ...new_rows] : new_rows, searchModalInit.excelColumnType)])
 
           Notiflix.Loading.remove()
@@ -583,8 +562,6 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
         )
       } else {
         // alert("모달 클릭하면 여기가 실행 and onRowChange 실행")
-        // console.log("selectList.size : ", selectList.size);
-        // console.log("searchList : ", searchList);
 
         const newRows = []
 
@@ -594,20 +571,11 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
 
           searchList.forEach((row, index) => {
             if (row.id === id) {
-
-              // console.log("check : ", id);
-              // console.log("index : ", index);
-
-              // console.log("searchList[i]", searchList[index]);
-
-
               newRows.push(searchList[index]);
             }
           })
 
         })
-
-        // console.log("newRows : ", newRows);
 
         const array_for_update = newRows.map((rowdata) => {
 
@@ -634,10 +602,6 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
 
           )
         })
-
-        // console.log("array_for_update : ", array_for_update);
-        // dispatch(remove_all_product_ids_for_selected_rows())
-
 
         if (newRows.length > 1) {
           onRowChange(
@@ -735,6 +699,7 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
             <ExcelTable
               // searchModalColumn
               // headerList={ searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
+              selectable
               headerList={searchModalInit && [SelectColumn, ...searchModalColumn]}
               selectList={selectList}
 
@@ -755,18 +720,12 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
               width={1744}
               rowHeight={34}
               height={640}
-              setSelectRow={(e) => {
+              onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                 setSelectedRows([])
                 let tmp: Set<any> = selectList;
-
-                console.log(" : ", product_ids_for_selected_rows);
-
-
                 const update = searchList.map((row, index) => {
 
                   if (e === index) {
-                    console.log("searchList : ", searchList);
-
                     if (product_ids_for_selected_rows.includes(searchList[e].product_id)) {
                       tmp.delete(row.id)
                       dispatch((
@@ -786,7 +745,6 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
                       tmp.add(row.id)
 
                       // 2244
-                      console.log("searchList : ", searchList);
                       dispatch((
                         add_product_ids_for_selected_rows(searchList[e].product_id)
                       ))

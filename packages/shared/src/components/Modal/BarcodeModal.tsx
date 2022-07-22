@@ -105,6 +105,9 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Pr
         })();
     }, [isVisible]);
 
+    const firstPage = selectIndex + 1  === 1
+    const lastPage = selectIndex + 1 >= data.length
+
     return(
         <BasicModal
             isOpen={isVisible}
@@ -127,36 +130,35 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Pr
             <div style={{display : 'flex' , justifyContent : 'space-around' , alignItems : 'center' , height : '100%'}}>
                 {data?.length > 1 ?
                     <>
-                        <div onClick={async () => {
-                            if(selectIndex){
+                        <div style={{height: '100%', display: 'flex', alignItems: 'center', flex:0.25, justifyContent: 'center', cursor: !firstPage && 'pointer'}} onClick={
+                            firstPage ? null :
+                            async () => {
                                 setSelectIndex((prev) => prev-1)
                                 const image = await getBarcodeImage(data[selectIndex - 1])
                                 setImageSrc(image)
-                            }else{
-                                Notiflix.Report.warning("경고","첫 페이지입니다.","확인")
-                            }
                         }}>
-                           <span className="material-symbols-outlined">
-                                keyboard_double_arrow_left
-                           </span>
+                            {
+                                !firstPage && <span style={{fontSize: '50px'}} className="material-symbols-outlined">
+                                    keyboard_double_arrow_left
+                               </span>
+                            }
                         </div>
-                        <div style={{display : 'flex' , flexDirection : 'column' , alignItems :"center"}}>
+                        <div style={{display : 'flex' , flexDirection : 'column' , alignItems :"center", flex: 0.5}}>
                             {printBarcode()}
                             <br/>
                             {selectIndex + 1}/{data.length}
                         </div>
-                        <div onClick={async () => {
-                            if(selectIndex < data.length - 1){
+                        <div style={{ height: '100%', display: 'flex', alignItems: 'center', flex:0.25, justifyContent:'center', cursor:!lastPage && 'pointer'}} onClick={
+                            lastPage ? null :
+                            async () => {
                                 setSelectIndex((prev) => prev + 1)
                                 const image = await getBarcodeImage(data[selectIndex + 1])
                                 setImageSrc(image)
-                            }else{
-                                Notiflix.Report.warning("경고","마지막 페이지입니다.","확인")
-                            }
                         }}>
-                            <span className="material-symbols-outlined">
+                            {!lastPage && <span style={{fontSize: '50px'}} className="material-symbols-outlined">
                                 keyboard_double_arrow_right
                             </span>
+                            }
                         </div>
                     </>
                     :

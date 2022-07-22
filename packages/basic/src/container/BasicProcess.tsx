@@ -598,14 +598,10 @@ setKeyword('')
     <div>
       <PageHeader
         isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          // setPageInfo({page:1,total:1})
-          setKeyword(keyword)
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }}
+        onChangeSearchKeyword={setKeyword}
+        onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+          Notiflix.Loading.remove()
+        })}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
@@ -619,6 +615,7 @@ setKeyword('')
         resizable
         resizeSave
         pageInfo={pageInfo}
+        selectable
         headerList={[
           SelectColumn,
           ...column
@@ -642,7 +639,8 @@ setKeyword('')
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
-        setSelectRow={setSelectRow}
+        onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+              setSelectRow(e)}}
         loadEvent={LoadBasic}
         width={1576}
         height={settingHeight(basicRow.length)}

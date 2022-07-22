@@ -17,7 +17,6 @@ const ProfileHeader = () => {
   //@ts-ignore
   const userInfo = useSelector(selectUserInfo)
   const dispatch = useDispatch()
-  console.log('userInfo', userInfo)
 
   useEffect(() => {
     let userInfo = cookie.load('userInfo')

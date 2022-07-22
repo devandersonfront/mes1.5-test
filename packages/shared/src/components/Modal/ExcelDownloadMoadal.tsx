@@ -101,7 +101,6 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction}:
           .then((res) => {
               resetFunction()
               setIsOpen(false)
-              console.log(res)
               // blobData = res.data
           }).catch((err) => {
               Notiflix.Report.failure("실패","업로드에 실패했습니다.","확인")

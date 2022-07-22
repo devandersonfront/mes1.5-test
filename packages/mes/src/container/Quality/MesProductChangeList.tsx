@@ -38,7 +38,6 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
     })
 
     useEffect(() => {
-        // setOptionIndex(option)
         if(searchKeyword){
             SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
                 Notiflix.Loading.remove()
@@ -88,11 +87,6 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
 
 
     const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
-
-        // alert("keyword : "+ keyword)
-        console.log("keyword 22 : ", keyword);
-        
-
         Notiflix.Loading.circle()
         if(!isPaging){
             setOptionIndex(option)
@@ -110,9 +104,6 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
             }
         })
 
-
-        // console.log("res : ", res);
-        
 
         if(res){
             setPageInfo({
@@ -139,7 +130,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 title: v.title,
                 register: moment(v.created).format('YYYY.MM.DD'),
                 writer: v.writer.name,
-                id: `sheet_${random_id}`,
+                id: `productchange_${random_id}`,
                 pcr_id: v.pcr_id
             }
         })
@@ -195,13 +186,11 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
             <PageHeader
                 isSearch
                 isCalendar
-                searchKeyword={keyword}
                 searchOptionList={optionList}
-                onChangeSearchKeyword={async (keyword) =>{
+                onChangeSearchKeyword={setSearchKeyword}
+                onSearch={()=> {
                     setSelectList(new Set)
-                    // await setSearchKeyword(keyword)
-                    // setPageInfo({page:1,total:1})
-                    await SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+                    SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
                         Notiflix.Loading.remove()
                     })
                 }}
@@ -223,6 +212,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
             <ExcelTable
                 editable
                 resizable
+                selectable
                 headerList={[
                     SelectColumn,
                     ...column

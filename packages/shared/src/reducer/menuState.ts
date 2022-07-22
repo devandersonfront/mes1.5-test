@@ -16,7 +16,6 @@ export const menuSlice = createSlice({
   initialState,
   reducers: {
     setMenuState(state, action: PayloadAction<MenuState>) {
-      console.log(action)
       state.main = action.payload.main
       state.sub = action.payload.sub
     }

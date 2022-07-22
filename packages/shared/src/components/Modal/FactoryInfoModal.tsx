@@ -27,7 +27,7 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
+  const [title, setTitle] = useState<string>('공장')
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>(-1)
@@ -103,18 +103,16 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
   const saveSubFactory = async () => {
     Notiflix.Loading.circle();
 
-    let nameCheck = true;
-
     const filterList = searchList.map((list)=>{
       if(!list.name){
         Notiflix.Report.warning("경고","세분화명을 입력해주세요.","확인")
-        nameCheck = false
+        return
       }else{
-        return {...list , factory_id : row.factory_id}
+        return {...list , factory_id : row.factory_id, manager: list.user?.id ? list.user : null}
       }
     })
 
-    if(filterList && nameCheck){
+    if(filterList){
       await RequestMethod("post", "subFactorySave", filterList)
           .then((res) => {
             onRowChange({...row, subFactories:filterList})
@@ -190,20 +188,15 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             setIsOpen(true)
           }}
             hoverColor={POINT_COLOR}
-            haveId={row.subFactories && row.subFactories.length}
+            haveId={row.subFactories?.length}
           >
-            <p>{row.subFactories && row.subFactories.length ? "세분화 보기" : "세분화 등록"}</p>
+            <p>{row.subFactories?.length ? "세분화 보기" : "세분화 등록"}</p>
           </UploadButton>
         </div>
 
     )
-
   const changeData = (key:string) => {
-    if(column.type === "subFactory" && row.factory){
-      return row["factory"].key
-    }else{
-      return row[key]
-    }
+    return !!row[key] ? row[key] : "-"
   }
 
   const competeAuthority = (rows) => {
@@ -276,13 +269,13 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>공장명</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{changeData("name") ?? "-"}</HeaderTableText>
+              <HeaderTableText>{changeData("name")}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>공장 주소</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 786}}>
-              <HeaderTableText>{changeData("address") ?? "-"}</HeaderTableText>
+              <HeaderTableText>{changeData("address")}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -290,19 +283,19 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>담당자</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{changeData("manager") ?? "-"}</HeaderTableText>
+              <HeaderTableText>{changeData("manager")}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>직책</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{changeData("appointment") ?? "-"}</HeaderTableText>
+              <HeaderTableText>{changeData("appointment")}</HeaderTableText>
             </HeaderTableTextInput>
             <HeaderTableTitle>
               <HeaderTableText style={{fontWeight: 'bold'}}>전화번호</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 480}}>
-              <HeaderTableText>{changeData("telephone") ?? "-"}</HeaderTableText>
+              <HeaderTableText>{changeData("telephone")}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <HeaderTable>
@@ -310,7 +303,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText style={{fontWeight: 'bold'}}>비고</HeaderTableText>
             </HeaderTableTitle>
             <HeaderTableTextInput style={{width: 1090}}>
-              <HeaderTableText>{changeData("description") ?? "-"}</HeaderTableText>
+              <HeaderTableText>{changeData("description")}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
           <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
@@ -383,36 +376,28 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
               row={searchList ?? [{}]}
               setRow={(e) => {
-
                 let tmp: Set<any> = selectList
-                e.map(v => {
+                const newSearchList = e.map(v => {
                   if(v.isChange) {
                             tmp.add(v.id)
                             v.isChange = false
-                        }
+                  }
+                  return {
+                    ...v,
+                    noneSelected: false
+                  }
                 })
                 setSelectList(tmp)
-
-                // e.map((v)=>{
-                //   v.manager_name = v.manager?.name;
-                //   v.appointment = v.manager?.appointment;
-                //   v.telephone = v.manager?.telephone;
-                // })
-
-                // setSearchList([...e])
-                competeAuthority(e)
+                setSearchList(newSearchList)
               }}
               width={1746}
               rowHeight={32}
               height={568}
-              // setSelectRow={(e) => {
-              //   setSelectRow(e)
-              // }}
               selectList={selectList}
               setSelectList={(e) => {
                 setSelectList(e as Set<number>);
               }}
-              setSelectRow={(e) => {
+              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
 
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{

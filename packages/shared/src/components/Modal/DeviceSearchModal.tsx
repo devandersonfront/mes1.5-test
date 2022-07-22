@@ -37,6 +37,7 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
     total: 1
   })
 
+
   useEffect(() => {
     if(isOpen) SearchBasic(searchKeyword, optionIndex, 1).then(() => {
       Notiflix.Loading.remove()
@@ -51,7 +52,6 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
   }, [pageInfo.page])
 
   const confirmFunction = () => {
-    // if(selectRow !== undefined && selectRow !== null){
       onRowChange({
         ...row,
         ...searchList[selectRow],
@@ -68,7 +68,6 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
       machine_idPK: row.machine_id,
       manager: row.manager ? row.manager.name : null,
       manager_data: row.manager,
-      doubleClick:confirmFunction
     }
 
     return tmpData
@@ -250,14 +249,22 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
               rowHeight={32}
               height={576}
               setRow={()=>{}}
-              setSelectRow={(e) => {
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
+              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
+                const update = searchList.map(
+                  (row, index) => index === e
+                    ? {
+                      ...row,
+                      doubleClick: confirmFunction,
+                      border: true,
+                    }
+                    : {
+                      ...row,
+                      border: false
+                    }
+                );
+
+                setSearchList(update)
+
                 setSelectRow(e)
               }}
               type={'searchModal'}

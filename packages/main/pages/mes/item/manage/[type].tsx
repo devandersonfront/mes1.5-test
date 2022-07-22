@@ -328,8 +328,6 @@ const ItemManagePage = ({title, type, code}: IProps) => {
           <div style={{width: 1570}}>
             <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
               {/*<HeaderButton onClick={() => {*/}
-              {/*  console.log(baseItem)*/}
-              {/*  console.log(columnlist[type])*/}
               {/*}} key={`btnCreate`}>초기화</HeaderButton>*/}
               <HeaderButton onClick={() => saveItem(code, baseItem)} key={`btnCreate`}>저장</HeaderButton>
             </div>
@@ -379,6 +377,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
               </div>
               <ItemManageBox title={title} items={addiItem} setItems={setAddiItem} type={'additional'}/>
               <ExcelTable
+                  selectable
                   headerList={[
                     SelectColumn,
                     ...columnlist.additionalItem
@@ -389,7 +388,8 @@ const ItemManagePage = ({title, type, code}: IProps) => {
                   selectList={selectList}
                   setSelectList={setSelectList}
                   setRow={(e) => competeAddtion(e)}
-                  setSelectRow={setSelectRow}
+                  setSelectRow={(e) => {
+                    setSelectRow(e)}}
               />
             </>
             }

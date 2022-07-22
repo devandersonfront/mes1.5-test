@@ -66,7 +66,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const [inputMaterial, setInputMaterial] = useState<any>()
   const isModify = column.action === 'modify'
 
-  console.log(inputMaterialList)
   useEffect(() => {
     if(isOpen){
       getInputMaterialList(row.osId, row.bom_root_id)
@@ -220,6 +219,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           date: lot.date ?? moment(lot.end).format("YYYY-MM-DD"),
           warehousing: lot.warehousing ?? lot.good_quantity,
           amount: lotAmount,
+          unit: input.unit,
           originalAmount: originalAmount,
           originalCurrent: Number(lot.current),
           current: isModify? new Big(Number(lot.current)).plus(originalTotalUsage).minus(totalUsage).toNumber() : new Big(Number(lot.current)).minus(totalUsage).toNumber(),
@@ -232,6 +232,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           date: lot.date ?? moment(lot.end).format("YYYY-MM-DD"),
           warehousing: lot.warehousing ?? lot.good_quantity,
           amount: lotAmount,
+          unit: input.unit,
           originalAmount: originalAmount,
           originalCurrent: Number(lot.current),
           current: isModify ? new Big(Number(lot.current)).plus(originalTotalUsage).minus(totalUsage).toNumber() : new Big(Number(lot.current)).minus(totalUsage).toNumber(),
@@ -254,19 +255,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   const ModalButtons = () => {
     return <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
-      {
-        column.type !== 'readonly' && <div
-              onClick={onCancelEvent}
-              style={{width: '50%', height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-          >
-            <p>취소</p>
-          </div>
-      }
+      <div
+        onClick={onCancelEvent}
+        style={{width: '50%', height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <p>취소</p>
+      </div>
       <div
         onClick={() =>{
-          if(column.type === 'readonly'){
-            setIsOpen(false)
-          }else{
             let bomToSave = []
             let disturbance = 0
             let quantity = 0
@@ -374,10 +369,10 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             }
 
           }
-        }}
-        style={{width: column.type !== 'readonly' ? "50%" : '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+        }
+        style={{width: "50%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
       >
-        <p>{column.type !== 'readonly' ? '선택 완료' : '확인'}</p>
+        <p>{'선택 완료'}</p>
       </div>
     </div>
   }
@@ -397,14 +392,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   const LotListColumns = () => {
     const defaultColumns = isProduct ? searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
-    return column.type === 'readonly' ? defaultColumns
-        : isModify? defaultColumns?.map(column =>
+    return isModify? defaultColumns?.map(column =>
             column.key === 'amount'?
-            {...column, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', type:'number', disabledCase: [{key:'is_complete', value: true}]}
+            {...column, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', inputType:'number', disabledCase: [{key:'is_complete', value: true}]}
             : column).concat({key: 'isComplete', name: '사용완료 상태', formatter: LineBorderContainer, textAlign: 'center'},)
         : defaultColumns?.map(column =>
             column.key === 'amount'?
-          {...column, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', type:'number'}
+          {...column, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', inputType:'number'}
           : column)
   }
 
@@ -485,12 +479,12 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
-                  headerList={column.type === 'readonly' ? searchModalList.InputListReadonly : searchModalList.InputList}
+                  headerList={searchModalList.InputList}
                   row={inputMaterialList ?? [{}]}
-                  setRow={(inputMaterials) => {
+                  setRow={(inputMaterials, idx) => {
                     let tmp = inputMaterials.map((input, inputIdx) => {
-                      if(input.lotList && selected.index === inputIdx ){
-                        setSelected({...selected, type: input.type_name, product: input.code})
+                      if(input.lotList && idx === inputIdx ){
+                        setSelected({index: idx, type: input.type_name, product: input.code})
                         setLotList(toLotList(input))
                       }
                       delete input.lotList
@@ -501,18 +495,18 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   width={1746}
                   rowHeight={32}
                   height={288}
-                  setSelectRow={(e) => {
+                  onRowClick={(clicked) => {const e = inputMaterialList.indexOf(clicked)
                     const tmpInputMaterialList = inputMaterialList
-                    tmpInputMaterialList[selected.index] = {
-                      ...tmpInputMaterialList[selected.index],
+                    tmpInputMaterialList[e] = {
+                      ...tmpInputMaterialList[e],
                       page: 1,
                       total: 1
                     }
                     setInputMaterialList(tmpInputMaterialList)
-                    setSelected({
-                      ...selected,
-                      index: e
-                    })
+                    // setSelected({
+                    //   ...selected,
+                    //   index: e
+                    // })
                   }}
                   type={'searchModal'}
                   headerAlign={'center'}
@@ -576,7 +570,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                     if(value){
                       if(inputMaterialList[selected.index].total > inputMaterialList[selected.index].page){
                         if(selected.index >= 0) {
-                          const tmpInputMaterialList = inputMaterialList
+                          const tmpInputMaterialList = inputMaterialList.slice()
                           let selectedMaterial = tmpInputMaterialList[selected.index]
                           selectedMaterial.loadMaterialLot(selectedMaterial.tab, selectedMaterial.page+1, selectedMaterial.action, selectedMaterial, setInputMaterial)
                         }

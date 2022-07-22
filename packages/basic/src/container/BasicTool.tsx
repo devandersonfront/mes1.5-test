@@ -307,9 +307,6 @@ const BasicTool = ({ page, search, option }: IProps) => {
         total: res.totalPages,
       });
 
-      // const resultData = cleanUpData(res);
-      // console.log(resultData,'resultData')
-      // setBasicRow(resultData);
     }
     setSelectList(new Set());
   };
@@ -331,7 +328,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
       tmpRow.code = rowData.code;
       tmpRow.name = rowData.name;
       tmpRow.stock = rowData?.stock;
-      tmpRow.customer = rowData.customer;
+      tmpRow.customer = rowData.customer?.id ? rowData.customer : null;
       tmpRow.additional = [
         ...additional
           .map((v, index) => {
@@ -544,19 +541,6 @@ const BasicTool = ({ page, search, option }: IProps) => {
     setBasicRow(rows);
   };
 
-  //   useEffect(() => {
-  //     // setOptionIndex(option)
-  //     if (keyword) {
-  //       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //         Notiflix.Loading.remove();
-  //       });
-  //     } else {
-  //       LoadBasic(pageInfo.page).then(() => {
-  //         Notiflix.Loading.remove();
-  //       });
-  //     }
-  //   }, [pageInfo.page, keyword]);
-
   useEffect(() => {
     if (keyword) {
       SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
@@ -576,70 +560,64 @@ const BasicTool = ({ page, search, option }: IProps) => {
     };
   }, []);
 
-  const searchValidation = (searchKeyword) => {
-    setKeyword(searchKeyword)
-    if(keyword === searchKeyword || pageInfo.page === 1){
-      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-        Notiflix.Loading.remove();
-      })
-    }else{
-      setPageInfo({...pageInfo,page:1})
-    }
-  }
 
 
-          return (
-              <div>
-                <PageHeader
-                    title={"공구 기준정보"}
-                    isSearch
-                    searchKeyword={keyword}
-                    onChangeSearchKeyword={searchValidation}
-                    searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
-                    onChangeSearchOption={(option) => {
-                      setOptionIndex(option);
-                    }}
-                    optionIndex={optionIndex}
-                    buttons={["엑셀" ,"항목관리","행 추가","저장하기","삭제"]}
-                    buttonsOnclick={buttonsEvent}
-                />
-                <ExcelTable
-                    resizable
-                    resizeSave
-                    headerList={[SelectColumn, ...column]}
-                    row={basicRow}
-                    setRow={(e) => {
-                      let tmp: Set<any> = selectList
-                      e.map(v => {
-                        if(v.isChange) {
-                          tmp.add(v.id)
-                          v.isChange = false
-                        }
-                      })
-                      setSelectList(tmp)
-                      competeTool(e)
-                      // setBasicRow(e)
-                    }}
-                    selectList={selectList}
-                    //@ts-ignore
-                    setSelectList={setSelectList}
-                    setSelectRow={setSelectRow}
-                    width={1576}
-                    height={settingHeight(basicRow.length)}
-                />
-                <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => {
-                  setSelectList(new Set)
-                  setPageInfo({...pageInfo, page: page})
-                }} />
-                <ExcelDownloadModal
-                    isOpen={excelOpen}
-                    category={"tool"}
-                    title={"공구 기준정보"}
-                    setIsOpen={setExcelOpen}
-                    resetFunction={() => LoadBasic(1)}
-                />
-              </div>
-          )
+  return (
+      <div>
+        <PageHeader
+            title={"공구 기준정보"}
+            isSearch
+            onChangeSearchKeyword={setKeyword}
+            onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove();
+            })}
+            searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
+            onChangeSearchOption={(option) => {
+              setOptionIndex(option);
+            }}
+            optionIndex={optionIndex}
+            buttons={["엑셀" ,"항목관리","행 추가","저장하기","삭제"]}
+            buttonsOnclick={buttonsEvent}
+        />
+        <ExcelTable
+            resizable
+            resizeSave
+            selectable
+            headerList={[SelectColumn, ...column]}
+            row={basicRow}
+            setRow={(e) => {
+              let tmp: Set<any> = selectList
+              e.map(v => {
+                if(v.isChange) {
+                  tmp.add(v.id)
+                  v.isChange = false
+                }
+              })
+              setSelectList(tmp)
+              competeTool(e)
+              // setBasicRow(e)
+            }}
+            selectList={selectList}
+            //@ts-ignore
+            setSelectList={setSelectList}
+            onRowClick={(clicked) => {const e = basicRow.indexOf(clicked)
+      setSelectRow(e)}}
+            width={1576}
+            height={settingHeight(basicRow.length)}
+        />
+        <PaginationComponent totalPage={pageInfo.total} currentPage={pageInfo.page} setPage={(page) => {
+          setSelectList(new Set)
+          setPageInfo({...pageInfo, page: page})
+        }} />
+        <ExcelDownloadModal
+            isOpen={excelOpen}
+            category={"tool"}
+            title={"공구 기준정보"}
+            setIsOpen={setExcelOpen}
+            resetFunction={() => LoadBasic(1)}
+        />
+      </div>
+  )
 };
 
 export { BasicTool };

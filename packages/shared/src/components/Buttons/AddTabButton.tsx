@@ -19,14 +19,12 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   const dispatch = useDispatch();
   const [title, setTitle] = useState<string>(column.key === 'lot' ? "LOT 보기" : "BOM 보기")
   const selector = useSelector((state:RootState) => state.infoModal)
-    console.log('addtab')
   // useEffect(() => {
   //   row.clicked && row.page !== 1 && loadMaterialLot(row.tab, null, row.action)
   // }, [row.page])
   const loadMaterialLot = async (type:number, initPage?: number, action?: string, input?, setInput?) => {
     let res
     const inputMaterial = input ?? row
-    const setInputMaterial = setInput ?? onRowChange
     switch(type){
       case 0:
         res = await RequestMethod('get', `lotRmSearch`, {
@@ -82,7 +80,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
     }
     if(res){
       const parsedRes = ParseResponse(res)
-      setInputMaterial({
+      const lots =  {
         ...inputMaterial,
         page: res.page,
         total: res.totalPages,
@@ -90,7 +88,12 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         lotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.rowLotList,...parsedRes],
         rowLotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.rowLotList,...parsedRes],
         loadMaterialLot
-      })
+      }
+      if(setInput){
+        setInput(lots)
+      } else {
+        onRowChange(lots)
+      }
     }
   }
 

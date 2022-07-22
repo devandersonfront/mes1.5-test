@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
 import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 import moment from "moment";
-import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
-import ButtonGroup from "../../../../main/component/ButtonGroup";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
@@ -10,6 +8,7 @@ import Notiflix from "notiflix";
 import {useRouter} from "next/router";
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
+import ButtonGroup from 'shared/src/components/ButtonGroup';
 
 interface SelectParameter {
     from:string
@@ -197,6 +196,7 @@ const MesKpiDefect = () => {
             <ExcelTable
                 editable
                 resizable
+                selectable
                 headerList={[
                     SelectColumn,
                     ...pauseColumn

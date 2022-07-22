@@ -62,7 +62,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page, keyword]);
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(
@@ -168,8 +168,6 @@ const MesStockList = ({ page, search, option }: IProps) => {
         page: res.page,
         total: res.totalPages,
       });
-      // console.log("SearchBasic res : ", res);
-      // setBasicRow([]);
       cleanUpData(res, isPaging ?? pageInfo);
     }
   };
@@ -229,9 +227,6 @@ const MesStockList = ({ page, search, option }: IProps) => {
       : [];
 
     tmpRow = res.info_list;
-
-    console.log("tmpRow :", tmpRow);
-
     loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
     let selectKey = "";
@@ -255,8 +250,6 @@ const MesStockList = ({ page, search, option }: IProps) => {
       }
     });
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-      // console.log("???? : ", row)
-
       let appendAdditional: any = {};
 
       row.additional &&
@@ -286,14 +279,9 @@ const MesStockList = ({ page, search, option }: IProps) => {
           ? TransferCodeToValue(row.type, "productType")
           : "-",
         unit: row.unit ?? "-",
-        id: `sheet_${random_id}`,
+        id: `stock_${random_id}`,
       };
     });
-
-    console.log("basicRow : ", basicRow);
-    console.log("tmpBasicRow : ", tmpBasicRow);
-
-    // setBasicRow([...basicRow, ...tmpBasicRow])
 
     if (page) {
       setBasicRow([...tmpBasicRow])
@@ -306,13 +294,10 @@ const MesStockList = ({ page, search, option }: IProps) => {
     <div>
       <PageHeader
         isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          setKeyword(keyword);
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          })
-        }}
+        onChangeSearchKeyword={setKeyword}
+        onSearch={() =>  SearchBasic(keyword, optionIndex, 1).then(() => {
+          Notiflix.Loading.remove();
+        })}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option);

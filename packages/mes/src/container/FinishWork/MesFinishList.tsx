@@ -314,16 +314,14 @@ const MesFinishList = ({page, search, option}: IProps) => {
       <PageHeader
         isSearch
         isCalendar
-        searchKeyword={keyword}
         searchOptionList={optionList}
         optionIndex={optionIndex}
-        onChangeSearchKeyword={(keyword) => {
+        onChangeSearchKeyword={setKeyword}
+        onSearch={() => {
           setSelectList(new Set)
-          setKeyword(keyword)
-          // setPageInfo({page:1, total:1})
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
-          });
+          })
         }}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
@@ -342,6 +340,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
       <ExcelTable
         editable
         resizable
+        selectable
         headerList={[
           SelectColumn,
           ...column

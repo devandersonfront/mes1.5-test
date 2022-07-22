@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
 import moment from "moment";
-import PeriodSelectCalendar from "../../../../main/component/Header/PeriodSelectCalendar";
-import ButtonGroup from "../../../../main/component/ButtonGroup";
+import ButtonGroup from 'shared/src/components/ButtonGroup';
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import DateRangeCalendar from "../../../../shared/src/components/Header/DateRangeCalendar";
@@ -172,6 +171,7 @@ const MesKpiUph = () => {
             <ExcelTable
                 editable
                 resizable
+                selectable
                 headerList={[
                     SelectColumn,
                     ...pauseColumn

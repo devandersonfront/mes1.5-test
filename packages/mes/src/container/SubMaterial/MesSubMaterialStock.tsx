@@ -150,10 +150,6 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   };
 
   const LoadBasic = async (page?: number) => {
-
-    console.log("loadbaisc for 부자재 재고 현황");
-
-
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", `subInList`, {
       path: {
@@ -175,9 +171,6 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
           },
     });
 
-    console.log("res : ", res);
-
-
     if (res) {
       setFirst(false);
       setPageInfo({
@@ -194,8 +187,6 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     option: number,
     isPaging?: number
   ) => {
-
-    console.log("무조건 search basic 만 실행 !!");
 
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", `lotSmSearch`, {
@@ -335,7 +326,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         name: row.sub_material.name,
         customer_id: row.sub_material?.customer?.name ?? "-",
         ...appendAdditional,
-        id: `rawin_${random_id}`,
+        id: `subin_${random_id}`,
       };
     });
     setSelectList(new Set());
@@ -468,14 +459,10 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         }}
         nz={nzState}
         isSearch
-        searchKeyword={keyword}
-        onChangeSearchKeyword={(keyword) => {
-          setKeyword(keyword);
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          });
-          // setPageInfo({ page: 1, total: 1 });
-        }}
+        onChangeSearchKeyword={setKeyword}
+        onSearch={() =>  SearchBasic(keyword, optionIndex, 1).then(() => {
+          Notiflix.Loading.remove();
+        })}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option);
@@ -498,6 +485,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
       <ExcelTable
         editable
         resizable
+        selectable
         headerList={[
           SelectColumn,
           ...column

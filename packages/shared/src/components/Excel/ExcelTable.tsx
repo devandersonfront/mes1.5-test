@@ -1,13 +1,14 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import styled from "styled-components";
 // @ts-ignore
-import DataGrid, {TextEditor, Row, RowRendererProps} from 'react-data-grid'
+import DataGrid, {
+  Row,
+} from 'react-data-grid'
 import {IExcelHeaderType} from '../../@types/type'
 import {SearchModalStyle} from '../../styles/styledComponents'
 import {RequestMethod} from "../../common/RequestFunctions";
 //@ts-ignore
 import ScrollState from "AdazzleReactDataGrid.ScrollState";
-import {columnlist} from "../../common/columnInit";
 
 interface IProps {
   headerList: Array<IExcelHeaderType>
@@ -22,7 +23,7 @@ interface IProps {
   resizable?: boolean
   resizeSave?:boolean
   selectable?: boolean
-  setRow: (row: Array<any>) => void
+  setRow?: (row: Array<any>, index: number) => void
   setSelectRow?: (index: number) => void
   setSelectList?: (selectedRows: ReadonlySet<number>) => void
   selectList?: ReadonlySet<number>
@@ -36,9 +37,11 @@ interface IProps {
   scrollEnd?:(value:boolean) => void
   scrollOnOff?:boolean
   customHeaderRowHeight?: number
+  onDoubleClick?: (row: Array<any>) => void
+  onRowClick?: (row: any) => void
 }
 
-const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff}: IProps) => {
+const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff, onDoubleClick, onRowClick}: IProps) => {
   const [ selectedRows, setSelectedRows ] = useState<ReadonlySet<number>>(selectList ?? new Set())
 
 
@@ -64,10 +67,7 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
 
   }
 
-  let tempData:any[] = [];
-
-
-
+  let tempData:any[] = []
 
 
   useEffect(() => {
@@ -83,7 +83,7 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
 
   function EmptyRowsRenderer() {
     return (
-        <div style={{ display:"flex", justifyContent:"center", height:40, alignItems:"center",background: type ? "white" : "#353B48", width: headerList.map(header => header.width).reduce(((prev, curr) => prev + curr)), gridColumn: '1/-1' ,color: type ? "black" : "none"}}>
+        <div style={{ display:"flex", justifyContent:"center", height:40, alignItems:"center",background: type ? "white" : "#353B48", width: headerList && headerList.map(header => header.width ?? 35).reduce(((prev, curr) => prev + curr)), gridColumn: '1/-1' ,color: type ? "black" : "none"}}>
           데이터가 없습니다.
         </div>
     );
@@ -99,15 +99,13 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
 
     return <DataGridTable
       //@ts-ignore
-      rowClass={(row) => row?.border ? 'selectRow' : undefined}
+      rowClass={(row) => {row?.border ? 'selectRow' : undefined}}
       headerRowHeight={customHeaderRowHeight ?? 40}
-      //@ts-ignore
-      rowKeyGetter={rowKeyGetter}
-      //@ts-ignore
+      rowKeyGetter={selectable ? rowKeyGetter : null}
       className={'cell'}
       columns={headerList}
       rows={row.length > 0 ? row : []}
-      emptyRowsRenderer={() => EmptyRowsRenderer()}
+      components={{noRowsFallback: <EmptyRowsRenderer />}}
       onColumnResize={(v, i) => {
         tempData.map((time,i)=>{
             clearTimeout(time)
@@ -149,15 +147,12 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
         resizable: resizable,
         editable: editable,
       }}
-      onRowsChange={setRow}
-      onSelectedRowsChange={setSelectedRows}
+      onRowsChange={(data, idx) => {
+        setSelectRow && setSelectRow(idx.indexes[0])
+        setRow(data, idx.indexes[0])}}
+      onSelectedRowsChange={(row) => setSelectedRows(row)}
       selectedRows={selectedRows}
-      onRowChange={(e:any)=>{
-        setSelectedRows(e)
-      }}
-      onRowClick={(i, r) => {
-        setSelectRow && setSelectRow(i)
-      }}
+      // onRowChange={setSelectedRows}
       style={{
         border:"none",
         overflow:scrollOnOff ? "hidden" : "auto",
@@ -171,13 +166,17 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       }}
       theme={scrollState}
       state={type}
+      onRowClick={(row,col) => {
+        onRowClick && onRowClick(row)
+      }}
+      onRowDoubleClick={(row,col) => {
+        onDoubleClick && onDoubleClick(row)
+      }}
       enableVirtualization={!disableVirtualization}
       //@ts-ignore
       onScroll={(e:ScrollState) => {
         scrollEnd && scrollEnd(isAtBottom(e))
       }}
-
-      clickable={clickable}
     />
   }
 
@@ -219,7 +218,32 @@ const DataGridTable = styled(DataGrid)`
     padding: 0 8px;
   }
   
-  ${(props:any) => props.state === "searchModal" ? "" : 
+  ${(props:any) => props.state === "searchModal" ? `
+    .rdg-checkbox-input:not(checked) + div{
+        width:20px;
+        height:20px;
+        box-shadow:none;
+        border:1px solid #b3b3b3;
+        background: white;        
+        outline: none;
+    }
+    .rdg-checkbox-input:checked + div{
+        width:20px;
+        height:20px;
+        box-shadow:none;
+        border:none;
+        background: url(${require('../../../public/images/check_box_activated.png')}) ;
+        background-size: 20px 20px;
+        outline: none;
+    }
+    .rdg-cell{
+        input{
+          background-color: white;
+          color: black;
+        }
+    }
+   
+  ` : 
     `
     .rdg{
         border:none;
@@ -252,6 +276,7 @@ const DataGridTable = styled(DataGrid)`
         }
         
     }
+   
     .rdg-row > .rdg-cell{
         background:#353B48;
         &:hover{
@@ -260,7 +285,6 @@ const DataGridTable = styled(DataGrid)`
           // background-color: #353B48;
         }
     }
-    
     .rdg-row[aria-selected=true]{
         // border:1px solid white;
         background:none;
@@ -285,9 +309,10 @@ const DataGridTable = styled(DataGrid)`
         border:none;
         background: url(${require('../../../public/images/check_box_activated.png')}) ;
         background-size: 20px 20px;
+        outline: none;
     }
     
-    .c1wupbe700-canary49 {
+    .c1wupbe700-beta13{
       padding: 0;
     }
     
@@ -311,10 +336,7 @@ const DataGridTable = styled(DataGrid)`
   .editDropdown > option {
     background:#484848;
   }
-  `
-}
-    
+  `}
   
-`;
-
+  `
 export {ExcelTable};

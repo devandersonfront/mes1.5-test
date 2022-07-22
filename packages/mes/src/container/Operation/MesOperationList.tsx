@@ -155,9 +155,6 @@ const MesOperationList = ({page, search, option}: IProps) => {
           }
     })
 
-    console.log("res operation: ", res);
-
-
     if(res){
       setPageInfo({
         ...pageInfo,
@@ -403,19 +400,17 @@ const MesOperationList = ({page, search, option}: IProps) => {
       <PageHeader
         isSearch
         isCalendar
-        searchKeyword={keyword}
         searchOptionList={optionList}
         optionIndex={optionIndex}
         calendarTitle={'작업 기한'}
         calendarType={'period'}
         selectDate={selectDate}
-        onChangeSearchKeyword={(keyword) => {
+        onChangeSearchKeyword={setKeyword}
+        onSearch={() => {
           setSelectList(new Set)
-          setKeyword(keyword);
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
-          });
-          // setPageInfo({page:1, total:1})
+          })
         }}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
@@ -471,6 +466,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
     <ExcelTable
       editable
       resizable
+      selectable
       headerList={[
         SelectColumn,
         ...column

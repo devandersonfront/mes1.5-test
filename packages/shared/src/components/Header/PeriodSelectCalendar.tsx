@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from "react";
 import styled from "styled-components";
 //@ts-ignore
 import Calendar_icon from "../../../public/images/calendar_icon_black.png";
 import Calendar from "react-calendar";
 import moment from "moment";
 import useOnclickOutside from "react-cool-onclickoutside";
-import {POINT_COLOR} from '../../common/configset'
 
 interface ValueType {
     from:string
@@ -21,33 +20,21 @@ interface Props {
     // endSelectDate:string
     // setEndSelectDate:(value:string) => void
     // setState:(value:"local" | "select") => void
-    calendarTitle?: string
 }
 
-const PeriodSelectCalendar = ({selectDate, onChangeSelectDate, dataLimit, calendarTitle}:Props) => {
+const PeriodSelectCalendar = ({selectDate, onChangeSelectDate, dataLimit}:Props) => {
 
     const [onCalendarStart, setOnCalendarStart] = useState<boolean>(false);
     const [onCalendarEnd, setOnCalendarEnd] = useState<boolean>(false);
-    const [selectDates, setSelectDates] = useState<{from: string, to: string}>({
-        from: moment().format('YYYY-MM-DD'),
-        to: moment().format('YYYY-MM-DD'),
-    })
 
     const ref = useOnclickOutside(()=>{
         setOnCalendarEnd(false);
         setOnCalendarStart(false);
     })
 
-    useEffect(() => {
-        setSelectDates({
-            from: selectDate.from,
-            to: selectDate.to
-        })
-    }, [onCalendarStart, onCalendarEnd])
-
     return (
         <div style={{background:"#B3B3B3", width:330, height:32, display:"flex",  justifyContent:"space-between", alignItems:"center", padding:"0 10px", fontWeight:550, borderRadius:6 }}>
-            {calendarTitle ?? '기간선택'}
+            기간선택
             <p style={{display:"flex", alignItems:"center"}}>
                 <SelectDateText onClick={()=>{
                     setOnCalendarStart(!onCalendarStart);
@@ -63,75 +50,22 @@ const PeriodSelectCalendar = ({selectDate, onChangeSelectDate, dataLimit, calend
             {
                 onCalendarStart &&
                 <div style={{position:"absolute", top:50, zIndex:10}} ref={ref}>
-                    <Calendar maxDate={new Date(new Date(selectDates.to))} value={new Date(selectDates.from)} onClickDay={(e)=>{ //value={new Date(new Date(selectDate).getMonth())}
-                        setSelectDates({...selectDates,from: moment(e).format("YYYY-MM-DD")});
-                        // setOnCalendarStart(false);
+                    <Calendar maxDate={new Date(new Date(selectDate.to))} value={new Date(selectDate.from)} onClickDay={(e)=>{ //value={new Date(new Date(selectDate).getMonth())}
+                        onChangeSelectDate({...selectDate,from: moment(e).format("YYYY-MM-DD")});
+                        setOnCalendarStart(false);
                     }}
                     />
-                    <div style={{width: '100%', height: 32, backgroundColor: 'white', display: 'flex'}}>
-                        <div
-                          style={{width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', display: 'flex', cursor: 'pointer'}}
-                          onClick={() => {
-                              setOnCalendarStart(false);
-                          }}
-                        >
-                            <p style={{padding: 0, margin: 0, textAlign: 'center'}}>
-                                취소
-                            </p>
-                        </div>
-                        <div
-                          style={{
-                              width: '50%', height: '100%',
-                              justifyContent: 'center', alignItems: 'center', display: 'flex', backgroundColor: POINT_COLOR,
-                              cursor: 'pointer'
-                          }}
-                          onClick={() => {
-                              onChangeSelectDate({...selectDate,from: moment(selectDates.from).format("YYYY-MM-DD")});
-                              setOnCalendarStart(false)
-                          }
-                        }>
-                            <p style={{padding: 0, margin: 0, textAlign: 'center'}}>
-                                확인
-                            </p>
-                        </div>
-                    </div>
                 </div>
             }
             {
                 onCalendarEnd &&
                 <div style={{position:"absolute", top:50, zIndex:10}} ref={ref}>
-                    <Calendar minDate={new Date(new Date(selectDates.from))} value={new Date(new Date(selectDates.to))} onClickDay={(e)=>{ //value={new Date(new Date(selectDate).getMonth())}
-                        setSelectDates({...selectDates,to: moment(e).format("YYYY-MM-DD")});
-                        // setOnCalendarEnd(false);
+                    <Calendar minDate={new Date(new Date(selectDate.from))} value={new Date(new Date(selectDate.to))} onClickDay={(e)=>{ //value={new Date(new Date(selectDate).getMonth())}
+                        onChangeSelectDate({...selectDate,to: moment(e).format("YYYY-MM-DD")});
+                        setOnCalendarEnd(false);
                     }}
                         maxDate={dataLimit ? new Date(moment().endOf('isoWeek').format('YYYY-MM-DD')) : new Date("2999-12-31")}
                     />
-                    <div style={{width: '100%', height: 32, backgroundColor: 'white', display: 'flex'}}>
-                        <div
-                          style={{width: '50%', height: '100%', justifyContent: 'center', alignItems: 'center', display: 'flex', cursor: 'pointer'}}
-                          onClick={() => {
-                              setOnCalendarEnd(false);
-                          }}
-                        >
-                            <p style={{padding: 0, margin: 0, textAlign: 'center'}}>
-                                취소
-                            </p>
-                        </div>
-                        <div
-                          style={{
-                              width: '50%', height: '100%',
-                              justifyContent: 'center', alignItems: 'center', display: 'flex', backgroundColor: POINT_COLOR,
-                              cursor: 'pointer'
-                          }}
-                          onClick={() => {
-                              onChangeSelectDate({...selectDate,to: moment(selectDates.to).format("YYYY-MM-DD")});
-                              setOnCalendarEnd(false);
-                          }}>
-                            <p style={{padding: 0, margin: 0, textAlign: 'center'}}>
-                                확인
-                            </p>
-                        </div>
-                    </div>
                 </div>
             }
             {/* 아이콘을 클릭했을때 Calendar가 뙇 하고 나오는거*/}

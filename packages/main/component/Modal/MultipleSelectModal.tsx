@@ -18,7 +18,7 @@ import Switch from '@material-ui/core/Switch'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "shared";
-import {insert_productList, insert_select_productList} from 'shared/src/reducer/productSelect';
+import {insert_productList, insert_select_productList} from 'shared/src/reducer/ProductSelect';
 
 interface IProps {
     column: IExcelHeaderType
@@ -42,7 +42,7 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
     })
     const [isFilter, setIsFilter] = useState<boolean>(false)
 
-    const selector = useSelector((state:RootState) => state.MulitpleSelectModal);
+    const selector = useSelector((state:RootState) => state.productSelect);
     const dispatch = useDispatch();
 
     const [saveList, setSaveList] = useState<any[]>([]);
@@ -300,10 +300,9 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
                                     width={"100%"}
                                     rowHeight={32}
                                     height={576}
-                                    setSelectRow={(e) => {
+                                    onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                                         setSelectRow(e)
                                         if(selectRow !== undefined && selectRow !== null){
-                                            // dispatch(insert_select_productData({...searchList[e], date:row.date, amount:row.amount, id:Math.random()+"product"}));
                                         }
 
                                         saveList[selector.selectRow] = {...searchList[e], date:row.date, amount:row.amount, id:Math.random()+"product", index:selector.selectRow+1};
@@ -333,7 +332,7 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
                                 width={"100%"}
                                 rowHeight={32}
                                 height={576}
-                                setSelectRow={(e) => {
+                                onRowClick={(clicked) => {const e = saveList.indexOf(clicked)
                                     setSelectRow(e)
                                     dispatch(insert_select_productList(e));
                                 }}

@@ -224,8 +224,9 @@ const MesSubMaterialStockModify = ({page, keyword, option}: IProps) => {
       <ExcelTable
         editable
         resizable
-        headerList={[
-          SelectColumn,
+        selectable
+          headerList={[
+            SelectColumn,
           ...column
         ]}
         row={basicRow}
