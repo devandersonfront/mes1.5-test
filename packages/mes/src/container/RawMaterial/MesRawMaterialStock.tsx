@@ -532,7 +532,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
     return [{
       material_id: quantityData.code ?? 0,
-      material_type: 0,
+      material_type: 3,
       material_lot_id : quantityData.lot_rm_id,
       material_lot_number: quantityData.lot_number,
       material_quantity : quantityData?.realCurrent ?? 0,
