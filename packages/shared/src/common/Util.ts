@@ -60,6 +60,6 @@ export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) 
   }
 }
 
-export const settingHeight = (length:number) => {
+export const setExcelTableHeight = (length:number) => {
   return length === 0 ? 90 : length * 40 >= 40*18+48? 40 *19 + 48 : length * 40 + 48
 }

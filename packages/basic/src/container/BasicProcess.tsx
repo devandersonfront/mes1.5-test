@@ -16,7 +16,7 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { settingHeight } from 'shared/src/common/Util'
+import { setExcelTableHeight } from 'shared/src/common/Util'
 
 export interface IProps {
   children?: any
@@ -643,7 +643,7 @@ setKeyword('')
               setSelectRow(e)}}
         loadEvent={LoadBasic}
         width={1576}
-        height={settingHeight(basicRow.length)}
+        height={setExcelTableHeight(basicRow.length)}
       />
       <PaginationComponent
         currentPage={pageInfo.page}

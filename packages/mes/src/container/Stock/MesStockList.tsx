@@ -21,7 +21,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "../../../../shared/src/reducer/menuSelectState";
-import { settingHeight } from 'shared/src/common/Util'
+import { setExcelTableHeight } from 'shared/src/common/Util'
 
 interface IProps {
   children?: any;
@@ -326,7 +326,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         width={1576}
-        height={settingHeight(basicRow.length)}
+        height={setExcelTableHeight(basicRow.length)}
         scrollEnd={(value) => {
           if (value) {
             if (pageInfo.total > pageInfo.page) {

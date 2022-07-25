@@ -18,6 +18,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
+import { setExcelTableHeight } from 'shared/src/common/Util'
 
 export interface IProps {
   children?: any;
@@ -748,7 +749,7 @@ const BasicUser = ({}: IProps) => {
         //@ts-ignore
         setSelectList={setSelectList}
         width={1576}
-        height={basicRow.length * 40 >= 40*18+40 ? 40*19+16 : basicRow.length * 40 + 56}
+        height={setExcelTableHeight(basicRow.length)}
       />
       <PaginationComponent
         currentPage={pageInfo.page}

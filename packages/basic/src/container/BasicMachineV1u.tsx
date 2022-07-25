@@ -20,7 +20,7 @@ import moment from "moment"
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import {subFactorySearchModal} from "shared/src/components/Modal/SearchModalTest/subFactorySearchModal";
-import { settingHeight } from 'shared/src/common/Util';
+import { setExcelTableHeight } from 'shared/src/common/Util';
 
 export interface IProps {
   children?: any
@@ -609,7 +609,7 @@ const BasicMachineV1u = ({option}: IProps) => {
             onRowClick={(clicked) => {const e = basicRow.indexOf(clicked)
               setSelectRow(e)}}
             width={1576}
-            height={settingHeight(basicRow.length)}
+            height={setExcelTableHeight(basicRow.length)}
         />
         <PaginationComponent
           currentPage={pageInfo.page}

@@ -18,7 +18,7 @@ import Notiflix from "notiflix"
 import {useDispatch, useSelector} from "react-redux";
 import {setToolDataAdd} from "shared/src/reducer/toolInfo";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { settingHeight } from 'shared/src/common/Util'
+import { setExcelTableHeight } from 'shared/src/common/Util'
 
 interface IProps {
     children?: any
@@ -334,7 +334,7 @@ const MesToolList = ({ page, search, option }: IProps) => {
                     setSelectList(tmp)
                     setBasicRow(e);
                 }}
-                height={settingHeight(basicRow.length)}
+                height={setExcelTableHeight(basicRow.length)}
                 width={1576}
                 scrollEnd={(value) => {
                     if (value) {

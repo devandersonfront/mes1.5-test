@@ -18,7 +18,7 @@ import Notiflix from "notiflix"
 import {useDispatch, useSelector} from "react-redux";
 import {setToolDataAdd} from "shared/src/reducer/toolInfo";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { settingHeight } from 'shared/src/common/Util'
+import { setExcelTableHeight } from 'shared/src/common/Util'
 
 interface IProps {
     children?: any
@@ -360,7 +360,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                         setPageInfo({...pageInfo, page: pageInfo.page + 1})
                     }
                 }}
-                height={settingHeight(basicRow.length)}
+                height={setExcelTableHeight(basicRow.length)}
 
             />
             {/*<PaginationComponent totalPage={} currentPage={} setPage={} />*/}

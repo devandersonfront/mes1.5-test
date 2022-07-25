@@ -20,7 +20,7 @@ import {NextPageContext} from 'next'
 import axios from 'axios';
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { settingHeight } from 'shared/src/common/Util';
+import { setExcelTableHeight } from 'shared/src/common/Util';
 import { BarcodeDataType } from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 
@@ -753,7 +753,7 @@ const BasicProduct = ({}: IProps) => {
             onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
               setSelectRow(e)}}
             width={1576}
-            height={settingHeight(basicRow.length)}
+            height={setExcelTableHeight(basicRow.length)}
         />
         <PaginationComponent
             currentPage={pageInfo.page}

@@ -21,7 +21,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import { settingHeight } from 'shared/src/common/Util'
+import { setExcelTableHeight } from 'shared/src/common/Util'
 
 export interface IProps {
   children?: any;
@@ -634,7 +634,7 @@ const BasicSubMaterial = ({ }: IProps) => {
           onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
               setSelectRow(e)}}
           width={1576}
-          height={settingHeight(basicRow.length)}
+          height={setExcelTableHeight(basicRow.length)}
         />
         <PaginationComponent
           currentPage={pageInfo.page}

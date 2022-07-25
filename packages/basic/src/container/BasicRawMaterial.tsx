@@ -26,7 +26,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import { settingHeight } from 'shared/src/common/Util'
+import { setExcelTableHeight } from 'shared/src/common/Util'
 import {BarcodeDataType} from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 
@@ -761,7 +761,7 @@ const BasicRawMaterial = ({}: IProps) => {
           //@ts-ignore
           setSelectList={setSelectList}
           width={1576}
-          height={settingHeight(basicRow.length)}
+          height={setExcelTableHeight(basicRow.length)}
         />
         <PaginationComponent
           currentPage={pageInfo.page}
