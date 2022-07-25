@@ -236,7 +236,10 @@ const BasicDevice = ({}: IProps) => {
                 manager: row.user?.user_id ? row.user : null,
                 factory: row.factory?.factory_id ? row.factory : null,
                 subFactory: row?.subFactory?.sf_id ? {...row?.subFactory, manager:row?.subFactory?.manager_info} : null,
-                photo: row?.photo?.uuid ?? row?.photo,
+                photo: row.photo?.uuid ?? row.photo,
+                qualify: row.qualify?.uuid ?? row.qualify,
+                guideline: row.guideline?.uuid ?? row.guideline,
+                capacity: row.capacity?.uuid ?? row.capacity,
                 additional: [
                   ...additional.map((v, index)=>{
                     //if(!row[v.colName]) return undefined;

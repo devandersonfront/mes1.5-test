@@ -189,6 +189,8 @@ const BasicProduct = ({}: IProps) => {
           }
         })
 
+
+        console.log('product',row)
         return {
           ...row,
           ...selectData,
@@ -236,18 +238,7 @@ const BasicProduct = ({}: IProps) => {
               }
             }).filter((machine) => machine.machine.machine_id)?? []
           ],
-          // tools:[
-          //     ...row.tools?.map((tool)=>{
-          //       return {
-          //         ...tool,
-          //         setting:tool.tool.setting,
-          //         tool:{
-          //           ...tool.tool,
-          //           customer:tool.tool.customerArray
-          //         }
-          //       }
-          //     })
-          // ],
+          work_standard_image:row.work_standard_image?.uuid,
           type:row.type_id ?? row.typeId ?? row.typePK,
           additional: [
             ...additional.map((v, index)=>{

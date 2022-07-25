@@ -31,6 +31,7 @@ export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, 
                 })
           .then((res) => {
               result = res.data;
+              result.name = data.name
           }).
           catch((err)=>{
             if(err.response.status === 415){
@@ -41,21 +42,4 @@ export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, 
           })
 
       return result
-
-  // if (res === false) {
-  //   return false
-  // } else {
-  //   if (res) { //res.status === 200 //res !== null
-  //     if (isUrl) {
-  //       return res //const path: string = res.results; //const path: string = res[0];
-  //     } else {
-  //       const path: string = res.results //const path: string = res.results; //const path: string = res[0];
-  //       return path
-  //     }
-  //     return res
-  //   } else {
-  //     alert('해당 파일 업로드 실패하였습니다.')
-  //     return false
-  //   }
-  // }
 }

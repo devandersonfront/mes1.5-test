@@ -94,6 +94,84 @@ const BasicCustomer = ({}: IProps) => {
     return false;
   };
 
+
+  const getPostBody =() => {
+    const searchAiID = (rowAdditional: any[], index: number) => {
+      let result: number = undefined;
+      rowAdditional.map((addi, i) => {
+        if (index === i) {
+          result = addi.ai_id;
+        }
+      });
+      return result;
+    };
+    return basicRow
+      .map((row, i) => {
+        if (selectList.has(row.id)) {
+          let selectKey: string[] = [];
+          let additional: any[] = [];
+          column.map((v) => {
+            if (v.type === "additional") {
+              additional.push(v);
+            }
+          });
+
+          let selectData: any = {};
+
+          Object.keys(row).map((v) => {
+            if (v.indexOf("PK") !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split("PK")[0]]: row[v],
+              };
+            }
+            if (v === "unitWeight") {
+              selectData = {
+                ...selectData,
+                unitWeight: Number(row["unitWeight"]),
+              };
+            }
+
+            if (v === "photo") {
+              selectData = {
+                ...selectData,
+                photo: row["photo"]?.uuid,
+              };
+            }
+
+            if (v === "tmpId") {
+              selectData = {
+                ...selectData,
+                id: row["tmpId"],
+              };
+            }
+          });
+          return {
+            ...row,
+            ...selectData,
+            additional: [
+              ...additional
+                .map((v, index) => {
+                  //if(!row[v.colName]) return undefined;
+                  // result.push(
+                  return {
+                    mi_id: v.id,
+                    title: v.name,
+                    value: row[v.colName] ?? "",
+                    unit: v.unit,
+                    ai_id: searchAiID(row.additional, index) ?? undefined,
+                    version: row.additional[index]?.version ?? undefined,
+                  };
+                  // )
+                })
+                .filter((v) => v),
+            ],
+          };
+        }
+      })
+      .filter((v) => v)
+  }
+
   const SaveBasic = async () => {
     const existence = valueExistence();
 
@@ -102,86 +180,11 @@ const BasicCustomer = ({}: IProps) => {
     }
 
     if (!existence) {
-      const searchAiID = (rowAdditional: any[], index: number) => {
-        let result: number = undefined;
-        rowAdditional.map((addi, i) => {
-          if (index === i) {
-            result = addi.ai_id;
-          }
-        });
-        return result;
-      };
-
       let res: any;
       res = await RequestMethod(
         "post",
         `customerSave`,
-        basicRow
-          .map((row, i) => {
-            if (selectList.has(row.id)) {
-              let selectKey: string[] = [];
-              let additional: any[] = [];
-              column.map((v) => {
-                if (v.type === "additional") {
-                  additional.push(v);
-                }
-              });
-
-              let selectData: any = {};
-
-              Object.keys(row).map((v) => {
-                if (v.indexOf("PK") !== -1) {
-                  selectData = {
-                    ...selectData,
-                    [v.split("PK")[0]]: row[v],
-                  };
-                }
-                if (v === "unitWeight") {
-                  selectData = {
-                    ...selectData,
-                    unitWeight: Number(row["unitWeight"]),
-                  };
-                }
-
-                if (v === "photo") {
-                  selectData = {
-                    ...selectData,
-                    photo: row["photo"]?.uuid,
-                  };
-                }
-
-                if (v === "tmpId") {
-                  selectData = {
-                    ...selectData,
-                    id: row["tmpId"],
-                  };
-                }
-              });
-
-              return {
-                ...row,
-                ...selectData,
-                additional: [
-                  ...additional
-                    .map((v, index) => {
-                      //if(!row[v.colName]) return undefined;
-                      // result.push(
-                      return {
-                        mi_id: v.id,
-                        title: v.name,
-                        value: row[v.colName] ?? "",
-                        unit: v.unit,
-                        ai_id: searchAiID(row.additional, index) ?? undefined,
-                        version: row.additional[index]?.version ?? undefined,
-                      };
-                      // )
-                    })
-                    .filter((v) => v),
-                ],
-              };
-            }
-          })
-          .filter((v) => v)
+        getPostBody()
       ).catch((error) => {
         return (
           error.data &&

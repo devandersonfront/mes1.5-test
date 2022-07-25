@@ -89,21 +89,12 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   }
 
   const loadPage = (page:number) => {
-    // if(keyword){
-    //   SearchBasic(keyword, optionIndex, page).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }else{
-    //   LoadBasic(page).then(() => {
-    //     Notiflix.Loading.remove()
-    //   })
-    // }
     if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+      SearchBasic(keyword, optionIndex, page).then(() => {
         Notiflix.Loading.remove();
       });
     } else {
-      LoadBasic(pageInfo.page).then(() => {
+      LoadBasic(page).then(() => {
         Notiflix.Loading.remove();
       });
     }
@@ -111,7 +102,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   useEffect(() => {
     loadPage(pageInfo.page)
-  }, [pageInfo.page, selectDate, expState, nzState])
+  }, [pageInfo.page, selectDate, nzState, expState, order])
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"원자재 관리",sub:router.pathname}))
@@ -386,7 +377,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
-        loadPage(1)
+        setPageInfo({page:1, total:1})
       });
     }
   }
@@ -451,7 +442,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     }
     switch(index){
       case 0:
-        setModal({type : 'quantity' , isVisible : true})
+        openBarcodeModal()
         return;
       case 1:
         const selectedRows = basicRow.filter(v => selectList.has(v.id))
@@ -518,23 +509,25 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     }]
   }
 
-
   const getCheckItems= () => {
     const tempList = []
     basicRow.map((data) => selectList.has(data.id) && tempList.push(data))
     return tempList
   }
 
-  const onClickQuantity = (quantity) => {
-    const items = getCheckItems()
-    const item = items[0]
-    const convertedData = convertBarcodeData({...item , quantity})
-    setBarcodeData(convertedData)
-    setModal({isVisible : true , type : 'barcode'})
-  }
-
-  const onCloseQuantity = () => {
-    setModal({isVisible : false , type : 'quantity'})
+  const openBarcodeModal = () => {
+    if(selectList.size > 0){
+      const items = getCheckItems()
+      if(!items[0].is_complete){
+        const convertedData = convertBarcodeData(items[0])
+        setBarcodeData(convertedData)
+        setModal({type : 'barcode' , isVisible : true})
+      }else{
+        Notiflix.Report.warning("경고", "사용 완료된 원자재 재고입니다.", "확인")
+      }
+    }else{
+      Notiflix.Report.warning("경고", "데이터를 선택해주세요.", "확인")
+    }
   }
 
   return (
@@ -627,11 +620,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           data={barcodeData}
           isVisible={modal.type === 'barcode' && modal.isVisible}
       />
-      <QuantityModal
-          onClick={onClickQuantity}
-          onClose={onCloseQuantity}
-          isVisible={modal.type === 'quantity' && modal.isVisible}
-      />
+
       {/*<ExcelDownloadModal*/}
       {/*  isOpen={excelOpen}*/}
       {/*  column={column}*/}

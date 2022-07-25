@@ -6,12 +6,16 @@
   "main": "index.js",
   "scripts": {
     "bootstrap": "npm install; lerna bootstrap;",
-    "package:main": "lerna run --scope main --stream dev",
-    "start": "run-p --print-label package:* ",
+    "package:dev": "lerna run --scope main --stream dev",
+    "package:main": "lerna run --scope main --stream start",
+    "dev": "yarn build && yarn package:dev",
+    "local": "run-p --print-label package:dev",
+    "start": "yarn build && yarn package:main",
     "build": "lerna run --parallel build",
     "clean": "lerna clean; rm -rf node_modules; yarn run bootstrap"
   },
   "devDependencies": {
+    "@types/dotenv": "^8.2.0",
     "@types/node": "^17.0.42",
     "babel-loader-lerna-cra": "*",
     "lerna": "^4.0.0",

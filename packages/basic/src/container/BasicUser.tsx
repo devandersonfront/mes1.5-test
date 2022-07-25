@@ -238,6 +238,7 @@ const BasicUser = ({}: IProps) => {
                   id: row.tmpId,
                   authority: row.authorityPK,
                   // user_id: row.tmpId,
+                  profile: row.profile?.uuid,
                   version: row.version ?? null,
                   additional: [
                     ...additional

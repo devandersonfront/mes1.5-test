@@ -137,8 +137,6 @@ const MesOperationList = ({page, search, option}: IProps) => {
         renderItem: 22,
       },
 
-      
-
       params: order == 0 ?
           {
             from: selectDate.from,

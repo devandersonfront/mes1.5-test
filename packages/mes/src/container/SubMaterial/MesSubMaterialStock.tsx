@@ -74,17 +74,22 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     setPageInfo({ page: 1, total: 1 });
   };
 
-  useEffect(() => {
+  const loadPage = (page:number) => {
     if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+      SearchBasic(keyword, optionIndex, page).then(() => {
         Notiflix.Loading.remove();
       });
     } else {
-      LoadBasic(pageInfo.page).then(() => {
+      LoadBasic(page).then(() => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page, selectDate]);
+  }
+
+
+  useEffect(() => {
+    loadPage(pageInfo.page)
+  }, [pageInfo.page, selectDate, nzState, order]);
 
   useEffect(() => {
     dispatch(
@@ -379,16 +384,8 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     if (res) {
       Notiflix.Loading.remove(200);
       Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
-        if (keyword) {
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
-        } else {
-          LoadBasic(pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
-        }
-      });
+        loadPage(1)
+      })
     }
   };
 

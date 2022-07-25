@@ -443,18 +443,15 @@ const BasicMachineV1u = ({option}: IProps) => {
     tempData.manager = value?.user?.id ? value.user : null;
     tempData.factory = value?.factory?.factory_id ? value.factory : null;
     tempData.subFactory = value?.subFactory?.sf_id ? {...value.subFactory, manager:value.subFactory.manager_info} : null;
-
-    // if(value.subFactory !== null && value.subFactory !== undefined && value.subFactory.sf_id !== null){
-    //   tempData.subFactory = {...value.subFactory, manager:value.subFactory.manager_info};
-    // }else{
-    //   tempData.subFactory = null;
-    // }
     tempData.weldingType = weldingPK;
     tempData.interwork = value.interworkPK === "true";
     tempData.devices = value?.devices?.map((device) => {
       return {...device, type: device.type_id}
     })
-    tempData.photo = value.photo?.uuid ?? value.photo;
+    tempData.photo = value.photo?.uuid ?? value.photo,
+    tempData.qualify = value.qualify?.uuid ?? value.qualify,
+    tempData.guideline = value.guideline?.uuid ?? value.guideline,
+    tempData.capacity = value.capacity?.uuid ?? value.capacity,
     tempData.additional =[
       ...additional.map((v, index)=>{
         if(!value[v.colName]) return undefined;

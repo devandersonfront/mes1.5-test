@@ -34,7 +34,6 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(
     columnlist["workStandardList"]
   );
-  const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionList, setOptionList] = useState<string[]>([
     "거래처",
     "모델",
@@ -122,10 +121,10 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
     let tmpRow = [];
     tmpRow = res.info_list.map((v, i) => {
       return {
-        customer: v.customer?.name,
-        model: v.model === null ? "-" : v.model.model,
-        code: v.code,
-        material_name: v.name === null ? "-" : v.name,
+        customer: v.customer?.name ?? "-",
+        model: v.model?.model ?? "-",
+        code: v.code ?? "-",
+        material_name: v.name ?? "-",
         type: column[4].selectList[v.type].name,
         work_standard_image: v.work_standard_image,
       };

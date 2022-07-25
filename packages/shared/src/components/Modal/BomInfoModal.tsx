@@ -278,6 +278,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               type: row.type_id ?? row.type === '완제품' ? 2 : 1,
               product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
               code: row.code,
+              work_standard_image: row.work_standard_image?.uuid,
               customer: row.customer === '' || row.customer?.id === null ? null : row.customer
             },
             child_product: v.tab === 2 ? {
@@ -348,10 +349,10 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const ModalContents = () => {
-    if(column.type === 'readonly' || row.bom_root_id){
+    if(column.type === 'readonly' || row.bom_root_id || (column.type === 'bomRegister' && row.bom)){
       return(
           <UploadButton  onClick={() => {
-            if (row.bom_root_id) {
+            if (row.bom_root_id || (column.type === 'bomRegister' && row.bom)) {
               setIsOpen(true)
             } else {
               Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {

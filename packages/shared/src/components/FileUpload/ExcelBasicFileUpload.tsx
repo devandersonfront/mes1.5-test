@@ -139,26 +139,17 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
               const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
               e.target.value = ''
               if(uploadImg !== undefined){
-                  if(column.key.includes("photo")){
                       onRowChange({
                           ...row,
                           [column.key]: {
                               ...row[column.key],
-                              name:e.target.files[0]?.name,
+                              name:uploadImg.name,
                               uuid: uploadImg.UUID,
                               url:uploadImg.url,
                               sequence: column.idx,
                           },
                               isChange: true
                       })
-                  }else{
-                    onRowChange({
-                      ...row,
-                      [column.key]: uploadImg.UUID,
-                      [column.key+'Resource']: uploadImg.url,
-                      isChange: true
-                    })
-                  }
               }
           }
         }}
