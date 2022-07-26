@@ -38,7 +38,11 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
                     bottom: 'auto',
                     marginRight: '-50%',
                     transform: 'translate(-50%, -50%)',
-                    padding: 0
+                    padding: 0,
+                    display:"flex",
+                    flexDirection:"column",
+                    justifyContent:"space-between",
+                    height:"800px"
                 },
                 overlay: {
                     background: 'rgba(0,0,0,.6)',
@@ -47,7 +51,6 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
             }}>
                 <div style={{
                     width: 1776,
-                    height: 800
                 }}>
                     <div style={{
                         margin: '24px 16px 16px',
