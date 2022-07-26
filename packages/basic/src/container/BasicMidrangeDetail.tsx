@@ -76,10 +76,10 @@ const BasicMidrangeDetail = () => {
     }
     React.useEffect(()=>{
         const data = {
-            customer: router.query.customer_id,
-            model: router.query.cm_id,
-            code: router.query.code,
-            material_name: router.query.name,
+            customer: !!router.query.customer_id ? router.query.customer_id : "-",
+            model: !!router.query.cm_id ? router.query.cm_id : "-",
+            code: !!router.query.code ? router.query.code : "-",
+            material_name: !!router.query.name ? router.query.name : "-",
             type: router.query.type,
         }
         setBasicRow([data])

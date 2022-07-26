@@ -33,7 +33,6 @@ interface IProps {
 const MesStockList = ({ page, search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [excelOpen, setExcelOpen] = useState<boolean>(false);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(
     columnlist["stockV2"]
@@ -141,7 +140,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
         page: res.page,
         total: res.totalPages,
       });
-      cleanUpData(res);
+      cleanUpData(res, page);
     }
   };
 
@@ -227,8 +226,8 @@ const MesStockList = ({ page, search, option }: IProps) => {
       : [];
 
     tmpRow = res.info_list;
-    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
+    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
     let selectKey = "";
     let additionalData: any[] = [];
     tmpColumn.map((v: any) => {
@@ -279,17 +278,30 @@ const MesStockList = ({ page, search, option }: IProps) => {
           ? TransferCodeToValue(row.type, "productType")
           : "-",
         unit: row.unit ?? "-",
-        id: `stock_${random_id}`,
+        id: `stock${random_id}`,
+        sum_stock: row.stock_sum
       };
     });
-
-    if (page) {
+    if (page === 1) {
       setBasicRow([...tmpBasicRow])
     } else {
       setBasicRow([...basicRow, ...tmpBasicRow])
     }
   };
 
+  const stockSave = async(data) => {
+    const res = await RequestMethod("post", "stockSave",data)
+
+    if(res){
+      Notiflix.Report.success("저장되었습니다.","","확인", () => {
+        setSelectList(new Set())
+        LoadBasic(1)
+      })
+
+    }else{
+      Notiflix.Report.failure("서버에러 입니다.","","확인")
+    }
+  }
   return (
     <div>
       <PageHeader
@@ -304,20 +316,36 @@ const MesStockList = ({ page, search, option }: IProps) => {
         }}
         optionIndex={optionIndex}
         title={"재고 현황"}
+        buttons={["저장"]}
+        buttonsOnclick={(buttonIndex) => {
+          switch(buttonIndex){
+            case 0:
+              const result = basicRow.map((row) => {
+                if(selectList.has(row.id)){
+                  return {product_id:row.productId, stock:row?.basic_stock}
+                }
+              }).filter(row => row)
+
+              stockSave(result)
+          }
+        }}
       />
       <ExcelTable
         editable
         resizable
-        headerList={column}
+        headerList={[
+            SelectColumn,
+            ...column
+        ]}
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
           e.map(v => {
             if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
+                tmp.add(v.id)
+                v.isChange = false
+            }
           })
           setSelectList(tmp)
           setBasicRow(e)

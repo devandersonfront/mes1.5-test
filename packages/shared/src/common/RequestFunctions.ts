@@ -290,7 +290,7 @@ const ApiList = {
   inspecMachineSave: `/api/v1/inspec/daily/machine/save`,
   inspecMoldSave: `/api/v1/inspec/daily/mold/save`,
   lotRmComplete: `/api/v1/lot-rm/complete`,
-
+  stockSave: `/api/v1/stock/basic/save`,
   //modify
   operationModify: `/api/v1/operation/modify`,
 
