@@ -22,6 +22,7 @@ import {
   setSelectMenuStateChange,
 } from "shared/src/reducer/menuSelectState";
 import { settingHeight } from "shared/src/common/Util";
+import ReactTooltip from "react-tooltip";
 
 export interface IProps {
   children?: any;
