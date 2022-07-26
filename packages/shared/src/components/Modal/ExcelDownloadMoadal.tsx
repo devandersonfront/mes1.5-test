@@ -90,7 +90,6 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction}:
       const formData = new FormData()
 
       formData.append("file", file)
-      // await axios.post(`http://192.168.0.30:8399/api/v1/upload/${category}`, formData,{
         await Axios.post(`${SF_ENDPOINT_EXCEL}/api/v1/upload/${category}`, formData,{
                 headers:
                     {
@@ -104,8 +103,11 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction}:
               console.log(res)
               // blobData = res.data
           }).catch((err) => {
-              Notiflix.Report.failure("실패","업로드에 실패했습니다.","확인")
-              console.log(err)
+              if(err.response.data.message){
+                  Notiflix.Report.failure("실패",err.response.data.message,"확인")
+              }else{
+                  Notiflix.Report.failure("실패","업로드에 실패했습니다.","확인")
+              }
           })
   }
 
