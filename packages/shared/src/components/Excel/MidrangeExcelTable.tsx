@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from 'react';
+import React, { ChangeEvent } from 'react'
 import styled from "styled-components";
 import {MidrangeExcelDropdown} from "../Dropdown/MidrangeExcelDropdown";
 import moment from "moment";
@@ -188,7 +188,8 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
     const formItemHeader = (inspection_info: InspectionInfo[]) => {
         return (
             inspection_info && inspection_info.map((v,i)=>
-                <div style={{display: "flex"}} key={v.samples+'~'+i}>
+              {
+               return <div style={{display: "flex"}} key={v.samples+'~'+i}>
                     <CellDefault style={{width: '144px', height: '40px', borderBottom: 0, borderRight: 0, textAlign: "center" }}>
                         {(v.name !== undefined ? v.name : '')+`(${v.unit})`}
                     </CellDefault>
@@ -197,15 +198,15 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                             {v.standard}
                         </div>
                         <div style={{fontSize: '11px'}}>
-                            ({v.error_minimum}~{v.error_maximum})
+                            ({!!v.error_minimum ? v.error_minimum: 0}~{!!v.error_maximum ? v.error_maximum : 0})
                         </div>
                     </CellDefault>
                 </div>
+              }
             ))
     }
 
     const formItemResult = (inspection_infoType: InspectionInfo[], type: 'beginning' | 'middle' | 'end') => {
-
         return (
             inspection_infoType.map((value,index)=>
                 <div style={{display: "flex"}}>
@@ -213,10 +214,13 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                         <ExampleNumber style={{borderBottom: 0, }}>
                             {value.type === 0 ?
                                 <input style={{ width: '100%', height: '100%', border: "none", zIndex: 10, display: "flex", alignItems: "center", textAlign: "center"}} type={"number"}
-                                       value={inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ? value.data_result[i].value : '' : '-'}
+                                       value={value.data_result[i]?.value}
                                        key={type+'input'+index+'static'+i}
-                                       placeholder={inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ? value.data_result[i].value : '0' : '-'}
-                                       onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } onChange={(e)=>itemDataResultTextChange(type,e,index,i)}/>
+                                       readOnly={!(value.samples > i)}
+                                       placeholder={value.samples > i ? !!value.data_result[i]?.value ? value.data_result[i]?.value : '0' : '-'}
+                                       onKeyDown={(e) =>
+                                       {e.key === 'Enter' && e.currentTarget.blur()
+                                           e.key === 'e' && e.preventDefault()}} onChange={(e)=>itemDataResultTextChange(type,e,index,i)}/>
                                 :
                                 inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ?
                                     <MidrangeExcelDropdown contents={testData.legendary_list} value={value.data_result[i].value} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> :
@@ -252,7 +256,7 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
             <div style={{display: "flex"}}>
                 <div style={{backgroundColor: "#F4F6FA", width: '112px',borderLeft: '0.5px solid #B3B3B3', borderTop: 0, height: '80px'}}>
                     <Worker>작성자</Worker>
-                    <Worker style={{borderTop: '0.5px solid #B3B3B3'}}></Worker>
+                    <Worker style={{borderTop: '0.5px solid #B3B3B3', background:'white'}}></Worker>
                 </div>
                 <HeaderTitle style={{width: '168px'}}>
                     점검시간
@@ -273,77 +277,79 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                 </div>
             </div>
             {/*초품 */}
-            <div style={{display: "flex"}}>
-                <CellDefault style={{width: '112px', minHeight: '80px', fontWeight: 'bold', borderRight: 0}}>
-                    초품
-                </CellDefault>
-                <div style={{width: '432px'}}>
-                    <div style={{display: "flex"}}>
-                        <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            {moment(testData.inspection_time.beginning).format("YYYY.MM.DD HH:mm")}
+            <div>
+                <div style={{display: "flex"}}>
+                    <CellDefault style={{width: '112px', minHeight: '80px', fontWeight: 'bold', borderRight: 0}}>
+                        초품
+                    </CellDefault>
+                    <div style={{width: '432px'}}>
+                        <div style={{display: "flex"}}>
+                            <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
+                                {moment(testData.inspection_time.beginning).format("YYYY.MM.DD HH:mm")}
+                            </CellDefault>
+                            <div style={{display: "flex", flexDirection: "column"}}>
+                                {formItemHeader(testData.inspection_info.beginning)}
+                            </div>
+                        </div>
+                        <CellDefault style={{width: '432px', height: '40px' }}>
+                            결과
                         </CellDefault>
-                        <div style={{display: "flex", flexDirection: "column"}}>
-                            {formItemHeader(testData.inspection_info.beginning)}
+                    </div>
+                    <div>
+                        {formItemResult(testData.inspection_info.beginning, 'beginning')}
+                        <div style={{display: "flex"}}>
+                            {resultRow(testData.inspection_info.beginning, testData.inspection_result.beginning, 'beginning')}
                         </div>
                     </div>
-                    <CellDefault style={{width: '432px', height: '40px' }}>
-                        결과
+                </div>
+                {/*중품 */}
+                <div style={{display: "flex"}}>
+                    <CellDefault style={{width: '112px', minHeight: '80px', fontWeight: 'bold', borderRight: 0}}>
+                        중품
                     </CellDefault>
-                </div>
-                <div>
-                    {formItemResult(testData.inspection_info.beginning, 'beginning')}
-                    <div style={{display: "flex"}}>
-                        {resultRow(testData.inspection_info.beginning, testData.inspection_result.beginning, 'beginning')}
-                    </div>
-                </div>
-            </div>
-            {/*중품 */}
-            <div style={{display: "flex"}}>
-                <CellDefault style={{width: '112px', minHeight: '80px', fontWeight: 'bold', borderRight: 0}}>
-                    중품
-                </CellDefault>
-                <div style={{width: '432px'}}>
-                    <div style={{display: "flex"}}>
-                        <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            {moment(testData.inspection_time.middle).format("YYYY.MM.DD HH:mm")}
+                    <div style={{width: '432px'}}>
+                        <div style={{display: "flex"}}>
+                            <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
+                                {moment(testData.inspection_time.middle).format("YYYY.MM.DD HH:mm")}
+                            </CellDefault>
+                            <div style={{display: "flex", flexDirection: "column"}}>
+                                {formItemHeader(testData.inspection_info.middle)}
+                            </div>
+                        </div>
+                        <CellDefault style={{width: '432px', height: '40px' }}>
+                            결과
                         </CellDefault>
-                        <div style={{display: "flex", flexDirection: "column"}}>
-                            {formItemHeader(testData.inspection_info.middle)}
+                    </div>
+                    <div>
+                        {formItemResult(testData.inspection_info.middle, 'middle')}
+                        <div style={{display: "flex"}}>
+                            {resultRow(testData.inspection_info.middle, testData.inspection_result.middle, 'middle')}
                         </div>
                     </div>
-                    <CellDefault style={{width: '432px', height: '40px' }}>
-                        결과
+                </div>
+                {/*종품 */}
+                <div style={{display: "flex"}}>
+                    <CellDefault style={{width: '112px', minHeight: '80px', fontWeight: 'bold', borderRight: 0}}>
+                        종품
                     </CellDefault>
-                </div>
-                <div>
-                    {formItemResult(testData.inspection_info.middle, 'middle')}
-                    <div style={{display: "flex"}}>
-                        {resultRow(testData.inspection_info.middle, testData.inspection_result.middle, 'middle')}
-                    </div>
-                </div>
-            </div>
-            {/*종품 */}
-            <div style={{display: "flex"}}>
-                <CellDefault style={{width: '112px', minHeight: '80px', fontWeight: 'bold', borderRight: 0}}>
-                    종품
-                </CellDefault>
-                <div style={{width: '432px'}}>
-                    <div style={{display: "flex"}}>
-                        <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
-                            {moment(testData.inspection_time.end).format("YYYY.MM.DD HH:mm")}
-                        </CellDefault>
-                        <div style={{display: "flex", flexDirection: "column"}}>
-                            {formItemHeader(testData.inspection_info.end)}
+                    <div style={{width: '432px'}}>
+                        <div style={{display: "flex"}}>
+                            <CellDefault style={{width: '168px', minHeight: '40px', backgroundColor: 'white', borderRight: 0, borderBottom: 0}}>
+                                {moment(testData.inspection_time.end).format("YYYY.MM.DD HH:mm")}
+                            </CellDefault>
+                            <div style={{display: "flex", flexDirection: "column"}}>
+                                {formItemHeader(testData.inspection_info.end)}
+                            </div>
                         </div>
+                        <CellDefault style={{width: '432px', height: '40px' }}>
+                            결과
+                        </CellDefault>
                     </div>
-                    <CellDefault style={{width: '432px', height: '40px' }}>
-                        결과
-                    </CellDefault>
-                </div>
-                <div>
-                    {formItemResult(testData.inspection_info.end, 'end')}
-                    <div style={{display: "flex"}}>
-                        {resultRow(testData.inspection_info.end, testData.inspection_result.end, 'end')}
+                    <div>
+                        {formItemResult(testData.inspection_info.end, 'end')}
+                        <div style={{display: "flex"}}>
+                            {resultRow(testData.inspection_info.end, testData.inspection_result.end, 'end')}
+                        </div>
                     </div>
                 </div>
             </div>

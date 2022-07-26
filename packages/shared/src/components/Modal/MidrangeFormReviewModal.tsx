@@ -19,10 +19,24 @@ interface IProps {
     setIsOpen?: (isOpen: boolean) => void
 }
 
-
 const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<Array<any>>()
+
+    useEffect(() => {
+        document.body.style.cssText = `
+            position:fixed;
+            width: 100%;
+            height: 100%;
+        `
+        return () => {
+            document.body.style.cssText = `
+            position:static;
+        `
+        }
+    }, [ ])
+
+
     React.useEffect(()=>{
         setSearchList([...formReviewData.basic])
     },[formReviewData])
@@ -36,21 +50,22 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
                     bottom: 'auto',
                     marginRight: '-50%',
                     transform: 'translate(-50%, -50%)',
-                    padding: 0
-                },
+                    padding: 0,
+                    width: 1793,
+                    height: 800,
+            },
                 overlay: {
                     background: 'rgba(0,0,0,.6)',
-                    zIndex: 5
                 }
-            }}>
+            }}
+                   ariaHideApp={false}
+            >
                 <div style={{
-                    width: 1776,
-                    height: 800
                 }}>
                     <div style={{
                         margin: '24px 16px 16px',
                         display: 'flex',
-                        justifyContent: 'space-between'
+                        justifyContent: 'space-between',
                     }}>
                         <p style={{
                             color: 'black',
@@ -69,7 +84,7 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
                             </div>
                         </div>
                     </div>
-                    <div style={{padding: '0 16px', width: 1776, height: '80px'}}>
+                    <div style={{padding: '0 16px', height: '80px'}}>
                         <ExcelTable
                             headerList={searchModalList.midrangeInfo}
                             row={searchList ?? [{}]}
@@ -91,19 +106,17 @@ const MidrangeFormReviewModal = ({ formReviewData, isOpen, setIsOpen}: IProps) =
                             headerAlign={'center'}
                         />
                     </div>
-                    <div style={{padding: '0 16px', width: 1776}}>
+                    <div style={{padding: '0 16px' }}>
                         <MidrangeExcelTable formReviewData={formReviewData} />
                     </div>
                 </div>
-                <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
-                    <div
-                        onClick={() => {
-                            setIsOpen(false)
-                        }}
-                        style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                    >
-                        <p>확인</p>
-                    </div>
+                <div
+                    onClick={() => {
+                        setIsOpen(false)
+                    }}
+                    style={{width: "100%", height: 40, marginTop: 10, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                >
+                    <p>확인</p>
                 </div>
             </Modal>
         </SearchModalWrapper>

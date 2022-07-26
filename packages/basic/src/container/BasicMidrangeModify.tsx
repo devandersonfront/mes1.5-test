@@ -54,8 +54,9 @@ const BasicMidrangeModify = () => {
         res = await RequestMethod('post', `inspectCategorySave`,[midrangeData])
 
         if(res){
-            Notiflix.Report.success('저장되었습니다.','','확인');
-            router.push('/mes/basic/productV1u')
+            Notiflix.Report.success('저장되었습니다.','','확인',() =>
+            router.push(({pathname:'/mes/basic/productV1u/midrange/form/detail',
+              query: { customer_id: router.query.customer_id, cm_id: router.query.cm_id, code: router.query.code, name: router.query.name, product_id: router.query.product_id, type: router.query.type} })))
         }
     }
 
@@ -268,7 +269,9 @@ const BasicMidrangeModify = () => {
                     +검사 항목 추가
                 </MidrangeButton>
             </div>
-            <MidrangeFormReviewModal formReviewData={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
+            {
+                isOpen && <MidrangeFormReviewModal formReviewData={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
+            }
         </div>
     );
 };
