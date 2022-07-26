@@ -145,7 +145,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
           }
           :
           {
-            sorts: 'date',
+            sorts: 'deadline',
             order: order == 1 ? 'ASC' : 'DESC',
             from: selectDate.from,
             to: selectDate.to,
@@ -184,7 +184,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
           }
           :
           {
-            sorts: 'date',
+            sorts: 'deadline',
             order: order == 1 ? 'ASC' : 'DESC',
             from: selectDate.from,
             to: selectDate.to,
