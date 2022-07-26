@@ -89,66 +89,81 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     // }
   }, [isOpen,row.os_id])
 
-  const changeRow = (tmpRow: any, key?: string) => {
-    let tmpRes = []
-    let totalGood:number = 0
-    let totalPoor:number = 0
-    let defectReasons = []
-    let tmpRowArray = []
-    if(typeof tmpRow === 'string'){
+  const convertJsonToArray = (tmpRow : any) => {
+    const splitData = tmpRow.split('\n')
+    const filterData = splitData.filter((data) => data !== "")
+    return filterData.map((data)=> JSON.parse(data))
+  }
 
-      tmpRowArray = tmpRow.split('\n')
+  const convertData = (arrayData : any) => {
+    return arrayData?.map((data,index)=>(
+        {...data, seq: index + 1, sum : data.good_quantity + data.poor_quantity, worker_name: data.worker?.name,}
+    ))
+  }
 
-      tmpRes = tmpRowArray.map((v, index) => {
-        if(v !== ""){
-          let tmp = JSON.parse(v)
-          totalGood += tmp.good_quantity
-          totalPoor += tmp.poor_quantity
+  // const changeRow = (tmpRow: any, key?: string) => {
+  //   let tmpRes = []
+  //   let totalGood:number = 0
+  //   let totalPoor:number = 0
+  //   let defectReasons = []
+  //   let tmpRowArray = []
+  //   if(typeof tmpRow === 'string'){
+  //
+  //     tmpRowArray = tmpRow.split('\n')
+  //
+  //     tmpRes = tmpRowArray.map((v, index) => {
+  //       if(v !== ""){
+  //         let tmp = JSON.parse(v)
+  //         totalGood += tmp.good_quantity
+  //         totalPoor += tmp.poor_quantity
+  //
+  //
+  //         if(tmp.defect_reasons){
+  //           tmp.defect_reasons.map((v)=>{
+  //             defectReasons.push(v)
+  //           })
+  //         }
+  //
+  //         return tmp
+  //       }
+  //     }).filter(v=>v)
+  //   }else{
+  //
+  //     tmpRes = tmpRow?.info_list?.map((row) => {
+  //       let resultRow:any = {...row};
+  //       resultRow.seq = row.sequence;
+  //       resultRow.lot_number = row.lot_number;
+  //       resultRow.worker_name = row.worker.name;
+  //       resultRow.start = row.start;
+  //       resultRow.end = row.end;
+  //       resultRow.pause = row.pause_reasons;
+  //       resultRow.good_quantity = row.good_quantity;
+  //       resultRow.poor_quantity = row.poor_quantity;
+  //       resultRow.sum = row.good_quantity + row.poor_quantity;
+  //
+  //       return resultRow;
+  //     })
+  //     totalGood += Number(tmpRow.good_quantity)
+  //     totalPoor += Number(tmpRow.poor_quantity)
+  //     defectReasons = tmpRow.defect_reasons
+  //     tmpRes = [{...tmpRow}]
+  //   }
+  //
+  //   return tmpRes?.map((v, i) => {
+  //     return {
+  //       ...v,
+  //       worker_name: v.worker?.name,
+  //       sum: v.good_quantity+v.poor_quantity,
+  //       seq: i+1
+  //     }
+  //   })
+  // }
 
-
-          if(tmp.defect_reasons){
-            tmp.defect_reasons.map((v)=>{
-              defectReasons.push(v)
-            })
-          }
-
-          return tmp
-        }
-      }).filter(v=>v)
-    }else{
-
-      tmpRes = tmpRow?.info_list?.map((row) => {
-        let resultRow:any = {...row};
-        resultRow.seq = row.sequence;
-        resultRow.lot_number = row.lot_number;
-        resultRow.worker_name = row.worker.name;
-        resultRow.start = row.start;
-        resultRow.end = row.end;
-        resultRow.pause = row.pause_reasons;
-        resultRow.good_quantity = row.good_quantity;
-        resultRow.poor_quantity = row.poor_quantity;
-        resultRow.sum = row.good_quantity + row.poor_quantity;
-
-        return resultRow;
-      })
-      totalGood += Number(tmpRow.good_quantity)
-      totalPoor += Number(tmpRow.poor_quantity)
-      defectReasons = tmpRow.defect_reasons
-      tmpRes = [{...tmpRow}]
-    }
-
-    return tmpRes?.map((v, i) => {
-      return {
-        ...v,
-        worker_name: v.worker?.name,
-        sum: v.good_quantity+v.poor_quantity,
-        seq: i+1
-      }
-    })
+  const changeRow = (tmpRow: any) => {
+    return convertData((typeof tmpRow === 'string' ? convertJsonToArray(tmpRow) : [tmpRow]))
   }
 
   const SearchBasic = async () => {
-
     const res = await RequestMethod('get', `recordAll`,{
       params: {
         sheetIds: row.os_id
