@@ -49,6 +49,7 @@ export interface IExcelHeaderType {
   hide?:boolean
   version?:number
   noSelect?:boolean
+  overlay?:boolean
 }
 
 export interface IResponseType {
