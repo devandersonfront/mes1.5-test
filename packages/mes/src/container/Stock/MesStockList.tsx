@@ -140,7 +140,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
         page: res.page,
         total: res.totalPages,
       });
-      cleanUpData(res);
+      cleanUpData(res, page);
     }
   };
 
@@ -286,8 +286,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
         sum_stock: row.stock_sum
       };
     });
-
-    if (page) {
+    if (page === 1) {
       setBasicRow([...tmpBasicRow])
     } else {
       setBasicRow([...basicRow, ...tmpBasicRow])
@@ -298,12 +297,15 @@ const MesStockList = ({ page, search, option }: IProps) => {
     const res = await RequestMethod("post", "stockSave",data)
 
     if(res){
-      Notiflix.Report.success("","저장되었습니다.","확인")
+      Notiflix.Report.success("저장되었습니다.","","확인", () => {
+        setSelectList(new Set())
+        LoadBasic(1)
+      })
+
     }else{
-      Notiflix.Report.failure("","","확인")
+      Notiflix.Report.failure("서버에러 입니다.","","확인")
     }
   }
-
   return (
     <div>
       <PageHeader
@@ -331,10 +333,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
                 }
               }).filter(row => row)
 
-              stockSave(result).then(() => {
-                setPageInfo({...pageInfo,page:1})
-
-              })
+              stockSave(result)
           }
         }}
       />
