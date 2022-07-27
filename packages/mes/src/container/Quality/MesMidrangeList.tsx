@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod } from "shared";
+import {
+    columnlist,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType,
+    PaginationComponent,
+    RequestMethod
+} from "shared";
 import moment from "moment";
 // @ts-ignore
 import { SelectColumn } from "react-data-grid";
@@ -37,7 +44,7 @@ const MesMidrangeList = ({ option }: IProps) => {
 
     const loadPage = (page: number) => {
         if (keyword) {
-            searchQualityRecordInspect(keyword, optionIndex, page).then(() => {
+            searchQualityRecordInspect(keyword,page).then(() => {
                 Notiflix.Loading.remove()
             })
         } else {
@@ -58,11 +65,11 @@ const MesMidrangeList = ({ option }: IProps) => {
         })
     }, [])
 
-    const searchQualityRecordInspect = async (keyword, opt, page?: number) => {
+    const searchQualityRecordInspect = async (keyword , page : number = 1) => {
         Notiflix.Loading.circle()
         const res = await RequestMethod('get', `qualityRecordInspectSearch`, {
             path: {
-                page: (page || page !== 0) ? page : 1,
+                page: page,
                 renderItem: 22,
             },
             params: {
@@ -102,25 +109,19 @@ const MesMidrangeList = ({ option }: IProps) => {
                     start: v.start,
                     end: v.end,
                     inspection_category: v.inspection_category,
-                    loadPage
                 }
             })
 
-            if (pageInfo.page > 1) {
-                const basicAddResponseData = basicRow.concat(data)
-                setBasicRow([...basicAddResponseData])
-            } else {
                 setBasicRow([...data])
-            }
         }
 
     }
 
-    const qualityRecordInspectList = async (page?: number) => {
+    const qualityRecordInspectList = async (page: number = 1) => {
         Notiflix.Loading.circle()
         const res = await RequestMethod('get', `qualityRecordInspectList`, {
             path: {
-                page: (page || page !== 0) ? page : 1,
+                page: page,
                 renderItem: 22,
             },
             params: {
@@ -138,7 +139,6 @@ const MesMidrangeList = ({ option }: IProps) => {
 
             const data = res.info_list.map((v) => {
                 const randomId = Math.random() * 1000;
-                // if(v.machines) {
                 return {
                     id: "midrange_" + randomId,
                     record_id: v.record_id,
@@ -159,16 +159,9 @@ const MesMidrangeList = ({ option }: IProps) => {
                     start: v.start,
                     end: v.end,
                     inspection_category: v.inspection_category,
-                    loadPage
                 }
-                // }
             })
-            if (pageInfo.page > 1) {
-                const basicAddResponseData = basicRow.concat(data)
-                setBasicRow([...basicAddResponseData])
-            } else {
                 setBasicRow([...data])
-            }
         }
 
     }
@@ -181,7 +174,7 @@ const MesMidrangeList = ({ option }: IProps) => {
                 searchOptionList={optionList}
                 onChangeSearchKeyword={setKeyword}
                 onSearch={()=> {
-                    searchQualityRecordInspect(keyword, optionIndex, pageInfo.page).then(() => {
+                    searchQualityRecordInspect(keyword).then(() => {
                         Notiflix.Loading.remove()
                     })
                 }}
@@ -219,15 +212,23 @@ const MesMidrangeList = ({ option }: IProps) => {
                 setSelectList={setSelectList}
                 width={1576}
                 height={setExcelTableHeight(basicRow.length)}
-                scrollEnd={(value) => {
-                    if (value) {
-                        if (pageInfo.total > pageInfo.page) {
-                            setSelectList(new Set)
-                            setPageInfo({ ...pageInfo, page: pageInfo.page + 1 })
-                        }
-                    }
+                // scrollEnd={(value) => {
+                //     if (value) {
+                //         if (pageInfo.total > pageInfo.page) {
+                //             setSelectList(new Set)
+                //             setPageInfo({ ...pageInfo, page: pageInfo.page + 1 })
+                //         }
+                //     }
+                // }}
+            />
+            <PaginationComponent
+                currentPage={pageInfo.page}
+                totalPage={pageInfo.total}
+                setPage={(page) => {
+                    setPageInfo({...pageInfo, page: page})
                 }}
             />
+
         </div>
     );
 };
