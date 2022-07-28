@@ -45,7 +45,28 @@ const BasicTool = ({ page, search, option }: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [selectRow, setSelectRow] = useState<number>(0);
 
-  const cleanUpData = (info_list: any, toolAverageArray?: number[][]) => {
+  const reload = (keyword?:string) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
+    } else {
+      getData(null, keyword)
+    }
+  }
+
+  useEffect(() => {
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
+
+  useEffect(() => {
+    dispatch(setMenuSelectState({ main: "공구 기준정보", sub: "" }));
+    return () => {
+      dispatch(deleteMenuSelectState());
+    };
+  }, []);
+
+
+  const cleanUpData = (info_list: any) => {
     let tmpColumn = columnlist["toolRegister"];
     let tmpRow: Array<any> = [];
     tmpColumn = tmpColumn
@@ -155,9 +176,6 @@ const BasicTool = ({ page, search, option }: IProps) => {
         ...row,
         ...appendAdditional,
         id: `tool_${random_id}`,
-        // products:[...row.products.map((product,index)=>{
-        //     return ({...product, average:Number(toolAverageArray[index])})
-        // })],
       };
     });
     setSelectList(new Set());
@@ -224,91 +242,33 @@ const BasicTool = ({ page, search, option }: IProps) => {
     // }
   };
 
-  const LoadBasic = async (page?: number) => {
+  const getData = async (page?: number, keyword?: string) => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod("get", "toolList", {
+    const res = await RequestMethod("get", keyword ? 'toolSearch' : 'toolList', {
       path: {
-        page: page || page !== 0 ? page : 1,
+        page: page ?? 1,
         renderItem: 18,
       },
-      params: {},
-    });
-
-    if (res) {
-      const productIdArrayList = [];
-      // res.info_list.map((row)=>{
-      //     const productList = [];
-      //     row?.products?.map((product) => {
-      //         // productList.push(product.product_id)
-      //         RequestMethod("get", "toolAverage", {
-      //             path:{
-      //                 product_id: product.product_id,
-      //                 tool_id: row.tool_id
-      //             }
-      //         })
-      //             .then((res) => {
-      //                 productList.push(res)
-      //             })
-      //     })
-      //     productIdArrayList.push(productList);
-      // })
-      cleanUpData(res);
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-    }
-    setSelectList(new Set());
-  };
-
-  const SearchBasic = async (
-    keyword: any,
-    option: number,
-    isPaging?: number
-  ) => {
-    Notiflix.Loading.circle();
-    if (!isPaging) {
-      setOptionIndex(option);
-    }
-    const res = await RequestMethod("get", "toolSearch", {
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params: {
+      params: keyword ? {
         opt: optionIndex,
         keyword: keyword,
-      },
+      } : null,
     });
 
-    if (res) {
-      const productIdArrayList = [];
-      res.info_list.map((row) => {
-        const productList = [];
-        row?.products?.map((product) => {
-          // productList.push(product.product_id)
-          RequestMethod("get", "toolAverage", {
-            path: {
-              product_id: product.product_id,
-              tool_id: row.tool_id,
-            },
-          }).then((res) => {
-            productList.push(res);
-          });
-        });
-        productIdArrayList.push(productList);
-      });
-
-      cleanUpData(res, productIdArrayList);
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-
+    if(res){
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          ...pageInfo,
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res);
+      }
     }
-    setSelectList(new Set());
+    setSelectList(new Set())
+    Notiflix.Loading.remove()
   };
 
   const SelectData = () => {
@@ -367,9 +327,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
 
       if (res) {
         Notiflix.Loading.remove(300);
-        Notiflix.Report.success("저장되었습니다.", "", "확인", () => {
-          LoadBasic(1);
-        });
+        Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
       } else {
         Notiflix.Loading.remove(300);
         Notiflix.Report.failure("에러입니다.", "", "확인");
@@ -419,7 +377,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
         "toolDelete",
         SaveCleanUpData(haveIdRows)
       );
-      LoadBasic(1);
+      reload()
     } else {
       selectedRows.forEach((row) => {
         map.delete(row.id);
@@ -541,36 +499,13 @@ const BasicTool = ({ page, search, option }: IProps) => {
     setBasicRow(rows);
   };
 
-  useEffect(() => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    } else {
-      LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    }
-  }, [pageInfo.page]);
-
-  useEffect(() => {
-    dispatch(setMenuSelectState({ main: "공구 기준정보", sub: "" }));
-    return () => {
-      dispatch(deleteMenuSelectState());
-    };
-  }, []);
-
-
-
   return (
       <div>
         <PageHeader
             title={"공구 기준정보"}
             isSearch
-            onChangeSearchKeyword={setKeyword}
-            onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
-              Notiflix.Loading.remove();
-            })}
+            searchKeyword={keyword}
+            onSearch={reload}
             searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
             onChangeSearchOption={(option) => {
               setOptionIndex(option);
@@ -614,7 +549,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
             category={"tool"}
             title={"공구 기준정보"}
             setIsOpen={setExcelOpen}
-            resetFunction={() => LoadBasic(1)}
+            resetFunction={() => reload()}
         />
       </div>
   )

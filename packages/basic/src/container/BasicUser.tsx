@@ -58,13 +58,17 @@ const BasicUser = ({}: IProps) => {
     total: 1,
   });
 
-  useEffect(() => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page);
+  const reload = (keyword?:string) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
     } else {
-      // alert("기본 리스트")
-      LoadBasic(pageInfo.page).then(() => {});
+      getData(null, keyword)
     }
+  }
+
+  useEffect(() => {
+    getData(pageInfo.page, keyword)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -267,16 +271,7 @@ const BasicUser = ({}: IProps) => {
         });
 
         if (res) {
-          Notiflix.Report.success("저장되었습니다.", "", "확인");
-          if (keyword) {
-            SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-              Notiflix.Loading.remove();
-            });
-          } else {
-            LoadBasic(pageInfo.page).then(() => {
-              Notiflix.Loading.remove();
-            });
-          }
+          Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
         }
       } else {
         Notiflix.Report.warning(
@@ -364,8 +359,7 @@ const BasicUser = ({}: IProps) => {
           ],
         }))
       );
-
-      LoadBasic(1);
+      reload();
     } else {
       selectedRows.forEach((row) => {
         map.delete(row.id);
@@ -380,59 +374,33 @@ const BasicUser = ({}: IProps) => {
     }
   };
 
-  const LoadBasic = async (page?: number) => {
-    const res = await RequestMethod("get", `memberList`, {
+  const getData = async (page?: number, keyword?:string) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod("get", keyword ? 'memberSearch' : 'memberList', {
       path: {
         page: page ?? 1,
         renderItem: 18,
       },
+      params: keyword ? {
+        sorts: "created",
+        keyword,
+        opt: optionIndex ?? 0,
+      } : null
     });
 
     if (res) {
-      if (res.totalPages < page) {
-        LoadBasic(page - 1);
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
       } else {
         setPageInfo({
-          ...pageInfo,
           page: res.page,
           total: res.totalPages,
         });
         cleanUpData(res);
       }
     }
-
     setSelectList(new Set());
-  };  
-  
-  const SearchBasic = async (
-    keyword: any,
-    option: number,
-    isPaging?: number
-  ) => {
-    // alert("Search Basic 실행 !!")
-
-    if (!isPaging) {
-      setOptionIndex(option);
-    }
-    const res = await RequestMethod("get", `memberSearch`, {
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? "",
-        opt: option ?? 0,
-      },
-    });
-
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: 1,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
-    }
+    Notiflix.Loading.remove()
   };
 
   const changeRow = (row: any) => {
@@ -714,10 +682,8 @@ const BasicUser = ({}: IProps) => {
     <div>
       <PageHeader
         isSearch
-        onChangeSearchKeyword={setKeyword}
-        onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
-          Notiflix.Loading.remove();
-        })}
+        searchKeyword={keyword}
+        onSearch={reload}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option);

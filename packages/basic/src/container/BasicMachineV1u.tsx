@@ -66,23 +66,22 @@ const BasicMachineV1u = ({option}: IProps) => {
   const [selectRow , setSelectRow] = useState<number>(0);
 
   const changeSetTypesState = (value:number) => {
-    setTypesState(value);
     setPageInfo({page:1, total:1})
+    setTypesState(value);
   }
 
-
+  const reload = (keyword?:string) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
+    } else {
+      getData(null, keyword)
+    }
+  }
 
   useEffect(() => {
-    if(keyword){
-      SearchBasic(keyword, optionIndex, 1).then(() => {
-        Notiflix.Loading.remove()
-      })
-    }else{
-      LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove()
-      })
-    }
-  }, [pageInfo.page, typesState])
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page, typesState]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"기계 기준정보",sub:""}))
@@ -164,8 +163,7 @@ const BasicMachineV1u = ({option}: IProps) => {
     }
       RequestMethod('post', `machineSave`, result)
           .then((res) => {
-            Notiflix.Report.success("저장되었습니다.","","확인");
-            LoadBasic(pageInfo.page);
+            Notiflix.Report.success("저장되었습니다.","","확인", () => reload());
           })
           .catch((error)=>{
             return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
@@ -175,75 +173,41 @@ const BasicMachineV1u = ({option}: IProps) => {
           })
   }
 
-
-  const LoadBasic = async (page?: number) => {
-    Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `machineList`,{
-      path: {
-        page: (page || page !== 0) ? page : 1,
-        renderItem: 18,
-      },
-
-      params: typesState !== null ?
-          {
-            types:typesState
-          }
-          :
-          {
-
-          }
-    })
-    if(res){
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
+  const getRequestParams = (keyword?: string) => {
+    let params = {}
+    if(typesState) params['types'] = typesState
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
     }
-    // else if (res.state === 401) {
-    //   Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-    //     router.back()
-    //   })
-    // }
-
-    setSelectList(new Set())
-
+    return params
   }
 
-  const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
+  const getData = async (page?: number, keyword?: string) => {
     Notiflix.Loading.circle()
-    // if(!isPaging){
-    //   setOptionIndex(option)
-    // }
-    const res = await RequestMethod('get', `machineSearch`,{
+    const res = await RequestMethod('get', keyword ? 'machineSearch' : 'machineList',{
       path: {
-        page: isPaging ?? 1,
+        page: page ?? 1,
         renderItem: 18,
       },
-      params: typesState !== null ?
-          {
-            keyword: keyword ?? '',
-            opt: option ?? 0,
-            types:0
-          }
-          :
-          {
-            keyword: keyword ?? '',
-            opt: option ?? 0,
-          }
+
+      params: getRequestParams(keyword)
     })
 
     if(res){
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          ...pageInfo,
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res)
+      }
     }
-
     setSelectList(new Set())
+    Notiflix.Loading.remove()
   }
 
   const convertDataToMap = () => {
@@ -280,9 +244,7 @@ const BasicMachineV1u = ({option}: IProps) => {
 
     if(haveIdRows.length > 0){
       deletable = await RequestMethod('delete','machineDelete', filterData)
-      LoadBasic(1)
-      setKeyword('')
-
+      reload()
     }else{
 
       selectedRows.forEach((row)=>{map.delete(row.id)})
@@ -563,14 +525,10 @@ const BasicMachineV1u = ({option}: IProps) => {
       <div>
         <PageHeader
           isSearch
-          onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          })}
-          onChangeSearchKeyword={setKeyword}
+          searchKeyword={keyword}
+          onSearch={reload}
           searchOptionList={optionList}
-          onChangeSearchOption={(option) => {
-            setOptionIndex(option)
-          }}
+          onChangeSearchOption={setOptionIndex}
           optionIndex={optionIndex}
           title={"기계 기준정보"}
           buttons={
@@ -620,7 +578,7 @@ const BasicMachineV1u = ({option}: IProps) => {
             category={"machine"}
             title={"기계 기준정보"}
             setIsOpen={setExcelOpen}
-            resetFunction={() => LoadBasic(1)}
+            resetFunction={() => reload()}
         />
       </div>
   );

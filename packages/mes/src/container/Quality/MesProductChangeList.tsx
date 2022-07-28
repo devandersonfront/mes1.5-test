@@ -60,8 +60,8 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
         Notiflix.Loading.circle()
         const res = await RequestMethod('get', `productChangeList`,{
             path: {
-                page: pageInfo.page ?? 1,
-                renderItem: 18,
+                page: page || page !== 0 ? page : 1,
+                renderItem: 22,
             },
             params: {
                 from: selectDate.from,
@@ -86,14 +86,11 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
     }
 
 
-    const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
+    const SearchBasic = async (keyword: any, option: number, page?: number) => {
         Notiflix.Loading.circle()
-        if(!isPaging){
-            setOptionIndex(option)
-        }
         const res = await RequestMethod('get', `productChangeSearch`,{
             path: {
-                page: isPaging ?? 1,
+                page: page || page !== 0 ? page : 1,
                 renderItem: 22,
             },
             params: {
@@ -134,7 +131,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 pcr_id: v.pcr_id
             }
         })
-        if(pageInfo.page > 1) {
+        if(res.page > 1) {
             setSelectList(new Set)
             const basicAddTmpRow = basicRow.concat(tmpRow)
             setBasicRow([...basicAddTmpRow])
@@ -190,9 +187,7 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 onChangeSearchKeyword={setSearchKeyword}
                 onSearch={()=> {
                     setSelectList(new Set)
-                    SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
-                        Notiflix.Loading.remove()
-                    })
+                    setPageInfo({page:1, total:1})
                 }}
                 onChangeSearchOption={(option) => {
                     setSelectList(new Set)
@@ -201,8 +196,11 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 calendarTitle={'등록 날짜'}
                 calendarType={'period'}
                 selectDate={selectDate}
+                setSelectDate={(date) => {
                 //@ts-ignore
-                setSelectDate={(date) => setSelectDate(date)}
+                    setSelectDate(date)
+                    setPageInfo({page:1, total:1})
+                }}
                 title={"변경점 정보 리스트"}
                 buttons={
                     ['', '자세히 보기']

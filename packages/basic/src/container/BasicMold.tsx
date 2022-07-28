@@ -50,18 +50,18 @@ const BasicMold = ({}: IProps) => {
     total: 1,
   });
 
-  useEffect(() => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
+  const reload = (keyword?:string) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
     } else {
-      LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
+      getData(null, keyword)
     }
-  }, [pageInfo.page,]);
+  }
 
+  useEffect(() => {
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({ main: "금형 기준정보", sub: "" }));
@@ -210,16 +210,7 @@ const BasicMold = ({}: IProps) => {
       });
 
       if (res) {
-        Notiflix.Report.success("저장되었습니다.", "", "확인");
-        if (keyword) {
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
-        } else {
-          LoadBasic(pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
-        }
+        Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
       }
     } else if (!selectCheck) {
       Notiflix.Report.warning(
@@ -232,24 +223,34 @@ const BasicMold = ({}: IProps) => {
     }
   };
 
-  const LoadBasic = async (page?: number) => {
+  const getData = async (page?: number, keyword?: string) => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod("get", `moldList`, {
+    const res = await RequestMethod("get", keyword ? 'moldSearch' : 'moldList', {
       path: {
-        page: page || page !== 0 ? page : 1,
+        page: page ?? 1,
         renderItem: 18,
       },
+      params: keyword ? {
+        keyword,
+        opt: optionIndex,
+        sorts: "created",
+      } : null,
     });
 
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
+    if(res){
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          ...pageInfo,
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res)
+      }
     }
-    setSelectList(new Set());
+    setSelectList(new Set())
+    Notiflix.Loading.remove()
   };
 
   const setAdditionalData = () => {
@@ -310,9 +311,7 @@ const BasicMold = ({}: IProps) => {
           ]}
       )))
 
-      LoadBasic(1)
-      setKeyword('')
-
+      reload()
     }else{
       selectedRows.forEach((row)=>{map.delete(row.id)})
       setBasicRow(Array.from(map.values()))
@@ -323,39 +322,6 @@ const BasicMold = ({}: IProps) => {
     if (deletable) {
       Notiflix.Report.success("삭제되었습니다.", "", "확인");
     }
-    setSelectList(new Set());
-  };
-
-  const SearchBasic = async (
-    keyword: any,
-    option: number,
-    isPaging?: number
-  ) => {
-    Notiflix.Loading.circle();
-    if (!isPaging) {
-      setOptionIndex(option);
-    }
-    const res = await RequestMethod("get", `moldSearch`, {
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? "",
-        opt: option ?? 0,
-        sorts: "created",
-      },
-    });
-
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
-    }
-
     setSelectList(new Set());
   };
 
@@ -565,10 +531,8 @@ const BasicMold = ({}: IProps) => {
 
         <PageHeader
           isSearch
-          onChangeSearchKeyword={setKeyword}
-          onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove()
-          })}
+          searchKeyword={keyword}
+          onSearch={reload}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
             setOptionIndex(option)
@@ -590,7 +554,6 @@ const BasicMold = ({}: IProps) => {
             ...column
           ]}
           row={basicRow}
-          // setRow={setBasicRow}
           setRow={(e) => {
             let tmp: Set<any> = selectList
             e.map(v => {
@@ -614,17 +577,12 @@ const BasicMold = ({}: IProps) => {
           currentPage={pageInfo.page}
           totalPage={pageInfo.total}
           setPage={(page) => {
-            // if(keyword){
-            //   router.push(`/mes/basic/moldV1u?page=1&keyword=${keyword}&opt=${option}`)
               setPageInfo({...pageInfo,page:page})
-            // }else{
-            //   router.push(`/mes/basic/moldV1u?page=${page}`)
-            // }
           }}
         />
       <ExcelDownloadModal
         isOpen={excelOpen}
-        resetFunction={() => LoadBasic(1)}
+        resetFunction={() => reload()}
         category={"mold"}
         title={"금형 기준정보"}
         setIsOpen={setExcelOpen}

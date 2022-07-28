@@ -40,37 +40,25 @@ const BasicModel = ({}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처명','사업자 번호', '모델명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [selectRow , setSelectRow] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>()
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
-  const [selectRow , setSelectRow] = useState<number>(0);
 
-  // useEffect(() => {
-  //   if(keyword){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }else{
-  //     LoadBasic(pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page, keyword])
+  const reload = (keyword?:string) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
+    } else {
+      getData(null, keyword)
+    }
+  }
 
   useEffect(() => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    } else {
-      LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    }
-  }, [pageInfo.page,]);
-
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"거래처 관리",sub:router.pathname}))
@@ -172,98 +160,89 @@ const BasicModel = ({}: IProps) => {
         );
     }
     if(!existence){
-    const searchAiID = (rowAdditional:any[], index:number) => {
-      let result:number = undefined;
-      rowAdditional.map((addi, i)=>{
-        if(index === i){
-          result = addi.ai_id;
-        }
-      })
-      return result;
-    }
-
-    let res: any
-    res = await RequestMethod('post', `modelSave`,
-      basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-            })
-            return {
-              ...row,
-              ...selectData,
-              customer: row.customerArray ?? row.customer,
-              additional: [
-                ...additional.map((v, index)=>{
-                  //if(!row[v.colName]) return undefined;
-                  // result.push(
-                  return {
-                    mi_id: v.id,
-                    title: v.name,
-                    value: row[v.colName] ?? "",
-                    unit: v.unit,
-                    ai_id: searchAiID(row.additional, index) ?? undefined,
-                    version:row.additional[index]?.version ?? undefined
-                  }
-                  // )
-                }).filter((v) => v)
-              ]
-            }
-
+      const searchAiID = (rowAdditional:any[], index:number) => {
+        let result:number = undefined;
+        rowAdditional.map((addi, i)=>{
+          if(index === i){
+            result = addi.ai_id;
           }
-        }).filter((v) => v)).catch((error)=>{
-          return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
         })
-
-
-
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인');
-      if(keyword){
-        SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
-        LoadBasic(pageInfo.page).then(() => {
-          Notiflix.Loading.remove()
-        })
+        return result;
       }
+
+      let res: any
+      res = await RequestMethod('post', `modelSave`,
+        basicRow.map((row, i) => {
+            if(selectList.has(row.id)){
+              let additional:any[] = []
+              column.map((v) => {
+                if(v.type === 'additional'){
+                  additional.push(v)
+                }
+              })
+
+              let selectData: any = {}
+
+              Object.keys(row).map(v => {
+                if(v.indexOf('PK') !== -1) {
+                  selectData = {
+                    ...selectData,
+                    [v.split('PK')[0]]: row[v]
+                  }
+                }
+
+                if(v === 'unitWeight') {
+                  selectData = {
+                    ...selectData,
+                    unitWeight: Number(row['unitWeight'])
+                  }
+                }
+
+                if(v === 'tmpId') {
+                  selectData = {
+                    ...selectData,
+                    id: row['tmpId']
+                  }
+                }
+              })
+              return {
+                ...row,
+                ...selectData,
+                customer: row.customerArray ?? row.customer,
+                additional: [
+                  ...additional.map((v, index)=>{
+                    //if(!row[v.colName]) return undefined;
+                    // result.push(
+                    return {
+                      mi_id: v.id,
+                      title: v.name,
+                      value: row[v.colName] ?? "",
+                      unit: v.unit,
+                      ai_id: searchAiID(row.additional, index) ?? undefined,
+                      version:row.additional[index]?.version ?? undefined
+                    }
+                    // )
+                  }).filter((v) => v)
+                ]
+              }
+
+            }
+          }).filter((v) => v)).catch((error)=>{
+            return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
+          })
+
+
+
+      if(res){
+        Notiflix.Report.success('저장되었습니다.','','확인', () => reload());
+      }
+    }else{
+      return Notiflix.Report.warning(
+        '경고',
+        `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+        '확인',
+      );
     }
-  }else{
-    return Notiflix.Report.warning(
-      '경고',
-      `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
-      '확인',
-    );
-  }
   }
   const setAdditionalData = () => {
 
@@ -324,9 +303,7 @@ const BasicModel = ({}: IProps) => {
           ]}
       )))
 
-      LoadBasic(1)
-setKeyword('')
-
+      reload()
     }else{
 
       selectedRows.forEach((row)=>{map.delete(row.id)})
@@ -341,24 +318,24 @@ setKeyword('')
 
   }
 
-  const LoadBasic = async (page?: number) => {
+  const getData = async (page?: number, keyword?: string) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `modelList`,{
+    const res = await RequestMethod('get', keyword ? 'modelSearch' : 'modelList',{
       path: {
-        page: (page || page !== 0) ? page : 1,
-        renderItem: 19,
+        page: page ?? 1,
+        renderItem: 18,
       },
-      params:{
-        sorts:"created"
-      }
+      params: keyword ? {
+        sorts:"created",
+        keyword,
+        opt: optionIndex ?? 0
+      } : null
     })
 
     if(res){
-      if(res.totalPages < page){
-        LoadBasic(page - 1).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
         setPageInfo({
           ...pageInfo,
           page: res.page,
@@ -368,65 +345,7 @@ setKeyword('')
       }
     }
     setSelectList(new Set())
-  }
-
-  const SearchBasic = async (keyword: any, option: number, isPaging?: string | string[] | number) => {
-    Notiflix.Loading.circle()
-    if(!isPaging){
-      setOptionIndex(option)
-    }
-
-    const res = await RequestMethod('get', `modelSearch`,{
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params: {
-        // sorts:"created",
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res){
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
-    }
-
-    setSelectList(new Set())
-  }
-  const cleanUpBasicData = (res:any) => {
-    let tmpRow = res.data.results.info_list;
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-      let appendAdditional: any = {}
-
-      row.additional && row.additional.map((v: any) => {
-        appendAdditional = {
-          ...appendAdditional,
-          [v.title]: v.value
-
-        }
-      })
-      let random_id = Math.random()*1000;
-      return {
-        cm_id:row.cm_id,
-        customer: row.customer.name,
-        customer_id: row.customer.name,
-        customer_idPK: row.customer.customer_id,
-        customerPK: row.customer.customer_id,
-        model:row.model,
-        crn:row.customer.crn,
-        ...appendAdditional,
-        id: `model_${random_id}`,
-
-      }
-    })
-    setBasicRow([...tmpBasicRow])
+    Notiflix.Loading.remove()
   }
 
   const cleanUpData = (res: any) => {
@@ -633,16 +552,10 @@ setKeyword('')
     <div>
       <PageHeader
         isSearch
-        onChangeSearchKeyword={(keyword) => {
-          setKeyword(keyword)
-        }}
-        onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
-          Notiflix.Loading.remove()
-        })}
+        searchKeyword={keyword}
+        onSearch={reload}
         searchOptionList={optionList}
-        onChangeSearchOption={(option) => {
-          setOptionIndex(option)
-        }}
+        onChangeSearchOption={setOptionIndex}
         optionIndex={optionIndex}
         title={"모델 관리"}
         buttons={

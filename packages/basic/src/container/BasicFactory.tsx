@@ -45,32 +45,18 @@ const BasicFactory = ({}: IProps) => {
         page: 1,
         total: 1
     })
-    const [weatherToRun, setWeatherToRun] = useState(false);
+
+    const reload = (keyword?:string) => {
+        setKeyword(keyword)
+        if(pageInfo.page > 1) {
+            setPageInfo({...pageInfo, page: 1})
+        } else {
+            getData(null, keyword)
+        }
+    }
 
     useEffect(() => {
-        // setOptionIndex(option)
-        if (keyword) {
-            SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-                Notiflix.Loading.remove()
-            })
-        } else {
-            LoadBasic(pageInfo.page).then(() => {
-                Notiflix.Loading.remove()
-            })
-        }
-    }, [pageInfo.page])
-
-    useEffect(() => {
-        if (keyword && !weatherToRun) {
-            SearchBasic(keyword, optionIndex, pageInfo.page);
-        } else {
-            if (weatherToRun) {
-                SearchBasic(keyword, optionIndex, pageInfo.page);
-            } else {
-                LoadBasic(pageInfo.page).then(() => {
-                });
-            }
-        }
+        getData(pageInfo.page, keyword)
     }, [pageInfo.page]);
 
     useEffect(() => {
@@ -221,16 +207,7 @@ const BasicFactory = ({}: IProps) => {
             });
 
             if (res) {
-                Notiflix.Report.success("저장되었습니다.", "", "확인");
-                if (keyword) {
-                    SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-                        Notiflix.Loading.remove();
-                    });
-                } else {
-                    LoadBasic(pageInfo.page).then(() => {
-                        Notiflix.Loading.remove();
-                    });
-                }
+                Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
             }
         } else {
             return Notiflix.Report.warning(
@@ -310,7 +287,7 @@ const BasicFactory = ({}: IProps) => {
                     ],
                 }))
             );
-            LoadBasic(1);
+            reload()
         } else {
             selectedRows.forEach((row) => {
                 map.delete(row.id);
@@ -325,58 +302,34 @@ const BasicFactory = ({}: IProps) => {
         }
     };
 
-    const LoadBasic = async (page?: number) => {
+    const getData = async (page?: number, keyword?: string) => {
         Notiflix.Loading.circle();
-        const res = await RequestMethod("get", `factoryList`, {
+        const res = await RequestMethod("get", keyword ? 'factorySearch' : 'factoryList', {
             path: {
-                page: page || page !== 0 ? page : 1,
+                page: page ?? 1,
                 renderItem: 18,
             },
-        });
-        if (res) {
-            setPageInfo({
-                ...pageInfo,
-                page: res.page,
-                total: res.totalPages,
-            });
-            cleanUpData(res);
-        }
-
-        setSelectList(new Set());
-    };
-
-    const SearchBasic = async (
-        keyword: any,
-        option: number,
-        isPaging?: number
-    ) => {
-        Notiflix.Loading.circle();
-        if (!isPaging) {
-            setOptionIndex(option);
-        }
-        const res = await RequestMethod("get", `factorySearch`, {
-            path: {
-                page: isPaging ?? 1,
-                renderItem: 18,
-            },
-            params: {
+            params: keyword ? {
                 sorts: "created",
-                keyword: keyword ?? "",
-                opt: option ?? 0,
-            },
+                keyword,
+                opt: optionIndex ?? 0,
+            } : null,
         });
-
         if (res) {
-            setPageInfo({
-                ...pageInfo,
-                page: res.page,
-                total: res.totalPages,
-            });
-            cleanUpData(res);
+            if (res.totalPages > 0 && res.totalPages < res.page) {
+                reload();
+            } else {
+                setPageInfo({
+                    ...pageInfo,
+                    page: res.page,
+                    total: res.totalPages,
+                });
+                cleanUpData(res);
+            }
         }
 
-        setWeatherToRun(true);
         setSelectList(new Set());
+        Notiflix.Loading.remove()
     };
 
     const cleanUpData = (res: any) => {
@@ -572,12 +525,8 @@ const BasicFactory = ({}: IProps) => {
         <div>
             <PageHeader
                 isSearch
-                onChangeSearchKeyword={(keyword) => {
-                    setKeyword(keyword)
-                }}
-                onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
-                    Notiflix.Loading.remove();
-                })}
+                searchKeyword={keyword}
+                onSearch={reload}
                 searchOptionList={optionList}
                 onChangeSearchOption={(option) => {
                     setOptionIndex(option)

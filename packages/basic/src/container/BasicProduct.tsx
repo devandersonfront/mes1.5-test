@@ -56,22 +56,20 @@ const BasicProduct = ({}: IProps) => {
     type : 'barcode',
     isVisible : false
   })
-
-
-  const [buttonList , setButtonList ] = useState<string[]>([])
   const [barcodeData , setBarcodeData] = useState<BarcodeDataType[]>([])
 
-  useEffect(() => {
-    if(keyword){
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove()
-      })
-    }else{
-      LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove()
-      })
+  const reload = (keyword?:string) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
+    } else {
+      getData(null, keyword)
     }
-  }, [pageInfo.page])
+  }
+
+  useEffect(() => {
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"제품 등록 관리",sub:""}))
@@ -189,8 +187,6 @@ const BasicProduct = ({}: IProps) => {
           }
         })
 
-
-        console.log('product',row)
         return {
           ...row,
           ...selectData,
@@ -264,16 +260,7 @@ const BasicProduct = ({}: IProps) => {
       })
 
       if(res){
-        Notiflix.Report.success('저장되었습니다.','','확인');
-        if(keyword){
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+        Notiflix.Report.success('저장되었습니다.','','확인', () => reload());
       }
     }else if(!selectCheck){
       Notiflix.Loading.remove()
@@ -331,8 +318,8 @@ const BasicProduct = ({}: IProps) => {
       deletable = await RequestMethod('delete','productDelete', haveIdRows.map((row) => (
           {...row , type : row.type_id}
       )))
-      LoadBasic(1)
 
+      reload()
     }else{
 
       selectedRows.forEach((row)=>{map.delete(row.id)})
@@ -348,24 +335,33 @@ const BasicProduct = ({}: IProps) => {
   }
 
 
-  const LoadBasic = async (page?: number) => {
-    // Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `productList`,{
+  const getData = async (page?: number, keyword?: string) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', keyword ? 'productSearch' : 'productList',{
       path: {
-        page: (page || page !== 0) ? page : 1,
+        page: page ?? 1,
         renderItem: 18,
-      }
+      },
+      params: keyword ? {
+        keyword,
+        opt: optionIndex
+      } : null,
     })
 
     if(res){
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          ...pageInfo,
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res);
+      }
     }
     setSelectList(new Set())
+    Notiflix.Loading.remove()
   }
 
   const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
@@ -527,10 +523,9 @@ const BasicProduct = ({}: IProps) => {
   }
 
   const onClickHeaderButton = (index: number) => {
-    switch(buttonList[index]){
+    switch(index){
 
-      case '바코드 미리보기' :
-      case '바코드 미리보기':
+      case 0:
         if(selectList.size === 0){
           return Notiflix.Report.warning('오류',
               '선택을 하셔야 합니다.',
@@ -538,10 +533,10 @@ const BasicProduct = ({}: IProps) => {
         }
         setModal({type : 'quantity' , isVisible : true})
         break;
-      case '항목관리':
+      case 1:
         router.push(`/mes/item/manage/product`)
         break;
-      case '행추가':
+      case 2:
         let items = {}
 
         column.map((value) => {
@@ -571,14 +566,14 @@ const BasicProduct = ({}: IProps) => {
         ])
         break;
 
-      case '저장하기':
+      case 3:
         if(selectList.size > 1){
           return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
         }
         SaveBasic()
 
         break;
-      case '삭제':
+      case 4:
         if(selectList.size === 0){
           return Notiflix.Report.warning(
               '경고',
@@ -687,23 +682,12 @@ const BasicProduct = ({}: IProps) => {
     setModal({isVisible : false , type : 'quantity'})
   }
 
-
-  React.useEffect(()=>{
-    if(selectList.size > 1){
-      return setButtonList(['항목관리', '행추가', '저장하기', '삭제'])
-    }
-    return setButtonList(['바코드 미리보기','항목관리', '행추가', '저장하기', '삭제'])
-  },[selectList.size])
-
-
   return (
       <div>
         <PageHeader
             isSearch
-            onChangeSearchKeyword={setKeyword}
-            onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
-              Notiflix.Loading.remove();
-            })}
+            searchKeyword={keyword}
+            onSearch={reload}
             searchOptionList={optionList}
             onChangeSearchOption={(option) => {
               setOptionIndex(option)
@@ -711,7 +695,7 @@ const BasicProduct = ({}: IProps) => {
             optionIndex={optionIndex}
             title={"제품 등록 관리"}
             pageHelper={"제품 등록, 삭제는 하나씩 가능"}
-            buttons={buttonList}
+            buttons={[ (selectList.size === 1 && "바코드 미리보기"), "항목관리", "행추가", "저장하기", "삭제", ]}
             buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable

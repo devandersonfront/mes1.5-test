@@ -51,16 +51,21 @@ const MesStockList = ({ page, search, option }: IProps) => {
     total: 1,
   });
 
-  useEffect(() => {
+
+  const loadPage = (page: number) => {
     if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
+      SearchBasic(keyword, optionIndex, page).then(() => {
         Notiflix.Loading.remove();
       });
     } else {
-      LoadBasic(pageInfo.page).then(() => {
+      LoadBasic(page).then(() => {
         Notiflix.Loading.remove();
       });
     }
+  }
+
+  useEffect(() => {
+    loadPage(pageInfo.page)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -130,7 +135,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
     const res = await RequestMethod("get", `stockList`, {
       path: {
         page: page || page !== 0 ? page : 1,
-        renderItem: 20,
+        renderItem: 22,
       },
     });
 
@@ -140,19 +145,19 @@ const MesStockList = ({ page, search, option }: IProps) => {
         page: res.page,
         total: res.totalPages,
       });
-      cleanUpData(res, page);
+      cleanUpData(res);
     }
   };
 
   const SearchBasic = async (
     keyword: any,
     option: number,
-    isPaging?: number
+    page: number
   ) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", `stockSearch`, {
       path: {
-        page: isPaging ?? pageInfo.page ?? 1,
+        page: page || page !== 0 ? page : 1,
         renderItem: 20,
       },
       params: {
@@ -167,11 +172,11 @@ const MesStockList = ({ page, search, option }: IProps) => {
         page: res.page,
         total: res.totalPages,
       });
-      cleanUpData(res, isPaging ?? pageInfo);
+      cleanUpData(res);
     }
   };
 
-  const cleanUpData = (res: any , page?) => {
+  const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["stockV2"];
     let tmpRow = [];
     tmpColumn = tmpColumn
@@ -282,7 +287,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
         sum_stock: row.stock_sum
       };
     });
-    if (page === 1) {
+    if (res.page === 1) {
       setBasicRow([...tmpBasicRow])
     } else {
       setBasicRow([...basicRow, ...tmpBasicRow])
@@ -291,11 +296,11 @@ const MesStockList = ({ page, search, option }: IProps) => {
 
   const stockSave = async(data) => {
     const res = await RequestMethod("post", "stockSave",data)
-
     if(res){
       Notiflix.Report.success("저장되었습니다.","","확인", () => {
         setSelectList(new Set())
-        LoadBasic(1)
+        setPageInfo({page:1, total:1})
+
       })
 
     }else{

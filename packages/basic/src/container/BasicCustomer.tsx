@@ -50,25 +50,25 @@ const BasicCustomer = ({}: IProps) => {
     "사업자 번호",
   ]);
   const [optionIndex, setOptionIndex] = useState<number>(0);
+  const [selectRow, setSelectRow] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
     page: 1,
     total: 1,
   });
-  const [selectRow, setSelectRow] = useState<number>(0);
+
+  const reload = (keyword?:string) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
+    } else {
+      getData(null, keyword)
+    }
+  }
 
   useEffect(() => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    } else {
-      LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    }
-  }, [pageInfo.page,]);
-
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(
@@ -193,16 +193,7 @@ const BasicCustomer = ({}: IProps) => {
       });
 
       if (res) {
-        Notiflix.Report.success("저장되었습니다.", "", "확인");
-        if (keyword) {
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
-        } else {
-          LoadBasic(pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
-        }
+        Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
       }
     } else {
       return Notiflix.Report.warning(
@@ -282,7 +273,7 @@ const BasicCustomer = ({}: IProps) => {
         }))
       );
 
-      LoadBasic(1);
+      reload();
     } else {
       selectedRows.forEach((row) => {
         map.delete(row.id);
@@ -297,18 +288,22 @@ const BasicCustomer = ({}: IProps) => {
     }
   };
 
-  const LoadBasic = async (page?: number) => {
+  const getData = async (page?: number, keyword?:string) => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod("get", `customerList`, {
+    const res = await RequestMethod("get", keyword? 'customerSearch':'customerList', {
       path: {
-        page: page || page !== 0 ? page : 1,
+        page: page ?? 1,
         renderItem: 18,
       },
+      params: keyword ? {
+        keyword,
+        opt: optionIndex ?? 0,
+      } : null,
     });
 
     if (res) {
-      if (res.totalPages < page) {
-        LoadBasic(page - 1);
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
       } else {
         setPageInfo({
           ...pageInfo,
@@ -320,74 +315,9 @@ const BasicCustomer = ({}: IProps) => {
     }
 
     setSelectList(new Set());
+    Notiflix.Loading.remove()
   };
 
-  const SearchBasic = async (
-    keyword: any,
-    option: number,
-    isPaging?: number
-  ) => {
-    Notiflix.Loading.circle();
-    if (!isPaging) {
-      setOptionIndex(option);
-    }
-
-    const res = await RequestMethod("get", `customerSearch`, {
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? "",
-        opt: option ?? 0,
-      },
-    });
-
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: isPaging ?? 1,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
-    }
-
-    setSelectList(new Set());
-  };
-
-  const cleanUpBasicData = (res: any) => {
-    let tmpRow = res.data.results.info_list;
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-      let appendAdditional: any = {};
-
-      row.additional &&
-        row.additional.map((v: any) => {
-          appendAdditional = {
-            ...appendAdditional,
-            [v.title]: v.value,
-          };
-        });
-      let random_id = Math.random() * 1000;
-      return {
-        ...row,
-        customer_id: row.customer_id,
-        name: row.name,
-        rep: row.rep,
-        telephone: row.telephone,
-        manager: row.manager,
-        cellphone: row.cellphone,
-        fax: row.fax,
-        photo: row.photo,
-        crn: row.crn,
-        address: row.address,
-        password: "-",
-        ...appendAdditional,
-        id: `customer_${random_id}`,
-      };
-    });
-    setBasicRow([...tmpBasicRow]);
-  };
   const cleanUpData = async (res: any) => {
     let tmpColumn = columnlist["customer"];
     let tmpRow = [];
@@ -622,10 +552,8 @@ const BasicCustomer = ({}: IProps) => {
       <div>
         <PageHeader
             isSearch
-            onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
-              Notiflix.Loading.remove();
-            })}
-            onChangeSearchKeyword={(searchKeyword) => setKeyword(searchKeyword)}
+            searchKeyword={keyword}
+            onSearch={reload}
             searchOptionList={optionList}
             onChangeSearchOption={setOptionIndex}
             optionIndex={optionIndex}

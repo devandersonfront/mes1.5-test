@@ -42,21 +42,58 @@ const BasicMidrangeRegister = () => {
         setProductId(Number(router.query.product_id))
     },[router.query])
 
+    const validateCategoryInfo = (categoryInfo: any[]) => {
+        if(!categoryInfo.every(info => info.name)) {
+            Notiflix.Report.warning('경고', '검사 항목을 입력해주세요.', '확인')
+            return true
+        }
+       if(!categoryInfo.every(info => info.standard)) {
+           Notiflix.Report.warning('경고', '점검 기준을 입력해주세요.', '확인')
+           return true
+       }
+       if(!categoryInfo.every(info => info.error_minimum)) {
+           Notiflix.Report.warning('경고', '최소값을 입력해주세요.', '확인')
+           return true
+       }
+       if(!categoryInfo.every(info => info.error_maximum)) {
+           Notiflix.Report.warning('경고', '최대값을 입력해주세요.', '확인')
+           return true
+       }
+       return false
+    }
+
+    const validateLegendsInfo = (legendsInfo: object) => {
+        if(Object.keys(legendsInfo).length <= 0 || Object.keys(legendsInfo).includes('') || Object.keys(legendsInfo).includes('undefined')){
+            return Notiflix.Report.warning('경고', '범례를 확인해주세요.', '확인')
+        }
+        if(Object.values(legendsInfo).includes('') || Object.values(legendsInfo).includes('undefined')){
+            return Notiflix.Report.warning('경고', '범례 설명을 확인해주세요.', '확인')
+        }
+    }
+
+
     const MidrangeSave = async () => {
+        const categoryInfo = itemBasicRow.map((v)=>{
+            return {...v, type: v.type === "범례 적용" ? 1 : 0}
+        })
+        if(validateCategoryInfo(categoryInfo)) return
+
+
+        console.log('aa',legendaryBasicRow)
         const legendaryKeyValue = {}
         legendaryBasicRow.map((v,i)=>{
             legendaryKeyValue[v.legendary] = v.LegendaryExplain
         })
+        console.log('bb',legendaryKeyValue)
 
-        if(Object.keys(legendaryKeyValue).length <= 0 || Object.keys(legendaryKeyValue).includes('') || Object.keys(legendaryKeyValue).includes('undefined')){
-            return Notiflix.Report.warning('경고', '범례를 확인해주세요.', '확인')
-        }else if(Object.values(legendaryKeyValue).includes('') || Object.values(legendaryKeyValue).includes('undefined')){
-            return Notiflix.Report.warning('경고', '범례 설명을 확인해주세요.', '확인')
+        if(categoryInfo.some(info => info.type === 1)) {
+            if(Object.keys(legendaryKeyValue).length <= 0 || Object.keys(legendaryKeyValue).includes('') || Object.keys(legendaryKeyValue).includes('undefined')){
+                return Notiflix.Report.warning('경고', '범례를 확인해주세요.', '확인')
+            }
+            if(Object.values(legendaryKeyValue).includes('') || Object.values(legendaryKeyValue).includes('undefined')){
+                return Notiflix.Report.warning('경고', '범례 설명을 확인해주세요.', '확인')
+            }
         }
-
-        const categoryInfo = itemBasicRow.map((v)=>{
-            return {...v, type: v.type === "범례 적용" ? 1 : 0}
-        })
 
         const midrangeData = {
             product_id: productId,
