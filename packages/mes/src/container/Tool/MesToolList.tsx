@@ -155,12 +155,7 @@ const MesToolList = ({ page, search, option }: IProps) => {
             }
         }).filter((v: any) => v) : []
 
-        if (pageInfo.page > 1) {
-            tmpRow = [...basicRow, ...info_list.info_list]
-        } else {
-            tmpRow = info_list.info_list
-        }
-
+        tmpRow = info_list.info_list
 
         loadAllSelectItems([
             ...tmpColumn,
@@ -182,12 +177,6 @@ const MesToolList = ({ page, search, option }: IProps) => {
             }
         })
 
-        // let pk = "";
-        // Object.keys(tmpRow).map((v) => {
-        //     if(v.indexOf('_id') !== -1){
-        //         pk = v
-        //     }
-        // })
         let tmpBasicRow = tmpRow.map((row: any, index: number) => {
             let appendAdditional: any = {}
             row.additional && row.additional.map((v: any) => {
@@ -219,7 +208,7 @@ const MesToolList = ({ page, search, option }: IProps) => {
         const res = await RequestMethod("get", "toolList", {
             path: {
                 page: (page || page !== 0) ? page : 1,
-                renderItem: 22
+                renderItem: 18
             },
         })
 
@@ -235,11 +224,9 @@ const MesToolList = ({ page, search, option }: IProps) => {
         const res = await RequestMethod("get", "toolSearch", {
             path: {
                 page: (page || page !== 0) ? page : 1,
-                renderItem: 22
+                renderItem: 18
             },
             params: {
-                // from:selectDate.from,
-                // to: selectDate.to,
                 keyword: keyword,
                 opt: optionIndex
             }
@@ -260,26 +247,6 @@ const MesToolList = ({ page, search, option }: IProps) => {
                     Notiflix.Loading.remove()
                 })
             });
-        }
-    }
-
-    const ButtonEvents = (index: number) => {
-        switch (index) {
-            case 0:
-                if (selectList && selectList.size > 0) {
-                    // @ts-ignore
-                    dispatch(setToolDataAdd(basicRow.filter((row) => selectList.has(row.id))));
-                    router.push("/mes/tool/update")
-                } else {
-                    Notiflix.Report.warning("데이터를 선택해주시기 바랍니다.", "", "확인")
-                }
-                return
-            case 1:
-                DeleteBasic()
-
-                return
-            default:
-                return
         }
     }
 
@@ -317,9 +284,7 @@ const MesToolList = ({ page, search, option }: IProps) => {
                     })
                 }}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
-                onChangeSearchOption={(option) => {
-                    setOptionIndex(option);
-                }}
+                onChangeSearchOption={setOptionIndex}
                 optionIndex={optionIndex}
             />
             <ExcelTable
@@ -336,19 +301,15 @@ const MesToolList = ({ page, search, option }: IProps) => {
                 }}
                 height={setExcelTableHeight(basicRow.length)}
                 width={1576}
-                scrollEnd={(value) => {
-                    if (value) {
-                        if (pageInfo.total > pageInfo.page) {
-                            setSelectList(new Set)
-                            setPageInfo({ ...pageInfo, page: pageInfo.page + 1 })
-                        }
-                    }
-                }}
-                setSelectList={(selectedRows) => {
                     //@ts-ignore
-                    setSelectList(selectedRows)
+                setSelectList={setSelectList}
+            />
+            <PaginationComponent
+                currentPage={pageInfo.page}
+                totalPage={pageInfo.total}
+                setPage={(page) => {
+                    setPageInfo({...pageInfo, page: page})
                 }}
-
             />
         </div>
     )

@@ -5,7 +5,7 @@ import {
   ExcelTable,
   Header as PageHeader,
   IExcelHeaderType,
-  MAX_VALUE,
+  MAX_VALUE, PaginationComponent,
   RequestMethod,
   TextEditor,
 } from "shared";
@@ -20,7 +20,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "../../../../shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import { setExcelTableHeight, tableHeaderController } from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 
 interface IProps {
@@ -30,28 +30,20 @@ interface IProps {
   option?: number;
 }
 
-const dummyDate = moment().subtract(10, "days");
+const optionList = ["부자재 CODE", "부자재 품명", "부자재 LOT 번호", "거래처",]
 
 const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
-
-  const [excelOpen, setExcelOpen] = useState<boolean>(false);
 
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(
     columnlist["substockV1u"]
   );
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
-  const [optionList, setOptionList] = useState<string[]>([
-    "부자재 CODE",
-    "부자재 품명",
-    "부자재 LOT 번호",
-    "거래처",
-  ]);
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
-  const [order, setOrder] = useState<number>(0);
+  const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
     page: 1,
     total: 1,
@@ -63,16 +55,14 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   });
 
   const [nzState, setNzState] = useState<boolean>(false);
-  const [first, setFirst] = useState<boolean>(true);
   const changeNzState = (value: boolean) => {
     setSelectList(new Set());
     setNzState(value);
   };
-  const changeOrder = (value: string) => {
-    setSelectList(new Set());
-    setOrder(Number(value));
-    setPageInfo({ page: 1, total: 1 });
-  };
+  const changeOrder = (order:string, key:string) => {
+    tableHeaderController(key, order, sortingOptions, setSortingOptions)
+  }
+
 
   const loadPage = (page:number) => {
     if (keyword) {
@@ -89,7 +79,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
 
   useEffect(() => {
     loadPage(pageInfo.page)
-  }, [pageInfo.page, selectDate, nzState, order]);
+  }, [pageInfo.page, selectDate, nzState, sortingOptions]);
 
   useEffect(() => {
     dispatch(
@@ -147,11 +137,9 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
       }
     });
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then((res) => {
       setColumn([...res]);
     });
-    // }
   };
 
   const LoadBasic = async (page?: number) => {
@@ -159,25 +147,19 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     const res = await RequestMethod("get", `subInList`, {
       path: {
         page: page || page !== 0 ? page : 1,
-        renderItem: 22,
+        renderItem: 18,
       },
       params:
-        order == 0
-          ? {
+          {
             nz: nzState,
-            from: selectDate.from,
-            to: selectDate.to,
-          }
-          : {
-            sorts: "date",
-            order: order == 1 ? "ASC" : "DESC",
+            sorts: sortingOptions.sorts,
+            order: sortingOptions.orders,
             from: selectDate.from,
             to: selectDate.to,
           },
     });
 
     if (res) {
-      setFirst(false);
       setPageInfo({
         ...pageInfo,
         page: res.page,
@@ -197,20 +179,12 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     const res = await RequestMethod("get", `lotSmSearch`, {
       path: {
         page: isPaging ?? 1,
-        renderItem: 22,
+        renderItem: 18,
       },
       params:
-        order == 0
-          ? {
-            keyword: keyword ?? "",
-            opt: option ?? 0,
-            nz: nzState,
-            from: selectDate.from,
-            to: selectDate.to,
-          }
-          : {
-            sorts: "date",
-            order: order == 1 ? "ASC" : "DESC",
+          {
+            sorts: sortingOptions.sorts,
+            order: sortingOptions.orders,
             keyword: keyword ?? "",
             opt: option ?? 0,
             nz: nzState,
@@ -501,25 +475,14 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         setSelectList={setSelectList}
         width={1576}
         height={setExcelTableHeight(basicRow.length) }
-        scrollEnd={(value) => {
-          if (value) {
-            if (pageInfo.total > pageInfo.page) {
-              setSelectList(new Set());
-              setPageInfo({ ...pageInfo, page: pageInfo.page + 1 });
-            }
-          }
-        }}
       />
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`금형기준정보`}*/}
-      {/*  sheetname={`금형기준정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
+      <PaginationComponent
+          currentPage={pageInfo.page}
+          totalPage={pageInfo.total}
+          setPage={(page) => {
+            setPageInfo({...pageInfo, page: page})
+          }}
+      />
     </div>
   );
 };

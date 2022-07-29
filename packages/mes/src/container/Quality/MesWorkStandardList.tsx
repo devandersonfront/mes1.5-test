@@ -26,20 +26,15 @@ interface IProps {
   option?: number;
 }
 
+const optionList = ["거래처", "모델", "코드", "품명",]
+
 const MesWorkStandardList = ({ search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [excelOpen, setExcelOpen] = useState<boolean>(false);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(
     columnlist["workStandardList"]
   );
-  const [optionList, setOptionList] = useState<string[]>([
-    "거래처",
-    "모델",
-    "코드",
-    "품명",
-  ]);
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
@@ -48,9 +43,8 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
   });
 
   useEffect(() => {
-    setOptionIndex(option);
     if (keyword) {
-      SearchBasic(keyword, option, pageInfo.page).then(() => {
+      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
         Notiflix.Loading.remove();
       });
     } else {
@@ -100,7 +94,7 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
     const res = await RequestMethod("get", `productSearch`, {
       path: {
         page: isPaging ?? 1,
-        renderItem: 22,
+        renderItem: 18,
       },
       params: {
         keyword: keyword ?? "",

@@ -5,7 +5,7 @@ import {
     Header as PageHeader,
     IExcelHeaderType,
     PaginationComponent,
-    RequestMethod
+    RequestMethod,
 } from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
@@ -15,7 +15,6 @@ import Notiflix from "notiflix";
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { setExcelTableHeight } from 'shared/src/common/Util'
-import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 
 interface IProps {
     children?: any
@@ -99,7 +98,6 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
 
 
     const SearchBasic = async (keyword: any, isPaging: number = 1) => {
-
         Notiflix.Loading.circle()
         const res = await RequestMethod('get', `productChangeSearch`,{
             path: {
@@ -113,7 +111,6 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 to: selectDate.to,
             }
         })
-
         if(res){
             setPageInfo({
                 ...pageInfo,
@@ -146,7 +143,6 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
 
         setSelectList(new Set)
         setBasicRow([...tmpRow])
-
     }
 
     const buttonEvents = (number:number) => {
@@ -242,14 +238,6 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 setSelectList={setSelectList}
                 width={1576}
                 height={setExcelTableHeight(basicRow.length)}
-                // scrollEnd={(value) => {
-                //     if(value){
-                //         if(pageInfo.total > pageInfo.page){
-                //             setSelectList(new Set)
-                //             setPageInfo({...pageInfo, page:pageInfo.page+1})
-                //         }
-                //     }
-                // }}
             />
             <PaginationComponent
                 currentPage={pageInfo.page}

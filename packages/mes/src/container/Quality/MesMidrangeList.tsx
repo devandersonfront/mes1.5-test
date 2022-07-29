@@ -23,13 +23,14 @@ interface IProps {
     option?: number
 }
 
+const optionList = ['수주 번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자']
+
 const MesMidrangeList = ({ option }: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["midrangeList"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [optionList, setOptionList] = useState<string[]>(['수주 번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자'])
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [selectDate, setSelectDate] = useState<{ from: string, to: string }>({
         from: moment().subtract(1, "months").format("YYYY-MM-DD"),
@@ -69,8 +70,8 @@ const MesMidrangeList = ({ option }: IProps) => {
         Notiflix.Loading.circle()
         const res = await RequestMethod('get', `qualityRecordInspectSearch`, {
             path: {
-                page: page,
-                renderItem: 22,
+                page: (page || page !== 0) ? page : 1,
+                renderItem: 18,
             },
             params: {
                 keyword: keyword,
@@ -112,7 +113,7 @@ const MesMidrangeList = ({ option }: IProps) => {
                 }
             })
 
-                setBasicRow([...data])
+            setBasicRow([...data])
         }
 
     }
@@ -121,8 +122,8 @@ const MesMidrangeList = ({ option }: IProps) => {
         Notiflix.Loading.circle()
         const res = await RequestMethod('get', `qualityRecordInspectList`, {
             path: {
-                page: page,
-                renderItem: 22,
+                page: (page || page !== 0) ? page : 1,
+                renderItem: 18,
             },
             params: {
                 from: selectDate.from,
@@ -161,7 +162,7 @@ const MesMidrangeList = ({ option }: IProps) => {
                     inspection_category: v.inspection_category,
                 }
             })
-                setBasicRow([...data])
+            setBasicRow([...data])
         }
 
     }
@@ -212,14 +213,6 @@ const MesMidrangeList = ({ option }: IProps) => {
                 setSelectList={setSelectList}
                 width={1576}
                 height={setExcelTableHeight(basicRow.length)}
-                // scrollEnd={(value) => {
-                //     if (value) {
-                //         if (pageInfo.total > pageInfo.page) {
-                //             setSelectList(new Set)
-                //             setPageInfo({ ...pageInfo, page: pageInfo.page + 1 })
-                //         }
-                //     }
-                // }}
             />
             <PaginationComponent
                 currentPage={pageInfo.page}

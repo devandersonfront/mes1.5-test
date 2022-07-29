@@ -156,11 +156,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 }
             }
         }).filter((v: any) => v) : []
-        if (pageInfo.page > 1) {
-            tmpRow = [...basicRow, ...info_list.info_list]
-        } else {
-            tmpRow = info_list.info_list
-        }
+        tmpRow = info_list.info_list
         loadAllSelectItems([
             ...tmpColumn,
             ...additionalMenus
@@ -217,7 +213,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         const res = await RequestMethod("get", "lotToolList",{
             path:{
                 page:pageInfo.page,
-                renderItem:22
+                renderItem:18
             },
             params:{
                 from: selectDate.from,
@@ -235,7 +231,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         const res = await RequestMethod("get", "lotToolSearch", {
             path:{
                 page:page ?? pageInfo.page,
-                renderItem:22
+                renderItem:18
             },
             params:{
                 from:selectDate.from,
@@ -304,7 +300,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
 
     return (
         <div>
-            
+
             <PageHeader
                 title={"공구 입고 리스트"}
                 buttons={
@@ -318,6 +314,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 setSelectDate={(date) => {
                     setSelectList(new Set)
                     setSelectDate(date as SelectParameter)
+                    setPageInfo({...pageInfo, page:1})
                 }}
                 dataLimit
                 isSearch
@@ -354,16 +351,15 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                     setSelectList(selectedRows)
                 }}
                 width={1576}
-                scrollEnd={(e) => {
-                    if(e && pageInfo.total > pageInfo.page) {
-                        setSelectList(new Set)
-                        setPageInfo({...pageInfo, page: pageInfo.page + 1})
-                    }
-                }}
                 height={setExcelTableHeight(basicRow.length)}
-
             />
-            {/*<PaginationComponent totalPage={} currentPage={} setPage={} />*/}
+            <PaginationComponent
+                currentPage={pageInfo.page}
+                totalPage={pageInfo.total}
+                setPage={(page) => {
+                    setPageInfo({...pageInfo, page: page})
+                }}
+            />
         </div>
     )
 }

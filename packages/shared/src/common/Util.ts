@@ -1,4 +1,4 @@
-import { BomObjectType, BomType } from '../@types/type'
+import {BomObjectType, BomType, TableSortingOptionType} from '../@types/type'
 
 export const ParseResponse = (res: {info_list: any[]} | string | any[]) : any[] => {
   if (typeof res === 'string') {
@@ -62,4 +62,21 @@ export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) 
 
 export const setExcelTableHeight = (length:number) => {
   return length === 0 ? 90 : length * 40 >= 40*18+48? 40 *19 + 48 : length * 40 + 48
+}
+
+export const tableHeaderController = (key, order, sortingOptions:TableSortingOptionType, setSortingOptions:(sortingOptions:TableSortingOptionType) => void) => {
+    const index = sortingOptions.sorts.findIndex((sort) => sort == key)
+    if(order == "none"){
+      sortingOptions.sorts.splice(index,1)
+      sortingOptions.orders.splice(index,1)
+    }else if(sortingOptions.sorts.includes(key)){
+      sortingOptions.sorts.splice(index,1)
+      sortingOptions.orders.splice(index,1)
+      sortingOptions.sorts.unshift(key)
+      sortingOptions.orders.unshift(order)
+    }else{
+      sortingOptions.sorts.unshift(key)
+      sortingOptions.orders.unshift(order)
+    }
+    setSortingOptions({...sortingOptions})
 }

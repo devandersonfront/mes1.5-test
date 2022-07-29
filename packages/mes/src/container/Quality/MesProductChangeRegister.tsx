@@ -9,6 +9,7 @@ import {
     TitleInput,
     TitleTextArea, RequestMethod
 } from "shared";
+import Notiflix from "notiflix"
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
@@ -55,7 +56,11 @@ const MesProductChangeRegister = () => {
 
                 return
             case 1 :
-                productChangeSave()
+                if(!basicRow[0].product){
+                    Notiflix.Report.warning("제품을 선택해주세요.","","확인",)
+                }else{
+                    productChangeSave()
+                }
                 return
         }
     }

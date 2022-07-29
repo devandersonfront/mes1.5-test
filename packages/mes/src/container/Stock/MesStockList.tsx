@@ -30,6 +30,8 @@ interface IProps {
   option?: number;
 }
 
+const optionList = ["거래처", "모델", "CODE", "품명"]
+
 const MesStockList = ({ page, search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -38,10 +40,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
-  const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
-    page: 1,
-    total: 1,
-  });
+  const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({page: 1, total: 1,});
 
   const loadPage = (page: number) => {
     if (keyword) {
@@ -68,10 +67,64 @@ const MesStockList = ({ page, search, option }: IProps) => {
     };
   }, []);
 
-  const LoadBasic = async (page: number = 1) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+    let tmpColumn = column.map(async (v: any) => {
+      if (v.selectList && v.selectList.length === 0) {
+        let tmpKey = v.key;
+
+        let res: any;
+        res = await RequestMethod("get", `${tmpKey}List`, {
+          path: {
+            page: 1,
+            renderItem: MAX_VALUE,
+          },
+        });
+
+        let pk = "";
+
+        res.info_list &&
+          res.info_list.length &&
+          Object.keys(res.info_list[0]).map((v) => {
+            if (v.indexOf("_id") !== -1) {
+              pk = v;
+            }
+          });
+        return {
+          ...v,
+          selectList: [
+            ...res.info_list.map((value: any) => {
+              return {
+                ...value,
+                name: tmpKey === "model" ? value.model : value.name,
+                pk: value[pk],
+              };
+            }),
+          ],
+        };
+      } else {
+        if (v.selectList) {
+          return {
+            ...v,
+            pk: v.unit_id,
+          };
+        } else {
+          return v;
+        }
+      }
+    });
+
+    Promise.all(tmpColumn).then((res) => {
+      setColumn([...res]);
+    });
+  };
+
+  const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", `stockList`, {
-      path: {page: page, renderItem: 18}
+      path: {
+        page: page ?? 1,
+        renderItem: 18,
+      },
     });
 
     if (res) {
@@ -94,7 +147,6 @@ const MesStockList = ({ page, search, option }: IProps) => {
   };
 
   const convertData = (infoList) => {
-
     const data = infoList.map((row: any) => {
       let random_id = Math.random() * 1000;
       return {
