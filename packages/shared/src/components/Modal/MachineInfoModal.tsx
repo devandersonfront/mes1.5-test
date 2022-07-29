@@ -14,6 +14,8 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {UploadButton} from '../../styles/styledComponents'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import Notiflix from 'notiflix'
+import { RequestMethod } from '../../common/RequestFunctions'
+import { useRouter } from 'next/router'
 
 interface IProps {
   column: IExcelHeaderType
@@ -29,15 +31,14 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 1}])
+  const [searchList, setSearchList] = useState<any[]>([])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
 
-
-
+  const hasSaved = !!row.product_id
   const selectMachineType = (value:number) => {
     let result = "";
     switch(value) {
@@ -69,52 +70,21 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     return result;
   }
 
-  const haveBasicValidation = () => {
 
-    if(searchList.length > 0){
-        return searchList.some((list)=>list.setting === 1)
+  const hasNoData = () => searchList.some(row => !row.machine_id)
+  const countDefaultSetting = () => searchList.filter((row)=>row.setting === 1).length
+
+  const isValidated = () => {
+    if(searchList.length === 0 || hasNoData()){
+      Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인")
+      return false
     }
-
-    return true;
-  }
-
-  const haveDataValidation = () => {
-
-    let dataCheck = true
-
-    searchList.map((v,i)=>{
-        if(!v.machine_id){
-            dataCheck = false
-        }
-    })
-
-    return dataCheck
-  }
-
-  const checkValidation = () => {
-    const check = searchList.filter((v,i)=> v.setting === 1).length
-   return check
-  }
-
-  const executeValidation = () => {
-
-    let isValidation = false
-    const haveData = haveDataValidation()
-    const haveBasic = haveBasicValidation()
-    const settingCheck = checkValidation()
-
-    if(!haveData){
-        isValidation = true
-        Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인",)
-    }else if(!haveBasic){
-        isValidation = true
-        Notiflix.Report.warning("경고","기본설정은 최소 한개 이상 필요합니다.","확인",)
-    }else if(settingCheck > 1){
-      isValidation = true
-      Notiflix.Report.warning("경고","기계는 하나만 설정 가능합니다.","확인",)
+    const defaultCount = countDefaultSetting()
+    if(defaultCount !== 1){
+      Notiflix.Report.warning("경고","기본설정은 한 개여야 합니다.","확인")
+      return false
     }
-    return isValidation
-
+    return true
   }
 
   useEffect(() => {
@@ -143,26 +113,86 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     </UploadButton>
   )
 
-    const competeMachine = (rows) => {
+  const competeMachine = (rows) => {
 
-      const tempRow = [...rows]
-      const spliceRow = [...rows]
-      spliceRow.splice(selectRow, 1)
+    const tempRow = [...rows]
+    const spliceRow = [...rows]
+    spliceRow.splice(selectRow, 1)
 
-      const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow]?.mfrCode && row.mfrCode !== undefined && row.mfrCode !=='')
+    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow]?.mfrCode && row.mfrCode !== undefined && row.mfrCode !=='')
 
-      if(spliceRow){
-        if(isCheck){
-          return Notiflix.Report.warning(
-            '경고',
-            `중복된 기계가 존재합니다.`,
-            '확인'
-          );
+    if(spliceRow){
+      if(isCheck){
+        return Notiflix.Report.warning(
+          '경고',
+          `중복된 기계가 존재합니다.`,
+          '확인'
+        );
+      }
+    }
+
+    setSearchList(rows)
+  }
+
+  const getRequestBody = () =>
+    searchList.map((machine)=> (
+      {
+        sequence : machine.sequence,
+        setting : machine.setting,
+        machine : {
+          machine_id : machine.machine_id,
+          mfrName : machine.mfrName,
+          name : machine.name,
+          type : machine.type_id,
+          weldingType : machine.weldingType_id,
+          madeAt:machine.madeAt,
+          mfrCode:machine.mfrCode,
+          manager:machine.manager,
+          photo:machine.photo,
+          capacity:machine.capacity,
+          qualify:machine.qualify,
+          guideline:machine.guideline,
+          interwork:machine.interwork,
+          devices:machine.devices,
+          factory:machine.factory,
+          subFactory:machine.subFactory,
+          additional :machine.additional,
         }
       }
+    )).filter((machine) => machine.machine.machine_id)
 
-      setSearchList(rows)
+  const updateData = async () => {
+    const requestBody = getRequestBody()
+    return await RequestMethod('post', 'prdMachineSave', requestBody, null, null, null, row.product_id).then(() =>
+      Notiflix.Report.success('저장되었습니다.','','확인', () =>
+      {
+        row.reload()
+        setIsOpen(false)
+      }))
+  }
+
+  const onClickSave = () => {
+    if(isValidated()){
+      if(hasSaved) {
+        updateData()
+      } else {
+        if(selectRow !== undefined && selectRow !== null){
+          onRowChange({
+            ...row,
+            machines: searchList.map((v, i) => {
+              return {
+                sequence: i+1,
+                machine: v,
+                setting : v.setting
+              }
+            }).filter((v)=> v.machine?.mfrCode),
+            isChange: true
+          })
+        }
+        setIsOpen(false)
+      }
     }
+  }
 
 
   return (
@@ -280,21 +310,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               let tmp = tmpRow[selectRow]
               tmpRow[selectRow] = tmpRow[selectRow - 1]
               tmpRow[selectRow - 1] = tmp
-
-              // setSearchList([...tmpRow.map((v, i) => {
-              //   if(!searchList[selectRow-1].border){
-              //     searchList.map((v,i)=>{
-              //       v.border = false;
-              //     })
-              //     searchList[selectRow-1].border = true
-              //     setSearchList([...searchList])
-              //   }
-              //   setSelectRow(selectRow -1)
-              //   return {
-              //     ...v,
-              //     seq: i+1
-              //   }
-              // })])
               setSelectRow((prevSelectRow)=> prevSelectRow - 1)
               setSearchList([...tmpRow.map((v, i) => {
                 return {
@@ -314,21 +329,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               let tmp = tmpRow[selectRow]
               tmpRow[selectRow] = tmpRow[selectRow + 1]
               tmpRow[selectRow + 1] = tmp
-
-              // setSearchList([...tmpRow.map((v, i) => {
-              //   if(!searchList[selectRow+1].border){
-              //     searchList.map((v,i)=>{
-              //       v.border = false;
-              //     })
-              //     searchList[selectRow+1].border = true
-              //     setSearchList([...searchList])
-              //   }
-              //   setSelectRow(selectRow +1)
-              //   return {
-              //     ...v,
-              //     seq: i+1
-              //   }
-              // })])
               setSelectRow((prevSelectRow)=> prevSelectRow + 1)
               setSearchList([...tmpRow.map((v, i) => {
                 return {
@@ -376,10 +376,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               width={1746}
               rowHeight={32}
               height={552}
-              // onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-              //   setSelectRow(e)
-              // }}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
+              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{
                     v.border = false;
@@ -393,7 +390,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               headerAlign={'center'}
             />
           </div>
-          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+          <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
             <div
               onClick={() => {
                 setIsOpen(false)
@@ -403,27 +400,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <p>취소</p>
             </div>
             <div
-              onClick={() => {
-
-                const isValidation = executeValidation()
-                if(!isValidation){
-
-                  if(selectRow !== undefined && selectRow !== null){
-                    onRowChange({
-                      ...row,
-                      machines: searchList.map((v, i) => {
-                        return {
-                          sequence: i+1,
-                          machine: v,
-                          setting : v.setting
-                        }
-                      }).filter((v)=> v.machine?.mfrCode),
-                      isChange: true
-                    })
-                  }
-                  setIsOpen(false)
-                }}
-              }
+              onClick={() => onClickSave()}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>등록하기</p>

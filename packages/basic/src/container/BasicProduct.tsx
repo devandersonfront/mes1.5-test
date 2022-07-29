@@ -508,6 +508,7 @@ const BasicProduct = ({}: IProps) => {
         type_id: row.type,
         type: column[4].selectList[row.type].name,
         id: `product_${random_id}`,
+        reload
       }
     })
 
