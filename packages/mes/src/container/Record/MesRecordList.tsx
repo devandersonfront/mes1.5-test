@@ -54,6 +54,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
     const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
     const changeOrder = (order:string, key:string) => {
         tableHeaderController(key, order, sortingOptions, setSortingOptions)
+        setPageInfo({...pageInfo, page:1})
     }
 
     const loadPage = (page:number) => {

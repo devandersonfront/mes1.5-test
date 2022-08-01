@@ -61,6 +61,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   };
   const changeOrder = (order:string, key:string) => {
     tableHeaderController(key, order, sortingOptions, setSortingOptions)
+    setPageInfo({...pageInfo, page:1})
   }
 
 
