@@ -15,7 +15,6 @@ import {UploadButton} from '../../styles/styledComponents'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import Notiflix from 'notiflix'
 import { RequestMethod } from '../../common/RequestFunctions'
-import { useRouter } from 'next/router'
 
 interface IProps {
   column: IExcelHeaderType
@@ -27,16 +26,8 @@ interface IProps {
 const optionList = ['제조번호','제조사명','기계명','','담당자명']
 const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
 
   const hasSaved = !!row.product_id
   const selectMachineType = (value:number) => {
@@ -78,9 +69,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     if(searchList.length === 0 || hasNoData()){
       Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인")
       return false
-    }
-    const defaultCount = countDefaultSetting()
-    if(defaultCount !== 1){
+    } else if(countDefaultSetting() !== 1){
       Notiflix.Report.warning("경고","기본설정은 한 개여야 합니다.","확인")
       return false
     }
@@ -102,7 +91,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         }))
       }
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen])
 
   const ModalContents = () => (
 

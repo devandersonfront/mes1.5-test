@@ -775,7 +775,7 @@ export const columnlist: any = {
   ],
   midrangeList: [
     {key: 'contract_id', name: '수주 번호', width: 120},
-    {key: 'osId', name: '지시 고유 번호', width: 120},
+    {key: 'identification', name: '지시 고유 번호', width: 120},
     {key: 'code', name: 'CODE', width: 120},
     {key: 'name', name: '품명', width: 120},
     {key: 'type', name: '품목 종류', width: 120, selectList: [
@@ -785,7 +785,7 @@ export const columnlist: any = {
       ]},
     {key: 'unit', name: '단위', width: 120},
     {key: 'process_id', name: '생산 공정', width: 120},
-    {key: 'ln_id', name: 'LOT 번호', width:120},
+    {key: 'lot_number', name: 'LOT 번호', width:120},
     {key: 'worker', name: '작업자', width: 120 },
     {key: 'start', name: '작업 시작 일시', width: 164},
     {key: 'end', name: '작업 종료 일시', width: 164},
@@ -965,7 +965,7 @@ export const columnlist: any = {
     {key:"customer_name", name:"거래처", width: 118},
     {key:"customer_model", name:"모델", width: 118},
     {key:"code", name:"CODE", width: 250 },
-    {key:"name", name:"품명", width: 470 },
+    {key:"name", name:"품명", width: 450 },
     {key:"type", name:"품목 종류", width: 118 },
     {key:"unit", name:"단위", width: 118   },
     {key: 'bom', name: 'BOM', formatter: BomInfoModal, width: 118, type: 'readonly'},

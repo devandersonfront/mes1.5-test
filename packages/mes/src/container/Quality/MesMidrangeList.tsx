@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod } from "shared";
+import {
+    columnlist,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType,
+    PaginationComponent,
+    RequestMethod
+} from "shared";
 import moment from "moment";
 // @ts-ignore
 import { SelectColumn } from "react-data-grid";
@@ -35,21 +42,19 @@ const MesMidrangeList = ({ option }: IProps) => {
         total: 1
     })
 
-    const loadPage = (page: number) => {
-        if (keyword) {
-            searchQualityRecordInspect(keyword, optionIndex, page).then(() => {
-                Notiflix.Loading.remove()
-            })
+    const reload = (keyword?:string, date?:{from:string, to:string}, ) => {
+        date && setSelectDate(date)
+        setKeyword(keyword)
+        if(pageInfo.page > 1) {
+            setPageInfo({...pageInfo, page: 1})
         } else {
-            qualityRecordInspectList(page).then(() => {
-                Notiflix.Loading.remove()
-            })
+            getData(undefined, keyword, date)
         }
     }
 
     useEffect(() => {
-        loadPage(pageInfo.page)
-    }, [pageInfo.page, selectDate])
+        getData(pageInfo.page, keyword)
+    }, [pageInfo.page]);
 
     useEffect(() => {
         dispatch(setMenuSelectState({ main: "품질 관리", sub: router.pathname }))
@@ -58,119 +63,69 @@ const MesMidrangeList = ({ option }: IProps) => {
         })
     }, [])
 
-    const searchQualityRecordInspect = async (keyword, opt, page?: number) => {
-        Notiflix.Loading.circle()
-        const res = await RequestMethod('get', `qualityRecordInspectSearch`, {
-            path: {
-                page: (page || page !== 0) ? page : 1,
-                renderItem: 22,
-            },
-            params: {
-                keyword: keyword,
-                opt: optionIndex,
-                from: selectDate.from,
-                to: selectDate.to,
-            }
-        })
-
-        if (res) {
-            setPageInfo({
-                ...pageInfo,
-                page: res.page,
-                total: res.totalPages
-            })
-
-            const data = res.info_list.map((v) => {
-                const randomId = Math.random() * 1000;
-                return {
-                    id: "midrange_" + randomId,
-                    record_id: v.record_id,
-                    identification: v.operation_sheet.identification ? v.operation_sheet.identification : '-',
-                    contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification : '-',
-                    osId: v.operation_sheet.identification ?? '-',
-                    lot_number: v.lot_number ?? '-',
-                    code: v.operation_sheet.product.code ?? '-',
-                    product: v.operation_sheet.product,
-                    machines: v.machines,
-                    user: v.worker,
-                    name: v.operation_sheet.product.name ?? '-',
-                    type: column[4].selectList[v.operation_sheet.product.type].name,
-                    unit: v.operation_sheet.product.unit ?? '-',
-                    process_id: v.operation_sheet.product.process === null ? '-' : v.operation_sheet.product.process.name,
-                    ln_id: v.lot_number ?? '-',
-                    worker: v.worker.name,
-                    start: v.start,
-                    end: v.end,
-                    inspection_category: v.inspection_category,
-                    loadPage
-                }
-            })
-
-            if (pageInfo.page > 1) {
-                const basicAddResponseData = basicRow.concat(data)
-                setBasicRow([...basicAddResponseData])
-            } else {
-                setBasicRow([...data])
-            }
-        }
-
+    const onSelectData = (date: {from:string, to:string}) => {
+        reload(null, date)
     }
 
-    const qualityRecordInspectList = async (page?: number) => {
-        Notiflix.Loading.circle()
-        const res = await RequestMethod('get', `qualityRecordInspectList`, {
-            path: {
-                page: (page || page !== 0) ? page : 1,
-                renderItem: 22,
-            },
-            params: {
-                from: selectDate.from,
-                to: selectDate.to,
+    const convertToRowData = (infoList: any[]) => {
+        return infoList.map((info) => {
+            const randomId = Math.random() * 1000;
+            return {
+                id: "midrange_" + randomId,
+                record_id: info.record_id,
+                contract_id: info.operation_sheet?.contract?.identification ?? '-',
+                identification: info.operation_sheet?.identification ?? '-',
+                code: info.operation_sheet?.product?.code ?? '-',
+                name: info.operation_sheet?.product?.name ?? '-',
+                type: column[4].selectList[info.operation_sheet?.product?.type]?.name ?? '-',
+                unit: info.operation_sheet?.product?.unit ?? '-',
+                process_id: info.operation_sheet?.product?.process?.name ?? '-',
+                lot_number: info.lot_number ?? '-',
+                worker: info.worker?.name ?? '-',
+                start: info.start,
+                end: info.end,
+                product: info.operation_sheet.product,
+                machines: info.machines,
+                user: info.worker,
+                inspection_category: info.inspection_category,
+                reload
             }
         })
+    }
 
-        if (res) {
-            setPageInfo({
-                ...pageInfo,
-                page: res.page,
-                total: res.totalPages
-            })
+    const getRequestParams = (keyword?: string, date?: {from:string, to:string}) => {
+        let params = {}
+        if(keyword) {
+            params['keyword'] = keyword
+            params['opt'] = optionIndex
+        }
+        params['from'] = date ? date.from: selectDate.from,
+        params['to'] = date ? date.to : selectDate.to
+        return params
+    }
 
-            const data = res.info_list.map((v) => {
-                const randomId = Math.random() * 1000;
-                // if(v.machines) {
-                return {
-                    id: "midrange_" + randomId,
-                    record_id: v.record_id,
-                    identification: v.operation_sheet.identification ? v.operation_sheet.identification : '-',
-                    contract_id: v.operation_sheet.contract ? v.operation_sheet.contract.identification : '-',
-                    osId: v.operation_sheet.identification ?? '-',
-                    lot_number: v.lot_number ?? '-',
-                    code: v.operation_sheet.product.code ?? '-',
-                    name: v.operation_sheet.product.name ?? '-',
-                    product: v.operation_sheet.product,
-                    machines: v.machines,
-                    user: v.worker,
-                    type: column[4].selectList[v.operation_sheet.product.type].name,
-                    unit: v.operation_sheet.product.unit ?? '-',
-                    process_id: v.operation_sheet.product.process === null ? '-' : v.operation_sheet.product.process.name,
-                    ln_id: v.lot_number ?? '-',
-                    worker: v.worker.name,
-                    start: v.start,
-                    end: v.end,
-                    inspection_category: v.inspection_category,
-                    loadPage
-                }
-                // }
-            })
-            if (pageInfo.page > 1) {
-                const basicAddResponseData = basicRow.concat(data)
-                setBasicRow([...basicAddResponseData])
+    const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, ) => {
+        Notiflix.Loading.circle()
+        const res = await RequestMethod('get', keyword ? 'qualityRecordInspectSearch': 'qualityRecordInspectList', {
+            path: {
+                page: page,
+                renderItem: 18,
+            },
+            params: getRequestParams(keyword, date)
+        })
+
+        if(res){
+            if (res.totalPages > 0 && res.totalPages < res.page) {
+                reload();
             } else {
-                setBasicRow([...data])
+                setPageInfo({
+                    page: res.page,
+                    total: res.totalPages
+                })
+                setBasicRow(convertToRowData(res.info_list))
             }
         }
-
+        Notiflix.Loading.remove()
     }
 
     return (
@@ -179,12 +134,8 @@ const MesMidrangeList = ({ option }: IProps) => {
                 isSearch
                 isCalendar
                 searchOptionList={optionList}
-                onChangeSearchKeyword={setKeyword}
-                onSearch={()=> {
-                    searchQualityRecordInspect(keyword, optionIndex, pageInfo.page).then(() => {
-                        Notiflix.Loading.remove()
-                    })
-                }}
+                searchKeyword={keyword}
+                onSearch={reload}
                 onChangeSearchOption={(option) => {
                     setOptionIndex(option)
                 }}
@@ -192,10 +143,7 @@ const MesMidrangeList = ({ option }: IProps) => {
                 calendarType={'period'}
                 selectDate={selectDate}
                 //@ts-ignore
-                setSelectDate={(date) => {
-                    setSelectDate(date as {from:string, to:string})
-                    setPageInfo({page:1, total:pageInfo.total})
-                }}
+                setSelectDate={onSelectData}
                 title={"초ㆍ중ㆍ종 검사 리스트"}
             />
             <ExcelTable
@@ -219,15 +167,15 @@ const MesMidrangeList = ({ option }: IProps) => {
                 setSelectList={setSelectList}
                 width={1576}
                 height={setExcelTableHeight(basicRow.length)}
-                scrollEnd={(value) => {
-                    if (value) {
-                        if (pageInfo.total > pageInfo.page) {
-                            setSelectList(new Set)
-                            setPageInfo({ ...pageInfo, page: pageInfo.page + 1 })
-                        }
-                    }
+            />
+            <PaginationComponent
+                currentPage={pageInfo.page}
+                totalPage={pageInfo.total}
+                setPage={(page) => {
+                    setPageInfo({...pageInfo, page: page})
                 }}
             />
+
         </div>
     );
 };

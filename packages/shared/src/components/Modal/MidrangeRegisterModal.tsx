@@ -19,11 +19,12 @@ interface IProps {
     isOpen: boolean
     setIsOpen?: (isOpen: boolean) => void
     modify: boolean
-    reloadPage: (page:number) => {}
+    reload: () => void
 }
 
 
-const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, reloadPage}: IProps) => {
+
+const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, reload}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>()
     const [ midrangeUpdate, setMidrangeUpdate] = useState<boolean>(false)
     const [searchList, setSearchList] = useState<Array<any>>()
@@ -66,7 +67,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
         if(res){
             Notiflix.Loading.circle()
             setIsOpen(false)
-            reloadPage(1)
+            reload()
         }
     }
 
@@ -87,7 +88,7 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
         if(res){
             Notiflix.Loading.circle()
             setIsOpen(false)
-            reloadPage(1)
+            reload()
         }
     }
 
@@ -100,7 +101,6 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
         <SearchModalWrapper >
             <Modal isOpen={isOpen} style={{
                 content: {
-                    height: 800,
                     top: '50%',
                     left: '50%',
                     right: 'auto',
@@ -117,8 +117,8 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
             }}>
                 <div style={{display : 'flex' , justifyContent : 'flex-end' , flexDirection : 'column'}}>
                 <div style={{
+                    height: 800,
                     width: 1776,
-                    height: '100%'
                 }}>
                     <div style={{
                         margin: '24px 16px 16px',

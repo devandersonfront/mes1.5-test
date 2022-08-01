@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod} from "shared";
+import {
+    columnlist,
+    ExcelTable,
+    Header as PageHeader,
+    IExcelHeaderType,
+    PaginationComponent,
+    RequestMethod
+} from "shared";
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
@@ -18,36 +25,36 @@ interface IProps {
 }
 
 
-const MesProductChangeList = ({page, keyword, option}: IProps) => {
+const MesProductChangeList = ({}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["productChangeList"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [optionList, setOptionList] = useState<string[]>([ '거래처', '모델', 'CODE', '품명', '제목', '작성자'])
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
         from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD'),
         to:  moment(new Date()).format('YYYY-MM-DD')
     });
-
-    const [searchKeyword, setSearchKeyword] = useState<string>("");
+    const [keyword, setKeyword] = useState<string>("");
     const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
         page: 1,
         total: 1
     })
 
-    useEffect(() => {
-        if(searchKeyword){
-            SearchBasic(searchKeyword, optionIndex, pageInfo.page).then(() => {
-                Notiflix.Loading.remove()
-            })
-        }else{
-            LoadBasic(pageInfo.page).then(() => {
-                Notiflix.Loading.remove()
-            })
+    const reload = (keyword?:string, date?:{from:string, to:string}, ) => {
+        date && setSelectDate(date)
+        setKeyword(keyword)
+        if(pageInfo.page > 1) {
+            setPageInfo({...pageInfo, page: 1})
+        } else {
+            getData(undefined, keyword, date)
         }
-    }, [pageInfo.page, selectDate])
+    }
+
+    useEffect(() => {
+        getData(pageInfo.page, keyword)
+    }, [pageInfo.page]);
 
     useEffect(() => {
         dispatch(setMenuSelectState({main:"품질 관리",sub:router.pathname}))
@@ -56,66 +63,47 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
         })
     },[])
 
-    const LoadBasic = async (page?: number) => {
-        Notiflix.Loading.circle()
-        const res = await RequestMethod('get', `productChangeList`,{
-            path: {
-                page: page || page !== 0 ? page : 1,
-                renderItem: 22,
-            },
-            params: {
-                from: selectDate.from,
-                to: selectDate.to,
-            }
-
-        })
-
-        if(res){
-            setPageInfo({
-                ...pageInfo,
-                page: res.page,
-                total: res.totalPages
-            })
-            cleanUpData(res)
-        }else if (res === 401) {
-            Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-                router.back()
-            })
-        }
-
+    const onSelectData = (date: {from:string, to:string}) => {
+        reload(null, date)
     }
 
-
-    const SearchBasic = async (keyword: any, option: number, page?: number) => {
-        Notiflix.Loading.circle()
-        const res = await RequestMethod('get', `productChangeSearch`,{
-            path: {
-                page: page || page !== 0 ? page : 1,
-                renderItem: 22,
-            },
-            params: {
-                keyword: keyword ?? '',
-                opt: option ?? 0,
-                from: selectDate.from,
-                to: selectDate.to,
-            }
-        })
-
-
-        if(res){
-            setPageInfo({
-                ...pageInfo,
-                page: res.page,
-                total: res.totalPages
-            })
-            cleanUpData(res)
+    const getRequestParams = (keyword?: string, date?: {from:string, to:string}) => {
+        let params = {}
+        if(keyword) {
+            params['keyword'] = keyword
+            params['opt'] = optionIndex
         }
+        params['from'] = date ? date.from: selectDate.from,
+          params['to'] = date ? date.to : selectDate.to
+        return params
     }
 
+    const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, ) => {
+        Notiflix.Loading.circle()
+        const res = await RequestMethod('get', keyword ? 'productChangeSearch' : 'productChangeList',{
+            path: {
+                page: page,
+                renderItem: 18,
+            },
+            params: getRequestParams(keyword, date)
+        })
+        if(res){
+            if (res.totalPages > 0 && res.totalPages < res.page) {
+                reload();
+            } else {
+                setPageInfo({
+                    page: res.page,
+                    total: res.totalPages
+                })
+                cleanUpData(res)
+            }
+        }
+        Notiflix.Loading.remove()
+    }
 
     const cleanUpData = (res: any) => {
         let tmpRow = []
-        tmpRow = res.map((v,i)=>{
+        tmpRow = res.info_list.map((v,i)=>{
             let random_id = Math.random()*1000;
             return {
                 customer_id: v.product.customer  === null ? '-' :  v.product.customer.name ,
@@ -131,14 +119,10 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 pcr_id: v.pcr_id
             }
         })
-        if(res.page > 1) {
-            setSelectList(new Set)
-            const basicAddTmpRow = basicRow.concat(tmpRow)
-            setBasicRow([...basicAddTmpRow])
-        }else {
-            setSelectList(new Set)
-            setBasicRow([...tmpRow])
-        }
+
+        setSelectList(new Set)
+        setBasicRow([...tmpRow])
+
     }
 
     const buttonEvents = (number:number) => {
@@ -183,24 +167,17 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
             <PageHeader
                 isSearch
                 isCalendar
-                searchOptionList={optionList}
-                onChangeSearchKeyword={setSearchKeyword}
-                onSearch={()=> {
-                    setSelectList(new Set)
-                    setPageInfo({page:1, total:1})
-                }}
+                searchOptionList={[ '거래처', '모델', 'CODE', '품명', '제목', '작성자']}
+                searchKeyword={keyword}
+                optionIndex={optionIndex}
+                onSearch={reload}
                 onChangeSearchOption={(option) => {
-                    setSelectList(new Set)
                     setOptionIndex(option)
                 }}
                 calendarTitle={'등록 날짜'}
                 calendarType={'period'}
                 selectDate={selectDate}
-                setSelectDate={(date) => {
-                //@ts-ignore
-                    setSelectDate(date)
-                    setPageInfo({page:1, total:1})
-                }}
+                setSelectDate={onSelectData}
                 title={"변경점 정보 리스트"}
                 buttons={
                     ['', '자세히 보기']
@@ -230,13 +207,20 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 setSelectList={setSelectList}
                 width={1576}
                 height={setExcelTableHeight(basicRow.length)}
-                scrollEnd={(value) => {
-                    if(value){
-                        if(pageInfo.total > pageInfo.page){
-                            setSelectList(new Set)
-                            setPageInfo({...pageInfo, page:pageInfo.page+1})
-                        }
-                    }
+                // scrollEnd={(value) => {
+                //     if(value){
+                //         if(pageInfo.total > pageInfo.page){
+                //             setSelectList(new Set)
+                //             setPageInfo({...pageInfo, page:pageInfo.page+1})
+                //         }
+                //     }
+                // }}
+            />
+            <PaginationComponent
+                currentPage={pageInfo.page}
+                totalPage={pageInfo.total}
+                setPage={(page) => {
+                    setPageInfo({...pageInfo, page: page})
                 }}
             />
         </div>
