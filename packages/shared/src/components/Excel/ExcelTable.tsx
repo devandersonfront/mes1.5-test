@@ -279,6 +279,7 @@ const DataGridTable = styled(DataGrid)`
    
     .rdg-row > .rdg-cell{
         background:#353B48;
+        padding:0px;
         &:hover{
           // opacity:50%;
           background-color: rgba(53,59,72,0.5);
@@ -310,10 +311,6 @@ const DataGridTable = styled(DataGrid)`
         background: url(${require('../../../public/images/check_box_activated.png')}) ;
         background-size: 20px 20px;
         outline: none;
-    }
-    
-    .c1wupbe700-beta13{
-      padding: 0;
     }
     
   div .cell .rdg-row {

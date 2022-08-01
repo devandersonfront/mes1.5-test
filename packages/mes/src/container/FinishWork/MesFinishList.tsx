@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import {
-    columnlist,
-    ExcelDownloadModal,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    RequestMethod,
-    TextEditor
+  columnlist,
+  ExcelDownloadModal,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  MAX_VALUE, PaginationComponent,
+  RequestMethod,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -18,7 +18,7 @@ import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import { setExcelTableHeight, tableHeaderController } from 'shared/src/common/Util'
 
 interface IProps {
   children?: any
@@ -27,19 +27,20 @@ interface IProps {
   option?: number
 }
 
+const optionList = ['지시고유번호', '거래처', '모델', 'code',  '품명']
+
 const MesFinishList = ({page, search, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["finishListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['지시고유번호', '거래처', '모델', 'code',  '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
   });
-  const [order, setOrder] = useState<number>(0)
+  const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
   const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -58,7 +59,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         })
       }
     }
-  }, [pageInfo.page, selectDate, order])
+  }, [pageInfo.page, selectDate, sortingOptions])
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"생산관리 등록",sub:router.pathname}))
@@ -76,10 +77,12 @@ const MesFinishList = ({page, search, option}: IProps) => {
 
     return !!res
   }
-  const changeOrder = (value:number) => {
-    setPageInfo({page:1,total:1})
-    setOrder(value);
+
+  const changeOrder = (order:string, key:string) => {
+    tableHeaderController(key, order, sortingOptions, setSortingOptions)
+    setPageInfo({...pageInfo, page:1})
   }
+
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     let tmpColumn = column.map(async (v: any) => {
       if(v.selectList && v.selectList.length === 0){
@@ -136,14 +139,14 @@ const MesFinishList = ({page, search, option}: IProps) => {
     const res = await RequestMethod('get', `sheetList`,{
       path: {
         page: pageInfo.page ?? 1,
-        renderItem: 22,
+        renderItem: 18,
       },
       params: {
         status: 2,
         from: selectDate.from,
         to: selectDate.to,
-        sorts: 'deadline',
-        order: order == 1 ? 'ASC' : 'DESC',
+        sorts: sortingOptions.sorts,
+        order:sortingOptions.orders,
       }
     })
 
@@ -166,7 +169,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
     const res = await RequestMethod('get', `operationSearch`,{
       path: {
         page: isPaging ?? 1,
-        renderItem: 22,
+        renderItem: 18,
       },
       params: {
         keyword: keyword ?? '',
@@ -234,13 +237,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
       }
     }).filter((v: any) => v) : []
 
-
-    if(pageInfo.page > 1){
-      tmpRow = [...basicRow,...res.info_list]
-    }else{
-      tmpRow = res.info_list
-    }
-
+    tmpRow = res.info_list
 
     loadAllSelectItems( [
       ...tmpColumn,
@@ -300,13 +297,8 @@ const MesFinishList = ({page, search, option}: IProps) => {
     })
 
     Notiflix.Loading.remove()
-    if(pageInfo.total > pageInfo.page){
-      setSelectList(new Set)
-      setBasicRow([...basicRow,...tmpBasicRow])
-    }else{
-      setSelectList(new Set)
-      setBasicRow([...tmpBasicRow])
-    }
+    setSelectList(new Set)
+    setBasicRow([...tmpBasicRow])
   }
 
   return (
@@ -381,26 +373,14 @@ const MesFinishList = ({page, search, option}: IProps) => {
         setSelectList={setSelectList}
         width={1576}
         height={setExcelTableHeight(basicRow.length)}
-        scrollEnd={(value) => {
-          if(value){
-            if(pageInfo.total > pageInfo.page){
-              setSelectList(new Set)
-              setPageInfo({...pageInfo, page:pageInfo.page+1})
-            }
-          }
-        }}
-
       />
-      {/* <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`금형기준정보`}
-        sheetname={`금형기준정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
-      /> */}
+      <PaginationComponent
+          currentPage={pageInfo.page}
+          totalPage={pageInfo.total}
+          setPage={(page) => {
+            setPageInfo({...pageInfo, page: page})
+          }}
+      />
     </div>
   );
 }

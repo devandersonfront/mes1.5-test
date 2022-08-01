@@ -4,7 +4,7 @@ import {
     ExcelTable, FinishButton,
     Header as PageHeader,
     IExcelHeaderType,
-    MAX_VALUE,
+    MAX_VALUE, PaginationComponent,
     RequestMethod,
     TextEditor,
 } from "shared";
@@ -22,7 +22,7 @@ import {
     setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { useDispatch } from "react-redux";
-import { setExcelTableHeight } from "shared/src/common/Util";
+import { setExcelTableHeight, tableHeaderController } from "shared/src/common/Util";
 
 interface IProps {
     children?: any;
@@ -51,15 +51,15 @@ const MesRecordList = ({page, search, option}: IProps) => {
         page: 1,
         total: 1,
     });
-    const [order, setOrder] = useState<number>(0);
-    const changeOrder = (value: number) => {
-        setPageInfo({ page: 1, total: 1 });
-        setOrder(value);
-    };
+    const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
+    const changeOrder = (order:string, key:string) => {
+        tableHeaderController(key, order, sortingOptions, setSortingOptions)
+        setPageInfo({...pageInfo, page:1})
+    }
 
     const loadPage = (page:number) => {
         if(keyword){
-            SearchBasic(keyword, page,optionIndex).then(() => {
+            SearchBasic(keyword, optionIndex, page).then(() => {
                 Notiflix.Loading.remove()
             })
         }else{
@@ -68,10 +68,9 @@ const MesRecordList = ({page, search, option}: IProps) => {
             })
         }
     }
-
     useEffect(() => {
         loadPage(pageInfo.page)
-    }, [pageInfo.page, selectDate, order, recordState])
+    }, [pageInfo.page, sortingOptions, recordState, selectDate])
 
 
     useEffect(() => {
@@ -83,34 +82,6 @@ const MesRecordList = ({page, search, option}: IProps) => {
         };
     }, []);
 
-    const setRequestParams = (recordState?:number ,order?:number, opt?:number , keyword?:string, from?:string, to?:string ) => {
-        // http://3.36.78.194:8443/cnc/api/v1/record/list/1/22?rangeNeeded=false&fin=false
-        const params:any = {
-            from,
-            to,
-            rangeNeeded: true
-        }
-
-
-        if(order){
-            params.sorts = "end"
-            params.order = order == 1 ? "asc" : "desc"
-        }
-
-        if(recordState == 1){
-            // params.rangeNeeded = false
-            params.fin=false
-            params.from = undefined
-            params.to = undefined
-        }
-        if(keyword){
-            params.opt = opt
-            params.keyword = keyword
-        }
-
-        return params
-
-    }
 
     const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         let tmpColumn = column.map(async (v: any) => {
@@ -172,10 +143,19 @@ const MesRecordList = ({page, search, option}: IProps) => {
         Notiflix.Loading.circle();
         const res = await RequestMethod("get", `cncRecordSearch`, {
             path: {
-                page: page || page !== 0 ? page : 1,
-                renderItem: 22,
+                page: page ?? 1,
+                renderItem: 18,
             },
-            params:setRequestParams(recordState, order, optionIndex, keyword, selectDate.from, selectDate.to)
+            params: {
+                from: selectDate.from,
+                to: selectDate.to,
+                rangeNeeded: true,
+                sorts: sortingOptions.sorts,
+                order: sortingOptions.orders,
+                fin: !recordState,
+                opt: opt,
+                keyword: keyword
+            }
         })
         if (res) {
             setPageInfo({
@@ -194,9 +174,15 @@ const MesRecordList = ({page, search, option}: IProps) => {
         const res = await RequestMethod("get", `cncRecordList`, {
             path: {
                 page: page || page !== 0 ? page : 1,
-                renderItem: 22,
+                renderItem: 18,
             },
-            params: setRequestParams(recordState, order, optionIndex, keyword, selectDate.from, selectDate.to)
+            params: {
+                from: selectDate.from,
+                to: selectDate.to,
+                sorts: sortingOptions.sorts,
+                order: sortingOptions.orders,
+                fin: !recordState
+            }
         })
         if(res){
             setPageInfo({
@@ -375,17 +361,10 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 sic_id: row.inspection_category,
                 worker: row.worker.name,
                 worker_object: row.worker_object ?? row.worker,
-                id: `record_${random_id}`,
-                loadPage,
-
+                id: `sheet_${random_id}`,
             }
         })
-
-        if (pageInfo.page > 1) {
-            setBasicRow([...basicRow, ...tmpBasicRow]);
-        } else {
-            setBasicRow([...tmpBasicRow]);
-        }
+        setBasicRow([...tmpBasicRow]);
 
         setSelectList(new Set)
     }
@@ -408,6 +387,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 onChangeSearchKeyword={setKeyword}
                 onSearch={() => {
                     setSelectList(new Set());
+                    setKeyword(keyword);
                     SearchBasic(keyword, optionIndex, 1).then(() => {
                         Notiflix.Loading.remove();
                     })
@@ -419,7 +399,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 setSelectDate={(date) => {
                     setSelectList(new Set());
                     setSelectDate(date as { from: string; to: string });
-                    // setPageInfo({ page: 1, total: 1 });
+                    setPageInfo({...pageInfo, page:1})
                 }}
                 //실제사용
                 title={"작업 일보 리스트"}
@@ -483,16 +463,14 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 setSelectList={setSelectList}
                 width={1576}
                 height={setExcelTableHeight(basicRow.length)}
-                scrollEnd={(value) => {
-                    if(value){
-                        if(pageInfo.total > pageInfo.page){
-                            setSelectList(new Set)
-                            setPageInfo({...pageInfo, page:pageInfo.page+1})
-                        }
-                    }
+            />
+            <PaginationComponent
+                currentPage={pageInfo.page}
+                totalPage={pageInfo.total}
+                setPage={(page) => {
+                    setPageInfo({...pageInfo, page: page})
                 }}
             />
-
             {excelOpen && (
                 <WorkModifyModal
                     row={[
@@ -512,7 +490,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
                     ]}
                     onRowChange={() => {
                         if (keyword) {
-                            SearchBasic(keyword, option, page).then(() => {
+                            SearchBasic(keyword, optionIndex, page).then(() => {
                               Notiflix.Loading.remove()
                             })
                         } else {

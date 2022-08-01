@@ -1,24 +1,24 @@
 import React, {useEffect, useState} from 'react'
 import {
-    columnlist,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    RequestMethod,
-    TextEditor
+  columnlist,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  MAX_VALUE, PaginationComponent,
+  RequestMethod,
+  TextEditor
 } from 'shared'
+import {NextPageContext} from 'next'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from 'react-redux'
-import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util';
+import { setExcelTableHeight, tableHeaderController } from 'shared/src/common/Util';
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 
 interface IProps {
   children?: any
@@ -27,20 +27,21 @@ interface IProps {
   option?: number
 }
 
+const optionList = ['지시 고유 번호', '거래처명', '모델', 'CODE', '품명']
+
 let now = moment().format('YYYY-MM-DD')
 
 const MesOperationList = ({page, search, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
-  const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["operationListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['지시 고유 번호', '거래처명', '모델', 'CODE', '품명'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [order, setOrder] = useState<number>(0);
+
+  const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
+
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
@@ -53,9 +54,9 @@ const MesOperationList = ({page, search, option}: IProps) => {
     page: 1,
     total: 1
   })
-  const changeOrder = (value:number) => {
-    setPageInfo({page:1,total:1})
-    setOrder(value);
+  const changeOrder = (order:string, key:string) => {
+    tableHeaderController(key, order, sortingOptions, setSortingOptions)
+    setPageInfo({...pageInfo, page:1})
   }
 
   useEffect(() => {
@@ -68,7 +69,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
         Notiflix.Loading.remove()
       })
     }
-  }, [pageInfo.page, selectDate, order])
+  }, [pageInfo.page, selectDate, sortingOptions])
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"생산관리 등록",sub:router.pathname}))
@@ -134,19 +135,12 @@ const MesOperationList = ({page, search, option}: IProps) => {
     const res = await RequestMethod('get', `sheetList`,{
       path: {
         page: pageInfo.page ?? 1,
-        renderItem: 22,
+        renderItem: 18,
       },
-
-      params: order == 0 ?
+      params:
           {
-            from: selectDate.from,
-            to: selectDate.to,
-            status: '0,1'
-          }
-          :
-          {
-            sorts: 'deadline',
-            order: order == 1 ? 'ASC' : 'DESC',
+            sorts: sortingOptions.sorts,
+            order: sortingOptions.orders,
             from: selectDate.from,
             to: selectDate.to,
             status: '0,1'
@@ -172,32 +166,25 @@ const MesOperationList = ({page, search, option}: IProps) => {
     const res = await RequestMethod('get', `operationSearch`,{
       path: {
         page: pageInfo.page ?? 1,
-        renderItem: 22,
+        renderItem: 18,
       },
-      params: order == 0 ?
+      params:
           {
+            sorts: sortingOptions.sorts,
+            order: sortingOptions.orders,
             from: selectDate.from,
             to: selectDate.to,
             keyword: keyword ?? '',
             status: '0,1',
-            opt: option ?? 0
-          }
-          :
-          {
-            sorts: 'deadline',
-            order: order == 1 ? 'ASC' : 'DESC',
-            from: selectDate.from,
-            to: selectDate.to,
-            keyword: keyword ?? '',
-            status: '0,1',
-            opt: option ?? 0
+            opt: option ?? 0,
+            rangeNeeded: true
           }
     })
 
     if(res){
       setPageInfo({
         ...pageInfo,
-        page: res.page,
+        page: isPaging ?? res.page,
         total: res.totalPages
       })
       cleanUpData(res)
@@ -323,11 +310,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
       }
     }).filter((v: any) => v) : []
 
-    if(pageInfo.page > 1){
-      tmpRow = [...basicRow,...res.info_list]
-    }else{
       tmpRow = res.info_list
-    }
 
     loadAllSelectItems( [
       ...tmpColumn,
@@ -375,7 +358,6 @@ const MesOperationList = ({page, search, option}: IProps) => {
         status_no: row.status,
         contract_id: row.contract?.identification ?? '-' ,
         bom_root_id: row.product?.bom_root_id,
-        // operation_sheet: row.
         total_counter: row.total_good_quantity+row.total_poor_quantity,
         customer_id: row.product.customer?.name ?? '-',
         cm_id: row.product.model?.model ?? '-',
@@ -505,16 +487,14 @@ const MesOperationList = ({page, search, option}: IProps) => {
       setSelectList={setSelectList}
       width={1576}
       height={setExcelTableHeight(basicRow.length)}
-      scrollEnd={(value) => {
-        if(value){
-          if(pageInfo.total > pageInfo.page){
-            setSelectList(new Set)
-            setPageInfo({...pageInfo, page:pageInfo.page+1})
-            setSelectList(new Set)
-          }
-        }
-      }}
     />
+      <PaginationComponent
+          currentPage={pageInfo.page}
+          totalPage={pageInfo.total}
+          setPage={(page) => {
+            setPageInfo({...pageInfo, page: page})
+          }}
+      />
     </div>
   );
 }

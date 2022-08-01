@@ -217,7 +217,6 @@ export const ExcelDataStyle = styled.div`
         border:none;
         margin-bottom:1px;
         border-right: 1px solid #151E2D;
-        
     }
     
     .rdg-header-row{
@@ -272,9 +271,7 @@ export const ExcelDataStyle = styled.div`
         background-size: 20px 20px;
     }
     
-    .c1wupbe700-canary49 {
-      padding: 0;
-    }
+
     
   div .cell .rdg-row {
     background-color: #353B48;
@@ -332,7 +329,7 @@ export const SearchModalStyle = styled.div`
         color:black;
         text-align: left;
         padding: 0 8px;
-        border-top: none
+        border-top: none;
         // &:hover{
         //     background:red;
         // }
@@ -362,10 +359,7 @@ export const SearchModalStyle = styled.div`
     .editDropdown > option {
       background:#484848;
     }
-    .c1wupbe700-canary49 {
-      padding: 0;
-    }
-    
+  
   div .cell .rdg-row {
     background-color: #353B48;
   }

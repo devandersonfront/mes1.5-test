@@ -23,13 +23,14 @@ interface IProps {
     option?: number
 }
 
+const optionList = ['수주 번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자']
+
 const MesMidrangeList = ({ option }: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["midrangeList"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [optionList, setOptionList] = useState<string[]>(['수주 번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자'])
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [selectDate, setSelectDate] = useState<{ from: string, to: string }>({
         from: moment().subtract(1, "months").format("YYYY-MM-DD"),

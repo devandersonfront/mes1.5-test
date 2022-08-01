@@ -22,7 +22,7 @@ export interface IExcelHeaderType {
   disabledCase?: {key: any, value: any}[]
   textType?: string
   options?:{status:number, name:string}[]
-  result?:(value:number | string | boolean) => void
+  result?:(value:number | string | boolean, key?:string) => void
   staticCalendar?: boolean
   clearContract?: boolean
   maxDate?:boolean

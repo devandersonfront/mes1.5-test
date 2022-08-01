@@ -107,6 +107,7 @@ const MesProductChangeDetail = () => {
                 setRow={(e) => {
                     setBasicRow(e.map(v => ({...v, name: v.product_name})))
                 }}
+                width={1576}
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
             />
             <TitleInput title={'제목'} value={changeInfo.title} placeholder={''} onChange={()=>{}}/>

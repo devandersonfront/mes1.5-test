@@ -2,8 +2,6 @@ import React, {useEffect, useState} from 'react'
 import {
   BarcodeModal,
   columnlist,
-  excelDownload,
-  ExcelDownloadModal,
   ExcelTable,
   Header as PageHeader,
   IExcelHeaderType,
@@ -23,7 +21,6 @@ import {useDispatch} from 'react-redux'
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { setExcelTableHeight } from 'shared/src/common/Util';
 import {BarcodeDataType} from "shared/src/common/barcodeType";
-import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 
 interface IProps {
@@ -38,26 +35,22 @@ type ModalType = {
   isVisible : boolean
 }
 
+const optionList = ['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처']
+
 const MesRawMaterialStock = ({page, search, option}: IProps) => {
   const router = useRouter()
 
   const dispatch = useDispatch()
 
-  const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawstockV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
-
-  // const [first, setFirst] = useState<boolean>(true);
-
 
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment().subtract(1,'month').format('YYYY-MM-DD'),
@@ -156,11 +149,9 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       }
     })
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
       setColumn([...res])
     })
-    // }
   }
 
 
@@ -169,7 +160,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     const res = await RequestMethod('get', `rawInList`,{
       path: {
         page: (page || page !== 0) ? page : 1,
-        renderItem: 22,
+        renderItem: 18,
       },
       params:
           order == 0 ?
@@ -208,7 +199,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     const res = await RequestMethod('get', `rawInListSearch`,{
       path: {
         page: isPaging ?? 1,
-        renderItem: 22,
+        renderItem: 18,
       },
       params:
           order == 0 ?
@@ -246,7 +237,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["rawstockV1u"];
-    let tmpRow = []
+    // let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
       res.menus && res.menus.map((menu: any) => {
@@ -291,13 +282,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       }
     }).filter((v: any) => v) : []
 
-
-    if(pageInfo.page > 1){
-      tmpRow = [...basicRow,...res.info_list]
-    }else{
-      tmpRow = res.info_list
-    }
-
+    // tmpRow = res.info_list
 
     loadAllSelectItems( [
       ...tmpColumn,
@@ -320,13 +305,13 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     })
 
     let pk = "";
-    Object.keys(tmpRow).map((v) => {
+    Object.keys(res.info_list).map((v) => {
       if(v.indexOf('_id') !== -1){
         pk = v
       }
     })
 
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+    let tmpBasicRow = res.info_list.map((row: any, index: number) => {
 
       let appendAdditional: any = {}
 
@@ -427,13 +412,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   }
 
-  const downloadExcel = () => {
-    let tmpSelectList: boolean[] = []
-    basicRow.map(row => {
-      tmpSelectList.push(selectList.has(row.id))
-    })
-    excelDownload(column, basicRow, `mold`, "mold", tmpSelectList)
-  }
 
   const onClickHeaderButton = (index: number) => {
     const noneSelected = selectList.size <= 0
@@ -553,6 +531,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           SearchBasic(keyword, optionIndex, 1).then(() => {
             Notiflix.Loading.remove();
           })
+          setKeyword(keyword);
         }}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
@@ -587,14 +566,13 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           ...column
         ]}
         row={basicRow}
-        // setRow={setBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
           e.map(v => {
             if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
+                tmp.add(v.id)
+                v.isChange = false
+            }
           })
           setSelectList(tmp)
           setBasicRow(e)
@@ -604,14 +582,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         setSelectList={setSelectList}
         width={1576}
         height={setExcelTableHeight(basicRow.length)}
-        scrollEnd={(value) => {
-          if(value){
-            if(pageInfo.total > pageInfo.page){
-              setSelectList(new Set)
-              setPageInfo({...pageInfo, page:pageInfo.page+1})
-            }
-          }
-        }}
       />
       <BarcodeModal
           title={'바코드 미리보기'}
@@ -621,17 +591,13 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           data={barcodeData}
           isVisible={modal.type === 'barcode' && modal.isVisible}
       />
-
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`금형기준정보`}*/}
-      {/*  sheetname={`금형기준정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
+      <PaginationComponent
+          currentPage={pageInfo.page}
+          totalPage={pageInfo.total}
+          setPage={(page) => {
+            setPageInfo({...pageInfo, page:page})
+          }}
+      />
     </div>
   );
 }

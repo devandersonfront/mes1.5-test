@@ -5,7 +5,7 @@ import {
   ExcelTable,
   Header as PageHeader,
   IExcelHeaderType,
-  MAX_VALUE,
+  MAX_VALUE, PaginationComponent,
   RequestMethod,
   TextEditor,
 } from "shared";
@@ -21,7 +21,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import { setExcelTableHeight, tableHeaderController } from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 
 interface IProps {
@@ -31,41 +31,33 @@ interface IProps {
   option?: number;
 }
 
+const optionList = ["납품 번호", "수주 번호", "거래처", "모델", "CODE", "품명",]
+
 const MesDeliveryList = ({ page, search, option }: IProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const [excelOpen, setExcelOpen] = useState<boolean>(false);
-  const [order, setOrder] = useState(0);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(
     columnlist["deliveryList"]
   );
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
-  const [optionList, setOptionList] = useState<string[]>([
-    "납품 번호",
-    "수주 번호",
-    "거래처",
-    "모델",
-    "CODE",
-    "품명",
-  ]);
-  
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [selectDate, setSelectDate] = useState<{ from: string; to: string }>({
     from: moment().subtract(1, "months").format("YYYY-MM-DD"),
     to: moment().format("YYYY-MM-DD"),
   });
-
   const [keyword, setKeyword] = useState<string>("");
+  const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
     page: 1,
     total: 1,
   });
-  const changeSetOrder = (value: number) => {
-    setPageInfo({ page: 1, total: 1 });
-    setOrder(value);
-  };
+  const changeOrder = (order:string, key:string) => {
+    tableHeaderController(key, order, sortingOptions, setSortingOptions)
+    setPageInfo({...pageInfo, page:1})
+  }
+
 
   useEffect(() => {
     if (keyword) {
@@ -77,7 +69,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page, selectDate, order]);
+  }, [pageInfo.page, selectDate, sortingOptions]);
 
   useEffect(() => {
     dispatch(
@@ -127,7 +119,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
           return {
             ...v,
             pk: v.unit_id,
-            result: changeSetOrder,
+            result: changeOrder,
           };
         } else {
           return v;
@@ -147,20 +139,15 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
     const res = await RequestMethod("get", `shipmentList`, {
       path: {
         page: pageInfo.page ?? 1,
-        renderItem: 22,
+        renderItem: 18,
       },
       params:
-        order == 0
-          ? {
-              from: selectDate.from,
-              to: selectDate.to,
-            }
-          : {
-              from: selectDate.from,
-              to: selectDate.to,
-              sorts: "date",
-              order: order == 1 ? "ASC" : "DESC",
-            },
+          {
+            from: selectDate.from,
+            to: selectDate.to,
+            sorts: sortingOptions.sorts,
+            order: sortingOptions.orders,
+          },
     });
 
     if (res) {
@@ -194,23 +181,16 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
     const res = await RequestMethod("get", `shipmentSearch`, {
       path: {
         page: isPaging ?? 1,
-        renderItem: 22,
+        renderItem: 18,
       },
       params:
-        order == 0
-          ? {
+           {
               keyword: keyword ?? "",
               opt: option ?? 0,
               from: selectDate.from,
               to: selectDate.to,
-            }
-          : {
-              keyword: keyword ?? "",
-              opt: option ?? 0,
-              from: selectDate.from,
-              to: selectDate.to,
-              sorts: "date",
-              order: order == 1 ? "ASC" : "DESC",
+              sorts: sortingOptions.sorts,
+              order: sortingOptions.orders,
             },
     });
 
@@ -522,9 +502,9 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
           let tmp: Set<any> = selectList
           e.map(v => {
             if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
+                tmp.add(v.id)
+                v.isChange = false
+            }
           })
           setSelectList(tmp)
           setBasicRow(e)
@@ -534,36 +514,14 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
         setSelectList={setSelectList}
         width={1576}
         height={setExcelTableHeight(basicRow.length)}
-        scrollEnd={(value) => {
-          if (value) {
-            if (pageInfo.total > pageInfo.page) {
-              setSelectList(new Set());
-              setPageInfo({ ...pageInfo, page: pageInfo.page + 1 });
-            }
-          }
-        }}
       />
-      {/*<PaginationComponent*/}
-      {/*  currentPage={pageInfo.page}*/}
-      {/*  totalPage={pageInfo.total}*/}
-      {/*  setPage={(page) => {*/}
-      {/*    if(keyword){*/}
-      {/*      router.push(`/mes/basic/mold?page=${page}&keyword=${keyword}&opt=${option}`)*/}
-      {/*    }else{*/}
-      {/*      router.push(`/mes/basic/mold?page=${page}`)*/}
-      {/*    }*/}
-      {/*  }}*/}
-      {/*/>*/}
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`금형기준정보`}*/}
-      {/*  sheetname={`금형기준정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
+      <PaginationComponent
+          currentPage={pageInfo.page}
+          totalPage={pageInfo.total}
+          setPage={(page) => {
+            setPageInfo({...pageInfo, page: page})
+          }}
+      />
     </div>
   );
 };

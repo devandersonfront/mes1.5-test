@@ -300,7 +300,7 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
                                     width={"100%"}
                                     rowHeight={32}
                                     height={576}
-                                    onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
+                                    setSelectRow={(clicked) => {const e = searchList.indexOf(clicked)
                                         setSelectRow(e)
                                         if(selectRow !== undefined && selectRow !== null){
                                         }
@@ -332,7 +332,7 @@ const MultipleSelectModal = ({column, row, onRowChange}: IProps) => {
                                 width={"100%"}
                                 rowHeight={32}
                                 height={576}
-                                onRowClick={(clicked) => {const e = saveList.indexOf(clicked)
+                                setSelectRow={(clicked) => {const e = saveList.indexOf(clicked)
                                     setSelectRow(e)
                                     dispatch(insert_select_productList(e));
                                 }}

@@ -258,7 +258,7 @@ const ModelSearchModal = ({column, row, onRowChange}: IProps) => {
                 width={1750}
                 rowHeight={32}
                 height={576}
-                onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
+                setSelectRow={(clicked) => {const e = searchList.indexOf(clicked)
                   setSelectRow(e)
                 }}
                 type={'searchModal'}

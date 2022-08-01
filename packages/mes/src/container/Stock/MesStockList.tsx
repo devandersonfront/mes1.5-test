@@ -30,6 +30,8 @@ interface IProps {
   option?: number;
 }
 
+const optionList = ["거래처", "모델", "CODE", "품명"]
+
 const MesStockList = ({ page, search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -38,10 +40,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
-  const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
-    page: 1,
-    total: 1,
-  });
+  const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({page: 1, total: 1,});
 
   const reload = (keyword?:string ) => {
     setKeyword(keyword)

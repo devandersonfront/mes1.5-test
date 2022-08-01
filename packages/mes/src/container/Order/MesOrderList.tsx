@@ -6,7 +6,7 @@ import {
   ExcelTable,
   Header as PageHeader,
   IExcelHeaderType,
-  MAX_VALUE,
+  MAX_VALUE, PaginationComponent,
   RequestMethod,
   TextEditor,
 } from "shared";
@@ -24,6 +24,7 @@ import {
 } from "shared/src/reducer/menuSelectState";
 import { setExcelTableHeight } from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
+import {tableHeaderController} from 'shared/src/common/Util'
 
 interface IProps {
   children?: any;
@@ -32,49 +33,31 @@ interface IProps {
   option?: number;
 }
 
+const optionList = ["수주 번호", "거래처명", "모델", "CODE", "품명"]
+
 const MesOrderList = ({ page, search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const [excelOpen, setExcelOpen] = useState<boolean>(false);
-
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(
-    columnlist["orderList"]
-  );
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["orderList"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
-  const [optionList, setOptionList] = useState<string[]>([
-    "수주 번호",
-    "거래처명",
-    "모델",
-    "CODE",
-    "품명" /*지시 고유 번호*/,
-  ]);
   const [optionIndex, setOptionIndex] = useState<number>(0);
-  const [order, setOrder] = useState([0, 3]);
   const [selectDate, setSelectDate] = useState<{ from: string; to: string }>({
     from: moment(new Date()).subtract(1, "month").format("YYYY-MM-DD"),
     to: moment(new Date()).add(1, "month").format("YYYY-MM-DD"),
   });
-
+  const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
   const [keyword, setKeyword] = useState<string>("");
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
     page: 1,
     total: 1,
   });
 
-  const changeSetOrder = (value: string) => {
-    setPageInfo({ page: 1, total: 1 });
-    if (value === "0" || value === "1" || value === "2") {
-      let tmp = [...order];
-      tmp.splice(0, 1, Number(value));
-      setOrder(tmp);
-    } else {
-      let tmp = [...order];
-      tmp.splice(1, 1, Number(value));
-      setOrder(tmp);
-    }
-  };
+  const changeOrder = (order:string, key:string) => {
+    tableHeaderController(key, order, sortingOptions, setSortingOptions)
+    setPageInfo({...pageInfo, page:1})
+  }
 
   useEffect(() => {
     if (keyword) {
@@ -86,7 +69,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         Notiflix.Loading.remove();
       });
     }
-  }, [pageInfo.page, selectDate, order]);
+  }, [pageInfo.page, sortingOptions]);
 
   useEffect(() => {
     dispatch(
@@ -136,7 +119,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
           return {
             ...v,
             pk: v.unit_id,
-            result: changeSetOrder,
+            result: changeOrder,
           };
         } else {
           return v;
@@ -149,80 +132,20 @@ const MesOrderList = ({ page, search, option }: IProps) => {
     });
   };
 
-  const load_basic_param_return = () => {
-    if (order[0] !== 0 && order[1] === 3) {
-      return {
-        from: selectDate.from,
-        to: selectDate.to,
-        sorts: "date",
-        order: order[0] === 1 ? "ASC" : "DESC",
-      };
-    } else if (order[0] === 0 && order[1] !== 3) {
-      return {
-        from: selectDate.from,
-        to: selectDate.to,
-        sorts: "deadline",
-        order: order[1] === 4 ? "ASC" : "DESC",
-      };
-    } else {
-      return {
-        from: selectDate.from,
-        to: selectDate.to,
-        sorts: "date,deadline",
-        order:
-          (order[0] === 1 ? "ASC" : "DESC") +
-          (order[1] === 4 ? ",ASC" : ",DESC"),
-      };
-    }
-  };
-
-  const search_basic_param_return = () => {
-    if (order[0] !== 0 && order[1] === 3) {
-      return {
-        keyword: keyword ?? "",
-        opt: option ?? 0,
-        from: selectDate.from,
-        to: selectDate.to,
-        sorts: "date",
-        order: order[0] === 1 ? "ASC" : "DESC",
-      };
-    } else if (order[0] === 0 && order[1] !== 3) {
-      return {
-        keyword: keyword ?? "",
-        opt: option ?? 0,
-        from: selectDate.from,
-        to: selectDate.to,
-        sorts: "deadline",
-        order: order[1] === 4 ? "ASC" : "DESC",
-      };
-    } else {
-      return {
-        keyword: keyword ?? "",
-        opt: option ?? 0,
-        from: selectDate.from,
-        to: selectDate.to,
-        sorts: "date,deadline",
-        order:
-          (order[0] === 1 ? "ASC" : "DESC") +
-          (order[1] === 4 ? ",ASC" : ",DESC"),
-      };
-    }
-  };
-
   const LoadBasic = async (page?: number) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", `contractList`, {
       path: {
         page: pageInfo.page ?? 1,
-        renderItem: 22,
+        renderItem: 18,
       },
       params:
-        order[0] === 0 && order[1] === 3
-          ? {
-              from: selectDate.from,
-              to: selectDate.to,
-            }
-          : load_basic_param_return(),
+        {
+          from: selectDate.from,
+          to: selectDate.to,
+          sorts: sortingOptions.sorts,
+          order: sortingOptions.orders,
+        }
     });
     if (res) {
       setPageInfo({
@@ -255,17 +178,17 @@ const MesOrderList = ({ page, search, option }: IProps) => {
     const res = await RequestMethod("get", `contractSearch`, {
       path: {
         page: isPaging ?? 1,
-        renderItem: 22,
+        renderItem: 18,
       },
       params:
-        order[0] === 0 && order[1] === 3
-          ? {
+          {
               keyword: keyword ?? "",
-              opt: option ?? 0,
+              opt: optionIndex ?? 0,
               from: selectDate.from,
               to: selectDate.to,
-            }
-          : search_basic_param_return(),
+              sorts: sortingOptions.sorts,
+              order: sortingOptions.orders,
+          }
     });
 
     if (res) {
@@ -331,11 +254,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
           .filter((v: any) => v)
       : [];
 
-    if (pageInfo.page > 1) {
-      tmpRow = [...basicRow, ...res.info_list];
-    } else {
       tmpRow = res.info_list;
-    }
 
     loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
@@ -480,9 +399,14 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         }}
         onSearch={() => {
           setSelectList(new Set)
-          SearchBasic(keyword, optionIndex).then(() => {
-            Notiflix.Loading.remove();
-          });
+          setKeyword(keyword);
+          if(pageInfo.page === 1){
+            SearchBasic(keyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove();
+            });
+          }else{
+            setPageInfo({ page: 1, total: 1 });
+          }
         }}
         onChangeSearchOption={(option) => {
           setOptionIndex(option);
@@ -494,11 +418,13 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         setSelectDate={(date) => {
           setSelectList(new Set)
           setSelectDate(date as {from:string, to:string})
-          setPageInfo({page: 1, total:1})
-          // setPageInfo({page:1, total:1})
-          // SearchBasic(keyword, optionIndex, 1).then(() => {
-          //   Notiflix.Loading.remove();
-          // });
+          if(pageInfo.page){
+            SearchBasic(keyword, optionIndex, 1).then(() => {
+              Notiflix.Loading.remove();
+            });
+          }else{
+            setPageInfo({page:1, total:1})
+          }
         }}
         title={"수주 현황"}
         buttons={["", "수정하기", "삭제"]}
@@ -556,14 +482,13 @@ const MesOrderList = ({ page, search, option }: IProps) => {
             ...column
           ]}
           row={basicRow}
-          // setRow={setBasicRow}
           setRow={(e) => {
             let tmp: Set<any> = selectList
             e.map(v => {
               if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
+                  tmp.add(v.id)
+                  v.isChange = false
+              }
             })
             setSelectList(tmp)
             setBasicRow(e)
@@ -573,26 +498,14 @@ const MesOrderList = ({ page, search, option }: IProps) => {
           setSelectList={setSelectList}
           width={1576}
           height={setExcelTableHeight(basicRow.length)}
-          scrollEnd={(value) => {
-            if(value){
-              if(pageInfo.total > pageInfo.page){
-                setSelectList(new Set)
-                setPageInfo({...pageInfo, page:pageInfo.page+1})
-              }
-            }
-          }
-        }
       />
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`금형기준정보`}*/}
-      {/*  sheetname={`금형기준정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
+      <PaginationComponent
+          currentPage={pageInfo.page}
+          totalPage={pageInfo.total}
+          setPage={(page) => {
+            setPageInfo({...pageInfo, page: page})
+          }}
+      />
     </div>
   );
 };

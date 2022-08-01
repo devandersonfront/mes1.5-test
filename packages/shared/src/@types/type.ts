@@ -199,3 +199,8 @@ export interface BomObjectType extends BomType {
   id: number | null,
   detail: any | null
 }
+
+export interface TableSortingOptionType {
+  sorts:string[],
+  orders:string[]
+}

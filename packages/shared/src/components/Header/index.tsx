@@ -26,7 +26,6 @@ interface IProps {
   setSelectDate?:(value:SelectParameter | string) => void
   buttons?: string[]
   leftButton?: string[]
-  typeList?: string[]
   buttonsOnclick?: (buttonIndex: number) => void
   isSearch?: boolean
   style?: any
@@ -39,7 +38,6 @@ interface IProps {
   serviceFilterButton?: string[]
   onClickServiceButton?: (service: string) => void
   leftButtonOnClick?:(buttonIndex: number) => void
-  typeListOnClick?: (type: string) => void
   basicMachineType?: string
   isCalendar?:boolean
   calendarType?:"day" | "month" | "period" | 'current'
@@ -68,47 +66,6 @@ interface IProps {
   searchKeyword?: string
 }
 
-const useStyles = makeStyles(_ => {
-  return {
-    quantityRoot: {
-      backgroundColor: "#19B9DF",
-
-      width: '120px',
-      height: '32px',
-      borderRadius: 6,
-
-      "& .MuiSelect-root": {
-        // padding: "6.5px 10px" ,
-        padding: 0,
-        width: "92px",
-        height: '100%',
-        display: 'flex',
-        fontSize: '15px',
-        overflow: 'hidden',
-        textOverflow: 'ellipse',
-        justifyContent: 'center',
-      },
-      "& .MuiOutlinedInput-notchedOutline": {
-        border: "none"
-      },
-      "&:hover .MuiOutlinedInput-notchedOutline": {
-        border: "none"
-      },
-      "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-        border: "none",
-      },
-      "& .Mui-disabled .MuiOutlinedInput-notchedOutline": {
-        border: "none"
-      }
-    },
-    selectRoot: {
-      color: "#000"
-    },
-    icon: {
-      color: "black"
-    },
-  }
-});
 
 const useStyles2 = makeStyles(_ => {
   return {
@@ -157,8 +114,8 @@ const lightTheme = createTheme({
   }
 })
 
-const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList, buttonsOnclick, isSearch, style,
-                  searchOptionList, onChangeSearchOption, filterList, onChangeFilter, basicMachineType, typeListOnClick, isCalendar, onChangeSelectDate,
+const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsOnclick, isSearch, style,
+                  searchOptionList, onChangeSearchOption, filterList, onChangeFilter, basicMachineType, isCalendar, onChangeSelectDate,
                   calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code,
                   isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch, searchKeyword}: IProps) => {
 
@@ -168,9 +125,6 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList
   })
 
   const [keyword, setKeyword] = React.useState<string>()
-  // const [selectDate, setSelectDate]= React.useState<string>(
-  //     moment(new Date()).format("yyyy.MM")
-  // )
 
   useEffect(() => {
     setKeyword(searchKeyword)
@@ -186,16 +140,13 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList
   const selectCalendarType = (value:string) => {
     switch (value){
       case "month":
-
         return (
             <MonthSelectCalendar calendarTitle={calendarTitle} selectDate={selectDate as string} setSelectDate={setSelectDate} onChangeSelectDate={onChangeSelectDate} setState={setState} dataLimit={dataLimit}/>
         )
-
       case "day":
         return (
             <MonthSelectCalendar calendarTitle={calendarTitle} selectDate={selectDate as string} setSelectDate={setSelectDate} onChangeSelectDate={onChangeSelectDate} setState={setState} dataLimit={dataLimit}/>
         )
-
       case "period":
         return (
             <PeriodSelectCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={dataLimit} />
@@ -226,16 +177,16 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, typeList
                 <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
                 </div>
 
-                {
-                    typeList && typeList.map((buttonTitle, buttonIndex) => {
-                      return <HeaderButton
-                          style={{backgroundColor: basicMachineType === buttonTitle ? POINT_COLOR : '#717C90'}}
-                          onClick={() => typeListOnClick && typeListOnClick(buttonTitle)}
-                          key={`btn${buttonIndex}`}>
-                        {buttonTitle}
-                      </HeaderButton>
-                    })
-                }
+                {/*{*/}
+                {/*    typeList && typeList.map((buttonTitle, buttonIndex) => {*/}
+                {/*      return <HeaderButton*/}
+                {/*          style={{backgroundColor: basicMachineType === buttonTitle ? POINT_COLOR : '#717C90'}}*/}
+                {/*          onClick={() => typeListOnClick && typeListOnClick(buttonTitle)}*/}
+                {/*          key={`btn${buttonIndex}`}>*/}
+                {/*        {buttonTitle}*/}
+                {/*      </HeaderButton>*/}
+                {/*    })*/}
+                {/*}*/}
                 {
                     isMachine &&
                     <div style={{display:"flex", alignItems:"center", borderRadius: 6, }}>

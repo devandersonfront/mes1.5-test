@@ -275,9 +275,7 @@ const DataGridTable = styled(DataGrid)`
         background-size: 20px 20px;
     }
     
-    .c1wupbe700-canary49 {
-      padding: 0;
-    }
+    
     
   div .cell .rdg-row {
     background-color: #353B48;

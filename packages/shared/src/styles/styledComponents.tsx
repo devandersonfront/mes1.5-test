@@ -278,6 +278,7 @@ export const ExcelDataStyle = styled.div`
     }
     .rdg-row > .rdg-cell{
         background:#353B48;
+        padding:0px;
         // &:hover{
         //     background:red;
         // }
@@ -304,10 +305,7 @@ export const ExcelDataStyle = styled.div`
         background-size: 20px 20px;
     }
     
-    .c1wupbe700-canary49 {
-      padding: 0;
-    }
-    
+  
   div .cell .rdg-row {
     background-color: #353B48;
   }
@@ -396,9 +394,7 @@ export const SearchModalStyle = styled.div`
     .editDropdown > option {
       background:#484848;
     }
-    .c1wupbe700-canary49 {
-      padding: 0;
-    }
+ 
     
   div .cell .rdg-row {
     background-color: #353B48;
