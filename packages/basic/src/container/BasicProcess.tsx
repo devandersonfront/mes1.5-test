@@ -39,36 +39,25 @@ const BasicProcess = ({}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(optList)
   const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [selectRow , setSelectRow] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
-  const [selectRow , setSelectRow] = useState<number>(0);
 
-  // useEffect(() => {
-  //   if(keyword){
-  //     SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }else{
-  //     LoadBasic(pageInfo.page).then(() => {
-  //       Notiflix.Loading.remove()
-  //     })
-  //   }
-  // }, [pageInfo.page, keyword])
+  const reload = (keyword?:string) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
+    } else {
+      getData(null, keyword)
+    }
+  }
 
   useEffect(() => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    } else {
-      LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    }
-  }, [pageInfo.page])
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"공정 관리",sub:router.pathname}))
@@ -84,23 +73,6 @@ const BasicProcess = ({}: IProps) => {
         // let res: any
 
         const res = await RequestMethod('get', `${v.key}All`, )
-
-        // res = await RequestMethod('get', `${tmpKey}List`,{
-        //   path: {
-        //     page: 1,
-        //     renderItem: MAX_VALUE,
-        //   }
-        // })
-
-
-        // let pk = "";
-        //
-        // res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
-        //   if(v.indexOf('_id') !== -1){
-        //     pk = v
-        //   }
-        // })
-
         return {
           ...v,
           selectList: [...res.result.map((value: any) => {
@@ -138,8 +110,6 @@ const BasicProcess = ({}: IProps) => {
     // }
   }
   const SaveBasic = async () => {
-
-
     const existence = valueExistence()
 
     if (selectList.size === 0) {
@@ -201,18 +171,7 @@ const BasicProcess = ({}: IProps) => {
 
 
       if (res) {
-
-        Notiflix.Report.success('저장되었습니다.', '', '확인');
-        if (keyword) {
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        } else {
-          LoadBasic(pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
-
+        Notiflix.Report.success('저장되었습니다.', '', '확인', () => reload());
       }
     } else {
       return Notiflix.Report.warning(
@@ -281,9 +240,7 @@ const BasicProcess = ({}: IProps) => {
             }).filter(v => v)
             ]}
       )))
-      LoadBasic(1)
-setKeyword('')
-
+      reload()
     }else{
 
       selectedRows.forEach((row)=>{map.delete(row.id)})
@@ -297,21 +254,23 @@ setKeyword('')
     }
   }
 
-  const LoadBasic = async (page?: number) => {
+  const getData = async (page?: number, keyword?: string) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `processList`,{
+    const res = await RequestMethod('get', keyword ? 'processSearch' : 'processList',{
       path: {
-        page: (page || page !== 0) ? page : 1,
+        page: page ?? 1,
         renderItem: 18,
-      }
+      },
+      params: keyword ? {
+        keyword,
+        opt: optionIndex ?? 0
+      } : null
     })
 
     if(res){
-      if(res.totalPages < page){
-        LoadBasic(page - 1).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
         setPageInfo({
           ...pageInfo,
           page: res.page,
@@ -320,36 +279,8 @@ setKeyword('')
         cleanUpData(res)
       }
     }
-
     setSelectList(new Set())
-  }
-
-  const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
-    if(!isPaging){
-      setOptionIndex(option)
-    }
-
-    const res = await RequestMethod('get', `processSearch`,{
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res){
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
-    }
-
-    setSelectList(new Set())
+    Notiflix.Loading.remove()
   }
 
   const changeRow = (row: any) => {
@@ -371,30 +302,7 @@ setKeyword('')
       ...tmpData
     }
   }
-  const cleanUpBasicData = (res:any) => {
-    let tmpRow = res.data.results.info_list;
 
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-      let realTableData: any = changeRow(row)
-      let appendAdditional: any = {}
-
-      row.additional && row.additional.map((v: any) => {
-        appendAdditional = {
-          ...appendAdditional,
-          [v.title]: v.value
-        }
-      })
-
-      const random_id = Math.random()*1000
-
-      return {
-        ...realTableData,
-        ...appendAdditional,
-        id: `process_${random_id}`,
-      }
-    })
-    setBasicRow([...tmpBasicRow])
-  }
   const cleanUpData = (res: any) => {
     let tmpColumn = columnlist.process
     let tmpRow = []
@@ -598,10 +506,8 @@ setKeyword('')
     <div>
       <PageHeader
         isSearch
-        onChangeSearchKeyword={setKeyword}
-        onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
-          Notiflix.Loading.remove()
-        })}
+        searchKeyword={keyword}
+        onSearch={reload}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
@@ -641,7 +547,6 @@ setKeyword('')
         setSelectList={setSelectList}
         onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
               setSelectRow(e)}}
-        loadEvent={LoadBasic}
         width={1576}
         height={setExcelTableHeight(basicRow.length)}
       />

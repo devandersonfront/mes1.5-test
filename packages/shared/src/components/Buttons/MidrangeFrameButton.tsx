@@ -96,7 +96,7 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
     )
     return (
         <>
-            <MidrangeRegisterModal isOpen={modalOpen} setIsOpen={setModalOpen} formReviewData={execlInfo} modify={modify} reloadPage={row.loadPage}/>
+            <MidrangeRegisterModal isOpen={modalOpen} setIsOpen={setModalOpen} formReviewData={execlInfo} modify={modify} reload={row.reload}/>
             {contentCheck()}
         </>
     );

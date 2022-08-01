@@ -34,7 +34,11 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
       style={{textAlign: 'center', color: column.textType ? 'black' : 'white', border:"none" }}
       className={'editCell'}
       ref={autoFocus}
-      onCompositionStart={() => setFocus(true)}
+      onCompositionStart={() => {
+        setFocus(true)}}
+      onPaste={(e) => {
+        setFocus(true)
+      }}
       value={isNumberInput? RemoveFirstZero(row[column.key]) : row[column.key]}
       disabled={isDisabled}
       type={isNumberInput ? "number" : "text"}
@@ -67,6 +71,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
       onKeyDown={(e) => e.key === 'Backspace' && setFocus(true)}
       onChange={(event) => {
         let eventValue = event.target.value
+        console.log('change',eventValue)
         if(korean.test(eventValue) && !focus) return
         if(isNumberInput){
           if(checkIfNegative(event.target.value)){

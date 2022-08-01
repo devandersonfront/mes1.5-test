@@ -24,7 +24,7 @@ interface IProps {
 }
 
 
-const MesProductChangeList = ({page, keyword, option}: IProps) => {
+const MesProductChangeList = ({}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -35,18 +35,25 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
         from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD'),
         to:  moment(new Date()).format('YYYY-MM-DD')
     });
-
-    const [searchKeyword, setSearchKeyword] = useState<string>("");
+    const [keyword, setKeyword] = useState<string>("");
     const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
         page: 1,
         total: 1
     })
 
-    console.log(pageInfo)
+    const reload = (keyword?:string, date?:{from:string, to:string}, ) => {
+        date && setSelectDate(date)
+        setKeyword(keyword)
+        if(pageInfo.page > 1) {
+            setPageInfo({...pageInfo, page: 1})
+        } else {
+            getData(undefined, keyword, date)
+        }
+    }
 
     useEffect(() => {
-        loadPage(pageInfo.page)
-    }, [pageInfo.page, selectDate])
+        getData(pageInfo.page, keyword)
+    }, [pageInfo.page]);
 
     useEffect(() => {
         dispatch(setMenuSelectState({main:"품질 관리",sub:router.pathname}))
@@ -55,72 +62,43 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
         })
     },[])
 
-    const loadPage = (page: number) => {
-        if(searchKeyword){
-            SearchBasic(searchKeyword, page).then(() => {
-                Notiflix.Loading.remove()
-            })
-        }else{
-            LoadBasic(page).then(() => {
-                Notiflix.Loading.remove()
-            })
-        }
+    const onSelectData = (date: {from:string, to:string}) => {
+        reload(null, date)
     }
 
-    const LoadBasic = async (page?: number) => {
+    const getRequestParams = (keyword?: string, date?: {from:string, to:string}) => {
+        let params = {}
+        if(keyword) {
+            params['keyword'] = keyword
+            params['opt'] = optionIndex
+        }
+        params['from'] = date ? date.from: selectDate.from,
+          params['to'] = date ? date.to : selectDate.to
+        return params
+    }
+
+    const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, ) => {
         Notiflix.Loading.circle()
-        const res = await RequestMethod('get', `productChangeList`,{
+        const res = await RequestMethod('get', keyword ? 'productChangeSearch' : 'productChangeList',{
             path: {
                 page: page,
                 renderItem: 18,
             },
-            params: {
-                from: selectDate.from,
-                to: selectDate.to,
-            }
-
-        })
-
-        if(res){
-            setPageInfo({
-                ...pageInfo,
-                page: res.page,
-                total: res.totalPages
-            })
-            cleanUpData(res)
-        }else if (res === 401) {
-            Notiflix.Report.failure('불러올 수 없습니다.', '권한이 없습니다.', '확인', () => {
-                router.back()
-            })
-        }
-
-    }
-
-
-    const SearchBasic = async (keyword: any, isPaging: number = 1) => {
-        Notiflix.Loading.circle()
-        const res = await RequestMethod('get', `productChangeSearch`,{
-            path: {
-                page: isPaging,
-                renderItem: 18,
-            },
-            params: {
-                keyword: keyword ?? '',
-                opt: optionIndex ?? 0,
-                from: selectDate.from,
-                to: selectDate.to,
-            }
+            params: getRequestParams(keyword, date)
         })
         if(res){
-            setPageInfo({
-                ...pageInfo,
-                page: res.page,
-                total: res.totalPages
-            })
-            cleanUpData(res)
+            if (res.totalPages > 0 && res.totalPages < res.page) {
+                reload();
+            } else {
+                setPageInfo({
+                    page: res.page,
+                    total: res.totalPages
+                })
+                cleanUpData(res)
+            }
         }
+        Notiflix.Loading.remove()
     }
-
 
     const cleanUpData = (res: any) => {
         let tmpRow = []
@@ -188,27 +166,16 @@ const MesProductChangeList = ({page, keyword, option}: IProps) => {
                 isSearch
                 isCalendar
                 searchOptionList={[ '거래처', '모델', 'CODE', '품명', '제목', '작성자']}
-                onChangeSearchKeyword={setSearchKeyword}
+                searchKeyword={keyword}
                 optionIndex={optionIndex}
-                onSearch={()=> {
-                    setSelectList(new Set)
-                    SearchBasic(searchKeyword,pageInfo.page).then(() => {
-                        Notiflix.Loading.remove()
-                    })
-                }}
+                onSearch={reload}
                 onChangeSearchOption={(option) => {
-                    setSelectList(new Set)
                     setOptionIndex(option)
                 }}
                 calendarTitle={'등록 날짜'}
                 calendarType={'period'}
                 selectDate={selectDate}
-                //@ts-ignore
-                //@ts-ignore
-                setSelectDate={(date) => {
-                    setSelectDate(date as {from:string, to:string})
-                    setPageInfo({page:1, total:pageInfo.total})
-                }}
+                setSelectDate={onSelectData}
                 title={"변경점 정보 리스트"}
                 buttons={
                     ['', '자세히 보기']

@@ -43,8 +43,6 @@ const BasicDevice = ({}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
-  const [state, setState] = useState<number>(1)
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["device"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -64,18 +62,18 @@ const BasicDevice = ({}: IProps) => {
     setTypesState(value);
   }
 
-  useEffect(() => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
+  const reload = (keyword?:string) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
     } else {
-      LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
+      getData(null, keyword)
     }
-  }, [pageInfo.page,]);
+  }
 
+  useEffect(() => {
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page, typesState]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"주변장치 기준정보",sub:""}))
@@ -171,24 +169,24 @@ const BasicDevice = ({}: IProps) => {
     }
 
     if(!existence){
-    const searchAiID = (rowAdditional:any[], index:number) => {
-      let result:number = undefined;
-      rowAdditional.map((addi, i)=>{
-        if(index === i){
-          result = addi.ai_id;
+      const searchAiID = (rowAdditional:any[], index:number) => {
+        let result:number = undefined;
+        rowAdditional.map((addi, i)=>{
+          if(index === i){
+            result = addi.ai_id;
+          }
+        })
+        return result;
+      }
+
+      let pass = true;
+      basicRow.map((value)=>{
+        if(selectList.has(value.id) && value.mfrCode === undefined || value.mfrCode === ""){
+          pass = false;
+          return Notiflix.Report.failure("경고", "제조 번호를 입력해주세요.", "확인")
         }
       })
-      return result;
-    }
-
-    let pass = true;
-    basicRow.map((value)=>{
-      if(selectList.has(value.id) && value.mfrCode === undefined || value.mfrCode === ""){
-        pass = false;
-        return Notiflix.Report.failure("경고", "제조 번호를 입력해주세요.", "확인")
-      }
-    })
-    if(pass){
+      if(pass){
       let res: any
       res = await RequestMethod('post', `deviceSave`,
         basicRow.map((row, i) => {
@@ -263,94 +261,52 @@ const BasicDevice = ({}: IProps) => {
 
 
       if(res){
-        Notiflix.Report.success('저장되었습니다.','','확인');
-        if(keyword){
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }else{
-          LoadBasic(pageInfo.page).then(() => {
-            Notiflix.Loading.remove()
-          })
-        }
+        Notiflix.Report.success('저장되었습니다.','','확인', () => reload());
       }
-
     }
-  }else{
-    return Notiflix.Report.warning(
-      '경고',
-      `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
-      '확인',
-    );
-  }
+    }else{
+      return Notiflix.Report.warning(
+        '경고',
+        `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
+        '확인',
+      );
+    }
   }
 
+  const getRequestParams = (keyword?: string) => {
+    let params = {}
+    if(typesState) params['types'] = typesState
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    return params
+  }
 
-  const LoadBasic = async (page?: number) => {
+  const getData = async (page?: number, keyword?: string) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `deviceList`,{
+    const res = await RequestMethod('get', keyword ? 'deviceSearch' : 'deviceList',{
       path: {
-        page: (page || page !== 0) ? page : 1,
+        page: page ?? 1,
         renderItem: 18,
       },
-      params:
-          typesState !== null ?
-          {
-            types:typesState
-          }
-          :
-          {
-
-          }
-
+      params: getRequestParams(keyword)
     })
 
     if(res){
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          ...pageInfo,
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res)
+      }
     }
-
     setSelectList(new Set())
-
-  }
-
-  const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
-    Notiflix.Loading.circle()
-    if(!isPaging){
-      setOptionIndex(option)
-    }
-    const res = await RequestMethod('get', `deviceSearch`,{
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params: typesState ?
-          {
-            keyword: keyword ?? '',
-            opt: option ?? 0,
-            types:typesState
-          }
-          :
-          {
-            keyword: keyword ?? '',
-            opt: option ?? 0,
-          }
-    })
-
-    if(res){
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
-    }
-
-    setSelectList(new Set())
+    Notiflix.Loading.remove()
   }
 
   const cleanUpData = (res: any) => {
@@ -539,8 +495,7 @@ const BasicDevice = ({}: IProps) => {
           }).filter(v => v)
           ]}
       )))
-      LoadBasic(1)
-      setKeyword('')
+      reload()
     }else{
 
       selectedRows.forEach((row)=>{map.delete(row.id)})
@@ -641,14 +596,8 @@ const BasicDevice = ({}: IProps) => {
     <div>
         <PageHeader
           isSearch
-          onChangeSearchKeyword={(keyword) => {
-            setKeyword(keyword)
-          }}
-          onSearch={() =>
-            SearchBasic(keyword, optionIndex, 1).then(() => {
-              Notiflix.Loading.remove()
-            })
-          }
+          searchKeyword={keyword}
+          onSearch={reload}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
             setOptionIndex(option)
@@ -701,7 +650,7 @@ const BasicDevice = ({}: IProps) => {
         category={"device"}
         title={"주변장치 기준정보"}
         setIsOpen={setExcelOpen}
-        resetFunction={() => LoadBasic(1)}
+        resetFunction={() => reload()}
       />
     </div>
   );

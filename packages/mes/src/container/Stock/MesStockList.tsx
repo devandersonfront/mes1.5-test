@@ -42,21 +42,18 @@ const MesStockList = ({ page, search, option }: IProps) => {
   const [keyword, setKeyword] = useState<string>();
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({page: 1, total: 1,});
 
-  const loadPage = (page: number) => {
-    if (keyword) {
-      SearchBasic(keyword,page).then(() => {
-        Notiflix.Loading.remove()
-      })
+  const reload = (keyword?:string ) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
     } else {
-      LoadBasic(page).then(() => {
-        Notiflix.Loading.remove()
-      })
+      getData(undefined, keyword)
     }
   }
 
   useEffect(() => {
-    loadPage(pageInfo.page)
-  }, [pageInfo.page])
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(
@@ -67,87 +64,29 @@ const MesStockList = ({ page, search, option }: IProps) => {
     };
   }, []);
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if (v.selectList && v.selectList.length === 0) {
-        let tmpKey = v.key;
+  const getData = async (page: number = 1, keyword?: string ) => {
+    Notiflix.Loading.circle();
+    const res = await RequestMethod("get", keyword ? 'stockSearch' : 'stockList', {
+      path: {page: page, renderItem: 18},
+      params: keyword ? { keyword, opt: optionIndex} : null,
+    });
 
-        let res: any;
-        res = await RequestMethod("get", `${tmpKey}List`, {
-          path: {
-            page: 1,
-            renderItem: MAX_VALUE,
-          },
-        });
-
-        let pk = "";
-
-        res.info_list &&
-          res.info_list.length &&
-          Object.keys(res.info_list[0]).map((v) => {
-            if (v.indexOf("_id") !== -1) {
-              pk = v;
-            }
-          });
-        return {
-          ...v,
-          selectList: [
-            ...res.info_list.map((value: any) => {
-              return {
-                ...value,
-                name: tmpKey === "model" ? value.model : value.name,
-                pk: value[pk],
-              };
-            }),
-          ],
-        };
+    if(res){
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
       } else {
-        if (v.selectList) {
-          return {
-            ...v,
-            pk: v.unit_id,
-          };
-        } else {
-          return v;
-        }
+        setPageInfo({
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res)
       }
-    });
-
-    Promise.all(tmpColumn).then((res) => {
-      setColumn([...res]);
-    });
-  };
-
-  const LoadBasic = async (page?: number) => {
-    Notiflix.Loading.circle();
-    const res = await RequestMethod("get", `stockList`, {
-      path: {
-        page: page ?? 1,
-        renderItem: 18,
-      },
-    });
-
-    if (res) {
-      setPageInfo({...pageInfo, page: res.page, total: res.totalPages});
-      cleanUpData(res);
     }
+    setSelectList(new Set())
+    Notiflix.Loading.remove()
   };
 
-  const SearchBasic = async (keyword: string, page : number = 1) => {
-    Notiflix.Loading.circle();
-    const res = await RequestMethod("get", `stockSearch`, {
-      path: { page: page, renderItem: 18},
-      params: { keyword: keyword ?? "", opt: optionIndex ?? 0},
-    });
-
-    if (res) {
-      setPageInfo({...pageInfo, page: res.page, total: res.totalPages});
-      cleanUpData(res);
-    }
-  };
-
-  const convertData = (infoList) => {
-    const data = infoList.map((row: any) => {
+  const convertData = (infoList) => (infoList.map((row: any) => {
       let random_id = Math.random() * 1000;
       return {
         ...row,
@@ -169,35 +108,24 @@ const MesStockList = ({ page, search, option }: IProps) => {
         id: `stock${random_id}`,
         sum_stock: row.stock_sum
       };
-    });
+    }))
 
-    return data
-  }
   const convertColumn = (column) => {
-    const columns = []
-    columnlist["stockV2"].map((data)=>{
-      column.map((menu) => {
-        if(menu.colName === data.key){
-          columns.push(data)
-        }
-      })
-    })
-    return columns
+    const colNames = column.map(menu => menu.colName)
+    return columnlist["stockV2"].filter((data)=> colNames.includes(data.key))
   }
 
   const cleanUpData = (res: any) => {
-    const renewalData = convertData(res.info_list)
-    const renewalColumn = convertColumn(res.menus)
-    setColumn(renewalColumn)
-    setBasicRow(renewalData)
+    const newData = convertData(res.info_list)
+    const newColumn = convertColumn(res.menus)
+    setBasicRow(newData)
+    setColumn(newColumn)
   };
 
   const stockSave = async(data) => {
     const res = await RequestMethod("post", "stockSave",data)
     if(res){
-      Notiflix.Report.success("저장되었습니다.","","확인", () => {
-        setSelectList(new Set())
-      })
+      Notiflix.Report.success("저장되었습니다.","","확인", () => reload())
     }else{
       Notiflix.Report.failure("서버에러 입니다.","","확인")
     }
@@ -217,8 +145,8 @@ const MesStockList = ({ page, search, option }: IProps) => {
       <div>
         <PageHeader
             isSearch
-            onChangeSearchKeyword={setKeyword}
-            onSearch={() => SearchBasic(keyword).then(() => {Notiflix.Loading.remove()})}
+            searchKeyword={keyword}
+            onSearch={reload}
             searchOptionList={["거래처", "모델", "CODE", "품명"]}
             onChangeSearchOption={setOptionIndex}
             optionIndex={optionIndex}

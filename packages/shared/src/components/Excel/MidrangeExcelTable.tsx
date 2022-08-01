@@ -222,9 +222,8 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
                                        {e.key === 'Enter' && e.currentTarget.blur()
                                            e.key === 'e' && e.preventDefault()}} onChange={(e)=>itemDataResultTextChange(type,e,index,i)}/>
                                 :
-                                inspection_infoType[0].samples > i ? value.data_result[i] !== undefined ?
-                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={value.data_result[i].value} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> :
-                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> : '-'
+                                value.samples > i ?
+                                    <MidrangeExcelDropdown contents={testData.legendary_list} value={value.data_result[i]?.value ?? ''} onChange={(e)=>itemDataResultDropdownChange(type,e,index,i)}/> : '-'
                             }
                         </ExampleNumber>
                     )}

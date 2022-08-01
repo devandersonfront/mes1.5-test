@@ -26,13 +26,11 @@ interface IProps {
   setSelectDate?:(value:SelectParameter | string) => void
   buttons?: string[]
   leftButton?: string[]
-  // typeList?: string[]
   buttonsOnclick?: (buttonIndex: number) => void
   isSearch?: boolean
   style?: any
   onClickMenu?: (index: number) => void
   menuIndex?: number
-  onChangeSearchKeyword?: (keyword: string) => void
   searchOptionList?: string[]
   onChangeSearchOption?: (option: number) => void
   filterList?: { value: string, title: string }[]
@@ -40,7 +38,6 @@ interface IProps {
   serviceFilterButton?: string[]
   onClickServiceButton?: (service: string) => void
   leftButtonOnClick?:(buttonIndex: number) => void
-  // typeListOnClick?: (type: string) => void
   basicMachineType?: string
   isCalendar?:boolean
   calendarType?:"day" | "month" | "period" | 'current'
@@ -65,7 +62,8 @@ interface IProps {
   radioTexts?:string[]
   radioValue?:number
   onChangeRadioValues?:(radioValues:number) => void
-  onSearch?:() => void
+  onSearch?:(keyword:string) => void
+  searchKeyword?: string
 }
 
 
@@ -117,9 +115,9 @@ const lightTheme = createTheme({
 })
 
 const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsOnclick, isSearch, style,
-                  onChangeSearchKeyword, searchOptionList, onChangeSearchOption, filterList, onChangeFilter, basicMachineType, isCalendar, onChangeSelectDate,
+                  searchOptionList, onChangeSearchOption, filterList, onChangeFilter, basicMachineType, isCalendar, onChangeSelectDate,
                   calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code,
-                  isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch}: IProps) => {
+                  isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch, searchKeyword}: IProps) => {
 
   const [machineCheck, setMachineCheck] = React.useState<any>({
     all: true,
@@ -128,7 +126,15 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
 
   const [keyword, setKeyword] = React.useState<string>()
 
+  useEffect(() => {
+    setKeyword(searchKeyword)
+  }, [searchKeyword])
+
   const classes2 = useStyles2();
+
+ const onSearchEvent = () => {
+   onSearch && onSearch(keyword)
+ }
 
 
   const selectCalendarType = (value:string) => {
@@ -263,18 +269,17 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                           placeholder="검색어를 2글자 이상 입력해주세요."
                           onChange={(e) => {
                             setKeyword(e.target.value)
-                            onChangeSearchKeyword && onChangeSearchKeyword(e.target.value ?? "")
                           }}
                           onKeyDown={(e) => {
                             if(e.key === 'Enter'){
-                              onSearch && onSearch()
+                              onSearch && onSearch(keyword)
                             }
                           }}
                           style={{width:"256px", height:"30px", borderRadius: '6px', paddingLeft:"10px", border:"none", backgroundColor: 'rgba(0,0,0,0)'}}
                       />
                       <div
                           style={{background:"#19b9df", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center",borderRadius:"6px", cursor:'pointer'}}
-                          onClick={() => onSearch && onSearch()}
+                          onClick={() => onSearch && onSearch(keyword)}
                       >
                         <img src={Search_icon} style={{width:"16.3px",height:"16.3px"}} />
                       </div>

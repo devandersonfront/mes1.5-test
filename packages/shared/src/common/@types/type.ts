@@ -50,6 +50,7 @@ export interface IExcelHeaderType {
   version?:number
   noSelect?:boolean
   inputType?: string
+  overlay?:boolean
 }
 
 export interface IResponseType {

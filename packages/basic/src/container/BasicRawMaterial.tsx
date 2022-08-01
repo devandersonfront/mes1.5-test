@@ -61,7 +61,6 @@ const BasicRawMaterial = ({}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
   const [selectRow, setSelectRow] = useState<any>(undefined);
-  const [buttonList, setButtonList] = useState<string[]>([]);
   const [barcodeData , setBarcodeData] = useState<BarcodeDataType[]>([])
   const [modal , setModal] = useState<ModalType>({
     type : 'barcode',
@@ -73,18 +72,18 @@ const BasicRawMaterial = ({}: IProps) => {
     total: 1,
   });
 
-  useEffect(() => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
+  const reload = (keyword?:string) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
     } else {
-      LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
+      getData(null, keyword)
     }
-  }, [pageInfo.page,]);
+  }
 
+  useEffect(() => {
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({ main: "원자재 기준정보", sub: "" }));
@@ -243,16 +242,7 @@ const BasicRawMaterial = ({}: IProps) => {
       );
 
       if (res) {
-        Notiflix.Report.success("저장되었습니다.", "", "확인");
-        if (keyword) {
-          SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
-        } else {
-          LoadBasic(pageInfo.page).then(() => {
-            Notiflix.Loading.remove();
-          });
-        }
+        Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
       }
     } else if (!selectCheck) {
       Notiflix.Report.warning(
@@ -265,56 +255,33 @@ const BasicRawMaterial = ({}: IProps) => {
     }
   };
 
-  const LoadBasic = async (page?: number) => {
+  const getData = async (page?: number, keyword?: string) => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod("get", `rawMaterialList`, {
+    const res = await RequestMethod("get", keyword ? 'rawmaterialSearch' : 'rawMaterialList', {
       path: {
-        page: page || page !== 0 ? page : 1,
+        page: page ?? 1,
         renderItem: 18,
       },
+      params: keyword ? {
+        keyword,
+        opt: optionIndex
+      } : null,
     });
 
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
+    if(res){
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          ...pageInfo,
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res);
+      }
     }
-    setSelectList(new Set());
-  };
-
-  const SearchBasic = async (
-    keyword: any,
-    option: number,
-    isPaging?: number
-  ) => {
-    Notiflix.Loading.circle();
-    if (!isPaging) {
-      setOptionIndex(option);
-    }
-    const res = await RequestMethod("get", `rawmaterialSearch`, {
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? "",
-        opt: option ?? 0,
-      },
-    });
-
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
-    }
-
-    setSelectList(new Set());
+    setSelectList(new Set())
+    Notiflix.Loading.remove()
   };
 
   const cleanUpData = (res: any) => {
@@ -512,7 +479,7 @@ const BasicRawMaterial = ({}: IProps) => {
           type: settingType(row.type),
         }))
       );
-      LoadBasic(1);
+      reload();
     } else {
       selectedRows.forEach((row) => {
         map.delete(row.id);
@@ -528,11 +495,8 @@ const BasicRawMaterial = ({}: IProps) => {
   };
 
   const onClickHeaderButton = (index: number) => {
-    switch (buttonList[index]) {
-      case "엑셀":
-        setExcelOpen(true)
-        return
-      case "바코드 미리보기":
+    switch (index) {
+      case 0:
         if (selectList.size === 0) {
           return Notiflix.Report.warning(
             "오류",
@@ -542,10 +506,13 @@ const BasicRawMaterial = ({}: IProps) => {
         }
         setModal({type : 'quantity' , isVisible : true})
         break;
-      case "항목관리":
+      case 1:
+        setExcelOpen(true)
+        return
+      case 2:
         router.push(`/mes/item/manage/rawmaterial`);
         break;
-      case "행추가":
+      case 3:
         let items = {};
 
         column.map((value) => {
@@ -571,11 +538,11 @@ const BasicRawMaterial = ({}: IProps) => {
           ...basicRow,
         ]);
         break;
-      case "저장하기":
+      case 4:
         SaveBasic();
 
         break;
-      case "삭제":
+      case 5:
         if (selectList.size === 0) {
           return Notiflix.Report.warning(
             "경고",
@@ -597,32 +564,6 @@ const BasicRawMaterial = ({}: IProps) => {
         break;
     }
   };
-
-  const selectedData = () => {
-    let tmpSelectList: any[] = [];
-    basicRow.map((row) => {
-      if (selectList.has(row.id)) {
-        tmpSelectList.push(row);
-      }
-    });
-
-    setSelectRow(tmpSelectList[0]);
-  };
-
-  React.useEffect(() => {
-    if (selectList.size > 1) {
-      return setButtonList(["엑셀", "항목관리", "행추가", "저장하기", "삭제"]);
-    }
-
-    return setButtonList([
-      "바코드 미리보기",
-      "엑셀",
-      "항목관리",
-      "행추가",
-      "저장하기",
-      "삭제",
-    ]);
-  }, [selectList.size]);
 
   const competeRawMaterial = (rows) => {
     const tempRow = [...rows];
@@ -718,20 +659,16 @@ const BasicRawMaterial = ({}: IProps) => {
     <div>
         <PageHeader
           isSearch
-          onChangeSearchKeyword={setKeyword}
-          onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          })}
+          searchKeyword={keyword}
+          onSearch={reload}
           searchOptionList={optionList}
           onChangeSearchOption={(option) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
           title={"원자재 기준정보"}
-          buttons={buttonList}
-          buttonsOnclick={
-            onClickHeaderButton
-          }
+          buttons={[ (selectList.size === 1 && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]}
+          buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
           editable
@@ -743,7 +680,6 @@ const BasicRawMaterial = ({}: IProps) => {
             ...column
           ]}
           row={basicRow}
-          // setRow={setBasicRow}
           setRow={(e) => {
             let tmp: Set<any> = selectList
             e.map(v => {
@@ -790,7 +726,7 @@ const BasicRawMaterial = ({}: IProps) => {
         category={"raw_material"}
         title={"원자재 기준정보"}
         setIsOpen={setExcelOpen}
-        resetFunction={() => LoadBasic(1)}
+        resetFunction={() => reload()}
       />
     </div>
   );
