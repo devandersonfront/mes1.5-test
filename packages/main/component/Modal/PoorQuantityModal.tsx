@@ -241,7 +241,7 @@ const PoorQuantityModal = ({column, row, onRowChange}: IProps) => {
               width={1750}
               rowHeight={32}
               height={740}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
+              setSelectRow={(clicked) => {const e = searchList.indexOf(clicked)
                 setSelectRow(e)
               }}
               type={'searchModal'}

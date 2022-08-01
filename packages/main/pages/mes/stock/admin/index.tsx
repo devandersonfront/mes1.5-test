@@ -5,7 +5,6 @@ import {SelectColumn} from "react-data-grid";
 //@ts-ignore
 import Notiflix from "notiflix";
 import {ScrollSync} from "react-scroll-sync";
-import {MesAdminStockProductList} from '../../../../../mes/src/container/Stock/MesAdminStockProductList'
 import { MesStockProductList } from 'mes'
 
 const Productlist = () => {
