@@ -254,6 +254,7 @@ export const ExcelDataStyle = styled.div`
         border:none;
         margin-bottom:1px;
         border-right: 1px solid #151E2D;
+        padding:0px;
     }
     
     .rdg-header-row{

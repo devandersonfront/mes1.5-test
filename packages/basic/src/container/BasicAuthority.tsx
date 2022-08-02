@@ -5,7 +5,7 @@ import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {IMenu} from '../../../main/common/@types/type'
-import {AUTHORITY_LIST} from '../../../main/common/configset'
+import {AUTHORITY_LIST} from 'shared/src/common/configset'
 import {AxiosResponse} from 'axios'
 import styled from 'styled-components'
 import {useDispatch} from "react-redux";

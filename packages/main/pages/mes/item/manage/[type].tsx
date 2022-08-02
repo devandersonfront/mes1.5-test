@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react'
-import ExcelTable from '../../../../component/Excel/ExcelTable'
+import {ExcelTable} from 'shared/src/components/Excel/ExcelTable'
 import MenuNavigation from '../../../../component/MenuNav/MenuNavigation'
 import ProfileHeader from '../../../../component/Profile/ProfileHeader'
-import PageHeader from '../../../../component/Header/Header'
+import {Header as PageHeader} from 'shared/src/components/Header'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {IExcelHeaderType, IItemMenuType} from '../../../../common/@types/type'
 
-import {columnlist} from '../../../../common/columnInit'
+import {columnlist} from 'shared/src/common/columnInit'
 import {HeaderButton} from '../../../../styles/styledComponents'
 import ItemManageBox from '../../../../component/ItemManage/ItemManageBox'
 //@ts-ignore

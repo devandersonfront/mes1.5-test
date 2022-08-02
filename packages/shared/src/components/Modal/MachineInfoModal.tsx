@@ -159,7 +159,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         setIsOpen(false)
       }))
   }
-
   const onClickSave = () => {
     if(isValidated()){
       if(hasSaved) {
@@ -346,7 +345,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <p>삭제</p>
             </Button>
           </div>
-          <div style={{padding: '0 16px', width: 1776}}>
+          <div style={{padding: '0 16px', width: 1776, display:"flex", justifyContent:"left"}}>
             <ExcelTable
               headerList={searchModalList.machineInfo}
               row={searchList }
@@ -362,7 +361,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
                 competeMachine(filterList)
               }}
-              width={1746}
+              width={searchModalList.machineInfo.map(machine => machine.width).reduce((prevValue, currentValue) => prevValue + currentValue)}
               rowHeight={32}
               height={552}
               onRowClick={(clicked) => {const e = searchList.indexOf(clicked)

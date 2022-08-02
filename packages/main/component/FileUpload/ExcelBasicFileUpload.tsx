@@ -4,7 +4,7 @@ import {IExcelHeaderType} from '../../common/@types/type'
 import Icon_X from '../../public/images/file_delete_button.png'
 import {UploadButton} from '../../styles/styledComponents'
 import {uploadTempFile} from '../../common/fileFuctuons'
-import {SF_ENDPOINT_RESOURCE} from '../../common/configset'
+import {SF_ENDPOINT_RESOURCE} from 'shared/src/common/configset'
 
 interface IProps {
   row: any

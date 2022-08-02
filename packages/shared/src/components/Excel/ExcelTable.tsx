@@ -53,7 +53,6 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
     setSelectList && setSelectList(selectedRows)
   }, [ selectedRows ])
 
-  const onePageHeight = 600;
   const rowKeyGetter = (row: any) => {
     return row?.id;
   }
@@ -83,9 +82,9 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
 
   function EmptyRowsRenderer() {
     return (
-        <div style={{ display:"flex", justifyContent:"center", height:40, alignItems:"center",background: type ? "white" : "#353B48", width: headerList && headerList.map(header => header.width ?? 35).reduce(((prev, curr) => prev + curr)), gridColumn: '1/-1' ,color: type ? "black" : "none"}}>
+        <EmptyRows type={type} style={{width:Number(width)}}>
           데이터가 없습니다.
-        </div>
+        </EmptyRows>
     );
   }
 
@@ -334,6 +333,17 @@ const DataGridTable = styled(DataGrid)`
     background:#484848;
   }
   `}
-  
   `
+
+const EmptyRows = styled.div<{type:string}>`
+  display:flex;
+  justify-content:center;
+  height:40px;
+  align-items:center;
+  background: ${(props:{type:string})=> props.type == "searchModal" ? "white" : "#353B48"};
+  // width:1776px;
+  // grid-column: '1/-1';
+  color: ${(props: { type:string })=> props.type ? "black" : "none"};
+  border:${(props: {type:string}) => props.type ? "1px solid #B3B3B3" : "none"}
+`;
 export {ExcelTable};

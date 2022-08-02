@@ -326,15 +326,15 @@ const MoldInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>삭제</p>
               </Button>
             </div>
-            <div style={{padding: '0 16px', width: 1776}}>
+            <div style={{padding: '0 16px', width: 1776, display:"flex", justifyContent:"left"}}>
               <ExcelTable
                   headerList={searchModalList.moldInfo}
                   row={searchList ?? [{}]}
                   setRow={(e) => competeMold([...e])}
-                  width={1746}
+                  width={searchModalList.moldInfo.map(mold => mold.width).reduce((prevValue, currentValue) => prevValue + currentValue)}
                   rowHeight={32}
                   height={552}
-                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
+                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                     if(!searchList[e].border){
                       searchList.map((v,i)=>{
                         v.border = false;

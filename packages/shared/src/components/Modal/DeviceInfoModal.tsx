@@ -162,7 +162,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     })
     return result;
   }
-  
+
   const competeDevice = (rows) => {
 
     const tempRow = [...rows]
@@ -182,7 +182,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     }
 
     setSearchList(rows)
-  } 
+  }
 
 
   return (
@@ -329,7 +329,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               <p>아래로</p>
             </Button>
             <Button style={{marginLeft: 16}}  onClick={() => {
-              
+
               if(selectRow === undefined){
                 return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
               }
@@ -347,7 +347,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
               <p>삭제</p>
             </Button>
           </div>
-          <div style={{padding: '0 16px', width: 1776}}>
+          <div style={{padding: '0 16px', width: 1776, display:"flex", }}>
             <ExcelTable
               headerList={searchModalList.deviceInfo}
               row={searchList ?? [{}]}
@@ -357,11 +357,11 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
                   row.type_id = settingTypeId(row.type)
                   row.type = Number(row.type) ? deviceList[row.type]?.name : row.type
                 })
-                
+
                 // setSearchList([...e])
                 competeDevice(e)
               }}
-              width={1746}
+              width={searchModalList.deviceInfo.map(device => device.width).reduce((prevValue, currentValue) => prevValue + currentValue)}
               rowHeight={32}
               height={526}
               // onRowClick={(clicked) => {const e = searchList.indexOf(clicked)

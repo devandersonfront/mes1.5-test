@@ -452,15 +452,12 @@ const BasicMold = ({}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch (index) {
       case 0:
-        // setExcelUploadOpen(true)
-        break;
-      case 1:
         setExcelOpen(true);
         break;
-      case 2:
+      case 1:
         router.push(`/mes/item/manage/mold`);
         break;
-      case 3:
+      case 2:
         const random_id = Math.random() * 1000;
 
         setBasicRow([
@@ -475,11 +472,11 @@ const BasicMold = ({}: IProps) => {
         ]);
         break;
 
-      case 4:
+      case 3:
         SaveBasic();
 
         break;
-      case 5:
+      case 4:
         if (selectList.size === 0) {
           return Notiflix.Report.warning(
             "경고",
@@ -540,7 +537,7 @@ const BasicMold = ({}: IProps) => {
           optionIndex={optionIndex}
           title={"금형 기준정보"}
           buttons={
-            ['', '엑셀', '항목관리', '행추가', '저장하기', '삭제']
+            ['엑셀', '항목관리', '행추가', '저장하기', '삭제']
           }
           buttonsOnclick={onClickHeaderButton}
         />
@@ -568,7 +565,7 @@ const BasicMold = ({}: IProps) => {
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
-          onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+          onRowClick={(clicked) => {const e = basicRow.indexOf(clicked)
               setSelectRow(e)}}
           width={1576}
           height={setExcelTableHeight(basicRow.length)}

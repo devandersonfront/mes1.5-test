@@ -418,7 +418,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
         isSearch
         isCalendar
         searchOptionList={optionList}
-        onChangeSearchKeyword={setKeyword}
+        // onChangeSearchKeyword={setKeyword}
         onSearch={() => {
           setSelectList(new Set)
           SearchBasic(keyword, optionIndex, 1).then(() => {

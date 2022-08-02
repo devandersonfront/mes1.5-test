@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
 import MenuNavigation from '../../../component/MenuNav/MenuNavigation'
 import ProfileHeader from '../../../component/Profile/ProfileHeader'
-import PageHeader from '../../../component/Header/Header'
+import {Header as PageHeader} from 'shared/src/components/Header'
+
 import {IExcelHeaderType} from '../../../common/@types/type'
 
 interface IProps {

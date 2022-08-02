@@ -297,20 +297,21 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                 <p>삭제</p>
               </Button>
             </div>
-            <div style={{padding: '0 16px', width: 1776}}>
+            <div style={{padding: '0 16px', width: 1776, display:"flex", justifyContent:"left"}}>
               <ExcelTable
                   headerList={searchModalList.toolInfo}
                   row={searchList ?? [{}]}
                   setRow={(e) => {
                     setSearchList([...e])
                   }}
-                  width={1746}
+                  // width={1746}
+                  width={searchModalList.toolInfo.map(tool => tool.width).reduce((prevValue, currentValue) => prevValue + currentValue)}
                   rowHeight={32}
                   height={552}
-                  // onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
+                  // onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                   //   setSelectRow(e)
                   // }}
-                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
+                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                     if(!searchList[e].border){
                       searchList.map((v,i)=>{
                         v.border = false;

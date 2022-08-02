@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
-import {menuSelect} from '../../common/menulist'
+import {menuSelect} from 'shared/src/common/menulist'
 import {IMenuType} from '../../common/@types/type'
 import {MenuNavComponent, MenuNavItem, MenuText, SideMenuItem} from '../../styles/styledComponents'
-import {POINT_COLOR} from '../../common/configset'
+import {POINT_COLOR} from 'shared/src/common/configset'
 //@ts-ignore
 import ic_home from '../../public/images/ic_home.png'
 //@ts-ignore

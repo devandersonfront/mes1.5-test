@@ -107,7 +107,7 @@ export const searchModalList: any  = {
     {key: 'description', name: '비고', width: 370, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '내용 입력'},
   ],
   deviceInfo: [
-    {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'seq', name: '번호', width: 80, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'mfrCode', name: '제조 번호', width: 440, formatter: DeviceSearchModal, type: 'Modal', placeholder: '주변장치를 선택해 주세요'},
     {key: 'name', name: '장치 이름', width: 440, formatter: LineBorderContainer, placeholder: '주변장치를 선택해 주세요' },
     {key: 'mfrName', name: '제조사', width: 160, formatter: LineBorderContainer, placeholder: '-'},
@@ -132,7 +132,7 @@ export const searchModalList: any  = {
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
   ],
   moldInfo: [
-    {key: 'sequence', name: '번호', textAlign: 'center', width: 64, formatter: LineBorderContainer},
+    {key: 'sequence', name: '번호', textAlign: 'center', width: 80, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
     {key: 'name', name: '금형명', width: 472, formatter: SearchModalTest, type: 'mold', modalType: true, noSelect:true},
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
@@ -144,7 +144,7 @@ export const searchModalList: any  = {
     {key: 'slideHeight', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
   ],
   toolInfo: [
-    {key: 'seq', name: '번호', textAlign: 'center', width: 64, formatter: LineBorderContainer},
+    {key: 'seq', name: '번호', textAlign: 'center', width: 80, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
     {key: 'name', name: '공구명', width: 472, formatter: SearchModalTest, type: 'tool', modalType: true, noSelect:true },
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
@@ -168,7 +168,7 @@ export const searchModalList: any  = {
     {key: 'stock', name: '재고량', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
   ],
   machineInfo: [
-    {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'seq', name: '번호', width: 80, formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'name', name: '기계 이름', width: 560, formatter: SearchModalTest, type: 'machine', modalType: true, noSelect:true},
     {key: 'mfrCode', name: '제조 번호', width: 160, formatter: LineBorderContainer, placeholder: '-', type: 'Modal', textAlign: 'center' },
     {key: 'type', name: '기계 종류', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
@@ -491,7 +491,7 @@ export const searchModalList: any  = {
     {key: 'crn', name: '사업자 번호', formatter: LineBorderContainer ,placeholder:"-", },
     {key: 'model', name: '모델명', formatter: LineBorderContainer ,placeholder:"-", },
   ],
-  
+
   rawmaterialSearch: [
     {key: 'code', formatter: LineBorderContainer , name: '원자재 CODE' ,placeholder:"-",},
     {key: 'name', formatter: LineBorderContainer , name: '원자재 품명' ,placeholder:"-",},

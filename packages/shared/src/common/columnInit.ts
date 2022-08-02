@@ -51,7 +51,6 @@ import {PauseInfoModal} from '../components/Modal/PauseInfoModal'
 import {FinishCancelButton} from '../components/Buttons/FinishCancelButton'
 import {OrderRegisterButton} from '../components/Buttons/OrderRegisterButton'
 import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
-import DaumAddressModal from "../components/InputBox/DaumAddressModal";
 import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFactorySearchModal";
 import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
 import {MidRangeButton} from "../components/Buttons/MidRangeButton";
@@ -319,13 +318,13 @@ export const columnlist: any = {
     {key: 'slideHeight', name: '슬라이드 위치',editor: TextEditor,formatter: PlaceholderBox, placeholder: '0',inputType:'number'},
     {key: 'limit', name: '최대타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력',inputType:'number'},
     {key: 'inspect', name: '점검타수', editor: TextEditor,formatter: PlaceholderBox, placeholder: '타수 입력',inputType:'number'},
-    {key: 'period', name: '점검주기', formatter: InputWithDropDown , selectList: [
+    {key: 'period', name: '점검주기', editorOptions:{editOnClick: true}, formatter: InputWithDropDown , selectList: [
       {pk: 'day', name: '일'},
       {pk: 'week' , name :'주'},
       {pk: 'month' , name : '월'},
     ]},
-    {key: 'current', name: '현재타수', editor: TextEditor,formatter: PlaceholderBox,
-      placeholder: '타수 입력',
+    {key: 'current', name: '현재타수',formatter: PlaceholderBox,
+      placeholder: '-',
       inputType:'number',
     },
     {key: 'product_id', name: '생산품목', formatter: ProductInfoModal, type:"mold", headerType:[  {code:"CODE", name:"금형명"},

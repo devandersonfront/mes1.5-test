@@ -19,7 +19,6 @@ import {NextPageContext} from 'next'
 import moment from "moment"
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import {subFactorySearchModal} from "shared/src/components/Modal/SearchModalTest/subFactorySearchModal";
 import { setExcelTableHeight } from 'shared/src/common/Util';
 
 export interface IProps {

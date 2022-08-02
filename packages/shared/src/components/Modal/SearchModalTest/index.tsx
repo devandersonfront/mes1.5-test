@@ -28,7 +28,6 @@ interface IProps {
 }
 
 const SearchModalTest = ({column, row, onRowChange}: IProps) => {
-  const dispatch = useDispatch()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
@@ -551,11 +550,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               SearchBox()
             }
             <ExcelTable
-              // searchModalColumn
-              // headerList={ searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
               headerList={ searchModalInit && searchModalColumn}
               row={searchList ?? []}
-              setRow={() => {}}
               width={1744}
               rowHeight={32}
               height={640}

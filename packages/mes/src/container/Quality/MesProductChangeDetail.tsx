@@ -12,8 +12,6 @@ import {
 // @ts-ignore
 import {SelectColumn} from "react-data-grid";
 import moment from "moment";
-import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
-import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
 import {useRouter} from "next/router";
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";

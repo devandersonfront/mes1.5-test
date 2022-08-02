@@ -20,7 +20,6 @@ type SelectListType = {
 // period_unit : 0(day) , 1(week) , 2(month)
 const InputWithDropDown = ({row, column, onRowChange} : ExcelType) => {
 
-    const [visible , setVisible] = React.useState<boolean>(false)
     const typeOfUnit = (unit : '일' | '주' | '월') : 0 | 1 | 2 | undefined  => {
         return  unit === '일'
                 ? 0
@@ -46,12 +45,8 @@ const InputWithDropDown = ({row, column, onRowChange} : ExcelType) => {
     }
 
     const handleDayChange = (e) => {
+        console.log(typeOfUnit(e.target.value))
         onRowChange({...row, period_unit : typeOfUnit(e.target.value) , isChange: true})
-    }
-
-    const handleClick = (e) => {
-
-        setVisible(true)
     }
 
     return (
@@ -63,17 +58,14 @@ const InputWithDropDown = ({row, column, onRowChange} : ExcelType) => {
                     <select
                         style={{background : 'inherit' , border : 'none' , marginRight : 5, color : '#fff'}}
                         onChange={handleDayChange}
-                        onClick={handleClick}
+                        defaultValue={unitOfType(row.period_unit)}
                     >
                         {
-                            visible ? column.selectList?.map((list : SelectListType)=>(
+                            column.selectList?.map((list : SelectListType)=>(
                                 <option key={list.pk} value={list.name} style={{color : '#000'}}>
                                     {list.name}
                                 </option>
-                            )) :
-                                <option key={'init'} style={{color : '#000'}}>
-                                    {unitOfType(row.period_unit)}
-                                </option>
+                            ))
                         }
                     </select>
 
