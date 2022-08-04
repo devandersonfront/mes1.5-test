@@ -249,6 +249,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
       <div>
         <PageHeader
             isCode
+            noCode={orderIdentificationId.identification !== ""}
             code={codeCheck}
             onChangeCode={(value)=> {
               setCodeCheck(value)

@@ -19,6 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {setToolDataAdd} from "shared/src/reducer/toolInfo";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { setExcelTableHeight } from 'shared/src/common/Util'
+import { TableSortingOptionType } from 'shared/src/@types/type'
 
 interface IProps {
     children?: any
@@ -43,60 +44,66 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
     const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:1});
     const [keyword, setKeyword] = useState<string>()
 
-    const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-        let tmpColumn = column.map(async (v: any) => {
-            if(v.selectList && v.selectList.length === 0){
-                let tmpKey = v.key
-
-
-                let res: any
-                res = await RequestMethod('get', `${tmpKey}List`,{
-                    path: {
-                        page: 1,
-                        renderItem: MAX_VALUE,
-                    }
-                })
-
-
-                let pk = "";
-
-                res.results.info_list && res.results.info_list.length && Object.keys(res.results.info_list[0]).map((v) => {
-                    if(v.indexOf('_id') !== -1){
-                        pk = v
-                    }
-                })
-                return {
-                    ...v,
-                    selectList: [...res.results.info_list.map((value: any) => {
-                        return {
-                            ...value,
-                            name: tmpKey === 'model' ? value.model : value.name,
-                            pk: value[pk]
-                        }
-                    })]
-                }
-
-            }else{
-                if(v.selectList){
-                    return {
-                        ...v,
-                        pk: v.unit_id,
-                        // result: changeNzState
-                    }
-                }else{
-                    return v
-                }
-            }
-        })
-
-        // if(type !== 'productprocess'){
-        Promise.all(tmpColumn).then(res => {
-            setColumn([...res])
-        })
-        // }
+    const onSelectDate = (date: {from:string, to:string}) => {
+        setSelectDate(date)
+        reload(null, date)
     }
 
-    const cleanUpData = (info_list:any, page?:number) => {
+    const reload = (keyword?:string, date?:{from:string, to:string}) => {
+        setKeyword(keyword)
+        if(pageInfo.page > 1) {
+            setPageInfo({...pageInfo, page: 1})
+        } else {
+            getData(undefined, keyword, date)
+        }
+    }
+
+    useEffect(() => {
+        getData(pageInfo.page, keyword)
+    }, [pageInfo.page]);
+
+    useEffect(() => {
+        dispatch(setMenuSelectState({main:"공구 관리",sub:router.pathname}))
+        return (() => {
+            dispatch(deleteMenuSelectState())
+        })
+    },[])
+
+    const getRequestParams = (keyword?: string, date?: {from:string, to:string}) => {
+        let params = {}
+        if(keyword) {
+            params['keyword'] = keyword
+            params['opt'] = optionIndex
+        }
+        params['from'] = date ? date.from: selectDate.from
+        params['to'] = date ? date.to : selectDate.to
+        return params
+    }
+
+    const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}) => {
+        Notiflix.Loading.circle();
+        const res = await RequestMethod("get", keyword ? 'lotToolSearch' : 'lotToolList', {
+            path: {
+                page: page,
+                renderItem: 18,
+            },
+            params: getRequestParams(keyword, date)
+        });
+        if(res){
+            if (res.totalPages > 0 && res.totalPages < res.page) {
+                reload();
+            } else {
+                setPageInfo({
+                    page: res.page,
+                    total: res.totalPages
+                })
+                cleanUpData(res)
+            }
+        }
+        Notiflix.Loading.remove()
+    }
+
+    const cleanUpData = (info_list:any) => {
         let tmpColumn = columnlist["toolWarehousingList"];
         let tmpRow:Array<any> = []
         tmpColumn = tmpColumn.map((column: any) => {
@@ -157,7 +164,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
             }
         }).filter((v: any) => v) : []
         tmpRow = info_list.info_list
-        loadAllSelectItems([
+        setColumn([
             ...tmpColumn,
             ...additionalMenus
         ])
@@ -177,12 +184,6 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
             }
         })
 
-        // let pk = "";
-        // Object.keys(tmpRow).map((v) => {
-        //     if(v.indexOf('_id') !== -1){
-        //         pk = v
-        //     }
-        // })
         let tmpBasicRow = tmpRow.map((row: any, index: number) => {
             let appendAdditional: any = {}
             row.additional && row.additional.map((v: any) => {
@@ -205,55 +206,14 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
             }
         })
         setSelectList(new Set)
-        setBasicRow([...tmpBasicRow])
-
-    }
-
-    const LoadBasic = async() => {
-        const res = await RequestMethod("get", "lotToolList",{
-            path:{
-                page:pageInfo.page,
-                renderItem:18
-            },
-            params:{
-                from: selectDate.from,
-                to: selectDate.to
-            }
-        })
-
-        if(res){
-            setPageInfo({...pageInfo, total: res.totalPages })
-            cleanUpData(res);
-        }
-    }
-
-    const SearchBasic = async(keyword, page?) => {
-        const res = await RequestMethod("get", "lotToolSearch", {
-            path:{
-                page:page ?? pageInfo.page,
-                renderItem:18
-            },
-            params:{
-                from:selectDate.from,
-                to: selectDate.to,
-                keyword:keyword,
-                opt:optionIndex
-            }
-        })
-
-        if(res){
-            setPageInfo({...pageInfo, page:res.page, total: res.totalPages })
-            cleanUpData(res, page);
-        }
+        setBasicRow(tmpBasicRow)
     }
 
     const DeleteBasic = async() => {
         const res = await RequestMethod("delete", "lotToolDelete", basicRow.filter((row)=>selectList.has(row.id)))
 
         if(res){
-            Notiflix.Report.success("삭제되었습니다.","","확인",() => {
-                LoadBasic()
-            });
+            Notiflix.Report.success("삭제되었습니다.","","확인",() => reload())
         }
     }
 
@@ -283,21 +243,6 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
         }
     }
 
-    useEffect(()=>{
-        if(keyword){
-            SearchBasic(keyword)
-        }else{
-            LoadBasic()
-        }
-    },[pageInfo.page, selectDate])
-
-    useEffect(() => {
-        dispatch(setMenuSelectState({main:"공구 관리",sub:router.pathname}))
-        return (() => {
-            dispatch(deleteMenuSelectState())
-        })
-    },[])
-
     return (
         <div>
 
@@ -311,24 +256,13 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                 calendarTitle={"입고일"}
                 calendarType={"period"}
                 selectDate={selectDate}
-                setSelectDate={(date) => {
-                    setSelectList(new Set)
-                    setSelectDate(date as SelectParameter)
-                    setPageInfo({...pageInfo, page:1})
-                }}
+                setSelectDate={onSelectDate}
                 dataLimit
                 isSearch
-                onChangeSearchKeyword={setKeyword}
-                onSearch={() => {
-                    setSelectList(new Set)
-                    SearchBasic(keyword, 1).then(() => {
-                Notiflix.Loading.remove()
-                })}}
+                searchKeyword={keyword}
+                onSearch={reload}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
-                onChangeSearchOption={(index) => {
-                    setOptionIndex(index);
-                    setPageInfo({...pageInfo,page:1})
-                }}
+                onChangeSearchOption={setOptionIndex}
             />
             <ExcelTable
                 resizable

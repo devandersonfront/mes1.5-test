@@ -42,56 +42,57 @@ const MesToolList = ({ page, search, option }: IProps) => {
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [pageInfo, setPageInfo] = useState<{ page: number, total: number }>({ page: 1, total: 1 });
     const [keyword, setKeyword] = useState<string>();
-    const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-        let tmpColumn = column.map(async (v: any) => {
-            if (v.selectList && v.selectList.length === 0) {
-                let tmpKey = v.key
 
-                let res: any
-                res = await RequestMethod('get', `${tmpKey}List`, {
-                    path: {
-                        page: 1,
-                        renderItem: MAX_VALUE,
-                    }
-                })
+    const reload = (keyword?:string, date?:{from:string, to:string}) => {
+        setKeyword(keyword)
+        if(pageInfo.page > 1) {
+            setPageInfo({...pageInfo, page: 1})
+        } else {
+            getData(undefined, keyword)
+        }
+    }
 
+    useEffect(() => {
+        getData(pageInfo.page, keyword)
+    }, [pageInfo.page]);
 
-                let pk = "";
+    useEffect(() => {
+        dispatch(setMenuSelectState({ main: "공구 관리", sub: router.pathname }))
+        return (() => {
+            dispatch(deleteMenuSelectState())
+        })
+    }, [])
 
-                res.results.info_list && res.results.info_list.length && Object.keys(res.results.info_list[0]).map((v) => {
-                    if (v.indexOf('_id') !== -1) {
-                        pk = v
-                    }
-                })
-                return {
-                    ...v,
-                    selectList: [...res.results.info_list.map((value: any) => {
-                        return {
-                            ...value,
-                            name: tmpKey === 'model' ? value.model : value.name,
-                            pk: value[pk]
-                        }
-                    })]
-                }
+    const getRequestParams = (keyword?: string) => {
+        let params = {}
+        if(keyword) {
+            params['keyword'] = keyword
+            params['opt'] = optionIndex
+        }
+        return params
+    }
 
+    const getData = async (page: number = 1, keyword?: string) => {
+        Notiflix.Loading.circle();
+        const res = await RequestMethod("get", keyword ? 'toolSearch' : 'toolList', {
+            path: {
+                page: page,
+                renderItem: 18,
+            },
+            params: getRequestParams(keyword)
+        });
+        if(res){
+            if (res.totalPages > 0 && res.totalPages < res.page) {
+                reload();
             } else {
-                if (v.selectList) {
-                    return {
-                        ...v,
-                        pk: v.unit_id,
-                        // result: changeNzState
-                    }
-                } else {
-                    return v
-                }
+                setPageInfo({
+                    page: res.page,
+                    total: res.totalPages
+                })
+                cleanUpData(res)
             }
-        })
-
-        // if(type !== 'productprocess'){
-        Promise.all(tmpColumn).then(res => {
-            setColumn([...res])
-        })
-        // }
+        }
+        Notiflix.Loading.remove()
     }
 
     const cleanUpData = (info_list: any) => {
@@ -157,7 +158,7 @@ const MesToolList = ({ page, search, option }: IProps) => {
 
         tmpRow = info_list.info_list
 
-        loadAllSelectItems([
+        setColumn([
             ...tmpColumn,
             ...additionalMenus
         ])
@@ -199,76 +200,16 @@ const MesToolList = ({ page, search, option }: IProps) => {
             }
         })
         setSelectList(new Set)
-        setBasicRow([...tmpBasicRow])
-
-    }
-
-    const LoadBasic = async (page?: number) => {
-        Notiflix.Loading.circle()
-        const res = await RequestMethod("get", "toolList", {
-            path: {
-                page: (page || page !== 0) ? page : 1,
-                renderItem: 18
-            },
-        })
-
-        if (res) {
-            setPageInfo({ ...pageInfo, page: res.page, total: res.totalPages })
-            setSelectList(new Set)
-            cleanUpData(res);
-        }
-    }
-
-    const SearchBasic = async (keyword, opt, page?: number) => {
-        Notiflix.Loading.circle()
-        const res = await RequestMethod("get", "toolSearch", {
-            path: {
-                page: (page || page !== 0) ? page : 1,
-                renderItem: 18
-            },
-            params: {
-                keyword: keyword,
-                opt: optionIndex
-            }
-        })
-        if (res) {
-            setPageInfo({ ...pageInfo, page: res.page, total: res.totalPages })
-            setSelectList(new Set)
-            cleanUpData(res);
-        }
+        setBasicRow(tmpBasicRow)
     }
 
     const DeleteBasic = async () => {
         const res = await RequestMethod("delete", "lotToolDelete", basicRow.filter((row) => selectList.has(row.id)))
 
         if (res) {
-            Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
-                LoadBasic(1).then(() => {
-                    Notiflix.Loading.remove()
-                })
-            });
+            Notiflix.Report.success("삭제되었습니다.", "", "확인", () => reload())
         }
     }
-
-    useEffect(() => {
-        if(keyword){
-            SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-                Notiflix.Loading.remove()
-            })
-        }else{
-            LoadBasic(pageInfo.page).then(() => {
-                Notiflix.Loading.remove()
-            })
-        }
-
-    }, [pageInfo.page, selectDate])
-
-    useEffect(() => {
-        dispatch(setMenuSelectState({ main: "공구 관리", sub: router.pathname }))
-        return (() => {
-            dispatch(deleteMenuSelectState())
-        })
-    }, [])
 
     return (
         <div>
@@ -276,13 +217,8 @@ const MesToolList = ({ page, search, option }: IProps) => {
                 title={"공구 재고 현황"}
                 dataLimit
                 isSearch
-                onChangeSearchKeyword={setKeyword}
-                onSearch={() => {
-                    setSelectList(new Set())
-                    SearchBasic(keyword, optionIndex, 1).then(() => {
-                        Notiflix.Loading.remove()
-                    })
-                }}
+                searchKeyword={keyword}
+                onSearch={reload}
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={setOptionIndex}
                 optionIndex={optionIndex}

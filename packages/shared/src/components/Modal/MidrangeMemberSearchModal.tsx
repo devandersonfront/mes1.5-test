@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import { IExcelHeaderType, midrangeWorkerType } from '../../@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'
@@ -17,24 +17,7 @@ import {PaginationComponent} from '../Pagination/PaginationComponent'
 import Notiflix from 'notiflix'
 
 interface IProps {
-    onChangeManger: (manager: {
-        additional: []
-        appointment: string
-        authority: number
-        ca_id: {ca_id: number, name: string, factor: number, authorities: [], version: number}
-        company: string
-        email: string
-        id: string
-        name: string
-        password: string
-        profile: null | string
-        serviceAddress: string
-        sync: string
-        telephone: string
-        token: null | string
-        user_id: number
-        version: number
-    }) => void
+    onChangeManger: (manager: midrangeWorkerType) => void
     value: string
     readOnly?: boolean
 }

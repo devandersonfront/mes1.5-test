@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import styled from "styled-components"
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import {CellButton, UploadButton} from '../../styles/styledComponents'
 import {useRouter} from 'next/router'
 import Notiflix from 'notiflix'

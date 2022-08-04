@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {IExcelHeaderType} from '../../../common/@types/type'
+import {IExcelHeaderType} from '../../../@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../../common/configset'
@@ -292,7 +292,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const SearchBox = () => {
 
     return <div style={{
-      width: '100%', height: 32, margin: '16px 0 16px 16px',
+      height: 32, margin: '16px 0 16px 16px',
       display: 'flex',
     }}>
       <div style={{
@@ -386,7 +386,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
             name: selectNameFunction(column.type),
             tab: tab,
-            // type_name: undefined,
+            date: row.date,
             version: row.version,
             isChange: true,
             contract: null,
@@ -584,7 +584,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               }}
             />
           </div>
-          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end',}}>
+          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
             <FooterButton
               onClick={() => {
                 setIsOpen(false)

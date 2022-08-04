@@ -20,8 +20,9 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "../../../../shared/src/reducer/menuSelectState";
-import { setExcelTableHeight, tableHeaderController } from 'shared/src/common/Util'
+import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
+import { TableSortingOptionType } from 'shared/src/@types/type'
 
 interface IProps {
   children?: any;
@@ -54,33 +55,23 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     to: moment().format("YYYY-MM-DD"),
   });
 
-  const [nzState, setNzState] = useState<boolean>(false);
-  const changeNzState = (value: boolean) => {
-    setSelectList(new Set());
-    setNzState(value);
-  };
-  const changeOrder = (order:string, key:string) => {
-    tableHeaderController(key, order, sortingOptions, setSortingOptions)
-    setPageInfo({...pageInfo, page:1})
+  const onSelectDate = (date: {from:string, to:string}) => {
+    setSelectDate(date)
+    reload(undefined, date)
   }
 
-
-  const loadPage = (page:number) => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, page).then(() => {
-        Notiflix.Loading.remove();
-      });
+  const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
     } else {
-      LoadBasic(page).then(() => {
-        Notiflix.Loading.remove();
-      });
+      getData(undefined, keyword, date, sortingOptions)
     }
   }
 
-
   useEffect(() => {
-    loadPage(pageInfo.page)
-  }, [pageInfo.page, selectDate, nzState, sortingOptions]);
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(
@@ -91,120 +82,63 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     };
   }, []);
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if (v.selectList && v.selectList.length === 0) {
-        let tmpKey = v.key;
-
-        let res: any;
-        res = await RequestMethod("get", `${tmpKey}List`, {
-          path: {
-            page: 1,
-            renderItem: MAX_VALUE,
-          },
-        });
-
-        let pk = "";
-
-        res.results.info_list &&
-          res.results.info_list.length &&
-          Object.keys(res.results.info_list[0]).map((v) => {
-            if (v.indexOf("_id") !== -1) {
-              pk = v;
-            }
-          });
-        return {
-          ...v,
-          selectList: [
-            ...res.results.info_list.map((value: any) => {
-              return {
-                ...value,
-                name: tmpKey === "model" ? value.model : value.name,
-                pk: value[pk],
-              };
-            }),
-          ],
-        };
-      } else {
-        if (v.selectList) {
-          return {
-            ...v,
-            pk: v.unit_id,
-            result: changeOrder,
-          };
-        } else {
-          return v;
-        }
+  const loadAllSelectItems = (column: IExcelHeaderType[], date?: {from:string, to:string}) => {
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(undefined, date, _sortingOptions)
+    }
+    let tmpColumn = column.map((v: any) => {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+      return {
+        ...v,
+        pk: v.unit_id,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+        sorts: v.sorts ? sortingOptions : null,
+        result: v.sortOption ? changeOrder : null,
       }
     });
 
-    Promise.all(tmpColumn).then((res) => {
-      setColumn([...res]);
-    });
-  };
+    setColumn(tmpColumn);
+  }
 
-  const LoadBasic = async (page?: number) => {
+  const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType, _nzState?: boolean, _expState?:boolean) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    params['from'] = date ? date.from: selectDate.from
+    params['to'] = date ? date.to : selectDate.to
+    params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+    params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    return params
+  }
+
+  const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod("get", `subInList`, {
+    const res = await RequestMethod("get", keyword ? 'lotSmSearch' : 'lotSmList', {
       path: {
-        page: page || page !== 0 ? page : 1,
+        page: page,
         renderItem: 18,
       },
-      params:
-          {
-            nz: nzState,
-            sorts: sortingOptions.sorts,
-            order: sortingOptions.orders,
-            from: selectDate.from,
-            to: selectDate.to,
-          },
+      params: getRequestParams(keyword, date, _sortingOptions)
     });
-
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
+    if(res){
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res, date);
+      }
     }
+    Notiflix.Loading.remove()
   };
 
-  const SearchBasic = async (
-    keyword: any,
-    option: number,
-    isPaging?: number
-  ) => {
-
-    Notiflix.Loading.circle();
-    const res = await RequestMethod("get", `lotSmSearch`, {
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params:
-          {
-            sorts: sortingOptions.sorts,
-            order: sortingOptions.orders,
-            keyword: keyword ?? "",
-            opt: option ?? 0,
-            nz: nzState,
-            from: selectDate.from,
-            to: selectDate.to,
-          },
-    });
-
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
-    }
-  };
-
-  const cleanUpData = (res: any) => {
+  const cleanUpData = (res: any, date?: {from:string, to:string}) => {
     let tmpColumn = columnlist["substockV1u"];
     let tmpRow = [];
     tmpColumn = tmpColumn
@@ -264,7 +198,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
       tmpRow = res.info_list;
     }
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus], date);
 
     let selectKey = "";
     let additionalData: any[] = [];
@@ -301,9 +235,9 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
       let random_id = Math.random() * 1000;
       return {
         ...row,
-        wip_id: row.sub_material.code,
-        unit: row.sub_material.unit,
-        name: row.sub_material.name,
+        wip_id: row.sub_material?.code,
+        unit: row.sub_material?.unit,
+        name: row.sub_material?.name,
         customer_id: row.sub_material?.customer?.name ?? "-",
         ...appendAdditional,
         id: `subin_${random_id}`,
@@ -358,9 +292,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
 
     if (res) {
       Notiflix.Loading.remove(200);
-      Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
-        loadPage(1)
-      })
+      Notiflix.Report.success("삭제되었습니다.", "", "확인", () => reload())
     }
   };
 
@@ -424,17 +356,9 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   return (
     <div>
       <PageHeader
-        isNz
-        onChangeNz={(e) => {
-          setSelectList(new Set());
-          changeNzState(e);
-        }}
-        nz={nzState}
         isSearch
-        onChangeSearchKeyword={setKeyword}
-        onSearch={() =>  SearchBasic(keyword, optionIndex, 1).then(() => {
-          Notiflix.Loading.remove();
-        })}
+        searchKeyword={keyword}
+        onSearch={reload}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option);
@@ -445,11 +369,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         calendarType={"period"}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={(date) => {
-          setSelectList(new Set());
-          setSelectDate(date as { from: string; to: string });
-          setPageInfo({ page: 1, total: 1 });
-        }}
+        setSelectDate={onSelectDate}
         title={"부자재 재고 현황"}
         buttons={["수정하기", "삭제"]}
         buttonsOnclick={onClickHeaderButton}

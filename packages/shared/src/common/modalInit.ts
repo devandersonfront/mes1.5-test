@@ -101,7 +101,7 @@ export const searchModalList: any  = {
   factoryInfo: [
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'name', name: '세분화명', width: 576, formatter: LineBorderContainer, editor: TextEditor,  textType: 'Modal', placeholder: '세분화명 입력'},
-    {key: 'manager', name: '담당자', width: 392, formatter: SearchModalTest, type:"user", placeholder: "-"},
+    {key: 'manager', name: '담당자', width: 392, formatter: SearchModalTest, modalType: true, type:"user", placeholder: "-"},
     {key: 'appointment', name: '직책', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력'},
     {key: 'telephone', name: '전화번호', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력'},
     {key: 'description', name: '비고', width: 370, formatter: LineBorderContainer, editor: TextEditor, textType: 'Modal', placeholder: '내용 입력'},
@@ -611,7 +611,7 @@ export const searchModalList: any  = {
   midrangeInfo: [
     {key: 'osd_id', name: '지시 고유 번호', width: 152},
     {key: 'lot_number', name: 'LOT 번호 (생산로트)', width: 152},
-    {key: 'code', name: 'CODE', width: 480},
+    {key: 'code', name: 'CODE'},
     {key: 'material_name', name: '품명', width: 360},
     {key: 'type', name: '품목 종류', width: 120},
     {key: 'process_id', name: '생산 공정', width: 120},

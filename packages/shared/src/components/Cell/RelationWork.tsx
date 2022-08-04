@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import {UnitValue, UnitWrapper} from '../../styles/styledComponents'
 import 'react-calendar/dist/Calendar.css'
 import styled from 'styled-components'

@@ -1,5 +1,5 @@
 import React, {useRef} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import Modal from 'react-modal'
 //@ts-ignore
 import IcSearchButton from '../../../public/images/ic_search.png'

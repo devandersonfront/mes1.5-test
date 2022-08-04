@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import moment from 'moment'
-import { MachineType } from '../common/@types/type'
+import { MachineType } from '../@types/type'
 
 export type MachineSelectState = {
     process_length:number

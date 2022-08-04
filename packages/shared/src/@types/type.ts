@@ -1,4 +1,4 @@
-import moment from "moment";
+import UserInfo, { UserInfoState } from '../reducer/userInfo'
 
 export interface IMenuType {
   title: string
@@ -7,6 +7,9 @@ export interface IMenuType {
 }
 
 export interface IExcelHeaderType {
+  onClickEvent?: (any) => {any}
+  beforeEventTitle?: string
+  afterEventTitle?: string
   key: string
   name: string
   width?: number
@@ -21,7 +24,9 @@ export interface IExcelHeaderType {
   disabledCase?: {key: any, value: any}[]
   textType?: string
   options?:{status:number, name:string}[]
-  result?:(value:number | string | boolean) => void
+  sortOption?: string
+  sorts?: {orders:string[], sorts:string[]}
+  result?:(value:number | string | boolean, key?:string) => void
   staticCalendar?: boolean
   clearContract?: boolean
   maxDate?:boolean
@@ -47,7 +52,9 @@ export interface IExcelHeaderType {
   mi_id?:number
   hide?:boolean
   version?:number
-  moddable?:boolean
+  noSelect?:boolean
+  inputType?: string
+  overlay?:boolean
 }
 
 export interface IResponseType {
@@ -75,15 +82,19 @@ export interface IItemMenuType {
 }
 
 export type MachineType = {
-  machine_id:string | number
-  machine_idPK:string | number
-  seq: number,
-  process_id: number,
-  process_idPK: number | string,
-  mold_id: number,
-  ln_id: number| undefined,
-  goal: number,
-  last: boolean,
+  name?:string
+  id?: string
+  index?:number
+  date?:string
+  machine_id?:string | number
+  machine_idPK?:string | number
+  seq?: number,
+  process_id?: number,
+  process_idPK?: number | string,
+  mold_id?: number,
+  ln_id?: number| undefined,
+  goal?: number,
+  last?: boolean,
   mold?: {
     mold_id:number, name:string
   }
@@ -110,7 +121,6 @@ type ProductType = {
   code:string
 }
 
-
 export type InspectionFinalDataResult = {
   sequence: number
   pass: boolean
@@ -124,12 +134,10 @@ export type InspectionInfo = {
   error_maximum: string
   standard: string
   samples: number
-  data_result: InspectionDataResult[]
+  data_result: InspectionDataResult[] | []
 }
 
-
-
-type InspectionDataResult = {
+export type InspectionDataResult = {
   sequence: number
   value: string
   pass: boolean
@@ -142,7 +150,7 @@ export type ChangeProductFileInfo = {
 }
 
 
-export type MidrangeRecordRegister = {
+export type MidrangeRecordType = {
   inspection_time: {
     beginning: string
     middle: string
@@ -155,23 +163,37 @@ export type MidrangeRecordRegister = {
   } | {}
   legendary_list: string[]
   inspection_info: {
-    beginning: {
-      data_result: InspectionDataResult[]
-      error_maximum: string
-      error_minimum: string
-      name: string
-      samples: number
-      standard: string
-      type: number
-      unit: string
-    }[]
-    middle: string
-    end: string
+    beginning: InspectionInfo[]
+    middle: InspectionInfo[]
+    end: InspectionInfo[]
   } | {}
-  sic_id: string
-  record_id: string
-  writer: string
+  writer?: midrangeWorkerType
+}
+
+export type midrangeWorkerType = {
+  additional: []
+  appointment: string
+  authority: number
+  ca_id: {ca_id: number, name: string, factor: number, authorities: [], version: number}
+  company: string
+  email: string
+  id: string
+  name: string
+  password: string
+  profile: null | string
+  serviceAddress: string
+  sync: string
+  telephone: string
+  token: null | string
+  user_id: number
+  version: number
+}
+
+export interface MidrangeRecordRegister extends MidrangeRecordType {
+  sic_id?: string
+  record_id?: string
   version?: number
+  samples?:number
 }
 
 export type TransferType = "productType" | "material" | "rawmaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "submaterial" | "welding" | null
@@ -204,3 +226,4 @@ export interface TableSortingOptionType {
   sorts:string[],
   orders:string[]
 }
+

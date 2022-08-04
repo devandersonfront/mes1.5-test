@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {columnlist, ExcelTable, Header as PageHeader, RequestMethod} from "shared";
-import {IExcelHeaderType} from "shared/src/common/@types/type"
+import {IExcelHeaderType} from "shared/src/@types/type"
 import moment from "moment";
 import ButtonGroup from 'shared/src/components/ButtonGroup';
 // @ts-ignore

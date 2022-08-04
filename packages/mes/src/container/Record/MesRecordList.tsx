@@ -16,13 +16,13 @@ import { NextPageContext } from "next";
 import moment from "moment";
 import { TransferCodeToValue } from "shared/src/common/TransferFunction";
 import { WorkModifyModal } from "../../../../shared/src/components/Modal/WorkModifyModal";
-import lodash from "lodash";
 import {
     deleteMenuSelectState,
     setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { useDispatch } from "react-redux";
-import { setExcelTableHeight, tableHeaderController } from "shared/src/common/Util";
+import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
+import { TableSortingOptionType } from 'shared/src/@types/type'
 
 interface IProps {
     children?: any;
@@ -31,7 +31,7 @@ interface IProps {
     option?: number;
 }
 
-const MesRecordList = ({page, search, option}: IProps) => {
+const MesRecordList = ({}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -52,26 +52,29 @@ const MesRecordList = ({page, search, option}: IProps) => {
         total: 1,
     });
     const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
-    const changeOrder = (order:string, key:string) => {
-        tableHeaderController(key, order, sortingOptions, setSortingOptions)
-        setPageInfo({...pageInfo, page:1})
+
+    const onSelectDate = (date: {from:string, to:string}) => {
+        setSelectDate(date)
+        reload(null, date)
     }
 
-    const loadPage = (page:number) => {
-        if(keyword){
-            SearchBasic(keyword, optionIndex, page).then(() => {
-                Notiflix.Loading.remove()
-            })
-        }else{
-            LoadBasic(page).then(() => {
-                Notiflix.Loading.remove()
-            })
+    const onRadioChange = (btnIdx:number) => {
+        setRecordState(btnIdx)
+        reload(null, null, null, btnIdx)
+    }
+
+    const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType, radioIdx?: number) => {
+        setKeyword(keyword)
+        if(pageInfo.page > 1) {
+            setPageInfo({...pageInfo, page: 1})
+        } else {
+            getData(undefined, keyword, date, sortingOptions, radioIdx)
         }
     }
-    useEffect(() => {
-        loadPage(pageInfo.page)
-    }, [pageInfo.page, sortingOptions, recordState, selectDate])
 
+    useEffect(() => {
+        getData(pageInfo.page, keyword)
+    }, [pageInfo.page]);
 
     useEffect(() => {
         dispatch(
@@ -82,118 +85,63 @@ const MesRecordList = ({page, search, option}: IProps) => {
         };
     }, []);
 
-
-    const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-        let tmpColumn = column.map(async (v: any) => {
-            if (v.selectList && v.selectList.length === 0) {
-                let tmpKey = v.key;
-
-                let res: any;
-                res = await RequestMethod("get", `${tmpKey}List`, {
-                    path: {
-                        page: 1,
-                        renderItem: MAX_VALUE,
-                    },
-                });
-
-                let pk = "";
-
-                res.info_list &&
-                res.info_list.length &&
-                Object.keys(res.info_list[0]).map((v) => {
-                    if (v.indexOf("_id") !== -1) {
-                        pk = v;
-                    }
-                });
-                return {
-                    ...v,
-                    selectList: [
-                        ...res.info_list.map((value: any) => {
-                            return {
-                                ...value,
-                                name: tmpKey === "model" ? value.model : value.name,
-                                pk: value[pk],
-                            };
-                        }),
-                    ],
-                };
-            } else {
-                if (v.selectList) {
-                    return {
-                        ...v,
-                        pk: v.unit_id,
-                        result: changeOrder,
-                    };
-                } else {
-                    return v;
-                }
+    const loadAllSelectItems = (column: IExcelHeaderType[], date?: {from:string, to:string}, radioIdx?:number) => {
+        const changeOrder = (sort:string, order:string) => {
+            const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+            setSortingOptions(_sortingOptions)
+            reload(null, date, _sortingOptions, radioIdx)
+        }
+        let tmpColumn = column.map((v: any) => {
+            const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+            return {
+                ...v,
+                pk: v.unit_id,
+                sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+                sorts: v.sorts ? sortingOptions : null,
+                result: v.sortOption ? changeOrder : null,
             }
         });
 
-        Promise.all(tmpColumn).then(res => {
-            const newColumn = lodash.cloneDeep(res)
-            if(recordState){
-                newColumn.splice(2, 0, {key: "finish", name: "작업 종료", width: 118, formatter: FinishButton})
-            }
-            setColumn(newColumn)
-        })
-    };
+        setColumn(tmpColumn);
+    }
 
-    const SearchBasic = async (keyword, opt, page?: number) => {
-        Notiflix.Loading.circle();
-        const res = await RequestMethod("get", `cncRecordSearch`, {
-            path: {
-                page: page ?? 1,
-                renderItem: 18,
-            },
-            params: {
-                from: selectDate.from,
-                to: selectDate.to,
-                rangeNeeded: true,
-                sorts: sortingOptions.sorts,
-                order: sortingOptions.orders,
-                fin: !recordState,
-                opt: opt,
-                keyword: keyword
-            }
-        })
-        if (res) {
-            setPageInfo({
-                ...pageInfo,
-                page: res.page,
-                total: res.totalPages,
-            });
-            setSelectList(new Set());
-            convertColumn(res)
-            cleanUpData(res);
+    const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType, radioIdx?: number) => {
+        let params = {}
+        if(keyword) {
+            params['keyword'] = keyword
+            params['opt'] = optionIndex
         }
-    };
+        params['from'] = date ? date.from: selectDate.from
+        params['to'] = date ? date.to : selectDate.to
+        params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+        params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+        params['fin'] = !isNaN(radioIdx) ? !radioIdx : !recordState
+        params['rangeNeeded'] = true
+        return params
+    }
 
-    const LoadBasic = async (page?: number) => {
+    const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType, radioIdx?:number) => {
         Notiflix.Loading.circle();
-        const res = await RequestMethod("get", `cncRecordList`, {
+        const res = await RequestMethod("get", keyword ? 'cncRecordSearch' : 'cncRecordList', {
             path: {
-                page: page || page !== 0 ? page : 1,
+                page: page,
                 renderItem: 18,
             },
-            params: {
-                from: selectDate.from,
-                to: selectDate.to,
-                sorts: sortingOptions.sorts,
-                order: sortingOptions.orders,
-                fin: !recordState
-            }
-        })
+            params: getRequestParams(keyword, date, _sortingOptions,radioIdx)
+        });
         if(res){
-            setPageInfo({
-                ...pageInfo,
-                page: res.page,
-                total: res.totalPages,
-            });
-            setSelectList(new Set());
-            convertColumn(res)
-            cleanUpData(res);
+            if (res.totalPages > 0 && res.totalPages < res.page) {
+                reload();
+            } else {
+                setPageInfo({
+                    page: res.page,
+                    total: res.totalPages
+                })
+                convertColumn(res, date, radioIdx)
+                cleanUpData(res, date, _sortingOptions, radioIdx);
+            }
         }
+        Notiflix.Loading.remove()
     };
 
     const DeleteBasic = async () => {
@@ -260,18 +208,12 @@ const MesRecordList = ({page, search, option}: IProps) => {
         );
 
         if (res) {
-            Notiflix.Report.success("삭제 성공!", "", "확인", () => {
-                setSelectList(new Set());
-                LoadBasic(1).then(() => {
-                    Notiflix.Loading.remove();
-                });
-            });
+            Notiflix.Report.success("삭제 성공!", "", "확인", () => reload())
         }
     };
 
 
-    const convertColumn = (res) => {
-
+    const convertColumn = (res, date?: {from:string, to:string}, radioIdx?:number) => {
         let tmpColumn = columnlist["cncRecordListV2"];
         const convertColumn = tmpColumn.map((column: any) => {
             let menuData: object | undefined;
@@ -324,10 +266,12 @@ const MesRecordList = ({page, search, option}: IProps) => {
             : [];
 
 
-        loadAllSelectItems([...convertColumn, ...additionalMenus]);
+        loadAllSelectItems([...convertColumn, ...additionalMenus], date, radioIdx);
     }
 
-    const cleanUpData = (res: any) => {
+    const cleanUpData = (res: any, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType, radioIdx?:number) => {
+        const _reload = () => reload(null, date, _sortingOptions, radioIdx)
+
         let tmpBasicRow = res.info_list.map((row: any, index: number) => {
             let appendAdditional: any = {};
 
@@ -362,10 +306,10 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 worker: row.worker.name,
                 worker_object: row.worker_object ?? row.worker,
                 id: `sheet_${random_id}`,
+                reload: _reload
             }
         })
         setBasicRow([...tmpBasicRow]);
-
         setSelectList(new Set)
     }
     return (
@@ -376,31 +320,18 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 isRadio
                 radioTexts={["종료","미완료"]}
                 radioValue={recordState}
-                onChangeRadioValues={(e) => {
-                    setRecordState(e)
-                    setPageInfo({...pageInfo, page:1})
-                }}
+                onChangeRadioValues={onRadioChange}
                 searchOptionList={optionList}
                 onChangeSearchOption={(e) => {
                     setOptionIndex(e);
                 }}
-                onChangeSearchKeyword={setKeyword}
-                onSearch={() => {
-                    setSelectList(new Set());
-                    setKeyword(keyword);
-                    SearchBasic(keyword, optionIndex, 1).then(() => {
-                        Notiflix.Loading.remove();
-                    })
-                }}
+                searchKeyword={keyword}
+                onSearch={reload}
                 calendarTitle={"종료일"}
                 calendarType={"period"}
                 selectDate={selectDate}
                 //@ts-ignore
-                setSelectDate={(date) => {
-                    setSelectList(new Set());
-                    setSelectDate(date as { from: string; to: string });
-                    setPageInfo({...pageInfo, page:1})
-                }}
+                setSelectDate={onSelectDate}
                 //실제사용
                 title={"작업 일보 리스트"}
                 buttons={["", "수정하기", "삭제"]}
@@ -456,7 +387,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
                 // setRow={setBasicRow}
                 setRow={(e) => {
                     const deleteCheck = e.every(prop => prop.finish === false);
-                    if(!deleteCheck) loadPage(1)
+                    if(!deleteCheck) reload()
                 }}
                 selectList={selectList}
                 //@ts-ignore
@@ -488,18 +419,7 @@ const MesRecordList = ({page, search, option}: IProps) => {
                             })
                             .filter((v) => v),
                     ]}
-                    onRowChange={() => {
-                        if (keyword) {
-                            SearchBasic(keyword, optionIndex, page).then(() => {
-                              Notiflix.Loading.remove()
-                            })
-                        } else {
-                            LoadBasic(page).then(() => {
-                                Notiflix.Loading.remove();
-                                setSelectList(new Set());
-                            });
-                        }
-                    }}
+                    onRowChange={() => reload()}
                     isOpen={excelOpen}
                     setIsOpen={setExcelOpen}
                 />

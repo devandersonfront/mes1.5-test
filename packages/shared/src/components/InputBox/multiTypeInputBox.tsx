@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../reducer";

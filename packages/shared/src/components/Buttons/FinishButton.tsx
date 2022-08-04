@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import {CellButton} from '../../styles/styledComponents'
 import Notiflix from 'notiflix'
 import {RequestMethod} from '../../common/RequestFunctions'

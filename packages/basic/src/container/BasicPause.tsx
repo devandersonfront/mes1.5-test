@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {columnlist, excelDownload, ExcelTable, Header as PageHeader, RequestMethod,} from 'shared'
-import {IExcelHeaderType} from 'shared/src/common/@types/type'
+import {IExcelHeaderType} from 'shared/src/@types/type'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";

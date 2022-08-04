@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react'
 import moment from "moment";
 import {RequestMethod} from "../../common/RequestFunctions";
 import Modal from "react-modal";
@@ -6,7 +6,6 @@ import Modal from "react-modal";
 import IcX from "../../../public/images/ic_x.png";
 import {ExcelTable} from "../Excel/ExcelTable";
 import {searchModalList} from "../../common/modalInit";
-import {MidrangeExcelTable} from "../Excel/MidrangeExcelTable";
 import {POINT_COLOR} from "../../common/configset";
 import styled from "styled-components";
 import {MidrangeExcelFrameTable} from "../Excel/MidrangeExcelFrameTable";
@@ -15,7 +14,7 @@ import {MidrangeRecordRegister} from "../../@types/type";
 
 
 interface IProps {
-    formReviewData: any
+    data: any
     isOpen: boolean
     setIsOpen?: (isOpen: boolean) => void
     modify: boolean
@@ -23,38 +22,40 @@ interface IProps {
 }
 
 
-
-const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, reload}: IProps) => {
-    const [selectRow, setSelectRow] = useState<number>()
-    const [ midrangeUpdate, setMidrangeUpdate] = useState<boolean>(false)
-    const [searchList, setSearchList] = useState<Array<any>>()
+const now = moment().format('YYYY-MM-DD[T]HH:mm:ss')
+const MidrangeRegisterModal = ({ data, isOpen, setIsOpen, modify, reload}: IProps) => {
+    const [ editPage, setEditPage] = useState<boolean>(false)
     const [ midrangeData, setMidrangeData ] = useState<MidrangeRecordRegister>({
-        inspection_time: {
-            beginning: '',
-            middle: '',
-            end: ''
-        },
-        inspection_result: {},
         legendary_list: [],
-        inspection_info: {},
-        sic_id: '',
-        record_id: '',
-        writer: ''
+        inspection_info: {beginning: [{samples: 1, data_result: []}], middle: [{samples: 1, data_result: [] }], end: [{samples: 1, data_result: [] }]},
+        inspection_result: { beginning: [], middle: [], end: [] },
+        inspection_time: {
+            beginning: now,
+            middle: now,
+            end: now
+        },
+        writer: undefined,
+        sic_id:'',
+        record_id:undefined,
+        version:undefined,
+        samples: undefined
     })
 
-    const recordInspectFrameSave = async () => {
-
-
-        midrangeData.inspection_time = {
-            //@ts-ignore
-            beginning: moment(midrangeData.inspection_time.beginning).format('YYYY-MM-DD[T]HH:mm:ss'),
-            //@ts-ignore
-            middle: moment(midrangeData.inspection_time.middle).format('YYYY-MM-DD[T]HH:mm:ss'),
-            //@ts-ignore
-            end: moment(midrangeData.inspection_time.end).format('YYYY-MM-DD[T]HH:mm:ss')
+    useEffect(() => {
+        const newData = {
+            ...data,
+            inspection_result: modify ? data.inspection_result : midrangeData.inspection_result,
+            inspection_time : modify ? data.inspection_time : midrangeData.inspection_time,
         }
+        setMidrangeData(newData)
+    }, [])
 
-        const res = await RequestMethod('post', `recordInspectSave`,{
+
+    const readOnly = modify && !editPage
+
+    const saveResult = async () => {
+        Notiflix.Loading.circle()
+        await RequestMethod('post', `recordInspectSave`,{
             sic_id: midrangeData.sic_id,
             record_id: midrangeData.record_id,
             writer: midrangeData.writer,
@@ -64,37 +65,13 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
             inspection_info: midrangeData.inspection_info
         })
 
-        if(res){
-            Notiflix.Loading.circle()
-            setIsOpen(false)
-            reload()
-        }
+        Notiflix.Loading.remove()
     }
 
-
-    const recordInspectFrameUpdate = async () => {
-
-        const res = await RequestMethod('post', `recordInspectSave`,{
-            version: midrangeData.version,
-            sic_id: midrangeData.sic_id,
-            record_id: midrangeData.record_id,
-            writer: midrangeData.writer,
-            inspection_time: midrangeData.inspection_time,
-            inspection_result: midrangeData.inspection_result,
-            legendary_list: midrangeData.legendary_list,
-            inspection_info: midrangeData.inspection_info
-        })
-
-        if(res){
-            Notiflix.Loading.circle()
-            setIsOpen(false)
-            reload()
-        }
+    const onClose = () => {
+        setEditPage(false)
+        setIsOpen(false)
     }
-
-    React.useEffect(()=>{
-        setSearchList([...formReviewData.basic])
-    },[formReviewData])
 
 
     return (
@@ -115,121 +92,66 @@ const MidrangeRegisterModal = ({ formReviewData, isOpen, setIsOpen, modify, relo
                 },
 
             }}>
-                <div style={{display : 'flex' , justifyContent : 'flex-end' , flexDirection : 'column'}}>
-                <div style={{
-                    height: 800,
-                    width: 1776,
-                }}>
-                    <div style={{
-                        margin: '24px 16px 16px',
-                        display: 'flex',
-                        justifyContent: 'space-between'
-                    }}>
-                        <p style={{
-                            color: 'black',
-                            fontSize: 22,
-                            fontWeight: 'bold',
-                            margin: 0,
-                        }}> {modify ? "초ㆍ중ㆍ종 검사 결과보기" : "초ㆍ중ㆍ종 검사 등록"}</p>
-                        <div style={{display: 'flex'}}>
-                            {modify && !midrangeUpdate &&
-                                <Button onClick={()=>setMidrangeUpdate(true)}>
-                                    <p>수정 하기</p>
-                                </Button>
-                            }
-                            <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
-                                setMidrangeUpdate(false)
-                                setIsOpen(false)
-                            }}>
-                                <img style={{width: 20, height: 20}} src={IcX}/>
+                <div style={{width: 1760, height: 800, display:'flex', flexDirection:'column', justifyContent: 'space-between'}}>
+                    <div style={{overflowY: 'visible'}}>
+                        <ModalTitle>
+                            <p style={{
+                                color: 'black',
+                                fontSize: 22,
+                                fontWeight: 'bold',
+                                margin: 0,
+                            }}> {modify ? "초ㆍ중ㆍ종 검사 결과보기" : "초ㆍ중ㆍ종 검사 등록"}</p>
+                            <div style={{display: 'flex', flex: modify && !editPage ? .1 : 0, justifyContent:'space-between'}}>
+                                {modify && !editPage &&
+                                    <Button onClick={()=> setEditPage(true)}>
+                                        <p>수정 하기</p>
+                                    </Button>
+                                }
+                                <div style={{cursor: 'pointer', display:'flex', alignItems:'center'}} onClick={onClose}>
+                                    <img style={{width: 20, height: 20}} src={IcX}/>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div style={{padding: '0 16px', width: 1776, height: '80px'}}>
+                        </ModalTitle>
                         <ExcelTable
                             headerList={searchModalList.midrangeInfo}
-                            row={searchList ?? [{}]}
-                            setRow={(e) => setSearchList([...e])}
-                            width={1746}
+                            row={data.basic ?? [{}]}
+                            width={1728}
+                            height={80}
                             rowHeight={32}
-                            height={400}
-                            onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                                if(!searchList[e].border){
-                                    searchList.map((v,i)=>{
-                                        v.border = false;
-                                    })
-                                    searchList[e].border = true
-                                    setSearchList([...searchList])
-                                }
-                                setSelectRow(e)
-                            }}
                             type={'searchModal'}
                             headerAlign={'center'}
                         />
-                    </div>
-                    <div style={{padding: '0 16px', width: 1776}}>
-                        <MidrangeExcelFrameTable formReviewData={formReviewData}  inspectFrameData={(e)=>setMidrangeData(e)} midrangeUpdate={modify && !midrangeUpdate}/>
-                    </div>
-                </div>
-                {modify ?
-                    midrangeUpdate ?
-                        <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
-                            <div
-                                onClick={() => {
-                                    setIsOpen(false)
-                                    setMidrangeUpdate(false)
-                                }}
-                                style={{width: "50%", height: 40, color: '#717C90', backgroundColor: '#DFDFDF', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                            >
-                                <p>취소</p>
-                            </div>
-                            <div
-                                onClick={() => {
-                                    Notiflix.Report.success("저장되었습니다.","","확인", () => {
-                                        recordInspectFrameUpdate()
-                                    })
-                                }}
-                                style={{width: "50%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                            >
-                                <p>등록하기</p>
-                            </div>
+                        <div style={{padding: '0 16px'}}>
+                            { midrangeData.record_id && <MidrangeExcelFrameTable modalData={midrangeData} setModalData={setMidrangeData} readOnly={readOnly} hasResult={modify}/>}
                         </div>
-                        :
-                        <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
-                            <div
-                                onClick={() => {
-                                    setMidrangeUpdate(false)
-                                    setIsOpen(false)
-                                }}
-                                style={{width: "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                            >
+                    </div>
+                    {
+                      readOnly ?
+                              <div
+                                onClick={onClose}
+                                style={{height: 40, marginTop:10, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                                 <p>확인</p>
-                            </div>
-                        </div>
-                    :
-                    <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
-                        <div
-                            onClick={() => {
-                                setMidrangeUpdate(true)
-                                setIsOpen(false)
-                            }}
-                            style={{width: "50%", height: 40, color: '#717C90', backgroundColor: '#DFDFDF', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                        >
-                            <p>취소</p>
-                        </div>
-                        <div
-                            onClick={() => {
-                                Notiflix.Report.success("저장되었습니다.","","확인",() => {
-                                    setMidrangeUpdate(true)
-                                    recordInspectFrameSave()
-                                })
-                            }}
-                            style={{width: "50%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                        >
-                            <p>등록하기</p>
-                        </div>
-                    </div>
-                }
+                              </div>
+                          :
+                          <div style={{ height: 40, marginTop: 10, display:'flex'}}>
+                              <div
+                                onClick={onClose}
+                                style={{flex:.5,height: 40, color: '#717C90', backgroundColor: '#DFDFDF', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                              >
+                                  <p>취소</p>
+                              </div>
+                              <div
+                                onClick={() => {
+                                    saveResult()
+                                    Notiflix.Report.success("저장되었습니다.","","확인", () => {onClose()
+                                    reload && reload()})
+                                }}
+                                style={{flex:.5, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                              >
+                                  <p>등록하기</p>
+                              </div>
+                          </div>
+                    }
                 </div>
             </Modal>
         </SearchModalWrapper>
@@ -256,37 +178,11 @@ const Button = styled.button`
     
 `;
 
-const HeaderTable = styled.div`
-  width: 1744px;
-  height: 32px;
-  margin: 0 16px;
-  background-color: #F4F6FA;
-  border: 0.5px solid #B3B3B3;
-  display: flex
-`
-
-const HeaderTableTextInput = styled.div`
-  background-color: #ffffff;
-  padding-left: 3px;
-  height: 27px;
-  border: 0.5px solid #B3B3B3;
-  margin-top:2px;
-  margin-right: 70px;
-  display: flex;
-  align-items: center;
-`
-
-const HeaderTableText = styled.p`
-  margin: 0;
-  font-size: 15px;
-`
-
-const HeaderTableTitle = styled.div`
-  width: 99px;
-  padding: 0 8px;
-  display: flex; 
-  align-items: center;
-`
-
+const ModalTitle = styled.div`
+    padding: 16px 16px 16px;
+    display: flex;
+    justify-content:space-between;
+    align-items:center;
+`;
 
 export {MidrangeRegisterModal};

@@ -64,7 +64,7 @@ export const setExcelTableHeight = (length:number) => {
   return length === 0 ? 90 : length * 40 >= 40*18+48? 40 *19 + 48 : length * 40 + 48
 }
 
-export const tableHeaderController = (key, order, sortingOptions:TableSortingOptionType, setSortingOptions:(sortingOptions:TableSortingOptionType) => void) => {
+export const getTableSortingOptions = (key, order, sortingOptions:TableSortingOptionType) => {
     const index = sortingOptions.sorts.findIndex((sort) => sort == key)
     if(order == "none"){
       sortingOptions.sorts.splice(index,1)
@@ -72,11 +72,11 @@ export const tableHeaderController = (key, order, sortingOptions:TableSortingOpt
     }else if(sortingOptions.sorts.includes(key)){
       sortingOptions.sorts.splice(index,1)
       sortingOptions.orders.splice(index,1)
-      sortingOptions.sorts.unshift(key)
-      sortingOptions.orders.unshift(order)
+      sortingOptions.sorts.push(key)
+      sortingOptions.orders.push(order)
     }else{
-      sortingOptions.sorts.unshift(key)
-      sortingOptions.orders.unshift(order)
+      sortingOptions.sorts.push(key)
+      sortingOptions.orders.push(order)
     }
-    setSortingOptions({...sortingOptions})
+    return {...sortingOptions}
 }

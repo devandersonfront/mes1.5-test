@@ -1,5 +1,5 @@
 import React from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import Notiflix from 'notiflix'
 //@ts-ignore
 import filterOpenB from '../../../public/images/filter_open_b.png'

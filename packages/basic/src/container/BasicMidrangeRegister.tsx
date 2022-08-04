@@ -6,7 +6,7 @@ import {
     MidrangeFormReviewModal,
     RequestMethod, TextEditor
 } from "shared";
-import {IExcelHeaderType} from 'shared/src/common/@types/type'
+import {IExcelHeaderType} from 'shared/src/@types/type'
 import {MidrangeButton} from "shared/src/styles/styledComponents";
 import Notiflix from "notiflix";
 import {useRouter} from "next/router";
@@ -78,13 +78,10 @@ const BasicMidrangeRegister = () => {
         })
         if(validateCategoryInfo(categoryInfo)) return
 
-
-        console.log('aa',legendaryBasicRow)
         const legendaryKeyValue = {}
         legendaryBasicRow.map((v,i)=>{
             legendaryKeyValue[v.legendary] = v.LegendaryExplain
         })
-        console.log('bb',legendaryKeyValue)
 
         if(categoryInfo.some(info => info.type === 1)) {
             if(Object.keys(legendaryKeyValue).length <= 0 || Object.keys(legendaryKeyValue).includes('') || Object.keys(legendaryKeyValue).includes('undefined')){

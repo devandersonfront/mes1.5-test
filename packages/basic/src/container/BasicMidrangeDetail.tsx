@@ -6,7 +6,7 @@ import {
     MidrangeFormReviewModal,
     RequestMethod
 } from "shared";
-import {IExcelHeaderType} from 'shared/src/common/@types/type'
+import {IExcelHeaderType} from 'shared/src/@types/type'
 import {useRouter} from "next/router";
 import Notiflix from "notiflix";
 

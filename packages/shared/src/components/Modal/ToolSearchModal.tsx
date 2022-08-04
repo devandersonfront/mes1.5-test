@@ -13,7 +13,7 @@ import {ExcelTable} from "../Excel/ExcelTable";
 import {searchModalList} from "../../common/modalInit";
 import {SearchModalResult} from "../../Functions/SearchResultSort";
 import styled from "styled-components";
-import {IExcelHeaderType} from "../../common/@types/type";
+import {IExcelHeaderType} from "../../@types/type";
 
 interface IProps {
     column: IExcelHeaderType

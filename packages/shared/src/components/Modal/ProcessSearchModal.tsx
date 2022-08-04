@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'

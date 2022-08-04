@@ -62,7 +62,7 @@ const MesProductChangeList = ({}: IProps) => {
         })
     },[])
 
-    const onSelectData = (date: {from:string, to:string}) => {
+    const onSelectDate = (date: {from:string, to:string}) => {
         reload(null, date)
     }
 
@@ -175,7 +175,7 @@ const MesProductChangeList = ({}: IProps) => {
                 calendarTitle={'등록 날짜'}
                 calendarType={'period'}
                 selectDate={selectDate}
-                setSelectDate={onSelectData}
+                setSelectDate={onSelectDate}
                 title={"변경점 정보 리스트"}
                 buttons={
                     ['', '자세히 보기']

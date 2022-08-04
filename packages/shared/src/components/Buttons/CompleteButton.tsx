@@ -1,5 +1,5 @@
 import React from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import {CellButton} from '../../styles/styledComponents'
 
 interface IProps {
