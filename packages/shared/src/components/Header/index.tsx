@@ -64,6 +64,7 @@ interface IProps {
   onChangeRadioValues?:(radioValues:number) => void
   onSearch?:(keyword:string) => void
   searchKeyword?: string
+  noCode?: boolean
 }
 
 
@@ -117,7 +118,7 @@ const lightTheme = createTheme({
 const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsOnclick, isSearch, style,
                   searchOptionList, onChangeSearchOption, filterList, onChangeFilter, basicMachineType, isCalendar, onChangeSelectDate,
                   calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code,
-                  isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch, searchKeyword}: IProps) => {
+                  isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch, searchKeyword, noCode}: IProps) => {
 
   const [machineCheck, setMachineCheck] = React.useState<any>({
     all: true,
@@ -349,20 +350,24 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
             }
             {
                 isCode && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
-                  <input id='codeTrue' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {
-                    onChangeCode && onChangeCode(true)
-                  }}/>
-                  <label htmlFor="codeTrue">
+                {
+                  !noCode && <>
+                      <input id='codeTrue' name={'code'} type={'radio'} style={{ display: 'none' }} onClick={() => {
+                      onChangeCode && onChangeCode(true)
+                    }}/>
+                    <label htmlFor="codeTrue">
                     <div style={{display:"flex", alignItems:"center",}}>
-                      {
-                        code
-                            ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
-                            : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
-                      }
+                    {
+                      code
+                      ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
+                      : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
+                    }
 
-                      <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>CODE로 등록</p>
+                    <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>CODE로 등록</p>
                     </div>
-                  </label>
+                    </label>
+                  </>
+                }
                   <input id='codeFalse' name={'code'} type={'radio'} style={{display: 'none'}} onClick={() => {
                     onChangeCode && onChangeCode(false)
                   }}/>

@@ -4,7 +4,7 @@ import {
     TreeViewHeader,
     TreeViewWrapper
 } from '../../styles/styledComponents'
-import {IMenu} from '../../common/@types/type'
+import {IMenu} from '../../@types/type'
 import TreeView from './TreeView'
 
 interface IProps {

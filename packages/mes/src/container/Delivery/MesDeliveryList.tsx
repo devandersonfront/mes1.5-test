@@ -21,8 +21,9 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight, tableHeaderController } from 'shared/src/common/Util'
+import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
+import { TableSortingOptionType } from 'shared/src/@types/type'
 
 interface IProps {
   children?: any;
@@ -53,23 +54,24 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
     page: 1,
     total: 1,
   });
-  const changeOrder = (order:string, key:string) => {
-    tableHeaderController(key, order, sortingOptions, setSortingOptions)
-    setPageInfo({...pageInfo, page:1})
+
+  const onSelectDate = (date: {from:string, to:string}) => {
+    setSelectDate(date)
+    reload(null, date)
   }
 
+  const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
+    } else {
+      getData(undefined, keyword, date, sortingOptions)
+    }
+  }
 
   useEffect(() => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    } else {
-      LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
-    }
-  }, [pageInfo.page, selectDate, sortingOptions]);
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(
@@ -80,128 +82,60 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
     };
   }, []);
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if (v.selectList && v.selectList.length === 0) {
-        let tmpKey = v.key;
-
-        let res: any;
-        res = await RequestMethod("get", `${tmpKey}List`, {
-          path: {
-            page: 1,
-            renderItem: MAX_VALUE,
-          },
-        });
-
-        let pk = "";
-
-        res.info_list &&
-          res.info_list.length &&
-          Object.keys(res.info_list[0]).map((v) => {
-            if (v.indexOf("_id") !== -1) {
-              pk = v;
-            }
-          });
-        return {
-          ...v,
-          selectList: [
-            ...res.info_list.map((value: any) => {
-              return {
-                ...value,
-                name: tmpKey === "model" ? value.model : value.name,
-                pk: value[pk],
-              };
-            }),
-          ],
-        };
-      } else {
-        if (v.selectList) {
-          return {
-            ...v,
-            pk: v.unit_id,
-            result: changeOrder,
-          };
-        } else {
-          return v;
-        }
+  const loadAllSelectItems = (column: IExcelHeaderType[],date?: {from:string, to:string}) => {
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(null, date, _sortingOptions)
+    }
+    let tmpColumn = column.map((v: any) => {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+      return {
+        ...v,
+        pk: v.unit_id,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+        sorts: v.sorts ? sortingOptions : null,
+        result: v.sortOption ? changeOrder : null,
       }
     });
 
-    // if(type !== 'productprocess'){
-    Promise.all(tmpColumn).then((res) => {
-      setColumn([...res]);
-    });
-    // }
+    setColumn(tmpColumn);
   };
 
-  const LoadBasic = async (page?: number) => {
+  const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    params['from'] = date ? date.from: selectDate.from
+    params['to'] = date ? date.to : selectDate.to
+    params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+    params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    return params
+  }
+
+  const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod("get", `shipmentList`, {
+    const res = await RequestMethod("get", keyword ? 'shipmentSearch' : 'shipmentList', {
       path: {
-        page: pageInfo.page ?? 1,
+        page: page,
         renderItem: 18,
       },
-      params:
-          {
-            from: selectDate.from,
-            to: selectDate.to,
-            sorts: sortingOptions.sorts,
-            order: sortingOptions.orders,
-          },
+      params: getRequestParams(keyword, date, _sortingOptions)
     });
-
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
-    } else if (res === 401) {
-      Notiflix.Report.failure(
-        "불러올 수 없습니다.",
-        "권한이 없습니다.",
-        "확인",
-        () => {
-          router.back();
-        }
-      );
+    if(res){
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res,date)
+      }
     }
-  };
-
-  const SearchBasic = async (
-    keyword: any,
-    option: number,
-    isPaging?: number
-  ) => {
-    Notiflix.Loading.circle();
-    if (!isPaging) {
-      setOptionIndex(option);
-    }
-    const res = await RequestMethod("get", `shipmentSearch`, {
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params:
-           {
-              keyword: keyword ?? "",
-              opt: option ?? 0,
-              from: selectDate.from,
-              to: selectDate.to,
-              sorts: sortingOptions.sorts,
-              order: sortingOptions.orders,
-            },
-    });
-
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
-    }
+    Notiflix.Loading.remove()
   };
 
   const DeleteBasic = async () => {
@@ -272,15 +206,11 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
     );
 
     if (res) {
-      Notiflix.Report.success("삭제 성공!", "", "확인", () => {
-        LoadBasic(1).then(() => {
-          Notiflix.Loading.remove();
-        });
-      });
+      Notiflix.Report.success("삭제 성공!", "", "확인", () => reload());
     }
   };
 
-  const cleanUpData = (res: any) => {
+  const cleanUpData = (res: any,date?: {from:string, to:string}) => {
     let tmpColumn = columnlist["deliveryList"];
     let tmpRow = [];
     tmpColumn = tmpColumn
@@ -336,7 +266,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
 
     tmpRow = res.info_list;
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus],date);
 
     let selectKey = "";
     let additionalData: any[] = [];
@@ -404,12 +334,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
       };
     });
 
-    Notiflix.Loading.remove();
-    if (pageInfo.page > 1) {
-      setBasicRow([...basicRow, ...tmpBasicRow]);
-    } else {
-      setBasicRow([...tmpBasicRow]);
-    }
+    setBasicRow(tmpBasicRow);
   };
 
   return (
@@ -418,13 +343,8 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
         isSearch
         isCalendar
         searchOptionList={optionList}
-        onChangeSearchKeyword={setKeyword}
-        onSearch={() => {
-          setSelectList(new Set)
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          })
-        }}
+        searchKeyword={keyword}
+        onSearch={reload}
         onChangeSearchOption={(option) => {
           setOptionIndex(option);
         }}
@@ -432,11 +352,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
         calendarType={"period"}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={(date) => {
-          setSelectList(new Set());
-          setSelectDate(date as { from: string; to: string });
-          setPageInfo({ page: 1, total: 1 });
-        }}
+        setSelectDate={onSelectDate}
         title={"납품 현황"}
         buttons={["", "수정하기", "삭제"]}
         buttonsOnclick={
@@ -497,7 +413,6 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
           ...column
         ]}
         row={basicRow}
-        // setRow={setBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
           e.map(v => {

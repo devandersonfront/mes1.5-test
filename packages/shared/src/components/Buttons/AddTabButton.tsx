@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";
 import {add_summary_info, change_summary_info_index} from "../../reducer/infoModal";

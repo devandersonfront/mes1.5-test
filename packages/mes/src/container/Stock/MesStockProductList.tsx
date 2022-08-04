@@ -37,10 +37,6 @@ const MesStockProductList = ({type}: IProps) => {
   const [keyword, setKeyword] = useState<string>("");
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectMonth, setSelectMonth] = useState<string>(moment(new Date()).startOf("month").format('YYYY-MM'))
-
-  const changeSelectMonth = (value:string) => {
-    setSelectMonth(value);
-  }
   const [excelTableWidths, setExcelTableWidths] = useState<{model:number, data:number}>({model:0, data:0});
   const isAdminPage = type === 'admin'
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
@@ -48,9 +44,13 @@ const MesStockProductList = ({type}: IProps) => {
     to: moment(new Date()).endOf("month").format('YYYY-MM-DD')
   });
 
+  const changeSelectMonth = (value:string) => {
+    setSelectMonth(value);}
+
   useEffect(() => {
     loadData()
-  }, [selectMonth])
+  }, [])
+
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"재고 관리",sub:router.pathname}))
@@ -60,7 +60,10 @@ const MesStockProductList = ({type}: IProps) => {
   },[])
 
   const changeSelectDate = (from:string, to:string) => {
-    setSelectDate({from:from, to:to});
+    const date = {from, to}
+    setSelectDate(date);
+    loadData(null, date)
+
   }
 
   const loadMenu = async() => {
@@ -73,15 +76,21 @@ const MesStockProductList = ({type}: IProps) => {
     return res.bases
   }
 
-  const loadData = async() => {
+  const getRequestParams = (keyword?: string, date?: {from:string, to:string}) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    params['from'] = date ? date.from : selectDate.from,
+      params['to'] = date ? date.to : selectDate.to
+    return params
+  }
+
+  const loadData = async(keyword?:string, date?:{from:string, to:string}) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod('get', isAdminPage ? 'stockAdminList' : 'stockProductList', {
-      params:{
-        keyword:keyword,
-        opt:optionIndex,
-        from:selectDate.from,
-        to:selectDate.to
-      }
+      params: getRequestParams(keyword, date)
     });
 
     if(res){
@@ -159,7 +168,7 @@ const MesStockProductList = ({type}: IProps) => {
           tmpColumn = res.summaries[0]?.statistics?.logs?.map((col)=>{
             result.push(
               isAdminPage ? {key:col.date, name:col.date, editor: TextEditor, formatter: UnitContainer, unitData: 'EA', width:118, inputType:'number', type:'stockAdmin'}
-              :{key:col.date, name:col.date, formatter: UnitContainer, unitData: 'EA', width:100},
+              :{key:col.date, name:col.date, formatter: UnitContainer, unitData: 'EA', width:118},
             );
           })
           setDateColumn([
@@ -306,10 +315,14 @@ const MesStockProductList = ({type}: IProps) => {
         setOptionIndex(optionIndex)
       }}
       isCalendar={true}
-      onChangeSearchKeyword={setKeyword}
+      searchKeyword={keyword}
       onSearch={loadData}
       calendarType={"month"}
-      onChangeSelectDate={changeSelectDate}
+      onChangeSelectDate={(from, to) =>
+      {
+        changeSelectDate(from, to)
+      }
+    }
       selectDate={selectMonth}
       setSelectDate={changeSelectMonth}
       optionIndex={optionIndex}

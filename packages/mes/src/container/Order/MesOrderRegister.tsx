@@ -16,11 +16,9 @@ interface IProps {
   option?: number
 }
 
-const MesOrderRegister = ({page, keyword, option}: IProps) => {
+const MesOrderRegister = ({}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
-  const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     date: moment().format('YYYY-MM-DD'),
     deadline: moment().format('YYYY-MM-DD')

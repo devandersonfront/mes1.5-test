@@ -1,4 +1,4 @@
-import {IMenuType} from './@types/type'
+import {IMenuType} from '../@types/type'
 
 const BASIC_MENUS: IMenuType[] = [
   {

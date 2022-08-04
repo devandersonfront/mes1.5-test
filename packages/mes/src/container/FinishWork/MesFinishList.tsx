@@ -18,7 +18,8 @@ import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight, tableHeaderController } from 'shared/src/common/Util'
+import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
+import { TableSortingOptionType } from 'shared/src/@types/type'
 
 interface IProps {
   children?: any
@@ -46,20 +47,24 @@ const MesFinishList = ({page, search, option}: IProps) => {
     page: 1,
     total: 1
   })
-  useEffect(() => {
-    if(getMenus()){
-      if(keyword){
-        SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }else{
 
-        LoadBasic(pageInfo.page).then(() => {
-          Notiflix.Loading.remove()
-        })
-      }
+  const onSelectDate = (date: {from:string, to:string}) => {
+    setSelectDate(date)
+    reload(null, date)
+  }
+
+  const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
+    } else {
+      getData(undefined, keyword, date, sortingOptions)
     }
-  }, [pageInfo.page, selectDate, sortingOptions])
+  }
+
+  useEffect(() => {
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"생산관리 등록",sub:router.pathname}))
@@ -68,129 +73,64 @@ const MesFinishList = ({page, search, option}: IProps) => {
     })
   },[])
 
-  const getMenus = async () => {
-    let res = await RequestMethod('get', `loadMenu`, {
-      path: {
-        tab: 'ROLE_PROD_06'
+  const loadAllSelectItems = async (column: IExcelHeaderType[], date?: {from:string, to:string}) => {
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(null, date, _sortingOptions)
+    }
+    let tmpColumn = column.map((v: any) => {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+      return {
+        ...v,
+        pk: v.unit_id,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+        sorts: v.sorts ? sortingOptions : null,
+        result: v.sortOption ? changeOrder : null,
       }
-    })
+    });
 
-    return !!res
+    setColumn(tmpColumn);
   }
 
-  const changeOrder = (order:string, key:string) => {
-    tableHeaderController(key, order, sortingOptions, setSortingOptions)
-    setPageInfo({...pageInfo, page:1})
+  const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    params['from'] = date ? date.from: selectDate.from
+    params['to'] = date ? date.to : selectDate.to
+    params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+    params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    params['status'] = 2
+    return params
   }
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if(v.selectList && v.selectList.length === 0){
-        let tmpKey = v.key
-
-        let res: any
-        res = await RequestMethod('get', `${tmpKey}List`,{
-          path: {
-            page: 1,
-            renderItem: MAX_VALUE,
-          }
-        })
-
-
-        let pk = "";
-
-        res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
-          if(v.indexOf('_id') !== -1){
-            pk = v
-          }
-        })
-        return {
-          ...v,
-          selectList: [...res.info_list.map((value: any) => {
-            return {
-              ...value,
-              name: tmpKey === 'model' ? value.model : value.name,
-              pk: value[pk],
-            }
-          })]
-        }
-      }else{
-        if(v.selectList){
-          return {
-            ...v,
-            pk: v.unit_id,
-            result: changeOrder
-          }
-        }else{
-          return v
-        }
-      }
-    })
-
-    // if(type !== 'productprocess'){
-    Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
-    })
-    // }
-  }
-
-  const LoadBasic = async (page?: number) => {
-    Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `sheetList`,{
+  const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType) => {
+    Notiflix.Loading.circle();
+    const res = await RequestMethod("get", keyword ? 'sheetSearch' : 'sheetList', {
       path: {
-        page: pageInfo.page ?? 1,
+        page: page,
         renderItem: 18,
       },
-      params: {
-        status: 2,
-        from: selectDate.from,
-        to: selectDate.to,
-        sorts: sortingOptions.sorts,
-        order:sortingOptions.orders,
-      }
-    })
-
+      params: getRequestParams(keyword, date, _sortingOptions)
+    });
     if(res){
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res, date)
+      }
     }
-
+    Notiflix.Loading.remove()
   }
 
-  const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
-    Notiflix.Loading.circle()
-    if(!isPaging){
-      setOptionIndex(option)
-    }
-    const res = await RequestMethod('get', `operationSearch`,{
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: optionIndex ?? 0,
-        status : 2,
-        from: selectDate.from,
-        to: selectDate.to,
-      }
-    })
-
-    if(res){
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
-    }
-  }
-
-  const cleanUpData = (res: any) => {
+  const cleanUpData = (res: any, date?: {from:string, to:string}) => {
     let tmpColumn = columnlist["finishListV2"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
@@ -242,7 +182,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
     loadAllSelectItems( [
       ...tmpColumn,
       ...additionalMenus
-    ])
+    ], date)
 
 
     let selectKey = ""
@@ -296,7 +236,6 @@ const MesFinishList = ({page, search, option}: IProps) => {
       }
     })
 
-    Notiflix.Loading.remove()
     setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
@@ -308,13 +247,8 @@ const MesFinishList = ({page, search, option}: IProps) => {
         isCalendar
         searchOptionList={optionList}
         optionIndex={optionIndex}
-        onChangeSearchKeyword={setKeyword}
-        onSearch={() => {
-          setSelectList(new Set)
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          })
-        }}
+        searchKeyword={keyword}
+        onSearch={reload}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
         }}
@@ -322,11 +256,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={(date) => {
-          setSelectList(new Set)
-          setSelectDate(date as { from:string, to:string })
-          setPageInfo({page:1, total:1})
-        }}
+        setSelectDate={onSelectDate}
         title={"작업 완료 리스트"}
       />
       <ExcelTable
@@ -338,7 +268,6 @@ const MesFinishList = ({page, search, option}: IProps) => {
           ...column
         ]}
         row={basicRow}
-        // setRow={setBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
           let tmpRes = e.map(v => {
@@ -347,15 +276,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
                             v.isChange = false
                         }
             if(v.update || v.finish){
-              if(keyword){
-                SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-                  Notiflix.Loading.remove()
-                })
-              }else{
-                LoadBasic(pageInfo.page).then(() => {
-                  Notiflix.Loading.remove()
-                })
-              }
+              reload()
               return {
                 ...v,
                 update: undefined,

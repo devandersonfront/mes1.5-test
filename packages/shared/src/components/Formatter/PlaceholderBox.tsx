@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import {IExcelHeaderType} from "../../common/@types/type";
+import {IExcelHeaderType} from "../../@types/type";
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
 interface IProps {

@@ -9,7 +9,7 @@ import IcX from "../../../../public/images/ic_x.png";
 import {ExcelTable} from "../../Excel/ExcelTable";
 import {searchModalList} from "../../../common/modalInit";
 import {POINT_COLOR} from "../../../common/configset";
-import {IExcelHeaderType} from "../../../common/@types/type";
+import {IExcelHeaderType} from "../../../@types/type";
 
 
 interface IProps {

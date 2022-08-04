@@ -413,7 +413,7 @@ const ApiList = {
   rawinSearch: `/api/v1/rawmaterial/warehouse/search`,
   rawstockSearch: `/api/v1/rawmaterial/warehouse/search`,
   stockSearch: '/api/v1/stock/search',
-  operationSearch: `/api/v1/sheet/search`,
+  sheetSearch: `/api/v1/sheet/search`,
   recordSearch: `/api/v1/record/search`,
   cncRecordSearch: `/cnc/api/v1/record/search`,
   cncRecordAll: `/cnc/api/v1/record/all`,

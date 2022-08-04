@@ -1,5 +1,5 @@
 import React, {useRef} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 //@ts-ignore
 import Icon_X from '../../../public/images/file_delete_button.png'
 import Notiflix from "notiflix";

@@ -1,4 +1,4 @@
-import {IMenuType} from '../common/@types/type'
+import {IMenuType} from '../@types/type'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export type MenuState = {

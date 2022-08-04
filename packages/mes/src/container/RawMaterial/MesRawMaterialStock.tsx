@@ -19,9 +19,10 @@ import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from 'react-redux'
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util';
+import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
 import {BarcodeDataType} from "shared/src/common/barcodeType";
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
+import { TableSortingOptionType } from 'shared/src/@types/type'
 
 interface IProps {
   children?: any
@@ -39,9 +40,7 @@ const optionList = ['원자재 CODE', '원자재 품명', '재질', '원자재 L
 
 const MesRawMaterialStock = ({page, search, option}: IProps) => {
   const router = useRouter()
-
   const dispatch = useDispatch()
-
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawstockV1u"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -57,7 +56,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     to: moment().format('YYYY-MM-DD')
   });
   const [nzState, setNzState] = useState<boolean>(false);
-  const [order, setOrder] = useState<number>(0);
+  const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
   const [expState, setExpState] = useState<boolean>(false);
   const [barcodeData , setBarcodeData] = useState<BarcodeDataType[]>([])
   const [modal , setModal] = useState<ModalType>({
@@ -65,37 +64,33 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     isVisible : false
   })
 
-  const changeNzState = (value:boolean) => {
-    setSelectList(new Set)
-    setNzState(value);
+  const onSelectDate = (date: {from:string, to:string}) => {
+    setSelectDate(date)
+    reload(undefined, date)
   }
 
-  const changeExpState = (value:boolean) => {
-    setSelectList(new Set)
-    setExpState(value);
+  const onCompRadioChange = (hideComplete:boolean) => {
+    setNzState(hideComplete)
+    reload(undefined, undefined, undefined, hideComplete)
   }
 
-  const changeOrder = (value:number) => {
-    setSelectList(new Set)
-    setOrder(value);
-    setPageInfo({page:1,total:1})
+  const onExpRadioChange = (onlyExpired:boolean) => {
+    setExpState(onlyExpired)
+    reload(undefined, undefined, undefined, undefined, onlyExpired)
   }
 
-  const loadPage = (page:number) => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, page).then(() => {
-        Notiflix.Loading.remove();
-      });
+  const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType, _nzState?: boolean, _expState?: boolean) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
     } else {
-      LoadBasic(page).then(() => {
-        Notiflix.Loading.remove();
-      });
+      getData(undefined, keyword, date, sortingOptions, _nzState, _expState)
     }
   }
 
   useEffect(() => {
-    loadPage(pageInfo.page)
-  }, [pageInfo.page, selectDate, nzState, expState, order])
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"원자재 관리",sub:router.pathname}))
@@ -104,140 +99,67 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     })
   },[])
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if(v.selectList && v.selectList.length === 0){
-        let tmpKey = v.key
-
-        let res: any
-        res = await RequestMethod('get', `${tmpKey}List`,{
-          path: {
-            page: 1,
-            renderItem: MAX_VALUE,
-          }
-        })
-
-
-        let pk = "";
-
-        res.results.info_list && res.results.info_list.length && Object.keys(res.results.info_list[0]).map((v) => {
-          if(v.indexOf('_id') !== -1){
-            pk = v
-          }
-        })
-        return {
-          ...v,
-          selectList: [...res.results.info_list.map((value: any) => {
-            return {
-              ...value,
-              name: tmpKey === 'model' ? value.model : value.name,
-              pk: value[pk]
-            }
-          })]
-        }
-
-      }else{
-        if(v.selectList){
-          return {
-            ...v,
-            pk: v.unit_id,
-            result: changeOrder
-          }
-        }else{
-          return v
-        }
+  const loadAllSelectItems = (column: IExcelHeaderType[], date?: {from:string, to:string}, _nzState?:boolean, _expState?:boolean ) => {
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(undefined, date, _sortingOptions, _nzState, _expState)
+    }
+    let tmpColumn = column.map((v: any) => {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+      return {
+        ...v,
+        pk: v.unit_id,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+        sorts: v.sorts ? sortingOptions : null,
+        result: v.sortOption ? changeOrder : null,
       }
-    })
+    });
 
-    Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
-    })
+    setColumn(tmpColumn);
   }
 
+  const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType, _nzState?: boolean, _expState?:boolean) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    params['from'] = date ? date.from: selectDate.from
+    params['to'] = date ? date.to : selectDate.to
+    params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+    params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    params['exp'] = _expState !== undefined && _expState !== null ? _expState : expState
+    params['nz'] = _nzState !== undefined && _nzState !== null ? _nzState : nzState
+    params['completed'] = params['nz']
+    return params
+  }
 
-  const LoadBasic = async (page?: number) => {
-    Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `rawInList`,{
+  const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType, _nzState?:boolean, _expState?:boolean) => {
+    Notiflix.Loading.circle();
+    const res = await RequestMethod("get", keyword ? 'lotRmSearch' : 'lotRmList', {
       path: {
-        page: (page || page !== 0) ? page : 1,
+        page: page,
         renderItem: 18,
       },
-      params:
-          order == 0 ?
-          {
-            exp: expState,
-            nz:nzState,
-            completed: nzState,
-            from:selectDate.from,
-            to:selectDate.to
-          }
-          :
-          {
-            sorts: 'date',
-            order: order == 1 ? 'ASC' : 'DESC',
-            exp: expState,
-            nz:nzState,
-            completed: nzState,
-            from:selectDate.from,
-            to:selectDate.to
-          }
-    })
-
+      params: getRequestParams(keyword, date, _sortingOptions,_nzState, _expState)
+    });
     if(res){
-      // setFirst(false);
-      setPageInfo({
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res, date, _nzState, _expState);
+      }
     }
+    Notiflix.Loading.remove()
+  };
 
-  }
-
-  const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
-    Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `rawInListSearch`,{
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params:
-          order == 0 ?
-              {
-                exp: expState,
-                nz:nzState,
-                completed:nzState,
-                from:selectDate.from,
-                to:selectDate.to,
-                keyword: keyword ?? '',
-                opt: option ?? 0,
-              }
-              :
-              {
-                sorts: 'date',
-                order: order == 1 ? 'ASC' : 'DESC',
-                exp: expState,
-                nz:nzState,
-                completed:nzState,
-                from:selectDate.from,
-                to:selectDate.to,
-                keyword: keyword ?? '',
-                opt: option ?? 0,
-              }
-    })
-
-    if(res){
-      setPageInfo({
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
-    }
-  }
-
-  const cleanUpData = (res: any) => {
+  const cleanUpData = (res: any, date?: {from:string, to:string}, _nzState?:boolean, _expState?:boolean) => {
     let tmpColumn = columnlist["rawstockV1u"];
-    // let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
       let menuData: object | undefined;
       res.menus && res.menus.map((menu: any) => {
@@ -287,7 +209,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     loadAllSelectItems( [
       ...tmpColumn,
       ...additionalMenus
-    ] )
+    ], date, _nzState, _expState )
 
 
     let selectKey = ""
@@ -361,9 +283,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       })
 
     if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인', () => {
-        setPageInfo({page:1, total:1})
-      });
+      Notiflix.Report.success('저장되었습니다.','','확인', () => reload())
     }
   }
 
@@ -404,10 +324,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       }).filter((v) => v))
 
     if(res) {
-      Notiflix.Report.success('삭제되었습니다.','','확인', () => {
-        loadPage(1)
-        setSelectList(new Set)
-      });
+      Notiflix.Report.success('삭제되었습니다.','','확인', () => reload());
     }
 
   }
@@ -516,23 +433,11 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         isExp
         nz={nzState}
         exp={expState}
-        onChangeNz={(e) => {
-          setSelectList(new Set)
-          changeNzState(e)
-        }}
-        onChangeExp={(e) => {
-          setSelectList(new Set)
-          changeExpState(e)
-        }}
+        onChangeNz={onCompRadioChange}
+        onChangeExp={onExpRadioChange}
         isSearch
-        onChangeSearchKeyword={setKeyword}
-        onSearch={() => {
-          setSelectList(new Set)
-          SearchBasic(keyword, optionIndex, 1).then(() => {
-            Notiflix.Loading.remove();
-          })
-          setKeyword(keyword);
-        }}
+        searchKeyword={keyword}
+        onSearch={reload}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option)
@@ -543,11 +448,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         calendarType={'period'}
         selectDate={selectDate}
         //@ts-ignore
-        setSelectDate={(date) => {
-          setSelectList(new Set)
-          setSelectDate(date as {from:string, to:string})
-          setPageInfo({page:1, total:1})
-        }}
+        setSelectDate={onSelectDate}
         title={"원자재 재고 현황"}
         buttons={
           selectList.size > 1

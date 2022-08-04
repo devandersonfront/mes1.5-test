@@ -1,7 +1,7 @@
 import React from 'react';
 import {useRouter} from "next/router";
 import {CellButton, UploadButton} from "../../styles/styledComponents";
-import {IExcelHeaderType} from "../../common/@types/type";
+import {IExcelHeaderType} from "../../@types/type";
 import Notiflix from 'notiflix';
 
 

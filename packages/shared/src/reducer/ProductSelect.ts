@@ -1,4 +1,4 @@
-import {ProductListType} from "../common/@types/type";
+import {ProductListType} from "../@types/type";
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const initialState: ProductListType = {

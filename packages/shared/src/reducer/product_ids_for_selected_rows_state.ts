@@ -1,4 +1,4 @@
-// import {IMenuType} from '../common/@types/type'
+// import {IMenuType} from '../@types/type'
 
 export const initalState = {
   product_ids_for_selected_rows: [],

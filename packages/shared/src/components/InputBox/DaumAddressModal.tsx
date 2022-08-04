@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import DaumPostcode from "react-daum-postcode";
 import Modal from "react-modal";
-import {IExcelHeaderType} from "../../common/@types/type";
+import {IExcelHeaderType} from "../../@types/type";
 //@ts-ignore
 import IcSearchButton from "../../../public/images/ic_search.png";
 //@ts-ignore

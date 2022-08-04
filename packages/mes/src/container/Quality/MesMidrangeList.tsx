@@ -43,8 +43,12 @@ const MesMidrangeList = ({ option }: IProps) => {
         total: 1
     })
 
+    const onSelectDate = (date: {from:string, to:string}) => {
+        setSelectDate(date)
+        reload(null, date)
+    }
+
     const reload = (keyword?:string, date?:{from:string, to:string}, ) => {
-        date && setSelectDate(date)
         setKeyword(keyword)
         if(pageInfo.page > 1) {
             setPageInfo({...pageInfo, page: 1})
@@ -64,11 +68,10 @@ const MesMidrangeList = ({ option }: IProps) => {
         })
     }, [])
 
-    const onSelectData = (date: {from:string, to:string}) => {
-        reload(null, date)
-    }
-
-    const convertToRowData = (infoList: any[]) => {
+    const convertToRowData = (infoList: any[], date?:{from:string, to:string}) => {
+        const _reload = () => {
+            reload(null, date)
+        }
         return infoList.map((info) => {
             const randomId = Math.random() * 1000;
             return {
@@ -89,7 +92,7 @@ const MesMidrangeList = ({ option }: IProps) => {
                 machines: info.machines,
                 user: info.worker,
                 inspection_category: info.inspection_category,
-                reload
+                reload: _reload
             }
         })
     }
@@ -123,7 +126,7 @@ const MesMidrangeList = ({ option }: IProps) => {
                     page: res.page,
                     total: res.totalPages
                 })
-                setBasicRow(convertToRowData(res.info_list))
+                setBasicRow(convertToRowData(res.info_list, date))
             }
         }
         Notiflix.Loading.remove()
@@ -144,7 +147,7 @@ const MesMidrangeList = ({ option }: IProps) => {
                 calendarType={'period'}
                 selectDate={selectDate}
                 //@ts-ignore
-                setSelectDate={onSelectData}
+                setSelectDate={onSelectDate}
                 title={"초ㆍ중ㆍ종 검사 리스트"}
             />
             <ExcelTable

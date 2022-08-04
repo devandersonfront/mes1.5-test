@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import Notiflix from 'notiflix'
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../reducer";
@@ -71,7 +71,6 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
       onKeyDown={(e) => e.key === 'Backspace' && setFocus(true)}
       onChange={(event) => {
         let eventValue = event.target.value
-        console.log('change',eventValue)
         if(korean.test(eventValue) && !focus) return
         if(isNumberInput){
           if(checkIfNegative(event.target.value)){

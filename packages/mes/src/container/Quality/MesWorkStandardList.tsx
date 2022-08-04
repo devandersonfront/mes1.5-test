@@ -42,16 +42,17 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
     total: 1,
   });
 
-  useEffect(() => {
-    if (keyword) {
-      SearchBasic(keyword, optionIndex, pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
+  const reload = (keyword?:string ) => {
+    setKeyword(keyword)
+    if(pageInfo.page > 1) {
+      setPageInfo({...pageInfo, page: 1})
     } else {
-      LoadBasic(pageInfo.page).then(() => {
-        Notiflix.Loading.remove();
-      });
+      getData(undefined, keyword)
     }
+  }
+
+  useEffect(() => {
+    getData(pageInfo.page, keyword)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -63,53 +64,38 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
     };
   }, []);
 
-  const LoadBasic = async (page?: number) => {
-    Notiflix.Loading.circle();
-    const res = await RequestMethod("get", `productList`, {
+  const getRequestParams = (keyword?: string, date?: {from:string, to:string}) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    return params
+  }
+
+  const getData = async (page: number = 1, keyword?: string ) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', keyword ? 'productSearch': 'productList', {
       path: {
-        page: page || page !== 0 ? page : 1,
+        page: page,
         renderItem: 18,
       },
-    });
+      params: getRequestParams(keyword)
+    })
 
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
+    if(res){
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res);
+      }
     }
-  };
-
-  const SearchBasic = async (
-    keyword: any,
-    option: number,
-    isPaging?: number
-  ) => {
-    Notiflix.Loading.circle();
-    if (!isPaging) {
-      setOptionIndex(option);
-    }
-    const res = await RequestMethod("get", `productSearch`, {
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? "",
-        opt: option ?? 0,
-      },
-    });
-    if (res) {
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      });
-      cleanUpData(res);
-    }
-  };
+    Notiflix.Loading.remove()
+  }
 
   const cleanUpData = (res: any) => {
     let tmpRow = [];
@@ -131,10 +117,8 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
         <div>
             <PageHeader
                 isSearch
-                onChangeSearchKeyword={setKeyword}
-                onSearch={() => SearchBasic(keyword, optionIndex, 1).then(() => {
-                  Notiflix.Loading.remove();
-                })}
+                searchKeyword={keyword}
+                onSearch={reload}
                 searchOptionList={optionList}
                 onChangeSearchOption={(option) => {
                     setOptionIndex(option)

@@ -10,7 +10,7 @@ import {AxiosResponse} from 'axios'
 import styled from 'styled-components'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import {IExcelHeaderType} from "shared/src/common/@types/type";
+import {IExcelHeaderType} from "shared/src/@types/type";
 import TreeViewTable from 'shared/src/components/TreeView/TreeViewTable';
 
 export interface IProps {

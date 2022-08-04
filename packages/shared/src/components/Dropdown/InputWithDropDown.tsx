@@ -1,4 +1,4 @@
-import { IExcelHeaderType } from '../../common/@types/type'
+import { IExcelHeaderType } from '../../@types/type'
 import styled from 'styled-components'
 //@ts-ignore
 import DROPDOWN_IMG from '../../../../mes/public/images/ic_monitoring_open.png'

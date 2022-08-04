@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { IExcelHeaderType } from '../../common/@types/type'
+import { IExcelHeaderType } from '../../@types/type'
 
 interface IProps {
   row: any

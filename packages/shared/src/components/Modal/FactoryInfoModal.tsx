@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'
@@ -23,17 +23,11 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
 const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('공장')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>(-1)
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [searchList, setSearchList] = useState<any[]>([])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -41,20 +35,18 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      setSelectRow(-1)
       if(!row.factory_id){
-        Notiflix.Report.warning("경고","공장을 먼저 등록해주시기 바랍니다.","확인", () => setIsOpen(false));
+        Notiflix.Report.warning("경고","공장을 먼저 등록해주시기 바랍니다.","확인", () => () => onCloseEvent());
+      }else {
+        getData()
       }
-      SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-        Notiflix.Loading.remove()
-      })
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen])
 
 
   const changeRow = (row: any, i : number) => {
     let random_id = Math.random()*1000;
-    let tmpData = {
+    return{
       ...row,
       machine_id: row.name,
       machine_idPK: row.machine_id,
@@ -65,23 +57,14 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
       id: `subFactory_${random_id}`,
       seq : i + 1
     }
-
-    return tmpData
   }
 
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
+  const getData = async (page: number = 1) => {
     Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-
-    if(!row.factory_id && !row.factory?.factory_id){
-      return
-    }
 
     const res = await RequestMethod('get', `subFactoryList`,{
       path: {
-        factory_id: column.type === "subFactory" ? row.factory.factory_id : row.factory_id,
-        // factory_id: row.factory_id,
+        factory_id: row.factory_id,
         page: page,
         renderItem: 18,
       },
@@ -90,25 +73,27 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-      let searchList = res.info_list.map((row: any, index: number) => {
-        return changeRow(row, index)
-      })
+    if (res.totalPages > 0 && res.totalPages < res.page) {
+      getData(1);
+    } else {
+      const searchList = res.info_list.map((row: any, index: number) => changeRow(row, index))
       setPageInfo({
-        ...pageInfo,
         page: res.page,
-        total: res.totalPages,
+        total: res.totalPages
       })
-      setSearchList([...searchList])
+      setSearchList(searchList)
+    }
+    Notiflix.Loading.remove()
   }
+
   const saveSubFactory = async () => {
     Notiflix.Loading.circle();
-
     const filterList = searchList.map((list)=>{
       if(!list.name){
         Notiflix.Report.warning("경고","세분화명을 입력해주세요.","확인")
         return
       }else{
-        return {...list , factory_id : row.factory_id, manager: list.user?.id ? list.user : null}
+        return {...list , factory_id : row.factory_id, manager: list.manager?.user_id ? list.manager : list.user?.user_id ? list.user : null}
       }
     })
 
@@ -117,29 +102,27 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
           .then((res) => {
             onRowChange({...row, subFactories:filterList})
             Notiflix.Loading.remove(300);
-            Notiflix.Report.success("확인","저장되었습니다.","확인",() => setIsOpen(false))
+            Notiflix.Report.success("확인","저장되었습니다.","확인",() => onCloseEvent())
           })
           .catch((err) => {
             if(err.response?.status === 300){
               Notiflix.Loading.remove(300);
-              Notiflix.Report.failure("경고","예상치 못한 에러가 발생했습니다.","확인")
+              Notiflix.Report.failure("경고","예상치 못한 에러가 발생했습니다.","확인", () => onCloseEvent())
             }else if(err.response?.status === 209){
               Notiflix.Loading.remove(300);
-              Notiflix.Report.failure("경고", err.response.data.message,"확인")
+              Notiflix.Report.failure("경고", err.response.data.message,"확인",() => onCloseEvent())
             }
           })
     }else {
             Notiflix.Loading.remove(300);
-            Notiflix.Report.failure("경고","공장을 먼저 등록해주시기 바랍니다.","확인")
+            Notiflix.Report.failure("경고","공장을 먼저 등록해주시기 바랍니다.","확인",() => onCloseEvent())
     }
   }
 
   const deleteSubFactory = async () => {
-
     if(selectRow === -1){
       return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
     }
-
     if(searchList[selectRow]?.sf_id){
       Notiflix.Confirm.show(
         '행 삭제',
@@ -150,37 +133,21 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
 
           await RequestMethod("delete", "subFactoryDelete",[searchList[selectRow]])
           .then((res)=>{
-            Notiflix.Report.success("확인", "삭제되었습니다.", "확인" ,() =>{
-              SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-                Notiflix.Loading.remove()
-              });
-            })
+            Notiflix.Report.success("확인", "삭제되었습니다.", "확인" ,() =>getData(1))
           })
         },
       );
     } else {
       let tmpRow = [...searchList]
       tmpRow.splice(selectRow, 1)
-      setSearchList([...tmpRow.map((v, i) => {
+      setSearchList(tmpRow.map((v, i) => {
         return {
           ...v,
           seq: i+1
         }
-      })])
+      }))
       setSelectRow(-1)
     }
-
-
-
-    // await RequestMethod("delete", "subFactoryDelete",[searchList[selectRow]])
-    //     .then((res)=>{
-    //       Notiflix.Report.success("확인", "삭제되었습니다.", "확인" ,() =>{
-    //         SearchBasic(searchKeyword, optionIndex, 1).then(() => {
-    //           Notiflix.Loading.remove()
-    //         });
-    //       })
-    //     })
-
   }
   const ModalContents = () => (
         <div>
@@ -199,26 +166,11 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
     return !!row[key] ? row[key] : "-"
   }
 
-  const competeAuthority = (rows) => {
-
-    const tempRow = [...rows]
-    const spliceRow = [...rows]
-    spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.name === tempRow[selectRow].name && row.name !== undefined)
-
-    if(spliceRow){
-      if(isCheck){
-        return Notiflix.Report.warning(
-          '권한명 경고',
-          `중복되는 권한명이 존재합니다.`,
-          '확인'
-        );
-      }
-    }
-
-    setSearchList(rows)
-}
-
+  const onCloseEvent = () => {
+    setIsOpen(false)
+    setSelectRow(-1)
+    setSelectList(new Set())
+  }
 
   return (
     <SearchModalWrapper >
@@ -413,12 +365,9 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               headerAlign={'center'}
             />
           </div>
-          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+          <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
             <div
-              onClick={() => {
-                setIsOpen(false)
-                setSelectRow(-1)
-              }}
+              onClick={onCloseEvent}
               style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>취소</p>
@@ -426,7 +375,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 saveSubFactory();
-                setSelectList(new Set())
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >

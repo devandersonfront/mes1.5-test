@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import {IExcelHeaderType} from '../../@types/type'
 import {UnitValue, UnitWrapper} from '../../styles/styledComponents'
 import 'react-calendar/dist/Calendar.css'
 import moment from 'moment'
