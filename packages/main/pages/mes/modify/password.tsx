@@ -3,7 +3,7 @@ import WelcomeInput from "../../../component/InputBox/WelcomeInput";
 import DefaultButton from "../../../component/DefaultButton";
 import Notiflix from "notiflix";
 import WelcomeContainer from "../../../component/Welcome/WelcomeContainer";
-import {requestApi} from "../../../common/RequestFunctions";
+import {requestApi} from "shared/src/common/RequestFunctions";
 import {useRouter} from "next/router";
 
 const Password = () => {

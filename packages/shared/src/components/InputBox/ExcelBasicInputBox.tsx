@@ -20,7 +20,10 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   const isNumberInput = column.inputType === 'number'
   const [ focus, setFocus ] = useState(false)
   useEffect(() => {
-  }, [row])
+    return () => {
+      setFocus(false)
+    }
+  }, [])
   const checkIfNegative = (value: string) : boolean => {
     return value.startsWith("-")
   }
@@ -29,19 +32,33 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
     input?.focus()
   }
   const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+
+  const inputValidation = (key:string) => {
+    const escapes = ["\\", "<", ">", "*"]
+    escapes.forEach((escape) => {
+      if(key.includes(escape)){
+        setFocus(false)
+        return Notiflix.Report.warning("경고","해당 특수문자는 사용할 수 없습니다.","확인")
+      }
+    })
+  }
+
+
   return (
     <input
       style={{textAlign: 'center', color: column.textType ? 'black' : 'white', border:"none" }}
       className={'editCell'}
       ref={autoFocus}
-      onCompositionStart={() => {
-        setFocus(true)}}
-      onPaste={(e) => {
-        setFocus(true)
-      }}
-      value={isNumberInput? RemoveFirstZero(row[column.key]) : row[column.key]}
+      onPaste={() => setFocus(true)}
+      value={isNumberInput? RemoveFirstZero(row[column.key]) : row[column.key] ?? ""}
       disabled={isDisabled}
       type={isNumberInput ? "number" : "text"}
+      onKeyDown={e => {
+        inputValidation(e.key)
+      }}
+      onKeyUp={() => {
+        if(!focus) setFocus(true)
+      }}
       onFocus={() => {
         if(column.searchType === 'record' && row.osd_id){
           onClose(true)
@@ -68,10 +85,10 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           }
         }
       }}
-      onKeyDown={(e) => e.key === 'Backspace' && setFocus(true)}
       onChange={(event) => {
         let eventValue = event.target.value
-        if(korean.test(eventValue) && !focus) return
+        inputValidation(eventValue)
+        if(!focus) return
         if(isNumberInput){
           if(checkIfNegative(event.target.value)){
             Notiflix.Report.warning('경고', '음수일 수 없습니다.', '확인')
@@ -96,6 +113,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
         }
       }}
       onBlur={() => {
+        setFocus(false)
         onClose && onClose(true)}}
     />
   );

@@ -1,7 +1,7 @@
 import {Item} from '../../styles/styledComponents'
 import React from 'react'
 import {IItemMenuType} from '../../common/@types/type'
-import {POINT_COLOR} from '../../common/configset'
+import {POINT_COLOR} from 'shared/src/common/configset'
 import Notiflix from 'notiflix'
 
 interface IProps {

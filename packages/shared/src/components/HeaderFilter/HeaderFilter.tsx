@@ -17,7 +17,6 @@ const HeaderFilter = ({row, column, setRow, onChangeOption}: IProps) => {
       }else if(e.target.value === column.options[0].name){
         column.result(null);
       }else{
-          console.log("column : ", column)
         column.result(e.target.value, column.key);
       }
     }}>

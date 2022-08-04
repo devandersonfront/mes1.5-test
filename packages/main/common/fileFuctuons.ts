@@ -1,5 +1,5 @@
-import {SF_ENDPOINT} from './configset'
-import {requestApi} from './RequestFunctions'
+import {SF_ENDPOINT} from 'shared/src/common/configset'
+import {requestApi} from 'shared/src/common/RequestFunctions'
 
 
 /**

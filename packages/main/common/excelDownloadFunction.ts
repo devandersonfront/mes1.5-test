@@ -1,4 +1,4 @@
-import {RequestMethod} from './RequestFunctions'
+import {RequestMethod} from 'shared/src/common/RequestFunctions'
 
 interface ExcelCellTextType {
   fontSize?: number

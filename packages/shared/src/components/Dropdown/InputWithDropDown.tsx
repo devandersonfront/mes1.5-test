@@ -45,7 +45,6 @@ const InputWithDropDown = ({row, column, onRowChange} : ExcelType) => {
     }
 
     const handleDayChange = (e) => {
-        console.log(typeOfUnit(e.target.value))
         onRowChange({...row, period_unit : typeOfUnit(e.target.value) , isChange: true})
     }
 

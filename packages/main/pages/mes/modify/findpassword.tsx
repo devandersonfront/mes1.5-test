@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
 import Notiflix from 'notiflix'
-import {requestApi} from "../../../common/RequestFunctions";
+import {requestApi} from "shared/src/common/RequestFunctions";
 import WelcomeContainer from "../../../component/Welcome/WelcomeContainer";
 import WelcomeInput from "../../../component/InputBox/WelcomeInput";
 import DefaultButton from "../../../component/DefaultButton";
-import {SF_ADDRESS, SF_PORT} from "../../../common/configset";
+import {SF_ADDRESS, SF_PORT} from "shared/src/common/configset";
 
 
 const LoginPage = () => {
