@@ -31,16 +31,15 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   const autoFocus = (input: HTMLInputElement | null) => {
     input?.focus()
   }
-  const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+  const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|\\|<|>*]/;
 
-  const inputValidation = (key:string) => {
+  const validInput = (input: string) => {
     const escapes = ["\\", "<", ">", "*"]
-    escapes.forEach((escape) => {
-      if(key.includes(escape)){
-        setFocus(false)
-        return Notiflix.Report.warning("경고","해당 특수문자는 사용할 수 없습니다.","확인")
-      }
-    })
+    if(escapes.includes(input)){
+        Notiflix.Report.warning("경고","해당 특수문자는 사용할 수 없습니다.","확인")
+        return false
+    }
+    return true
   }
 
 
@@ -53,12 +52,14 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
       value={isNumberInput? RemoveFirstZero(row[column.key]) : row[column.key] ?? ""}
       disabled={isDisabled}
       type={isNumberInput ? "number" : "text"}
-      onKeyDown={e => {
-        inputValidation(e.key)
+      onKeyDown={(e) => {
+        if(validInput(e.key)){
+          setFocus(true)
+        } else {
+          e.preventDefault()
+        }
       }}
-      onKeyUp={() => {
-        if(!focus) setFocus(true)
-      }}
+      onCompositionStart={() => setFocus(true)}
       onFocus={() => {
         if(column.searchType === 'record' && row.osd_id){
           onClose(true)
@@ -87,8 +88,10 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
       }}
       onChange={(event) => {
         let eventValue = event.target.value
-        inputValidation(eventValue)
-        if(!focus) return
+        const lastChar = eventValue.slice(-1)
+        const deleteEvent = eventValue.length < row[column.key]?.length
+        if(!validInput(lastChar) || (!deleteEvent && korean.test(lastChar) && !focus)) return
+
         if(isNumberInput){
           if(checkIfNegative(event.target.value)){
             Notiflix.Report.warning('경고', '음수일 수 없습니다.', '확인')

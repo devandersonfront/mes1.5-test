@@ -958,7 +958,7 @@ export const columnlist: any = {
     {key: 'bom', name: 'BOM', formatter: BomInfoModal, width: 118, type: 'readonly'},
     {key: 'lot_number', name: 'LOT별 재고', formatter: LotInfoModal, width: 118, type: 'readonly'},
     {key:"stock", name:"재고량", width: 118},
-    {key:"basic_stock", name:"기존재고", width: 118, editor:TextEditor},
+    {key:"basic_stock", name:"기존재고", width: 118, editor:TextEditor, inputType:'number'},
     {key:"sum_stock", name:"합계", width: 118,}
   ],
 
