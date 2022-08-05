@@ -97,14 +97,16 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
     const getCriteria = (type: inspectionType) => {
         return (
           <div style={{display:'flex'}}>
-              <BottomLeftBorder style={{backgroundColor: 'white', flex: 1.5}}>
-                  <MidrangeDatetimePickerBox readOnly={readOnly} value={modalData.inspection_time[type]} onDateChange={(date)=>
-                  {
-                      const newData = {...modalData}
-                      newData.inspection_time[type] = date.format("YYYY-MM-DD[T]HH:mm:ss")
-                      setModalData(newData)
-                  }}/>
-              </BottomLeftBorder>
+              <div style={{flex: 1.5}}>
+                  <BottomLeftBorder style={{backgroundColor: 'white', height: '100%'}}>
+                      <MidrangeDatetimePickerBox readOnly={readOnly} value={modalData.inspection_time[type]} onDateChange={(date)=>
+                      {
+                          const newData = {...modalData}
+                          newData.inspection_time[type] = date.format("YYYY-MM-DD[T]HH:mm:ss")
+                          setModalData(newData)
+                      }}/>
+                  </BottomLeftBorder>
+              </div>
                 <div style={{flex: 1.3, flexDirection:'column'}}>
                     {modalData.inspection_info?.[type].map((v,i) => (
                       <>
@@ -256,7 +258,9 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
             {
                 inspectionPhases.map(phase => (
                   <div style={{ display: 'flex', width: '100%', minHeight: '80px' }}>
-                      <BottomLeftBorder style={{ fontWeight: 'bold', flex: 1 }}> {phase.value} </BottomLeftBorder>
+                      <div style={{flex: 1}}>
+                        <BottomLeftBorder style={{ fontWeight: 'bold', height:'100%'}}> {phase.value} </BottomLeftBorder>
+                      </div>
                       <div style={{ display: 'flex', flex: 3.5 }}>
                           <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                               {getCriteria(phase.key)}
