@@ -19,6 +19,5 @@ lerna-debug.log
 # Logs
 yarn-error.log*
 
-.env
-.env.local
+packages/main/.env.local
 
