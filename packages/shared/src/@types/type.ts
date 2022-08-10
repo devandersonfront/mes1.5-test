@@ -55,6 +55,8 @@ export interface IExcelHeaderType {
   noSelect?:boolean
   inputType?: string
   overlay?:boolean
+  orderRegisterManage?:() => any[]
+
 }
 
 export interface IResponseType {

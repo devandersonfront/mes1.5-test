@@ -100,7 +100,7 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       //@ts-ignore
       rowClass={(row) => {row?.border ? 'selectRow' : undefined}}
       headerRowHeight={customHeaderRowHeight ?? 40}
-      rowKeyGetter={selectable ? rowKeyGetter : null}
+      rowKeyGetter={rowKeyGetter}
       className={'cell'}
       columns={headerList}
       rows={row.length > 0 ? row : []}

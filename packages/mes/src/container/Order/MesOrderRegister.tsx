@@ -26,6 +26,7 @@ interface IProps {
 }
 
 
+
 const MesOrderRegister = ({ page, keyword, option }: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
@@ -358,7 +359,7 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
   // 선택한 행의 정보로 수주 정보 등록 테이블을 초기화
   const mysetrow = async (e: any) => {
     setCodeCheck(false)
-    // console.log("e[0] <=> 넘어온 정보 , ", e[0]);
+    console.log("e[0] <=> 넘어온 정보 , ", e[0]);
     let registered_prodouct_ids_arr = basicRow.map(row => row.code)
     // dispatch(initialize_product_ids_for_basicrow([...registered_prodouct_ids_arr]))
     // console.log("기존 행 ids (필터링 전) : ", registered_prodouct_ids_arr);
@@ -523,6 +524,8 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
             })
 
             setSelectList(tmp);
+
+
             mysetrow(e)
 
           } else if (e) {
@@ -574,8 +577,21 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
                   },
                 ])
               } else {
-                console.log("2222");
-                setBasicRow(e)
+                console.log("12341234 1111, " , e);
+
+                const new_rows = e.map((row) => {
+                  if (row.isChange && !product_ids_for_removed_rows.includes(row.code)) {
+                    tmp.add(row.id)
+                  }
+                  return {
+                    ...row,
+                    isChange: false
+                  }
+                })
+
+                setSelectList(tmp)
+
+                setBasicRow(new_rows)
               }
 
 

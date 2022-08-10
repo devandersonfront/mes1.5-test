@@ -986,6 +986,18 @@ export const columnlist: any = {
     { key: "amount", name: "수주량", width: 118, editor: TextEditor, formatter: PlaceholderBox, placeholder: '0' },
   ],
 
+  orderRegisterManage2: ({ basicRow , setBasicRow}) => [
+    { key: "date", name: "수주 날짜", formatter: CalendarBox, width: 118, type: "date" },
+    { key: "deadline", name: "납품 기한", formatter: CalendarBox, width: 118, type: "deadline" },
+    { key: "customer_id", name: "거래처", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
+    { key: "cm_id", name: "모델", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
+    { key: "product_id", name: "CODE", width: 118, formatter: PlaceholderBox, type: 'product', noSelect: true, basicRow: basicRow , setBasicRow: setBasicRow},
+    { key: "name", name: "품명", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
+    { key: "type", name: "품목 종류", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
+    { key: "unit", name: "단위", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
+    { key: "amount", name: "수주량", width: 118, editor: TextEditor, formatter: PlaceholderBox, placeholder: '0' },
+  ],
+
   orderList: [
     {key:"identification", name:"수주 번호", width: 118},
     {key:"date", name:"수주 날짜", width: 118, headerRenderer: HeaderSort, sortOption: "none",sorts: {} },
