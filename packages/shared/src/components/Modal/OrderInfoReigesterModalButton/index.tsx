@@ -607,7 +607,6 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
     setTotalSearchList(new_search_list)
     // setTotalSearchList(new_search_list)
     // setTotalSearchList((prev) => [...prev, row])
-
   }
 
   const allSelectCancel = () => {
@@ -656,15 +655,6 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
     setTotalSearchList([])
 
   }
-
-  // const modifyTotalSearchList = () => {
-  //   const new_totalSearchList = totalSearchList.filter((row) => {
-  //     if (selector.product_ids_for_current_basic_row.includes(row.code)) {
-  //       return row
-  //     }
-  //   })
-  // setTotalSearchList([])
-  // }
 
   return (
     <SearchModalWrapper>

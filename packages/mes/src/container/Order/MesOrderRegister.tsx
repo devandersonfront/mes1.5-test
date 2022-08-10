@@ -6,8 +6,7 @@ import Notiflix from "notiflix";
 import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
 import moment from 'moment'
-// import { deleteSelectMenuState, setSelectMenuStateChange } from "shared/src/reducer/menuSelectState";
-import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
+import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
 
 
 import { useDispatch, useSelector } from "react-redux";
@@ -37,22 +36,12 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
     deadline: moment().format('YYYY-MM-DD'),
     isFirst: true
   }])
-  const [basicRow2, setBasicRow2] = useState<Array<any>>([{
-    // date: moment().format('YYYY-MM-DD'),
-    // deadline: moment().format('YYYY-MM-DD')
-  }])
-  22
-  const [excelOpen, setExcelOpen] = useState<boolean>(false)
-  const [codeCheck, setCodeCheck] = useState<boolean>(true)
 
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["orderRegister"])
-
   const selector = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state)
   const product_ids_for_selected_rows = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state.product_ids_for_selected_rows)
   const product_ids_for_removed_rows = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state.product_ids_for_removed_rows)
-
-  console.log(basicRow, 'basicRow')
-
+  // console.log(basicRow, 'basicRow')
 
   useEffect(() => {
     console.log(`The current value of imageUri is: ${basicRow}`);
@@ -61,11 +50,9 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
     )
   }, []);
 
-  useEffect(() => {
-    // console.log("12", selectList.size);
-    console.log("basicRow.length : ", basicRow.length);
-
-  }, [])
+  // useEffect(() => {
+  // console.log("basicRow.length : ", basicRow.length);
+  // }, [])
 
   useEffect(() => {
     getMenus()
@@ -358,7 +345,6 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
   // step 4
   // 선택한 행의 정보로 수주 정보 등록 테이블을 초기화
   const mysetrow = async (e: any) => {
-    setCodeCheck(false)
     console.log("e[0] <=> 넘어온 정보 , ", e[0]);
     let registered_prodouct_ids_arr = basicRow.map(row => row.code)
     // dispatch(initialize_product_ids_for_basicrow([...registered_prodouct_ids_arr]))
@@ -373,20 +359,13 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
         return row
       }
     })
-    console.log("필터링된 행 정보 : ", filtered_array_for_register);
-    // console.log("e[0] : ", e[0]);
-
-    // filtered_array_for_register
+    // console.log("필터링된 행 정보 : ", filtered_array_for_register);
     // 디폴트행 제거
     filtered_array_for_register = filtered_array_for_register.filter((row, index) => {
       if (row.code) {
         return row
       }
     })
-
-    console.log("==========================");
-
-    // console.log("filtered_array_for_register : ", filtered_array_for_register);
     // console.log("filtered_array_for_register : ", filtered_array_for_register);
 
     // 기존행 ids 정보 초기화
@@ -401,12 +380,11 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
       }
 
       if (product_ids_for_removed_rows.includes(row.code)) {
-        console.log("row.id : ", row.id);
-
+        // console.log("row.id : ", row.id);
         tmp.delete(row.id)
       }
 
-      
+
       setSelectList(tmp)
 
       if (!registered_prodouct_ids_arr.includes(row.code)) {
@@ -414,33 +392,16 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
       }
     })
 
-    console.log("추가할 행 정보 : ", [...filtered_array_for_register, ...array_for_register_of_search_result]);
-
+    // console.log("추가할 행 정보 : ", [...filtered_array_for_register, ...array_for_register_of_search_result]);
     const current_row_ids = array_for_register_of_search_result.map((row) => {
       return row.code
     })
 
-    // dispatch(initialize_product_ids_for_basicrow([...current_row_ids]))
-
-
-    // [{
-    //   date: moment().format('YYYY-MM-DD'),
-    //   deadline: moment().format('YYYY-MM-DD')
-    // }],
 
     let new_array = [...filtered_array_for_register, ...array_for_register_of_search_result]
-
-    console.log("new_array : ", new_array);
-
-    // alert("실행 확인")
-    // new_array = new_array.filter((row, index) => {
-    //   if (row.code !== undefined) {
-    //     return row
-    //   }
-    // })
+    // console.log("new_array : ", new_array);
 
     // 기존 행에 없는것만 추가 
-
     new_array = new_array.map((row, index) => {
 
       if (index === 0) {
@@ -466,23 +427,12 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
       }])
       console.log("basicRow : ", basicRow);
       setSelectList(new Set())
-      // setBasicRow()
     }
     else {
       await setBasicRow(prev => [...new_array])
     }
 
   }
-
-  // console.log("basicRow : ", basicRow[0]);
-
-  // useEffect(() => {
-  //   if(basicRow.length === 0 ){
-  //     let tmp: Set<any> = selectList
-  //     setSelectList(new Set())
-  //   }
-  // },[basicRow])
-
 
   return (
     <div>
@@ -530,7 +480,7 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
 
           } else if (e) {
             console.log("hihhihi");
-            
+
             e.map((row) => {
               if (row.isChange && !product_ids_for_removed_rows.includes(row.code)) {
                 tmp.add(row.id)
@@ -538,7 +488,7 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
             })
             setSelectList(tmp);
 
-            if(e[0].length === 0 ){
+            if (e[0].length === 0) {
               setSelectList(new Set())
             }
 
@@ -546,7 +496,7 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
             const current_rows = basicRow.map((row) => row.code);
 
             setBasicRow(
-              basicRow.map((row)=> {
+              basicRow.map((row) => {
                 return {
                   ...row,
                   isChange: false
@@ -568,7 +518,7 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
               console.log("1 : ", e);
               if (e[0].length === 0) {
                 console.log("11111");
-                
+
                 setBasicRow([
                   {
                     name: "", id: "order" + random_id, date: moment().format('YYYY-MM-DD'),
@@ -577,7 +527,7 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
                   },
                 ])
               } else {
-                console.log("12341234 1111, " , e);
+                console.log("12341234 1111, ", e);
 
                 const new_rows = e.map((row) => {
                   if (row.isChange && !product_ids_for_removed_rows.includes(row.code)) {
@@ -597,48 +547,8 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
 
             }
 
-            // setBasicRow(e)
-            // if(basicRow.length === 0 ){
-            //   setBasicRow([
-            //     {
-            //       name: "", id: "order" + random_id, date: moment().format('YYYY-MM-DD'),
-            //       deadline: moment().format('YYYY-MM-DD')
-            //     },
-            //   ])
-            // }
-            // console.log("power");
           } else {
-
             console.log("e99999", e);
-            // const current_rows = basicRow.map((row)=> row.code);
-
-            // if(basicRow.includes(e[1].code)){
-            //   if(e[0]){
-            //   setBasicRow(e)
-
-            //   }
-
-
-            // } else {
-            //   setBasicRow(e)
-            // }
-
-
-            // if(e[0]=[]){
-            //   e[1] = []
-
-            // }
-
-            // if(e[0] == [] || e[1] == []){
-            //   setBasicRow([
-            //     {
-            //       name: "", id: "order" + random_id, date: moment().format('YYYY-MM-DD'),
-            //       deadline: moment().format('YYYY-MM-DD')
-            //     },
-            //   ])
-            // }
-
-            console.log("2222222", e);
             setBasicRow(e)
           }
         }}
@@ -649,38 +559,6 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
         width={1576}
         height={basicRow.length * 40 >= 40 * 18 + 56 ? 40 * 19 : basicRow.length * 40 + 56}
       />
-
-      {/* <div style={{color:"yellow"}}>hi</div> */}
-
-      {/* <ExcelTable
-        editable
-        resizable
-        height={basicRow[0] !== undefined && basicRow[0]?.code ? basicRow.length * 40 >= 40 * 18 + 56 ? 40 * 19 : basicRow.length * 40 + 56 : 0}
-        headerList={[
-          SelectColumn,
-          ...columnlist.orderRegisterManage({ basicRow: basicRow, setBasicRow: setBasicRow, codeCheck: false })
-        ]}
-        customHeaderRowHeight={0}
-        row={basicRow}
-
-        // step4
-        setRow={(e) => {
-          if (e[0].length) {
-            console.log("111111111");
-            mysetrow(e)
-
-          } else {
-            console.log("422222", e);
-            setBasicRow(e)
-            // mysetrow2(e[0])
-          }
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        width={1576}
-      /> */}
-
     </div>
   );
 }
