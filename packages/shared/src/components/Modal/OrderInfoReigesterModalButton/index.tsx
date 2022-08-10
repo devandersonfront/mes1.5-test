@@ -347,7 +347,7 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
         setIsOpen(true)
 
       }} modalType={column.modalType}>
-        <img style={column.modalType ? { width: 16.3, height: 16.3 } : { width: 440, height: 20 }} src={IcSearchButton} />
+        <img style={{width: "20px", height:"20px"}} src={IcSearchButton} />
 
       </SearchIcon>
 

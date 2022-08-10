@@ -501,7 +501,7 @@ const MesOrderRegister = ({ page, keyword, option }: IProps) => {
         resizable
         headerList={[
           SelectColumn,
-          ...columnlist.orderRegisterManage({ basicRow: basicRow, setbasicRow: setBasicRow, codeCheck: true })
+          ...columnlist.orderRegisterManage({ basicRow: basicRow, setbasicRow: setBasicRow })
         ]}
         row={basicRow}
         // step4
