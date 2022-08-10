@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { IExcelHeaderType } from '../../../@types/type'
+import { IExcelHeaderType } from '../../../common/@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import { POINT_COLOR } from '../../../common/configset'
@@ -25,7 +25,8 @@ import { NoSelectContainer } from "../../Formatter/NoSelectFomatter";
 import { SelectColumn } from 'react-data-grid'
 import { RootState } from "../../../reducer";
 import { useDispatch, useSelector } from "react-redux";
-import { add_product_ids_for_selected_rows, remove_product_ids_for_selected_rows, remove_all_product_ids_for_selected_rows } from "../../../reducer/product_ids_for_selected_rows_state";
+import { add_product_ids_for_selected_rows, remove_product_ids_for_selected_rows, add_product_ids_for_removed_rows, remove_product_ids_for_removed_rows, cancel_product_ids_for_modal, cancel_for_product_ids_for_modal, update_is_change, add_all_selected_product_ids_for_search_list } from "../../../reducer/product_ids_for_selected_rows_state";
+import moment from 'moment'
 
 // import { useDispatch, useSelector } from 'react-redux'
 
@@ -36,13 +37,25 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
+const search_result_array_for_register = []
+// let new_array_for_update = []
+
+
+
 const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => {
+  // console.log("column.basicRow : ", column.basicRow);
   const dispatch = useDispatch()
+  const [totalSearchList, setTotalSearchList] = useState<any[]>([])
+  const [searchList, setSearchList] = useState<any[]>([])
+
+  const [selectRow, setSelectRow] = useState<number>()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
-  const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([])
+
+  // console.log("basicSearchRows: ", basicSearchRows);
+  // console.log(totalSearchList, 'totalSearchList123');
+
   const [tab, setTab] = useState<number>(0)
   const [searchModalInit, setSearchModalInit] = useState<any>()
   const [searchModalColumn, setSearchModalColumn] = useState<Array<IExcelHeaderType>>()
@@ -54,20 +67,29 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [selectedRows, setSelectedRows] = useState([]);
 
-  const [basicRow, setBasicRow] = useState<Array<any>>([
-    // {
-    //   name: "",
-    //   id: "",
-    // },
-  ]);
+  const [new_array_for_update, set_new_array_for_update] = useState([])
+
+  // const [basicRow, setBasicRow] = useState<Array<any>>([
+  //   // {
+  //   //   name: "",
+  //   //   id: "",
+  //   // },
+  // ]);
+
+  // console.log("basicRow : ", basicRow);
 
   const selector = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state)
   const product_ids_for_selected_rows = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state.product_ids_for_selected_rows)
+  const product_ids_for_removed_rows = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state.product_ids_for_removed_rows)
+  // product_ids_for_current_basic_row
+  const product_ids_for_current_basic_row = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state.product_ids_for_current_basic_row)
+  const is_change_for_modal = useSelector((selector: RootState) => selector.product_ids_for_selected_rows_state.is_change_for_modal)
+
 
   useEffect(() => {
 
     if (column.type === "bom") {
-      setSearchList([{}])
+      // setSearchList([{}])
       switch (tab) {
         case 0: {
           setSearchModalInit(SearchInit.rawmaterial)
@@ -164,20 +186,17 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
       LoadBasic(pageInfo.page);
     } else {
       setPageInfo({ page: 1, total: 1 })
-      // setSearchList([{}])
     }
-  }, [isOpen, searchModalInit, pageInfo.page])
+  }, [isOpen, searchModalInit, pageInfo.page, is_change_for_modal])
 
+  // 1122 최초 페이지 로딩
   const LoadBasic = async (page: number) => {
     Notiflix.Loading.circle();
+
+    // console.log("column,type : ", column.type);
+
     const selectType = () => {
       switch (column.type) {
-        case "customerModel":
-          return {
-            keyword: keyword,
-            opt: optionIndex,
-            customer_id: row.product?.customerId ?? null
-          }
         case "searchToolModal":
           return {}
         default:
@@ -187,32 +206,24 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
           }
       }
     }
+
     const searchToolInProduct = (row: any) => {
       switch (column.type) {
-        case "searchToolModal":
-          return {
-            product_id: row.product_id
-          }
-        case "customerModel":
-          return {
-            page: page || page !== 0 ? page : 1,
-            renderItem: 4,
-            customer_id: row.customer?.customer_id ?? null
-          }
+
         default:
           return {
             page: page || page !== 0 ? page : 1,
-            renderItem: 4,
+            renderItem: 20,
           }
       }
     }
+
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`, {
       path: searchToolInProduct(row)
       ,
       params: selectType()
     })
 
-    // hyunsok
     let custom_info_list;
 
     if (res) {
@@ -224,51 +235,81 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
           id: `orderinfo_${random_id}`
         }
       })
-    }
 
-    // 2244
-    // 고쳐야할 부분 1111
-    if (res) {
-      // alert("hi")
+      if (res.page !== 1) {
 
-      if (searchModalInit.excelColumnType === "toolProduct") {
-        setSearchList([...SearchResultSort(!column.noSelect ? [null, ...res] : res, searchModalInit.excelColumnType)])
+        if (selector.product_ids_for_selected_rows.length == 0) {
+          // setTotalSearchList([...column.basicRow])
+        }
+
+        let tmp: Set<any> = selectList
+        let selected_product_ids = [];
+
+        const new_rows = custom_info_list.map((row, index) => {
+
+          if (selector.product_ids_for_selected_rows.includes(row.code) || selected_product_ids.includes(row.code)) {
+            tmp.add(row.id)
+            return {
+              ...row,
+              border: true
+            }
+          } else {
+            return {
+              ...row,
+              border: false
+            }
+          }
+        })
+
+        setSearchList(prev => [...prev, ...SearchResultSort(!column.noSelect ? [{ noneSelected: true }, ...new_rows] : new_rows, searchModalInit.excelColumnType)])
         setPageInfo({ page: res.page, total: res.totalPages });
         Notiflix.Loading.remove()
-      } else
-        if (res.page !== 1) {
-          setSearchList([...searchList, ...SearchResultSort(!column.noSelect ? [{ noneSelected: true }, ...custom_info_list] : custom_info_list, searchModalInit.excelColumnType)])
-          setPageInfo({ page: res.page, total: res.totalPages });
-          Notiflix.Loading.remove()
-        } else {
-          let tmp: Set<any> = selectList
+      } else {
 
-              tmp.add(row.product_id)
-              // tmp.add(index)
+        console.log("hi", [...column.basicRow])
 
-          const new_rows = custom_info_list.map((row, index) => {
-            if (selector.product_ids_for_selected_rows.includes(row.product_id)) {
-              // alert("실행이 되나? :  " + row.product_id)
-              tmp.add(row.product_id)
-              tmp.add(index)
-              
-              return {
-                ...row,
-                border: true
-              }
-            } else {
-              return {
-                ...row
-              }
+        let tmp: Set<any> = selectList
+        let selected_product_ids = [];
+
+        // if (selector.product_ids_for_selected_rows.length == 0) {
+        setTotalSearchList([...column.basicRow])
+        // }
+
+        selected_product_ids = [...column.basicRow].map((row) => {
+          if (!selector.product_ids_for_removed_rows.includes(row.code))
+            return row.code
+        })
+
+        console.log("selected_product_ids ::::::::: ", selected_product_ids);
+        console.log("custom_info_list : ", custom_info_list);
+
+        const new_rows = custom_info_list.map((row, index) => {
+
+          if (selector.product_ids_for_selected_rows.includes(row.code) || selected_product_ids.includes(row.code)) {
+            tmp.add(row.id)
+            return {
+              ...row,
+              border: true
             }
-          })
-          
-          setSearchList([...SearchResultSort(!column.noSelect ? [{ id: null, noneSelected: false }, ...new_rows] : new_rows, searchModalInit.excelColumnType)])
+          } else {
+            return {
+              ...row,
+              border: false
+            }
+          }
+        })
 
-          Notiflix.Loading.remove()
+        console.log("res !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ", res);
+        setPageInfo({ page: res.page, total: res.totalPages })
+        setSearchList([...SearchResultSort(!column.noSelect ? [{ id: null, noneSelected: false }, ...new_rows] : new_rows, searchModalInit.excelColumnType)])
+        Notiflix.Loading.remove()
 
-        }
+      }
+    } else {
+      console.log("hi");
     }
+
+
   }
 
   const getContents = () => {
@@ -287,13 +328,33 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
     }
   }
 
-
+  // setIsOpen 이 아니라 직접 호출로 바꿔 보자 , 생각해보아야할것 알고리즘 vs 렌더링 시점
   const addSearchButton = () => {
-    return <SearchIcon onClick={() => {
-      setIsOpen(true)
-    }} modalType={column.modalType}>
-      <img style={column.modalType ? { width: 16.3, height: 16.3 } : { width: 440, height: 20 }} src={IcSearchButton} />
-    </SearchIcon>
+
+    if (row.isFirst) {
+      return <SearchIcon onClick={() => {
+        // alert("hi 11")
+        // 2244
+        console.log("column.basicRow : ", column.basicRow);
+
+        column.basicRow.map((row) => {
+          console.log("row.code !! ", row.code);
+
+          dispatch(
+            add_product_ids_for_selected_rows(row.code)
+          )
+        })
+        setIsOpen(true)
+
+      }} modalType={column.modalType}>
+        <img style={column.modalType ? { width: 16.3, height: 16.3 } : { width: 440, height: 20 }} src={IcSearchButton} />
+
+      </SearchIcon>
+
+    } else {
+      return <div></div>
+    }
+
   }
 
   const ContentHeader = () => {
@@ -308,7 +369,7 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
       <div id={'content-title'} style={{ display: 'flex' }}>
         <p style={{
           color: 'black',
-          fontSize: 22,
+          fontSize: `22`,
           fontWeight: 'bold',
           margin: 0,
         }}>{searchModalInit && searchModalInit.title}</p>
@@ -332,11 +393,13 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
             LoadBasic(1)
           }} />
         }
+
         <div style={{ cursor: 'pointer', marginLeft: 4 }} onClick={() => {
           setIsOpen(false)
         }}>
           <img style={{ width: 20, height: 20 }} src={IcX} />
         </div>
+
       </div>
     </div>
   }
@@ -379,7 +442,7 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
           onChange={(e) => {
             const option = switchSearchOption(Number(e.target.value))
             setOptionIndex(option)
-            setPageInfo({ total: 1, page: 1 });
+            // setPageInfo({ total: 1, page: 1 });
             // SearchBasic('', Number(e.target.value))
           }}
           style={{
@@ -402,6 +465,8 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
           }
         </select>
       </div>
+
+
       <input
         value={keyword ?? ""}
         type={"text"}
@@ -435,220 +500,171 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
   }
 
 
-  const confirmFunction2 = () => {
-    alert("체크 박스 아무거나 체크 되도록 해보자")
 
-  }
-
+  // step2
   const confirmFunction = () => {
-
-    // alert("hyun")
+    // alert("hi !!!!!!!!!!!!!!!!!!!!!")
 
     setIsOpen(false)
-    if (selectRow !== undefined) {
-      const selectNameFunction = (type: string) => {
-        switch (type) {
-          case "bom":
-            return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
-          case "rawmaterial":
-            return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
-          case "machine":
-            return searchList[selectRow].name;
-          case "mold":
-            return searchList[selectRow].name;
-          default:
-            return row.name;
-        }
-      }
-      if (column.clearContract) {
-        onRowChange(
-          {
-            ...row,
-            ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-            manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-            name: selectNameFunction(column.type),
-            tab: tab,
-            // type_name: undefined,
-            version: row.version,
-            isChange: true,
-            contract: null,
-            contract_id: null
-          }
-        )
-      } else if (column.type === "searchToolModal") {
-        onRowChange({ ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar) })
-      } else if (column.type === 'customer') {
-        onRowChange(
-          {
-            ...row,
-            ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-            manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-            name: selectNameFunction(column.type),
-            tab: tab,
-            // type_name: undefined,
-            version: row.version,
-            isChange: true,
-            cm_id: '',
-            modelArray: {
-              additional: [],
-              cm_id: '',
-              customer: null,
-              customerId: '',
-              model: '',
-              sync: '',
-              version: null
-            }
-          }
-        )
-      } else if (column.type === 'factory') {
-        onRowChange({
+    const selectNameFunction = (type: string) => {
+      return row.name;
+    }
+
+    console.log("totalSearchList : ", totalSearchList);
+
+    const selected_rows_array = totalSearchList;
+
+    let array_for_update = selected_rows_array.map((rowdata) => {
+      console.log("rowdata : ", rowdata);
+
+      const random_id = Math.random() * 1000;
+      const expires = new Date()
+
+      return (
+        {
           ...row,
-          ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+          id: "orderinfo_" + random_id,
+          ...SearchModalResult(rowdata, searchModalInit.excelColumnType, column.staticCalendar),
+          manager: SearchModalResult(rowdata, searchModalInit.excelColumnType).manager,
           name: selectNameFunction(column.type),
           tab: tab,
           // type_name: undefined,
-          version: row.version,
-          isChange: true,
-          cm_id: '',
-          modelArray: {
-            additional: [],
-            cm_id: '',
-            customer: null,
-            customerId: '',
-            model: '',
-            sync: '',
-            version: null
-          }
-        })
-      } else if (column.type === 'tool') {
-        onRowChange(
-          {
-            ...row,
-            ...SearchModalResult(searchList[selectRow], column.toolType === 'register' ? 'toolRegister' : searchModalInit.excelColumnType, column.staticCalendar),
-            manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-            // name: selectNameFunction(column.type),
-            tab: tab,
-            // type_name: undefined,
-            version: row.version,
-            isChange: true,
-          }
-        )
-      } else if (column.type === "bom") {
-        // const bomType = (tab:number) => {
-        //   switch (tab) {
-        //     case 0:
-        //       return "rawmaterial"
-        //     case 1:
-        //       return "submaterial"
-        //     case 2:
-        //       return "product"
-        //     default:
-        //       return "rawmaterial"
-        //   }
-        // }
-        const searchModalResult = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar)
-        delete searchModalResult.doubleClick
-        onRowChange(
-          {
-            ...row,
-            ...searchModalResult,
-            name: selectNameFunction(column.type),
-            tab: tab === null ? 0 : tab,
-            version: row.version,
-            isChange: true,
-            //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
-            returnType: column.key
-          }
-        )
-      } else {
-        // alert("모달 클릭하면 여기가 실행 and onRowChange 실행")
+          version: rowdata.version,
+          isChange: false,
+          //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
+          returnType: column.key,
+          product_id: rowdata.code,
+          // product_code : rowdata.code,
+          date: moment(new Date()).startOf("day").format('YYYY-MM-DD'),
+          deadline: moment(new Date()).startOf("day").format('YYYY-MM-DD'),
+          goal: rowdata?.goal,
+          process: {
+            process_id: rowdata.process_id,
+            // name: rowdata.process.name,
+            additional: rowdata.additional,
 
-        const newRows = []
-
-        selectList.forEach((id, i) => {
-          const s = selectList;
-          // const index = 0;
-
-          searchList.forEach((row, index) => {
-            if (row.id === id) {
-              newRows.push(searchList[index]);
-            }
-          })
-
-        })
-
-        const array_for_update = newRows.map((rowdata) => {
-
-          const random_id = Math.random() * 1000;
-
-
-          return (
-            {
-              ...row,
-              id: "orderinfo_" + random_id,
-              ...SearchModalResult(rowdata, searchModalInit.excelColumnType, column.staticCalendar),
-              manager: SearchModalResult(rowdata, searchModalInit.excelColumnType).manager,
-              name: selectNameFunction(column.type),
-              tab: tab,
-              // type_name: undefined,
-              version: row.version,
-              isChange: true,
-              //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
-              returnType: column.key,
-              date: row?.date,
-              deadline: row?.deadline,
-              goal: row?.goal
-            }
-
-          )
-        })
-
-        if (newRows.length > 1) {
-          onRowChange(
-            // {
-            //   ...row,
-            //   ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-            //   manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-            //   name: selectNameFunction(column.type),
-            //   tab: tab,
-            //   // type_name: undefined,
-            //   version: row.version,
-            //   isChange: true,
-            //   //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
-            //   returnType: column.key,
-            //   date: row?.date,
-            //   deadline: row?.deadline,
-            //   goal: row?.goal
-            // }
-            // hyunsok
-            [...array_for_update]
-          )
-
-        } else {
-          onRowChange(
-            {
-              ...row,
-              ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
-              manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
-              name: selectNameFunction(column.type),
-              tab: tab,
-              // type_name: undefined,
-              version: row.version,
-              isChange: true,
-              //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
-              returnType: column.key,
-              date: row?.date,
-              deadline: row?.deadline,
-              goal: row?.goal
-            }
-            // [...array_for_update]
-          )
+          },
+          molds: rowdata.molds,
+          machines: rowdata.machines,
+          standard_uph: rowdata.standard_uph,
+          work_standard_image: rowdata.work_standard_image,
+          amount: rowdata.amount,
         }
 
+      )
+    })
+
+    array_for_update = array_for_update.filter((row) => {
+      if (!product_ids_for_removed_rows.includes(row.code) && row.id) {
+        return row
+      }
+    })
+
+    console.log("array_for_update :::::::::::::::::::: ", array_for_update);
+    console.log("array_for_update :::::::::::::::::::: ", array_for_update.length);
+
+
+
+    // if (array_for_update.length === 0) {
+    //   // return
+    //   // column.setBasicRow({
+    //   //   date: moment().format('YYYY-MM-DD'),
+    //   //   deadline: moment().format('YYYY-MM-DD'),
+    //   //   isFirst: true
+    //   // })
+    //   onRowChange([])
+    // } else {
+    // }
+    onRowChange(array_for_update)
+
+
+  }
+
+  // 2244
+  const allSelect = () => {
+
+    let tmp: Set<any> = selectList
+
+    const new_search_list = searchList.map((row, index) => {
+      tmp.add(row.id)
+      dispatch((
+        remove_product_ids_for_removed_rows(row.code)
+      ))
+
+      dispatch(
+        add_product_ids_for_selected_rows(row.code)
+      )
+      setSelectRow(index)
+
+      return {
+        ...row,
+        border: true
       }
 
-    }
+    })
+
+    setSearchList(new_search_list)
+    setTotalSearchList(new_search_list)
+    // setTotalSearchList(new_search_list)
+    // setTotalSearchList((prev) => [...prev, row])
+
   }
+
+  const allSelectCancel = () => {
+
+
+    let tmp: Set<any> = selectList
+
+    console.log("totalSearchList 1111 : ", totalSearchList);
+
+
+    totalSearchList.map((row) => {
+      console.log("row.code : ", row.code);
+      dispatch((
+        add_product_ids_for_removed_rows(row.code)
+      ))
+
+    })
+
+    dispatch(
+      cancel_product_ids_for_modal()
+    )
+
+    console.log("product_ids_for_removed_rows :", selector.product_ids_for_removed_rows);
+
+
+    const new_search_list = searchList.map((row, index) => {
+      tmp.delete(row.id)
+
+      dispatch((
+        add_product_ids_for_removed_rows(row.code)
+      ))
+      setSelectRow(index)
+
+      return {
+        ...row,
+        border: false
+      }
+
+    })
+
+    // dispatch(
+    // cancel_for_product_ids_for_modal()
+    // )
+
+    setSearchList(new_search_list)
+    setTotalSearchList([])
+
+  }
+
+  // const modifyTotalSearchList = () => {
+  //   const new_totalSearchList = totalSearchList.filter((row) => {
+  //     if (selector.product_ids_for_current_basic_row.includes(row.code)) {
+  //       return row
+  //     }
+  //   })
+  // setTotalSearchList([])
+  // }
 
   return (
     <SearchModalWrapper>
@@ -660,11 +676,18 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
           setIsOpen(true)
         }
       }}>
+
+
+
         {getContents()}
+
       </div>
       {(row.first || !column.disableType) &&
         addSearchButton()
       }
+
+
+
       <Modal isOpen={isOpen} style={{
         content: {
           top: '50%',
@@ -680,6 +703,7 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
           zIndex: 5,
         }
       }}>
+
         <div style={{
           width: 1776,
           height: 816,
@@ -695,19 +719,23 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
               SearchBox()
             }
 
+            <div style={{ marginBottom: "10px" }}>
+              &nbsp;&nbsp;&nbsp; <button onClick={allSelect}>모두 선택</button>
+              &nbsp; <button onClick={allSelectCancel}>모두 취소</button>
+              &nbsp;&nbsp;
+              출력 개수: {searchList.length}
+            </div>
 
             <ExcelTable
-              // searchModalColumn
-              // headerList={ searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
-              selectable
-              headerList={searchModalInit && [SelectColumn, ...searchModalColumn]}
+              headerList={searchModalInit && [...searchModalColumn]}
               selectList={selectList}
-
               //@ts-ignore
               setSelectList={setSelectList}
               row={searchList ?? []}
               // row={basicRow ?? []}
               setRow={(e) => {
+                console.log("eeeeeeee : ", e);
+
                 let tmp: Set<any> = selectList
                 e.map(v => {
                   if (v.isChange) {
@@ -719,59 +747,100 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
               }}
               width={1744}
               rowHeight={34}
-              height={640}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                setSelectedRows([])
-                let tmp: Set<any> = selectList;
-                const update = searchList.map((row, index) => {
+              height={620}
 
+              setSelectRow={(e) => {
+                // 모달창 테이블의 로우 클릭시 전체를 다시 그림
+                // step1
+                // 클릭시에 선택한 행 정보에 이미 추가된 경우 제거(색깔 제거), 아니면 추가 (색깔 추가) <=> ui 적으로는 색깔 적용, 취소 
+                let tmp: Set<any> = selectList;
+
+                const new_row_for_search_table_update = searchList.map((row, index) => {
+
+                  // 클릭한 행일 경우 
                   if (e === index) {
-                    if (product_ids_for_selected_rows.includes(searchList[e].product_id)) {
+                    tmp.add(row.id)
+                    // console.log("row.border : ", row.border);
+
+                    // 이미 선택한 행일 경우
+                    if (selector.product_ids_for_selected_rows.includes(row.code) && row.border === true) {
+                      console.log("색깔 지우기");
+
+                      // console.log("선택한 행의 개수 -1 : ", selector.product_ids_for_selected_rows.length);
                       tmp.delete(row.id)
+
                       dispatch((
-                        remove_product_ids_for_selected_rows(searchList[e].product_id)
+                        remove_product_ids_for_selected_rows(row.code)
                       ))
-                      // setSelectedRows(
-                      //   selectedRows.filter((e) => {
-                      //     e !== index
-                      //   })
-                      // )
+
+                      dispatch((
+                        add_product_ids_for_removed_rows(row.code)
+                      ))
+
+                      const new_total_search_list = totalSearchList.filter((el) => {
+                        if (row.code !== el.code) {
+                          return el
+                        }
+                      })
+
+                      console.log("new_total_search_list : ", new_total_search_list.length);
+
+                      setTotalSearchList(new_total_search_list);
+
                       return {
                         ...row,
-                        // doubleClick: confirmFunction,
                         border: false
                       }
+
+                      // 아직 선택하지 않은 행의 경우 
                     } else {
                       tmp.add(row.id)
 
-                      // 2244
                       dispatch((
-                        add_product_ids_for_selected_rows(searchList[e].product_id)
+                        remove_product_ids_for_removed_rows(row.code)
                       ))
+
+                      dispatch(
+                        add_product_ids_for_selected_rows(row.code)
+                      )
+
+                      setTotalSearchList((prev) => [...prev, row])
 
                       return {
                         ...row,
-                        // doubleClick: confirmFunction,
                         border: true
                       }
-                    }
 
-                  } else {
-                    return {
-                      ...row,
-                      // doubleClick: confirmFunction,
-                      // border: product_ids_for_selected_rows.includes(searchList[e].product_id)
+                    }
+                  } else {  // 클릭한 행 이외의 행에 대해
+                    // 선택했던 행일 경우 색깔 축 
+                    if (selector.product_ids_for_selected_rows.includes(row.code)) {
+                      return {
+                        ...row,
+                        border: selector.product_ids_for_selected_rows.includes(row.code)
+                      }
+                    } else {  // 선택했던 행이 아닐 경우 색깔 없음
+                      return {
+                        ...row,
+                      }
                     }
                   }
+
+
                 })
 
-                // setSelectedRows([])22
-                setSearchList(update);
-
+                console.log("new_array_for_update : ", new_array_for_update);
+                setSearchList(new_row_for_search_table_update)
                 setSelectRow(e)
+
               }}
               type={'searchModal'}
               scrollEnd={(value) => {
+
+                console.log("scrol event check !!");
+                console.log("pageInfo.total , pageInfo.page : ", pageInfo.total, pageInfo.page);
+
+
                 if (value) {
                   if (pageInfo.total > pageInfo.page) {
                     setPageInfo({ ...pageInfo, page: pageInfo.page + 1 })
@@ -784,8 +853,23 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
             <FooterButton
               onClick={() => {
                 setIsOpen(false)
-                setSelectRow(undefined)
+                // setSelectRow(undefined)
+                // modifyTotalSearchList();
+                console.log("서치 리스트 초기화");
+                
+                setTotalSearchList([])
+                dispatch(cancel_for_product_ids_for_modal())
+                // dispatch(
+                //   update_is_change()
+                // )
                 setOptionIndex(0)
+                // setPageInfo(prev => {
+                //   return {
+                //     page: 1,
+                //     total: prev.total
+                //   }
+                // })
+                // allSelectCancel()
                 setKeyword('')
               }}
               style={{ backgroundColor: '#E7E9EB' }}
@@ -793,7 +877,7 @@ const OrderInfoReigesterModalButton = ({ column, row, onRowChange }: IProps) => 
               <p style={{ color: '#717C90' }}>취소</p>
             </FooterButton>
             <FooterButton
-              onClick={() => { confirmFunction() }}
+              onClick={confirmFunction}
               style={{ backgroundColor: POINT_COLOR }}
             >
               <p style={{ color: '#0D0D0D' }}>등록하기</p>
