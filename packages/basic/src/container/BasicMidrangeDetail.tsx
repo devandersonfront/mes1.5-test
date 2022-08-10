@@ -9,6 +9,8 @@ import {
 import {IExcelHeaderType} from 'shared/src/@types/type'
 import {useRouter} from "next/router";
 import Notiflix from "notiflix";
+import { setExcelTableHeight } from 'shared/src/common/Util'
+import { sum } from 'lodash'
 
 const BasicMidrangeDetail = () => {
     const [basicRow, setBasicRow] = useState<Array<any>>([{
@@ -76,11 +78,16 @@ const BasicMidrangeDetail = () => {
     }
     React.useEffect(()=>{
         const data = {
-            customer: !!router.query.customer_id ? router.query.customer_id : "-",
-            model: !!router.query.cm_id ? router.query.cm_id : "-",
-            code: !!router.query.code ? router.query.code : "-",
-            material_name: !!router.query.name ? router.query.name : "-",
-            type: router.query.type,
+            osd_id:router.query.osd_id ?? "-",
+            lot_number:router.query.lot_number ?? "-",
+            code: router.query.code ?? "-",
+            material_name: router.query.name ??  "-",
+            type: router.query.type ?? "-",
+            process_id: router.query.process_id ?? "-",
+            worker_name: router.query.worker_name ?? "-",
+            name: router.query.machine_name ?? "-",
+            customer: router.query.customer_id ?? "-",
+            model: router.query.cm_id ?? "-",
         }
         setBasicRow([data])
         if(router.query.product_id){
@@ -144,7 +151,8 @@ const BasicMidrangeDetail = () => {
                 selectList={legendarySelectList}
                 //@ts-ignore
                 setSelectList={setLegendarySelectList}
-                height={legendaryBasicRow.length * 40 >= 40*18+56 ? 40*19 : legendaryBasicRow.length * 40 + 56}
+                height={setExcelTableHeight(legendaryBasicRow.length)}
+                width={sum(legendaryColumn.map(col => col.width))}
             />
             <ExcelTable
                 headerList={[
@@ -162,10 +170,10 @@ const BasicMidrangeDetail = () => {
                 selectList={ItemSelectList}
                 //@ts-ignore
                 setSelectList={setItemSelectList}
-                height={itemBasicRow.length * 40 >= 40*18+56 ? 40*19 : itemBasicRow.length * 40 + 56}
+                height={setExcelTableHeight(itemBasicRow.length)}
             />
             {
-                isOpen && <MidrangeFormReviewModal formReviewData={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
+                isOpen && <MidrangeFormReviewModal data={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
             }
         </div>
     );
