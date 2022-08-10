@@ -12,6 +12,7 @@ import {MonthSelectCalendar} from "./MonthSelectCalendar";
 import {PeriodSelectCalendar} from "./PeriodSelectCalendar";
 //@ts-ignore
 import IcSearchButton from '../../../public/images/btn_radio_check.png'
+import {CurrentDate} from "./CurrentDate";
 
 interface SelectParameter {
   from:string
@@ -151,6 +152,10 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
       case "period":
         return (
             <PeriodSelectCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={dataLimit} />
+        )
+      case "current" :
+        return (
+            <CurrentDate/>
         )
       default:
         return
