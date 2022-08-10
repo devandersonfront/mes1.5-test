@@ -166,9 +166,11 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       theme={scrollState}
       state={type}
       onRowClick={(row,col) => {
-        alert("여기")
+        // alert("여기")
+        console.log("row 클릭");
+        
         onRowClick && onRowClick(row)
-        // setSelectRow && setSelectRow(row)
+        setSelectRow && setSelectRow(row)
       }}
       onRowDoubleClick={(row,col) => {
         onDoubleClick && onDoubleClick(row)
