@@ -70,6 +70,7 @@ import Notiflix from 'notiflix'
 import {TestWorkRegisterModal} from "../components/Modal/TestWorkRegisterModal";
 import { OrderInfoReigesterModalButton } from '../components/Modal/OrderInfoReigesterModalButton'
 import { HeaderSort } from '../components/HeaderSort/HeaderSort'
+import CommonProgressBar from '../../../main/component/InputBox/CommonProgressBar'
 
 
 export const columnlist: any = {
@@ -1410,5 +1411,22 @@ export const columnlist: any = {
     {key: 'BomInfoReadonlyModal', name: '재고 확인', formatter: InfoModal, type: 'bomInfoReadOnly', summaryType: 'product', width: 118,},
     {key: 'MoldInfoModal', name: '금형 등록', formatter: InfoModal, type: 'moldInfo', summaryType: 'product_no_cavity', width: 118,},
     {key: 'MachineInfoModal', name: '기계 등록', formatter: InfoModal, type: 'machineInfo', summaryType: 'product_no_cavity', width: 118,},
-  ]
+  ],
+  productionLog : [
+    {key: 'order',frozen:true, name: '순서',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 48,},
+    {key: 'machine_name',frozen:true, name: '기계 이름',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120, placeholder : '-'},
+    // {key: 'machine_type',frozen:true, name: '기계 종류',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,},
+    {key: 'identification',frozen:true, name: '지시 고유 번호',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,placeholder : '-'},
+    {key: 'deadline',frozen:true, name: '작업 기한', formatter: PlaceholderBox, width:120},
+    {key: 'customer',frozen:true, name: '거래처',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,placeholder : '-'},
+    {key: 'model',frozen:true, name: '모델',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,placeholder : '-'},
+    {key: 'product_code',frozen:true, name: 'CODE',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,placeholder : '-'},
+    {key: 'product_name',frozen:true, name: '품명',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,placeholder : '-'},
+    // {key: 'process', name: '생산 공정',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,},
+    {key: 'goal', name: '목표 생산량',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,placeholder : '0'},
+    {key: 'total_good_quantity', name: '총 양품 수량',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,placeholder : '0'},
+    {key: 'total_poor_quantity', name: '총 불량 수량',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,placeholder : '0'},
+    {key: 'poor_rate', name: '불량률',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,placeholder : '0'},
+    {key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', summaryType: 'product_no_cavity', width: 170},
+  ],
 }

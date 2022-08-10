@@ -4,6 +4,7 @@ import ProfileHeader from '../../../component/Profile/ProfileHeader'
 import {Header as PageHeader} from 'shared/src/components/Header'
 
 import {IExcelHeaderType} from '../../../common/@types/type'
+import {HomeProductionLog} from "../../../container/home/HomeProductionLog";
 
 interface IProps {
   children?: any,
@@ -26,7 +27,7 @@ const DashboardPage = ({children, title, cookies}: IProps) => {
       <MenuNavigation pageType={'HOME'}/>
       <div style={{width: '100%'}}>
         <ProfileHeader/>
-        <PageHeader title={title}></PageHeader>
+        <HomeProductionLog/>
       </div>
     </div>
   );
