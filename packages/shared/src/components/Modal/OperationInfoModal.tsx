@@ -101,8 +101,14 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
               setIsOpen(true)
             }else{
               if(row?.productId){
-                dispatch(change_operation_searchKey(row?.identification))
-                router.push('/mes/operationV1u/register')
+                // dispatch(change_operation_searchKey(row?.identification))
+                // router.push('/mes/operationV1u/register')
+
+                router.push({
+                  pathname: `/mes/operationV1u/register`,
+                  query: {key : row?.identification}
+                });
+
               }else{
                 Notiflix.Report.warning("수주번호가 없습니다.", "", "확인")
               }
