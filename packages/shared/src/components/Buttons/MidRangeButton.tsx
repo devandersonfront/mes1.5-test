@@ -18,7 +18,7 @@ const MidRangeButton = ({row, column }: IProps) => {
     const title = itemRegistered ? '검사항목 보기' : '검사항목 등록'
     const routeParam = {
         pathname : `/mes/basic/productV1u/midrange/form/${itemRegistered ? 'detail' : 'register'}`,
-        query : { customer_id: row.customer_id, cm_id: row.cm_id, code: row.code, name: row.name, product_id: row.product_id, type: row.type}
+        query : { customer_id: row.customer_id, cm_id: row.cm_id, code: row.code, name: row.name, product_id: row.product_id, type: row.type, process_id:row.process?.name}
     }
     const onClickEvent = () => {
         row.product_id ? router.push(routeParam)

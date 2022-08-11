@@ -10,6 +10,8 @@ import {IExcelHeaderType} from 'shared/src/@types/type'
 import {MidrangeButton} from "shared/src/styles/styledComponents";
 import {useRouter} from "next/router";
 import Notiflix from "notiflix";
+import { setExcelTableHeight } from 'shared/src/common/Util'
+import { sum } from 'lodash'
 
 const BasicMidrangeModify = () => {
     const router = useRouter()
@@ -17,7 +19,6 @@ const BasicMidrangeModify = () => {
     const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([{}])
     const [legendaryBasicRow, setLegendaryBasicRow] = useState<Array<any>>([])
     const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{}])
-    const [productId, setProductId] = useState<number>()
     const [ isOpen, setIsOpen ] = useState<boolean>(false)
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["midrangeExam"])
     const [sampleColumn, setSampleColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrange'])
@@ -28,36 +29,68 @@ const BasicMidrangeModify = () => {
     const [legendarySelectList, setLegendarySelectList] = useState<Set<number>>(new Set())
     const [ItemSelectList, setItemSelectList] = useState<Set<number>>(new Set())
 
+    React.useEffect(()=>{
+        const data = {
+            osd_id:router.query.osd_id ?? "-",
+            lot_number:router.query.lot_number ?? "-",
+            code: router.query.code ?? "-",
+            material_name: router.query.name ??  "-",
+            type: router.query.type ?? "-",
+            process_id: router.query.process_id ?? "-",
+            worker_name: router.query.worker_name ?? "-",
+            name: router.query.machine_name ?? "-",
+            customer: router.query.customer_id ?? "-",
+            model: router.query.cm_id ?? "-",
+            product_id: router.query.product_id
+        }
+        setBasicRow([data])
+        LoadMidrange(Number(router.query.product_id))
+    },[router.query])
+
+    const validateCategoryInfo = (info) => {
+        if(!!!info.name) throw('검사 항목을 입력해주세요')
+        if(!!!info.standard) throw('검사 기준을 입력해주세요')
+        if(!!!info.error_minimum) throw('최소값을 입력해주세요')
+        if(!!!info.error_maximum) throw('최대값을 입력해주세요')
+    }
+
+    const validateLegendsInfo = (info) => {
+        if(!!!info.legendary) throw('범례를 입력해주세요')
+        if(!!!info.LegendaryExplain) throw('범례 설명을 입력해주세요')
+    }
+
     const MidrangeSave = async () => {
-        const legendaryKeyValue = {}
-        legendaryBasicRow.map((v,i)=>{
-            legendaryKeyValue[v.legendary] = v.LegendaryExplain
-        })
+        try{
+            const categoryInfo = itemBasicRow.map((v, i)=>{
+                validateCategoryInfo(v)
+                return {...v, type: v.type === "범례 적용" ? 1 : 0}
+            })
 
-        if(Object.keys(legendaryKeyValue).includes('') || Object.keys(legendaryKeyValue).includes('undefined')){
-            return Notiflix.Report.warning('경고', '범례를 확인해주세요.', '확인')
-        }else if(Object.values(legendaryKeyValue).includes('') || Object.values(legendaryKeyValue).includes('undefined')){
-            return Notiflix.Report.warning('경고', '범례 설명을 확인해주세요.', '확인')
+            const legendaryKeyValue = {}
+            legendaryBasicRow.map((v,i)=>{
+                validateLegendsInfo(v)
+                legendaryKeyValue[v.legendary] = v.LegendaryExplain
+            })
+
+            if(categoryInfo.some(info => info.type === 1) && Object.keys(legendaryKeyValue).length < 1) throw('범례를 추가해주세요')
+
+            const midrangeData = {
+                product_id: basicRow[0]?.product_id,
+                samples: Number(sampleBasicRow[0].samples),
+                legendary_list: legendaryKeyValue,
+                category_info: categoryInfo
+            }
+            const res = await RequestMethod('post', `inspectCategorySave`,[midrangeData])
+
+            if(res){
+                Notiflix.Report.success('저장되었습니다.','','확인',() =>
+                  router.push(({pathname:'/mes/basic/productV1u/midrange/form/detail',
+                      query: { customer_id: router.query.customer_id, cm_id: router.query.cm_id, code: router.query.code, name: router.query.name, product_id: router.query.product_id, type: router.query.type, process_id: router.query.process_id} })))
+            }
+        }catch(e) {
+            Notiflix.Report.warning('경고', e, '확인')
         }
 
-        const categoryInfo = itemBasicRow.map((v)=>{
-            return {...v, type: v.type === "범례 적용" ? 1 : 0}
-        })
-
-        const midrangeData = {
-            product_id: productId,
-            samples: Number(sampleBasicRow[0].samples),
-            legendary_list: legendaryKeyValue,
-            category_info: categoryInfo
-        }
-        let res: any
-        res = await RequestMethod('post', `inspectCategorySave`,[midrangeData])
-
-        if(res){
-            Notiflix.Report.success('저장되었습니다.','','확인',() =>
-            router.push(({pathname:'/mes/basic/productV1u/midrange/form/detail',
-              query: { customer_id: router.query.customer_id, cm_id: router.query.cm_id, code: router.query.code, name: router.query.name, product_id: router.query.product_id, type: router.query.type} })))
-        }
     }
 
     const LoadMidrange = async (product_id: number) => {
@@ -156,19 +189,6 @@ const BasicMidrangeModify = () => {
 
     }
 
-    React.useEffect(()=>{
-        const data = {
-            customer: router.query.customer_id,
-            model: router.query.cm_id,
-            code: router.query.code,
-            material_name: router.query.name,
-            type: router.query.type,
-        }
-        setBasicRow([data])
-        setProductId(Number(router.query.product_id))
-        LoadMidrange(Number(router.query.product_id))
-    },[router.query])
-
     const buttonEvents = async(index:number) => {
         switch (index) {
             case 0 :
@@ -234,7 +254,9 @@ const BasicMidrangeModify = () => {
                 selectList={legendarySelectList}
                 //@ts-ignore
                 setSelectList={setLegendarySelectList}
-                height={legendaryBasicRow.length * 40 >= 40*18+56 ? 40*19 : legendaryBasicRow.length * 40 + 40}
+                height={setExcelTableHeight(legendaryBasicRow.length)}
+                width={sum(legendaryColumn.map(col => col.width))}
+
             />
             <div style={{display : 'flex'}}>
                 <MidrangeButton onClick={()=>deleteRowButton('legendary')} style={{backgroundColor :'#98999B'}}>
@@ -259,7 +281,7 @@ const BasicMidrangeModify = () => {
                 selectList={ItemSelectList}
                 //@ts-ignore
                 setSelectList={setItemSelectList}
-                height={itemBasicRow.length * 40 >= 40*18+56 ? 40*19 : itemBasicRow.length * 40 + 40}
+                height={setExcelTableHeight(itemBasicRow.length)}
             />
             <div style={{display : 'flex'}}>
                 <MidrangeButton onClick={()=>deleteRowButton('item')} style={{backgroundColor :'#98999B'}}>
@@ -270,7 +292,7 @@ const BasicMidrangeModify = () => {
                 </MidrangeButton>
             </div>
             {
-                isOpen && <MidrangeFormReviewModal formReviewData={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
+                isOpen && <MidrangeFormReviewModal data={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
             }
         </div>
     );
