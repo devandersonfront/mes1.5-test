@@ -3,29 +3,32 @@ import styled from "styled-components";
 
 interface Props {
     row:any
-
+    column: any
     onRowChange:(value:any) => void
-
 }
 
 
-const MoveButtons = ({row, onRowChange}:Props) => {
+const MoveButtons = ({row, column ,onRowChange }:Props) => {
     const moveUp = () => {
-        // row.index += 1
-        // if(row.lengthIndex > 1){
-            onRowChange({
-                ...row,
-                lengthIndex:row.index-2
-            })
-        // }
+        if(row.seq > 1) {
+          const index = row.seq - 1
+          const newRows = [...column.rows]
+          const tmp = {...newRows[index], seq: row.seq - 1}
+          newRows[index] = {...newRows[index - 1], seq: row.seq}
+          newRows[index - 1] = tmp
+          column.setRows(newRows)
+        }
     }
 
     const moveDown = () => {
-        // row.index += 1
-        onRowChange({
-            ...row,
-            lengthIndex:row.index+2
-        })
+      if(row.seq < column.rows?.length) {
+        const index = row.seq - 1
+        const newRows = [...column.rows]
+        const tmp = {...newRows[index], seq: row.seq + 1}
+        newRows[index] = {...newRows[index + 1], seq: row.seq}
+        newRows[index + 1] = tmp
+        column.setRows(newRows)
+      }
     }
 
     return (

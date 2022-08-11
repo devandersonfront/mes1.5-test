@@ -149,7 +149,8 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       onRowsChange={(data, idx) => {
         setSelectRow && setSelectRow(idx.indexes[0])
         setRow(data, idx.indexes[0])}}
-      onSelectedRowsChange={(row) => setSelectedRows(row)}
+      onSelectedRowsChange={(row) =>{
+        setSelectedRows(row)}}
       selectedRows={selectedRows}
       // onRowChange={setSelectedRows}
       style={{
@@ -286,7 +287,6 @@ const DataGridTable = styled(DataGrid)`
         }
     }
     .rdg-row[aria-selected=true]{
-        // border:1px solid white;
         background:none;
         &:hover{
             background:none;
@@ -296,10 +296,6 @@ const DataGridTable = styled(DataGrid)`
     
     .editDropdown > option {
       background:#484848;
-    }
-   
-    .rdg-row[aria-selected=true]{
-        background:none;
     }
 
     .rdg-checkbox-input:checked + div{
