@@ -17,6 +17,7 @@ import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import ButtonGroup from 'shared/src/components/ButtonGroup';
 import { sum } from 'lodash'
+import { setExcelTableHeight } from 'shared/src/common/Util'
 
 export interface IProps {
   children?: any
@@ -61,11 +62,10 @@ const BasicPause = ({}: IProps) => {
 
   const setMenu = (menus: any[]) => (
     columnlist.pause.map(col => {
-      const newMenus = menus.map(menu => ( menu.colName === col.key ? {
+      const newMenus = menus.filter(menu => menu.colName === col.key).map(menu => ({
         id: menu.mi_id,
         name: menu.title,
-        width: 1560
-      } : {}))
+        width: 400 }))
       return {...col, ...newMenus[0]}
     })
   )
@@ -75,7 +75,7 @@ const BasicPause = ({}: IProps) => {
     const res = await RequestMethod('get', `processList`,{
       path: {
         page: page,
-        renderItem:6,
+        renderItem:18,
       }
     })
 
@@ -242,52 +242,56 @@ const BasicPause = ({}: IProps) => {
   return (
     <div>
       <PageHeader title={"공정 일시정지 유형 등록"} />
-      <div style={{marginTop:15}}>
-        <ExcelTable
-          editable
-          headerList={[
-            ...processColumn
-          ]}
-          row={processBasicRow}
-          setRow={setProcessBasicRow}
-          onRowClick={(clicked) => {
-            const e = processBasicRow.indexOf(clicked)
-            setSelectRow(e)
-            setProcessId(clicked.process_id)
-          }}
-          width={1576}
-          height={280}
-        />
-        <PaginationComponent
-          currentPage={pageInfo.page}
-          totalPage={pageInfo.total}
-          setPage={(page) => {
-            setPageInfo({...pageInfo,page:page})
-          }}
-        />
-        <div style={{display:"flex", justifyContent:"space-between", margin:"15px 0"}}>
-                        <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
-                            {processBasicRow[selectRow] && processBasicRow[selectRow].name}
-                        </span>
-          <ButtonGroup buttons={['', '', "행 추가", "저장하기", "삭제"]} buttonsOnclick={buttonEvents}/>
+      <div style={{display:'flex', justifyContent:'space-between', width:1300}}>
+        <div>
+          <ExcelTable
+            editable
+            headerList={[
+              ...processColumn
+            ]}
+            row={processBasicRow}
+            setRow={setProcessBasicRow}
+            onRowClick={(clicked) => {
+              const e = processBasicRow.indexOf(clicked)
+              setSelectRow(e)
+              setProcessId(clicked.process_id)
+            }}
+            width={400}
+            height={setExcelTableHeight(processBasicRow.length)}
+          />
+          <PaginationComponent
+            currentPage={pageInfo.page}
+            totalPage={pageInfo.total}
+            setPage={(page) => {
+              setPageInfo({...pageInfo,page:page})
+            }}
+          />
         </div>
-        <ExcelTable
-          editable
-          selectable
-          headerList={[
-            SelectColumn,
-            ...columnlist.pauseReason(pauseBasicRow, setPauseBasicRow)
-          ]}
-          row={pauseBasicRow}
-          setRow={(data, index) => {
-            setPauseBasicRow(data)
-          }}
-          height={440}
-          //@ts-ignore
-          setSelectList={setSelectIds}
-          selectList={selectIds}
-          width={1565}
-        />
+        <div>
+          <div style={{display:"flex", justifyContent:"space-between", margin:"0 0 15px 0"}}>
+                          <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
+                              {processBasicRow[selectRow] && processBasicRow[selectRow].name}
+                          </span>
+            <ButtonGroup buttons={['', '', "행 추가", "저장하기", "삭제"]} buttonsOnclick={buttonEvents}/>
+          </div>
+          <ExcelTable
+            editable
+            selectable
+            headerList={[
+              SelectColumn,
+              ...columnlist.pauseReason(pauseBasicRow, setPauseBasicRow)
+            ]}
+            row={pauseBasicRow}
+            setRow={(data, index) => {
+              setPauseBasicRow(data)
+            }}
+            height={440}
+            //@ts-ignore
+            setSelectList={setSelectIds}
+            selectList={selectIds}
+            width={820}
+          />
+        </div>
       </div>
     </div>
   );
