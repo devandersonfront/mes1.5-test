@@ -22,7 +22,7 @@ interface IReqType {
   password: string
 }
 
-const LoginPage: NextPage<IProps> = ({children, data, setData }) => {
+const LoginPage = ({children, data, setData } : IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
