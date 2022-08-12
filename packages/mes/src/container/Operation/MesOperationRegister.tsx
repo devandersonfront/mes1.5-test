@@ -30,7 +30,7 @@ interface IProps {
 const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch();
-  const receiveKey = useSelector((root:RootState) => root.OperationRegisterState);
+  // const receiveKey = useSelector((root:RootState) => root.OperationRegisterState);
   //처음인지 확인하는 state 하나 필요
   const [firstCheck, setFirstCheck] = useState<boolean>(true)
   const [codeCheck, setCodeCheck] = useState<boolean>(true)
@@ -38,8 +38,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
     deadline: moment().format('YYYY-MM-DD'),first:true
   }])
-
-
 
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationCodeRegisterV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -327,11 +325,11 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   }
 
   useEffect(() => {
-    if(receiveKey.searchKey !== "" && firstCheck){
+    if(router.query.key !== undefined && firstCheck){
       setColumn(columnlist["operationIdentificationRegisterV2"])
       RequestMethod("get", "contractSearch", {
         params:{
-          keyword:receiveKey.searchKey,
+          keyword:router.query.key,
           opt:0
         }
       })
