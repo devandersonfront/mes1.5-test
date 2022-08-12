@@ -7,6 +7,7 @@ export interface IMenuType {
 }
 
 export interface IExcelHeaderType {
+  isFloatFormat?: number
   onClickEvent?: (any) => {any}
   beforeEventTitle?: string
   afterEventTitle?: string
