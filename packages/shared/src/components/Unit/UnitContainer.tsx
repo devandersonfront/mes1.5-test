@@ -29,6 +29,11 @@ const UnitContainer = ({ row, column, setRow }: IProps) => {
     if (!isNaN(Number(fixNumber))) {
       if (column.toFix) {
         fixNumber = new Big(fixNumber).toFixed(column.toFix)
+        if (row.type && row.type !== 'COIL') {
+          console.log("여기 어때");
+          
+          fixNumber = new Number(fixNumber)
+        }
       }
       fixNumber = AddComma(fixNumber)
     } else {
