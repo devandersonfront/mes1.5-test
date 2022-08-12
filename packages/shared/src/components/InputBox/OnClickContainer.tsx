@@ -8,7 +8,6 @@ interface IProps {
 }
 
 const OnClickContainer = ({ row, column }: IProps) => {
-
     return (
         <ClickContainer clicked={row.onClicked}>
             <p>{row[column.key]}</p>

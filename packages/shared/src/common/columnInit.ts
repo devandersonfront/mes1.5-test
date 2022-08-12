@@ -511,16 +511,16 @@ export const columnlist: any = {
   pause: [
     {key: 'name' , formatter : OnClickContainer}
   ],
-  pauseReason: [
-    {key: 'index', name:"순번", width:130},
+  pauseReason: (rows?, setRows?) => ([
+    {key: 'seq', name:"순번", width:130},
     {key: 'reason', name:"일시정지 유형", width:1200, editor: TextEditor},
-    {key: 'moveButtons', width:200, formatter:MoveButtons,},
-  ],
-  defectReason:[
-    {key: 'index', name:"순번", width:130},
+    {key: 'moveButtons', width:200, formatter:MoveButtons, rows, setRows },
+  ]),
+  defectReason: (rows?, setRows?) => ([
+    {key: 'seq', name:"순번", width:130},
     {key: 'reason', name:"불량 유형", width:1200, editor: TextEditor},
-    {key: 'moveButtons', width:200, formatter:MoveButtons,},
-  ],
+    {key: 'moveButtons', width:200, formatter:MoveButtons,  rows, setRows},
+  ]),
   stock:[
     {key:'customer_id'},
     {key:'customer_name'},

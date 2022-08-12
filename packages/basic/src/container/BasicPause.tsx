@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react'
-import {columnlist, excelDownload, ExcelTable, Header as PageHeader, RequestMethod,} from 'shared'
+import {
+  columnlist,
+  excelDownload,
+  ExcelTable,
+  Header as PageHeader,
+  PaginationComponent,
+  RequestMethod
+} from 'shared'
 import {IExcelHeaderType} from 'shared/src/@types/type'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -9,6 +16,7 @@ import {NextPageContext} from 'next'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import ButtonGroup from 'shared/src/components/ButtonGroup';
+import { sum } from 'lodash'
 
 export interface IProps {
   children?: any
@@ -17,30 +25,32 @@ export interface IProps {
   option?: number
 }
 
-const BasicPause = ({page, keyword, option}: IProps) => {
-
+const BasicPause = ({}: IProps) => {
   const [processBasicRow, setProcessBasicRow] = useState<any[]>([]);
   const [processColumn, setProcessColumn] = useState<Array<IExcelHeaderType>>(columnlist[`pause`]);
-
+  const [pauseColumn, setPauseColumn] = useState<any>(columnlist[`pauseReason`]());
   const [processId, setProcessId] = useState<number>(0);
-
   const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
-  const [pauseColumn, setPauseColumn] = useState<Array<IExcelHeaderType>>(columnlist[`pauseReason`]);
   const [selectRow, setSelectRow] = useState<any>(0);
-
-  const [state, setState] = useState<boolean>(false);
-
-  const [selectList, setSelectList] = useState<Set<any>>(new Set());
-
+  const [selectIds, setSelectIds] = useState<ReadonlySet<number>>(new Set());
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
+  const [pageInfo, setPageInfo] = useState<{total: number, page: number}>({
+    total: 1,
+    page: 1
+  })
 
   const router = useRouter()
   const dispatch = useDispatch()
+
   useEffect(()=>{
-    if(processBasicRow.length > 0){
-      LoadPauseList(processBasicRow[selectRow].process_id);
+    LoadBasic(pageInfo.page);
+  },[pageInfo.page])
+
+  useEffect(()=>{
+    if(processBasicRow.length > 0 && selectRow > -1){
+      LoadPauseList(processId);
     }
-  },[selectRow])
+  },[processId])
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"공정 관리",sub:router.pathname}))
@@ -49,182 +59,156 @@ const BasicPause = ({page, keyword, option}: IProps) => {
     })
   },[])
 
-  const cleanUpBasicData = (res:any) => {
-    let tmpRow = [];
-    tmpRow = res.info_list.map((column: any,index:number) => {
-      let menuData: object = {};
+  const setMenu = (menus: any[]) => (
+    columnlist.pause.map(col => {
+      const newMenus = menus.map(menu => ( menu.colName === col.key ? {
+        id: menu.mi_id,
+        name: menu.title,
+        width: 1560
+      } : {}))
+      return {...col, ...newMenus[0]}
+    })
+  )
 
-      menuData = {
-        index:index+1,
-        width: column.width,
-      }
-      let random_id = Math.random()*1000;
-      return {
-        id: random_id,
-        ...column,
-        ...menuData
+  const LoadBasic = async (page: number = 1) => {
+    Notiflix.Loading.circle();
+    const res = await RequestMethod('get', `processList`,{
+      path: {
+        page: page,
+        renderItem:6,
       }
     })
-    setPauseBasicRow([...tmpRow]);
+
+    if(res) {
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        LoadBasic();
+      } else {
+        setPageInfo({
+          ...pageInfo,
+          page: res.page,
+          total: res.totalPages,
+        });
+        if(res.info_list.length - 1 < selectRow)
+        {
+          setSelectRow(0)
+        }
+        setProcessId(res.info_list[selectRow]?.process_id ?? res.info_list[0].process_id)
+        setProcessColumn(setMenu(res.menus));
+        setProcessBasicRow([ ...res.info_list])
+      }
+    }
+    setSelectIds(new Set)
+    Notiflix.Loading.remove();
   }
 
-  const LoadPauseList = async (value:string) => {
-    // const res =
-    await RequestMethod("get", `pauseReasonList`, {
+  const LoadPauseList = async (processId:number) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod("get", `pauseReasonList`, {
       path: {
         page: 1,
         renderItem: 51,
-        process_id: value
+        process_id: processId
       }
     })
-        .then((res) => {
 
-          let tmpColumn = columnlist[`pauseReason`];
-          tmpColumn = tmpColumn.map((value: any, index: number) => {
-            return {...value, key: value.key, name: value.name, width: value.width}
-          })
-          setPauseColumn(tmpColumn);
+    if(res) {
+      setPauseColumn(columnlist[`pauseReason`]);
+      setPauseBasicRow(res.info_list?.map((info: any, index: number) => {
+        let random_id = Math.random() * 1000;
+        return {
+          ...info,
+          id: random_id,
+          seq: index + 1
+        }
+      }));
 
-          let tmpRow = [];
-          tmpRow = res.info_list.map((column: any, index: number) => {
-            let menuData: object = {};
-
-            menuData = {
-              index: index + 1,
-              width: column.width,
-            }
-            let random_id = Math.random() * 1000;
-            return {
-              id: random_id,
-              ...column,
-              ...menuData
-            }
-          })
-          Notiflix.Loading.remove(300);
-          setPauseBasicRow([...tmpRow]);
-
-        })
-
-        setSelectList(new Set())
+    }
+    setSelectIds(new Set())
+    Notiflix.Loading.remove(300);
   }
 
-  const LoadBasic = async () => {
-    Notiflix.Loading.circle();
-    // const res = await
-    RequestMethod('get', `processList`,{
-      path: {
-        page: 1,
-        renderItem:51,
-      }
-    }).then((res) => {
-            let tmpColumn = columnlist[`pause`];
-            if(res.info_list.length > 0){
-              setProcessId(res.info_list[selectRow].process_id);
-            }
-            let tmpRow = []
-            tmpColumn = tmpColumn.map((column: any) => {
-              let menuData: object = {};
 
-              res.menus.map((menu: any) => {
-                if(menu.colName === column.key){
-                  menuData = {
-                    id: menu.id,
-                    name: menu.title,
-                    width: 1560
-                  }
-                }
-              })
-
-              return {
-                ...column,
-                ...menuData
-              }
-            })
-            tmpRow = res.info_list
-            if(res.info_list.length > 0){
-              LoadPauseList(res.info_list[selectRow].process_id);
-            }else{
-              Notiflix.Loading.remove(300);
-            }
-            setProcessColumn(tmpColumn);
-            setProcessBasicRow([...tmpRow.map((row: any,index) => {
-              return {
-                ...row, onClicked: index === 0 ? true : false
-              }
-            })])
-            Notiflix.Loading.remove(300);
-
-        })
-        .catch((err) => {
-          Notiflix.Report.failure('불러올 수 없습니다.', err, '확인', () => {
-            router.back()
-          })
-        })
-  }
   const downloadExcel = () => {
-    let tmpSelectList: boolean[] = []
+    let tmpselectIds: boolean[] = []
     pauseBasicRow.map(row => {
-      tmpSelectList.push(selectList.has(row.id))
+      tmpselectIds.push(selectIds.has(row.id))
     })
 
-    excelDownload(pauseColumn, pauseBasicRow, `일시정지 유형 등록`, '일시정지 유형 등록', tmpSelectList)
+    excelDownload(pauseColumn, pauseBasicRow, `일시정지 유형 등록`, '일시정지 유형 등록', tmpselectIds)
   }
-
-
-
-  const convertDataToMap = () => {
-    const map = new Map()
-    pauseBasicRow.map((v)=>map.set(v.id , v))
-    return map
-  }
-
-  const filterSelectedRows = () => {
-    return pauseBasicRow.map((row)=> selectList.has(row.id) && row).filter(v => v)
-  }
-
-  const classfyNormalAndHave = (selectedRows) => {
-
-    const haveIdRows = []
-
-    selectedRows.map((row : any)=>{
-      if(row.ppr_id){
-        haveIdRows.push(row)
-      }
-    })
-
-    return haveIdRows
-  }
-
 
   const DeleteBasic = async () => {
+    const rowsToDelete = pauseBasicRow.filter((row)=> selectIds.has(row.id))
+    const rowsToRemain = pauseBasicRow.filter((row)=> !selectIds.has(row.id)).map((row, idx) => ({...row, seq: idx + 1}))
+    const rowsToRequest = rowsToDelete.filter((row) => row.ppr_id)
 
-    const map = convertDataToMap()
-    const selectedRows = filterSelectedRows()
-    const haveIdRows = classfyNormalAndHave(selectedRows)
-    let deletable = true
-
-    if(haveIdRows.length > 0){
-
-      deletable = await RequestMethod('delete','pauseDelete', haveIdRows)
-    }
-
-    if(deletable){
-      selectedRows.forEach((row)=>{ map.delete(row.id)})
+    try{
+      if(rowsToRequest.length > 0){
+        await RequestMethod('delete','pauseDelete', rowsToRequest)
+      }
       Notiflix.Report.success('삭제되었습니다.','','확인');
-      setPauseBasicRow(Array.from(map.values()))
-      setSelectList(new Set())
+      setPauseBasicRow(rowsToRemain)
+      setSelectIds(new Set())
+    } catch (e) {
+
     }
   }
 
   const validateSaveRequestBody = () => {
-    const filtered = pauseBasicRow.filter(value => value.reason !== "" && value.reason !== undefined)
-    const reasons = filtered.map(pauseReason => pauseReason.reason)
-    if(filtered.length === 0) {
-      Notiflix.Report.warning("저장할 데이터가 없습니다", "", "확인");
-    }else if(reasons.length != new Set(reasons).size){
-      Notiflix.Report.warning("일시정지 유형은 중복될 수 없습니다.","","확인");
+    const pauseReasons = pauseBasicRow.map(pause => {
+      if(!!!pause.reason){
+        throw('저장할 데이터가 없습니다')
+      } else {
+        return {
+          ...pause, process_id: processId
+        }
+      }
+    } )
+    const reasonNames = pauseReasons.map(pauseReason => pauseReason.reason)
+    if(reasonNames.length != new Set(reasonNames).size){
+      throw("일시정지 유형은 중복될 수 없습니다.");
     }
-    return filtered
+    return pauseReasons
+  }
+
+  const addRow = () => {
+    let newPauseReason:any = {};
+    columnlist[`pauseReason`]().map((pr:any,index:number)=>{
+      if(pr.key === "seq"){
+        newPauseReason[pr.key] = pauseBasicRow.length+1;
+        newPauseReason.id = Math.random()*100;
+      }else{
+        newPauseReason[pr.key] = "";
+      }
+    })
+    try{
+      if(processId !== 0){
+        pauseBasicRow.push(newPauseReason)
+        if(pauseBasicRow.length > 50) throw('일시정지 유형은 최대 50개까지 등록가능합니다.')
+        setPauseBasicRow([...pauseBasicRow])
+      } else{
+       throw("선택된 공정이 없습니다.")
+      }
+    } catch(e)
+    {
+      Notiflix.Report.warning("경고",e,"확인");
+    }
+  }
+
+  const savePauseReasons = async () => {
+    try{
+      const savePauseBasicRow = validateSaveRequestBody()
+      if(savePauseBasicRow.length > 0 ) {
+      Notiflix.Loading.circle();
+        await RequestMethod("post", `pauseSave`, savePauseBasicRow
+        ).then(() => {
+          Notiflix.Report.success("저장되었습니다.", "", "확인", () => {
+            LoadPauseList(processId);
+          });
+        })}
+    }catch (e) {
+      Notiflix.Report.warning("경고", e, "확인");
+    }
   }
 
   const buttonEvents = async(index:number) => {
@@ -236,127 +220,24 @@ const BasicPause = ({page, keyword, option}: IProps) => {
         downloadExcel();
         return
       case 2 :
-        let dataRow:any = {};
-
-        columnlist[`pauseReason`].map((key:any,index:number)=>{
-          if(key.key === "index"){
-            dataRow[key.key] = pauseBasicRow.length+1;
-            dataRow.id = Math.random()*100;
-            // dataRow.id = index+1;
-          }else{
-            dataRow[key.key] = "";
-          }
-        })
-
-        if(processId !== 0){
-          pauseBasicRow.push({...dataRow})
-          setPauseBasicRow([...pauseBasicRow])
-        }else{
-          Notiflix.Report.warning("선택된 공정이 없습니다.","","확인");
-        }
+        addRow()
         return
-
       case 3 :
-        Notiflix.Loading.circle();
-        let savePauseBasicRow:any[] = [];
-        validateSaveRequestBody()
-          .map((value,index)=>{
-            savePauseBasicRow.push({...value, process_id:processBasicRow[selectRow].process_id, seq:index+1});
-        })
-        if(pauseBasicRow.length > 0 ) {
-          RequestMethod("post", `pauseSave`, savePauseBasicRow
-          ).then(() => {
-            Notiflix.Report.success("저장되었습니다.", "", "확인", () => {
-              LoadPauseList(processBasicRow[selectRow].process_id);
-            });
-          }).catch((e) => {
-            Notiflix.Loading.remove(300);
-            Notiflix.Report.warning("관리자에게 문의하세요.", "", "확인");
-          })
-        }
+        savePauseReasons()
         return
-
       case 4 :
-        if(selectList.size === 0){
+        if(selectIds.size === 0){
           return Notiflix.Report.warning(
         '경고',
         '선택된 정보가 없습니다.',
         '확인',
         );
         }
-
         Notiflix.Confirm.show("경고","삭제하시겠습니까?(기존 데이터를 삭제할 경우 저장하지 않은 데이터는 모두 사라집니다.)","확인","취소",
           () => DeleteBasic()
-          // async()=>{
-          //   const idList = [];
-          //   const spliceArray:number[] = [];
-
-          //   pauseBasicRow.map((v)=> {
-          //     if(selectList.has(v.id)){
-          //       idList.push(v)
-          //     }
-          //   })
-
-          //   const tmpPauseBasicRow = [...pauseBasicRow];
-          //   spliceArray.reverse();
-          //   spliceArray.map((value, index)=>{
-          //     tmpPauseBasicRow.splice(value, 1);
-          //   })
-
-          //   const res = await RequestMethod("delete", `pauseDelete`, idList );
-
-          //   if(res){
-          //     Notiflix.Report.success("삭제되었습니다.",""," 확인", () => {
-          //       sortObject(tmpPauseBasicRow);
-          //       LoadPauseList(processBasicRow[selectRow].process_id);
-          //     });
-          //   }else{
-          //     Notiflix.Report.success("에러가 발생했습니다.",""," 확인");
-          //   }
-          // },
-          // ()=>{}
         )
     }
   }
-
-  const sortObject = (object:any) => {
-    const  compare_qty = (a:any, b:any) => {
-      // a should come before b in the sorted order
-      if(a.lengthIndex < b.lengthIndex){
-        return -1;
-        // a should come after b in the sorted order
-      }else if(a.lengthIndex > b.lengthIndex){
-        return 1;
-        // a and b are the same
-      }else{
-        return 0;
-      }
-    }
-
-    object.sort(compare_qty)
-    let sortData = object.map((v:object, index:number)=>{
-      return {...v, index:index+1, lengthIndex:index+1}
-    });
-    setPauseBasicRow([...sortData]);
-
-  }
-
-  useEffect(()=>{
-    LoadBasic();
-  },[])
-
-  useEffect(()=>{
-    if(processBasicRow.length > 0){
-      LoadPauseList(processBasicRow[selectRow].process_id)
-    }
-  }, [selectRow])
-
-  useEffect(()=>{
-    if(state){
-      sortObject(pauseBasicRow);
-      setState(false);
-    }
-  },[pauseBasicRow])
 
   return (
     <div>
@@ -369,19 +250,20 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           ]}
           row={processBasicRow}
           setRow={setProcessBasicRow}
-          onRowClick={(clicked) => {const e = processBasicRow.indexOf(clicked)
-            const clickedList = processBasicRow.map((data, index) => {
-              if (e === index) {
-                return { ...data, onClicked: true }
-              } else {
-                return { ...data, onClicked: false }
-              }
-            })
-            setProcessBasicRow(clickedList)
+          onRowClick={(clicked) => {
+            const e = processBasicRow.indexOf(clicked)
             setSelectRow(e)
+            setProcessId(clicked.process_id)
           }}
           width={1576}
           height={280}
+        />
+        <PaginationComponent
+          currentPage={pageInfo.page}
+          totalPage={pageInfo.total}
+          setPage={(page) => {
+            setPageInfo({...pageInfo,page:page})
+          }}
         />
         <div style={{display:"flex", justifyContent:"space-between", margin:"15px 0"}}>
                         <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
@@ -394,26 +276,17 @@ const BasicPause = ({page, keyword, option}: IProps) => {
           selectable
           headerList={[
             SelectColumn,
-            ...pauseColumn
+            ...columnlist.pauseReason(pauseBasicRow, setPauseBasicRow)
           ]}
           row={pauseBasicRow}
-          setRow={(e) => {
-            let tmp: Set<any> = selectList
-            e.map(v => {
-              if(v.isChange) {
-                tmp.add(v.id)
-                v.isChange = false
-              }
-            })
-            setSelectList(tmp)
-            setState(true)
-            setPauseBasicRow(e)
+          setRow={(data, index) => {
+            setPauseBasicRow(data)
           }}
           height={440}
-          // setSelectList={changeSetSelectList}
           //@ts-ignore
-          setSelectList={setSelectList}
-          selectList={selectList}
+          setSelectList={setSelectIds}
+          selectList={selectIds}
+          width={1565}
         />
       </div>
     </div>
