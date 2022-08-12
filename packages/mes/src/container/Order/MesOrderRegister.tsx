@@ -7,13 +7,7 @@ import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
 import moment from 'moment'
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
-
-
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from 'shared/src/reducer'
-import { add_product_ids_for_removed_rows, add_product_ids_for_selected_rows, cancel_product_ids_for_modal, initialize_product_ids_for_basicrow, remove_product_ids_for_selected_rows, set_product_ids_for_selected_rows } from "shared/src/reducer/product_ids_for_selected_rows_state";
-import { off } from 'process';
-import { tmpdir } from 'os';
+import { useDispatch,  } from "react-redux";
 import { setExcelTableHeight } from 'shared/src/common/Util'
 
 
@@ -42,10 +36,6 @@ const MesOrderRegister = ({ }: IProps) => {
   console.log(basicRow, 'basicRow')
   useEffect(() => {
     getMenus()
-    Notiflix.Loading.remove()
-    dispatch(
-      cancel_product_ids_for_modal()
-    )
     dispatch(setMenuSelectState({ main: "영업 관리", sub: router.pathname }))
     return (() => {
       dispatch(deleteMenuSelectState())
