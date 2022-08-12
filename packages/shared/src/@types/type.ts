@@ -7,6 +7,7 @@ export interface IMenuType {
 }
 
 export interface IExcelHeaderType {
+  isFloatFormat?: number
   onClickEvent?: (any) => {any}
   beforeEventTitle?: string
   afterEventTitle?: string
@@ -55,6 +56,8 @@ export interface IExcelHeaderType {
   noSelect?:boolean
   inputType?: string
   overlay?:boolean
+  orderRegisterManage?:() => any[]
+
 }
 
 export interface IResponseType {

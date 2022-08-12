@@ -100,7 +100,7 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       //@ts-ignore
       rowClass={(row) => {row?.border ? 'selectRow' : undefined}}
       headerRowHeight={customHeaderRowHeight ?? 40}
-      rowKeyGetter={selectable ? rowKeyGetter : null}
+      rowKeyGetter={rowKeyGetter}
       className={'cell'}
       columns={headerList}
       rows={row.length > 0 ? row : []}
@@ -152,7 +152,6 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       onSelectedRowsChange={(row) =>{
         setSelectedRows(row)}}
       selectedRows={selectedRows}
-      // onRowChange={setSelectedRows}
       style={{
         border:"none",
         overflow:scrollOnOff ? "hidden" : "auto",
@@ -168,6 +167,7 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       state={type}
       onRowClick={(row,col) => {
         onRowClick && onRowClick(row)
+        setSelectRow && setSelectRow(row)
       }}
       onRowDoubleClick={(row,col) => {
         onDoubleClick && onDoubleClick(row)

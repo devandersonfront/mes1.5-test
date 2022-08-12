@@ -49,8 +49,8 @@ const BasicRawMaterial = ({}: IProps) => {
   const [barcodeOpen, setBarcodeOpen] = useState<boolean>(false);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(
-    columnlist["rawmaterial"]
-  );
+    columnlist["rawmaterialForBasicMaterial"]
+  );  
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionList, setOptionList] = useState<string[]>([
     "원자재 CODE",
@@ -285,7 +285,7 @@ const BasicRawMaterial = ({}: IProps) => {
   };
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["rawmaterial"];
+    let tmpColumn = columnlist["rawmaterialForBasicMaterial"];
     let tmpRow = [];
     tmpColumn = tmpColumn
       .map((column: any) => {

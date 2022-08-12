@@ -254,6 +254,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
     case 'product': {
 
       return staticCalendar ? {
+        ...selectData,
         code: selectData.code,
         name: selectData.name,
         type: TransferCodeToValue(selectData.type, 'material'),
@@ -285,6 +286,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         deadline: selectData.deadline
 
       }:{
+        ...selectData,
         code: selectData.code,
         name: selectData.name,
         type: TransferCodeToValue(selectData.type, 'product'),

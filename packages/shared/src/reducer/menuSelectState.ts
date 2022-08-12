@@ -11,6 +11,18 @@ const initialState : MenuSelectState = {
     main: ''
 }
 
+// export const deleteSelectMenuState = () => ({
+//     type: DELETE_SELECT_MENU_STATE,
+//     menuState: null
+// })
+
+// export const setSelectMenuStateChange = (menuState: IMenuStateType) => {
+//     return {
+//         type: SET_SELECT_MENU_STATE,
+//         menuState: menuState
+//     }
+// }
+
 export const selectedMenuSlice = createSlice({
     name: 'menuSelectState',
     initialState,

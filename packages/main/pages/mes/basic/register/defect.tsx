@@ -8,7 +8,7 @@ const RegisterBasicContainer = () => {
     return (
         <div style={{display:"flex"}}>
             <MenuNavigation pageType={'BASIC'} subType={3}/>
-            <div>
+            <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
                 <BasicDefect/>
             </div>
