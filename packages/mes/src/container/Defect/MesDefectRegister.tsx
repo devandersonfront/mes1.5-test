@@ -27,7 +27,7 @@ interface IProps {
   option?: number
 }
 
-const MesOperationRegister = ({page, keyword, option}: IProps) => {
+const MesDefectRegister = ({page, keyword, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch();
   // const receiveKey = useSelector((root:RootState) => root.OperationRegisterState);
@@ -148,7 +148,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       }))
     if (res) {
       Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
-        router.push('/mes/operationV1u/list')
+        router.push('/mes/defect/list')
       });
     }
   }
@@ -372,7 +372,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               }])
             }}
             code={codeCheck}
-            title={"작업지시서 등록"}
+            title={"불량 이력 관리 등록"}
             buttons={['', '', '저장하기', '삭제']}
             buttonsOnclick={onClickHeaderButton}
         />
@@ -441,4 +441,4 @@ export const getServerSideProps = (ctx: NextPageContext) => {
   }
 }
 
-export {MesOperationRegister};
+export {MesDefectRegister};
