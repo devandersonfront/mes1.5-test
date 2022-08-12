@@ -33,7 +33,6 @@ const UnitContainer = ({ row, column, setRow }: IProps) => {
       if (column.toFix) {
         // fixNumber = new Big(fixNumber)
 
-
         if (row.type && row.type == 'COIL') {
 
           // console.log("hihi ", isInteger(fixNumber));
@@ -41,7 +40,7 @@ const UnitContainer = ({ row, column, setRow }: IProps) => {
             fixNumber = new Number(fixNumber)
 
           } else {
-            console.log("abcd");
+            // console.log("abcd");
             fixNumber = new Big(fixNumber).toFixed(column.toFix)
           }
 
@@ -51,7 +50,7 @@ const UnitContainer = ({ row, column, setRow }: IProps) => {
             fixNumber = new Number(fixNumber).toFixed(column.toFix)
 
           } else {
-            console.log("abcd");
+            // console.log("abcd");
             fixNumber = new Big(fixNumber)
           }
         }
