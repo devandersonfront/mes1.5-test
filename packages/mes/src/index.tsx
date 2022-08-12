@@ -3,6 +3,13 @@
 export {MesOperationRegister} from './container/Operation/MesOperationRegister'
 export {MesOperationList} from './container/Operation/MesOperationList'
 export {MesOperationModify} from './container/Operation/MesOperationModify'
+
+//불량 이력 관리
+
+export {MesDefectRegister} from './container/Defect/MesDefectRegister'
+export {MesDefectList} from './container/Defect/MesDefectList'
+export {MesDefectModify} from './container/Defect/MesDefectModify'
+
 //작업 일보
 export {MesRecordList} from './container/Record/MesRecordList'
 //재고 현황
