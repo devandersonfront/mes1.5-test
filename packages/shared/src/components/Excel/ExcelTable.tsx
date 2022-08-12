@@ -168,7 +168,7 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       state={type}
       onRowClick={(row,col) => {
         // alert("여기")
-        console.log("row 클릭");
+        console.log("row 클릭 : row : ",);
         
         onRowClick && onRowClick(row)
         setSelectRow && setSelectRow(row)
