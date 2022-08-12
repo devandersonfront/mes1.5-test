@@ -18,6 +18,7 @@ import moment from "moment"
 import axios from "axios";
 import cookie from "react-cookies";
 import ErrorList from "shared/src/common/ErrorList";
+import {setExcelTableHeight} from "shared/src/common/Util";
 
 export interface IProps {
     children?: any
@@ -43,17 +44,10 @@ const HomeProductionLog = ({}: IProps) => {
             })
             if(res.status === 200){
                 Notiflix.Loading.remove()
-                let renewalData;
                 const {info_list , page, totalPages, menus} = res.data
                 const renewalColumn = convertColumn(menus)
-
-                if(page > 1){
-                    renewalData = convertData([...basicRow , ...info_list])
-                    setBasicRow(renewalData)
-                }else {
-                    renewalData = convertData(info_list)
-                    setBasicRow(renewalData)
-                }
+                const renewalData = convertData(info_list)
+                setBasicRow(renewalData)
                 setColumn(renewalColumn)
                 setPage({current_page : page , totalPages : totalPages})
             }
@@ -113,14 +107,7 @@ const HomeProductionLog = ({}: IProps) => {
                 row={basicRow}
                 setRow={setBasicRow}
                 width={1576}
-                height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-                scrollEnd={(value) => {
-                    if(value){
-                        if(page.totalPages > page.current_page){
-                            LoadBasic(page.current_page+ 1)
-                        }
-                    }
-                }}
+                height={setExcelTableHeight(basicRow.length)}
             />
         </div>
     );
