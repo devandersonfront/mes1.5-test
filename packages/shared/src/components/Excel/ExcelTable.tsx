@@ -152,7 +152,6 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       onSelectedRowsChange={(row) =>{
         setSelectedRows(row)}}
       selectedRows={selectedRows}
-      // onRowChange={setSelectedRows}
       style={{
         border:"none",
         overflow:scrollOnOff ? "hidden" : "auto",
@@ -167,9 +166,6 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       theme={scrollState}
       state={type}
       onRowClick={(row,col) => {
-        // alert("여기")
-        console.log("row 클릭");
-        
         onRowClick && onRowClick(row)
         setSelectRow && setSelectRow(row)
       }}
