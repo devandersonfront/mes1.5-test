@@ -285,7 +285,7 @@ export const columnlist: any = {
   ],
 
   rawmaterialForBasicMaterial: [
-    {key: 'code', name: '원자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder:"CODE 입력"},
+    {key: 'code', name: '원자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder:"CODE 입력", headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'name', name: '원자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder:"품명 입력"},
     {key: 'texture', name: '재질', editor: TextEditor, formatter: PlaceholderBox, placeholder:"재질 입력"},
     {key: 'depth', name: '두께', editor: TextEditor, formatter: UnitContainer, inputType:'number', unitData: 'T',  placeholder:"0", toFix:2},
