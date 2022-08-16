@@ -19,8 +19,6 @@ interface IProps {
   option?: number
 }
 
-
-
 const MesOrderRegister = ({ }: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
@@ -33,7 +31,6 @@ const MesOrderRegister = ({ }: IProps) => {
   }])
   const [column, setColumn] = useState<any>(columnlist["orderRegister"]())
 
-  console.log(basicRow, 'basicRow')
   useEffect(() => {
     getMenus()
     dispatch(setMenuSelectState({ main: "영업 관리", sub: router.pathname }))
@@ -73,10 +70,13 @@ const MesOrderRegister = ({ }: IProps) => {
       if(selectList.size < 1) throw("데이터를 선택해주세요.")
 
       basicRow.map((row) => {
-        if (selectList.has(row.id) && !row.code) {
-          throw("CODE를 입력해주세요.")
-        } else if (!Number.isInteger(Number(row.amount)) || row.amount < 1) {
-          throw("수주량을 정확히 입력해주세요.")
+        if(selectList.has(row.id))
+        {
+          if (!row.code) {
+            throw("CODE를 입력해주세요.")
+          } else if (!Number.isInteger(Number(row.amount)) || row.amount < 1) {
+            throw("수주량을 정확히 입력해주세요.")
+          }
         }
       })
 
@@ -87,6 +87,7 @@ const MesOrderRegister = ({ }: IProps) => {
           customer: row.customerArray,
           amount: row.amount ?? 0,
         }))
+      Notiflix.Loading.circle()
       const res = await RequestMethod('post', `contractSave`,postBody)
 
       if (res) {
@@ -130,7 +131,6 @@ const MesOrderRegister = ({ }: IProps) => {
         break;
     }
   }
-  console.log('sekect',selectList)
 
   return (
     <div>
