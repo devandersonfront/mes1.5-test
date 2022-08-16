@@ -243,7 +243,7 @@ export const columnlist: any = {
   productV1u: [
     {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-'},
     {key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-'},
-    {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', overlay:true},
+    {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', overlay:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: 'type', name: '품목 종류',  formatter: DropDownEditor, selectList: [
         {pk: '0', name: '반제품'},
@@ -257,10 +257,10 @@ export const columnlist: any = {
         {pk: 'Ton', name: 'Ton'},
         {pk: 'ml', name: 'ml'},
         {pk: 'L', name: 'L'},
-      ]},
+      ], headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister"},
     // {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"product"},
-    {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process", placeholder: "-", noSelect:true},
+    {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process", placeholder: "-", noSelect:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
     {key: 'tool_id', name: '공구', formatter: ToolInfoModal},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
