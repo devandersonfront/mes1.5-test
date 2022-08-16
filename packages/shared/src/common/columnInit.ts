@@ -75,13 +75,13 @@ import CommonProgressBar from '../../../main/component/InputBox/CommonProgressBa
 
 export const columnlist: any = {
   member: [
-    {key: 'name', formatter: PlaceholderBox, placeholder:"성명 입력", editor: TextEditor},
+    {key: 'name', formatter: PlaceholderBox, placeholder:"성명 입력", editor: TextEditor, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'appointment', formatter: PlaceholderBox, placeholder:"직책 입력", editor: TextEditor},
     {key: 'telephone', formatter: PlaceholderBox, placeholder:"전화번호 입력", editor: TextEditor},
     {key: 'email', formatter: PlaceholderBox, placeholder:"이메일 입력", editor: TextEditor},
-    {key: 'authority', formatter: AuthoritySearchModal},
+    {key: 'authority', formatter: AuthoritySearchModal, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     // {key: 'authority', formatter: DropDownEditor, selectList: []},
-    {key: 'tmpId', formatter: PlaceholderBox, placeholder:"아이디 입력", editor: TextEditor},
+    {key: 'tmpId', formatter: PlaceholderBox, placeholder:"아이디 입력", editor: TextEditor, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'password', formatter: PlaceholderBox, placeholder:"비밀번호 입력", editor: TextEditor},
     {key: 'password-confirm', formatter: PlaceholderBox, placeholder:"비밀번호 확인", editor: TextEditor},
     {key: 'profile', formatter: FileEditer, type:"image"},
