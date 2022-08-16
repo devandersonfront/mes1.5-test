@@ -38,7 +38,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["operationListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
+  const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
     from: moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
