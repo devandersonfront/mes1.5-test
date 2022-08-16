@@ -170,7 +170,7 @@ export const columnlist: any = {
         {pk: 3, name: "통합"},
       ], width: 118, placeholder:"-"},
     {key: 'madeAt', name: '제조 연월일', formatter: CalendarBox, width: 118},
-    {key: 'mfrCode', name: '제조 번호(필수)', editor: TextEditor, formatter: PlaceholderBox, width: 118, placeholder:"제조 번호 입력"},
+    {key: 'mfrCode', name: '제조 번호(필수)', editor: TextEditor, formatter: PlaceholderBox, width: 118, placeholder:"제조 번호 입력",  headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'manager', name: '담당자', formatter: SearchModalTest, type: 'user', width: 118, placeholder:"-"},
     {key: 'photo', name: '기계사진', formatter: FileEditer, width: 118, type:"image"},
     {key: 'qualify', name: '스펙 명판 사진', formatter: FileEditer, width: 118, type:"image"},
