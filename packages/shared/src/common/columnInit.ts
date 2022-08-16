@@ -1356,7 +1356,7 @@ export const columnlist: any = {
     {key: "operation", name: '설비가동률', width: 208},
   ],
   toolRegister: [
-    {key: "code", name: '공구 CODE', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: "code", name: '공구 CODE', editor:TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력',  headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: "name", name: '공구 품명', editor:TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: "unit", name: '단위', formatter: DropDownEditor,
       selectList:[
