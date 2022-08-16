@@ -214,7 +214,7 @@ export const columnlist: any = {
         {pk: 7, name: "유틸리티 센서"},
       ]},
     {key: 'madeAt', name: '제조 연월일', formatter: CalendarBox},
-    {key: 'mfrCode', name: '제조 번호(필수)', editor: TextEditor, formatter: PlaceholderBox, placeholder:"제조 번호 입력"},
+    {key: 'mfrCode', name: '제조 번호(필수)', editor: TextEditor, formatter: PlaceholderBox, placeholder:"제조 번호 입력", headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'manager', name: '담당자', formatter: SearchModalTest, type:"user", placeholder:"-"},
     {key: 'photo', name: '장치사진', formatter: FileEditer, type:"image"},
     {key: 'qualify', name: '스펙 명판 사진', formatter: FileEditer, type:"image"},
