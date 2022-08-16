@@ -112,7 +112,7 @@ export const columnlist: any = {
     {key: 'model', editor: TextEditor, formatter: PlaceholderBox, placeholder:"모델 입력" },
   ],
   process: [
-    {key: 'name', editor: TextEditor, formatter: PlaceholderBox, placeholder:"공정명 입력"},
+    {key: 'name', editor: TextEditor, formatter: PlaceholderBox, placeholder:"공정명 입력", headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
   ],
   machine:[
     {key: 'name', editor: TextEditor},
