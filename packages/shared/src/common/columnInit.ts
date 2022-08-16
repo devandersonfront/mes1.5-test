@@ -87,7 +87,7 @@ export const columnlist: any = {
     {key: 'profile', formatter: FileEditer, type:"image"},
   ],
   factory: [
-    {key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력'},
+    {key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력', headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'address', name: '공장 주소', width: 480, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장 주소 입력'},
     {key: 'manager', name: '담당자', width: 120, formatter: SearchModalTest, type: 'user', placeholder: '-'},
     {key: 'appointment', name: '직책', width: 120, formatter: PlaceholderBox, placeholder: '자동 입력'},
