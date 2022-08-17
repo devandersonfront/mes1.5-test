@@ -37,7 +37,7 @@ const UnitContainer = ({ row, column, setRow }: IProps) => {
 
           // console.log("hihi ", isInteger(fixNumber));
           if (isInteger(fixNumber)) {
-            fixNumber = new Number(fixNumber)
+            fixNumber = new Number(fixNumber).toFixed(2)
 
           } else {
             // console.log("abcd");
