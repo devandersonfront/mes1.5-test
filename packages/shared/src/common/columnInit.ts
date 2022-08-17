@@ -266,22 +266,6 @@ export const columnlist: any = {
     {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' }
   ],
   rawmaterial: [
-    {key: 'code', name: '원자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder:"CODE 입력"},
-    {key: 'name', name: '원자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder:"품명 입력"},
-    {key: 'texture', name: '재질', editor: TextEditor, formatter: PlaceholderBox, placeholder:"재질 입력"},
-    {key: 'depth', name: '두께', editor: TextEditor, formatter: UnitContainer, inputType:'number', unitData: 'T',  placeholder:"0"},
-    {key: 'width', name: '가로(COIL 폭)', editor: TextEditor, formatter: UnitContainer, inputType:'number', unitData: 'mm',  placeholder:"0"},
-    {key: 'height', name: '세로(Feeder)', editor: TextEditor, formatter: UnitContainer, inputType:'number', unitData: 'mm',  placeholder:"0"},
-    {key: 'type', name: '재질 종류', formatter: DropDownEditor, selectList: [
-        {pk: 1, name: 'COIL'},
-        {pk: 2, name: 'SHEET'}
-      ]},
-    {key: 'stock', name: '원자재 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',placeholder:"0"},
-    {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer' ,placeholder:"-"},
-    {key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력',inputType:'number',},
-  ],
-
-  rawmaterialForBasicMaterial: [
     {key: 'code', name: '원자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder:"CODE 입력", headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'name', name: '원자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder:"품명 입력"},
     {key: 'texture', name: '재질', editor: TextEditor, formatter: PlaceholderBox, placeholder:"재질 입력"},
@@ -292,7 +276,10 @@ export const columnlist: any = {
         {pk: 1, name: 'COIL'},
         {pk: 2, name: 'SHEET'}
       ]},
-    {key: 'stock', name: '원자재 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',placeholder:"0", toFix:2},
+    {key: 'stock', name: '원자재 재고량', formatter: UnitContainer,placeholder:"0", toFix:2, selectList: [
+        {pk: 0, name: 'kg'},
+        {pk: 1, name: '장'},
+      ]},
     {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer' ,placeholder:"-"},
     {key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력',inputType:'number',},
   ],

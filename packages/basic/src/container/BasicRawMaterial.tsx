@@ -47,10 +47,9 @@ const BasicRawMaterial = ({}: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [excelOpen, setExcelOpen] = useState<boolean>(false);
-  const [barcodeOpen, setBarcodeOpen] = useState<boolean>(false);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["rawmaterialForBasicMaterial"]);
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["rawmaterial"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionList, setOptionList] = useState<string[]>([
     "원자재 CODE",
@@ -267,7 +266,7 @@ const BasicRawMaterial = ({}: IProps) => {
   };
 
   const cleanUpData = (res: any, keyword?:string) => {
-    let tmpColumn = columnlist["rawmaterialForBasicMaterial"];
+    let tmpColumn = columnlist["rawmaterial"];
     let tmpRow = [];
     tmpColumn = tmpColumn
       .map((column: any) => {
@@ -374,6 +373,7 @@ const BasicRawMaterial = ({}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
+        unit: row.unit !== null ? row.unit : row.type === 1 ? 0 : 1,
         type: settingType(row.type),
         customer_id: row.customer && row.customer.name,
         id: `rawmaterial_${random_id}`,
