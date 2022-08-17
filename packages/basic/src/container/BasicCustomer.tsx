@@ -20,7 +20,8 @@ import {
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { useDispatch } from "react-redux";
-import { setExcelTableHeight } from "shared/src/common/Util";
+import {getTableSortingOptions, setExcelTableHeight} from "shared/src/common/Util";
+import {TableSortingOptionType} from "shared/src/@types/type";
 
 export interface IProps {
   children?: any;
@@ -35,6 +36,7 @@ const BasicCustomer = ({}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false);
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
+  const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(
     columnlist["customer"]
   );
@@ -57,17 +59,18 @@ const BasicCustomer = ({}: IProps) => {
     total: 1,
   });
 
-  const reload = (keyword?:string) => {
+  const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
       setPageInfo({...pageInfo, page: 1})
     } else {
-      getData(null, keyword)
+      getData(undefined, keyword, sortingOptions)
     }
   }
 
+
   useEffect(() => {
-    getData(pageInfo.page, keyword)
+    getData(pageInfo.page, keyword, sortingOptions)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -288,17 +291,27 @@ const BasicCustomer = ({}: IProps) => {
     }
   };
 
-  const getData = async (page?: number, keyword?:string) => {
+  const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    if(sortingOptions.orders.length > 0){
+      params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+      params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    }
+    return params
+  }
+
+  const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", keyword? 'customerSearch':'customerList', {
       path: {
         page: page ?? 1,
         renderItem: 18,
       },
-      params: keyword ? {
-        keyword,
-        opt: optionIndex ?? 0,
-      } : null,
+      params: getRequestParams(keyword, _sortingOptions)
     });
 
     if (res) {
@@ -310,7 +323,7 @@ const BasicCustomer = ({}: IProps) => {
           page: res.page,
           total: res.totalPages,
         });
-        cleanUpData(res);
+        cleanUpData(res, keyword);
       }
     }
 
@@ -318,7 +331,36 @@ const BasicCustomer = ({}: IProps) => {
     Notiflix.Loading.remove()
   };
 
-  const cleanUpData = async (res: any) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(keyword, _sortingOptions)
+    }
+    let tmpColumn = column.map((v: any) => {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+      return {
+        ...v,
+        pk: v.unit_id,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+        sorts: v.sorts ? sortingOptions : null,
+        result: v.sortOption ? changeOrder : null,
+      }
+    });
+
+    Promise.all(tmpColumn).then((res) => {
+      setColumn([
+        ...res.map((v) => {
+          return {
+            ...v,
+            name: v.moddable ? v.name + "(필수)" : v.name,
+          };
+        }),
+      ]);
+    });
+  };
+
+  const cleanUpData = async (res: any, keyword?:string) => {
     let tmpColumn = columnlist["customer"];
     let tmpRow = [];
     tmpColumn = tmpColumn
@@ -402,15 +444,7 @@ const BasicCustomer = ({}: IProps) => {
       }
     });
 
-    setColumn([
-      ...tmpColumn.map((v) => {
-        return {
-          ...v,
-          name: v.moddable ? v.name + "(필수)" : v.name,
-        };
-      }),
-      ...additionalMenus,
-    ]);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
 
     let pk = "";
     Object.keys(tmpRow).map((v) => {
@@ -589,7 +623,7 @@ const BasicCustomer = ({}: IProps) => {
             selectList={selectList}
             //@ts-ignore
             setSelectList={setSelectList}
-            onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+            onRowClick={(clicked) => {const e = basicRow.indexOf(clicked)
               setSelectRow(e)}}
             width={1576}
             height={setExcelTableHeight(basicRow.length)}

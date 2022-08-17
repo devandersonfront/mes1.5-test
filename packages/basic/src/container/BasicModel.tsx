@@ -17,7 +17,8 @@ import {useRouter} from 'next/router'
 import styled from 'styled-components'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util';
+import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util';
+import {TableSortingOptionType} from "shared/src/@types/type";
 
 export interface IProps {
   children?: any
@@ -35,7 +36,7 @@ const BasicModel = ({}: IProps) => {
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
-
+  const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["model"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['거래처명','사업자 번호', '모델명'])
@@ -47,17 +48,17 @@ const BasicModel = ({}: IProps) => {
     total: 1
   })
 
-  const reload = (keyword?:string) => {
+  const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
       setPageInfo({...pageInfo, page: 1})
     } else {
-      getData(null, keyword)
+      getData(undefined, keyword, sortingOptions)
     }
   }
 
   useEffect(() => {
-    getData(pageInfo.page, keyword)
+    getData(pageInfo.page, keyword, sortingOptions)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -67,52 +68,22 @@ const BasicModel = ({}: IProps) => {
     })
   },[])
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if(v.selectList && v.selectList.length === 0){
-        let tmpKey = v.key
-        let res: any
-
-        res = await RequestMethod('get', `${tmpKey}List`,{
-          path: {
-            page: 1,
-            renderItem: MAX_VALUE,
-          }
-        })
-
-
-        let pk = "";
-
-        res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
-          if(v.indexOf('_id') !== -1){
-            pk = v
-          }
-        })
-
-        return {
-          ...v,
-          selectList: [...res.info_list.map((value: any) => {
-            return {
-              ...value,
-              name: value.name,
-              // name: tmpKey === 'model' ? value.model : value.name,
-              pk: value[pk]
-            }
-          })]
-        }
-
-
-      }else{
-        if(v.selectList){
-          return {
-            ...v,
-            pk: v.unit_id
-          }
-        }else{
-          return v
-        }
+  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword:string) => {
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(keyword, _sortingOptions)
+    }
+    let tmpColumn = column.map((v: any) => {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+      return {
+        ...v,
+        pk: v.unit_id,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+        sorts: v.sorts ? sortingOptions : null,
+        result: v.sortOption ? changeOrder : null,
       }
-    })
+    });
 
     // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
@@ -234,7 +205,7 @@ const BasicModel = ({}: IProps) => {
 
 
       if(res){
-        Notiflix.Report.success('저장되었습니다.','','확인', () => reload());
+        Notiflix.Report.success('저장되었습니다.','','확인', () => reload(keyword, sortingOptions));
       }
     }else{
       return Notiflix.Report.warning(
@@ -303,7 +274,7 @@ const BasicModel = ({}: IProps) => {
           ]}
       )))
 
-      reload()
+      reload(keyword, sortingOptions)
     }else{
 
       selectedRows.forEach((row)=>{map.delete(row.id)})
@@ -318,18 +289,31 @@ const BasicModel = ({}: IProps) => {
 
   }
 
-  const getData = async (page?: number, keyword?: string) => {
+  const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    if(sortingOptions.orders.length > 0){
+      params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+      params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    }
+    return params
+  }
+
+  const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle()
+    const settingSorts = _sortingOptions?.sorts.map((sort) => {
+      if(sort == "customer_id") return "name"
+      return sort
+    })
     const res = await RequestMethod('get', keyword ? 'modelSearch' : 'modelList',{
       path: {
         page: page ?? 1,
         renderItem: 18,
       },
-      params: keyword ? {
-        sorts:"created",
-        keyword,
-        opt: optionIndex ?? 0
-      } : null
+      params: getRequestParams(keyword, {..._sortingOptions, sorts:settingSorts})
     })
 
     if(res){
@@ -341,14 +325,14 @@ const BasicModel = ({}: IProps) => {
           page: res.page,
           total: res.totalPages
         })
-        cleanUpData(res)
+        cleanUpData(res, keyword)
       }
     }
     setSelectList(new Set())
     Notiflix.Loading.remove()
   }
 
-  const cleanUpData = (res: any) => {
+  const cleanUpData = (res: any, keyword?:string) => {
     let tmpColumn = columnlist["model"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
@@ -397,7 +381,6 @@ const BasicModel = ({}: IProps) => {
           id: menu.mi_id,
           name: menu.title,
           width: menu.width,
-          // key: menu.title,
           key: menu.mi_id,
           editor: TextEditor,
           type: 'additional',
@@ -411,10 +394,7 @@ const BasicModel = ({}: IProps) => {
 
     tmpRow = res.info_list
 
-    loadAllSelectItems( [
-      ...tmpColumn,
-      ...additionalMenus
-    ] )
+    loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
       let appendAdditional: any = {}
@@ -553,7 +533,7 @@ const BasicModel = ({}: IProps) => {
       <PageHeader
         isSearch
         searchKeyword={keyword}
-        onSearch={reload}
+        onSearch={(keyword) => reload(keyword, sortingOptions)}
         searchOptionList={optionList}
         onChangeSearchOption={setOptionIndex}
         optionIndex={optionIndex}

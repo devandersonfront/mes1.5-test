@@ -6,6 +6,13 @@ export interface IMenuType {
   subMenu?: IMenuType[]
 }
 
+export interface IProps {
+  row: any
+  column: IExcelHeaderType
+  setRow: (row: any) => void
+  onChangeOption:any
+}
+
 export interface IExcelHeaderType {
   isFloatFormat?: number
   onClickEvent?: (any) => {any}
@@ -47,6 +54,7 @@ export interface IExcelHeaderType {
   toolType?: 'register'
   callback?: (data : any) => void
   idx?:number
+  headerRenderer?: ({row, column, setRow, onChangeOption}:IProps) => any
   headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][]
   action?:string
   doubleClick?:() => void

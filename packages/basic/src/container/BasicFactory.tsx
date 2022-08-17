@@ -21,7 +21,8 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from "shared/src/common/Util";
+import {getTableSortingOptions, setExcelTableHeight} from "shared/src/common/Util";
+import {TableSortingOptionType} from "shared/src/@types/type";
 
 export interface IProps {
   children?: any;
@@ -39,6 +40,7 @@ const BasicFactory = ({}: IProps) => {
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionList, setOptionList] = useState<string[]>(['공장명', '주소', '담당자명', '담당자 직책', '담당자 휴대폰 번호'])
     const [optionIndex, setOptionIndex] = useState<number>(0)
+    const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
     const [selectRow, setSelectRow] = useState<number>(0);
     const [keyword, setKeyword] = useState<string>();
     const [pageInfo, setPageInfo] = useState<{ page: number, total: number }>({
@@ -46,17 +48,17 @@ const BasicFactory = ({}: IProps) => {
         total: 1
     })
 
-    const reload = (keyword?:string) => {
+    const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
         setKeyword(keyword)
         if(pageInfo.page > 1) {
             setPageInfo({...pageInfo, page: 1})
         } else {
-            getData(null, keyword)
+            getData(undefined, keyword, sortingOptions)
         }
     }
 
     useEffect(() => {
-        getData(pageInfo.page, keyword)
+        getData(pageInfo.page, keyword, sortingOptions)
     }, [pageInfo.page]);
 
     useEffect(() => {
@@ -68,49 +70,20 @@ const BasicFactory = ({}: IProps) => {
         };
     }, []);
 
-    const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-        let tmpColumn = column.map(async (v: any) => {
-            if (v.selectList && v.selectList.length === 0) {
-                let tmpKey = v.key;
-
-                let res: any;
-                res = await RequestMethod("get", `${tmpKey}List`, {
-                    path: {
-                        page: 1,
-                        renderItem: MAX_VALUE,
-                    },
-                });
-
-                let pk = "";
-
-                res.results.info_list &&
-                res.results.info_list.length &&
-                Object.keys(res.results.info_list[0]).map((v) => {
-                    if (v.indexOf("_id") !== -1) {
-                        pk = v;
-                    }
-                });
-                return {
-                    ...v,
-                    selectList: [
-                        ...res.results.info_list.map((value: any) => {
-                            return {
-                                ...value,
-                                name: tmpKey === "model" ? value.model : value.name,
-                                pk: value[pk],
-                            };
-                        }),
-                    ],
-                };
-            } else {
-                if (v.selectList) {
-                    return {
-                        ...v,
-                        pk: v.unit_id,
-                    };
-                } else {
-                    return v;
-                }
+    const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
+        const changeOrder = (sort:string, order:string) => {
+            const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+            setSortingOptions(_sortingOptions)
+            reload(keyword, _sortingOptions)
+        }
+        let tmpColumn = column.map((v: any) => {
+            const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+            return {
+                ...v,
+                pk: v.unit_id,
+                sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+                sorts: v.sorts ? sortingOptions : null,
+                result: v.sortOption ? changeOrder : null,
             }
         });
 
@@ -301,19 +274,27 @@ const BasicFactory = ({}: IProps) => {
             Notiflix.Report.success("삭제되었습니다.", "", "확인");
         }
     };
-
-    const getData = async (page?: number, keyword?: string) => {
+    const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
+        let params = {}
+        if(keyword) {
+            params['keyword'] = keyword
+            params['opt'] = optionIndex
+        }
+        if(sortingOptions.orders.length > 0){
+            params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+            params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+        }
+        params['status'] = '0,1'
+        return params
+    }
+    const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
         Notiflix.Loading.circle();
         const res = await RequestMethod("get", keyword ? 'factorySearch' : 'factoryList', {
             path: {
                 page: page ?? 1,
                 renderItem: 18,
             },
-            params: keyword ? {
-                sorts: "created",
-                keyword,
-                opt: optionIndex ?? 0,
-            } : null,
+            params: getRequestParams(keyword, _sortingOptions)
         });
         if (res) {
             if (res.totalPages > 0 && res.totalPages < res.page) {
@@ -324,7 +305,7 @@ const BasicFactory = ({}: IProps) => {
                     page: res.page,
                     total: res.totalPages,
                 });
-                cleanUpData(res);
+                cleanUpData(res, keyword);
             }
         }
 
@@ -332,7 +313,7 @@ const BasicFactory = ({}: IProps) => {
         Notiflix.Loading.remove()
     };
 
-    const cleanUpData = (res: any) => {
+    const cleanUpData = (res: any, keyword?:string) => {
         let tmpColumn = columnlist["factory"];
         let tmpRow = [];
         tmpColumn = tmpColumn
@@ -402,7 +383,7 @@ const BasicFactory = ({}: IProps) => {
 
         tmpRow = res.info_list;
 
-        loadAllSelectItems([...tmpColumn, ...additionalMenus]);
+        loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
 
         let selectKey = "";
         let additionalData: any[] = [];

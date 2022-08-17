@@ -17,13 +17,11 @@ const UnitContainer = ({ row, column, setRow }: IProps) => {
 
   useEffect(() => {
     let fixNumber: any = Number(row[column.key]);
-
     if (!isNaN(Number(fixNumber))) {
       fixNumber = fixNumber.toLocaleString(undefined, {minimumFractionDigits: column.toFix ?? undefined,  maximumFractionDigits: column.toFix ?? undefined})
     } else {
       fixNumber = undefined
     }
-    // }
     setTitle(fixNumber !== undefined ? fixNumber : "")
   }, [row[column.key]])
 
