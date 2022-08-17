@@ -227,7 +227,7 @@ const BasicMidrangeRegister = () => {
                 selectList={legendarySelectList}
                 //@ts-ignore
                 setSelectList={setLegendarySelectList}
-                height={setExcelTableHeight(legendaryBasicRow.length)}
+                height={setExcelTableHeight(legendaryBasicRow.length) - 8}
                 width={sum(legendaryColumn.map(col => col.width))}
 
             />
@@ -254,7 +254,7 @@ const BasicMidrangeRegister = () => {
                 selectList={ItemSelectList}
                 //@ts-ignore
                 setSelectList={setItemSelectList}
-                height={setExcelTableHeight(itemBasicRow.length)}
+                height={setExcelTableHeight(itemBasicRow.length) - 8}
             />
             <div style={{display : 'flex'}}>
                 <MidrangeButton onClick={()=>deleteRowButton('item')} style={{backgroundColor :'#98999B'}}>

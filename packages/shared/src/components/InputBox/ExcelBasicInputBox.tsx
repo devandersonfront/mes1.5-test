@@ -6,7 +6,6 @@ import {RootState} from "../../reducer";
 import { insert_machine_list, selectMachineList } from '../../reducer/machineSelect'
 import { RemoveFirstZero } from '../../common/Util'
 
-
 interface IProps {
   row: any
   column: IExcelHeaderType
@@ -16,7 +15,6 @@ interface IProps {
 
 
 const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
-  
   const dispatch = useDispatch();
   const selector = useSelector(selectMachineList);
   const isNumberInput = column.inputType === 'number'

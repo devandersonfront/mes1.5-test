@@ -151,7 +151,7 @@ const BasicMidrangeDetail = () => {
                 selectList={legendarySelectList}
                 //@ts-ignore
                 setSelectList={setLegendarySelectList}
-                height={setExcelTableHeight(legendaryBasicRow.length)}
+                height={setExcelTableHeight(legendaryBasicRow.length)+10}
                 width={sum(legendaryColumn.map(col => col.width))}
             />
             <ExcelTable

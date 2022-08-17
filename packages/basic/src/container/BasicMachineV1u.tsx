@@ -359,11 +359,9 @@ const BasicMachineV1u = ({option}: IProps) => {
         }
       })
 
-      
       let random_id = Math.random()*1000;
       return {
         ...row,
-
         ...appendAdditional,
         type: row.type ? machineList[row.type]?.name : '선택없음',
         type_id: row.type ? machineList[row.type]?.pk : 0,
@@ -519,7 +517,6 @@ const BasicMachineV1u = ({option}: IProps) => {
       }
     }
 
-    
     setBasicRow(rows)
   }
 
@@ -550,9 +547,6 @@ const BasicMachineV1u = ({option}: IProps) => {
             row={basicRow}
             // setRow={setBasicRow}
             setRow={(e) => {
-              console.log("e : ", e);
-              
-
               let tmp: Set<any> = selectList
               e.map(v => {
                 if(v.isChange) {
