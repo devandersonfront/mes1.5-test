@@ -38,7 +38,7 @@ export const modalInfoSlice = createSlice({
         state.index = state.index < action.payload ? state.index : state.index-1 ;
       }
     },
-    add_summary_info(state, action: PayloadAction<{code:string, title:string, index:number, product_id:number}>) {
+    add_summary_info(state, action: PayloadAction<{code:string, title:string, index:number, product_id:number, data?:any[]}>) {
       const currentState = current(state)
       if(!state.datas[action.payload.index])
       {
@@ -54,6 +54,11 @@ export const modalInfoSlice = createSlice({
         toBeUpdated.title = action.payload.title
         toBeUpdated.code = action.payload.code
         toBeUpdated.product_id = action.payload.product_id
+      }
+      if(currentState.index === 0 && action.payload.data)
+      {
+        const firstData = state.datas.find((data,idx) => idx === 0)
+        firstData.data = action.payload.data
       }
 
       state.index = action.payload.index

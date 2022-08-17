@@ -38,10 +38,12 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     total: 1
   })
   const [ basicRowMap, setBasicRowMap ] = useState<Map<number, any>>(new Map())
+  const [ allDeselected, setAllDeselected ] = useState<boolean>(false)
 
   useEffect(() => {
-    column.basicRow?.map(row => row?.product?.product_id && basicRowMap.set(row.product.product_id, row))
-    setBasicRowMap(basicRowMap)
+    const newMap = new Map()
+    column.basicRow?.map(row => row?.product?.product_id && newMap.set(row.product.product_id, row))
+    setBasicRowMap(newMap)
   }, [column.basicRow])
 
   useEffect(() => {
@@ -70,10 +72,11 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
 
   const markSelectedRows = (rows: any[]) => (
    rows.map(row => {
-     if(basicRowMap.has(row.product_id))
+     if(basicRowMap.has(row.product_id) && !allDeselected)
      {
        const newRows = {
          ...row,
+         id: basicRowMap.get(row.product_id).id ?? row.id,
          date: basicRowMap.get(row.product_id).date,
          deadline: basicRowMap.get(row.product_id).deadline,
          amount: basicRowMap.get(row.product_id).amount,
@@ -126,6 +129,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       const borderedRows = markSelectedRows(newSearchList)
       setSearchList(page === 1 ? borderedRows : prev => [...prev, ...borderedRows])
     }
+    Notiflix.Loading.remove();
   }
 
   const getContents = () => {
@@ -250,7 +254,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       {
         ...SearchModalResult(row, searchModalInit.excelColumnType, column.staticCalendar),
       }))
-    tmpBasicRowMap.size > 0 && newBasicRow.push(...Array.from(tmpBasicRowMap.values()))
+    tmpBasicRowMap.size > 0 && !allDeselected && newBasicRow.push(...Array.from(tmpBasicRowMap.values()))
     newBasicRow = newBasicRow.length === 0
       ? [{
       date: moment().format('YYYY-MM-DD'),
@@ -270,6 +274,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     setPageInfo({page: 1, total: 1})
     setIsOpen(false)
     setKeyword('')
+    setAllDeselected(false)
   }
 
   return (
@@ -310,7 +315,8 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
             }
             <div style={{ marginBottom: "10px" }}>
               <button style={{marginLeft: 20}} onClick={() => setSearchList(setAllBorder(searchList,true))}>모두 선택</button>
-              <button style={{marginLeft: 10, marginRight: 15}} onClick={() => setSearchList(setAllBorder(searchList,false))}>모두 취소</button>
+              <button style={{marginLeft: 10, marginRight: 15}} onClick={() => {setSearchList(setAllBorder(searchList,false))
+              setAllDeselected(true)}}>모두 취소</button>
               출력 개수: {searchList.length}
             </div>
 

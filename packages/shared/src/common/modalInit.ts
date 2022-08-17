@@ -177,9 +177,9 @@ export const searchModalList: any  = {
         {pk: 'spare', name: '스페어'},
       ], type: 'Modal'},
   ],
-  bomInfo: [
+  bomInfo: (searchList, tabIndex) => ([
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
-    {key: 'code', name: 'CODE', width: 425, formatter: SearchModalTest, placeholder: '-', type: 'bom', modalType: true, noSelect:true},
+    {key: 'code', name: 'CODE', width: 425, formatter: tabIndex === 0 ? SearchModalTest : LineBorderContainer, placeholder: '-', type: 'bom', modalType: true, noSelect:true},
     {key: 'name', name: '품명', width: 280, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 0, name: '기본'},
@@ -189,8 +189,8 @@ export const searchModalList: any  = {
     {key: 'unit', name: '단위', width: 160, formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
     {key: 'usage', name: '1회 사용량', width: 160, formatter: LineBorderContainer, editor: TextEditor, inputType:'number', textType: 'Modal', placeholder: '1'},
     {key: 'process', name: '생산 공정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-'},
-  ],
+    {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-', searchList},
+  ]),
 
   readOnlyBomInfo: [
     {key: 'seq', name: '번호', width: 64,formatter: LineBorderContainer},
@@ -401,7 +401,7 @@ export const searchModalList: any  = {
     {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "standardEndDate"},
     {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true, width: 120},
     {key: 'good_quantity', name: '양품 수량', textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 250, modalType: true},
+    {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 140, modalType: true},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center', modalType:true, action:'register'},
     {key: 'molds', name: '금형', formatter: MoldSelectModal, textAlign: 'center', modalType:true},
@@ -416,7 +416,7 @@ export const searchModalList: any  = {
     {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "standardEndDate"},
     {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true, width: 120},
     {key: 'good_quantity', name: '양품 수량', textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 250, modalType: true},
+    {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 140, modalType: true},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'bom', name: '투입 자재', formatter: InputMaterialListModal, textAlign: 'center', modalType:true, action:'modify'},
     {key: 'molds', name: '금형', formatter: MoldSelectModal, textAlign: 'center', modalType:true},
