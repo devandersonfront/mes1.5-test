@@ -42,8 +42,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   const [searchList, setSearchList] = useState<any[]>([])
   const [headerData, setHeaderData] = useState<any>();
 
-  console.log('select',selectRow)
-
   useEffect(() => {
     if(isOpen) {
       setSelectRow(undefined)

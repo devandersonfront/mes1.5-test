@@ -492,7 +492,7 @@ export const searchModalList: any  = {
     {key: 'model', name: '모델명', formatter: LineBorderContainer ,placeholder:"-", },
   ],
 
-  rawmaterialSearch: [
+  rawMaterialSearch: [
     {key: 'code', formatter: LineBorderContainer , name: '원자재 CODE' ,placeholder:"-",},
     {key: 'name', formatter: LineBorderContainer , name: '원자재 품명' ,placeholder:"-",},
     {key: 'texture', formatter: LineBorderContainer , name: '재질' ,placeholder:"-",},
@@ -502,7 +502,7 @@ export const searchModalList: any  = {
     {key: 'type', formatter: LineBorderContainer , name: '재질 종류' ,placeholder:"-",},
     {key: 'customer', formatter: LineBorderContainer , name: '거래처' ,placeholder:"-",},
   ],
-  submaterialSearch: [
+  subMaterialSearch: [
     {key: 'code', formatter: LineBorderContainer, name: '부자재 CODE' ,placeholder:"-",},
     {key: 'name', formatter: LineBorderContainer, name: '부자재 품명' ,placeholder:"-",},
     {key: 'unit', formatter: LineBorderContainer, name: '단위' ,placeholder:"-",},
