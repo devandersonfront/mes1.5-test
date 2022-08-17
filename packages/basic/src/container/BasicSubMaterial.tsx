@@ -64,7 +64,7 @@ const BasicSubMaterial = ({ }: IProps) => {
   }
 
   useEffect(() => {
-    getData(pageInfo.page, keyword, sortingOptions)
+    getData(pageInfo.page, keyword)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -74,11 +74,11 @@ const BasicSubMaterial = ({ }: IProps) => {
     };
   }, []);
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
-      reload(keyword, _sortingOptions)
+      reload(null, _sortingOptions)
     }
     let tmpColumn = column.map((v: any) => {
       const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
@@ -313,14 +313,14 @@ const BasicSubMaterial = ({ }: IProps) => {
           page: res.page,
           total: res.totalPages
         })
-        cleanUpData(res, keyword);
+        cleanUpData(res);
       }
     }
     setSelectList(new Set())
     Notiflix.Loading.remove()
   };
 
-  const cleanUpData = (res: any, keyword?:string) => {
+  const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["submaterial"];
     let tmpRow = [];
     tmpColumn = tmpColumn
@@ -390,7 +390,7 @@ const BasicSubMaterial = ({ }: IProps) => {
 
     tmpRow = res.info_list;
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
     let selectKey = "";
     let additionalData: any[] = [];

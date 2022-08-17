@@ -58,7 +58,7 @@ const BasicFactory = ({}: IProps) => {
     }
 
     useEffect(() => {
-        getData(pageInfo.page, keyword, sortingOptions)
+        getData(pageInfo.page, keyword)
     }, [pageInfo.page]);
 
     useEffect(() => {
@@ -70,11 +70,11 @@ const BasicFactory = ({}: IProps) => {
         };
     }, []);
 
-    const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
+    const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
         const changeOrder = (sort:string, order:string) => {
             const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
             setSortingOptions(_sortingOptions)
-            reload(keyword, _sortingOptions)
+            reload(null, _sortingOptions)
         }
         let tmpColumn = column.map((v: any) => {
             const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
@@ -284,7 +284,6 @@ const BasicFactory = ({}: IProps) => {
             params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
             params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
         }
-        params['status'] = '0,1'
         return params
     }
     const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
@@ -305,7 +304,7 @@ const BasicFactory = ({}: IProps) => {
                     page: res.page,
                     total: res.totalPages,
                 });
-                cleanUpData(res, keyword);
+                cleanUpData(res);
             }
         }
 
@@ -313,7 +312,7 @@ const BasicFactory = ({}: IProps) => {
         Notiflix.Loading.remove()
     };
 
-    const cleanUpData = (res: any, keyword?:string) => {
+    const cleanUpData = (res: any) => {
         let tmpColumn = columnlist["factory"];
         let tmpRow = [];
         tmpColumn = tmpColumn
@@ -383,7 +382,7 @@ const BasicFactory = ({}: IProps) => {
 
         tmpRow = res.info_list;
 
-        loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
+        loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
         let selectKey = "";
         let additionalData: any[] = [];

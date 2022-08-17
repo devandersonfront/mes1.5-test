@@ -58,7 +58,7 @@ const BasicModel = ({}: IProps) => {
   }
 
   useEffect(() => {
-    getData(pageInfo.page, keyword, sortingOptions)
+    getData(pageInfo.page, keyword)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -68,11 +68,11 @@ const BasicModel = ({}: IProps) => {
     })
   },[])
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword:string) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
-      reload(keyword, _sortingOptions)
+      reload(null, _sortingOptions)
     }
     let tmpColumn = column.map((v: any) => {
       const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
@@ -298,22 +298,19 @@ const BasicModel = ({}: IProps) => {
     if(sortingOptions.orders.length > 0){
       params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
       params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+      params['sorts'] = params['sorts']?.map(sort => sort === 'customer_id' ? 'name' : sort)
     }
     return params
   }
 
   const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle()
-    const settingSorts = _sortingOptions?.sorts.map((sort) => {
-      if(sort == "customer_id") return "name"
-      return sort
-    })
     const res = await RequestMethod('get', keyword ? 'modelSearch' : 'modelList',{
       path: {
         page: page ?? 1,
         renderItem: 18,
       },
-      params: getRequestParams(keyword, {..._sortingOptions, sorts:settingSorts})
+      params: getRequestParams(keyword, _sortingOptions)
     })
 
     if(res){
@@ -325,14 +322,14 @@ const BasicModel = ({}: IProps) => {
           page: res.page,
           total: res.totalPages
         })
-        cleanUpData(res, keyword)
+        cleanUpData(res)
       }
     }
     setSelectList(new Set())
     Notiflix.Loading.remove()
   }
 
-  const cleanUpData = (res: any, keyword?:string) => {
+  const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["model"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
@@ -394,7 +391,7 @@ const BasicModel = ({}: IProps) => {
 
     tmpRow = res.info_list
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
       let appendAdditional: any = {}

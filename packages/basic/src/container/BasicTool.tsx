@@ -57,7 +57,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
   }
 
   useEffect(() => {
-    getData(pageInfo.page, keyword, sortingOptions)
+    getData(pageInfo.page, keyword)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
   }, []);
 
 
-  const cleanUpData = (info_list: any, keyword?:string) => {
+  const cleanUpData = (info_list: any) => {
     let tmpColumn = columnlist["toolRegister"];
     let tmpRow: Array<any> = [];
     tmpColumn = tmpColumn
@@ -138,7 +138,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
 
     tmpRow = info_list.info_list;
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
     let selectKey = "";
     let additionalData: any[] = [];
@@ -184,11 +184,11 @@ const BasicTool = ({ page, search, option }: IProps) => {
     setBasicRow([...tmpBasicRow]);
   };
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
-      reload(keyword, _sortingOptions)
+      reload(null, _sortingOptions)
     }
     let tmpColumn = column.map((v: any) => {
       const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
@@ -248,7 +248,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
           page: res.page,
           total: res.totalPages
         })
-        cleanUpData(res, keyword);
+        cleanUpData(res);
       }
     }
     setSelectList(new Set())

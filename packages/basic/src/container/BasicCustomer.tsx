@@ -70,7 +70,7 @@ const BasicCustomer = ({}: IProps) => {
 
 
   useEffect(() => {
-    getData(pageInfo.page, keyword, sortingOptions)
+    getData(pageInfo.page, keyword)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -323,7 +323,7 @@ const BasicCustomer = ({}: IProps) => {
           page: res.page,
           total: res.totalPages,
         });
-        cleanUpData(res, keyword);
+        cleanUpData(res);
       }
     }
 
@@ -331,11 +331,11 @@ const BasicCustomer = ({}: IProps) => {
     Notiflix.Loading.remove()
   };
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
-      reload(keyword, _sortingOptions)
+      reload(null, _sortingOptions)
     }
     let tmpColumn = column.map((v: any) => {
       const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
@@ -360,7 +360,7 @@ const BasicCustomer = ({}: IProps) => {
     });
   };
 
-  const cleanUpData = async (res: any, keyword?:string) => {
+  const cleanUpData = async (res: any) => {
     let tmpColumn = columnlist["customer"];
     let tmpRow = [];
     tmpColumn = tmpColumn
@@ -444,7 +444,7 @@ const BasicCustomer = ({}: IProps) => {
       }
     });
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
     let pk = "";
     Object.keys(tmpRow).map((v) => {

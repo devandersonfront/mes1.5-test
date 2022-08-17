@@ -66,7 +66,7 @@ const BasicUser = ({}: IProps) => {
   }
 
   useEffect(() => {
-    getData(pageInfo.page, keyword, sortingOptions)
+    getData(pageInfo.page, keyword)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -81,11 +81,11 @@ const BasicUser = ({}: IProps) => {
     };
   }, []);
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
-      reload(keyword, _sortingOptions)
+      reload(null, _sortingOptions)
     }
     let tmpColumn = column.map((v: any) => {
       const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
@@ -370,23 +370,19 @@ const BasicUser = ({}: IProps) => {
     if(sortingOptions.orders.length > 0){
       params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
       params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+      params['sorts'] = params['sorts']?.map(sort => sort === 'tmpId' ? 'id' : sort)
     }
-    params['status'] = '0,1'
     return params
   }
 
   const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle()
-    const settingSorts = _sortingOptions?.sorts.map((sort) => {
-      if(sort == "tmpId") return "id"
-      return sort
-    })
     const res = await RequestMethod("get", keyword ? 'memberSearch' : 'memberList', {
       path: {
         page: page ?? 1,
         renderItem: 18,
       },
-      params: getRequestParams(keyword, {..._sortingOptions, sorts:settingSorts})
+      params: getRequestParams(keyword, _sortingOptions)
     });
 
     if (res) {
@@ -397,7 +393,7 @@ const BasicUser = ({}: IProps) => {
           page: res.page,
           total: res.totalPages,
         });
-        cleanUpData(res, keyword);
+        cleanUpData(res);
       }
     }
     setSelectList(new Set());
@@ -430,7 +426,7 @@ const BasicUser = ({}: IProps) => {
     };
   };
 
-  const cleanUpData = (res: any, keyword?:string) => {
+  const cleanUpData = (res: any) => {
     let tmpColumn = columnlist.member;
     let tmpRow = [];
     tmpColumn = tmpColumn
@@ -506,7 +502,7 @@ const BasicUser = ({}: IProps) => {
     // })
 
     tmpRow = res.info_list;
-    loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
       let realTableData: any = changeRow(row);

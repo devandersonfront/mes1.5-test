@@ -81,7 +81,7 @@ const BasicMachineV1u = ({option}: IProps) => {
   }
 
   useEffect(() => {
-    getData(pageInfo.page, keyword, sortingOptions)
+    getData(pageInfo.page, keyword)
   }, [pageInfo.page, typesState]);
 
   useEffect(() => {
@@ -91,11 +91,11 @@ const BasicMachineV1u = ({option}: IProps) => {
     })
   },[])
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
-      reload(keyword, _sortingOptions)
+      reload(null, _sortingOptions)
     }
     let tmpColumn = column.map((v: any) => {
       const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
@@ -148,7 +148,6 @@ const BasicMachineV1u = ({option}: IProps) => {
 
   const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     let params = {}
-    if(typesState) params['types'] = typesState
     if(keyword) {
       params['keyword'] = keyword
       params['opt'] = optionIndex
@@ -181,7 +180,7 @@ const BasicMachineV1u = ({option}: IProps) => {
           page: res.page,
           total: res.totalPages
         })
-        cleanUpData(res, keyword)
+        cleanUpData(res)
       }
     }
     setSelectList(new Set())
@@ -236,7 +235,7 @@ const BasicMachineV1u = ({option}: IProps) => {
     }
   }
 
-  const cleanUpData = (res: any, keyword?:string) => {
+  const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["machineV2"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
@@ -301,7 +300,7 @@ const BasicMachineV1u = ({option}: IProps) => {
     tmpRow = res.info_list
 
 
-    loadAllSelectItems( [...tmpColumn, ...additionalMenus], keyword)
+    loadAllSelectItems( [...tmpColumn, ...additionalMenus])
 
     let selectKey = ""
     let additionalData: any[] = []

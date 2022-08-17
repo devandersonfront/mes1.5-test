@@ -81,7 +81,7 @@ const BasicRawMaterial = ({}: IProps) => {
   }
 
   useEffect(() => {
-    getData(pageInfo.page, keyword, sortingOptions)
+    getData(pageInfo.page, keyword)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -110,11 +110,11 @@ const BasicRawMaterial = ({}: IProps) => {
     }
   };
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
-      reload(keyword, _sortingOptions)
+      reload(null, _sortingOptions)
     }
     let tmpColumn = column.map((v: any) => {
       const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
@@ -241,7 +241,7 @@ const BasicRawMaterial = ({}: IProps) => {
 
   const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod("get", keyword ? 'rawmaterialSearch' : 'rawMaterialList', {
+    const res = await RequestMethod("get", keyword ? 'rawMaterialSearch' : 'rawMaterialList', {
       path: {
         page: page ?? 1,
         renderItem: 18,
@@ -258,14 +258,14 @@ const BasicRawMaterial = ({}: IProps) => {
           page: res.page,
           total: res.totalPages
         })
-        cleanUpData(res, keyword);
+        cleanUpData(res);
       }
     }
     setSelectList(new Set())
     Notiflix.Loading.remove()
   };
 
-  const cleanUpData = (res: any, keyword?:string) => {
+  const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["rawmaterial"];
     let tmpRow = [];
     tmpColumn = tmpColumn
@@ -335,7 +335,7 @@ const BasicRawMaterial = ({}: IProps) => {
 
     tmpRow = res.info_list;
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
     let selectKey = "";
     let additionalData: any[] = [];
