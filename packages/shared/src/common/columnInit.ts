@@ -32,7 +32,6 @@ import {MoldInfoModal} from '../components/Modal/MoldInfoModal'
 import {MachineInfoModal} from '../components/Modal/MachineInfoModal'
 import {BomInfoModal} from '../components/Modal/BomInfoModal'
 import {UseDateCell} from '../components/Cell/UseDateCell'
-import {InfoModal} from '../components/Modal/InfoModal'
 import {BomRegisterInit} from '../components/Modal/InfoModal/InfoModalInit'
 import {BomRegisterModal} from '../components/Modal/BomRegisterModal'
 import {InputMaterialInfoModal} from '../components/Modal/InputMaterialInfoModal'
@@ -65,9 +64,6 @@ import {UnderLineContainer} from '../components/Formatter/UnderLineContainer'
 import { OnClickContainer } from '../components/InputBox/OnClickContainer'
 import { InputWithDropDown } from '../components/Dropdown/InputWithDropDown'
 import {ToolModal} from "../components/Modal/ToolModal";
-import { RequestMethod } from './RequestFunctions'
-import Notiflix from 'notiflix'
-import {TestWorkRegisterModal} from "../components/Modal/TestWorkRegisterModal";
 import { MultiSelectModal } from '../components/Modal/SearchModalTest/MultiSelectModal'
 import { HeaderSort } from '../components/HeaderSort/HeaderSort'
 import CommonProgressBar from '../../../main/component/InputBox/CommonProgressBar'
@@ -264,7 +260,7 @@ export const columnlist: any = {
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
     {key: 'tool_id', name: '공구', formatter: ToolInfoModal},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
-    {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, inputType:'number', formatter: UnitContainer, placeholder: 0, toFix:1},
+    {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, inputType:'number', formatter: UnitContainer, placeholder: '0', toFix:1},
     {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer},
     {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' }
   ],
@@ -874,7 +870,7 @@ export const columnlist: any = {
     {key:"process_id", name:"생산 공정", width: 118},
     {key:"goal", name:"목표 생산량", width: 118},
     {key: 'input', name: '투입 자재', formatter: InputMaterialInfoModal, width: 118, type: 'readonly'},
-    {key: 'route_record_register', name: '작업 일보 등록', formatter: TestWorkRegisterModal, width: 118},
+    {key: 'route_record_register', name: '작업 일보 등록', formatter: WorkRegisterModal, width: 118},
     {key: 'route_record_list', name: '작업 이력', formatter: WorkListModal, width: 118, modalInitData: BomRegisterInit },
     {key: 'total_counter', name: '총 카운터', width: 118 },
     {key: 'total_good_quantity', name: '총 양품 수량', width: 118 },
@@ -1413,27 +1409,6 @@ export const columnlist: any = {
     {key:"content", name:"변경 사항", width:1056 },
     {key:"type", name:"종류", width:247 },
     {key:"date", name:"날짜", width:224},
-  ],
-  test: [
-    {key: 'userSearchModal', name: '유저 검색', formatter: SearchModalTest, type: 'user', width: 118,},
-    {key: 'customerSearchModal', name: '거래처 검색', formatter: SearchModalTest, type: 'customer', width: 118,},
-    {key: 'factorySearchModal', name: '공장 검색', formatter: SearchModalTest, type: 'factory', width: 118,},
-    {key: 'segmentSearchModal', name: '공장 세분화 검색', formatter: SearchModalTest, type: 'segment', width: 118,},
-    {key: 'modelSearchModal', name: '모델명 검색', formatter: SearchModalTest, type: 'model', width: 118,},
-    {key: 'rawMaterialSearchModal', name: '원자재 검색', formatter: SearchModalTest, type: 'rawMaterial', width: 118,},
-    {key: 'subMaterialSearchModal', name: '부자재 검색', formatter: SearchModalTest, type: 'subMaterial', width: 118,},
-    {key: 'moldSearchModal', name: '금형 검색', formatter: SearchModalTest, type: 'mold', width: 118,},
-    {key: 'machineSearchModal', name: '기계 검색', formatter: SearchModalTest, type: 'machine', width: 118,},
-    {key: 'deviceSearchModal', name: '주변장치 검색', formatter: SearchModalTest, type: 'device', width: 118,},
-    {key: 'productSearchModal', name: '제품 검색', formatter: SearchModalTest, type: 'product', width: 118,},
-    {key: 'productSearchModal', name: '수주 검색', formatter: SearchModalTest, type: 'order', width: 118,},
-    {key: 'FactoryInfoModal', name: '공장 정보', formatter: InfoModal, type: 'factoryRegister', summaryType: 'factory', width: 118,},
-    {key: 'DeviceInfoModal', name: '주변장치 정보', formatter: InfoModal, type: 'deviceRegister', summaryType: 'device', width: 118,},
-    {key: 'ProductInfoModal', name: '생산 품목 정보', formatter: InfoModal, type: 'productInfo', summaryType: 'mold', width: 118,},
-    {key: 'BomInfoModal', name: 'BOM 등록', formatter: InfoModal, type: 'bomInfo', summaryType: 'product', width: 118,},
-    {key: 'BomInfoReadonlyModal', name: '재고 확인', formatter: InfoModal, type: 'bomInfoReadOnly', summaryType: 'product', width: 118,},
-    {key: 'MoldInfoModal', name: '금형 등록', formatter: InfoModal, type: 'moldInfo', summaryType: 'product_no_cavity', width: 118,},
-    {key: 'MachineInfoModal', name: '기계 등록', formatter: InfoModal, type: 'machineInfo', summaryType: 'product_no_cavity', width: 118,},
   ],
   productionLog : [
     {key: 'order',frozen:true, name: '순서',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 48,},

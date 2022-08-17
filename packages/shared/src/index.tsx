@@ -152,9 +152,7 @@ export {ProductInfoModal} from './components/Modal/ProductInfoModal'
 export {MoldInfoModal} from './components/Modal/MoldInfoModal'
 export {MachineInfoModal} from './components/Modal/MachineInfoModal'
 export {InputMaterialInfoModal} from './components/Modal/InputMaterialInfoModal'
-export {WorkRegisterModal} from './components/Modal/WorkRegisterModal'
 export {OperationInfoModal} from './components/Modal/OperationInfoModal'
-export {InfoModal} from './components/Modal/InfoModal'
 export {LotInputInfoModal} from './components/Modal/LotInputInfoModal'
 
 export {TestModule} from "./components/ComponentTest"
@@ -171,7 +169,7 @@ export {MidrangeFormReviewModal} from "./components/Modal/MidrangeFormReviewModa
 
 //test
 export {TestToolSelectModal} from './components/Modal/TestToolSelectModal'
-export {TestWorkRegisterModal} from './components/Modal/TestWorkRegisterModal'
+export {WorkRegisterModal} from './components/Modal/WorkRegisterModal'
 export {TestSearchModalTest} from "./components/Modal/SearchModalTest/TestSearchModalTest"
 
 export type {
