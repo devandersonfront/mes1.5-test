@@ -67,12 +67,12 @@ export const SearchInit: Record<string, SearchInitType> = {
     searchFilter: ['거래처명','사업자 번호', '모델명'],
     excelColumnType: 'model'
   },
-  rawmaterial: {
+  rawMaterial: {
     title: '원자재 검색',
     searchFilter: ['원자재 CODE', '원자재 품명', '재질', '거래처'],
     excelColumnType: 'rawMaterial'
   },
-  submaterial: {
+  subMaterial: {
     title: '부자재 검색',
     searchFilter: ['부자재 CODE', '부자재 품명', '거래처'],
     excelColumnType: 'subMaterial'

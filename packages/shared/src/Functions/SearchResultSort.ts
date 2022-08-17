@@ -62,8 +62,8 @@ export const SearchResultSort = (infoList, type: string) => {
         }
       })
     }
-    case 'rawmaterial': {
-      const columnKeys = searchModalList.rawmaterialSearch.map(columns => columns.key)
+    case 'rawMaterial': {
+      const columnKeys = searchModalList.rawMaterialSearch.map(columns => columns.key)
       return infoList.map((v) => {
         let obj = {}
         columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
@@ -79,8 +79,8 @@ export const SearchResultSort = (infoList, type: string) => {
         }
       })
     }
-    case 'submaterial': {
-      const columnKeys = searchModalList.submaterialSearch.map(columns => columns.key)
+    case 'subMaterial': {
+      const columnKeys = searchModalList.subMaterialSearch.map(columns => columns.key)
       return infoList.map((v) => {
         let obj = {}
         columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
@@ -326,7 +326,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         version: selectData.version
       }
     }
-    case 'rawmaterial': {
+    case 'rawMaterial': {
       const unitResult = () => {
         let result = "-";
         switch (selectData.type){
@@ -358,7 +358,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         usage: selectData.usage,
       }
     }
-    case 'submaterial': {
+    case 'subMaterial': {
       return {
         ...selectData,
         wip_id: selectData.code,

@@ -109,14 +109,14 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         case 0:{
           childData = v.bom.child_rm
           childData.unit = v.bom.child_rm.type == "1" ? "kg" : v.bom.child_rm.type == "2" ? "장" : "-";
-          childDataType = 'rawmaterial'
+          childDataType = 'rawMaterial'
           raw_material = childData
           bomId = v.bom.childRmId
           break;
         }
         case 1:{
           childData = v.bom.child_sm
-          childDataType = 'submaterial'
+          childDataType = 'subMaterial'
           sub_material = childData
           bomId = v.bom.childSmId
           break;
@@ -173,9 +173,9 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
   function getBomLots(id:number, type: TransferType) {
     switch(type){
-      case 'rawmaterial':
+      case 'rawMaterial':
         return row.bom?.filter((bom) => bom?.lot?.child_lot_rm?.rmId === id)
-      case 'submaterial':
+      case 'subMaterial':
         return row.bom?.filter((bom) => bom?.lot?.child_lot_sm?.smId === id)
       case 'product':
         return row.bom?.filter((bom) => bom?.lot?.child_lot_record?.operation_sheet?.productId === id)

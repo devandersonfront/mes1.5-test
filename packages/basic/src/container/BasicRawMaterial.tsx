@@ -49,7 +49,7 @@ const BasicRawMaterial = ({}: IProps) => {
   const [excelOpen, setExcelOpen] = useState<boolean>(false);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["rawmaterial"]);
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["rawMaterial"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionList, setOptionList] = useState<string[]>([
     "원자재 CODE",
@@ -266,7 +266,7 @@ const BasicRawMaterial = ({}: IProps) => {
   };
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["rawmaterial"];
+    let tmpColumn = columnlist["rawMaterial"];
     let tmpRow = [];
     tmpColumn = tmpColumn
       .map((column: any) => {

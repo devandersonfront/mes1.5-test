@@ -46,13 +46,13 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       setSearchList([{}])
       switch(tab){
         case 0:{
-          setSearchModalInit(SearchInit.rawmaterial)
+          setSearchModalInit(SearchInit.rawMaterial)
           // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
           setSearchModalColumn(
-            [...searchModalList[`${SearchInit.rawmaterial.excelColumnType}Search`].map((column, index) => {
+            [...searchModalList[`${SearchInit.rawMaterial.excelColumnType}Search`].map((column, index) => {
               if(index === 0) return ({...column, colSpan(args) {
                   if(args.row?.first){
-                    return searchModalList[`${SearchInit.rawmaterial.excelColumnType}Search`].length
+                    return searchModalList[`${SearchInit.rawMaterial.excelColumnType}Search`].length
                   }else{
                     return undefined
                   }
@@ -62,13 +62,13 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           break;
         }
         case 1:{
-          setSearchModalInit(SearchInit.submaterial)
+          setSearchModalInit(SearchInit.subMaterial)
           // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
           setSearchModalColumn(
-            [...searchModalList[`${SearchInit.submaterial.excelColumnType}Search`].map((column, index) => {
+            [...searchModalList[`${SearchInit.subMaterial.excelColumnType}Search`].map((column, index) => {
               if(index === 0) return ({...column, colSpan(args) {
                   if(args.row?.first){
-                    return searchModalList[`${SearchInit.submaterial.excelColumnType}Search`].length
+                    return searchModalList[`${SearchInit.subMaterial.excelColumnType}Search`].length
                   }else{
                     return undefined
                   }
@@ -368,7 +368,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         switch(type){
           case "bom":
             return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
-          case "rawmaterial" :
+          case "rawMaterial" :
             return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).name;
           case "machine" :
             return searchList[selectRow].name;

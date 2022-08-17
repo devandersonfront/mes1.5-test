@@ -265,7 +265,7 @@ export const columnlist: any = {
     {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer},
     {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' }
   ],
-  rawmaterial: [
+  rawMaterial: [
     {key: 'code', name: '원자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder:"CODE 입력", headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'name', name: '원자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder:"품명 입력"},
     {key: 'texture', name: '재질', editor: TextEditor, formatter: PlaceholderBox, placeholder:"재질 입력"},
@@ -284,7 +284,7 @@ export const columnlist: any = {
     {key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력',inputType:'number',},
   ],
 
-  submaterial: [
+  subMaterial: [
     {key: 'code', name: '부자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'name', name: '부자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: 'unit', name: '단위', formatter: DropDownEditor, selectList: [
@@ -407,7 +407,7 @@ export const columnlist: any = {
   ],
 
   rawinV1u: [
-    {key: 'rm_id',name:'원자재 CODE', formatter: SearchModalTest, type: 'rawmaterial', frozen: true, placeholder: '원자재 CODE', noSelect:true},
+    {key: 'rm_id',name:'원자재 CODE', formatter: SearchModalTest, type: 'rawMaterial', frozen: true, placeholder: '원자재 CODE', noSelect:true},
     {key: 'name', name:'원자재 품명', frozen: true, formatter: PlaceholderBox, placeholder:'자동 입력'},
     {key: 'texture', name:'재질', formatter: PlaceholderBox, placeholder:'자동 입력'},
     {key: 'depth', name:'두께', formatter: UnitContainer, unitData: 'T', placeholder: '0'},
@@ -460,7 +460,7 @@ export const columnlist: any = {
   ],
 
   subinV1u: [
-    {key: 'wip_id',name:'부자재 CODE', formatter: SearchModalTest, type: 'submaterial', frozen: true, placeholder: '부자재 CODE', noSelect:true},
+    {key: 'wip_id',name:'부자재 CODE', formatter: SearchModalTest, type: 'subMaterial', frozen: true, placeholder: '부자재 CODE', noSelect:true},
     {key: 'name', name:'부자재 품명', frozen: true, formatter: PlaceholderBox, placeholder:'자동 입력'},
     {key: 'unit', name:'단위', formatter: PlaceholderBox, placeholder:'자동 입력'},
     {key: 'customer_id', name:'거래처', formatter: PlaceholderBox, placeholder:'자동 입력' },

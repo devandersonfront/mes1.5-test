@@ -38,7 +38,7 @@ const BasicSubMaterial = ({ }: IProps) => {
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(
-    columnlist["submaterial"]
+    columnlist["subMaterial"]
   );
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionList, setOptionList] = useState<string[]>([
@@ -321,7 +321,7 @@ const BasicSubMaterial = ({ }: IProps) => {
   };
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["submaterial"];
+    let tmpColumn = columnlist["subMaterial"];
     let tmpRow = [];
     tmpColumn = tmpColumn
       .map((column: any) => {
