@@ -76,7 +76,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
     }
   }, [isOpen])
 
-  console.log('work',searchList)
   const SaveBasic = async () => {
     console.log('search',searchList)
     try{
@@ -91,7 +90,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
 
       const postBody = searchList.map((v, i) => {
         let selectData: any = {}
-
         Object.keys(v).map(v => {
           if(v.indexOf('PK') !== -1) {
             selectData = {
