@@ -111,7 +111,7 @@ const BasicRawMaterial = ({}: IProps) => {
     }
   };
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
@@ -259,14 +259,14 @@ const BasicRawMaterial = ({}: IProps) => {
           page: res.page,
           total: res.totalPages
         })
-        cleanUpData(res);
+        cleanUpData(res, keyword);
       }
     }
     setSelectList(new Set())
     Notiflix.Loading.remove()
   };
 
-  const cleanUpData = (res: any) => {
+  const cleanUpData = (res: any, keyword?:string) => {
     let tmpColumn = columnlist["rawmaterialForBasicMaterial"];
     let tmpRow = [];
     tmpColumn = tmpColumn
@@ -336,7 +336,7 @@ const BasicRawMaterial = ({}: IProps) => {
 
     tmpRow = res.info_list;
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
 
     let selectKey = "";
     let additionalData: any[] = [];

@@ -70,7 +70,7 @@ const BasicFactory = ({}: IProps) => {
         };
     }, []);
 
-    const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+    const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
         const changeOrder = (sort:string, order:string) => {
             const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
             setSortingOptions(_sortingOptions)
@@ -280,9 +280,10 @@ const BasicFactory = ({}: IProps) => {
             params['keyword'] = keyword
             params['opt'] = optionIndex
         }
-        //이 부분 해제하면됨
-        // params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
-        // params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+        if(sortingOptions.orders.length > 0){
+            params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+            params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+        }
         params['status'] = '0,1'
         return params
     }
@@ -304,7 +305,7 @@ const BasicFactory = ({}: IProps) => {
                     page: res.page,
                     total: res.totalPages,
                 });
-                cleanUpData(res);
+                cleanUpData(res, keyword);
             }
         }
 
@@ -312,7 +313,7 @@ const BasicFactory = ({}: IProps) => {
         Notiflix.Loading.remove()
     };
 
-    const cleanUpData = (res: any) => {
+    const cleanUpData = (res: any, keyword?:string) => {
         let tmpColumn = columnlist["factory"];
         let tmpRow = [];
         tmpColumn = tmpColumn
@@ -382,7 +383,7 @@ const BasicFactory = ({}: IProps) => {
 
         tmpRow = res.info_list;
 
-        loadAllSelectItems([...tmpColumn, ...additionalMenus]);
+        loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
 
         let selectKey = "";
         let additionalData: any[] = [];

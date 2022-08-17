@@ -81,7 +81,7 @@ const BasicUser = ({}: IProps) => {
     };
   }, []);
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
@@ -367,9 +367,10 @@ const BasicUser = ({}: IProps) => {
       params['keyword'] = keyword
       params['opt'] = optionIndex
     }
-    //이 부분 해제하면됨
-    // params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
-    // params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    if(sortingOptions.orders.length > 0){
+      params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+      params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    }
     params['status'] = '0,1'
     return params
   }
@@ -392,7 +393,7 @@ const BasicUser = ({}: IProps) => {
           page: res.page,
           total: res.totalPages,
         });
-        cleanUpData(res);
+        cleanUpData(res, keyword);
       }
     }
     setSelectList(new Set());
@@ -425,34 +426,7 @@ const BasicUser = ({}: IProps) => {
     };
   };
 
-  const cleanUpBasicData = (res: any) => {
-    let tmpRow = res.data.results.info_list;
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-      let realTableData: any = changeRow(row);
-      let appendAdditional: any = {};
-
-      row.additional &&
-        row.additional.map((v: any) => {
-          appendAdditional = {
-            ...appendAdditional,
-            [v.title]: v.value,
-          };
-        });
-
-      const random_id = Math.random() * 1000;
-
-      return {
-        ...row,
-        ...realTableData,
-        ...appendAdditional,
-        id: `user_${random_id}`,
-      };
-    });
-    setBasicRow([...tmpBasicRow]);
-  };
-
-  const cleanUpData = (res: any) => {
+  const cleanUpData = (res: any, keyword?:string) => {
     let tmpColumn = columnlist.member;
     let tmpRow = [];
     tmpColumn = tmpColumn
@@ -506,7 +480,6 @@ const BasicUser = ({}: IProps) => {
                 id: menu.mi_id,
                 name: menu.title,
                 width: menu.width,
-                // key: menu.title,
                 key: menu.mi_id,
                 editor: TextEditor,
                 type: "additional",
@@ -519,16 +492,9 @@ const BasicUser = ({}: IProps) => {
           })
           .filter((v: any) => v)
       : [];
-    // let additionalData: any[] = []
-
-    // additionalMenus.map((v: any) => {
-    //   if(v.type === 'additional'){
-    //     additionalData.push(v.key)
-    //   }
-    // })
 
     tmpRow = res.info_list;
-    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
       let realTableData: any = changeRow(row);
@@ -542,14 +508,12 @@ const BasicUser = ({}: IProps) => {
           };
         });
 
-      const random_id = Math.random() * 1000;
       return {
         ...row,
         ...realTableData,
         ...appendAdditional,
         authority: row.ca_id.name,
         authorityPK: row.ca_id.ca_id,
-        id: `user_${random_id}`,
       };
     });
     setBasicRow([...tmpBasicRow]);

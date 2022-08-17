@@ -68,7 +68,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
   }, []);
 
 
-  const cleanUpData = (info_list: any) => {
+  const cleanUpData = (info_list: any, keyword?:string) => {
     let tmpColumn = columnlist["toolRegister"];
     let tmpRow: Array<any> = [];
     tmpColumn = tmpColumn
@@ -138,7 +138,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
 
     tmpRow = info_list.info_list;
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
+    loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
 
     let selectKey = "";
     let additionalData: any[] = [];
@@ -184,7 +184,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
     setBasicRow([...tmpBasicRow]);
   };
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
@@ -248,7 +248,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
           page: res.page,
           total: res.totalPages
         })
-        cleanUpData(res);
+        cleanUpData(res, keyword);
       }
     }
     setSelectList(new Set())

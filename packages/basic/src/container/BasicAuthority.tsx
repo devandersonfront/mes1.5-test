@@ -32,7 +32,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
   const [selectIndex, setSelectIndex] = useState<number>(-1)
   const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({sorts:[], orders:[]})
   const [column, setColumn] = useState<IExcelHeaderType[]>(
-      [{key: 'name', width: 280, name: '권한명(필수)', editor: TextEditor, headerRenderer: HeaderSort, sortOption: "none",sorts: {}}] as Array<IExcelHeaderType>
+      [{key: 'name', width: 280, name: '권한명(필수)', editor: TextEditor,}] as Array<IExcelHeaderType>
   )
 
 

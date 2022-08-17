@@ -81,7 +81,7 @@ const BasicProduct = ({}: IProps) => {
   },[])
 
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
@@ -316,7 +316,6 @@ const BasicProduct = ({}: IProps) => {
       params['keyword'] = keyword
       params['opt'] = optionIndex
     }
-    //이 부분 해제하면됨
     if(sortingOptions.orders.length > 0){
       params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
       params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
@@ -326,12 +325,16 @@ const BasicProduct = ({}: IProps) => {
 
   const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle()
+    const settingSorts = _sortingOptions?.sorts.map((sort) => {
+      if(sort == "process_id") return "pc.name"
+      return sort
+    })
     const res = await RequestMethod('get', keyword ? 'productSearch' : 'productList',{
       path: {
         page: page ?? 1,
         renderItem: 18,
       },
-      params: getRequestParams(keyword, _sortingOptions)
+      params: getRequestParams(keyword, {..._sortingOptions, sorts:settingSorts})
     })
 
     if(res){
@@ -343,42 +346,15 @@ const BasicProduct = ({}: IProps) => {
           page: res.page,
           total: res.totalPages
         })
-        cleanUpData(res);
+        cleanUpData(res, keyword);
       }
     }
     setSelectList(new Set())
     Notiflix.Loading.remove()
   }
 
-  const SearchBasic = async (keyword: any, option: number, isPaging?: number) => {
-    // Notiflix.Loading.circle()
-    if(!isPaging){
-      setOptionIndex(option)
-    }
-    const res = await RequestMethod('get', `productSearch`,{
-      path: {
-        page: isPaging ?? 1,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
 
-      }
-    })
-    if(res){
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages
-      })
-      cleanUpData(res)
-    }
-
-    setSelectList(new Set())
-  }
-
-  const cleanUpData = (res: any) => {
+  const cleanUpData = (res: any, keyword?:string) => {
     let tmpColumn = columnlist["productV1u"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
@@ -443,10 +419,7 @@ const BasicProduct = ({}: IProps) => {
     tmpRow = res.info_list
 
 
-    loadAllSelectItems( [
-      ...tmpColumn,
-      ...additionalMenus
-    ] )
+    loadAllSelectItems( [...tmpColumn, ...additionalMenus], keyword)
 
 
     let selectKey = ""

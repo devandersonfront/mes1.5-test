@@ -68,7 +68,7 @@ const BasicProcess = ({}: IProps) => {
     })
   },[])
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
@@ -246,9 +246,10 @@ const BasicProcess = ({}: IProps) => {
       params['keyword'] = keyword
       params['opt'] = optionIndex
     }
-    //이 부분 해제하면됨
-    // params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
-    // params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    if(sortingOptions.orders.length > 0){
+      params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+      params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    }
     return params
   }
 
@@ -271,7 +272,7 @@ const BasicProcess = ({}: IProps) => {
           page: res.page,
           total: res.totalPages
         })
-        cleanUpData(res)
+        cleanUpData(res, keyword)
       }
     }
     setSelectList(new Set())
@@ -298,7 +299,7 @@ const BasicProcess = ({}: IProps) => {
     }
   }
 
-  const cleanUpData = (res: any) => {
+  const cleanUpData = (res: any, keyword?:string) => {
     let tmpColumn = columnlist.process
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
@@ -359,10 +360,7 @@ const BasicProcess = ({}: IProps) => {
       }
     }).filter((v: any) => v) : []
 
-    loadAllSelectItems( [
-      ...tmpColumn,
-      ...additionalMenus
-    ] )
+    loadAllSelectItems( [...tmpColumn, ...additionalMenus], keyword)
 
     tmpRow = res.info_list
 

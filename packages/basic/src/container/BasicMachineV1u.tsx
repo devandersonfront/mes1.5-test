@@ -91,7 +91,7 @@ const BasicMachineV1u = ({option}: IProps) => {
     })
   },[])
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+  const loadAllSelectItems = async (column: IExcelHeaderType[], keyword?:string) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
       setSortingOptions(_sortingOptions)
@@ -104,7 +104,7 @@ const BasicMachineV1u = ({option}: IProps) => {
         pk: v.unit_id,
         sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
         sorts: v.sorts ? sortingOptions : null,
-        result: v.sortOption ? changeOrder : null,
+        result: v.sortOption ? changeOrder : v.selectList ? changeSetTypesState : null,
       }
     });
 
@@ -157,6 +157,7 @@ const BasicMachineV1u = ({option}: IProps) => {
       params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
       params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
     }
+    if(typesState) params['types'] = typesState
     return params
   }
 
@@ -180,7 +181,7 @@ const BasicMachineV1u = ({option}: IProps) => {
           page: res.page,
           total: res.totalPages
         })
-        cleanUpData(res)
+        cleanUpData(res, keyword)
       }
     }
     setSelectList(new Set())
@@ -235,7 +236,7 @@ const BasicMachineV1u = ({option}: IProps) => {
     }
   }
 
-  const cleanUpData = (res: any) => {
+  const cleanUpData = (res: any, keyword?:string) => {
     let tmpColumn = columnlist["machineV2"];
     let tmpRow = []
     tmpColumn = tmpColumn.map((column: any) => {
@@ -300,10 +301,7 @@ const BasicMachineV1u = ({option}: IProps) => {
     tmpRow = res.info_list
 
 
-    loadAllSelectItems( [
-      ...tmpColumn,
-      ...additionalMenus
-    ] )
+    loadAllSelectItems( [...tmpColumn, ...additionalMenus], keyword)
 
     let selectKey = ""
     let additionalData: any[] = []
@@ -350,7 +348,6 @@ const BasicMachineV1u = ({option}: IProps) => {
       }
     })
     setBasicRow([...tmpBasicRow])
-    // setBasicRow([{ id: "", name: "400톤 2호기", weldingType: '선택없음', type: '프레스', mfrCode: '125-77-123', interwork: '유', user_id: '차지훈', manufacturer:'Aidas'}])
   }
 
   const searchAiID = (rowAdditional:any[], index:number) => {

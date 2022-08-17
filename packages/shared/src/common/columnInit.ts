@@ -79,9 +79,9 @@ export const columnlist: any = {
     {key: 'appointment', formatter: PlaceholderBox, placeholder:"직책 입력", editor: TextEditor},
     {key: 'telephone', formatter: PlaceholderBox, placeholder:"전화번호 입력", editor: TextEditor},
     {key: 'email', formatter: PlaceholderBox, placeholder:"이메일 입력", editor: TextEditor},
-    {key: 'authority', formatter: AuthoritySearchModal, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
+    {key: 'authority', formatter: AuthoritySearchModal},
     // {key: 'authority', formatter: DropDownEditor, selectList: []},
-    {key: 'tmpId', formatter: PlaceholderBox, placeholder:"아이디 입력", editor: TextEditor, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
+    {key: 'id', formatter: PlaceholderBox, placeholder:"아이디 입력", editor: TextEditor, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'password', formatter: PlaceholderBox, placeholder:"비밀번호 입력", editor: TextEditor},
     {key: 'password-confirm', formatter: PlaceholderBox, placeholder:"비밀번호 확인", editor: TextEditor},
     {key: 'profile', formatter: FileEditer, type:"image"},
@@ -96,7 +96,7 @@ export const columnlist: any = {
     {key: 'affiliated_id', name: '공장 세분화', width: 120, formatter: /*IdnfoModal*/ FactoryInfoModal, type: 'factoryRegister', summaryType: 'factory'},
   ],
   customer: [
-    {key: 'name', editor: TextEditor, formatter: PlaceholderBox, placeholder:"거래처명 입력"},
+    {key: 'name', editor: TextEditor, formatter: PlaceholderBox, placeholder:"거래처명 입력", headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'rep', editor: TextEditor, formatter: PlaceholderBox, placeholder:"대표자명 입력"},
     {key: 'manager', editor: TextEditor, formatter: PlaceholderBox, placeholder:"담당자명 입력"},
     {key: 'telephone', editor: TextEditor, formatter: PlaceholderBox, placeholder:"전화번호 입력"},
@@ -107,9 +107,9 @@ export const columnlist: any = {
     {key: 'photo', formatter: FileEditer},
   ],
   model: [
-    {key: 'customer_id', formatter: SearchModalTest, type: 'customer', placeholder:"-", noSelect:true },
+    {key: 'customer_id', formatter: SearchModalTest, type: 'customer', placeholder:"-", noSelect:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'crn', formatter: PlaceholderBox, placeholder:"자동 입력" },
-    {key: 'model', editor: TextEditor, formatter: PlaceholderBox, placeholder:"모델 입력" },
+    {key: 'model', editor: TextEditor, formatter: PlaceholderBox, placeholder:"모델 입력", headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
   ],
   process: [
     {key: 'name', editor: TextEditor, formatter: PlaceholderBox, placeholder:"공정명 입력", headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
