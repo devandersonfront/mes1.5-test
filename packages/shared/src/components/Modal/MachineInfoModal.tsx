@@ -28,8 +28,26 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
-
   const hasSaved = !!row.product_id
+
+  useEffect(() => {
+    if(isOpen) {
+      setSelectRow(undefined)
+      if(row?.machines && row?.machines.length > 0){
+        setSearchList(row.machines.map((v,i) => {
+          return {
+            ...v,
+            ...v.machine,
+            border:false,
+            type_id:v.machine.type,
+            type:selectMachineType(v.machine.type),
+            seq: i+1
+          }
+        }))
+      }
+    }
+  }, [isOpen])
+
   const selectMachineType = (value:number) => {
     let result = "";
     switch(value) {
@@ -61,37 +79,16 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     return result;
   }
 
+  const executeValidation = () => {
+    const hasInvalidData = searchList.some(row => !row.machine_id)
+    const defaultSettingCount = searchList.filter(row =>row.setting === 1).length
 
-  const hasNoData = () => searchList.some(row => !row.machine_id)
-  const countDefaultSetting = () => searchList.filter((row)=>row.setting === 1).length
-
-  const isValidated = () => {
-    if(searchList.length === 0 || hasNoData()){
-      Notiflix.Report.warning("경고","데이터를 입력해주세요.","확인")
-      return false
-    } else if(countDefaultSetting() !== 1){
-      Notiflix.Report.warning("경고","기본설정은 한 개여야 합니다.","확인")
-      return false
+    if(hasInvalidData){
+      throw("데이터를 입력해주세요.")
+    }else if(defaultSettingCount !== 1){
+      throw("기본설정은 한 개여야 합니다.")
     }
-    return true
   }
-
-  useEffect(() => {
-    if(isOpen) {
-      if(row?.machines && row?.machines.length > 0){
-
-        setSearchList(row.machines.map((v,i) => {
-          return {
-            ...v,
-            ...v.machine,
-            type_id:v.machine.type,
-            type:selectMachineType(v.machine.type),
-            seq: i+1
-          }
-        }))
-      }
-    }
-  }, [isOpen])
 
   const ModalContents = () => (
 
@@ -159,8 +156,10 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         setIsOpen(false)
       }))
   }
-  const onClickSave = () => {
-    if(isValidated()){
+
+  const onConfirm = () => {
+    try{
+      executeValidation()
       if(hasSaved) {
         updateData()
       } else {
@@ -179,9 +178,74 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         }
         setIsOpen(false)
       }
+    }catch(errMsg){
+      Notiflix.Report.warning('경고', errMsg, '확인')
     }
   }
 
+  const getButtons = () => {
+    return <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
+      <Button onClick={() => {
+        setSearchList(prev =>[
+          ...prev,
+          {
+            setting: 1,
+            seq: prev.length+1
+          }
+        ])
+      }}>
+        <p>행 추가</p>
+      </Button>
+      <Button style={{marginLeft: 16}} onClick={() => {
+        if(selectRow === undefined || selectRow === 0){
+          return;
+        }else{
+          let tmpRow = searchList.slice()
+          let tmp = tmpRow[selectRow]
+          tmpRow[selectRow] = {...tmpRow[selectRow - 1], seq: tmpRow[selectRow - 1].seq + 1, isChange: true}
+          tmpRow[selectRow - 1] = {...tmp, seq: tmp.seq - 1, isChange: true}
+          setSearchList(tmpRow)
+          setSelectRow(selectRow-1)
+        }
+      }}>
+        <p>위로</p>
+      </Button>
+      <Button style={{marginLeft: 16}} onClick={() => {
+        if(selectRow === searchList.length-1 || selectRow === undefined){
+          return
+        } else {
+          let tmpRow = searchList.slice()
+          let tmp = tmpRow[selectRow]
+          tmpRow[selectRow] = {...tmpRow[selectRow + 1], seq: tmpRow[selectRow + 1].seq - 1, isChange: true}
+          tmpRow[selectRow + 1] = {...tmp, seq: tmp.seq + 1, isChange: true}
+          setSearchList(tmpRow)
+          setSelectRow(selectRow + 1)
+        }
+      }}>
+        <p>아래로</p>
+      </Button>
+      <Button style={{marginLeft: 16}} onClick={() => {
+        if(selectRow === undefined){
+          return Notiflix.Report.warning(
+            '경고',
+            '선택된 정보가 없습니다.',
+            '확인',
+          );
+        } else {
+          let tmpRow = [...searchList]
+          tmpRow.splice(selectRow, 1)
+          const filterRow = tmpRow.map((v , i)=>{
+            return {...v , seq : i + 1, isChange:true}
+          })
+          setSearchList(filterRow)
+          setSelectRow(undefined)
+        }
+
+      }}>
+        <p>삭제</p>
+      </Button>
+    </div>
+  }
 
   return (
     <SearchModalWrapper >
@@ -275,76 +339,9 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <HeaderTableText>{row.unit ?? "-"}</HeaderTableText>
             </HeaderTableTextInput>
           </HeaderTable>
-          <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-            <Button onClick={() => {
-              let tmp = searchList
-
-              setSearchList([
-                ...searchList,
-                {
-                  setting:1,
-                  seq: searchList.length+1
-                }
-              ])
-            }}>
-              <p>행 추가</p>
-            </Button>
-            <Button style={{marginLeft: 16}} onClick={() => {
-              if(selectRow === 0 || selectRow === undefined){
-                return
-              }
-              let tmpRow = [...searchList]
-
-              let tmp = tmpRow[selectRow]
-              tmpRow[selectRow] = tmpRow[selectRow - 1]
-              tmpRow[selectRow - 1] = tmp
-              setSelectRow((prevSelectRow)=> prevSelectRow - 1)
-              setSearchList([...tmpRow.map((v, i) => {
-                return {
-                  ...v,
-                  seq: i+1
-                }
-              })])
-
-            }}>
-              <p>위로</p>
-            </Button>
-            <Button style={{marginLeft: 16}} onClick={() => {
-              if(selectRow === searchList.length-1 || selectRow === undefined){
-                return
-              }
-              let tmpRow = [...searchList]
-              let tmp = tmpRow[selectRow]
-              tmpRow[selectRow] = tmpRow[selectRow + 1]
-              tmpRow[selectRow + 1] = tmp
-              setSelectRow((prevSelectRow)=> prevSelectRow + 1)
-              setSearchList([...tmpRow.map((v, i) => {
-                return {
-                  ...v,
-                  seq: i+1
-                }
-              })])
-            }}>
-              <p>아래로</p>
-            </Button>
-            <Button style={{marginLeft: 16}} onClick={() => {
-
-              if(selectRow === -1){
-                return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
-              }
-                let tmpRow = [...searchList]
-                tmpRow.splice(selectRow, 1)
-                setSearchList([...tmpRow.map((v, i) => {
-                  return {
-                    ...v,
-                    seq: i+1
-                  }
-                })])
-                setSelectRow(-1)
-            }}>
-              <p>삭제</p>
-            </Button>
-          </div>
+          {
+            getButtons()
+          }
           <div style={{padding: '0 16px', width: 1776, display:"flex", justifyContent:"left"}}>
             <ExcelTable
               headerList={searchModalList.machineInfo}
@@ -355,24 +352,23 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                     return {...machine, type_id:machine.type, type:selectMachineType(machine.type)}
                   }else{
                     return {...machine}
-
                   }
                 })]
-
                 competeMachine(filterList)
               }}
               width={searchModalList.machineInfo.map(machine => machine.width).reduce((prevValue, currentValue) => prevValue + currentValue)}
               rowHeight={32}
               height={552}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
+              onRowClick={(clicked) => {
+                const e = searchList.indexOf(clicked)
                 if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
+                  const newSearchList = searchList.map((row,rowIdx) => ({
+                    ...row,
+                    border: rowIdx === e
+                  }))
+                  setSearchList(newSearchList)
+                  setSelectRow(e)
                 }
-                setSelectRow(e)
               }}
               type={'searchModal'}
               headerAlign={'center'}
@@ -388,7 +384,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               <p>취소</p>
             </div>
             <div
-              onClick={() => onClickSave()}
+              onClick={() => onConfirm()}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>등록하기</p>

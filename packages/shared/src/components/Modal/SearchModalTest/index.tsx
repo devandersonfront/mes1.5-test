@@ -178,22 +178,22 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       params: selectType()
     })
 
-
     if(res){
       if(searchModalInit.excelColumnType === "toolProduct"){
         setSearchList([...SearchResultSort(!column.noSelect ? [null, ...res] : res, searchModalInit.excelColumnType)])
         setPageInfo({page:res.page, total:res.totalPages});
         Notiflix.Loading.remove()
-      }else
-      if(res.page !== 1){
-        setSearchList([ ...searchList,...SearchResultSort(!column.noSelect ? [ ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
-        setPageInfo({page:res.page, total:res.totalPages});
-        Notiflix.Loading.remove()
       }else{
-        // setSearchList([...SearchResultSort(!column.noSelect ? [null, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
-        setSearchList([...SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
-        setPageInfo({page:res.page, total:res.totalPages});
-        Notiflix.Loading.remove()
+        if(res.page !== 1){
+          setSearchList([ ...searchList,...SearchResultSort(!column.noSelect ? [ ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
+          setPageInfo({page:res.page, total:res.totalPages});
+          Notiflix.Loading.remove()
+        }else{
+          // setSearchList([...SearchResultSort(!column.noSelect ? [null, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
+          setSearchList([...SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
+          setPageInfo({page:res.page, total:res.totalPages});
+          Notiflix.Loading.remove()
+        }
       }
     }
   }

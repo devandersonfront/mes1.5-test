@@ -49,17 +49,11 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
     const [summaryData, setSummaryData] = useState<any>({})
-    const [searchKeyword, setSearchKeyword] = useState<string>('')
-    const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-        page: 1,
-        total: 1
-    })
 
     useEffect(() => {
         if(isOpen){
             LoadBasic(row.productId)
             setSummaryData({
-                // ...res.parent
                 identification: row.identification,
                 lot_number: row.lot_number ?? '-',
                 customer: row.product?.customer?.name,
@@ -84,34 +78,23 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                 productId: productId
             },
         })
-        let selectMachine
+        let selectedMachine
         row.machines?.map((machine, index) => {
             if(machine.machine.setting){
-                selectMachine = machine.machine.machine.machine_id
+                selectedMachine = machine.machine.machine.machine_id
             }
         })
         if(res){
-            // if(row.machines){
-            //   setSearchList(row.machines.map((v, index) => {
-            //     return {
-            //       ...v.machine.machine,
-            //       machineType: TransferCodeToValue(v?.machine.machine.type, 'machine'),
-            //       sequence: index+1,
-            //       setting: v?.machine.machine.setting,
-            //     }
-            //   }))
-            // }else{
             setSearchList([...res].map((v, index) =>{
                 return {
                     ...v.machine,
                     machineType: TransferCodeToValue(v.machine.type, 'machine'),
                     sequence: index+1,
-                    // setting: row?.machines ? row?.machines[index]?.machine.setting : 0,
-                    setting: v.machine.machine_id === selectMachine ? 1 : 0
+                    setting: v.machine.machine_id === selectedMachine ? 1 : 0
                 }
             }))
-            // }
         }
+        Notiflix.Loading.remove()
     }
 
     const ModalContents = () =>(
@@ -123,6 +106,35 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
     )
     const getSummaryInfo = (info) => {
         return summaryData[info.key] ?? '-'
+    }
+
+    const onClose =() => {
+        setIsOpen(false)
+    }
+
+    const onConfirm = () => {
+        const machineInUse = searchList.filter(row => row.setting === 1)
+        if(machineInUse.length > 1) {
+            return Notiflix.Report.warning("경고", "기계를 하나만 선택해주시기 바랍니다.", "확인");
+        }
+        if(selectRow !== undefined && selectRow !== null){
+            onRowChange({
+                ...row,
+                machines: searchList.map(v => {
+                    return {
+                        machine: {
+                            sequence: v.sequence,
+                            machine: {
+                                ...v
+                            },
+                            setting: v.setting
+                        }
+                    }
+                }),
+                name: row.name,
+                isChange: true
+            })
+        }
     }
 
     return (
@@ -223,10 +235,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                             width={1746}
                             rowHeight={32}
                             height={552}
-                            // onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                            //   setSelectRow(e)
-                            // }}
-                            onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
+                            onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                                 if(!searchList[e].border){
                                     searchList.map((v,i)=>{
                                         v.border = false;
@@ -243,7 +252,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                     <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
                         <div
                             onClick={() => {
-                                setIsOpen(false)
+                                onClose()
                             }}
                             style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >
@@ -251,34 +260,8 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                         </div>
                         <div
                             onClick={() => {
-                                let settingUseArray = 0
-                                searchList.map((v)=> {
-                                    if(v.setting === 1) {
-                                        settingUseArray += 1
-                                    }
-                                })
-                                if(settingUseArray > 1) {
-                                    return Notiflix.Report.warning("경고", "기계를 하나만 선택해주시기 바랍니다.", "확인");
-                                }
-                                if(selectRow !== undefined && selectRow !== null){
-                                    onRowChange({
-                                        ...row,
-                                        machines: searchList.map(v => {
-                                            return {
-                                                machine: {
-                                                    sequence: v.sequence,
-                                                    machine: {
-                                                        ...v
-                                                    },
-                                                    setting: v.setting
-                                                }
-                                            }
-                                        }),
-                                        name: row.name,
-                                        isChange: true
-                                    })
-                                }
-                                setIsOpen(false)
+                                onConfirm()
+                                onClose()
                             }}
                             style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >

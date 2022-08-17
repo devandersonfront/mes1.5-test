@@ -10,7 +10,7 @@ import { ParseResponse } from '../../common/Util'
 
 interface IProps {
   row: any
-  column: IExcelHeaderType
+  column: any
   onRowChange: (e: any) => void
 }
 
@@ -18,10 +18,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   const tabStore = useSelector((root:RootState) => root.infoModal);
   const dispatch = useDispatch();
   const [title, setTitle] = useState<string>(column.key === 'lot' ? "LOT 보기" : "BOM 보기")
-  const selector = useSelector((state:RootState) => state.infoModal)
-  // useEffect(() => {
-  //   row.clicked && row.page !== 1 && loadMaterialLot(row.tab, null, row.action)
-  // }, [row.page])
+
   const loadMaterialLot = async (type:number, initPage?: number, action?: string, input?, setInput?) => {
     let res
     const inputMaterial = input ?? row
@@ -157,11 +154,12 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
 
   const notLotEvent = () => {
     if (row.bom_root_id) {
-      const check = tabStore.datas.findIndex((tab) => tab.code == row.bom_root_id)
+      const check = tabStore.datas.findIndex((tab) => tab.code === row.bom_root_id)
       if(check >= 0){
         dispatch(change_summary_info_index(check))
       }else{
-        dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1, product_id:row.bom_root_id}))
+        const bomRegisterTab = tabStore.index === 0
+        dispatch(add_summary_info({code: row.bom_root_id, title: row.code, index: tabStore.index + 1, product_id:row.bom_root_id, data: bomRegisterTab ? column.searchList : null}))
       }
     } else {
       Notiflix.Report.warning("경고", "등록된 BOM 정보가 없습니다.", "확인", () => {

@@ -167,7 +167,6 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       state={type}
       onRowClick={(row,col) => {
         onRowClick && onRowClick(row)
-        setSelectRow && setSelectRow(row)
       }}
       onRowDoubleClick={(row,col) => {
         onDoubleClick && onDoubleClick(row)
