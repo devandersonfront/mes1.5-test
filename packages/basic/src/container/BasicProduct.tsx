@@ -70,7 +70,7 @@ const BasicProduct = ({}: IProps) => {
   }
 
   useEffect(() => {
-    getData(pageInfo.page, keyword)
+    getData(pageInfo.page, keyword, sortingOptions)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -647,7 +647,7 @@ const BasicProduct = ({}: IProps) => {
         <PageHeader
             isSearch
             searchKeyword={keyword}
-            onSearch={reload}
+            onSearch={(keyword) => reload(keyword, sortingOptions)}
             searchOptionList={optionList}
             onChangeSearchOption={(option) => {
               setOptionIndex(option)

@@ -66,7 +66,7 @@ const BasicUser = ({}: IProps) => {
   }
 
   useEffect(() => {
-    getData(pageInfo.page, keyword)
+    getData(pageInfo.page, keyword, sortingOptions)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -377,12 +377,16 @@ const BasicUser = ({}: IProps) => {
 
   const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle()
+    const settingSorts = _sortingOptions?.sorts.map((sort) => {
+      if(sort == "tmpId") return "id"
+      return sort
+    })
     const res = await RequestMethod("get", keyword ? 'memberSearch' : 'memberList', {
       path: {
         page: page ?? 1,
         renderItem: 18,
       },
-      params: getRequestParams(keyword, _sortingOptions)
+      params: getRequestParams(keyword, {..._sortingOptions, sorts:settingSorts})
     });
 
     if (res) {
@@ -480,6 +484,7 @@ const BasicUser = ({}: IProps) => {
                 id: menu.mi_id,
                 name: menu.title,
                 width: menu.width,
+                // key: menu.title,
                 key: menu.mi_id,
                 editor: TextEditor,
                 type: "additional",
@@ -492,6 +497,13 @@ const BasicUser = ({}: IProps) => {
           })
           .filter((v: any) => v)
       : [];
+    // let additionalData: any[] = []
+
+    // additionalMenus.map((v: any) => {
+    //   if(v.type === 'additional'){
+    //     additionalData.push(v.key)
+    //   }
+    // })
 
     tmpRow = res.info_list;
     loadAllSelectItems([...tmpColumn, ...additionalMenus], keyword);
@@ -643,7 +655,7 @@ const BasicUser = ({}: IProps) => {
       <PageHeader
         isSearch
         searchKeyword={keyword}
-        onSearch={reload}
+        onSearch={(keyword) => reload(keyword,sortingOptions)}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option);

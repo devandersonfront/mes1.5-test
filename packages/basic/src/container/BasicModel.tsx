@@ -58,7 +58,7 @@ const BasicModel = ({}: IProps) => {
   }
 
   useEffect(() => {
-    getData(pageInfo.page, keyword)
+    getData(pageInfo.page, keyword, sortingOptions)
   }, [pageInfo.page]);
 
   useEffect(() => {
@@ -205,7 +205,7 @@ const BasicModel = ({}: IProps) => {
 
 
       if(res){
-        Notiflix.Report.success('저장되었습니다.','','확인', () => reload());
+        Notiflix.Report.success('저장되었습니다.','','확인', () => reload(keyword, sortingOptions));
       }
     }else{
       return Notiflix.Report.warning(
@@ -274,7 +274,7 @@ const BasicModel = ({}: IProps) => {
           ]}
       )))
 
-      reload()
+      reload(keyword, sortingOptions)
     }else{
 
       selectedRows.forEach((row)=>{map.delete(row.id)})

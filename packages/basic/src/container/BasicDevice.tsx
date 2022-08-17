@@ -74,7 +74,7 @@ const BasicDevice = ({}: IProps) => {
   }
 
   useEffect(() => {
-    getData(pageInfo.page, keyword)
+    getData(pageInfo.page, keyword, sortingOptions)
   }, [pageInfo.page, typesState]);
 
   useEffect(() => {

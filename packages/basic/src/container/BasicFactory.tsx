@@ -58,7 +58,7 @@ const BasicFactory = ({}: IProps) => {
     }
 
     useEffect(() => {
-        getData(pageInfo.page, keyword)
+        getData(pageInfo.page, keyword, sortingOptions)
     }, [pageInfo.page]);
 
     useEffect(() => {
