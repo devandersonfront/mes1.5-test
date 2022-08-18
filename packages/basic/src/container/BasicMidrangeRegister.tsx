@@ -15,23 +15,18 @@ import { sum } from 'lodash'
 import { MidrangeRegisterModal } from 'shared/src/components/Modal/MidrangeRegisterModal'
 
 const BasicMidrangeRegister = () => {
+    const column:Array<IExcelHeaderType> = columnlist["midrangeExam"]
+    const sampleColumn:Array<IExcelHeaderType> = columnlist['midrange']
+    const legendaryColumn:Array<IExcelHeaderType> = columnlist['midrangeLegendary']
+    const itemColumn:Array<IExcelHeaderType> = columnlist['midrangeInspectionItem']
     const router = useRouter()
-    const [basicRow, setBasicRow] = useState<Array<any>>([{
-
-    }])
+    const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([{samples: 1}])
     const [legendaryBasicRow, setLegendaryBasicRow] = useState<Array<any>>([])
-    const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{unit: 'mm', type: 0}])
-    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["midrangeExam"])
-    const [sampleColumn, setSampleColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrange'])
-    const [legendaryColumn, setLegendaryColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeLegendary'])
-    const [itemColumn, setItemColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeInspectionItem'])
-    const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [sampleSelectList, setSampleSelectList] = useState<Set<number>>(new Set())
-    const [ isOpen, setIsOpen ] = useState<boolean>(false)
-    const [legendarySelectList, setLegendarySelectList] = useState<Set<number>>(new Set())
-    const [ItemSelectList, setItemSelectList] = useState<Set<number>>(new Set())
-    const [productId, setProductId] = useState<number>()
+    const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{sequence:1, unit: 'mm', type: 0}])
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+    const [selectCheckListIndex, setSelectCheckListIndex] = useState<number>(null)
+    const [selectLegendaryIndex, setSelectLegendaryIndex] = useState<number>(null)
 
     React.useEffect(()=>{
         const data = {
@@ -109,7 +104,6 @@ const BasicMidrangeRegister = () => {
 
     const addRowButton = (type : 'legendary' | 'item') => {
         if( type === 'legendary' && legendaryBasicRow.length < 11) {
-
             let items = {}
             let random_id = Math.random() * 1000;
             legendaryColumn.map((value) => {
@@ -127,6 +121,7 @@ const BasicMidrangeRegister = () => {
                 {
                     ...items,
                     id: `legendary_${random_id}`,
+                    sequence:legendaryBasicRow.length+1
                 }
             ])
         }else if(type === 'item' && itemBasicRow.length < 51) {
@@ -154,6 +149,7 @@ const BasicMidrangeRegister = () => {
                 {
                     ...items,
                     id: `item_${random_id}`,
+                    sequence:itemBasicRow.length+1
                 }
             ])
 
@@ -161,21 +157,27 @@ const BasicMidrangeRegister = () => {
     }
 
     const deleteRowButton = (type : 'legendary' | 'item') => {
-
         if(type === 'legendary' && legendaryBasicRow.length > 0) {
-
             const tmpRow = [...legendaryBasicRow]
-            tmpRow.splice(-1,1)
+            tmpRow.map((row, index) => {
+                if(selectLegendaryIndex < index){
+                    row.sequence -= 1
+                }
+            })
+            tmpRow.splice(selectLegendaryIndex,1)
             setLegendaryBasicRow(tmpRow)
-
+            setSelectLegendaryIndex(null)
         }else if(type === 'item' && itemBasicRow.length > 1) {
-
             const tmpRow = [...itemBasicRow]
-            tmpRow.splice(-1,1)
+            tmpRow.map((row, index) => {
+                if(selectCheckListIndex < index){
+                    row.sequence -= 1
+                }
+            })
+            tmpRow.splice(selectCheckListIndex,1)
             setItemBasicRow(tmpRow)
-
+            setSelectCheckListIndex(null)
         }
-
     }
 
     return (
@@ -183,55 +185,31 @@ const BasicMidrangeRegister = () => {
             <PageHeader title={"초ㆍ중ㆍ종 검사항목 등록"} buttons={['검사 양식 검토', '저장하기']} buttonsOnclick={buttonEvents}/>
             <ExcelTable
                 editable
-                headerList={[
-                    ...column
-                ]}
+                headerList={column}
                 row={basicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = selectList
-                    setSelectList(tmp)
-                    setBasicRow(e)
-                }}
-                selectList={selectList}
-                //@ts-ignore
-                setSelectList={setSelectList}
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
             />
             <ExcelTable
                 editable
-                headerList={[
-                    ...sampleColumn
-                ]}
+                headerList={sampleColumn}
                 row={sampleBasicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = sampleSelectList
-                    setSampleSelectList(tmp)
-                    setSampleBasicRow(e)
-                }}
-                selectList={sampleSelectList}
-                //@ts-ignore
-                setSelectList={setSampleSelectList}
+                setRow={setSampleBasicRow}
                 height={sampleBasicRow.length * 40 >= 40*18+56 ? 40*19 : sampleBasicRow.length * 40 + 56}
             />
             <ExcelTable
                 editable
-                headerList={[
-                    ...legendaryColumn
-                ]}
+                headerList={legendaryColumn}
                 row={legendaryBasicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = legendarySelectList
-                    setLegendarySelectList(tmp)
-                    setLegendaryBasicRow(e)
+                onRowClick={(row) => {
+                    const index = legendaryBasicRow.indexOf(row)
+                    setSelectLegendaryIndex(index)
                 }}
-                selectList={legendarySelectList}
-                //@ts-ignore
-                setSelectList={setLegendarySelectList}
+                setRow={setLegendaryBasicRow}
                 height={setExcelTableHeight(legendaryBasicRow.length) - 8}
-                width={sum(legendaryColumn.map(col => col.width))}
+                width={1576}
 
             />
-            <div style={{display : 'flex'}}>
+            <div style={{display : 'flex', width:1576}}>
                 <MidrangeButton onClick={()=>deleteRowButton('legendary')} style={{backgroundColor :'#98999B'}}>
                     -범례 삭제
                 </MidrangeButton>
@@ -241,22 +219,17 @@ const BasicMidrangeRegister = () => {
             </div>
             <ExcelTable
                 editable
-                headerList={[
-                    ...itemColumn
-                ]}
+                headerList={itemColumn}
                 row={itemBasicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = ItemSelectList
-                    setItemSelectList(tmp)
-
-                    setItemBasicRow(e)
+                onRowClick={(row) => {
+                    const index = itemBasicRow.indexOf(row)
+                    setSelectCheckListIndex(index)
                 }}
-                selectList={ItemSelectList}
-                //@ts-ignore
-                setSelectList={setItemSelectList}
+                setRow={setItemBasicRow}
                 height={setExcelTableHeight(itemBasicRow.length) - 8}
+                width={1576}
             />
-            <div style={{display : 'flex'}}>
+            <div style={{display : 'flex', width:1576}}>
                 <MidrangeButton onClick={()=>deleteRowButton('item')} style={{backgroundColor :'#98999B'}}>
                     -검사 항목 삭제
                 </MidrangeButton>

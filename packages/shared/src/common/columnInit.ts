@@ -739,16 +739,18 @@ export const columnlist: any = {
     {key: 'type', name: '품목 종류',width: 120},
   ],
   midrangeLegendary: [
-    {key: 'legendary', name: '범례',width: 968, formatter: PlaceholderBox, placeholder: '범례 입력', editor: TextEditor},
-    {key: 'LegendaryExplain', name: '범례 설명', width: 608, formatter: PlaceholderBox, placeholder: '범례 설명 입력', editor: TextEditor},
+    {key: "sequence", name: '구분', formatter: PlaceholderBox, width:48},
+    {key: 'legendary', name: '범례', formatter: PlaceholderBox, width:908 , placeholder: '범례 입력', editor: TextEditor},
+    {key: 'LegendaryExplain', name: '범례 설명',  formatter: PlaceholderBox, width:588, placeholder: '범례 설명 입력', editor: TextEditor},
   ],
   midrangeLegendaryDetail: [
     {key: 'legendary', name: '범례',width: 968,},
     {key: 'LegendaryExplain', name: '범례 설명', width: 608},
   ],
   midrangeInspectionItem: [
+    {key: "sequence", name: '구분', formatter: PlaceholderBox, width: 48,},
     {key: 'name', name: '검사 항목',width: 480, formatter: PlaceholderBox, placeholder: '검사 항목 입력', editor: TextEditor},
-    {key: 'unit', name: '단위', width: 120, formatter: DropDownEditor, selectList: [
+    {key: 'unit', name: '단위', width: 80, formatter: DropDownEditor, selectList: [
         {pk: 'mm', name: 'mm'},
         {pk: 'cm', name: 'cm'},
         {pk: 'm', name: 'm'},
@@ -760,10 +762,10 @@ export const columnlist: any = {
         {pk: 'L', name: 'L'},
         {pk: 'PI', name: 'PI'},
       ]},
-    {key: 'standard', name: '점검 기준', width: 424, placeholder: '점검 기준 입력', editor: TextEditor, formatter: PlaceholderBox,},
+    {key: 'standard', name: '점검 기준', width: 384, placeholder: '점검 기준 입력', editor: TextEditor, formatter: PlaceholderBox,},
     {key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216, formatter: UnitContainer, placeholder: '최소값 입력',editor: TextEditor, inputType:'number'},
     {key: 'error_maximum', name: '최대값(오차범위 최대)', width: 216, formatter: UnitContainer, placeholder: '최대값 입력',editor: TextEditor, inputType:'number'},
-    {key: 'type', name: '기록 방법', width: 120, formatter: DropDownEditor, selectList: [
+    {key: 'type', name: '기록 방법', width: 118, formatter: DropDownEditor, selectList: [
         {pk: '0', name: '수치 입력'},
         {pk: '1', name: '범례 적용'},
       ] },
