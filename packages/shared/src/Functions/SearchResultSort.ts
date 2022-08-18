@@ -227,7 +227,6 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         ...selectData,
         appointment: selectData.appointment,
         telephone: selectData.telephone,
-        description: selectData.description,
         manager: selectData.name,
         worker_name: selectData.name,
         managerPk: selectData.user_id,
