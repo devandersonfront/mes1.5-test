@@ -239,7 +239,6 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
           return false
         })
   } else {
-    console.log('apilist', apiType)
     const response = await requestApi(MethodType, ApiList[apiType], data, tokenData, responseType, params, path)
     return response
   }
