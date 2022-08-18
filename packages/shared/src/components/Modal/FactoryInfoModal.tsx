@@ -36,7 +36,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       if(!row.factory_id){
-        Notiflix.Report.warning("경고","공장을 먼저 등록해주시기 바랍니다.","확인", () => () => onCloseEvent());
+        Notiflix.Report.warning("경고","공장을 먼저 등록해주시기 바랍니다.","확인", () => onCloseEvent());
       }else {
         getData()
       }

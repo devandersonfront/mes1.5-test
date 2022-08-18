@@ -516,6 +516,8 @@ const BasicRawMaterial = ({}: IProps) => {
             id: `rawmaterial_${random_id}`,
             name: null,
             additional: [],
+            stock:0,
+            unit: 0
           },
           ...basicRow,
         ]);
