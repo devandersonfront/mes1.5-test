@@ -11,23 +11,20 @@ import {MidrangeButton} from "shared/src/styles/styledComponents";
 import {useRouter} from "next/router";
 import Notiflix from "notiflix";
 import { setExcelTableHeight } from 'shared/src/common/Util'
-import { sum } from 'lodash'
 
 const BasicMidrangeModify = () => {
+    const column:Array<IExcelHeaderType> = columnlist["midrangeExam"]
+    const sampleColumn:Array<IExcelHeaderType> = columnlist['midrange']
+    const legendaryColumn:Array<IExcelHeaderType> = columnlist['midrangeLegendary']
+    const itemColumn:Array<IExcelHeaderType> = columnlist['midrangeInspectionItem']
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<Array<any>>([{}])
     const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([{}])
     const [legendaryBasicRow, setLegendaryBasicRow] = useState<Array<any>>([])
     const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{}])
     const [ isOpen, setIsOpen ] = useState<boolean>(false)
-    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["midrangeExam"])
-    const [sampleColumn, setSampleColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrange'])
-    const [legendaryColumn, setLegendaryColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeLegendary'])
-    const [itemColumn, setItemColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeInspectionItem'])
-    const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [sampleSelectList, setSampleSelectList] = useState<Set<number>>(new Set())
-    const [legendarySelectList, setLegendarySelectList] = useState<Set<number>>(new Set())
-    const [ItemSelectList, setItemSelectList] = useState<Set<number>>(new Set())
+    const [selectCheckListIndex, setSelectCheckListIndex] = useState<number>(null)
+    const [selectLegendaryIndex, setSelectLegendaryIndex] = useState<number>(null)
 
     React.useEffect(()=>{
         const data = {
@@ -105,12 +102,12 @@ const BasicMidrangeModify = () => {
             const legendaryKey = Object.keys(res.legendary_list)
             const legendaryValue = Object.values(res.legendary_list)
 
-            const legendaryArray = legendaryKey.map((v,i)=>{
-                return {legendary: v, LegendaryExplain: legendaryValue[i]}
+            const legendaryArray = legendaryKey.map((v,index)=>{
+                return {sequence:index+1 ,legendary: v, LegendaryExplain: legendaryValue[index]}
             })
 
-            const itemBasic = res.category_info.map((v)=>{
-                return {...v, type: v.type === 1 ? '범례 적용' : "수치 입력"}
+            const itemBasic = res.category_info.map((v, index)=>{
+                return {...v, sequence:index+1, type: v.type === 1 ? '범례 적용' : "수치 입력"}
             })
 
             setSampleBasicRow([{samples: res.samples}])
@@ -138,6 +135,7 @@ const BasicMidrangeModify = () => {
                 {
                     ...items,
                     id: `legendary_${random_id}`,
+                    sequence:legendaryBasicRow.length+1
                 }
             ])
         }else if(type === 'item' && itemBasicRow.length < 51) {
@@ -165,6 +163,7 @@ const BasicMidrangeModify = () => {
                 {
                     ...items,
                     id: `item_${random_id}`,
+                    sequence:itemBasicRow.length+1
                 }
             ])
 
@@ -172,21 +171,27 @@ const BasicMidrangeModify = () => {
     }
 
     const deleteRowButton = (type : 'legendary' | 'item') => {
-
         if(type === 'legendary' && legendaryBasicRow.length > 0) {
-
             const tmpRow = [...legendaryBasicRow]
-            tmpRow.splice(-1,1)
+            tmpRow.map((row, index) => {
+                if(selectLegendaryIndex < index){
+                    row.sequence -= 1
+                }
+            })
+            tmpRow.splice(selectLegendaryIndex,1)
             setLegendaryBasicRow(tmpRow)
-
+            setSelectLegendaryIndex(null)
         }else if(type === 'item' && itemBasicRow.length > 1) {
-
             const tmpRow = [...itemBasicRow]
-            tmpRow.splice(-1,1)
+            tmpRow.map((row, index) => {
+                if(selectCheckListIndex < index){
+                    row.sequence -= 1
+                }
+            })
+            tmpRow.splice(selectCheckListIndex,1)
             setItemBasicRow(tmpRow)
-
+            setSelectCheckListIndex(null)
         }
-
     }
 
     const buttonEvents = async(index:number) => {
@@ -204,59 +209,28 @@ const BasicMidrangeModify = () => {
         <div>
             <PageHeader title={"초ㆍ중ㆍ종 검사항목 정보 (수정)"} buttons={['검사 양식 검토', '저장하기']} buttonsOnclick={buttonEvents}/>
             <ExcelTable
-                headerList={[
-                    ...column
-                ]}
+                headerList={column}
                 row={basicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = selectList
-                    e.map(v => {
-                        if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
-                    })
-                    setSelectList(tmp)
-                    setBasicRow(e)
-                }}
-                selectList={selectList}
-                //@ts-ignore
-                setSelectList={setSelectList}
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
             />
             <ExcelTable
                 editable
-                headerList={[
-                    ...sampleColumn
-                ]}
+                headerList={sampleColumn}
                 row={sampleBasicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = sampleSelectList
-                    setSampleSelectList(tmp)
-                    setSampleBasicRow(e)
-                }}
-                selectList={sampleSelectList}
-                //@ts-ignore
-                setSelectList={setSampleSelectList}
+                setRow={setSampleBasicRow}
                 height={sampleBasicRow.length * 40 >= 40*18+56 ? 40*19 : sampleBasicRow.length * 40 + 56}
             />
             <ExcelTable
                 editable
-                headerList={[
-                    ...legendaryColumn
-                ]}
+                headerList={legendaryColumn}
                 row={legendaryBasicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = legendarySelectList
-                    setLegendarySelectList(tmp)
-                    setLegendaryBasicRow(e)
+                onRowClick={(row) =>{
+                    const index = legendaryBasicRow.indexOf(row)
+                    setSelectLegendaryIndex(index)
                 }}
-                selectList={legendarySelectList}
-                //@ts-ignore
-                setSelectList={setLegendarySelectList}
+                setRow={setLegendaryBasicRow}
                 height={setExcelTableHeight(legendaryBasicRow.length) - 8}
-                width={sum(legendaryColumn.map(col => col.width))}
-
+                width={1576}
             />
             <div style={{display : 'flex'}}>
                 <MidrangeButton onClick={()=>deleteRowButton('legendary')} style={{backgroundColor :'#98999B'}}>
@@ -268,20 +242,15 @@ const BasicMidrangeModify = () => {
             </div>
             <ExcelTable
                 editable
-                headerList={[
-                    ...itemColumn
-                ]}
+                headerList={itemColumn}
                 row={itemBasicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = ItemSelectList
-                    setItemSelectList(tmp)
-
-                    setItemBasicRow(e)
+                onRowClick={(row) => {
+                    const index = itemBasicRow.indexOf(row)
+                    setSelectCheckListIndex(index)
                 }}
-                selectList={ItemSelectList}
-                //@ts-ignore
-                setSelectList={setItemSelectList}
+                setRow={setItemBasicRow}
                 height={setExcelTableHeight(itemBasicRow.length) - 8}
+                width={1576}
             />
             <div style={{display : 'flex'}}>
                 <MidrangeButton onClick={()=>deleteRowButton('item')} style={{backgroundColor :'#98999B'}}>

@@ -13,27 +13,17 @@ import { setExcelTableHeight } from 'shared/src/common/Util'
 import { sum } from 'lodash'
 
 const BasicMidrangeDetail = () => {
-    const [basicRow, setBasicRow] = useState<Array<any>>([{
-    }])
-    const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([{
-
-    }])
-    const [legendaryBasicRow, setLegendaryBasicRow] = useState<Array<any>>([{
-
-    }])
-    const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{
-
-    }])
-    const [productId, setProductId] = useState<number>()
-    const [ isOpen, setIsOpen ] = useState<boolean>(false)
-    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["midrangeExamDetail"])
-    const [sampleColumn, setSampleColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeDetail'])
-    const [legendaryColumn, setLegendaryColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeLegendaryDetail'])
-    const [ItemColumn, setItemColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeInspectionItemDetail'])
+    const column:Array<IExcelHeaderType> = columnlist["midrangeExam"]
+    const sampleColumn:Array<IExcelHeaderType> = columnlist['midrange']
+    const legendaryColumn:Array<IExcelHeaderType> = columnlist['midrangeLegendary']
+    const itemColumn:Array<IExcelHeaderType> = columnlist['midrangeInspectionItem']
+    const [basicRow, setBasicRow] = useState<Array<any>>([])
+    const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([])
+    const [legendaryBasicRow, setLegendaryBasicRow] = useState<Array<any>>([])
+    const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([])
+    const [isOpen, setIsOpen] = useState<boolean>(false)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [sampleSelectList, setSampleSelectList] = useState<Set<number>>(new Set())
-    const [legendarySelectList, setLegendarySelectList] = useState<Set<number>>(new Set())
-    const [ItemSelectList, setItemSelectList] = useState<Set<number>>(new Set())
     const router = useRouter()
 
     const LoadMidrange = async (product_id: number) => {
@@ -48,12 +38,12 @@ const BasicMidrangeDetail = () => {
             const legendaryKey = Object.keys(res.legendary_list)
             const legendaryValue = Object.values(res.legendary_list)
 
-            const legendaryArray = legendaryKey.map((v,i)=>{
-                return {legendary: v, LegendaryExplain: legendaryValue[i]}
+            const legendaryArray = legendaryKey.map((v,index)=> {
+                return {sequence:index+1,legendary: v, LegendaryExplain: legendaryValue[index]}
             })
 
-            const itemBasic = res.category_info.map((v)=>{
-                return {...v, type: v.type === 1 ? '범례 적용' : "수치 입력"}
+            const itemBasic = res.category_info.map((v, index)=>{
+                return {...v, sequence:index+1, type: v.type === 1 ? '범례 적용' : "수치 입력"}
             })
 
             setSampleBasicRow([{samples: res.samples}])
@@ -136,41 +126,16 @@ const BasicMidrangeDetail = () => {
                 height={sampleBasicRow.length * 40 >= 40*18+56 ? 40*19 : sampleBasicRow.length * 40 + 56}
             />
             <ExcelTable
-                headerList={[
-                    ...legendaryColumn
-                ]}
+                headerList={legendaryColumn}
                 row={legendaryBasicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = legendarySelectList
-                    e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
-                    })
-                    setLegendarySelectList(tmp)
-                    setLegendaryBasicRow(e)
-                }}
-                selectList={legendarySelectList}
-                //@ts-ignore
-                setSelectList={setLegendarySelectList}
                 height={setExcelTableHeight(legendaryBasicRow.length)+10}
-                width={sum(legendaryColumn.map(col => col.width))}
+                width={1576}
             />
             <ExcelTable
-                headerList={[
-                    ...ItemColumn
-                ]}
+                headerList={itemColumn}
                 row={itemBasicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = ItemSelectList
-                    e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
-                    })
-                    setItemSelectList(tmp)
-                    setItemBasicRow(e)
-                }}
-                selectList={ItemSelectList}
-                //@ts-ignore
-                setSelectList={setItemSelectList}
                 height={setExcelTableHeight(itemBasicRow.length)}
+                width={1576}
             />
             {
                 isOpen && <MidrangeFormReviewModal data={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
