@@ -93,7 +93,7 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
         (previousValue, currentValue) => previousValue + currentValue,
     )
   }
-  console.log("row : ", row)
+  
   const showDataGrid = () => {
 
     return <DataGridTable
