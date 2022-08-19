@@ -3,14 +3,11 @@ import {
   ExcelTable,
   Header as PageHeader,
   RequestMethod,
-  MAX_VALUE,
-  DropDownEditor,
   TextEditor,
   excelDownload,
   PaginationComponent,
   ExcelDownloadModal,
   IExcelHeaderType,
-  IItemMenuType,
   BarcodeModal,
   columnlist,
 } from "shared";
@@ -18,14 +15,9 @@ import {
 import { SelectColumn } from "react-data-grid";
 import Notiflix from "notiflix";
 import { useRouter } from "next/router";
-import { loadAll } from "react-cookies";
 import { NextPageContext } from "next";
-import axios from "axios";
 import { useDispatch } from "react-redux";
-import {
-  deleteMenuSelectState,
-  setMenuSelectState,
-} from "shared/src/reducer/menuSelectState";
+import {deleteMenuSelectState, setMenuSelectState,} from "shared/src/reducer/menuSelectState";
 import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import {BarcodeDataType} from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
@@ -42,6 +34,7 @@ type ModalType = {
   type : 'barcode' | 'quantity'
   isVisible : boolean
 }
+const optionList = ["원자재 CODE", "원자재 품명", "재질", "거래처",]
 
 const BasicRawMaterial = ({}: IProps) => {
   const router = useRouter();
@@ -51,12 +44,6 @@ const BasicRawMaterial = ({}: IProps) => {
   const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["rawMaterial"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
-  const [optionList, setOptionList] = useState<string[]>([
-    "원자재 CODE",
-    "원자재 품명",
-    "재질",
-    "거래처",
-  ]);
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
   const [selectRow, setSelectRow] = useState<any>(undefined);
@@ -479,11 +466,18 @@ const BasicRawMaterial = ({}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch (index) {
       case 0:
+        const result = basicRow.find(row => selectList.has(row.id))
         if (selectList.size === 0) {
           return Notiflix.Report.warning(
             "오류",
             "선택을 하셔야 합니다.",
-            "Okay"
+            "확인"
+          );
+        }else if(!result.rm_id){
+          return Notiflix.Report.warning(
+              "오류",
+              "저장된 데이터가 아닙니다.",
+              "확인"
           );
         }
         setModal({type : 'quantity' , isVisible : true})
