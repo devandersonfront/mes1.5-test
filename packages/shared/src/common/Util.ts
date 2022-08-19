@@ -65,8 +65,6 @@ export const setExcelTableHeight = (length:number) => {
 }
 
 export const getTableSortingOptions = (key, order, sortingOptions:TableSortingOptionType) => {
-  console.log("key : ", key, " order : ", order, " sortigOption : ", sortingOptions)
-  console.log("oso : ",sortingOptions.sorts.includes(key))
     const index = sortingOptions.sorts.findIndex((sort) => sort == key)
     if(order == "none"){
       sortingOptions.sorts.splice(index,1)
