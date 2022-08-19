@@ -33,107 +33,60 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     page: 1,
     total: 1
   })
-  // const [initProp, setInitProp]  = useState<{isInit: boolean, initTotal:string}>({isInit: true, initTotal:'00:00:00'})
   const hasData = row['pause_reasons'] && row['pause_reasons'].length > 0
+  const secondsToHMS = (seconds:number) => {
+    return {
+      seconds,
+      hour:Math.floor(seconds / 3600),
+      minute:Math.floor(seconds % 3600 / 60),
+      second:Math.floor(seconds % 3600 % 60),
+    }
+  }
 
-  console.log(row)
-  console.log('pause',searchList)
   useEffect(() => {
       if(column.type !== 'readonly') {
-        // initialize()
-        if(isOpen && row.processId){
+        if(isOpen && (row.processId || row.product.processId)){
           loadPauseList()
+        } else if(column.type === 'modify' && hasData){
+          setTotalSec(sum(row.pause_reasons.map(reason => reason.amount)))
         }
       } else {
         if(hasData) {
           let total = 0
           setSearchList([ ...row.pause_reasons.map(v => {
-
-            let sec = v.amount
-            let hour = Math.floor(sec / 3600)
-            sec = sec % 3600
-            let min = Math.floor(sec / 60)
-            sec = sec % 60
-
+            const times = secondsToHMS(v.amount)
             total += v.amount
-
             return {
               ...v,
               ...v.pause_reason,
-              hour: hour,
-              minute: min,
-              second: sec,
+              ...times
             }
           }) ])
-
-
           setTotalSec(total)
         }
       }
     }, [isOpen, pageInfo.page])
 
-  // useEffect(() => {
-  //   if(isOpen && pageInfo.page!=1)
-  //   {
-  //     loadPauseList()
-  //   }
-  // },[pageInfo.page])
-
-  const initialize = () => {
-    // if(initProp.isInit){
-    //   let initTotal = 0
-    //   if(hasData){
-    //     row.pause_reasons.map(reason => {
-    //       initTotal += reason.amount
-    //     })
-    //   }
-    //   setInitProp({isInit:false, initTotal: sumTotalTime(initTotal) })
-    // }
+  const toHHMMSS = (seconds: number) => {
+    const times = secondsToHMS(seconds)
+    return `${times.hour.toString().padStart(2,'0')}:${times.minute.toString().padStart(2,'0')}:${times.second.toString().padStart(2,'0')}`
   }
 
   const changeRow = (rows: any) => {
     let reasonMap
     if(hasData) {
       reasonMap = row.pause_reasons.reduce((map, obj) => {
-        map.set(obj.pause_reason.ppr_id, obj.pause_reason);
+        map.set(obj.pause_reason.ppr_id, obj.amount);
         return map;
       }, new Map);
     }
     return rows.map(row => {
-      let second = 0, minute = 0, hour = 0, seconds = 0
-      if(hasData) {
-        second = reasonMap.get(row.ppr_id)?.second ?? 0
-        minute = reasonMap.get(row.ppr_id)?.minute ?? 0
-        hour = reasonMap.get(row.ppr_id)?.hour ?? 0
-        seconds = reasonMap.get(row.ppr_id)?.seconds ?? 0
-      }
+      const times = secondsToHMS(hasData ? reasonMap.get(row.ppr_id) ?? 0 : 0)
       return {
         ...row,
-        second,
-        minute,
-        hour,
-        seconds,
+        ...times
       }
     })
-    // let second = 0, minute = 0, hour = 0, seconds = 0
-    // if(hasData) {
-    //   row.pause_reasons.map(reason =>
-    //     reason.pause_reason.ppr_id === eachRow.ppr_id ?
-    //   ))
-    //   console.log(reasonMap)
-    //   second = reasonMap.get(eachRow.ppr_id)?.amount ?? 0
-    //   hour = Math.floor(second / 3600)
-    //   second = second % 3600
-    //   minute = Math.floor(second / 60)
-    //   second = second % 60
-    // }
-    // return {
-    //   ...eachRow,
-    //   second,
-    //   minute,
-    //   hour,
-    //   seconds,
-    // }
   }
 
   const loadPauseList = async () => {
@@ -164,7 +117,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         <UploadButton onClick={() => {
           setIsOpen(true)
         }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
-          <p>{new Date(totalSec * 1000).toISOString().slice(11, 19)}</p>
+          <p>{toHHMMSS(totalSec)}</p>
         </UploadButton>
       )
 
@@ -267,7 +220,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   backgroundColor: 'white', width: 144, height: 28, border: '1px solid #B3B3B3', marginLeft: 16, marginRight: 32,
                   display: 'flex', alignItems: 'center', paddingTop:3
                 }}>
-                  <p style={{margin:0, padding: '0 0 0 8px'}}>{new Date(totalSec * 1000).toISOString().slice(11, 19)}</p>
+                  <p style={{margin:0, padding: '0 0 0 8px'}}>{toHHMMSS(totalSec)}</p>
                 </div>
               </div>
               {/*<Button>*/}

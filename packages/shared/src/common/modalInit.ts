@@ -417,7 +417,7 @@ export const searchModalList: any  = {
     {key: 'worker_name', name: '작업자', formatter: SearchModalTest, type: 'user', width: 118, modalType: true, placeholder: '작업자 선택'},
     {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "standardStartDate"},
     {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "standardEndDate"},
-    {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true, width: 120},
+    {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true, width: 120, type: 'modify'},
     {key: 'good_quantity', name: '양품 수량', textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 140, modalType: true},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},
