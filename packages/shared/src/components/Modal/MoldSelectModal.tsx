@@ -122,6 +122,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
 
   const onConfirm = () => {
     const moldInUse = searchList.filter(row => row.setting === 1)
+    const cavity = moldInUse.length > 0 && moldInUse[0].cavity
     if(moldInUse.length > 1) {
       return Notiflix.Report.warning("경고", "금형을 하나만 선택해주시기 바랍니다.", "확인");
     }
@@ -140,6 +141,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             }
           }
         }),
+        cavity,
         isChange: true
       })
     }

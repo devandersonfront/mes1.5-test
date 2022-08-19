@@ -65,6 +65,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const [lotList, setLotList] = useState<any[]>([])
   const [inputMaterial, setInputMaterial] = useState<any>()
   const isModify = column.action === 'modify'
+  const cavity = row.molds?.filter(mold => mold?.mold?.setting === 1)?.[0]?.mold?.mold?.cavity ?? 1
 
   useEffect(() => {
     if(isOpen){
@@ -91,7 +92,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     if(inputMaterial) {
       setLotList(toLotList(inputMaterial))
       delete inputMaterial.lotList
-      let tmpInput = inputMaterialList
+      let tmpInput = inputMaterialList.slice()
       tmpInput[selected.index] = inputMaterial
       setInputMaterialList(tmpInput)
     }
@@ -142,7 +143,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           {
             bom_info = bomIdAndLotMap.get(`rm${inputMaterial.childRmId}`)?.map((lots) => ({...lots.child_lot_rm, amount: lots.amount}))
           }
-          originalBom = row.originalBom ? row.originalBom.filter(bom => bom[0].rmId === inputMaterial.childRmId)?.[0] : bom_info
+          originalBom = row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.rmId === inputMaterial.childRmId)?.[0] ?? bom_info : bom_info
           break;
         }
         case 'subMaterial':{
@@ -152,7 +153,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           {
             bom_info = bomIdAndLotMap.get(`sm${inputMaterial.childSmId}`)?.map((lots) => ({...lots.child_lot_sm, amount: lots.amount}))
           }
-          originalBom = row.originalBom ? row.originalBom.filter(bom => bom[0].smId === inputMaterial.childSmId)?.[0] : bom_info
+          originalBom = row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.smId === inputMaterial.childSmId)?.[0] ?? bom_info : bom_info
           break;
         }
         case 'product':{
@@ -162,31 +163,30 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           {
             bom_info = bomIdAndLotMap.get(`p${inputMaterial.childProductId}`)?.map((lots) => ({...lots.child_lot_record, amount: lots.amount}))
           }
-          originalBom = row.originalBom ? row.originalBom.filter(bom => bom[0].operation_sheet?.productId === inputMaterial.childProductId)?.[0] : bom_info
+          originalBom = row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.operation_sheet?.productId === inputMaterial.childProductId)?.[0] ?? bom_info : bom_info
           break;
         }
       }
-
       const modifyAndNoStock = isModify && bom.detail.stock === 0
       const typeName = TransferCodeToValue(bom.detail?.type, bom.typeName)
-      const totalUsage = new Big(sumQuantity).times(bom.usage).toNumber()
+      const totalUsage = new Big(sumQuantity).div(cavity).times(bom.usage).toNumber()
       return {
         ...bom,
         ...bom.detail,
         seq: index+1,
         type_name: typeName,
+        cavity,
+        real_disturbance: isNaN(totalUsage) ? 0 : totalUsage,
+        disturbance: sumQuantity ?? 0,
+        stock : isModify ? row.originalQty ? new Big(row.originalQty).times(bom.usage).plus(bom.detail.stock).minus(totalUsage).toNumber() : bom.detail.stock : new Big(bom.detail.stock).minus(totalUsage).toNumber(),
+        process: bom.detail.process ? bom.detail.process.name : null,
         bom_info: bom_info ?? null,
         tab: bom.type,
-        process: bom.detail.process ? bom.detail.process.name : null,
         product: bom.typeName === 'product' ?{
           ...bom.detail,
         }: null,
-        disturbance: sumQuantity ?? 0,
-        real_disturbance: isNaN(totalUsage) ? 0 : totalUsage,
         originalBom : originalBom ?? null,
         originalStock : isModify ? row.originalQty ? new Big(row.originalQty).times(bom.usage).plus(bom.detail.stock).toNumber() : bom.detail.stock : bom.detail.stock,
-        stock : isModify ? row.originalQty ? new Big(row.originalQty).times(bom.usage).plus(bom.detail.stock).minus(totalUsage).toNumber() : bom.detail.stock : new Big(bom.detail.stock).minus(totalUsage).toNumber(),
-        action : modifyAndNoStock ? 'modifyAndNoStock' : column.action,
         bom: modifyAndNoStock ? row.bom : null,
         page: 1,
         total: 1
@@ -210,8 +210,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     return input.lotList.map((lot,lotIdx) => {
       const lotAmount = lotNumAndLotMap.get(lot.lot_number)?.amount ?? "0"
       const originalAmount = originalLotNumAndLotMap.get(lot.lot_number)?.amount ?? "0"
-      const totalUsage = new Big(Number(lotAmount)).times(input.usage)
-      const originalTotalUsage = new Big(Number(originalAmount)).times(input.usage)
+      const totalUsage = new Big(Number(lotAmount)).div(cavity).times(input.usage)
+      const originalTotalUsage = new Big(Number(originalAmount)).div(cavity).times(input.usage)
       return bomSavedAndUnChanged ? {
           ...lot,
           seq: lotIdx + 1,
@@ -268,7 +268,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             const inputBomIdMap = new Map()
             const originalBom = row.originalBom ?? inputMaterialList.map((v) => {
               return v.bom_info
-            })
+            }).filter(v => v)
             row.input_bom?.map((bom) => {
               let bomObject = getBomObject(bom.bom)
               inputBomIdMap.set(bomObject.bomKey, bom)
@@ -434,7 +434,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                 fontSize: 22,
                 fontWeight: 'bold',
                 margin: 0,
-              }}>투입 자재 정보 (해당 제품을 만드는데 사용할 자재는 아래와 같습니다)</p>
+              }}>투입 자재 정보 (해당 제품을 만드는 데 사용할 자재는 아래와 같습니다)</p>
               <div style={{display: 'flex'}}>
 
                 <div style={{cursor: 'pointer', marginLeft: 20}} onClick={onCancelEvent}>
@@ -490,23 +490,19 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                       delete input.lotList
                       return input
                     })
-                    setInputMaterialList([...tmp])
+                    setInputMaterialList(tmp)
                   }}
                   width={1746}
                   rowHeight={32}
                   height={288}
                   onRowClick={(clicked) => {const e = inputMaterialList.indexOf(clicked)
-                    const tmpInputMaterialList = inputMaterialList
+                    const tmpInputMaterialList = inputMaterialList.slice()
                     tmpInputMaterialList[e] = {
                       ...tmpInputMaterialList[e],
                       page: 1,
                       total: 1
                     }
                     setInputMaterialList(tmpInputMaterialList)
-                    // setSelected({
-                    //   ...selected,
-                    //   index: e
-                    // })
                   }}
                   type={'searchModal'}
                   headerAlign={'center'}
@@ -531,8 +527,9 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   headerList={LotListColumns()}
                   row={lotList ?? []}
                   setRow={(lots) => {
+                    console.log('lots',lots)
                     const isUsageOverStock = lots.some(lot => {
-                      if(!!lot.amount && new Big(lot.originalCurrent).plus(new Big(lot.originalAmount).times(lot.usage)).toNumber() < new Big(lot.amount).times(lot.usage).toNumber()) {
+                      if(!!lot.amount && new Big(lot.originalCurrent).plus(new Big(lot.originalAmount).div(cavity).times(lot.usage)).toNumber() < new Big(lot.amount).div(cavity).times(lot.usage).toNumber()) {
                         Notiflix.Report.warning("경고", "LOT 재고량 보다 소요량이 많습니다.", "확인")
                         return true
                       }
@@ -542,14 +539,14 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                       const newLotList = lots.map((lot) => {
                         return {
                           ...lot,
-                          current: !!lot.amount ? isModify ? new Big(lot.originalCurrent).plus(new Big(Number(lot.originalAmount)).times(lot.usage)).minus(new Big(Number(lot.amount)).times(lot.usage)).toNumber()
-                            : new Big(lot.originalCurrent).minus(new Big(Number(lot.amount)).times(lot.usage)).toNumber() : lot.originalCurrent,
+                          current: !!lot.amount ? isModify ? new Big(lot.originalCurrent).plus(new Big(Number(lot.originalAmount)).div(cavity).times(lot.usage)).minus(new Big(Number(lot.amount)).div(cavity).times(lot.usage)).toNumber()
+                            : new Big(lot.originalCurrent).minus(new Big(Number(lot.amount)).div(cavity).times(lot.usage)).toNumber() : lot.originalCurrent,
                         }
                       })
                       const allAmount = lodash.sum(lots.map(lot => Number(lot.amount)).filter(lotAmount => lotAmount))
                       const originalAllAmount = isModify ? lodash.sum(inputMaterialList[selected.index]?.originalBom?.map(lot => Number(lot.amount))) : null
-                      const originalTotalUsage = isModify ? new Big(originalAllAmount).times(inputMaterialList[selected.index].usage) : null
-                      const totalUsage = new Big(allAmount).times(inputMaterialList[selected.index].usage)
+                      const originalTotalUsage = isModify ? new Big(originalAllAmount).div(cavity).times(inputMaterialList[selected.index].usage) : null
+                      const totalUsage = new Big(allAmount).div(cavity).times(inputMaterialList[selected.index].usage)
                       let newInputMaterialList = inputMaterialList.slice()
                       newInputMaterialList[selected.index] = {
                         ...newInputMaterialList[selected.index],
@@ -570,8 +567,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                     if(value){
                       if(inputMaterialList[selected.index].total > inputMaterialList[selected.index].page){
                         if(selected.index >= 0) {
-                          const tmpInputMaterialList = inputMaterialList.slice()
-                          let selectedMaterial = tmpInputMaterialList[selected.index]
+                          let selectedMaterial = inputMaterialList[selected.index]
                           selectedMaterial.loadMaterialLot(selectedMaterial.tab, selectedMaterial.page+1, selectedMaterial.action, selectedMaterial, setInputMaterial)
                         }
                       }

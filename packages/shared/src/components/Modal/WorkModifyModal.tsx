@@ -22,8 +22,6 @@ interface IProps {
   setIsOpen?: (isOpen: boolean) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
     {title: '수주번호', infoWidth: 144, key: 'contract_id'},
@@ -302,7 +300,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
                 }}
                 width={1746}
                 rowHeight={32}
-                height={552}
+                height={557}
                 onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                   setSelectRow(e)
                 }}

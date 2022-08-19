@@ -66,7 +66,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           params: {
             from: "2000-01-01",
             to:moment().format("YYYY-MM-DD"),
-            productIds: inputMaterial.product.product_id,
+            productIds: inputMaterial.product_id,
             nz: action === 'register' ?? false,
             rangeNeeded:true,
             sorts:['end', 'recordId'],
@@ -140,7 +140,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   }
 
   const lotNotReadOnlyEvent = () => {
-    if(row.stock === 0){
+    console.log('addrow',row)
+    if(row.originalStock === 0){
       return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
     }
     else if(row.action === 'modifyAndNoStock') {
