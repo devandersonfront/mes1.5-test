@@ -760,7 +760,7 @@ export const columnlist: any = {
         {pk: 'Ton', name: 'Ton'},
         {pk: 'ml', name: 'ml'},
         {pk: 'L', name: 'L'},
-        {pk: 'PI', name: 'PI'},
+        {pk: 'phi', name: 'phi(내경)'},
       ]},
     {key: 'standard', name: '점검 기준', width: 384, placeholder: '점검 기준 입력', editor: TextEditor, formatter: PlaceholderBox,},
     {key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216, formatter: UnitContainer, placeholder: '최소값 입력',editor: TextEditor, inputType:'number'},
