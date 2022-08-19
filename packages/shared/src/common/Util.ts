@@ -41,7 +41,7 @@ export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) 
       typeName: 'rawMaterial',
       bomKey: `rm${bom.childRmId}`,
       id: bom.childRmId,
-      detail: {...bom.child_rm, unit: getRawMaterialUnit(bom.child_rm.type)},
+      detail: {...bom.child_rm, unit: bom.child_rm?.unit === 0 ? 'kg' : '장' ?? getRawMaterialUnit(bom.child_rm.type)},
       }
     case 1: return {
       ...bom,
