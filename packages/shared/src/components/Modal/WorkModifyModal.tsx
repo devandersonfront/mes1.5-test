@@ -14,6 +14,7 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import moment from "moment";
+import Big from 'big.js'
 
 interface IProps {
   row: any
@@ -47,20 +48,10 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 
 
 const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
-  const tabRef = useRef(null)
-  const [bomDummy, setBomDummy] = useState<any[]>([
-    {sequence: '1', code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
-  ])
-
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{sequence: 1}])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [summaryData, setSummaryData] = useState<any>({})
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
-  const [focusIndex, setFocusIndex] = useState<number>(0)
+  const cavity = row.molds ? row.molds[0]?.mold.mold.cavity : 1
 
   useEffect(() => {
     if(isOpen) {
@@ -92,100 +83,75 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
         total_poor_quantity: poor_quantity,
         // unit: row[0].operation_sheet?.product?.unit,
       })
-      const newList = row.map((v)=> {return {...v, bom_root_id: row[0].operation_sheet.product.bom_root_id, productId: row[0].product.product_id, modify: true, worker: row[0].worker_object, worker_object: null} })
+      const newList = row.map((v)=> {return {...v, bom: divBomLotAmountByCavity(row[0].bom), bom_root_id: row[0].operation_sheet.product.bom_root_id, productId: row[0].product.product_id, modify: true, worker: row[0].worker_object, worker_object: null} })
       setSearchList([...newList])
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen])
 
-  const addNewTab = (index: number) => {
-    let tmp = bomDummy
-    tmp.push({code: 'SU-20210701-'+ index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
-    setBomDummy([...tmp])
-  }
-
-  const deleteTab = (index: number) => {
-    if(bomDummy.length - 1 === focusIndex){
-      setFocusIndex(focusIndex-1)
-    }
-    if(bomDummy.length === 1) {
-      return setIsOpen(false)
-    }
-
-    let tmp = bomDummy
-    tmp.splice(index, 1)
-    setBomDummy([...tmp])
+  function divBomLotAmountByCavity(bom:any[]) {
+    return bom.map(bom => ({...bom, lot: {... bom.lot, amount: new Big(bom.lot.amount).times(cavity).toNumber() }}))
   }
 
   const SaveBasic = async () => {
-    let checkPoint = true;
-    searchList.map((row) => {
-      let time = '00:00:00'
-      let seconds
-      if(row.pause_time !== undefined ){
-        time = row.pause_time.split(':')
-      }
-      seconds = (+time[0]) * 60 * 60 + (+time[1]) * 60 + (+time[2])
+    try{
+      searchList.map((row) => {
+        if(!row.lot_number){
+          throw("LOT번호를 입력해주시기 바랍니다.")
+        }else if(!row.worker?.user_id){
+          throw("작업자를 선택해주시기 바랍니다.")
+        }else if(!row.sum) {
+          throw("생산 수량을 입력해주시기 바랍니다.")
+        }})
+      const postBody = searchList.map((v, i) => {
+        let selectData: any = {}
 
-      if(!row.lot_number){
-        Notiflix.Report.warning("경고","LOT번호를 입력해주시기 바랍니다.","확인",)
-        return checkPoint = false;
-      }else if(!row.good_quantity){
-        Notiflix.Report.warning("경고","양품 수량을 입력해주시기 바랍니다.","확인",)
-        return checkPoint = false;
-      } else if( (moment(row.end).toDate().getTime() - moment(row.start).toDate().getTime()) / 1000 < seconds ){
-        Notiflix.Report.warning("경고","작업 시간보다 일시 정지 시간이 더 클 수 없습니다.","확인",)
-        return checkPoint = false;
-      }
-    })
-    if(checkPoint) {
-      let res = await RequestMethod('post', `recordSave`,
-          searchList.map((v, i) => {
-            let selectData: any = {}
-
-            Object.keys(v).map(v => {
-              if (v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: v[v]
-                }
-              }
-
-              if (v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(v['unitWeight'])
-                }
-              }
-
-              if (v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: v['tmpId']
-                }
-              }
-            })
-
-            return {
-              ...v,
+        Object.keys(v).map(v => {
+          if (v.indexOf('PK') !== -1) {
+            selectData = {
               ...selectData,
-              operation_sheet: {
-                ...v.operation_sheet,
-                status: row.status_no
-              },
-              input_bom: [],
-              status: 0,
+              [v.split('PK')[0]]: v[v]
             }
-          }).filter((v) => v))
+          }
 
+          if (v === 'unitWeight') {
+            selectData = {
+              ...selectData,
+              unitWeight: Number(v['unitWeight'])
+            }
+          }
 
+          if (v === 'tmpId') {
+            selectData = {
+              ...selectData,
+              id: v['tmpId']
+            }
+          }
+        })
+
+        return {
+          ...v,
+          ...selectData,
+          bom: v.molds ? v.bom.map(bom => ({...bom, lot: {...bom.lot, amount: new Big(Number(bom.lot.amount)).div(cavity).toString()}})) : v.bom,
+          operation_sheet: {
+            ...v.operation_sheet,
+            status: row.status_no
+          },
+          input_bom: [],
+          status: 0,
+        }
+      }).filter((v) => v)
+
+      const res = await RequestMethod('post', `recordSave`,postBody)
       if (res) {
         Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
           onRowChange()
           Notiflix.Loading.circle()
           setIsOpen(false)
         });
-
       }
+    } catch (errMsg){
+        console.log(errMsg)
+        Notiflix.Report.warning('경고', errMsg, '확인')
     }
   }
 
@@ -273,20 +239,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
                 headerList={searchModalList.workModify}
                 row={searchList ?? [{}]}
                 setRow={(e) => {
-                  let tmp = e.map((v, index) => {
-                    if(v.newTab === true){
-                      const newTabIndex = bomDummy.length+1
-                      addNewTab(newTabIndex)
-                      setFocusIndex(newTabIndex-1)
-                    }
-
-                    return {
-                      ...v,
-                      newTab: false
-                    }
-                  })
-
-                  setSearchList([...tmp.map(v => {
+                  setSearchList(e.map(v => {
                     const good_quantity = Number(v.quantity ??v.sum ?? 0)-Number(v.poor_quantity ?? 0)
                     return {
                       ...v,
@@ -296,7 +249,7 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
                       sum: Number(v.quantity ?? v.sum ?? 0),
 
                     }
-                  })])
+                  }))
                 }}
                 width={1746}
                 rowHeight={32}

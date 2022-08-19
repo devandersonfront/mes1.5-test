@@ -67,6 +67,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const isModify = column.action === 'modify'
   const cavity = row.molds?.filter(mold => mold?.mold?.setting === 1)?.[0]?.mold?.mold?.cavity ?? 1
 
+  console.log(isModify, row)
   useEffect(() => {
     if(isOpen){
       getInputMaterialList(row.osId, row.bom_root_id)
