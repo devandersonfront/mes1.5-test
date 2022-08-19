@@ -93,12 +93,12 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
         (previousValue, currentValue) => previousValue + currentValue,
     )
   }
-
+  
   const showDataGrid = () => {
 
     return <DataGridTable
       //@ts-ignore
-      rowClass={(row) => {row?.border ? 'selectRow' : undefined}}
+      rowClass={(row) => row?.border ? 'selectRow' : undefined}
       headerRowHeight={customHeaderRowHeight ?? 40}
       rowKeyGetter={rowKeyGetter}
       className={'cell'}
@@ -217,6 +217,10 @@ const DataGridTable = styled(DataGrid)`
     padding: 0 8px;
   }
   
+  
+  
+   
+    
   ${(props:any) => props.state === "searchModal" ? `
     .rdg-checkbox-input:not(checked) + div{
         width:20px;
@@ -285,6 +289,14 @@ const DataGridTable = styled(DataGrid)`
           // background-color: #353B48;
         }
     }
+    
+    .selectRow > .rdg-cell{
+      background: rgba(25, 185, 223, 0.5);
+      &:hover{
+        background: rgba(25, 185, 223, 0.3);
+      }
+    }
+  
     .rdg-row[aria-selected=true]{
         background:none;
         &:hover{
