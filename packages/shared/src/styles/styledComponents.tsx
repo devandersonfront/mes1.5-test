@@ -369,12 +369,6 @@ export const SearchModalStyle = styled.div`
         }
     }
 
-    .selectRow {
-      background: #19B9DF79;
-      &:hover {
-        background-color: #19B9DFB0;
-      }
-    }
     .rdg-row > .rdg-cell{
         //background:#F4F6FA;
         border: 0.5px solid #b3b3b3;

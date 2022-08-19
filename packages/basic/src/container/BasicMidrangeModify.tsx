@@ -227,6 +227,13 @@ const BasicMidrangeModify = () => {
                 onRowClick={(row) =>{
                     const index = legendaryBasicRow.indexOf(row)
                     setSelectLegendaryIndex(index)
+                    legendaryBasicRow.map((legendary,i) => {
+                        if(index == i){
+                            legendary.border = true
+                        }else{
+                            legendary.border = false
+                        }
+                    })
                 }}
                 setRow={setLegendaryBasicRow}
                 height={setExcelTableHeight(legendaryBasicRow.length) - 8}
@@ -247,6 +254,13 @@ const BasicMidrangeModify = () => {
                 onRowClick={(row) => {
                     const index = itemBasicRow.indexOf(row)
                     setSelectCheckListIndex(index)
+                    itemBasicRow.map((item,i) => {
+                        if(index == i){
+                            item.border = true
+                        }else{
+                            item.border = false
+                        }
+                    })
                 }}
                 setRow={setItemBasicRow}
                 height={setExcelTableHeight(itemBasicRow.length) - 8}

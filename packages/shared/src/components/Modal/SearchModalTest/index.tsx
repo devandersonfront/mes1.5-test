@@ -556,6 +556,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               rowHeight={32}
               height={640}
               onRowClick={(clicked) => {
+                  console.log(clicked)
                 const e = searchList.indexOf(clicked)
                 const update = searchList.map(
                   (row, index) => index === e
