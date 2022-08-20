@@ -18,7 +18,8 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
+import {TableSortingOptionType} from "shared/src/@types/type";
 
 export interface IProps {
   children?: any;
@@ -35,7 +36,7 @@ const BasicUser = ({}: IProps) => {
   const dispatch = useDispatch();
   const [excelDownOpen, setExcelDownOpen] = useState<boolean>(false);
   const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
-
+  const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
   const [basicRow, setBasicRow] = useState<Array<any>>([
     {
       name: "",
@@ -43,10 +44,7 @@ const BasicUser = ({}: IProps) => {
     },
   ]);
 
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(
-    columnlist.member
-  );
-
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist.member)
   const [selectList, setSelectList] = useState<Set<any>>(new Set());
   const [optionList, setOptionList] = useState<string[]>(optList);
   const [optionIndex, setOptionIndex] = useState<number>(0);
@@ -58,12 +56,12 @@ const BasicUser = ({}: IProps) => {
     total: 1,
   });
 
-  const reload = (keyword?:string) => {
+  const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
       setPageInfo({...pageInfo, page: 1})
     } else {
-      getData(null, keyword)
+      getData(undefined, keyword, sortingOptions)
     }
   }
 
@@ -84,30 +82,19 @@ const BasicUser = ({}: IProps) => {
   }, []);
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if (v.selectList && v.selectList.length === 0) {
-        const res = await RequestMethod("get", `${v.key}All`);
-
-        return {
-          ...v,
-          selectList: [
-            ...res.results.map((value: any) => {
-              return {
-                ...value,
-                pk: value.ca_id,
-              };
-            }),
-          ],
-        };
-      } else {
-        if (v.selectList) {
-          return {
-            ...v,
-            pk: v.unit_id,
-          };
-        } else {
-          return v;
-        }
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(null, _sortingOptions)
+    }
+    let tmpColumn = column.map((v: any) => {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+      return {
+        ...v,
+        pk: v.unit_id,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+        sorts: v.sorts ? sortingOptions : null,
+        result: v.sortOption ? changeOrder : null,
       }
     });
 
@@ -374,18 +361,28 @@ const BasicUser = ({}: IProps) => {
     }
   };
 
-  const getData = async (page?: number, keyword?:string) => {
+  const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    if(sortingOptions.orders.length > 0){
+      params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+      params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+      params['sorts'] = params['sorts']?.map(sort => sort === 'tmpId' ? 'id' : sort)
+    }
+    return params
+  }
+
+  const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod("get", keyword ? 'memberSearch' : 'memberList', {
       path: {
         page: page ?? 1,
         renderItem: 18,
       },
-      params: keyword ? {
-        sorts: "created",
-        keyword,
-        opt: optionIndex ?? 0,
-      } : null
+      params: getRequestParams(keyword, _sortingOptions)
     });
 
     if (res) {
@@ -427,33 +424,6 @@ const BasicUser = ({}: IProps) => {
       password: null,
       ...tmpData,
     };
-  };
-
-  const cleanUpBasicData = (res: any) => {
-    let tmpRow = res.data.results.info_list;
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-      let realTableData: any = changeRow(row);
-      let appendAdditional: any = {};
-
-      row.additional &&
-        row.additional.map((v: any) => {
-          appendAdditional = {
-            ...appendAdditional,
-            [v.title]: v.value,
-          };
-        });
-
-      const random_id = Math.random() * 1000;
-
-      return {
-        ...row,
-        ...realTableData,
-        ...appendAdditional,
-        id: `user_${random_id}`,
-      };
-    });
-    setBasicRow([...tmpBasicRow]);
   };
 
   const cleanUpData = (res: any) => {
@@ -546,14 +516,12 @@ const BasicUser = ({}: IProps) => {
           };
         });
 
-      const random_id = Math.random() * 1000;
       return {
         ...row,
         ...realTableData,
         ...appendAdditional,
         authority: row.ca_id.name,
         authorityPK: row.ca_id.ca_id,
-        id: `user_${random_id}`,
       };
     });
     setBasicRow([...tmpBasicRow]);
@@ -683,7 +651,7 @@ const BasicUser = ({}: IProps) => {
       <PageHeader
         isSearch
         searchKeyword={keyword}
-        onSearch={reload}
+        onSearch={(keyword) => reload(keyword,sortingOptions)}
         searchOptionList={optionList}
         onChangeSearchOption={(option) => {
           setOptionIndex(option);

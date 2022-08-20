@@ -19,7 +19,8 @@ import {NextPageContext} from 'next'
 import moment from "moment"
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util';
+import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util';
+import {TableSortingOptionType} from "shared/src/@types/type";
 
 export interface IProps {
   children?: any
@@ -52,6 +53,7 @@ const BasicMachineV1u = ({option}: IProps) => {
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["machineV2"])
+  const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(['기계 제조사', '기계 이름', "", '제조 번호'])
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -69,12 +71,12 @@ const BasicMachineV1u = ({option}: IProps) => {
     setTypesState(value);
   }
 
-  const reload = (keyword?:string) => {
+  const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
       setPageInfo({...pageInfo, page: 1})
     } else {
-      getData(null, keyword)
+      getData(undefined, keyword, sortingOptions)
     }
   }
 
@@ -90,49 +92,21 @@ const BasicMachineV1u = ({option}: IProps) => {
   },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if(v.selectList && v.selectList.length === 0){
-        let tmpKey = v.key
-
-
-        let res: any
-        res = await RequestMethod('get', `${tmpKey}List`,{
-          path: {
-            page: 1,
-            renderItem: MAX_VALUE,
-          }
-        })
-
-        let pk = "";
-
-        res.info_list && res.info_list.length && Object.keys(res.info_list[0]).map((v) => {
-          if(v.indexOf('_id') !== -1){
-            pk = v
-          }
-        })
-        return {
-          ...v,
-          selectList: [...res.info_list.map((value: any) => {
-            return {
-              ...value,
-              name: tmpKey === 'model' ? value.model : value.name,
-              pk: value[pk]
-            }
-          })]
-        }
-
-      }else{
-        if(v.selectList){
-          return {
-            ...v,
-            pk: v.unit_id,
-            result:changeSetTypesState
-          }
-        }else{
-          return v
-        }
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(null, _sortingOptions)
+    }
+    let tmpColumn = column.map((v: any) => {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+      return {
+        ...v,
+        pk: v.unit_id,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+        sorts: v.sorts ? sortingOptions : null,
+        result: v.sortOption ? changeOrder : v.selectList ? changeSetTypesState : null,
       }
-    })
+    });
 
     Promise.all(tmpColumn).then(res => {
       setColumn([...res.map(v=> {
@@ -172,17 +146,21 @@ const BasicMachineV1u = ({option}: IProps) => {
           })
   }
 
-  const getRequestParams = (keyword?: string) => {
+  const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     let params = {}
-    if(typesState) params['types'] = typesState
     if(keyword) {
       params['keyword'] = keyword
       params['opt'] = optionIndex
     }
+    if(sortingOptions.orders.length > 0){
+      params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+      params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    }
+    if(typesState) params['types'] = typesState
     return params
   }
 
-  const getData = async (page?: number, keyword?: string) => {
+  const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', keyword ? 'machineSearch' : 'machineList',{
       path: {
@@ -322,10 +300,7 @@ const BasicMachineV1u = ({option}: IProps) => {
     tmpRow = res.info_list
 
 
-    loadAllSelectItems( [
-      ...tmpColumn,
-      ...additionalMenus
-    ] )
+    loadAllSelectItems( [...tmpColumn, ...additionalMenus])
 
     let selectKey = ""
     let additionalData: any[] = []
@@ -372,7 +347,6 @@ const BasicMachineV1u = ({option}: IProps) => {
       }
     })
     setBasicRow([...tmpBasicRow])
-    // setBasicRow([{ id: "", name: "400톤 2호기", weldingType: '선택없음', type: '프레스', mfrCode: '125-77-123', interwork: '유', user_id: '차지훈', manufacturer:'Aidas'}])
   }
 
   const searchAiID = (rowAdditional:any[], index:number) => {
@@ -525,7 +499,7 @@ const BasicMachineV1u = ({option}: IProps) => {
         <PageHeader
           isSearch
           searchKeyword={keyword}
-          onSearch={reload}
+          onSearch={(keyword) => reload(keyword, sortingOptions)}
           searchOptionList={optionList}
           onChangeSearchOption={setOptionIndex}
           optionIndex={optionIndex}

@@ -3,14 +3,11 @@ import {
   ExcelTable,
   Header as PageHeader,
   RequestMethod,
-  MAX_VALUE,
-  DropDownEditor,
   TextEditor,
   excelDownload,
   PaginationComponent,
   ExcelDownloadModal,
   IExcelHeaderType,
-  IItemMenuType,
   BarcodeModal,
   columnlist,
 } from "shared";
@@ -18,17 +15,13 @@ import {
 import { SelectColumn } from "react-data-grid";
 import Notiflix from "notiflix";
 import { useRouter } from "next/router";
-import { loadAll } from "react-cookies";
 import { NextPageContext } from "next";
-import axios from "axios";
 import { useDispatch } from "react-redux";
-import {
-  deleteMenuSelectState,
-  setMenuSelectState,
-} from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import {deleteMenuSelectState, setMenuSelectState,} from "shared/src/reducer/menuSelectState";
+import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import {BarcodeDataType} from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
+import {TableSortingOptionType} from "shared/src/@types/type";
 
 export interface IProps {
   children?: any;
@@ -41,23 +34,16 @@ type ModalType = {
   type : 'barcode' | 'quantity'
   isVisible : boolean
 }
+const optionList = ["원자재 CODE", "원자재 품명", "재질", "거래처",]
 
 const BasicRawMaterial = ({}: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [excelOpen, setExcelOpen] = useState<boolean>(false);
-  const [barcodeOpen, setBarcodeOpen] = useState<boolean>(false);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(
-    columnlist["rawmaterialForBasicMaterial"]
-  );  
+  const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["rawMaterial"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
-  const [optionList, setOptionList] = useState<string[]>([
-    "원자재 CODE",
-    "원자재 품명",
-    "재질",
-    "거래처",
-  ]);
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
   const [selectRow, setSelectRow] = useState<any>(undefined);
@@ -72,12 +58,12 @@ const BasicRawMaterial = ({}: IProps) => {
     total: 1,
   });
 
-  const reload = (keyword?:string) => {
+  const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
       setPageInfo({...pageInfo, page: 1})
     } else {
-      getData(null, keyword)
+      getData(undefined, keyword, sortingOptions)
     }
   }
 
@@ -112,48 +98,19 @@ const BasicRawMaterial = ({}: IProps) => {
   };
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if (v.selectList && v.selectList.length === 0) {
-        let tmpKey = v.key;
-
-        let res: any;
-        res = await RequestMethod("get", `${tmpKey}List`, {
-          path: {
-            page: 1,
-            renderItem: MAX_VALUE,
-          },
-        });
-
-        let pk = "";
-
-        res.info_list &&
-          res.info_list.length &&
-          Object.keys(res.info_list[0]).map((v) => {
-            if (v.indexOf("_id") !== -1) {
-              pk = v;
-            }
-          });
-        return {
-          ...v,
-          selectList: [
-            ...res.info_list.map((value: any) => {
-              return {
-                ...value,
-                name: tmpKey === "model" ? value.model : value.name,
-                pk: value[pk],
-              };
-            }),
-          ],
-        };
-      } else {
-        if (v.selectList) {
-          return {
-            ...v,
-            pk: v.unit_id,
-          };
-        } else {
-          return v;
-        }
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(null, _sortingOptions)
+    }
+    let tmpColumn = column.map((v: any) => {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+      return {
+        ...v,
+        pk: v.unit_id,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+        sorts: v.sorts ? sortingOptions : null,
+        result: v.sortOption ? changeOrder : null,
       }
     });
 
@@ -255,17 +212,28 @@ const BasicRawMaterial = ({}: IProps) => {
     }
   };
 
-  const getData = async (page?: number, keyword?: string) => {
+  const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    //이 부분 해제하면됨
+    if(sortingOptions.orders.length > 0){
+      params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+      params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    }
+    return params
+  }
+
+  const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod("get", keyword ? 'rawmaterialSearch' : 'rawMaterialList', {
+    const res = await RequestMethod("get", keyword ? 'rawMaterialSearch' : 'rawMaterialList', {
       path: {
         page: page ?? 1,
         renderItem: 18,
       },
-      params: keyword ? {
-        keyword,
-        opt: optionIndex
-      } : null,
+      params: getRequestParams(keyword, _sortingOptions)
     });
 
     if(res){
@@ -285,7 +253,7 @@ const BasicRawMaterial = ({}: IProps) => {
   };
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["rawmaterialForBasicMaterial"];
+    let tmpColumn = columnlist["rawMaterial"];
     let tmpRow = [];
     tmpColumn = tmpColumn
       .map((column: any) => {
@@ -392,6 +360,7 @@ const BasicRawMaterial = ({}: IProps) => {
       return {
         ...row,
         ...appendAdditional,
+        unit: row.unit !== null ? row.unit : row.type === 1 ? 0 : 1,
         type: settingType(row.type),
         customer_id: row.customer && row.customer.name,
         id: `rawmaterial_${random_id}`,
@@ -497,11 +466,18 @@ const BasicRawMaterial = ({}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch (index) {
       case 0:
+        const result = basicRow.find(row => selectList.has(row.id))
         if (selectList.size === 0) {
           return Notiflix.Report.warning(
             "오류",
             "선택을 하셔야 합니다.",
-            "Okay"
+            "확인"
+          );
+        }else if(!result.rm_id){
+          return Notiflix.Report.warning(
+              "오류",
+              "저장된 데이터가 아닙니다.",
+              "확인"
           );
         }
         setModal({type : 'quantity' , isVisible : true})
@@ -534,6 +510,8 @@ const BasicRawMaterial = ({}: IProps) => {
             id: `rawmaterial_${random_id}`,
             name: null,
             additional: [],
+            stock:0,
+            unit: 0
           },
           ...basicRow,
         ]);
@@ -692,7 +670,7 @@ const BasicRawMaterial = ({}: IProps) => {
             competeRawMaterial(e)
           }}
           selectList={selectList}
-          onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+          onRowClick={(clicked) => {const e = basicRow.indexOf(clicked)
               setSelectRow(e)}}
           //@ts-ignore
           setSelectList={setSelectList}

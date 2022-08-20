@@ -21,7 +21,8 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
+import {TableSortingOptionType} from "shared/src/@types/type";
 
 export interface IProps {
   children?: any;
@@ -34,6 +35,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
+  const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
   const [column, setColumn] = useState<any>(columnlist.toolRegister);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
@@ -45,12 +47,12 @@ const BasicTool = ({ page, search, option }: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [selectRow, setSelectRow] = useState<number>(0);
 
-  const reload = (keyword?:string) => {
+  const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
       setPageInfo({...pageInfo, page: 1})
     } else {
-      getData(null, keyword)
+      getData(undefined, keyword, sortingOptions)
     }
   }
 
@@ -183,48 +185,19 @@ const BasicTool = ({ page, search, option }: IProps) => {
   };
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if (v.selectList && v.selectList.length === 0) {
-        let tmpKey = v.key;
-
-        let res: any;
-        res = await RequestMethod("get", `${tmpKey}List`, {
-          path: {
-            page: 1,
-            renderItem: MAX_VALUE,
-          },
-        });
-
-        let pk = "";
-
-        res.results.info_list &&
-          res.results.info_list.length &&
-          Object.keys(res.results.info_list[0]).map((v) => {
-            if (v.indexOf("_id") !== -1) {
-              pk = v;
-            }
-          });
-        return {
-          ...v,
-          selectList: [
-            ...res.results.info_list.map((value: any) => {
-              return {
-                ...value,
-                name: tmpKey === "model" ? value.model : value.name,
-                pk: value[pk],
-              };
-            }),
-          ],
-        };
-      } else {
-        if (v.selectList) {
-          return {
-            ...v,
-            pk: v.unit_id,
-          };
-        } else {
-          return v;
-        }
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(null, _sortingOptions)
+    }
+    let tmpColumn = column.map((v: any) => {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+      return {
+        ...v,
+        pk: v.unit_id,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+        sorts: v.sorts ? sortingOptions : null,
+        result: v.sortOption ? changeOrder : null,
       }
     });
 
@@ -242,17 +215,28 @@ const BasicTool = ({ page, search, option }: IProps) => {
     // }
   };
 
-  const getData = async (page?: number, keyword?: string) => {
+  const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    //이 부분 해제하면됨
+    if(sortingOptions.orders.length > 0){
+      params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+      params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    }
+    return params
+  }
+
+  const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", keyword ? 'toolSearch' : 'toolList', {
       path: {
         page: page ?? 1,
         renderItem: 18,
       },
-      params: keyword ? {
-        opt: optionIndex,
-        keyword: keyword,
-      } : null,
+      params: getRequestParams(keyword, _sortingOptions)
     });
 
     if(res){

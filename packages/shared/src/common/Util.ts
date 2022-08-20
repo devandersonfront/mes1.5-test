@@ -26,7 +26,7 @@ export const getRawMaterialUnit = (type: string) => {
 }
 
 export const getMaterialType = (type: number) => {
-  return type === 0 ? "rawmaterial" : type === 1 ? "submaterial" : "product"
+  return type === 0 ? "rawMaterial" : type === 1 ? "subMaterial" : "product"
 }
 
 export const getUsageType = (setting: number) => {
@@ -38,14 +38,14 @@ export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) 
     case 0:
       return {
       ...bom,
-      typeName: 'rawmaterial',
+      typeName: 'rawMaterial',
       bomKey: `rm${bom.childRmId}`,
       id: bom.childRmId,
       detail: {...bom.child_rm, unit: getRawMaterialUnit(bom.child_rm.type)},
       }
     case 1: return {
       ...bom,
-      typeName: 'submaterial',
+      typeName: 'subMaterial',
       bomKey: `sm${bom.childSmId}`,
       id: bom.childSmId,
       detail: bom.child_sm

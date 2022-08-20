@@ -6,6 +6,13 @@ export interface IMenuType {
   subMenu?: IMenuType[]
 }
 
+export interface IProps {
+  row: any
+  column: IExcelHeaderType
+  setRow: (row: any) => void
+  onChangeOption:any
+}
+
 export interface IExcelHeaderType {
   isFloatFormat?: number
   onClickEvent?: (any) => {any}
@@ -47,6 +54,7 @@ export interface IExcelHeaderType {
   toolType?: 'register'
   callback?: (data : any) => void
   idx?:number
+  headerRenderer?: ({row, column, setRow, onChangeOption}:IProps) => any
   headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][]
   action?:string
   doubleClick?:() => void
@@ -199,7 +207,7 @@ export interface MidrangeRecordRegister extends MidrangeRecordType {
   samples?:number
 }
 
-export type TransferType = "productType" | "material" | "rawmaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "submaterial" | "welding" | null
+export type TransferType = "productType" | "material" | "rawMaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "subMaterial" | "welding" | null
 
 export interface BomType {
   childProductId: number | null

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {ExcelTable, Header as PageHeader, RequestMethod, TextEditor} from 'shared'
+import {ExcelTable, Header as PageHeader, HeaderFilter, RequestMethod, TextEditor} from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
@@ -10,8 +10,10 @@ import {AxiosResponse} from 'axios'
 import styled from 'styled-components'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import {IExcelHeaderType} from "shared/src/@types/type";
+import {IExcelHeaderType, TableSortingOptionType} from "shared/src/@types/type";
 import TreeViewTable from 'shared/src/components/TreeView/TreeViewTable';
+import {HeaderSort} from "shared/src/components/HeaderSort/HeaderSort";
+import {getTableSortingOptions} from "shared/src/common/Util";
 
 export interface IProps {
   children?: any
@@ -28,6 +30,10 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
   const [row, setRow] = useState<Array<any>>([])
   const [auth, setAuth] = useState<Array<IMenu>>(AUTHORITY_LIST)
   const [selectIndex, setSelectIndex] = useState<number>(-1)
+  const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({sorts:[], orders:[]})
+  const [column, setColumn] = useState<IExcelHeaderType[]>(
+      [{key: 'name', width: 280, name: '권한명(필수)', editor: TextEditor,}] as Array<IExcelHeaderType>
+  )
 
 
   useEffect(() => {
@@ -40,9 +46,23 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
 
   const loadAuthorityList = async () => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', 'authorityAll')
+    const res = await RequestMethod('get', 'authorityAll', undefined, undefined, undefined, /*params*/)
 
     if(res) {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value == 'name')
+      const changeSorts = (sort:string, order:string) => {
+        const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+        setSortingOptions(_sortingOptions)
+        loadAuthorityList()
+      }
+      setColumn(column => column.map(col => {
+        return {
+          ...col,
+          sorts: sortingOptions,
+          sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : "none",
+          result:changeSorts
+        }
+      }))
       setRow([...res])
     }
   }
@@ -175,11 +195,9 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
   }
 
   const addRow = () => {
-
     const tempRow = [...row]
     tempRow.unshift({ca_id: "",name: '',authorities: []})
     setRow(tempRow)
-
   }
 
   const leftButtonOnClick = (index: number) => {
@@ -191,6 +209,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
         return deleteAuth()
     }
   }
+
 
 
   const saveAppointmentAuthorityDetails = async () => {
@@ -241,12 +260,12 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
           <HeaderButton style={{marginLeft: 0}} onClick={() => addRow()}>
             {'행추가'}
           </HeaderButton>
-          <HeaderButton onClick={() => deleteAuth()}>
+          <HeaderButton onClick={deleteAuth}>
             {'삭제'}
           </HeaderButton>
         </div>
         <div>
-          <HeaderButton onClick={() => saveAppointmentAuthorityDetails()}>
+          <HeaderButton onClick={saveAppointmentAuthorityDetails}>
             {'저장하기'}
           </HeaderButton>
         </div>
@@ -256,7 +275,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
           <ExcelTable
             clickable
             width={280}
-            headerList={[{key: 'name', width: 280, name: '권한명(필수)', editor: TextEditor}] as Array<IExcelHeaderType>}
+            headerList={column}
             row={row}
             setRow={(row) => competeAuthority(row)}
             onRowClick={(clicked) => {

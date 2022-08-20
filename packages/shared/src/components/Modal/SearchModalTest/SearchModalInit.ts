@@ -67,15 +67,15 @@ export const SearchInit: Record<string, SearchInitType> = {
     searchFilter: ['거래처명','사업자 번호', '모델명'],
     excelColumnType: 'model'
   },
-  rawmaterial: {
+  rawMaterial: {
     title: '원자재 검색',
     searchFilter: ['원자재 CODE', '원자재 품명', '재질', '거래처'],
-    excelColumnType: 'rawmaterial'
+    excelColumnType: 'rawMaterial'
   },
-  submaterial: {
+  subMaterial: {
     title: '부자재 검색',
     searchFilter: ['부자재 CODE', '부자재 품명', '거래처'],
-    excelColumnType: 'submaterial'
+    excelColumnType: 'subMaterial'
   },
   mold: {
     title: '금형 검색',
@@ -102,7 +102,7 @@ export const SearchInit: Record<string, SearchInitType> = {
   bom: {
     title: '제품 검색',
     searchFilter: ['거래처', '모델', 'CODE', '품명'],
-    excelColumnType: 'rawmaterial',
+    excelColumnType: 'rawMaterial',
     placeholder: 'CODE 검색'
   },
   order: {

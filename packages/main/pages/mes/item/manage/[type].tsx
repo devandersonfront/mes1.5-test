@@ -55,12 +55,12 @@ export const getServerSideProps = async (ctx: any) => {
           title: '제품 등록 관리',
           code: 'ROLE_BASE_15'
         }
-      case 'rawmaterial':
+      case 'rawMaterial':
         return {
           title: '원자재 기준정보',
           code: 'ROLE_BASE_06'
         }
-      case 'submaterial':
+      case 'subMaterial':
         return {
           title: '부자재 기준정보',
           code: 'ROLE_BASE_13'

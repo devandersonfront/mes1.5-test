@@ -239,7 +239,6 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
           return false
         })
   } else {
-    console.log('apilist', apiType)
     const response = await requestApi(MethodType, ApiList[apiType], data, tokenData, responseType, params, path)
     return response
   }
@@ -408,7 +407,7 @@ const ApiList = {
   machineSearch: `/api/v1/machine/search`,
   productSearch: `/cnc/api/v1/product/search`,
   pauseSearch: `/api/v1/process/reason/pause/search`,
-  rawmaterialSearch: `/api/v1/raw-material/search`,
+  rawMaterialSearch: `/api/v1/raw-material/search`,
   moldSearch: `/api/v1/mold/search`,
   defectReasonSearch: `/api/v1/process/reason/defect/search`,
   rawinSearch: `/api/v1/rawmaterial/warehouse/search`,
@@ -420,7 +419,7 @@ const ApiList = {
   cncRecordAll: `/cnc/api/v1/record/all`,
   shipmentSearch: `/api/v1/shipment/search`,
   recordSumSearch: `/api/v1/record/summation/search`,
-  submaterialSearch: `/api/v1/sub-material/search`,
+  subMaterialSearch: `/api/v1/sub-material/search`,
   factorySearch: `/api/v1/factory/search`,
   subFactorySearch: `/api/v1/subFactory/search`,
   rawInListSearch: `/api/v1/lot-rm/search`,

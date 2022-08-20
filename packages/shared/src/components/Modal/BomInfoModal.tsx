@@ -42,8 +42,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   const [searchList, setSearchList] = useState<any[]>([])
   const [headerData, setHeaderData] = useState<any>();
 
-  console.log('select',selectRow)
-
   useEffect(() => {
     if(isOpen) {
       setSelectRow(undefined)
@@ -137,7 +135,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
         type: v.type,
         tab: v.type,
         name: childData.name,
-        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawmaterial" : v.type === 1 ? "submaterial" : "product"),
+        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterial" : v.type === 1 ? "subMaterial" : "product"),
         unit: childData.unit ?? type,
         usage: v.usage,
         version: v.version,

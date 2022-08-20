@@ -378,7 +378,14 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                                 setModalSelectOption(e)
                             }}
                             onRowClick={(clicked) => {const index = basicRow?.legendary_list.indexOf(clicked)
-                                setSelectLegendaryIndex(index);
+                                setSelectLegendaryIndex(index)
+                                basicRow.legendary_list.map((legendary_list,i) => {
+                                    if(index == i){
+                                        legendary_list.border = true
+                                    }else{
+                                        legendary_list.border = false
+                                    }
+                                })
                             }}
                             height={basicRow.legendary_list?.length * 40 >= 40*18+56 ? 40*19 : basicRow.legendary_list?.length * 40 + 40}
                 />
@@ -425,8 +432,16 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                         basicRow.check_list = result
                         setBasicRow({...basicRow})
                     }}
-                    onRowClick={(clicked) => {const index = basicRow.check_list.indexOf(clicked)
+                    onRowClick={(clicked) => {
+                        const index = basicRow.check_list.indexOf(clicked)
                         setSelectCheckListIndex(index)
+                        basicRow.check_list.map((check_list,i) => {
+                            if(index == i){
+                                check_list.border = true
+                            }else{
+                                check_list.border = false
+                            }
+                        })
                     }}
                     height={basicRow.check_list?.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list?.length * 40 + 40}
                 />
@@ -498,6 +513,8 @@ const DeleteButton = styled(AddButton)`
     background:#777777;
 `;
 
+export {BasicDailyInspectionInfo}
+
 export const getServerSideProps = (ctx: NextPageContext) => {
     return {
         props: {
@@ -505,5 +522,3 @@ export const getServerSideProps = (ctx: NextPageContext) => {
         }
     }
 }
-
-export {BasicDailyInspectionInfo}

@@ -16,7 +16,8 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
+import {TableSortingOptionType} from "shared/src/@types/type";
 
 export interface IProps {
   children?: any
@@ -36,6 +37,7 @@ const BasicProcess = ({}: IProps) => {
   const [top, setTop] = useState<number>(0)
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist.process)
+  const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [optionList, setOptionList] = useState<string[]>(optList)
   const [optionIndex, setOptionIndex] = useState<number>(0)
@@ -46,12 +48,12 @@ const BasicProcess = ({}: IProps) => {
     total: 1
   })
 
-  const reload = (keyword?:string) => {
+  const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
       setPageInfo({...pageInfo, page: 1})
     } else {
-      getData(null, keyword)
+      getData(undefined, keyword, sortingOptions)
     }
   }
 
@@ -67,38 +69,22 @@ const BasicProcess = ({}: IProps) => {
   },[])
 
   const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if(v.selectList && v.selectList.length === 0){
-        let tmpKey = v.key
-        // let res: any
-
-        const res = await RequestMethod('get', `${v.key}All`, )
-        return {
-          ...v,
-          selectList: [...res.result.map((value: any) => {
-            return {
-              ...value,
-              // name: value.name,
-              // name: tmpKey === 'model' ? value.model : value.name,
-              pk: value.ca_id
-            }
-          })]
-        }
-
-
-      }else{
-        if(v.selectList){
-          return {
-            ...v,
-            pk: v.unit_id
-          }
-        }else{
-          return v
-        }
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(null, _sortingOptions)
+    }
+    let tmpColumn = column.map((v: any) => {
+      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+      return {
+        ...v,
+        pk: v.unit_id,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+        sorts: v.sorts ? sortingOptions : null,
+        result: v.sortOption ? changeOrder : null,
       }
-    })
+    });
 
-    // if(type !== 'productprocess'){
     Promise.all(tmpColumn).then(res => {
       setColumn([...res.map(v=> {
         return {
@@ -254,17 +240,27 @@ const BasicProcess = ({}: IProps) => {
     }
   }
 
-  const getData = async (page?: number, keyword?: string) => {
+  const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    if(sortingOptions.orders.length > 0){
+      params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+      params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    }
+    return params
+  }
+
+  const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', keyword ? 'processSearch' : 'processList',{
       path: {
         page: page ?? 1,
         renderItem: 18,
       },
-      params: keyword ? {
-        keyword,
-        opt: optionIndex ?? 0
-      } : null
+      params: getRequestParams(keyword, _sortingOptions)
     })
 
     if(res){
@@ -364,10 +360,7 @@ const BasicProcess = ({}: IProps) => {
       }
     }).filter((v: any) => v) : []
 
-    loadAllSelectItems( [
-      ...tmpColumn,
-      ...additionalMenus
-    ] )
+    loadAllSelectItems( [...tmpColumn, ...additionalMenus])
 
     tmpRow = res.info_list
 
@@ -545,7 +538,7 @@ const BasicProcess = ({}: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
-        onRowClick={(clicked) => {const e = basicRow.indexOf(clicked) 
+        onRowClick={(clicked) => {const e = basicRow.indexOf(clicked)
               setSelectRow(e)}}
         width={1576}
         height={setExcelTableHeight(basicRow.length)}

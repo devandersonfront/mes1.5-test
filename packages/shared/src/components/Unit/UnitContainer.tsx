@@ -3,78 +3,41 @@ import { IExcelHeaderType } from '../../@types/type'
 import { UnitBox, UnitValue, UnitWrapper } from '../../styles/styledComponents'
 import Big from 'big.js'
 import { isInteger } from 'lodash'
+import styled from 'styled-components'
 
 
 
 interface IProps {
   row: any
   column: IExcelHeaderType
-  setRow: (row: any) => void
+  onRowChange: (row: any) => void
 }
 
-const UnitContainer = ({ row, column, setRow }: IProps) => {
+type SelectListType = {
+  pk : string,
+  name : string
+}
+
+const UnitContainer = ({ row, column, onRowChange }: IProps) => {
   const [title, setTitle] = useState<string>("")
-  const AddComma = (number: number) => {
-    //후방탐색 부정형은 TV, 아이폰에서 현재 지원을 안함
-    // let regexp = /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g
-    return number.toLocaleString()
-  }
 
   useEffect(() => {
     let fixNumber: any = Number(row[column.key]);
-    // if(Number.isInteger(fixNumber))
-    // {
-    //     fixNumber = AddComma(fixNumber);
-    // }else if(fixNumber !== undefined){
-    //반올림이 문제가 발생할 수 있음 (toFixed)
-    console.log("row.type : ", row.type);
     if (!isNaN(Number(fixNumber))) {
-
-      if (column.toFix) {
-        // fixNumber = new Big(fixNumber)
-
-        if (row.type && row.type == 'COIL') {
-
-          // console.log("hihi ", isInteger(fixNumber));
-          if (isInteger(fixNumber)) {
-            fixNumber = new Number(fixNumber).toFixed(2)
-
-          } else {
-            // console.log("abcd");
-            fixNumber = new Big(fixNumber).toFixed(column.toFix)
-          }
-
-        } else if (row.type == '반제품') {
-          console.log("반제품");
-          if (isInteger(fixNumber)) {
-            fixNumber = new Number(fixNumber).toFixed(column.toFix)
-
-          } else {
-            // console.log("abcd");
-            fixNumber = new Big(fixNumber)
-          }
-        }
-
-        else {
-          console.log("1234");
-          // fixNumber = new Big(fixNumber);
-          if (isInteger(fixNumber)) {
-            fixNumber = new Number(fixNumber).toFixed(column.toFix)
-
-          } else {
-            console.log("abcd");
-            fixNumber = new Big(fixNumber)
-          }
-
-        }
-      }
-      fixNumber = AddComma(fixNumber)
+      fixNumber = fixNumber.toLocaleString(undefined, {minimumFractionDigits: column.toFix ?? undefined,  maximumFractionDigits: column.toFix ?? undefined})
     } else {
       fixNumber = undefined
     }
-    // }
     setTitle(fixNumber !== undefined ? fixNumber : "")
   }, [row[column.key]])
+
+  const unitToInt = (unit : string) : 0 | 1 | undefined  => {
+    switch(unit){
+      case 'kg': return 0
+      case '장': return 1
+      default: return undefined
+    }
+  }
 
   return (
     <UnitWrapper>
@@ -93,7 +56,23 @@ const UnitContainer = ({ row, column, setRow }: IProps) => {
             ? <span>{row.type ? row.type === 'COIL' ? 'kg' : '장' : ''}</span>
             : column.type === 'selectUnit'
               ? <span>{row.unit}</span>
-              : <span >{column.unitData}</span>
+              : column.selectList ?
+                  <select
+                    style={{background : 'inherit' , border : 'none' , marginRight : 5, color : '#fff'}}
+                    onChange={e => {
+                      onRowChange({...row, unit : unitToInt(e.target.value) , isChange: true})
+                    }}
+                    defaultValue={column.selectList?.filter(select => select.pk === row.unit)?.[0].name}
+                  >
+                    {
+                      column.selectList?.map((list : SelectListType)=>(
+                        <option key={list.pk} value={list.name} style={{color : '#000'}}>
+                          {list.name}
+                        </option>
+                      ))
+                    }
+                  </select>
+              :<span >{column.unitData}</span>
         }
       </UnitBox>
     </UnitWrapper>

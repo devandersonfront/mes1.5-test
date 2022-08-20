@@ -34,10 +34,24 @@ const HomeProductionLog = ({}: IProps) => {
         current_page: 1,
         totalPages : 1
     });
+    const userInfo = cookie.load('userInfo')
+
+    useEffect(() => {
+        if(userInfo?.ca_id?.authorities?.some(auth => ['ROLE_PROD_02', 'ROLE_PROD_06'].includes(auth))){
+            Notiflix.Loading.circle()
+            LoadBasic()
+            const dashboard = setInterval(()=>{
+                LoadBasic()
+            },3000)
+            return () => {
+                clearInterval(dashboard)
+            }
+        }
+    },[])
 
     const LoadBasic = async (pages : number = 1) => {
         try {
-            const tokenData = cookie.load('userInfo')?.token;
+            const tokenData = userInfo?.token;
             const res = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/monitoring/list/${pages}/20`,{
                 params : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'},
                 headers : { Authorization : tokenData }
@@ -79,20 +93,6 @@ const HomeProductionLog = ({}: IProps) => {
     const convertData = (data : any) => {
         return data.map((list,index)=>({...list , order : index + 1}))
     }
-
-    useEffect(() => {
-        const dashboard = setInterval(()=>{
-            LoadBasic()
-        },30000)
-        return () => {
-            clearTimeout(dashboard)
-        }
-    },[])
-
-    useEffect(()=>{
-        Notiflix.Loading.circle()
-        LoadBasic()
-    },[])
 
     return (
         <div>

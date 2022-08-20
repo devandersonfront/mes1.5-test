@@ -71,7 +71,7 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
       })
       break;
     }
-    case 'rawmaterial': {
+    case 'rawMaterial': {
       value = "원자재"
       // RAW_MATERIAL_TYPE_CODE.map(v => {
       //   if(v.code === code){
@@ -88,7 +88,7 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
       })
       break;
     }
-    case "submaterial" :{
+    case "subMaterial" :{
       value = "부자재"
       break;
     }
@@ -155,7 +155,7 @@ export const TransferValueToCode = (value: string, type:TransferType) => {
       })
       break;
     }
-    case 'rawmaterial': {
+    case 'rawMaterial': {
       value = "원자재"
       // RAW_MATERIAL_TYPE_CODE.map(v => {
       //   if(v.code === code){
@@ -172,7 +172,7 @@ export const TransferValueToCode = (value: string, type:TransferType) => {
       })
       break;
     }
-    case "submaterial" :{
+    case "subMaterial" :{
       value = "부자재"
       break;
     }

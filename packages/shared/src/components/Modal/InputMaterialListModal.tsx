@@ -135,7 +135,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       const bom = getBomObject(inputMaterial)
       let bom_info, originalBom
       switch(bom.typeName){
-        case 'rawmaterial':{
+        case 'rawMaterial':{
           if(!!row.bom_info) {
             bom_info = row.bom_info.filter(bom => bom[0].rmId === inputMaterial.childRmId)?.[0]
           } else if (firstModify)
@@ -145,7 +145,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           originalBom = row.originalBom ? row.originalBom.filter(bom => bom[0].rmId === inputMaterial.childRmId)?.[0] : bom_info
           break;
         }
-        case 'submaterial':{
+        case 'subMaterial':{
           if(!!row.bom_info) {
             bom_info = row.bom_info.filter(bom => bom[0].smId === inputMaterial.childSmId)?.[0]
           } else if (firstModify)
