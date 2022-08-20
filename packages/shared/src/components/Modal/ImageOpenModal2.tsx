@@ -20,11 +20,11 @@ interface ImgProps {
     imageDegree: number,
     width: number | string,
     height: number | string,
-    top: number,
 }
 
 const Img = styled.img`
-    object-fit: ${(props: ImgProps) => props.objectFit === "none" ? "none" : "cover"};
+    flex:"auto"; // 쓰나 마나 인듯 
+    object-fit: ${(props: ImgProps) => props.objectFit === "none" ? "cover" : "fill"};
     width: "auto";
     height: "auto";
     max-width: ${(props: ImgProps) => props.width} + "px";
@@ -216,7 +216,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
             console.log("width : ", width);
             return width * ratio;
         } else if (option === "custom_image") {
-            return 500 * ratio
+            return 800 * ratio
         }
         console.log("hi");
     }
@@ -233,7 +233,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
         if (option === "original_image") {
             return height;
         } else if (option === "custom_image") {
-            return 500 * ratio
+            return 800 * ratio
         }
 
     }
