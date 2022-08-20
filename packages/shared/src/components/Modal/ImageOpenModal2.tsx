@@ -2,6 +2,26 @@ import { log } from "console";
 import React, { useEffect, useState } from "react";
 import Modal from 'react-modal'
 import styled from 'styled-components'
+import AddIcon from '@mui/icons-material/Add';
+import Icon_X from '../../../public/images/file_delete_button.png';
+
+import Plus from '../../../public/images/plus-solid.svg';
+import Minus from '../../../public/images/minus-solid.svg';
+
+import rotation_right from '../../../public/images/rotate-right-solid.svg';
+import rotation_left from '../../../public/images/rotate-left-solid.svg';
+import Close from '../../../public/images/xmark-solid.svg';
+import floppy_disk from '../../../public/images/floppy-disk-solid.svg';
+
+// packages/shared/public/images/minus-solid.svg
+// packages/shared/public/images/plus-solid.svg
+
+// packages/shared/public/images/rotate-left-solid.svg
+// packages/shared/public/images/rotate-right-solid.svg
+
+// packages/shared/public/images/xmark-solid.svg
+// packages/shared/public/images/hard-drive-solid.svg
+// packages/shared/public/images/floppy-disk-solid.svg
 
 
 interface IProps {
@@ -31,7 +51,7 @@ const Img = styled.img`
     /* max-width: ${(props: ImgProps) => props.width} + "px"; */
     /* max-height: ${(props: ImgProps) => props.height} + "px"; */
     border: "10px solid blue";
-    aspect-ratio: "auto " + ${(props:ImgProps)=> props.aspectRatio};
+    aspect-ratio: "auto " + ${(props: ImgProps) => props.aspectRatio};
     transform: rotate(${(props: ImgProps) => props.imageDegree + "deg"});
 `;
 
@@ -92,11 +112,13 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
             console.log("original");
             setObjectFit("none")
             setImagePercent(100);
+            setImageDegree(0)
             set_original_width_height();
         }
         if (e.target.name == "custom") {
             console.log("custom");
             setObjectFit("cover")
+            setImageDegree(0)
             setImagePercent(100);
         }
 
@@ -133,19 +155,19 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
             console.log("origianlWidth : ", originalWidth);
             console.log("originalHeight : ", originalHeight);
 
-            if (imageDegree === 0) {
-                console.log("90니까 높이 넓이 바꿔");
-                // setOriginalWidth(height);
-                // setOriginalHeight(width);
-            } else if (imageDegree === 180) {
-                console.log("180니까 넓이 높이 바꿔");
-                // setOriginalWidth(height);
-                // setOriginalHeight(width);
-            } else {
-                console.log("원래 대로 유지");
-                // setOriginalWidth(width);
-                // setOriginalHeight(height);
-            }
+            // if (imageDegree === 0) {
+            //     console.log("90니까 높이 넓이 바꿔");
+            //     // setOriginalWidth(height);
+            //     // setOriginalHeight(width);
+            // } else if (imageDegree === 180) {
+            //     console.log("180니까 넓이 높이 바꿔");
+            //     // setOriginalWidth(height);
+            //     // setOriginalHeight(width);
+            // } else {
+            //     console.log("원래 대로 유지");
+            //     // setOriginalWidth(width);
+            //     // setOriginalHeight(height);
+            // }
 
             setImageDegree((prev) => {
 
@@ -211,7 +233,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
         console.log("imagePercent : ", imagePercent);
         const ratio = imagePercent / 100;
         console.log("ratio : ", ratio);
-        
+
 
         if (option === "original_image") {
             console.log("width : ", width);
@@ -266,19 +288,57 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
                         }
                     }}>
 
-                    <div style={{display:"flex",flexDirection:"column" }}>
-                        <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px", zIndex:5 }}>
+
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                        <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px", zIndex: 5 }}>
                             <button onClick={imageButtonClickHandler} name="original">원본</button>
                             <button onClick={imageButtonClickHandler} name="custom">맞춤</button>
-                            <button onClick={imageButtonClickHandler} name="enlargement">확대</button>
-                            <button onClick={imageButtonClickHandler} name="reduction">축소</button>
-                            <button onClick={imageButtonClickHandler} name="rotation+">+90°</button>
-                            <button onClick={imageButtonClickHandler} name="rotation-">-90°</button>
-                            <button>저장</button>
-                            <button style={{ float: "right" }} onClick={() => close_modal(false)}>닫기</button>
+
+                            <img
+                                onClick={imageButtonClickHandler}
+                                name="enlargement"
+                                src={Plus}
+                                style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
+                            />
+
+                            <img
+                                onClick={imageButtonClickHandler}
+                                name="reduction"
+                                src={Minus}
+                                style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
+                            />
+                            <img
+                                onClick={imageButtonClickHandler}
+                                name="rotation+"
+                                src={rotation_right}
+                                style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
+                            />
+                            <img
+                                onClick={imageButtonClickHandler}
+                                name="rotation-"
+                                src={rotation_left}
+                                style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
+                            />
+
+                            <img
+                                onClick={() => console.log("저장 버튼 클릭")}
+                                src={floppy_disk}
+                                style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
+                            />
+
+                            <img
+                                onClick={() => close_modal(false)}
+                                src={Close}
+                                style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
+                            />
+
+                            {/* <button onClick={imageButtonClickHandler} name="rotation+">+90°</button>
+                            <button onClick={imageButtonClickHandler} name="rotation-">-90°</button> */}
+                            {/* <button>저장</button> */}
+                            {/* <button style={{ float: "right" }} onClick={() => close_modal(false)}>닫기</button> */}
 
                         </div>
-                        
+                        <br />
 
                         <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px" }}>
                             {/* origin-width : {originalWidth} , origin-height : {originalHeight} */}
@@ -298,7 +358,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
                                 imageDegree={imageDegree}
                                 width={objectFit === "none" ? calculateWidth("original_image", imagePercent) : calculateWidth("custom_image", imagePercent)}
                                 height={objectFit === "none" ? calculateHeight("original_image", imageDegree) : calculateHeight("custom_image", imagePercent)}
-                                aspectRatio = {originalWidth/originalHeight}
+                                aspectRatio={originalWidth / originalHeight}
                             />
                         </div>
 
