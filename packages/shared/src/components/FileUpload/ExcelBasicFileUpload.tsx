@@ -6,7 +6,7 @@ import Notiflix from "notiflix";
 import {DeleteImage, UploadButton} from '../../styles/styledComponents'
 import {uploadTempFile} from '../../common/fileFuctuons'
 import {RequestMethod} from "../../common/RequestFunctions";
-import ImageOpenModal from "../Modal/ImageOpenModal";
+import ImageOpenModal2 from "../Modal/ImageOpenModal2";
 
 interface IProps {
   row: any
@@ -30,6 +30,8 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
       setOnImage(value)
   }
 
+  
+
 
   const cleanText = () => {
       switch(true){
@@ -51,7 +53,8 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
       justifyContent: 'center',
       alignItems: 'center'
     }}>
-        <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage}/>
+        {/* <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage}/> */}
+        <ImageOpenModal2 url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage}/>
       {
           (row[column.key]?.uuid) ||  typeof row[column.key] !== "object" && row[column.key]?
           <div style={{
