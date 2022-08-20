@@ -20,17 +20,18 @@ interface ImgProps {
     imageDegree: number,
     width: number | string,
     height: number | string,
+    aspectRatio?: any
 }
 
 const Img = styled.img`
     flex:"auto"; // 쓰나 마나 인듯 
-    object-fit: ${(props: ImgProps) => props.objectFit === "none" ? "cover" : "fill"};
+    object-fit: ${(props: ImgProps) => props.objectFit === "none" ? "contain" : "fill"};
     width: "auto";
     height: "auto";
-    max-width: ${(props: ImgProps) => props.width} + "px";
-    max-height: ${(props: ImgProps) => props.height} + "px";
+    /* max-width: ${(props: ImgProps) => props.width} + "px"; */
+    /* max-height: ${(props: ImgProps) => props.height} + "px"; */
     border: "10px solid blue";
-    aspect-ratio: "auto";
+    aspect-ratio: "auto " + ${(props:ImgProps)=> props.aspectRatio};
     transform: rotate(${(props: ImgProps) => props.imageDegree + "deg"});
 `;
 
@@ -285,6 +286,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
                             폭 : {originalWidth}, 높이: {originalHeight} &nbsp;&nbsp;
                             비율: {imagePercent} &nbsp;&nbsp;
                             각도: {imageDegree} &nbsp;&nbsp;
+                            {/* {originalWidth}, {originalHeight} */}
                         </div>
 
                         <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px" }}>
@@ -296,6 +298,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
                                 imageDegree={imageDegree}
                                 width={objectFit === "none" ? calculateWidth("original_image", imagePercent) : calculateWidth("custom_image", imagePercent)}
                                 height={objectFit === "none" ? calculateHeight("original_image", imageDegree) : calculateHeight("custom_image", imagePercent)}
+                                aspectRatio = {originalWidth/originalHeight}
                             />
                         </div>
 
