@@ -25,10 +25,12 @@ interface ImgProps {
 
 const Img = styled.img`
     object-fit: ${(props: ImgProps) => props.objectFit === "none" ? "none" : "cover"};
-    width: ${(props: ImgProps) => props.width} + "px";
-    height: ${(props: ImgProps) => props.height} + "px";
+    width: "auto";
+    height: "auto";
+    max-width: ${(props: ImgProps) => props.width} + "px";
+    max-height: ${(props: ImgProps) => props.height} + "px";
     border: "10px solid blue";
-    aspect-ratio: ${(props: ImgProps) => { return "auto " + props.originalWidth / props.originalHeight }};
+    aspect-ratio: "auto";
     transform: rotate(${(props: ImgProps) => props.imageDegree + "deg"});
 `;
 
@@ -263,8 +265,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
                         }
                     }}>
 
-                    <div style={{display:"flex",flexDirection:"column", flexWrap:"wrap"}}>
-                        
+                    <div style={{display:"flex",flexDirection:"column" }}>
                         <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px", zIndex:5 }}>
                             <button onClick={imageButtonClickHandler} name="original">원본</button>
                             <button onClick={imageButtonClickHandler} name="custom">맞춤</button>
@@ -276,6 +277,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
                             <button style={{ float: "right" }} onClick={() => close_modal(false)}>닫기</button>
 
                         </div>
+                        
 
                         <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px" }}>
                             {/* origin-width : {originalWidth} , origin-height : {originalHeight} */}
