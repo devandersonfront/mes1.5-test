@@ -12,22 +12,18 @@ import rotation_right from '../../../public/images/rotate-right-solid.svg';
 import rotation_left from '../../../public/images/rotate-left-solid.svg';
 import Close from '../../../public/images/xmark-solid.svg';
 import floppy_disk from '../../../public/images/floppy-disk-solid.svg';
+import { RequestMethod } from '../../../../shared';
 
-// packages/shared/public/images/minus-solid.svg
-// packages/shared/public/images/plus-solid.svg
-
-// packages/shared/public/images/rotate-left-solid.svg
-// packages/shared/public/images/rotate-right-solid.svg
-
-// packages/shared/public/images/xmark-solid.svg
-// packages/shared/public/images/hard-drive-solid.svg
-// packages/shared/public/images/floppy-disk-solid.svg
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 
 
 interface IProps {
     url: string
     open: boolean
     changeSetOnImage: (value: boolean) => void
+    uuid?: any
+    photoId?: any
 }
 
 interface ImgProps {
@@ -45,7 +41,7 @@ interface ImgProps {
 
 const Img = styled.img`
     flex:"auto"; // 쓰나 마나 인듯 
-    object-fit: ${(props: ImgProps) => props.objectFit === "none" ? "contain" : "fill"};
+    object-fit: ${(props: ImgProps) => props.objectFit === "none" ? "contain" : "contain"};
     width: "auto";
     height: "auto";
     /* max-width: ${(props: ImgProps) => props.width} + "px"; */
@@ -56,13 +52,13 @@ const Img = styled.img`
 `;
 
 /* packages/shared/src/components/Modal/ImageOpenModal.tsx */
-const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
+const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps) => {
     const [imagePercent, setImagePercent] = useState(100);
     const [objectFit, setObjectFit] = useState("cover");
     const [originalWidth, setOriginalWidth] = useState(0);
     const [originalHeight, setOriginalHeight] = useState(0);
     const [imageDegree, setImageDegree] = useState(0);
-    const [imageUrl, setImageUrl] = useState(url);
+
 
     const mode = (mode: any) => {
         let imgMode;
@@ -188,24 +184,6 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
             let width = img.width;
             let height = img.height;
 
-            console.log("objectFit : ", objectFit);
-            console.log("origianlWidth : ", originalWidth);
-            console.log("originalHeight : ", originalHeight);
-
-            if (imageDegree === 0) {
-                console.log("90니까 높이 넓이 바꿔");
-                setOriginalWidth(height);
-                setOriginalHeight(width);
-            } else if (imageDegree === 180) {
-                console.log("180니까 넓이 높이 바꿔");
-                setOriginalWidth(height);
-                setOriginalHeight(width);
-            } else {
-                console.log("원래 대로 유지");
-                setOriginalWidth(width);
-                setOriginalHeight(height);
-            }
-
             setImageDegree((prev) => {
                 switch (prev) {
                     case 360:
@@ -239,7 +217,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
             console.log("width : ", width);
             return width * ratio;
         } else if (option === "custom_image") {
-            return 800 * ratio
+            return 700 * ratio
         }
         console.log("hi");
     }
@@ -256,43 +234,82 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
         if (option === "original_image") {
             return height;
         } else if (option === "custom_image") {
-            return 800 * ratio
+            return 700 * ratio
         }
 
     }
 
+    const forceDownload = (url: string, fileName: string) => {
+        const downloadDatas = []
+        const uuid_object = { doc_id: photoId }
+        downloadDatas.push(uuid_object);
+        console.log("downloadDatas for download request : ", downloadDatas);
+
+        const result = RequestMethod("post", "documentDownLoad", downloadDatas)
+            .then((res) => {
+                if (res) {
+                    downloadDatas.map((file) => {
+                        if (file.file_uuid) {
+                            RequestMethod("get", "anonymousLoad", {
+                                path: {
+                                    uuid: file.file_uuid
+                                }
+                            }).then((response) => {
+                                window.open(response.url)
+                            })
+                        }
+                    })
+                }
+            })
+
+        // const file = RequestMethod("get", "anonymousLoad", {
+        //     path: {
+        //         uuid: uuid
+        //     }
+        // }).then((response) => {
+        //     window.open(response.url)
+        // })
+
+        console.log("hi 11 ", result);
+
+        // var xhr = new XMLHttpRequest();
+        // xhr.open("GET", url, true);
+        // xhr.responseType = "blob";
+        // xhr.onload = function () {
+        //     var urlCreator = window.URL || window.webkitURL;
+        //     var imageUrl = urlCreator.createObjectURL(this.response);
+        //     var tag = document.createElement('a');
+        //     tag.href = imageUrl;
+        //     tag.download = fileName;
+        //     document.body.appendChild(tag);
+        //     tag.click();
+        //     document.body.removeChild(tag);
+        // }
+        // xhr.send();
+    }
+
+
     return (
         <div>
-            <div
-                onClick={() => { }}
-                style={{}}
-            >
+            <div>
                 <Modal isOpen={open}
                     style={{
                         content: {
-                            // display: "flex",
-                            // justifyContent: "",
-                            // alignItems:"flex-start",
                             width: "1800px",
-                            height: "700px"
+                            height: "800px"
                         },
                         overlay: {
                             background: 'rgba(0,0,0,.6)',
-                            /* zIndex: 5 */
-                            // top: 0,
-                            // left: 0,
-                            // right: 0,
-                            // bottom: 0,
-                            // backgroundColor: 'rgba(255, 255, 255, 0.75)'
-
                         }
                     }}>
 
 
                     <div style={{ display: "flex", flexDirection: "column" }}>
-                        <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px", zIndex: 5 }}>
-                            <button onClick={imageButtonClickHandler} name="original">원본</button>
-                            <button onClick={imageButtonClickHandler} name="custom">맞춤</button>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems:"center", gap: "10px", height: "20px", zIndex: 5 }}>
+
+                            <Button size="medium" variant="outlined" onClick={imageButtonClickHandler} name="original">원본</Button>
+                            <Button size="medium" variant="outlined" onClick={imageButtonClickHandler} name="custom">맞춤</Button>
+
 
                             <img
                                 onClick={imageButtonClickHandler}
@@ -320,11 +337,13 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />
 
-                            <img
-                                onClick={() => console.log("저장 버튼 클릭")}
-                                src={floppy_disk}
-                                style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
-                            />
+                            <a href={url} download>
+                                <img
+                                    src={floppy_disk}
+                                    style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
+                                />
+                            </a>
+
 
                             <img
                                 onClick={() => close_modal(false)}
@@ -332,21 +351,17 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />
 
-                            {/* <button onClick={imageButtonClickHandler} name="rotation+">+90°</button>
-                            <button onClick={imageButtonClickHandler} name="rotation-">-90°</button> */}
-                            {/* <button>저장</button> */}
-                            {/* <button style={{ float: "right" }} onClick={() => close_modal(false)}>닫기</button> */}
+                            {/* <a className="download-icon" onClick={() => forceDownload(url, 'images.jpg')}> Download</a> */}
+
 
                         </div>
                         <br />
 
                         <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px" }}>
-                            {/* origin-width : {originalWidth} , origin-height : {originalHeight} */}
                             모드: {mode(objectFit)} &nbsp;&nbsp;
                             폭 : {originalWidth}, 높이: {originalHeight} &nbsp;&nbsp;
                             비율: {imagePercent} &nbsp;&nbsp;
                             각도: {imageDegree} &nbsp;&nbsp;
-                            {/* {originalWidth}, {originalHeight} */}
                         </div>
 
                         <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px" }}>
@@ -364,8 +379,8 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage }: IProps) => {
 
                     </div>
                 </Modal>
-            </div>
-        </div>
+            </div >
+        </div >
 
     )
 
