@@ -322,10 +322,7 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={[
-                  ...searchModalList.factoryInfo
-              ]}
-
+              headerList={searchModalList.factoryInfo}
               row={searchList ?? [{}]}
               setRow={(e) => {
                 let tmp: Set<any> = selectList
@@ -349,15 +346,8 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               setSelectList={(e) => {
                 setSelectList(e as Set<number>);
               }}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
+              onRowClick={(clicked) => {
+                const e = searchList.indexOf(clicked)
                 setSelectRow(e)
               }}
 

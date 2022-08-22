@@ -221,6 +221,7 @@ export const SearchResultSort = (infoList, type: string) => {
 }
 
 export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean) => {
+  selectData.border = false;
   switch(type) {
     case 'user': {
       return {
