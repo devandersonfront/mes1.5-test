@@ -573,17 +573,17 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
                   width={1746}
                   rowHeight={32}
                   height={552}
-                  onRowClick={(clicked) => {
-                    const e = searchList.indexOf(clicked)
-                    if(!searchList[e].border){
-                      const newSearchList = searchList.map((row,rowIdx) => ({
-                        ...row,
-                        border: rowIdx === e
-                      }))
-                      setSearchList(newSearchList)
-                      setSelectRow(e)
-                    }
-                  }}
+                  // onRowClick={(clicked) => {
+                  //   const e = searchList.indexOf(clicked)
+                  //   if(!searchList[e].border){
+                  //     const newSearchList = searchList.map((row,rowIdx) => ({
+                  //       ...row,
+                  //       border: rowIdx === e
+                  //     }))
+                  //     setSearchList(newSearchList)
+                  //     setSelectRow(e)
+                  //   }
+                  // }}
                   type={'searchModal'}
                   headerAlign={'center'}
               />

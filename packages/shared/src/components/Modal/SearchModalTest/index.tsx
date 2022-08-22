@@ -508,8 +508,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   return (
     <SearchModalWrapper>
       <div style={ column.modalType
-        ? {width: 'calc(100% - 32px)', height: 32, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
-        : {width: 'calc(100% - 40px)', height: 40, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
+        ? {width: 'calc(100% - 32px)', height: 32, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3, }
+        : {width: 'calc(100% - 40px)', height: 40, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3, }
       } onClick={() => {
         if(row.first || !column.disableType){
           setIsOpen(true)
@@ -627,14 +627,5 @@ const FooterButton = styled.div`
     font-weight: bold;
   }
 `
-
-const LoadingBar = styled.div`
-  width:100%;
-  height:50px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  
-`;
 
 export {SearchModalTest}
