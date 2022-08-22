@@ -346,11 +346,6 @@ const FactoryInfoModal = ({column, row, onRowChange}: IProps) => {
               setSelectList={(e) => {
                 setSelectList(e as Set<number>);
               }}
-              onRowClick={(clicked) => {
-                const e = searchList.indexOf(clicked)
-                setSelectRow(e)
-              }}
-
               type={'searchModal'}
               headerAlign={'center'}
             />
