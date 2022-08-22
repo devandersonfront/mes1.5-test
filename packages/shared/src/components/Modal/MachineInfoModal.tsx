@@ -359,17 +359,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               width={searchModalList.machineInfo.map(machine => machine.width).reduce((prevValue, currentValue) => prevValue + currentValue)}
               rowHeight={32}
               height={552}
-              onRowClick={(clicked) => {
-                const e = searchList.indexOf(clicked)
-                if(!searchList[e].border){
-                  const newSearchList = searchList.map((row,rowIdx) => ({
-                    ...row,
-                    border: rowIdx === e
-                  }))
-                  setSearchList(newSearchList)
-                  setSelectRow(e)
-                }
-              }}
               type={'searchModal'}
               headerAlign={'center'}
             />

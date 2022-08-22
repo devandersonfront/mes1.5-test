@@ -308,19 +308,6 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   width={searchModalList.toolInfo.map(tool => tool.width).reduce((prevValue, currentValue) => prevValue + currentValue)}
                   rowHeight={32}
                   height={552}
-                  // onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-                  //   setSelectRow(e)
-                  // }}
-                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-                    if(!searchList[e].border){
-                      searchList.map((v,i)=>{
-                        v.border = false;
-                      })
-                      searchList[e].border = true
-                      setSearchList([...searchList])
-                    }
-                    setSelectRow(e)
-                  }}
                   type={'searchModal'}
                   headerAlign={'center'}
               />

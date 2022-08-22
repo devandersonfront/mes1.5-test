@@ -114,6 +114,7 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
       onRowChange({
         ...row,
         ...searchList[selectRow],
+        border:false,
         ca_id:{
           ca_id: searchList[selectRow].ca_id,
           name:searchList[selectRow].name,
