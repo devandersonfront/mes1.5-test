@@ -295,7 +295,8 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                 <Modal isOpen={open}
                     style={{
                         content: {
-                            width: "1800px",
+                            margin: "0 auto",
+                            width: "1700px",
                             height: "800px"
                         },
                         overlay: {
@@ -358,10 +359,12 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                         <br />
 
                         <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px" }}>
+                            {/* 
                             모드: {mode(objectFit)} &nbsp;&nbsp;
                             폭 : {originalWidth}, 높이: {originalHeight} &nbsp;&nbsp;
                             비율: {imagePercent} &nbsp;&nbsp;
-                            각도: {imageDegree} &nbsp;&nbsp;
+                            각도: {imageDegree} &nbsp;&nbsp; 
+                            */}
                         </div>
 
                         <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px" }}>
