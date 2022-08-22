@@ -107,7 +107,7 @@ const MesOrderRegister = ({ }: IProps) => {
         SaveBasic()
 
         break;
-      case 2:
+      case 1:
         if (selectList.size < 1) {
           Notiflix.Report.warning("경고", "데이터를 선택해주세요.", "확인")
         } else {
