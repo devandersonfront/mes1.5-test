@@ -1,5 +1,5 @@
 import { log } from "console";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Modal from 'react-modal'
 import styled from 'styled-components'
 import AddIcon from '@mui/icons-material/Add';
@@ -12,10 +12,13 @@ import rotation_right from '../../../public/images/rotate-right-solid.svg';
 import rotation_left from '../../../public/images/rotate-left-solid.svg';
 import Close from '../../../public/images/xmark-solid.svg';
 import floppy_disk from '../../../public/images/floppy-disk-solid.svg';
-import { RequestMethod } from '../../../../shared';
+import { RequestMethod, SF_ENDPOINT } from '../../../../shared';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Notiflix from "notiflix";
+import axios from 'axios';
+
 
 
 interface IProps {
@@ -51,6 +54,29 @@ const Img = styled.img`
     transform: rotate(${(props: ImgProps) => props.imageDegree + "deg"});
 `;
 
+function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+
+    let today = new Date();
+    let year = today.getFullYear();
+    let month = today.getMonth();
+    let day = today.getDay();
+
+    const option = year + "-" + month + "-" + day;
+    console.log("option : ", option);
+
+    const date = new Date(option);
+
+
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() *
+            charactersLength));
+    }
+    return result + date.getTime();
+}
+
 /* packages/shared/src/components/Modal/ImageOpenModal.tsx */
 const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps) => {
     const [imagePercent, setImagePercent] = useState(100);
@@ -58,6 +84,8 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
     const [originalWidth, setOriginalWidth] = useState(0);
     const [originalHeight, setOriginalHeight] = useState(0);
     const [imageDegree, setImageDegree] = useState(0);
+
+    const child1 = useRef(null);
 
 
     const mode = (mode: any) => {
@@ -239,59 +267,59 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
 
     }
 
-    const forceDownload = (url: string, fileName: string) => {
-        const downloadDatas = []
-        const uuid_object = { doc_id: photoId }
-        downloadDatas.push(uuid_object);
-        console.log("downloadDatas for download request : ", downloadDatas);
+    // https://stackoverflow.com/questions/11876175/how-to-get-a-file-or-blob-from-an-object-url
+    const forceDownload = async () => {
+        console.log("uuid : ", uuid);
 
-        const result = RequestMethod("post", "documentDownLoad", downloadDatas)
-            .then((res) => {
-                if (res) {
-                    downloadDatas.map((file) => {
-                        if (file.file_uuid) {
-                            RequestMethod("get", "anonymousLoad", {
-                                path: {
-                                    uuid: file.file_uuid
-                                }
-                            }).then((response) => {
-                                window.open(response.url)
-                            })
-                        }
-                    })
+        // let blob = await fetch(url).then(r => r.blob());
+
+        const config = {
+            responseType: 'blob'
+        }
+
+
+        // const result = await axios.post(`http://3.36.78.194:8443/anonymous/download/554337a9-9615-420b-9a17-01317c1e00ec`, config)
+        await axios.post(`${SF_ENDPOINT}/anonymous/download/${uuid}`, [], { responseType: 'blob' })
+            .then((result: any) => {
+                console.log("result : ", result);
+                console.log("result.data : ", result.data);
+
+                const tmpUrl = URL.createObjectURL(new Blob([result.data], { type: "application/octet-stream" }))
+
+                const filename = makeid(5)
+                console.log("filename : ", filename);
+
+
+                const link = document.createElement('a');
+                link.href = tmpUrl;
+                link.download = "picture.png";
+                // console.log
+                link.setAttribute('download', `${filename}.png`); //or any other extension
+                document.body.appendChild(link);
+                link.click();
+                // URL.revokeObjectURL(url);
+
+            })
+            .catch((error) => {
+                if (error) {
+                    console.log("error : ", error);
+                    Notiflix.Report.failure('다운로드 할 수 없습니다.', '파일 다운로드 에러 !', '확인')
+                } else if (error.response.status === 500) {
+                    Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
                 }
             })
+        // console.log("result : ", result);
 
-        // const file = RequestMethod("get", "anonymousLoad", {
-        //     path: {
-        //         uuid: uuid
-        //     }
-        // }).then((response) => {
-        //     window.open(response.url)
-        // })
 
-        console.log("hi 11 ", result);
-
-        // var xhr = new XMLHttpRequest();
-        // xhr.open("GET", url, true);
-        // xhr.responseType = "blob";
-        // xhr.onload = function () {
-        //     var urlCreator = window.URL || window.webkitURL;
-        //     var imageUrl = urlCreator.createObjectURL(this.response);
-        //     var tag = document.createElement('a');
-        //     tag.href = imageUrl;
-        //     tag.download = fileName;
-        //     document.body.appendChild(tag);
-        //     tag.click();
-        //     document.body.removeChild(tag);
-        // }
-        // xhr.send();
     }
 
 
     return (
         <div>
             <div>
+
+                <div ref={child1} ></div>
+
                 <Modal isOpen={open}
                     style={{
                         content: {
@@ -306,11 +334,10 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
 
 
                     <div style={{ display: "flex", flexDirection: "column" }}>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems:"center", gap: "10px", height: "20px", zIndex: 5 }}>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", height: "20px", zIndex: 5 }}>
 
                             <Button size="medium" variant="outlined" onClick={imageButtonClickHandler} name="original">원본</Button>
                             <Button size="medium" variant="outlined" onClick={imageButtonClickHandler} name="custom">맞춤</Button>
-
 
                             <img
                                 onClick={imageButtonClickHandler}
@@ -338,12 +365,15 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />
 
-                            <a href={url} download>
-                                <img
-                                    src={floppy_disk}
-                                    style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
-                                />
-                            </a>
+                            <img
+                                onClick={forceDownload}
+                                src={floppy_disk}
+                                style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
+                            />
+                            <div onClick={forceDownload}>
+                                elem
+                            </div>
+
 
 
                             <img

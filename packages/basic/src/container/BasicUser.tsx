@@ -698,22 +698,7 @@ const BasicUser = ({}: IProps) => {
           setPageInfo({ ...pageInfo, page: page });
         }}
       />
-      {/* <ExcelDownloadModal
-        isOpen={excelDownOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`유저관리`}
-        sheetname={`유저관리`}
-        selectList={selectList}
-        tab={'ROLE_HR_02'}
-        setIsOpen={setExcelDownOpen}
-      />
-      <ExcelUploadModal
-        isOpen={excelUploadOpen}
-        setIsOpen={setExcelUploadOpen}
-        tab={'ROLE_HR_02'}
-        cleanUpBasicData={cleanUpBasicData}
-      /> */}
+
     </div>
   );
 };
