@@ -179,7 +179,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>금형 정보 (해당 제품을 만드는데 사용한 금형을 선택해주세요.{/* 선택 가능 금형이 없으면 금형 수정 버튼을 눌러 금형 정보를 수정해주세요*/})</p>
+            }}>금형 정보 (해당 제품을 만드는 데 사용한 금형을 선택해주세요.{/* 선택 가능 금형이 없으면 금형 수정 버튼을 눌러 금형 정보를 수정해주세요*/})</p>
             <div style={{display: 'flex'}}>
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
@@ -234,15 +234,16 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               width={1746}
               rowHeight={32}
               height={552}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
+              onRowClick={clicked => {
+                const rowIdx = searchList.indexOf(clicked)
+                if(!searchList[rowIdx]?.border){
+                  const newSearchList = searchList.map((v,i)=> ({
+                    ...v,
+                    border : i === rowIdx
+                  }))
+                  setSearchList(newSearchList)
+                  setSelectRow(rowIdx)
                 }
-                setSelectRow(e)
               }}
               type={'searchModal'}
               headerAlign={'center'}

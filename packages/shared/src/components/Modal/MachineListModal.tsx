@@ -189,7 +189,7 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>기계 정보 (해당 제품을 만드는데 사용된 기계은 아래와 같습니다.)</p>
+            }}>기계 정보 (해당 제품을 만드는 데 사용된 기계은 아래와 같습니다.)</p>
             <div style={{display: 'flex'}}>
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
@@ -240,18 +240,16 @@ const MachineListModal = ({column, row, onRowChange}: IProps) => {
               width={1746}
               rowHeight={32}
               height={552}
-              // onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-              //   setSelectRow(e)
-              // }}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
+              onRowClick={clicked => {
+                const rowIdx = searchList.indexOf(clicked)
+                if(!searchList[rowIdx]?.border){
+                  const newSearchList = searchList.map((v,i)=> ({
+                    ...v,
+                    border : i === rowIdx
+                  }))
+                  setSearchList(newSearchList)
+                  setSelectRow(rowIdx)
                 }
-                setSelectRow(e)
               }}
               type={'searchModal'}
               headerAlign={'center'}

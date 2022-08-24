@@ -80,3 +80,11 @@ export const getTableSortingOptions = (key, order, sortingOptions:TableSortingOp
     }
     return {...sortingOptions}
 }
+
+export const decideKoreanSuffix = (word: string, existCoda: string, notExistCoda: string): String => {
+  const charCode = word.charCodeAt(word.length - 1);
+  const consonantCode = (charCode - 44032) % 28;
+  const markingParticle = consonantCode === 0 ? notExistCoda : existCoda
+
+  return word+markingParticle
+}

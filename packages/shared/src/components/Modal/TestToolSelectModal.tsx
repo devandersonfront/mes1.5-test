@@ -157,7 +157,7 @@ const TestToolSelectModal = ({column, row, onRowChange}: IProps) => {
                             fontSize: 22,
                             fontWeight: 'bold',
                             margin: 0,
-                        }}>공구 정보 (해당 제품 생산하는데 사용한 공구를 입력해주세요.)</p>
+                        }}>공구 정보 (해당 제품 생산하는 데 사용한 공구를 입력해주세요.)</p>
                         <div style={{display: 'flex'}}>
                             {/*<Button>*/}
                             {/*  <p>엑셀로 받기</p>*/}
