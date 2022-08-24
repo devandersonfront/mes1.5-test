@@ -81,23 +81,21 @@ const BasicDocument = ({ page, keyword, option, doc_id }: IProps) => {
                 downloadDatas.push(row);
             }
         })
+        downloadDatas.map(async(downloadData) => {
+            await RequestMethod("post", "documentDownLoad", [downloadData], undefined,'blob')
+                .then((res) => {
+                    if(res){
+                        const url = URL.createObjectURL(new Blob([res] , { type: "application/octet-stream" }));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', downloadData.name); //or any other extension
+                        document.body.appendChild(link);
+                        link.click();
+                        URL.revokeObjectURL(url); // prevent wasting memory
+                    }
+                })
 
-        await RequestMethod("post", "documentDownLoad", downloadDatas)
-            .then((res) => {
-                if (res) {
-                    downloadDatas.map((file) => {
-                        if (file.file_uuid) {
-                            RequestMethod("get", "anonymousLoad", {
-                                path: {
-                                    uuid: file.file_uuid
-                                }
-                            }).then((response) => {
-                                window.open(response.url)
-                            })
-                        }
-                    })
-                }
-            })
+        })
     }
 
 
@@ -228,6 +226,7 @@ const BasicDocument = ({ page, keyword, option, doc_id }: IProps) => {
                     //@ts-ignore
                     setSelectList(e)
                 }}
+                width={1576}
             />
             <DocumentControlModal
                 isOpen={isOpen}
