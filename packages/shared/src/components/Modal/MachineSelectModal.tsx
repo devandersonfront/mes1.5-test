@@ -169,7 +169,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                             fontSize: 22,
                             fontWeight: 'bold',
                             margin: 0,
-                        }}>기계 정보 (해당 제품 생산하는데 사용한 모든 기계를 입력해주세요. {/*선택 가능 기계가 없으면 기계 수정 버튼을 눌러 기계 정보를 수정해주세요*/})</p>
+                        }}>기계 정보 (해당 제품 생산하는 데 사용한 모든 기계를 입력해주세요. {/*선택 가능 기계가 없으면 기계 수정 버튼을 눌러 기계 정보를 수정해주세요*/})</p>
                         <div style={{display: 'flex'}}>
                             {/*<Button>*/}
                             {/*  <p>엑셀로 받기</p>*/}
@@ -235,15 +235,16 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                             width={1746}
                             rowHeight={32}
                             height={552}
-                            onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-                                if(!searchList[e].border){
-                                    searchList.map((v,i)=>{
-                                        v.border = false;
-                                    })
-                                    searchList[e].border = true
-                                    setSearchList([...searchList])
+                            onRowClick={clicked => {
+                                const rowIdx = searchList.indexOf(clicked)
+                                if(!searchList[rowIdx]?.border){
+                                    const newSearchList = searchList.map((v,i)=> ({
+                                        ...v,
+                                        border : i === rowIdx
+                                    }))
+                                    setSearchList(newSearchList)
+                                    setSelectRow(rowIdx)
                                 }
-                                setSelectRow(e)
                             }}
                             type={'searchModal'}
                             headerAlign={'center'}

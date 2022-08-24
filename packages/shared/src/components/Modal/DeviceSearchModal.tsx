@@ -106,24 +106,9 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const ModalContents = () => {
-    if(column.searchType === 'operation' && row.index !== 1){
-      return <></>
-    }
-
-    if(column.disableType === 'record' && row.osd_id){
-      return <div style={{width: '100%', height: 40, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-        <p>{row[`${column.key}`]}</p>
-      </div>
-    }
-
     return <>
-      <div style={{width: '100%', height: 32}} onClick={() => {
-      }}>
-        {
-          column.type === 'Modal'
-            ? <LineBorderContainer row={row} column={column} setRow={() => {}}/>
-            : row[`${column.key}`]
-        }
+      <div style={{width: 'calc(100% - 30px)', height: 32, background: row.border ? '#19B9DF80' : undefined, display:'flex', alignItems:'center'  }} onClick={() => setIsOpen(true)}>
+        <p style={{opacity: row[`${column.key}`] ? 1 : .3, paddingLeft: 10}}>{row[column.key] ?? column.placeholder}</p>
       </div>
       <div style={{
         display: 'flex',
@@ -132,9 +117,7 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
         height: 30,
         justifyContent: 'center',
         alignItems: 'center'
-      }} onClick={() => {
-        setIsOpen(true)
-      }}>
+      }} onClick={() => setIsOpen(true)}>
         <img style={{width: 16.3, height: 16.3}} src={IcSearchButton}/>
       </div>
     </>
@@ -160,7 +143,7 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
       }}>
         <div style={{
           width: 1776,
-          height: 816
+          height: 795
         }}>
           <div style={{
             marginTop: 24,
@@ -181,10 +164,8 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
               <img style={{width: 20, height: 20}} src={IcX}/>
             </div>
           </div>
-          <div style={{
-            width: 1776, height: 32, margin: '16px 0 16px 16px',
-            display: 'flex'
-          }}>
+          <div style={{height: 32, margin: '16px 0 16px 16px',
+            display: 'flex' }}>
             <div style={{
               width: 120, display: 'flex', justifyContent: 'center', alignItems: 'center',
               backgroundColor: '#F4F6FA', border: '0.5px solid #B3B3B3',
@@ -241,13 +222,13 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
               <img src={Search_icon} style={{width:"16px",height:"16px"}} />
             </div>
           </div>
-          <div style={{padding: '0 16px 0 16px', width: 1776}}>
+          <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
               headerList={searchModalList.device}
               row={searchList ?? []}
               width={1746}
               rowHeight={32}
-              height={576}
+              height={654}
               setRow={()=>{}}
               onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                 const update = searchList.map(
@@ -280,7 +261,7 @@ const DeviceSearchModal = ({column, row, onRowChange}: IProps) => {
             {/*  }}*/}
             {/*/>*/}
           </div>
-          <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
+          <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
             <div
               onClick={() => {
                 setIsOpen(false)

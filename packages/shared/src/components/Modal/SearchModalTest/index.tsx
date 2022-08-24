@@ -244,6 +244,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 setTab(Number(e.target.value))
                 setOptionIndex(0)
                 setKeyword('')
+                setPageInfo({page:1, total:1})
               }}>
                 <option key={'0'} value={0}>원자재</option>
                 <option key={'1'} value={1}>부자재</option>
@@ -485,7 +486,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         onRowChange(
           {
             ...row,
-            ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar),
+            ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType),
             manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType).manager,
             name: selectNameFunction(column.type),
             id:row.id,
@@ -507,9 +508,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   return (
     <SearchModalWrapper>
-      <div style={ column.modalType
-        ? {width: 'calc(100% - 32px)', height: 32, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3, }
-        : {width: 'calc(100% - 40px)', height: 40, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3, }
+      <div style={{width: column.modalType ? 'calc(100% - 32px)' : 'calc(100% - 40px)', height: column.modalType ? 32 : 40,
+        paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3,  background: row.border ? '#19B9DF80' : undefined}
       } onClick={() => {
         if(row.first || !column.disableType){
           setIsOpen(true)
@@ -569,9 +569,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                       border: false
                     }
                 );
-
                 setSearchList(update)
-
                 setSelectRow(e)
               }}
               type={'searchModal'}

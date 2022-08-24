@@ -220,8 +220,8 @@ export const SearchResultSort = (infoList, type: string) => {
   }
 }
 
-export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean) => {
-  selectData.border = false;
+export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean, usedInModal?: boolean) => {
+  if(usedInModal === false) selectData.border = false;
   switch(type) {
     case 'user': {
       return {
