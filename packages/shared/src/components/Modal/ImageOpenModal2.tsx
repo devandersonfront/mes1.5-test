@@ -74,7 +74,7 @@ function makeid(length) {
         result += characters.charAt(Math.floor(Math.random() *
             charactersLength));
     }
-    return result + date.getTime();
+    return result + date.getTime + "sizl";
 }
 
 /* packages/shared/src/components/Modal/ImageOpenModal.tsx */
@@ -370,9 +370,6 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                                 src={floppy_disk}
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />
-                            <div onClick={forceDownload}>
-                                elem
-                            </div>
 
 
 
