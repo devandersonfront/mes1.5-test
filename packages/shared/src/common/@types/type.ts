@@ -5,6 +5,8 @@ export interface IMenuType {
   }
   
   export interface IExcelHeaderType {
+    currentSelectedRows?: any
+    setCurrentSelectedRows(arg0: (prev: any) => any[])
     basicRow?: any
     setBasicRow?: any
     onClickEvent?: (any) => {any}
