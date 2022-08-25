@@ -68,13 +68,14 @@ function makeid(length) {
     console.log("option : ", option);
 
     const date = new Date(option);
-
-
     for (var i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() *
-            charactersLength));
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-    return result + date.getTime + "sizl";
+
+    console.log("file name !!!!!!!!!!!!!! : ", result);
+
+
+    return result;
 }
 
 /* packages/shared/src/components/Modal/ImageOpenModal.tsx */
@@ -276,28 +277,77 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
         const config = {
             responseType: 'blob'
         }
-
-
         // const result = await axios.post(`http://3.36.78.194:8443/anonymous/download/554337a9-9615-420b-9a17-01317c1e00ec`, config)
         await axios.post(`${SF_ENDPOINT}/anonymous/download/${uuid}`, [], { responseType: 'blob' })
             .then((result: any) => {
+
+                const reader = new FileReader();
+
+                reader.onload = e => {
+                    console.log("e for file : ", e);
+
+                };
                 console.log("result : ", result);
                 console.log("result.data : ", result.data);
 
-                const tmpUrl = URL.createObjectURL(new Blob([result.data], { type: "application/octet-stream" }))
+                const tmpImg = new Blob([result.data], { type: "application/octet-stream" })
+                const tmpUrl = URL.createObjectURL(tmpImg)
 
-                const filename = makeid(5)
-                console.log("filename : ", filename);
+                reader.readAsDataURL(tmpImg);
+
+                var view;
+                let file_type;
+
+                const result_of_buffer = Promise.resolve(tmpImg.arrayBuffer()).then(
+                    (result) => {
+                        // console.log("result 1111111 : ", result);
+                        const view = new Uint8Array(result);
+                        return view
+                    }
+                ).then((result => {
+                    // console.log("result 222222 : ", result[0]);
+                    return result[0]
+                })).then((result) => {
+                    // console.log("result ::::::::::: ", result);
+                    return result
+                }).then((result2) => {
+                    let file_type;
+                    // console.log("result for type2 : ", result2);
+                    if (result2 === 137) {
+                        file_type = "png"
+                    } else if (result2 === 255) {
+                        file_type = "jpegs"
+                    }
+                    else {
+                        // console.log("result for type check ::::", file_type);
+                        file_type = "jpg"
+                    }
+
+                    const filename = makeid(10)
+                    // console.log("filename : ", filename);
+                    // console.log("filetype : ", file_type);
+
+                    const link = document.createElement('a');
+                    link.href = tmpUrl;
+                    link.download = filename + "." + file_type;
+                    // console.log
+                    // link.setAttribute('download', file_type); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                    URL.revokeObjectURL(url);
+                })
 
 
-                const link = document.createElement('a');
-                link.href = tmpUrl;
-                link.download = "picture.png";
-                // console.log
-                link.setAttribute('download', `${filename}.png`); //or any other extension
-                document.body.appendChild(link);
-                link.click();
-                // URL.revokeObjectURL(url);
+                // console.log("result_of_buffer : ", result_of_buffer);
+
+                // if (file_type === 137) {
+                //     console.log("png");
+                // } else {
+                //     console.log("file_type : ", typeof file_type, file_type);
+
+                //     console.log("안걸림");
+
+                // }
 
             })
             .catch((error) => {
@@ -308,8 +358,6 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                     Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
                 }
             })
-        // console.log("result : ", result);
-
 
     }
 
