@@ -26,7 +26,8 @@ const FileUploader = ({type, accept, onChange, value}:Props) => {
                             onChange={async(e) => {
                                 const fileType = e.target.files[0].name.split(".").length -1;
                                 setFileName(e.target.files[0].name)
-                                const result = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true, e.target.files[0].type);
+                                console.log(e.target.files[0].name)
+                                const result = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true, e.target.files[0].name, e.target.files[0].type);
                                 onChange({...result, name:e.target.files[0].name, type:e.target.files[0].name.split(".")[fileType]})
 
                             }}
