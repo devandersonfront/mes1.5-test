@@ -136,7 +136,8 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         hidden
         onChange={async (e) => {
           if(e.target.files && e.target.files.length !== 0) {
-              const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
+              console.log(e.target.files[0].name)
+              const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true, e.target.files[0].name);
               e.target.value = ''
               if(uploadImg !== undefined){
                       onRowChange({
