@@ -121,29 +121,40 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const onConfirm = () => {
-    const moldInUse = searchList.filter(row => row.setting === 1)
-    const cavity = moldInUse.length > 0 && moldInUse[0].cavity
-    if(moldInUse.length > 1) {
-      return Notiflix.Report.warning("경고", "금형을 하나만 선택해주시기 바랍니다.", "확인");
-    }
-    if(selectRow !== undefined && selectRow !== null){
-      onRowChange({
-        ...row,
-        name: row.name,
-        molds: searchList.map(v => {
-          return {
-            mold: {
-              sequence: v.sequence,
-              mold: {
-                ...v
-              },
-              setting: v.setting
-            }
-          }
-        }),
-        cavity,
-        isChange: true
-      })
+    try{
+      const moldInUse = searchList.filter(row => row.setting === 1)
+      const cavity = moldInUse.length > 0 ? moldInUse[0].cavity : 1
+      const update = () => {
+        if (selectRow !== undefined && selectRow !== null) {
+          onRowChange({
+            ...row,
+            name: row.name,
+            molds: moldInUse.map(v => {
+              return {
+                mold: {
+                  sequence: v.sequence,
+                  mold: {
+                    ...v
+                  },
+                  setting: v.setting
+                }
+              }
+            }),
+            cavity,
+            isChange: true
+          })
+      }}
+
+      if(moldInUse.length > 1) {
+        throw ('금형을 하나만 사용해 주시기 바랍니다.')
+      } else {
+        Notiflix.Report.info('알림', '캐비티가 바뀌면 자재 사용량이 바뀌어 재고가 부족할 수 있습니다.', '확인', () => {
+          update()
+          onClose()
+        })
+      }
+    } catch (errMsg) {
+        Notiflix.Report.warning('경고', errMsg,'확인')
     }
   }
 
@@ -261,7 +272,6 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 onConfirm()
-                onClose()
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >

@@ -206,7 +206,7 @@ export const searchModalList: any  = {
   moldUse: [
     {key: 'sequence', name: '번호', width: 64, textAlign: 'center', formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer },
-    {key: 'name', name: '금형명', formatter: LineBorderContainer, type: 'Modal'},
+    {key: 'name', name: '금형명', formatter: LineBorderContainer, type: 'Modal', placeholder:'-'},
     {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '여'},
         {pk: 'spare', name: '부'},

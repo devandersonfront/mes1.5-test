@@ -252,40 +252,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
       }
     }
     case 'product': {
-
-      return staticCalendar ? {
-        ...selectData,
-        code: selectData.code,
-        name: selectData.name,
-        type: TransferCodeToValue(selectData.type, 'material'),
-        customer: selectData.customer ? selectData.customer.name : '',
-        customer_id: selectData.customer?.name,
-        cm_id: selectData.model?.model,
-        product_id: selectData.code,
-        model: selectData.model ? selectData.model.model : '',
-        type_name: selectData.type_name ?? TransferCodeToValue(selectData.type, 'material'),
-        unit: selectData.unit,
-        usage: selectData.usage,
-        process: selectData.process?.name ?? "-",
-        product_name: selectData.name,
-        product_type: TransferCodeToValue(selectData.type, 'material'),
-        product_unit: selectData.unit,
-        product: {...selectData},
-        bom_root_id: selectData.bom_root_id,
-        customerData: selectData.customer,
-        modelData: selectData.model,
-        standard_uph : selectData.standard_uph,
-        os_id : selectData.os_id,
-        amount: selectData.amount,
-        shipment_amount : selectData.shipment_amount,
-        shipment_date : selectData.shipment_date,
-        lead_time : selectData.lead_time,
-        uph : selectData.uph,
-        identification : selectData.identification,
-        date: selectData.date,
-        deadline: selectData.deadline
-
-      }:{
+      return {
         ...selectData,
         code: selectData.code,
         name: selectData.name,
@@ -308,15 +275,14 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         modelData: selectData.model,
         standard_uph : selectData.standard_uph,
         os_id : selectData.os_id,
-        date : selectData.date,
-        deadline : selectData.deadline,
+        date: selectData.date,
+        deadline: selectData.deadline,
         amount: selectData.amount,
         shipment_amount : selectData.shipment_amount,
         shipment_date : selectData.shipment_date,
         lead_time : selectData.lead_time,
         uph : selectData.uph,
-        identification : selectData.identification
-
+        identification : selectData.identification,
       }
     }
     case "process": {

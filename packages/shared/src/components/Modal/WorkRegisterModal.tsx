@@ -18,6 +18,7 @@ import {UploadButton} from '../../styles/styledComponents'
 import moment from 'moment'
 import {transferStringToCode} from "../../common/codeTransferFunctions";
 import Big from 'big.js'
+import { alertMsg } from '../../common/AlertMsg'
 
 
 interface IProps {
@@ -77,45 +78,29 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   }, [isOpen])
 
   const SaveBasic = async () => {
-    console.log('search',searchList)
     try{
-      searchList.map((row) => {
-        if(!row.lot_number){
-          throw("LOT번호를 입력해주시기 바랍니다.")
-        }else if(!row.manager){
-          throw("작업자를 선택해주시기 바랍니다.")
-        }else if(!row.sum) {
-          throw("생산 수량을 입력해주시기 바랍니다.")
-        }})
+      const postBody = searchList.map((v) => {
+        if(!v.lot_number){
+          throw(alertMsg.noLotNumber)
+        }else if(!v.manager){
+          throw(alertMsg.noWorker)
+        }else if(!v.sum) {
+          throw(alertMsg.noProductAmount)
+        }
+        if(v.molds) {
+          v.bom.map(bom => {
+            const finalAmount = new Big(bom.lot?.amount).div(v.cavity)
+            const finalUsage = finalAmount.times(bom.bom?.usage)
+            if(!Number.isInteger(finalAmount.toNumber())) throw(alertMsg.productAmountNotCavityDivisor)
+            if(finalUsage.gt(bom.lot?.current)) throw (alertMsg.overStock)
+            // const currentAmount = lotTotalAmountMap.get(bom.osb_id) ?? 0
+            //   lotTotalAmountMap.set(bom.osb_id, currentAmount + Number(bom.lot.amount))
+          })
+        }
 
-      const postBody = searchList.map((v, i) => {
-        let selectData: any = {}
-        Object.keys(v).map(v => {
-          if(v.indexOf('PK') !== -1) {
-            selectData = {
-              ...selectData,
-              [v.split('PK')[0]]: v[v]
-            }
-          }
-
-          if(v === 'unitWeight') {
-            selectData = {
-              ...selectData,
-              unitWeight: Number(v['unitWeight'])
-            }
-          }
-
-          if(v === 'tmpId') {
-            selectData = {
-              ...selectData,
-              id: v['tmpId']
-            }
-          }
-        })
         return {
           ...v,
-          ...selectData,
-          bom: v.molds ? v.bom.map(bom => ({...bom, lot: {...bom.lot, amount: new Big(Number(bom.lot.amount)).div(v.cavity).toString()}})) : v.bom,
+          bom: v.molds?.length > 0 ? v.bom.map(bom => ({...bom, lot: {...bom.lot, amount: new Big(Number(bom.lot.amount)).div(v.cavity).toString()}})) : v.bom,
           operation_sheet: {
             ...row,
             status: typeof row.status_no === "string" ? transferStringToCode('workStatus', row.status_no) : row.status_no
@@ -134,25 +119,13 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
               }}
           }).filter(v=>v.tool.tool.code),
           machines: v?.machines ? v?.machines.filter((machine) => machine.machine.setting == 1) : [],
-          // input_bom: [],
-          status: 0,
           version: undefined
         }
       }).filter((v) => v)
-      console.log('post',postBody)
-      // let res = await RequestMethod('post', `recordSave`, postBody)
-
-
-      // if(res){
-      //   setTimeout(() => {
-      //     onRowChange({
-      //       ...row,
-      //       update: true
-      //     })
-      //     Notiflix.Report.success('저장되었습니다.','','확인');
-      //   }, 1000)
-      // }
+      let res = await RequestMethod('post', `recordSave`, postBody)
+      if(res) Notiflix.Report.success('저장되었습니다.','','확인', () => row.reload());
     } catch (errMsg){
+      console.log(errMsg)
       Notiflix.Report.warning('경고', errMsg, '확인')
     }
   }
