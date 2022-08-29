@@ -15,10 +15,10 @@ import Notiflix from 'notiflix'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import moment from "moment";
 import Big from 'big.js'
+import { alertMsg } from '../../common/AlertMsg'
 
 interface IProps {
   row: any
-  onRowChange: () => void
   isOpen?: boolean
   setIsOpen?: (isOpen: boolean) => void
 }
@@ -47,106 +47,115 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 
 
 
-const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
+const WorkModifyModal = ({row, isOpen, setIsOpen}: IProps) => {
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{sequence: 1}])
   const [summaryData, setSummaryData] = useState<any>({})
-  const cavity = row.molds ? row.molds[0]?.mold.mold.cavity : 1
+  const cavity = row.molds?.length > 0 ? row.molds[0].mold?.mold?.cavity : 1
 
   useEffect(() => {
     if(isOpen) {
-      let total_count = 0
-      let good_quantity = 0
-      let poor_quantity = 0
-
-      row.map(v => {
-        total_count += v.good_quantity + v.poor_quantity
-        good_quantity += v.good_quantity
-        poor_quantity += v.poor_quantity
-      })
       setSummaryData({
-        contract_id: row[0].operation_sheet?.contract?.identification,
-        identification: row[0].operation_sheet?.identification,
-        customer_id: row[0].operation_sheet?.product?.customer?.name,
-        cm_id: row[0].operation_sheet?.product?.model?.model,
-        code: row[0].operation_sheet?.product?.code,
-        name: row[0].operation_sheet?.product?.name,
-        type: row[0].operation_sheet?.product?.type
-        || row[0].operation_sheet?.product?.type === 0
-            ? TransferCodeToValue(row[0].operation_sheet?.product?.type, 'productType')
+        contract_id: row.operation_sheet?.contract?.identification,
+        identification: row.operation_sheet?.identification,
+        customer_id: row.operation_sheet?.product?.customer?.name,
+        cm_id: row.operation_sheet?.product?.model?.model,
+        code: row.operation_sheet?.product?.code,
+        name: row.operation_sheet?.product?.name,
+        type: row.operation_sheet?.product?.type
+        || row.operation_sheet?.product?.type === 0
+            ? TransferCodeToValue(row.operation_sheet?.product?.type, 'productType')
             : null,
-        process: row[0].product?.process?.name,
-        unit: row[0].operation_sheet?.product?.unit,
-        goal: row[0].operation_sheet?.goal,
-        total_counter: total_count,
-        total_good_quantity: good_quantity,
-        total_poor_quantity: poor_quantity,
+        process: row.product?.process?.name,
+        unit: row.operation_sheet?.product?.unit,
+        goal: row.operation_sheet?.goal,
+        total_counter: row.good_quantity + row.poor_quantity,
+        total_good_quantity: row?.good_quantity,
+        total_poor_quantity: row?.good_quantity
         // unit: row[0].operation_sheet?.product?.unit,
       })
-      const newList = row.map((v)=> {return {...v, bom: divBomLotAmountByCavity(row[0].bom), bom_root_id: row[0].operation_sheet.product.bom_root_id, productId: row[0].product.product_id, modify: true, worker: row[0].worker_object, worker_object: null} })
-      setSearchList([...newList])
+      const newList = {
+        ...row,
+        bom_root_id: row.operation_sheet.product.bom_root_id,
+        productId: row.product.product_id,
+        modify: true,
+        worker: row.worker_object,
+        worker_object: null,
+        originalCavity: cavity,
+        cavity,
+      }
+      setSearchList([newList])
     }
   }, [isOpen])
 
-  function divBomLotAmountByCavity(bom:any[]) {
-    return bom.map(bom => ({...bom, lot: {... bom.lot, amount: new Big(bom.lot.amount).times(cavity).toNumber() }}))
+
+  const getBomKey = (bom:any) => {
+    switch(bom.type) {
+      case 0: return 'rm' + bom.childRmId
+      case 1: return 'sm' + bom.childSmId
+      case 2: return 'p' + bom.childProductId
+      default: return undefined
+    }
   }
 
   const SaveBasic = async () => {
     try{
-      searchList.map((row) => {
-        if(!row.lot_number){
-          throw("LOT번호를 입력해주시기 바랍니다.")
-        }else if(!row.worker?.user_id){
-          throw("작업자를 선택해주시기 바랍니다.")
-        }else if(!row.sum) {
-          throw("생산 수량을 입력해주시기 바랍니다.")
-        }})
-      const postBody = searchList.map((v, i) => {
-        let selectData: any = {}
+      const postBody = searchList.map((v) => {
+        if(!v.lot_number){
+          throw(alertMsg.noLotNumber)
+        }else if(!v.worker){
+          throw(alertMsg.noWorker)
+        }else if(!v.sum) {
+          throw(alertMsg.noProductAmount)
+        }
+        const inputDataChanged = v.bom_info
+        const moldChanged = v.cavity !== cavity
+        if(v.molds){
+            v.bom.map(bom => {
+              const bomKey = getBomKey(bom.bom)
+              if(inputDataChanged){
+                const finalAmount = new Big(bom.lot?.amount).div(v.cavity)
+                const finalUsage = finalAmount.times(bom.bom?.usage)
+                if(!Number.isInteger(finalAmount.toNumber())) throw(alertMsg.productAmountNotCavityDivisor)
+                if(finalUsage.gt(new Big(bom.lot.current).plus(bom.lot.actualCurrent))) throw (alertMsg.overStock)
+              } else{
+                const finalAmount = moldChanged ? new Big(bom.lot?.amount).times(cavity).div(v.cavity) : new Big(bom.lot?.amount)
+                const finalUsage = finalAmount.times(bom.bom?.usage)
+                if(!Number.isInteger(finalAmount.toNumber())) throw(alertMsg.productAmountNotCavityDivisor)
+                if(finalUsage.gt(new Big(bom.lot.current))) throw (alertMsg.overStock)
 
-        Object.keys(v).map(v => {
-          if (v.indexOf('PK') !== -1) {
-            selectData = {
-              ...selectData,
-              [v.split('PK')[0]]: v[v]
-            }
-          }
-
-          if (v === 'unitWeight') {
-            selectData = {
-              ...selectData,
-              unitWeight: Number(v['unitWeight'])
-            }
-          }
-
-          if (v === 'tmpId') {
-            selectData = {
-              ...selectData,
-              id: v['tmpId']
-            }
-          }
-        })
-
+                // const currentAmount = lotTotalAmountMap.get(bomKey) ?? 0
+                // const newAmount = moldChanged ? new Big(bom.lot.amount).times(cavity).div(v.cavity).toNumber() : Number(bom.lot.amount)
+                // lotTotalAmountMap.set(bomKey, currentAmount + newAmount)
+              }
+            })
+            // if(!inputDataChanged){
+            //   lotTotalAmountMap.forEach( (value, key) => {
+            //       if(new Big(v.sum).div(v.cavity).gt(value)) throw (alertMsg.overStock)
+            //   });
+            // }
+        }
         return {
           ...v,
-          ...selectData,
-          bom: v.molds ? v.bom.map(bom => ({...bom, lot: {...bom.lot, amount: new Big(Number(bom.lot.amount)).div(cavity).toString()}})) : v.bom,
-          operation_sheet: {
-            ...v.operation_sheet,
-            status: row.status_no
-          },
-          input_bom: [],
-          status: 0,
+          bom: v.molds ? v.bom.map(bom => {
+              const finalAmount = inputDataChanged ? new Big(Number(bom.lot.amount)).div(v.cavity).toNumber() : moldChanged ? new Big(bom.lot?.amount).times(cavity).div(v.cavity).toNumber() : new Big(bom.lot?.amount).toNumber()
+              return {...bom,
+                lot: {...bom.lot,
+                  amount: finalAmount
+              }}
+            }) : v.bom,
         }
       }).filter((v) => v)
-
       const res = await RequestMethod('post', `recordSave`,postBody)
-      if (res) {
+      if (res?.length > 0) {
         Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
-          onRowChange()
-          Notiflix.Loading.circle()
           setIsOpen(false)
+          row.reload()
+        });
+      } else {
+        Notiflix.Report.failure('이미 삭제된 작업일보 입니다.', '', '확인', () => {
+          setIsOpen(false)
+          row.reload()
         });
       }
     } catch (errMsg){
@@ -239,6 +248,18 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
                 headerList={searchModalList.workModify}
                 row={searchList ?? [{}]}
                 setRow={(e) => {
+                  const newRow =
+                    e.map(v => {
+                      const good_quantity = Number(v.quantity ??v.sum ?? 0)-Number(v.poor_quantity ?? 0)
+                      return {
+                        ...v,
+                        border:false,
+                        good_quantity,
+                        current: good_quantity,
+                        sum: Number(v.quantity ?? v.sum ?? 0),
+
+                      }
+                    })
                   setSearchList(e.map(v => {
                     const good_quantity = Number(v.quantity ??v.sum ?? 0)-Number(v.poor_quantity ?? 0)
                     return {
