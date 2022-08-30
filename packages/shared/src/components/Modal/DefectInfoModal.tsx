@@ -96,6 +96,9 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
       path: {
         page: pageInfo.page,
         renderItem: 22,
+      },
+      params: {
+        sorts: ['process']
       }
     })
 
