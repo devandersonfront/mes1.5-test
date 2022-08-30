@@ -109,7 +109,7 @@ const MesProductChangeList = ({}: IProps) => {
                 cm_id: v.product.model === null ? '-' : v.product.model.model,
                 code: v.product.code,
                 material_name: v.product.name === null ? '-' : v.product.name,
-                type: column[4].selectList[v.product.type].name,
+                type: column[column.findIndex((col) => col.key == "type")]?.selectList[v.product.type].name,
                 process_id: v.product.process === null ? '-' : v.product.process.name,
                 title: v.title,
                 register: moment(v.created).format('YYYY.MM.DD'),
