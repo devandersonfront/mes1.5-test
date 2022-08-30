@@ -460,6 +460,7 @@ const ApiList = {
   sheetBomLoad: `/api/v1/sheet`,
 
   anonymousLoad: `/anonymous/load`,
+  anonymousDownLoad: `/anonymous/download`,
 
   documentDownLoad: `/cnc/api/v1/document/download`,
   documentLogs: `/cnc/api/v1/document/logs`,
