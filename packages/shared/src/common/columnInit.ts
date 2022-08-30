@@ -67,6 +67,7 @@ import {ToolModal} from "../components/Modal/ToolModal";
 import { MultiSelectModal } from '../components/Modal/SearchModalTest/MultiSelectModal'
 import { HeaderSort } from '../components/HeaderSort/HeaderSort'
 import CommonProgressBar from '../../../main/component/InputBox/CommonProgressBar'
+import {ReturnButton} from "../components/Buttons/ReturnButton";
 
 
 export const columnlist: any = {
@@ -440,7 +441,8 @@ export const columnlist: any = {
     {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',width: 118},
     {key: 'customer_id', name: '거래처', width: 118},
     {key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118},
-    {key: 'exhaustion', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소'}
+    {key: 'exhaustion', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소'},
+    {key: 'return', name: '반납처리', formatter: ReturnButton, width: 118,}
   ],
 
   rawstockModify: [
@@ -463,6 +465,24 @@ export const columnlist: any = {
     //   ]},
   ],
 
+  rawstockReturn: [
+    {key: 'elapsed', name: '경과일', formatter: UseDateCell, width: 118},
+    {key: 'rm_id',name:'원자재 CODE', formatter: PlaceholderBox, placeholder: '원자재 CODE', width: 118},
+    {key: 'name', name:'원자재 품명', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
+    {key: 'texture', name:'재질', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
+    {key: 'depth', name:'두께', formatter: UnitContainer, unitData: 'T', placeholder: '0', width: 118},
+    {key: 'width', name:'가로(COIL 폭)', formatter: UnitContainer, unitData: 'mm', placeholder: '0', width: 118 },
+    {key: 'height', name:'세로(Feeder)', formatter: UnitContainer, unitData: 'mm', placeholder: '0', width: 118},
+    {key: 'type', name:'재질 종류',formatter: PlaceholderBox, placeholder:'자동 입력', width: 118 },
+    {key: 'warehousing',name: '입고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', width: 118},
+    {key: 'date', name: '입고일', width: 118, headerRenderer: HeaderSort, sortOption: "none",sorts: {} },
+    {key: 'lot_number', name: '원자재 LOT 번호', width: 118},
+    {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',width: 118},
+    {key: 'customer_id', name: '거래처', width: 118},
+    {key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118},
+    {key: 'return', name: '반납취소', formatter: CompleteButton, width: 118, beforeEventTitle:'반납 취소'}
+  ],
+
   subinV1u: [
     {key: 'wip_id',name:'부자재 CODE', formatter: SearchModalTest, type: 'subMaterial', frozen: true, placeholder: '부자재 CODE', noSelect:true},
     {key: 'name', name:'부자재 품명', frozen: true, formatter: PlaceholderBox, placeholder:'자동 입력'},
@@ -482,6 +502,7 @@ export const columnlist: any = {
     {key: 'date', name: '입고일', width: 118, headerRenderer: HeaderSort, sortOption: "none",sorts: {} },
     {key: 'lot_number', name: '부자재 LOT 번호', width: 118},
     {key: 'current', name: 'LOT 재고량', width: 118},
+    {key: 'return', name: '반납처리', formatter: ReturnButton, width: 118,}
   ],
 
   substockModify: [
@@ -492,6 +513,18 @@ export const columnlist: any = {
     {key: 'warehousing',name: '입고량', editor: TextEditor, width: 118},
     {key: 'date', name: '입고일', formatter: CalendarBox, width: 118},
     {key: 'lot_number', name: '부자재 LOT 번호', editor: TextEditor, width: 118},
+  ],
+
+  substockReturn: [
+    {key: 'wip_id',name:'부자재 CODE', formatter: PlaceholderBox, placeholder: '부자재 CODE', width: 118},
+    {key: 'name', name:'부자재 품명', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
+    {key: 'unit', name:'단위', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
+    {key: 'customer_id', name:'거래처', width: 118},
+    {key: 'warehousing',name: '입고량', searchType: 'rawin', width: 118},
+    {key: 'date', name: '입고일', width: 118, headerRenderer: HeaderSort, sortOption: "none",sorts: {} },
+    {key: 'lot_number', name: '부자재 LOT 번호', width: 118},
+    {key: 'current', name: 'LOT 재고량', width: 118},
+    {key: 'return', name: '반납취소', formatter: CompleteButton, width: 118, beforeEventTitle:'반납 취소'}
   ],
 
   baseItem: [
