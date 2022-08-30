@@ -89,9 +89,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   }, [isOpen])
 
   const changeRow = (tmpRow: any, key?: string) => {
-    let tmpData = []
-    let tmpRows = tmpRow;
-    tmpData = tmpRows?.map((v, i) => {
+    const newRows = tmpRow?.map((v, i) => {
       let childData: any = {}
       let childDataType: TransferType = null
       let product = null
@@ -124,7 +122,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       }
       const bomLots = getBomLots(bomId, childDataType)
       const stock = getTotalStock(bomLots)
-
+      const sumOfUsage = bomLots?.length > 0 ? lodash.sum(bomLots.map(bom => new Big(bom.lot.amount).times(bom.bom.usage).toNumber())) : new Big(row.good_quantity).div(cavity)
 
       return {
         ...childData,
@@ -141,7 +139,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         setting: v.bom.setting,
         stock,
         bom_lot_list: tmpRow,
-        disturbance: row.good_quantity,
+        disturbance: sumOfUsage,
         processArray: childData.process ?? null,
         process: childData.process ? childData.process.name : '-',
         bom: bomLots,
@@ -151,18 +149,11 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    setSearchList([...tmpData])
+    setSearchList(newRows)
   }
 
   function getTotalStock(lots){
-    let stock = 0
-    if(lots === null) {}
-    else if(lots.length > 1){
-      stock = lodash.sum(lots.map((lot) => new Big(lot.lot.current).minus(new Big(lot.lot.amount).div(cavity).times(lot.bom.usage)).toNumber()))
-    }else {
-      stock = new Big(lots[0]?.lot.current).minus(new Big(lots[0]?.lot.amount).div(cavity).times(lots[0]?.bom.usage)).toNumber()
-    }
-    return stock
+    return lots.length > 0 ? lodash.sum(lots.map((lot) => new Big(lot.lot.current).minus(new Big(lot.lot.amount).times(lot.bom.usage)).toNumber())) : 0
   }
 
   function getBomLots(id:number, type: TransferType) {
@@ -306,8 +297,9 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                         if(v.lotList){
                           const newLots = v.lotList.map(lot => ({
                             ...lot,
+                            amount: new Big(lot.amount).times(cavity),
                             unit: v.unit,
-                            current: new Big(lot.current).minus(new Big(lot.amount).div(cavity).times(v.usage)).toNumber()
+                            current: new Big(lot.current).minus(new Big(lot.amount).times(v.usage)).toNumber()
                           }))
                           setSelectType(v.type_name)
                           setLotList(newLots)

@@ -221,7 +221,6 @@ export const SearchResultSort = (infoList, type: string) => {
 }
 
 export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean, usedInModal?: boolean) => {
-  if(usedInModal === false) selectData.border = false;
   switch(type) {
     case 'user': {
       return {
@@ -233,6 +232,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         managerPk: selectData.user_id,
         user: selectData,
         worker: selectData,
+        border: usedInModal
         // name: selectData.name
       }
     }
@@ -248,7 +248,8 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         modelArray: {
           ...selectData,
           customer: selectData.customerArray
-        }
+        },
+        border: usedInModal
       }
     }
     case 'product': {
@@ -283,13 +284,15 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         lead_time : selectData.lead_time,
         uph : selectData.uph,
         identification : selectData.identification,
+        border: usedInModal
       }
     }
     case "process": {
       return {
         process:selectData,
         process_id: selectData.name,
-        version: selectData.version
+        version: selectData.version,
+        border: usedInModal
       }
     }
     case 'rawMaterial': {
@@ -322,6 +325,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
           customer: selectData.customerArray
         },
         usage: selectData.usage,
+        border: usedInModal
       }
     }
     case 'subMaterial': {
@@ -336,6 +340,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
           customer: selectData.customerArray
         },
         usage: selectData.usage,
+        border: usedInModal
       }
     }
     case 'factory': {
@@ -349,6 +354,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         factory_id: selectData.name,
         subFactory:null,
         subFactories:null,
+        border: usedInModal
       }
     }
     case 'customer': {
@@ -357,6 +363,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         customer:selectData.customerArray,
         customerArray:selectData.customerArray,
         crn:selectData.crn,
+        border: usedInModal
       }
     }
     case 'receiveContract':
@@ -381,17 +388,22 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         product: {
           ...selectData.product
         },
+        border: usedInModal
       }
     }
     case 'toolRegister': {
       return {
         ...selectData,
         code: selectData.tool_id,
-        tool_id: selectData.code
+        tool_id: selectData.code,
+        border: usedInModal
       }
     }
     default : {
-      return selectData
+      return {
+        ...selectData,
+        border: usedInModal
+      }
     }
   }
 }
