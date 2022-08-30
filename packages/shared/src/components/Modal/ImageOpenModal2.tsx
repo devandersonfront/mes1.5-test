@@ -269,7 +269,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
     }
 
     // https://stackoverflow.com/questions/11876175/how-to-get-a-file-or-blob-from-an-object-url
-    // const f#196orceDownload = async () => {
+    // const forceDownload = async () => {
     //     console.log("uuid : ", uuid);
     //     // let blob = await fetch(url).then(r => r.blob());
     //     const config = {
@@ -289,7 +289,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
     //             }
     //         })
 
- }
+    // }
 
 
     return (
@@ -327,6 +327,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                             <img
                                 onClick={imageButtonClickHandler}
                                 name="reduction"
+                                
                                 src={Minus}
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />

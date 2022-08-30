@@ -252,30 +252,6 @@ export const columnlist: any = {
   ],
 
   productV1u: [
-<<<<<<< HEAD
-    { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-' },
-    { key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-' },
-    { key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', overlay: true, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력' },
-    {
-      key: 'type', name: '품목 종류', formatter: DropDownEditor, selectList: [
-        { pk: '0', name: '반제품' },
-        { pk: '1', name: '재공품' },
-        { pk: '2', name: '완제품' },
-      ]
-    },
-    {
-      key: 'unit', name: '단위', formatter: DropDownEditor, selectList: [
-        { pk: 'EA', name: 'EA' },
-        { pk: 'g', name: 'g' },
-        { pk: 'kg', name: 'kg' },
-        { pk: 'Ton', name: 'Ton' },
-        { pk: 'ml', name: 'ml' },
-        { pk: 'L', name: 'L' },
-      ], headerRenderer: HeaderSort, sortOption: "none", sorts: {}
-    },
-    { key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type: "bomRegister" },
-=======
     {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-'},
     {key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-'},
     {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', overlay:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
@@ -298,7 +274,6 @@ export const columnlist: any = {
         {pk: 'L', name: 'L'},
       ], headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister"},
->>>>>>> origin/dev
     // {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"product"},
     { key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type: "process", placeholder: "-", noSelect: true, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
     { key: 'mold_id', name: '금형', formatter: MoldInfoModal },
@@ -484,23 +459,6 @@ export const columnlist: any = {
   ],
 
   rawstockV1u: [
-<<<<<<< HEAD
-    { key: 'elapsed', name: '경과일', formatter: UseDateCell, width: 118 },
-    { key: 'rm_id', name: '원자재 CODE', formatter: PlaceholderBox, placeholder: '원자재 CODE', width: 118 },
-    { key: 'name', name: '원자재 품명', formatter: PlaceholderBox, placeholder: '자동 입력', width: 118 },
-    { key: 'texture', name: '재질', formatter: PlaceholderBox, placeholder: '자동 입력', width: 118 },
-    { key: 'depth', name: '두께', formatter: UnitContainer, unitData: 'T', placeholder: '0', width: 118 },
-    { key: 'width', name: '가로(COIL 폭)', formatter: UnitContainer, unitData: 'mm', placeholder: '0', width: 118 },
-    { key: 'height', name: '세로(Feeder)', formatter: UnitContainer, unitData: 'mm', placeholder: '0', width: 118 },
-    { key: 'type', name: '재질 종류', formatter: PlaceholderBox, placeholder: '자동 입력', width: 118 },
-    { key: 'warehousing', name: '입고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', width: 118 },
-    { key: 'date', name: '입고일', width: 118, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'lot_number', name: '원자재 LOT 번호', width: 118 },
-    { key: 'current', name: 'LOT 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', width: 118 },
-    { key: 'customer_id', name: '거래처', width: 118 },
-    { key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118 },
-    { key: 'exhaustion', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle: '사용 완료', afterEventTitle: '사용 완료 취소' }
-=======
     {key: 'elapsed', name: '경과일', formatter: UseDateCell, width: 118},
     {key: 'rm_id',name:'원자재 CODE', formatter: PlaceholderBox, placeholder: '원자재 CODE', width: 118},
     {key: 'name', name:'원자재 품명', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
@@ -517,7 +475,6 @@ export const columnlist: any = {
     {key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118},
     {key: 'exhaustion', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소'},
     {key: 'return', name: '반납처리', formatter: ReturnButton, width: 118,}
->>>>>>> origin/dev
   ],
 
   rawstockModify: [
@@ -569,16 +526,6 @@ export const columnlist: any = {
   ],
 
   substockV1u: [
-<<<<<<< HEAD
-    { key: 'wip_id', name: '부자재 CODE', formatter: PlaceholderBox, placeholder: '부자재 CODE', width: 118 },
-    { key: 'name', name: '부자재 품명', formatter: PlaceholderBox, placeholder: '자동 입력', width: 118 },
-    { key: 'unit', name: '단위', formatter: PlaceholderBox, placeholder: '자동 입력', width: 118 },
-    { key: 'customer_id', name: '거래처', width: 118 },
-    { key: 'warehousing', name: '입고량', searchType: 'rawin', width: 118 },
-    { key: 'date', name: '입고일', width: 118, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'lot_number', name: '부자재 LOT 번호', width: 118 },
-    { key: 'current', name: 'LOT 재고량', width: 118 },
-=======
     {key: 'wip_id',name:'부자재 CODE', formatter: PlaceholderBox, placeholder: '부자재 CODE', width: 118},
     {key: 'name', name:'부자재 품명', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
     {key: 'unit', name:'단위', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
@@ -588,7 +535,6 @@ export const columnlist: any = {
     {key: 'lot_number', name: '부자재 LOT 번호', width: 118},
     {key: 'current', name: 'LOT 재고량', width: 118},
     {key: 'return', name: '반납처리', formatter: ReturnButton, width: 118,}
->>>>>>> origin/dev
   ],
 
   substockModify: [
@@ -1508,53 +1454,6 @@ export const columnlist: any = {
     { key: "product_id", name: '생산 품목', formatter: ToolModal, type: "tool", headerType: [{ code: "공구 CODE", name: "공구명" }, { customer: "거래처" }] },
   ],
   toolList: [
-<<<<<<< HEAD
-    { key: "code", name: '공구 CODE', formatter: PlaceholderBox, placeholder: 'CODE 입력' },
-    { key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '품명 입력' },
-    { key: "unit", name: '단위', },
-    { key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '거래처 입력', type: "customer" },
-    { key: "stock", name: '공구 재고량', formatter: UnitContainer, unitData: "EA", },
-    { key: "product_id", name: '생산 품목', formatter: ToolModal, type: "tool", headerType: [{ code: "공구 CODE", name: "공구명" }, { customer: "거래처" }] },
-  ],
-  toolWarehousingRegister: [
-    { key: "tool_id", name: '공구 CODE', formatter: SearchModalTest, type: "tool", placeholder: 'CODE 입력', toolType: 'register', noSelect: true },
-    { key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '자동 입력' },
-    { key: "unit", name: '단위', formatter: PlaceholderBox, placeholder: '자동 입력' },
-    { key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력' },
-    { key: "amount", name: '입고량', editor: TextEditor, formatter: PlaceholderBox, placeholder: '입고량 압력' },
-    { key: "date", name: '입고일', formatter: CalendarBox, maxDate: true },
-  ],
-  toolWarehousingList: [
-    // {key: 'elapsed', name: '경과일', formatter: UseDateCell, width: 118},
-    { key: "tool_id", name: '공구 CODE', formatter: PlaceholderBox, placeholder: 'CODE 입력' },
-    { key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '품명 입력' },
-    { key: "unit", name: '단위', formatter: PlaceholderBox, },
-    { key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '거래처 입력', type: "customer" },
-    { key: "warehousing", name: '입고량', formatter: PlaceholderBox, placeholder: '입고량 압력' },
-    { key: "date", name: '입고일', },
-  ],
-  toolWarehousingUpdate: [
-    { key: "code", name: '공구 CODE', },
-    { key: "name", name: '공구 품명', },
-    { key: "unit", name: '단위', },
-    { key: "customer", name: '거래처', },
-    { key: "warehousing", name: '입고량', editor: TextEditor, formatter: PlaceholderBox, placeholder: '입고량 입력' },
-    { key: "date", name: '입고일', formatter: CalendarBox, maxDate: true },
-  ],
-  documentManage: ({ move }) => [
-    { key: "name", name: "이름", width: 1056, formatter: UnderLineContainer, callback: move },
-    { key: "type", name: "종류", width: 247 },
-    { key: "date", name: "날짜", width: 224 },
-  ],
-  documentLog: [
-    { key: "content", name: "변경 사항", width: 1056 },
-    { key: "type", name: "종류", width: 247 },
-    { key: "date", name: "날짜", width: 224 },
-  ],
-  productionLog: [
-    { key: 'order', frozen: true, name: '순서', type: 'machineInfo', formatter: PlaceholderBox, summaryType: 'product_no_cavity', width: 48, },
-    { key: 'machine_name', frozen: true, name: '기계 이름', type: 'machineInfo', formatter: PlaceholderBox, summaryType: 'product_no_cavity', width: 120, placeholder: '-' },
-=======
     {key: "code", name: '공구 CODE',  formatter: PlaceholderBox, placeholder: 'CODE 입력'},
     {key: "name", name: '공구 품명',  formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: "unit", name: '단위', },
@@ -1600,7 +1499,6 @@ export const columnlist: any = {
   productionLog : [
     {key: 'order',frozen:true, name: '순서',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 48,},
     {key: 'machine_name',frozen:true, name: '기계 이름',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120, placeholder : '-'},
->>>>>>> origin/dev
     // {key: 'machine_type',frozen:true, name: '기계 종류',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,},
     { key: 'identification', frozen: true, name: '지시 고유 번호', type: 'machineInfo', formatter: PlaceholderBox, summaryType: 'product_no_cavity', width: 120, placeholder: '-' },
     { key: 'deadline', frozen: true, name: '작업 기한', formatter: PlaceholderBox, width: 120 },
