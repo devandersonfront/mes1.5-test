@@ -247,10 +247,10 @@ export const columnlist: any = {
         {pk: '1', name: '재공품'},
         {pk: '2', name: '완제품'},
       ]},
-    {key: 'product_type', name: '외주 여부',  formatter: DropDownEditor, selectList: [
-        {pk: '3', name: '생산품'},
-        {pk: '4', name: '외주품'},
-      ]},
+    // {key: 'product_type', name: '외주 여부',  formatter: DropDownEditor, selectList: [
+    //     {pk: '3', name: '생산품'},
+    //     {pk: '4', name: '외주품'},
+    //   ]},
     {key: 'unit', name: '단위', formatter: DropDownEditor, selectList: [
         {pk: 'EA', name: 'EA'},
         {pk: 'g', name: 'g'},
@@ -442,7 +442,7 @@ export const columnlist: any = {
     {key: 'customer_id', name: '거래처', width: 118},
     {key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118},
     {key: 'exhaustion', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소'},
-    {key: 'return', name: '반납처리', formatter: ReturnButton, width: 118,}
+    // {key: 'return', name: '반납처리', formatter: ReturnButton, width: 118,}
   ],
 
   rawstockModify: [
@@ -480,7 +480,7 @@ export const columnlist: any = {
     {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',width: 118},
     {key: 'customer_id', name: '거래처', width: 118},
     {key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118},
-    {key: 'return', name: '반납취소', formatter: CompleteButton, width: 118, beforeEventTitle:'반납 취소'}
+    // {key: 'return', name: '반납취소', formatter: CompleteButton, width: 118, beforeEventTitle:'반납 취소'}
   ],
 
   subinV1u: [
@@ -502,7 +502,7 @@ export const columnlist: any = {
     {key: 'date', name: '입고일', width: 118, headerRenderer: HeaderSort, sortOption: "none",sorts: {} },
     {key: 'lot_number', name: '부자재 LOT 번호', width: 118},
     {key: 'current', name: 'LOT 재고량', width: 118},
-    {key: 'return', name: '반납처리', formatter: ReturnButton, width: 118,}
+    // {key: 'return', name: '반납처리', formatter: ReturnButton, width: 118,}
   ],
 
   substockModify: [
@@ -524,7 +524,7 @@ export const columnlist: any = {
     {key: 'date', name: '입고일', width: 118, headerRenderer: HeaderSort, sortOption: "none",sorts: {} },
     {key: 'lot_number', name: '부자재 LOT 번호', width: 118},
     {key: 'current', name: 'LOT 재고량', width: 118},
-    {key: 'return', name: '반납취소', formatter: CompleteButton, width: 118, beforeEventTitle:'반납 취소'}
+    // {key: 'return', name: '반납취소', formatter: CompleteButton, width: 118, beforeEventTitle:'반납 취소'}
   ],
 
   baseItem: [
@@ -1398,7 +1398,7 @@ export const columnlist: any = {
     {key: "code", name: '공구 CODE',  formatter: PlaceholderBox, placeholder: 'CODE 입력'},
     {key: "name", name: '공구 품명',  formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: "unit", name: '단위', },
-    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '거래처 입력', type:"customer"},
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '-', type:"customer"},
     {key: "stock", name: '공구 재고량', formatter: UnitContainer, unitData:"EA", },
     {key: "product_id", name: '생산 품목', formatter: ToolModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ]},
   ],
@@ -1415,15 +1415,15 @@ export const columnlist: any = {
     {key: "tool_id", name: '공구 CODE',  formatter: PlaceholderBox, placeholder: 'CODE 입력'},
     {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox,},
-    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '거래처 입력', type:"customer"},
+    {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '-', type:"customer"},
     {key: "warehousing", name: '입고량', formatter: PlaceholderBox, placeholder: '입고량 압력'},
     {key: "date", name: '입고일', },
   ],
   toolWarehousingUpdate:[
     {key: "code", name: '공구 CODE', },
-    {key: "name", name: '공구 품명', },
+    {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '-' },
     {key: "unit", name: '단위', },
-    {key: "customer", name: '거래처', },
+    {key: "customer", name: '거래처', formatter: PlaceholderBox, placeholder: '-' },
     {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 입력'},
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],

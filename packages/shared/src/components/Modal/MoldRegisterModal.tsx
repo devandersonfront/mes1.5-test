@@ -141,39 +141,39 @@ const MoldRegisterModal = ({column, row, onRowChange, register}: IProps) => {
               <TableBackground>
                 <TableItems style={{width: 160}}><p>캐비티</p></TableItems>
                 <TableItems style={{width: 1152}}>
-                  <RegisterInput value={requestData['cavity']} onChange={changeRequestData('cavity')} placeholder={'0'} unit={'EA'}/>
+                  <RegisterInput value={requestData['cavity']} onChange={changeRequestData('cavity')} placeholder={'0'} unit={'EA'} inputType={'number'}/>
                 </TableItems>
               </TableBackground>
               <TableBackground>
                 <TableItems style={{width: 160}}><p>SPM</p></TableItems>
                 <TableItems style={{width: 1152}}>
-                  <RegisterInput value={requestData['spm']} onChange={changeRequestData('spm')} placeholder={'0'}/>
+                  <RegisterInput value={requestData['spm']} onChange={changeRequestData('spm')} placeholder={'0'} inputType={'number'}/>
                 </TableItems>
               </TableBackground>
               <TableBackground>
                 <TableItems style={{width: 160}}><p>슬라이드 위치</p></TableItems>
                 <TableItems style={{width: 1152}}>
-                  <RegisterInput value={requestData['slideHeight']} onChange={changeRequestData('slideHeight')} placeholder={'0'}/>
+                  <RegisterInput value={requestData['slideHeight']} onChange={changeRequestData('slideHeight')} placeholder={'0'} inputType={'number'}/>
                 </TableItems>
               </TableBackground>
               <TableBackground>
                 <TableItems style={{width: 160}}><p>최대 타수</p></TableItems>
                 <TableItems style={{width: 1152}}>
-                  <RegisterInput value={requestData['limit']} onChange={changeRequestData('limit')} placeholder={'타수 입력'}/>
+                  <RegisterInput value={requestData['limit']} onChange={changeRequestData('limit')} placeholder={'타수 입력'} inputType={'number'}/>
                 </TableItems>
               </TableBackground>
               <TableBackground>
                 <TableItems style={{width: 160}}><p>점검 타수</p></TableItems>
                 <TableItems style={{width: 1152}}>
-                  <RegisterInput value={requestData['inspect']} onChange={changeRequestData('inspect')} placeholder={'타수 입력'}/>
+                  <RegisterInput value={requestData['inspect']} onChange={changeRequestData('inspect')} placeholder={'타수 입력'} inputType={'number'}/>
                 </TableItems>
               </TableBackground>
-              <TableBackground>
-                <TableItems style={{width: 160}}><p>현재 타수</p></TableItems>
-                <TableItems style={{width: 1152}}>
-                  <RegisterInput value={requestData['current']} onChange={changeRequestData('current')} placeholder={'타수 입력'}/>
-                </TableItems>
-              </TableBackground>
+              {/*<TableBackground>*/}
+              {/*  <TableItems style={{width: 160}}><p>현재 타수</p></TableItems>*/}
+              {/*  <TableItems style={{width: 1152}}>*/}
+              {/*    <RegisterInput value={requestData['current']} onChange={changeRequestData('current')} placeholder={'타수 입력'}/>*/}
+              {/*  </TableItems>*/}
+              {/*</TableBackground>*/}
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-end'}}>

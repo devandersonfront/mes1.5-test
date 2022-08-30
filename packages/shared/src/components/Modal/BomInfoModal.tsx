@@ -570,6 +570,17 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
                   setRow={(e) => {
                     competeBom([...e])
                   }}
+                  onRowClick={(clicked) => {
+                    const rowIdx = searchList.indexOf(clicked)
+                    if(!searchList[rowIdx]?.border){
+                      const newSearchList = searchList.map((v,i)=> ({
+                        ...v,
+                        border : i === rowIdx
+                      }))
+                      setSearchList(newSearchList)
+                      setSelectRow(rowIdx)
+                    }
+                  }}
                   width={1746}
                   rowHeight={32}
                   height={552}

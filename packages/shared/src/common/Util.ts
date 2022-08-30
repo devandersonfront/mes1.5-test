@@ -41,7 +41,7 @@ export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) 
       typeName: 'rawMaterial',
       bomKey: `rm${bom.childRmId}`,
       id: bom.childRmId,
-      detail: {...bom.child_rm, unit: getRawMaterialUnit(bom.child_rm.type)},
+      detail: {...bom.child_rm, unit: bom.child_rm?.unit === 0 ? 'kg' : '장' ?? getRawMaterialUnit(bom.child_rm.type)},
       }
     case 1: return {
       ...bom,
@@ -79,4 +79,12 @@ export const getTableSortingOptions = (key, order, sortingOptions:TableSortingOp
       sortingOptions.orders.push(order)
     }
     return {...sortingOptions}
+}
+
+export const decideKoreanSuffix = (word: string, existCoda: string, notExistCoda: string): String => {
+  const charCode = word.charCodeAt(word.length - 1);
+  const consonantCode = (charCode - 44032) % 28;
+  const markingParticle = consonantCode === 0 ? notExistCoda : existCoda
+
+  return word+markingParticle
 }

@@ -17,6 +17,8 @@ import {UploadButton} from '../../styles/styledComponents'
 //@ts-ignore
 import moment from 'moment'
 import {transferStringToCode} from "../../common/codeTransferFunctions";
+import Big from 'big.js'
+import { alertMsg } from '../../common/AlertMsg'
 
 
 interface IProps {
@@ -49,27 +51,23 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 ]
 
 const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
-
-  const [bomDummy, setBomDummy] = useState<any[]>([
-    {sequence: '1', code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
-  ])
-
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{sequence: 1}])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [focusIndex, setFocusIndex] = useState<number>(0)
 
   useEffect(() => {
     if(isOpen) {
       setSearchList([{
         modify: true,
         osId: row.os_id,
-        sequence: 1, good_quantity: 0, processId: row.product?.process?.process_id, input_bom: row.input_bom, product: row.product, goal: row.goal,
-        // start: moment().format('YYYY-MM-DD HH:mm:00'),
-        // end: moment().format('YYYY-MM-DD HH:mm:00'),
-        start: row.date,
-        end: row.deadline,
+        sequence: 1,
+        good_quantity: 0,
+        poor_quantity: 0,
+        processId: row.product?.process?.process_id,
+        input_bom: row.input_bom,
+        product: row.product,
+        goal: row.goal,
+        start: row.date + " 00:00:00",
+        end: row.date + " 00:00:00",
         standardStartDate : row.date,
         standardEndDate : moment('2999-12-31').subtract(1, 'days').toDate(),
         ...row,
@@ -77,119 +75,59 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         defect_reasons: [],
       }])
     }
-  }, [isOpen, searchKeyword])
-
-  const addNewTab = (index: number) => {
-    let tmp = bomDummy
-    tmp.push({code: 'SU-20210701-'+ index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
-    setBomDummy([...tmp])
-  }
-
-  const deleteTab = (index: number) => {
-    if(bomDummy.length - 1 === focusIndex){
-      setFocusIndex(focusIndex-1)
-    }
-    if(bomDummy.length === 1) {
-      return setIsOpen(false)
-    }
-
-    let tmp = bomDummy
-    tmp.splice(index, 1)
-    setBomDummy([...tmp])
-  }
+  }, [isOpen])
 
   const SaveBasic = async () => {
-    let checkPoint = true;
-    searchList.map((row) => {
-      let a = '00:00:00'
-      let seconds
-      if(row.pause_time !== undefined ){
-        a = row.pause_time.split(':')
-      }
-      seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2])
-
-      if(!row.lot_number){
-        Notiflix.Report.warning("경고","LOT번호를 입력해주시기 바랍니다.","확인",)
-        return checkPoint = false;
-      }else if(!row.manager){
-        Notiflix.Report.warning("경고","작업자를 선택해주시기 바랍니다.","확인",)
-        return checkPoint = false;
-      }else if(!row.good_quantity){
-        Notiflix.Report.warning("경고","양품 수량을 입력해주시기 바랍니다.","확인",)
-        return checkPoint = false;
-      } else if( (moment(row.end).toDate().getTime() - moment(row.start).toDate().getTime()) / 1000 < seconds ){
-        Notiflix.Report.warning("경고","작업 시간보다 일시 정지 시간이 더 클 수 없습니다.","확인",)
-        return checkPoint = false;
-      }
-    })
-
-    if(checkPoint){
-      let res = await RequestMethod('post', `recordSave`,
-          searchList.map((v, i) => {
-            let selectData: any = {}
-
-            Object.keys(v).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: v[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(v['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: v['tmpId']
-                }
-              }
-            })
-
-            return {
-              ...v,
-              ...selectData,
-              operation_sheet: {
-                ...row,
-                status: typeof row.status_no === "string" ? transferStringToCode('workStatus', row.status_no) : row.status_no
-              },
-              tools: v?.tools?.map((tool) => {
-                return{
-                  ...tool,
-                  tool:{
-                    ...tool.tool,
-                    setting: 0,
-                    used: Number(tool.tool.tool.used),
-                    tool: {
-                      ...tool.tool.tool,
-                      customer: tool.tool.tool.customerArray
-                    }
-                  }}
-              }).filter(v=>v.tool.tool.code),
-              machines: v?.machines ? v?.machines.filter((machine) => machine.machine.setting == 1) : [],
-              // input_bom: [],
-              status: 0,
-              version: undefined
-            }
-          }).filter((v) => v))
-
-
-      if(res){
-        setTimeout(() => {
-          onRowChange({
-            ...row,
-            update: true
+    try{
+      const postBody = searchList.map((v) => {
+        if(!v.lot_number){
+          throw(alertMsg.noLotNumber)
+        }else if(!v.manager){
+          throw(alertMsg.noWorker)
+        }else if(!v.sum) {
+          throw(alertMsg.noProductAmount)
+        }
+        if(v.molds) {
+          v.bom.map(bom => {
+            const finalAmount = new Big(bom.lot?.amount).div(v.cavity)
+            const finalUsage = finalAmount.times(bom.bom?.usage)
+            if(!Number.isInteger(finalAmount.toNumber())) throw(alertMsg.productAmountNotCavityDivisor)
+            if(finalUsage.gt(bom.lot?.current)) throw (alertMsg.overStock)
+            // const currentAmount = lotTotalAmountMap.get(bom.osb_id) ?? 0
+            //   lotTotalAmountMap.set(bom.osb_id, currentAmount + Number(bom.lot.amount))
           })
-          Notiflix.Report.success('저장되었습니다.','','확인');
-        }, 1000)
-      }
-    }
+        }
 
+        return {
+          ...v,
+          bom: v.molds?.length > 0 ? v.bom.map(bom => ({...bom, lot: {...bom.lot, amount: new Big(Number(bom.lot.amount)).div(v.cavity).toString()}})) : v.bom,
+          operation_sheet: {
+            ...row,
+            status: typeof row.status_no === "string" ? transferStringToCode('workStatus', row.status_no) : row.status_no
+          },
+          tools: v?.tools?.map((tool) => {
+            return{
+              ...tool,
+              tool:{
+                ...tool.tool,
+                setting: 0,
+                used: Number(tool.tool.tool.used),
+                tool: {
+                  ...tool.tool.tool,
+                  customer: tool.tool.tool.customerArray
+                }
+              }}
+          }).filter(v=>v.tool.tool.code),
+          machines: v?.machines ? v?.machines.filter((machine) => machine.machine.setting == 1) : [],
+          version: undefined
+        }
+      }).filter((v) => v)
+      let res = await RequestMethod('post', `recordSave`, postBody)
+      if(res) Notiflix.Report.success('저장되었습니다.','','확인', () => row.reload());
+    } catch (errMsg){
+      console.log(errMsg)
+      Notiflix.Report.warning('경고', errMsg, '확인')
+    }
   }
 
   const ModalContents = () => {
@@ -303,32 +241,18 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 headerList={searchModalList.workRegister}
                 row={searchList ?? [{}]}
                 setRow={(e) => {
-                  let tmp = e.map((v, index) => {
-                    if(v.newTab === true){
-                      const newTabIndex = bomDummy.length+1
-                      addNewTab(newTabIndex)
-                      setFocusIndex(newTabIndex-1)
-                    }
-
+                  setSearchList(e.map(v => {
                     return {
                       ...v,
-                      newTab: false
-                    }
-                  })
-                  setSearchList([...tmp.map(v => {
-                    return {
-                      ...v,
+                      border:false,
                       good_quantity: Number(v.quantity ?? 0)-Number(v.poor_quantity ?? 0),
                       sum: Number(v.quantity ?? 0)
                     }
-                  })])
+                  }))
                 }}
                 width={1746}
                 rowHeight={32}
-                height={552}
-                onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                  setSelectRow(e)
-                }}
+                height={557}
                 type={'searchModal'}
                 headerAlign={'center'}
             />

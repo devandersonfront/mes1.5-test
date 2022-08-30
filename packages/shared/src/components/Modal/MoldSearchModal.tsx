@@ -123,7 +123,7 @@ const MoldSearchModal = ({column, row, onRowChange}: IProps) => {
       }}>
         {
           column.type === 'Modal'
-            ? <LineBorderContainer row={row} column={column} setRow={() => {}}/>
+            ? <LineBorderContainer row={row} column={column} onRowChange={() => {}}/>
             : row[`${column.key}`]
         }
       </div>
