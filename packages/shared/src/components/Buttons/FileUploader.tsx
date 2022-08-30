@@ -1,7 +1,5 @@
 import React, {useRef, useState} from "react";
 import styled from "styled-components";
-import {RequestMethod} from "../../common/RequestFunctions";
-import Notiflix from "notiflix";
 import {uploadTempFile} from "../../common/fileFuctuons";
 
 interface Props {
@@ -26,9 +24,8 @@ const FileUploader = ({type, accept, onChange, value}:Props) => {
                             onChange={async(e) => {
                                 const fileType = e.target.files[0].name.split(".").length -1;
                                 setFileName(e.target.files[0].name)
-                                const result = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true, e.target.files[0].type);
+                                const result = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true, e.target.files[0].name, e.target.files[0].type);
                                 onChange({...result, name:e.target.files[0].name, type:e.target.files[0].name.split(".")[fileType]})
-
                             }}
                             accept={accept}
                             ref={ref}

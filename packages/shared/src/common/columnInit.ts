@@ -251,6 +251,7 @@ export const columnlist: any = {
   ],
 
   productV1u: [
+<<<<<<< HEAD
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-' },
     { key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-' },
     { key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', overlay: true, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
@@ -273,6 +274,30 @@ export const columnlist: any = {
       ], headerRenderer: HeaderSort, sortOption: "none", sorts: {}
     },
     { key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type: "bomRegister" },
+=======
+    {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-'},
+    {key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-'},
+    {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', overlay:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
+    {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
+    {key: 'type', name: '품목 종류',  formatter: DropDownEditor, selectList: [
+        {pk: '0', name: '반제품'},
+        {pk: '1', name: '재공품'},
+        {pk: '2', name: '완제품'},
+      ]},
+    {key: 'product_type', name: '외주 여부',  formatter: DropDownEditor, selectList: [
+        {pk: '3', name: '생산품'},
+        {pk: '4', name: '외주품'},
+      ]},
+    {key: 'unit', name: '단위', formatter: DropDownEditor, selectList: [
+        {pk: 'EA', name: 'EA'},
+        {pk: 'g', name: 'g'},
+        {pk: 'kg', name: 'kg'},
+        {pk: 'Ton', name: 'Ton'},
+        {pk: 'ml', name: 'ml'},
+        {pk: 'L', name: 'L'},
+      ], headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
+    {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister"},
+>>>>>>> origin/dev
     // {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"product"},
     { key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type: "process", placeholder: "-", noSelect: true, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
     { key: 'mold_id', name: '금형', formatter: MoldInfoModal },
