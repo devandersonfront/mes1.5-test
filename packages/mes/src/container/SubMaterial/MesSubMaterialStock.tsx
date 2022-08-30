@@ -165,6 +165,11 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
             }
           });
 
+        menuData = {
+          id: "sub_return_1",
+          name: column.name,
+
+        }
         if (menuData) {
           return {
             ...column,
@@ -241,12 +246,79 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         customer_id: row.sub_material?.customer?.name ?? "-",
         ...appendAdditional,
         id: `subin_${random_id}`,
+        onClickReturnEvent: (row) => Notiflix.Confirm.show(`Test?`, '반납처리하겠습니까?', '예','아니오', () => ReturnSaveBasic(row, 2), ()=>{}, {width: '400px'})
       };
     });
     setSelectList(new Set());
     setBasicRow([...tmpBasicRow]);
   };
 
+  const ReturnSaveBasic = async(row:any, status:number) => {
+    console.log(row )
+    await RequestMethod('post', `lotSmSave`,
+        // basicRow.map((row, i) => {
+        //   if(selectList.has(row.id)){
+        //     let selectKey: string[] = []
+        //     let additional:any[] = []
+        //     column.map((v) => {
+        //       if(v.selectList){
+        //         selectKey.push(v.key)
+        //       }
+        //
+        //       if(v.type === 'additional'){
+        //         additional.push(v)
+        //       }
+        //     })
+        //
+        //     let selectData: any = {}
+        //
+        //     Object.keys(row).map(v => {
+        //       if(v.indexOf('PK') !== -1) {
+        //         selectData = {
+        //           ...selectData,
+        //           [v.split('PK')[0]]: row[v]
+        //         }
+        //       }
+        //
+        //       if(v === 'unitWeight') {
+        //         selectData = {
+        //           ...selectData,
+        //           unitWeight: Number(row['unitWeight'])
+        //         }
+        //       }
+        //
+        //       if(v === 'tmpId') {
+        //         selectData = {
+        //           ...selectData,
+        //           id: row['tmpId']
+        //         }
+        //       }
+        //     })
+
+            {
+              ...row,
+              // ...selectData,
+              // current: row.warehousing,
+              // warehousing: row.warehousing,
+              customer: row.sub_material.customer,
+              customerArray: row.sub_material.customer,
+              // additional: [
+              //   ...additional.map(v => {
+              //     if(row[v.name]) {
+              //       return {
+              //         id: v.id,
+              //         title: v.name,
+              //         value: row[v.name],
+              //         unit: v.unit
+              //       }
+              //     }
+              //   }).filter((v) => v)
+              // ]
+            }
+    )
+          // }
+        // }).filter((v) => v))
+  }
   const DeleteBasic = async () => {
     Notiflix.Loading.circle();
 
