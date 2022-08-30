@@ -175,14 +175,12 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                     pageHelper && <span style={{fontSize: 12, color: 'white'}}>*{pageHelper}</span>
                 }
               </div>
-              <ButtonWrapper className={'buttonWrapper unprintable'} style={{  marginTop: 20}}>
+              <ButtonWrapper style={{  marginTop: 20}}>
                 {
                     isCalendar &&
                     selectCalendarType(calendarType)
                 }
-                <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
-                </div>
-
+                <ButtonWrapper className={'buttonWrapper unprintable'}>
                 {/*{*/}
                 {/*    typeList && typeList.map((buttonTitle, buttonIndex) => {*/}
                 {/*      return <HeaderButton*/}
@@ -326,12 +324,12 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                       }
                     })
                 }
-
+                </ButtonWrapper>
               </ButtonWrapper>
 
             </div>
           </div>
-          <div style={{display:"flex", justifyContent:"right", marginBottom:"10px"}}>
+          <div className={'unprintable'} style={{display:"flex", justifyContent:"right", marginBottom:"10px"}}>
             {
                 isRadio &&
                 radioTexts.map((text, index) =>

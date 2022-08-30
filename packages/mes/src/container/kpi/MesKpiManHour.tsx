@@ -139,7 +139,7 @@ const MesKpiManHour = () => {
     },[])
 
     return (
-        <div>
+        <div className={'excelPageContainer'}>
             <PageHeader title={"작업공수(C)"} />
             <ExcelTable
                 editable

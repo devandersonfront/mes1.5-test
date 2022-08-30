@@ -1,15 +1,9 @@
-
-const keyList = ['profile','photo','qualify'
-    ,'capacity','guideline','device_id','form_id'
-    ,'product_id','mold_id','tool_id','machine_id'
-    ,'bom_root','work_standard_image','sic_id']
-
 const addColumnClass= (column) => {
 
     let moveNum = 0;
     let addClass = false
     return column.map((data,index)=>{
-        if(keyList.includes(data.key)){
+        if(data.unprintable || data.key === "select-row"){
             addClass = true
             moveNum++
             return ({...data , headerCellClass : 'unprintable' , cellClass : 'unprintable'})

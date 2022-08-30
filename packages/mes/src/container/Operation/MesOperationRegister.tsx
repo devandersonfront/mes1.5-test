@@ -20,6 +20,7 @@ import {SearchModalResult, SearchResultSort} from "shared/src/Functions/SearchRe
 import {delete_operation_searchKey} from "shared/src/reducer/operationRegisterState";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import {NoneSelectedValidation, RequiredValidation, NoAmountValidation} from "shared/src/validations/Validation";
+import addColumnClass from '../../../../main/common/unprintableKey'
 
 interface IProps {
   page?: number
@@ -382,7 +383,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             selectable
             headerList={[
               SelectColumn,
-              ...column
+              ...addColumnClass(column)
             ]}
             row={basicRow}
             setRow={async(e) => {

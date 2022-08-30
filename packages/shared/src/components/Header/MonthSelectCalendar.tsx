@@ -24,12 +24,12 @@ const MonthSelectCalendar = ({selectDate, setSelectDate, onChangeSelectDate, set
 
     return (
         <div style={{background:"#B3B3B3", width:205, height:32, display:"flex",  justifyContent:"space-between", alignItems:"center", padding:"0 10px", fontWeight:550, borderRadius:6 }} >
-            {calendarTitle ?? '기간선택'}
+            <p className={'unprintable'}>{calendarTitle ?? '기간선택'}</p>
             <p style={{display:"flex", alignItems:"center"}} >
                 <SelectDateText onClick={()=>{
                     setOnCalendar(true);
                 }}>{selectDate}</SelectDateText>
-                <img src={Calendar_icon} style={{width:32,height:32,fill:"black", marginLeft:6}}/>
+                <img className={'unprintable'} src={Calendar_icon} style={{width:32,height:32,fill:"black", marginLeft:6}}/>
             </p>
             {
                 onCalendar &&

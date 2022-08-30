@@ -140,7 +140,7 @@ const MesKpiPowerUsage = () => {
     },[])
 
     return (
-        <div>
+        <div className={'excelPageContainer'}>
             <PageHeader title={"전력 사용량(E)"} />
             <ExcelTable
                 editable

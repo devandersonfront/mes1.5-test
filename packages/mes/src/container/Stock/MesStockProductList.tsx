@@ -7,7 +7,6 @@ import {
   ExcelTable, columnlist,
   Header as PageHeader, IExcelHeaderType,
   ProductTitleFomatter,
-  ProfileHeader,
   RequestMethod,
   UnitContainer, TextEditor
 } from 'shared'
@@ -16,6 +15,7 @@ import {ScrollSyncPane} from 'react-scroll-sync'
 import {SelectColumn} from 'react-data-grid'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "../../../../shared/src/reducer/menuSelectState";
+import ProfileHeader from '../../../../main/component/Profile/ProfileHeader'
 
 interface IProps {
   children?: any
@@ -174,7 +174,7 @@ const MesStockProductList = ({type}: IProps) => {
           setDateColumn([
             {key:"title", name:"생산/납품",formatter:ProductTitleFomatter, width:100, frozen:true},
             {key:"carryforward", name:"전월 이월", formatter: UnitContainer, unitData:"EA",frozen:true},
-            {key:"total", name:"합계", formatter: UnitContainer, unitData: 'EA',width:100, frozen:true},
+            {key:"total", name:"합계", formatter: UnitContainer, unitData: 'EA',width:100, frozen:true , headerCellClass : 'printable' , cellClass : 'printable'},
             ...result,
           ]);
           result = [];
@@ -303,7 +303,7 @@ const MesStockProductList = ({type}: IProps) => {
     }
   }
 
-  return (<div style={{width:1576}}>
+  return (<div>
     <ProfileHeader/>
     <PageHeader
       title={`생산/납품 현황${isAdminPage ? '(관리자용)' : ''}`}
@@ -330,7 +330,9 @@ const MesStockProductList = ({type}: IProps) => {
     />
     <div style={{display:"flex",justifyContent:"center"}}>
       <ScrollSyncPane>
-        <ExcelTable headerList={column}
+        <ExcelTable
+
+                    headerList={column}
                     setHeaderList={(value) => {
                       // value.splice(0,1);
                       value.map((v,i)=>{
@@ -347,7 +349,8 @@ const MesStockProductList = ({type}: IProps) => {
         />
       </ScrollSyncPane>
       <ScrollSyncPane>
-        <ExcelTable headerList={dateColumn} row={dateData} setRow={setDateData} maxWidth={excelTableWidths.data} rowHeight={40}   />
+        <ExcelTable
+            headerList={dateColumn} row={dateData} setRow={setDateData} maxWidth={excelTableWidths.data} rowHeight={40}   />
       </ScrollSyncPane>
     </div>
   </div>)

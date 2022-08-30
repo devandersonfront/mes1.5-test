@@ -354,7 +354,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   };
 
   return (
-    <div>
+    <div className={'excelPageContainer'}>
       <PageHeader
         isSearch
         searchKeyword={keyword}

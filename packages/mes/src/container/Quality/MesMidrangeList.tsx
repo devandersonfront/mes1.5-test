@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
 import { setExcelTableHeight } from 'shared/src/common/Util';
+import addColumnClass from '../../../../main/common/unprintableKey'
 
 interface IProps {
     children?: any
@@ -133,7 +134,7 @@ const MesMidrangeList = ({ option }: IProps) => {
     }
 
     return (
-        <div>
+        <div className={'excelPageContainer noCheckBox'}>
             <PageHeader
                 isSearch
                 isCalendar
@@ -153,7 +154,7 @@ const MesMidrangeList = ({ option }: IProps) => {
             <ExcelTable
                 editable
                 resizable
-                headerList={column}
+                headerList={addColumnClass(column)}
                 row={basicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
