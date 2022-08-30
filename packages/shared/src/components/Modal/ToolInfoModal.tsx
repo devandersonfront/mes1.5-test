@@ -26,7 +26,7 @@ interface IProps {
 const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [selectRow, setSelectRow] = useState<number>(undefined)
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 1}])
+  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 0}])
 
   useEffect(() => {
     if(isOpen) {
@@ -40,7 +40,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           }
         }))
       } else {
-        setSearchList([{seq: 1 , setting : 1}])
+        setSearchList([{seq: 1 , setting : 0}])
       }
     }
   }, [isOpen])
