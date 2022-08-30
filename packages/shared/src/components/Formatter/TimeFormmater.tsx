@@ -11,15 +11,15 @@ interface IProps {
 }
 
 const TimeFormatter = ({row, column, setRow,onRowChange}: IProps) => {
-    const isReadOnly = column.type === 'readonly'?? undefined
+    const isReadOnly = column.type === 'readonly'
     return(
         <Background style={{background: "white"}} onClick={()=>{}} >
             <p style={{padding: 0, color: '#000', width: '100%', textAlign: column.textAlign ?? 'left' }}>
-                <input readOnly={isReadOnly} placeholder={'0'} type={'number'} value={row['hour']} style={{width: '30px'}} onChange={(e)=> onRowChange({...row, hour: RemoveFirstZero(e.target.value)})}/>
+                <input readOnly={isReadOnly} placeholder={'0'} type={'number'} value={row['hour']} style={{width: '30px'}} onChange={(e)=> onRowChange({...row, hour: RemoveFirstZero(e.target.value), isChange:true})}/>
                 :
-                <input readOnly={isReadOnly} placeholder={'0'} type={'number'} value={row['minute']} style={{width: '30px'}} onChange={(e)=>{if(Number(e.target.value) < 60){onRowChange({...row, minute: RemoveFirstZero(e.target.value)})}}}/>
+                <input readOnly={isReadOnly} placeholder={'0'} type={'number'} value={row['minute']} style={{width: '30px'}} onChange={(e)=>{if(Number(e.target.value) < 60){onRowChange({...row, minute: RemoveFirstZero(e.target.value), isChange:true})}}}/>
                 :
-                <input readOnly={isReadOnly} placeholder={'0'} type={'number'} value={Math.floor(row['second'])} style={{width: '30px'}} onChange={(e)=>{if(Number(e.target.value) < 60) {onRowChange({...row, second: RemoveFirstZero(e.target.value)})}}}/>
+                <input readOnly={isReadOnly} placeholder={'0'} type={'number'} value={row['second']} style={{width: '30px'}} onChange={(e)=>{if(Number(e.target.value) < 60) {onRowChange({...row, second: RemoveFirstZero(e.target.value), isChange:true})}}}/>
             </p>
         </Background>
     )

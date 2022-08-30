@@ -133,8 +133,8 @@ export const searchModalList: any  = {
   ],
   moldInfo: [
     {key: 'sequence', name: '번호', textAlign: 'center', width: 80, formatter: LineBorderContainer},
-    {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '금형명', width: 472, formatter: SearchModalTest, type: 'mold', modalType: true, noSelect:true},
+    {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력' },
+    {key: 'name', name: '금형명', width: 472, formatter: SearchModalTest, type: 'mold', modalType: true, noSelect:true, placeholder: '금형을 선택해 주세요.'},
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '기본'},
         {pk: 'spare', name: '스페어'},
@@ -145,8 +145,8 @@ export const searchModalList: any  = {
   ],
   toolInfo: [
     {key: 'seq', name: '번호', textAlign: 'center', width: 80, formatter: LineBorderContainer},
-    {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: 'CODE 입력' },
-    {key: 'name', name: '공구명', width: 472, formatter: SearchModalTest, type: 'tool', modalType: true, noSelect:true },
+    {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력' },
+    {key: 'name', name: '공구명', width: 472, formatter: SearchModalTest, type: 'tool', modalType: true, noSelect:true, placeholder: '공구를 선택해 주세요.'},
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: '1', name: '기본'},
         {pk: '0', name: '스페어'},
@@ -169,7 +169,7 @@ export const searchModalList: any  = {
   ],
   machineInfo: [
     {key: 'seq', name: '번호', width: 80, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'name', name: '기계 이름', width: 560, formatter: SearchModalTest, type: 'machine', modalType: true, noSelect:true},
+    {key: 'name', name: '기계 이름', width: 560, formatter: SearchModalTest, type: 'machine', modalType: true, noSelect:true, placeholder:'기계를 선택해 주세요.'},
     {key: 'mfrCode', name: '제조 번호', width: 160, formatter: LineBorderContainer, placeholder: '-', type: 'Modal', textAlign: 'center' },
     {key: 'type', name: '기계 종류', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
@@ -206,7 +206,7 @@ export const searchModalList: any  = {
   moldUse: [
     {key: 'sequence', name: '번호', width: 64, textAlign: 'center', formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer },
-    {key: 'name', name: '금형명', formatter: LineBorderContainer, type: 'Modal'},
+    {key: 'name', name: '금형명', formatter: LineBorderContainer, type: 'Modal', placeholder:'-'},
     {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '여'},
         {pk: 'spare', name: '부'},
@@ -345,6 +345,7 @@ export const searchModalList: any  = {
     {key: 'type', name: '품목 종류', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'unit', name: '단위', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'usage', name: '1회 사용량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
+    {key: 'cavity', name: '기본 캐비티', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", unitData: 'EA'},
     {key: 'disturbance', name: '예상 소요량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'stock', name: '재고량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
@@ -375,6 +376,7 @@ export const searchModalList: any  = {
     {key: 'unit', name: '단위', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'usage', name: '1회 사용량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'real_disturbance', name: '소요량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
+    {key: 'cavity', name: '캐비티', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", unitData:'EA'},
     {key: 'disturbance', name: '생산량', formatter: UnitContainer, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"},
     {key: 'stock', name: '재고량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
@@ -388,6 +390,7 @@ export const searchModalList: any  = {
     {key: 'unit', name: '단위', formatter: LineBorderContainer, textAlign: 'center',placeholder: "-"},
     {key: 'usage', name: '1회 사용량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'disturbance', name: '소요량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
+    {key: 'cavity', name: '캐비티', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", unitData:'EA'},
     {key: 'stock', name: '재고량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
     {key: 'lot', name: '투입 LOT', width: 160, formatter: AddTabButton, placeholder: '-', type: 'readonly'},
@@ -414,7 +417,7 @@ export const searchModalList: any  = {
     {key: 'worker_name', name: '작업자', formatter: SearchModalTest, type: 'user', width: 118, modalType: true, placeholder: '작업자 선택'},
     {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "standardStartDate"},
     {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "standardEndDate"},
-    {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true, width: 120},
+    {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true, width: 120, type: 'modify'},
     {key: 'good_quantity', name: '양품 수량', textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 140, modalType: true},
     {key: 'sum', name: '합계', formatter: LineBorderContainer, textAlign: 'center'},

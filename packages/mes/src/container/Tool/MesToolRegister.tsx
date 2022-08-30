@@ -116,7 +116,7 @@ const MesToolRegister = () => {
         const res = await RequestMethod("post", "lotToolSave", data)
 
         if(res){
-            Notiflix.Report.success("저장되었습니다.","","확인", () => router.push("/mes/tool/list"))
+            Notiflix.Report.success("저장되었습니다.","","확인", () => router.push("/mes/tool/warehousinglist"))
         }else{
             Notiflix.Report.failure("에러가 발생했습니다. 관리자에게 문의해주시기 바랍니다.","","확인")
         }

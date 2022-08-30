@@ -14,6 +14,9 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
+import { MDRegisterModalButtons } from '../Buttons/MDRegisterModalButtons'
+import NormalModal from './NormalModal'
+import { alertMsg } from '../../common/AlertMsg'
 
 interface IProps {
   column: IExcelHeaderType
@@ -34,11 +37,8 @@ const deviceList = [
 
 const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([])
+  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 1}])
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -47,95 +47,20 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      setSelectRow(undefined)
       if(row.devices !== undefined && row.devices !== null && row.devices.length > 0){
-        const rowDevices = [];
-        row.devices.map((device, index)=>{
-          rowDevices.push({...device, seq:index+1, manager:device.manager?.name ?? "", manager_data:device.manager, type:deviceList[device.type]?.name ?? device.type});
-        })
-        setSearchList(rowDevices);
+        setSearchList(row.devices.map((device, index)=>(
+          {...device,
+            seq:index+1,
+            manager:device.manager?.name ?? "",
+            manager_data:device.manager,
+            type:deviceList[device.type]?.name ?? device.type}
+        )))
       }
     }else{
-      setSearchList([]);
+      setSearchList([{seq: 1 , setting : 1}])
     }
   }, [isOpen, searchKeyword])
-
-
-  const changeRow = (row: any, key?: string) => {
-    let tmpData = {
-      ...row,
-      machine_id: row.name,
-      machine_idPK: row.machine_id,
-      manager: row.manager ? row.manager.name : null
-    }
-
-    return tmpData
-  }
-
-  const SearchBasic = async (keyword: any, option: number, page: number) => {
-    Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
-    // const res = await RequestMethod('get', `machineDetailLoad`,{
-    const res = await RequestMethod('get', `deviceSearch`,{
-      path: {
-        page: page,
-        renderItem: 18,
-      },
-      params: {
-        keyword: keyword ?? '',
-        opt: option ?? 0
-      }
-    })
-
-    if(res){
-      let searchList = res.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
-      setPageInfo({
-        ...pageInfo,
-        page: res.page,
-        total: res.totalPages,
-      })
-
-      setSearchList([...searchList])
-    }
-  }
-
-  const ModalContents = () => {
-
-    if(row.devices?.length > 0){
-      return (
-          <>
-            <div style={{
-              padding: '3.5px 0px 0px 3.5px',
-              width: '100%'
-            }}>
-              <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
-                setIsOpen(true)
-                setSelectRow(undefined)
-              }}>
-                <p style={{color: 'white', textDecoration: 'underline'}}>주변장치 보기</p>
-              </UploadButton>
-            </div>
-          </>
-      )
-    }else{
-      return (<>
-        <div style={{
-          padding: '3.5px 0px 0px 3.5px',
-          width: '100%'
-        }}>
-        <UploadButton onClick={() => {
-          setIsOpen(true)
-        }}>
-          <p>주변장치 등록</p>
-        </UploadButton>
-        </div>
-      </>)
-
-    }
-  }
 
   const getManagerName = () => {
     if(row.manager){
@@ -163,260 +88,47 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     return result;
   }
 
-  const competeDevice = (rows) => {
+  const validateConfirm = () => {
+    const hasInvalidData = searchList.some(row => !row.device_id)
 
-    const tempRow = [...rows]
-    const spliceRow = [...rows]
-    spliceRow.splice(selectRow, 1)
-
-    const isCheck = spliceRow.some((row)=> row.mfrCode === tempRow[selectRow]?.mfrCode && row.mfrCode !==undefined && row.mfrCode !=='')
-
-    if(spliceRow){
-      if(isCheck){
-        return Notiflix.Report.warning(
-          '경고',
-          `중복된 주변장치가 존재합니다.`,
-          '확인'
-        );
-      }
+    if(hasInvalidData){
+      throw(alertMsg.noData)
     }
-
-    setSearchList(rows)
   }
 
+  const onConfirm = () => {
+    if(selectRow !== undefined && selectRow !== null) {
+      const newrow = {
+        ...row,
+        name: row.name,
+        devices: searchList.map((device) => {
+          return { ...device, border: false, manager: device.manager_data }
+        }).filter(v => v.mfrCode !== undefined),
+        isChange: true,
+      }
+      console.log(selectRow)
+      console.log(newrow)
+      onRowChange(newrow)
+    }
+  }
+
+  const onCloseEvent = () => {
+    setIsOpen(false)
+  }
 
   return (
-    <SearchModalWrapper >
-      { ModalContents() }
-      <Modal isOpen={isOpen} style={{
-        content: {
-          top: '50%',
-          left: '50%',
-          right: 'auto',
-          bottom: 'auto',
-          marginRight: '-50%',
-          transform: 'translate(-50%, -50%)',
-          padding: 0
-        },
-        overlay: {
-          background: 'rgba(0,0,0,.6)',
-          zIndex: 5
-        }
-      }}>
-        <div style={{
-          width: 1776,
-          height: 816
-        }}>
-          <div style={{
-            margin: '24px 16px 16px',
-            display: 'flex',
-            justifyContent: 'space-between'
-          }}>
-            <p style={{
-              color: 'black',
-              fontSize: 22,
-              fontWeight: 'bold',
-              margin: 0,
-            }}>주변장치 정보</p>
-            <div style={{display: 'flex'}}>
-              {/*<Button>*/}
-              {/*  <p>엑셀로 받기</p>*/}
-              {/*</Button>*/}
-              <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
-                setIsOpen(false)
-              }}>
-                <img style={{width: 20, height: 20}} src={IcX}/>
-              </div>
-            </div>
-          </div>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>기계제조사</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.mfrName}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>기계 이름</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 770}}>
-              <HeaderTableText>{row.name}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>기계종류</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.type}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>용접종류</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.weldingType}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>제조번호</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.mfrCode}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>담당자</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              {/*<HeaderTableText>{row.manager}</HeaderTableText>*/}
-              <HeaderTableText>{getManagerName()}</HeaderTableText>
-              {/*<HeaderTableText>{typeof row.manager == "object" ? row.manager.name : row.manager }</HeaderTableText>*/}
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>오버홀</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.interwork ? "유" : "무"}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-            <Button onClick={() => {
-              setSearchList([
-                ...searchList,
-                {
-                  seq: searchList.length+1
-                }
-              ])
-            }}>
-              <p>행 추가</p>
-            </Button>
-            <Button style={{marginLeft: 16}} onClick={() => {
-              if(selectRow === 0){
-                return
-              }
-              let tmpRow = [...searchList]
-
-              let tmp = tmpRow[selectRow]
-              tmpRow[selectRow] = tmpRow[selectRow - 1]
-              tmpRow[selectRow - 1] = tmp
-              setSelectRow((prevSelectRow)=> prevSelectRow - 1)
-              setSearchList([...tmpRow.map((v, i) => {
-                return {
-                  ...v,
-                  seq: i+1
-                }
-              })])
-            }}>
-              <p>위로</p>
-            </Button>
-            <Button style={{marginLeft: 16}} onClick={() => {
-              if(selectRow === searchList.length-1){
-                return
-              }
-              let tmpRow = searchList
-              setSelectRow((prevSelectRow)=> prevSelectRow + 1)
-              let tmp = tmpRow[selectRow]
-              tmpRow[selectRow] = tmpRow[selectRow + 1]
-              tmpRow[selectRow + 1] = tmp
-
-              setSearchList([...tmpRow.map((v, i) => {
-                return {
-                  ...v,
-                  seq: i+1
-                }
-              })])
-            }}>
-              <p>아래로</p>
-            </Button>
-            <Button style={{marginLeft: 16}}  onClick={() => {
-
-              if(selectRow === undefined){
-                return Notiflix.Report.warning('오류', '삭제를 하기위해서는 선택을 해주세요', '확인')
-              }
-
-              searchList.splice(selectRow, 1);
-              setSelectRow(undefined)
-              setSearchList([...searchList.map((v, i) => {
-                  return {
-                    ...v,
-                    seq: i+1
-                  }
-              })])
-
-              }}>
-              <p>삭제</p>
-            </Button>
-          </div>
-          <div style={{padding: '0 16px', width: 1776, display:"flex", }}>
-            <ExcelTable
-              headerList={searchModalList.deviceInfo}
-              row={searchList ?? [{}]}
-              setRow={(e) => {
-                // searchList[selectRow].device =
-                e.map((row) => {
-                  row.type_id = settingTypeId(row.type)
-                  row.type = Number(row.type) ? deviceList[row.type]?.name : row.type
-                })
-
-                // setSearchList([...e])
-                competeDevice(e)
-              }}
-              width={searchModalList.deviceInfo.map(device => device.width).reduce((prevValue, currentValue) => prevValue + currentValue)}
-              rowHeight={32}
-              height={526}
-              // onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-              //   setSelectRow(e)
-              // }}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
-                }
-                setSelectRow(e)
-              }}
-              type={'searchModal'}
-              headerAlign={'center'}
-            />
-          </div>
-          <div style={{ height: 84, display: 'flex', alignItems: 'flex-end'}}>
-            <div
-              onClick={() => {
-                setIsOpen(false)
-              }}
-              style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p>취소</p>
-            </div>
-            <div
-              onClick={() => {
-                // if(selectRow !== undefined && selectRow !== null){
-                  onRowChange({
-                    ...row,
-                    // ...searchList[selectRow],
-                    machine_idPK:row.machine_id,
-                    name: row.name,
-                    devices:searchList.map((device)=>{
-                      // const tmpDevice = {...device};
-                      // tmpDevice.manager = device.manager_data;
-                      // return tmpDevice
-                      return {...device , border : false ,manager : device.manager_data}
-                    }).filter(v => v.mfrCode !== undefined),
-                    isChange: true,
-                    })
-                // }
-                setIsOpen(false)
-              }}
-              style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-            >
-              <p>등록하기</p>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    </SearchModalWrapper>
+    <NormalModal title={'주변장치 정보'} buttonTitle={'주변장치'}  hasData={row.devices.length > 0} isOpen={isOpen} onModalButtonClick={() => setIsOpen(true)} onClose={onCloseEvent}
+     validateConfirm={validateConfirm} duplicateCheckKey={'mfrCode'}
+     onConfirm={onConfirm} headers={[
+      [{key:'기계 제조사', value: row.mfrName}, {key:'기계 이름', value: row.name, width: 770},],
+      [{key:'기계 종류', value: row.type},{key:'용접 종류', value: row.weldingType},{key:'제조 번호', value: row.mfrCode},{key:'담당자', value: getManagerName()},],
+      [{key:'오버홀', value: row.interwork ? "유" : "무"},]
+    ]} data={searchList} setData={setSearchList} dataIndex={selectRow} setDataIndex={setSelectRow} dataColumnKey={'deviceInfo'}
+   changeRow={row => ({
+      ...row,
+      type_id : settingTypeId(row.type),
+      type: Number(row.type) ? deviceList[row.type]?.name : row.type
+    })} />
   )
 }
 

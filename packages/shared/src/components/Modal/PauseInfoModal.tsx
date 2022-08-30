@@ -15,6 +15,7 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import moment from 'moment'
 import {UploadButton} from "../../styles/styledComponents";
+import { sum } from 'lodash'
 
 interface IProps {
   column: IExcelHeaderType
@@ -23,112 +24,69 @@ interface IProps {
   modify?: boolean
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
-
-
 const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [totalTime, setTotalTime] = useState<string>('00:00:00')
   const [totalSec, setTotalSec] = useState<number>(0)
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
-  const [initProp, setInitProp]  = useState<{isInit: boolean, initTotal:string}>({isInit: true, initTotal:'00:00:00'})
   const hasData = row['pause_reasons'] && row['pause_reasons'].length > 0
+  const secondsToHMS = (seconds:number) => {
+    return {
+      seconds,
+      hour:Math.floor(seconds / 3600),
+      minute:Math.floor(seconds % 3600 / 60),
+      second:Math.floor(seconds % 3600 % 60),
+    }
+  }
+
   useEffect(() => {
       if(column.type !== 'readonly') {
-        initialize()
-        if(isOpen && row.process_id && row.process_id !== '-' && searchList.findIndex((e) => !!e.amount) === -1) {
+        if(isOpen && (row.processId || row.product.processId)){
           loadPauseList()
+        } else if(column.type === 'modify' && hasData){
+          setTotalSec(sum(row.pause_reasons.map(reason => reason.amount)))
         }
       } else {
         if(hasData) {
           let total = 0
           setSearchList([ ...row.pause_reasons.map(v => {
-
-            let sec = v.amount
-            let hour = Math.floor(sec / 3600)
-            sec = sec % 3600
-            let min = Math.floor(sec / 60)
-            sec = sec % 60
-
+            const times = secondsToHMS(v.amount)
             total += v.amount
-
             return {
               ...v,
               ...v.pause_reason,
-              hour: hour,
-              minute: min,
-              second: sec,
-              amount: `${hour >= 10 ? hour : '0' + hour}:${min >= 10 ? min : '0' + min}:${sec >= 10 ? sec : '0' + sec}`
+              ...times
             }
           }) ])
-
-          sumTotalTime(total)
+          setTotalSec(total)
         }
       }
-    }, [isOpen, row['pause_reason'], searchKeyword])
+    }, [isOpen, pageInfo.page])
 
-  useEffect(() => {
-    if(isOpen && pageInfo.page!=1)
-    {
-      loadPauseList()
-    }
-  },[pageInfo.page])
-
-  const initialize = () => {
-    if(initProp.isInit){
-      let initTotal = 0
-      if(hasData){
-        row.pause_reasons.map(reason => {
-          initTotal += reason.amount
-        })
-      }
-      setInitProp({isInit:false, initTotal: sumTotalTime(initTotal) })
-    }
+  const toHHMMSS = (seconds: number) => {
+    const times = secondsToHMS(seconds)
+    return `${times.hour.toString().padStart(2,'0')}:${times.minute.toString().padStart(2,'0')}:${times.second.toString().padStart(2,'0')}`
   }
 
-  const changeRow = (eachRow: any, key?: string) => {
-    let second, minute, hour = 0
+  const changeRow = (rows: any) => {
+    let reasonMap
     if(hasData) {
-      const reasonMap = new Map<number, any>(row.pause_reasons.map(reason =>
-        [reason.pause_reason.ppr_id, reason]
-      ))
-      second = reasonMap.get(eachRow.ppr_id)?.amount ?? 0
-      hour = Math.floor(second / 3600)
-      second = second % 3600
-      minute = Math.floor(second / 60)
-      second = second % 60
+      reasonMap = row.pause_reasons.reduce((map, obj) => {
+        map.set(obj.pause_reason.ppr_id, obj.amount);
+        return map;
+      }, new Map);
     }
-    let tmpData = {
-      ...eachRow,
-      machine_id: eachRow.name,
-      machine_idPK: eachRow.machine_id,
-      manager: eachRow.manager ? eachRow.manager.name : null,
-      second,
-      minute,
-      hour,
-      amount: `${hour >= 10 ? hour : '0' + hour}:${minute >= 10 ? minute : '0' + minute}:${second >= 10 ? second : '0' + second}`
-    }
-
-    return tmpData
-  }
-
-  const sumTotalTime = (total: number) => {
-    let sec = total
-    let hour = Math.floor(sec / 3600)
-    sec = sec % 3600
-    let min = Math.floor(sec / 60)
-    sec = sec % 60
-    const totalTime = `${hour >= 10 ? hour : '0' + hour}:${min >= 10 ? min : '0' + min}:${sec >= 10 ? Math.floor(sec) : '0' + Math.floor(sec)}`
-    setTotalSec(sec)
-    setTotalTime(totalTime)
-    return totalTime
+    return rows.map(row => {
+      const times = secondsToHMS(hasData ? reasonMap.get(row.ppr_id) ?? 0 : 0)
+      return {
+        ...row,
+        ...times
+      }
+    })
   }
 
   const loadPauseList = async () => {
@@ -142,20 +100,24 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     })
 
     if(res){
-      let resSearchList = res.info_list.map((row: any, index: number) => {
-        return changeRow(row)
-      })
-
+      const resSearchList = changeRow(res.info_list)
       setPageInfo({page: res.page, total:res.totalPages})
-      setSearchList([...searchList, ...resSearchList])
+      setSearchList(prev => res.page > 1? [... prev, ...resSearchList] : [...resSearchList])
     }
+    Notiflix.Loading.remove()
   }
+
+  const getWorkTime = () => {
+    return (moment(row.end).toDate().getTime() - moment(row.start).toDate().getTime()) / 1000
+  }
+
+
 
   const ModalContents = () => (
         <UploadButton onClick={() => {
           setIsOpen(true)
         }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
-          <p>{totalTime}</p>
+          <p>{toHHMMSS(totalSec)}</p>
         </UploadButton>
       )
 
@@ -171,24 +133,30 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       }
       <div
         onClick={() => {
-          if(column.type !== 'readonly'){
-            if(selectRow !== undefined && selectRow !== null){
-              onRowChange({
-                ...row,
-                pause_reasons: [
-                  ...searchList.map(v => {
-                    return ({
-                      amount: v.time_sec ?? 0,
-                      pause_reason: v
-                    })
+          console.log('row',row)
+          try{
+            if(column.type !== 'readonly'){
+              if(selectRow !== undefined && selectRow !== null){
+                if(getWorkTime() < totalSec) throw("작업 시간보다 일시 정지 시간이 더 클 수 없습니다.")
+                  onRowChange({
+                    ...row,
+                    pause_reasons: [
+                      ...searchList.map(v => {
+                        return ({
+                          amount: v.seconds,
+                          pause_reason: v
+                        })
+                      })
+                    ],
+                    isChange: true
                   })
-                ],
-                name: row.name,
-                isChange: true
-              })
-            }
+
+                }
+              }
+            onCloseModalEvent()
+          } catch(errMsg){
+            Notiflix.Report.warning('경고', errMsg, '확인')
           }
-          onCloseModalEvent()
         }}
         style={{width: column.type !== 'readonly' ? "50%" : "100%", height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
       >
@@ -201,17 +169,13 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     setIsOpen(false)
     setPageInfo({page:1, total:1})
     setSearchList([])
-    setInitProp({...initProp, isInit:true})
   }
 
   const onCancelEvent = () => {
     onCloseModalEvent()
-    setIsOpen(false)
-    if(!hasData){
-      setTotalTime('00:00:00')
-      setTotalSec(0)
+    if(hasData){
+      setTotalSec(sum(row.pause_reasons.map(reason => reason.amount)))
     } else {
-      setTotalTime(initProp.initTotal)
       setTotalSec(0)
     }
   }
@@ -256,7 +220,7 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
                   backgroundColor: 'white', width: 144, height: 28, border: '1px solid #B3B3B3', marginLeft: 16, marginRight: 32,
                   display: 'flex', alignItems: 'center', paddingTop:3
                 }}>
-                  <p style={{margin:0, padding: '0 0 0 8px'}}>{totalTime}</p>
+                  <p style={{margin:0, padding: '0 0 0 8px'}}>{toHHMMSS(totalSec)}</p>
                 </div>
               </div>
               {/*<Button>*/}
@@ -272,46 +236,18 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
               headerList={ column.type === 'readonly' ? searchModalList.pauseTimeReadOnly : searchModalList.pauseTime }
               row={searchList ?? []}
               setRow={(e) => {
-                let addIndex = 0
-                let ppr_id = ''
-                let reason = ''
-                let total = 0
-                let tmpRow = e.map((v, i) => {
-                  let time_sec = 0
-                  if(v.add) {
-                    addIndex = i+1
-                    reason = v.reason
-                    ppr_id = v.ppr_id
+                const newReasons = e.map(reason => {
+                  const seconds = reason.isChange ? Number(reason.hour) * 3600 + Number(reason.minute) * 60 + Number(reason.second) : reason.seconds
+                  if(reason.isChange){
+                    setTotalSec(totalSec - reason.seconds + seconds)
                   }
-
-                  if(v.hour || v.minute || v.second){
-                    const numHour = v.hour === undefined ? 0 : Number(v.hour)
-                    const numMinute = v.minute === undefined ? 0 : Number(v.minute)
-                    const numSecond = v.second === undefined ? 0 : Number(v.second)
-
-                    time_sec = (numHour*3600)+(numMinute*60)+(Math.floor(numSecond))
-
-                    total = total+time_sec
-                  }
-
-                  sumTotalTime(total)
-
                   return {
-                    ...v,
-                    time_sec,
-                    add: false,
+                    ...reason,
+                    seconds,
+                    isChange: undefined
                   }
                 })
-                if(addIndex){
-                  tmpRow.splice(addIndex, 0, {
-                    ppr_id,
-                    reason,
-                    start: `${moment().format('YYYY-MM-DD HH:mm')}:00`,
-                    end: null,
-                  })
-                }
-
-                setSearchList([...tmpRow])
+                setSearchList(newReasons)
               }}
               width={1746}
               rowHeight={32}

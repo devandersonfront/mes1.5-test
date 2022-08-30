@@ -14,15 +14,14 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import moment from "moment";
+import Big from 'big.js'
+import { alertMsg } from '../../common/AlertMsg'
 
 interface IProps {
   row: any
-  onRowChange: () => void
   isOpen?: boolean
   setIsOpen?: (isOpen: boolean) => void
 }
-
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
@@ -48,146 +47,120 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 
 
 
-const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
-  const tabRef = useRef(null)
-  const [bomDummy, setBomDummy] = useState<any[]>([
-    {sequence: '1', code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
-  ])
-
+const WorkModifyModal = ({row, isOpen, setIsOpen}: IProps) => {
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{sequence: 1}])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [summaryData, setSummaryData] = useState<any>({})
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
-  const [focusIndex, setFocusIndex] = useState<number>(0)
+  const cavity = row.molds?.length > 0 ? row.molds[0].mold?.mold?.cavity : 1
 
   useEffect(() => {
     if(isOpen) {
-      let total_count = 0
-      let good_quantity = 0
-      let poor_quantity = 0
-
-      row.map(v => {
-        total_count += v.good_quantity + v.poor_quantity
-        good_quantity += v.good_quantity
-        poor_quantity += v.poor_quantity
-      })
       setSummaryData({
-        contract_id: row[0].operation_sheet?.contract?.identification,
-        identification: row[0].operation_sheet?.identification,
-        customer_id: row[0].operation_sheet?.product?.customer?.name,
-        cm_id: row[0].operation_sheet?.product?.model?.model,
-        code: row[0].operation_sheet?.product?.code,
-        name: row[0].operation_sheet?.product?.name,
-        type: row[0].operation_sheet?.product?.type
-        || row[0].operation_sheet?.product?.type === 0
-            ? TransferCodeToValue(row[0].operation_sheet?.product?.type, 'productType')
+        contract_id: row.operation_sheet?.contract?.identification,
+        identification: row.operation_sheet?.identification,
+        customer_id: row.operation_sheet?.product?.customer?.name,
+        cm_id: row.operation_sheet?.product?.model?.model,
+        code: row.operation_sheet?.product?.code,
+        name: row.operation_sheet?.product?.name,
+        type: row.operation_sheet?.product?.type
+        || row.operation_sheet?.product?.type === 0
+            ? TransferCodeToValue(row.operation_sheet?.product?.type, 'productType')
             : null,
-        process: row[0].product?.process?.name,
-        unit: row[0].operation_sheet?.product?.unit,
-        goal: row[0].operation_sheet?.goal,
-        total_counter: total_count,
-        total_good_quantity: good_quantity,
-        total_poor_quantity: poor_quantity,
+        process: row.product?.process?.name,
+        unit: row.operation_sheet?.product?.unit,
+        goal: row.operation_sheet?.goal,
+        total_counter: row.good_quantity + row.poor_quantity,
+        total_good_quantity: row?.good_quantity,
+        total_poor_quantity: row?.good_quantity
         // unit: row[0].operation_sheet?.product?.unit,
       })
-      const newList = row.map((v)=> {return {...v, bom_root_id: row[0].operation_sheet.product.bom_root_id, productId: row[0].product.product_id, modify: true, worker: row[0].worker_object, worker_object: null} })
-      setSearchList([...newList])
+      const newList = {
+        ...row,
+        bom_root_id: row.operation_sheet.product.bom_root_id,
+        productId: row.product.product_id,
+        modify: true,
+        worker: row.worker_object,
+        worker_object: null,
+        originalCavity: cavity,
+        cavity,
+      }
+      setSearchList([newList])
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen])
 
-  const addNewTab = (index: number) => {
-    let tmp = bomDummy
-    tmp.push({code: 'SU-20210701-'+ index, name: 'SU900-'+index, material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},)
-    setBomDummy([...tmp])
-  }
 
-  const deleteTab = (index: number) => {
-    if(bomDummy.length - 1 === focusIndex){
-      setFocusIndex(focusIndex-1)
+  const getBomKey = (bom:any) => {
+    switch(bom.type) {
+      case 0: return 'rm' + bom.childRmId
+      case 1: return 'sm' + bom.childSmId
+      case 2: return 'p' + bom.childProductId
+      default: return undefined
     }
-    if(bomDummy.length === 1) {
-      return setIsOpen(false)
-    }
-
-    let tmp = bomDummy
-    tmp.splice(index, 1)
-    setBomDummy([...tmp])
   }
 
   const SaveBasic = async () => {
-    let checkPoint = true;
-    searchList.map((row) => {
-      let time = '00:00:00'
-      let seconds
-      if(row.pause_time !== undefined ){
-        time = row.pause_time.split(':')
-      }
-      seconds = (+time[0]) * 60 * 60 + (+time[1]) * 60 + (+time[2])
+    try{
+      const postBody = searchList.map((v) => {
+        if(!v.lot_number){
+          throw(alertMsg.noLotNumber)
+        }else if(!v.worker){
+          throw(alertMsg.noWorker)
+        }else if(!v.sum) {
+          throw(alertMsg.noProductAmount)
+        }
+        const inputDataChanged = v.bom_info
+        const moldChanged = v.cavity !== cavity
+        if(v.molds){
+            v.bom.map(bom => {
+              const bomKey = getBomKey(bom.bom)
+              if(inputDataChanged){
+                const finalAmount = new Big(bom.lot?.amount).div(v.cavity)
+                const finalUsage = finalAmount.times(bom.bom?.usage)
+                if(!Number.isInteger(finalAmount.toNumber())) throw(alertMsg.productAmountNotCavityDivisor)
+                if(finalUsage.gt(new Big(bom.lot.current).plus(bom.lot.actualCurrent))) throw (alertMsg.overStock)
+              } else{
+                const finalAmount = moldChanged ? new Big(bom.lot?.amount).times(cavity).div(v.cavity) : new Big(bom.lot?.amount)
+                const finalUsage = finalAmount.times(bom.bom?.usage)
+                if(!Number.isInteger(finalAmount.toNumber())) throw(alertMsg.productAmountNotCavityDivisor)
+                if(finalUsage.gt(new Big(bom.lot.current))) throw (alertMsg.overStock)
 
-      if(!row.lot_number){
-        Notiflix.Report.warning("경고","LOT번호를 입력해주시기 바랍니다.","확인",)
-        return checkPoint = false;
-      }else if(!row.good_quantity){
-        Notiflix.Report.warning("경고","양품 수량을 입력해주시기 바랍니다.","확인",)
-        return checkPoint = false;
-      } else if( (moment(row.end).toDate().getTime() - moment(row.start).toDate().getTime()) / 1000 < seconds ){
-        Notiflix.Report.warning("경고","작업 시간보다 일시 정지 시간이 더 클 수 없습니다.","확인",)
-        return checkPoint = false;
-      }
-    })
-    if(checkPoint) {
-      let res = await RequestMethod('post', `recordSave`,
-          searchList.map((v, i) => {
-            let selectData: any = {}
-
-            Object.keys(v).map(v => {
-              if (v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: v[v]
-                }
-              }
-
-              if (v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(v['unitWeight'])
-                }
-              }
-
-              if (v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: v['tmpId']
-                }
+                // const currentAmount = lotTotalAmountMap.get(bomKey) ?? 0
+                // const newAmount = moldChanged ? new Big(bom.lot.amount).times(cavity).div(v.cavity).toNumber() : Number(bom.lot.amount)
+                // lotTotalAmountMap.set(bomKey, currentAmount + newAmount)
               }
             })
-
-            return {
-              ...v,
-              ...selectData,
-              operation_sheet: {
-                ...v.operation_sheet,
-                status: row.status_no
-              },
-              input_bom: [],
-              status: 0,
-            }
-          }).filter((v) => v))
-
-
-      if (res) {
+            // if(!inputDataChanged){
+            //   lotTotalAmountMap.forEach( (value, key) => {
+            //       if(new Big(v.sum).div(v.cavity).gt(value)) throw (alertMsg.overStock)
+            //   });
+            // }
+        }
+        return {
+          ...v,
+          bom: v.molds ? v.bom.map(bom => {
+              const finalAmount = inputDataChanged ? new Big(Number(bom.lot.amount)).div(v.cavity).toNumber() : moldChanged ? new Big(bom.lot?.amount).times(cavity).div(v.cavity).toNumber() : new Big(bom.lot?.amount).toNumber()
+              return {...bom,
+                lot: {...bom.lot,
+                  amount: finalAmount
+              }}
+            }) : v.bom,
+        }
+      }).filter((v) => v)
+      const res = await RequestMethod('post', `recordSave`,postBody)
+      if (res?.length > 0) {
         Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
-          onRowChange()
-          Notiflix.Loading.circle()
           setIsOpen(false)
+          row.reload()
         });
-
+      } else {
+        Notiflix.Report.failure('이미 삭제된 작업일보 입니다.', '', '확인', () => {
+          setIsOpen(false)
+          row.reload()
+        });
       }
+    } catch (errMsg){
+        console.log(errMsg)
+        Notiflix.Report.warning('경고', errMsg, '확인')
     }
   }
 
@@ -275,20 +248,19 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
                 headerList={searchModalList.workModify}
                 row={searchList ?? [{}]}
                 setRow={(e) => {
-                  let tmp = e.map((v, index) => {
-                    if(v.newTab === true){
-                      const newTabIndex = bomDummy.length+1
-                      addNewTab(newTabIndex)
-                      setFocusIndex(newTabIndex-1)
-                    }
+                  const newRow =
+                    e.map(v => {
+                      const good_quantity = Number(v.quantity ??v.sum ?? 0)-Number(v.poor_quantity ?? 0)
+                      return {
+                        ...v,
+                        border:false,
+                        good_quantity,
+                        current: good_quantity,
+                        sum: Number(v.quantity ?? v.sum ?? 0),
 
-                    return {
-                      ...v,
-                      newTab: false
-                    }
-                  })
-
-                  setSearchList([...tmp.map(v => {
+                      }
+                    })
+                  setSearchList(e.map(v => {
                     const good_quantity = Number(v.quantity ??v.sum ?? 0)-Number(v.poor_quantity ?? 0)
                     return {
                       ...v,
@@ -298,11 +270,11 @@ const WorkModifyModal = ({row, onRowChange, isOpen, setIsOpen}: IProps) => {
                       sum: Number(v.quantity ?? v.sum ?? 0),
 
                     }
-                  })])
+                  }))
                 }}
                 width={1746}
                 rowHeight={32}
-                height={552}
+                height={557}
                 onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                   setSelectRow(e)
                 }}

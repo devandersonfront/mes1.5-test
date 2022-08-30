@@ -34,8 +34,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
             to:moment().format("YYYY-MM-DD"),
             option:0,
             rm_id: inputMaterial.rm_id,
-            nz: action === 'register'?? false,
-            completed: action === 'register'?? false,
+            nz: action === 'register',
+            completed: action === 'register',
             sorts: ['date','lotRmId'],
             order: ['asc', 'asc'],
           }
@@ -51,7 +51,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
             from: "2000-01-01",
             to:moment().format("YYYY-MM-DD"),
             sm_id: inputMaterial.sm_id,
-            nz: action === 'register'?? false,
+            nz: action === 'register',
             sorts: ['date','lotSmId'],
             order: ['asc','asc'],
           }
@@ -66,8 +66,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           params: {
             from: "2000-01-01",
             to:moment().format("YYYY-MM-DD"),
-            productIds: inputMaterial.product.product_id,
-            nz: action === 'register' ?? false,
+            productIds: inputMaterial.product_id,
+            nz: action === 'register',
             rangeNeeded:true,
             sorts:['end', 'recordId'],
             order:['asc', 'asc']
@@ -140,11 +140,11 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   }
 
   const lotNotReadOnlyEvent = () => {
-    if(row.stock === 0){
+    console.log('addrow',row)
+    if(row.action === 'modifyAndNoStock') {
+      loadMaterialLot(row.tab, 1, row.action)
+    } else if(row.originalStock === 0){
       return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
-    }
-    else if(row.action === 'modifyAndNoStock') {
-      updateLotList()
     }
     // if(row.bom_info !== null){
     else {

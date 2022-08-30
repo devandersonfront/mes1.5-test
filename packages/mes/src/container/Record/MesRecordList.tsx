@@ -405,22 +405,15 @@ const MesRecordList = ({}: IProps) => {
             />
             {excelOpen && (
                 <WorkModifyModal
-                    row={[
-                        ...basicRow
-                            .map((v) => {
-                                if (selectList.has(v.id)) {
-                                    return {
-                                        ...v,
-                                        worker: v.user,
-                                        worker_name: v.user.name,
-                                        sum: v.poor_quantity + v.good_quantity,
-                                        input_bom: v.operation_sheet.input_bom,
-                                    };
-                                }
-                            })
-                            .filter((v) => v),
-                    ]}
-                    onRowChange={() => reload()}
+                    row={
+                        {...basicRow.filter(row => selectList.has(row.id)).map(row => ({
+                            ...row,
+                            worker: row.user,
+                            worker_name: row.user.name,
+                            sum: row.poor_quantity + row.good_quantity,
+                            input_bom: row.operation_sheet.input_bom,
+                        }))[0]}
+                    }
                     isOpen={excelOpen}
                     setIsOpen={setExcelOpen}
                 />

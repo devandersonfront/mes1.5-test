@@ -121,27 +121,40 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const onConfirm = () => {
-    const moldInUse = searchList.filter(row => row.setting === 1)
-    if(moldInUse.length > 1) {
-      return Notiflix.Report.warning("경고", "금형을 하나만 선택해주시기 바랍니다.", "확인");
-    }
-    if(selectRow !== undefined && selectRow !== null){
-      onRowChange({
-        ...row,
-        name: row.name,
-        molds: searchList.map(v => {
-          return {
-            mold: {
-              sequence: v.sequence,
-              mold: {
-                ...v
-              },
-              setting: v.setting
-            }
-          }
-        }),
-        isChange: true
-      })
+    try{
+      const moldInUse = searchList.filter(row => row.setting === 1)
+      const cavity = moldInUse.length > 0 ? moldInUse[0].cavity : 1
+      const update = () => {
+        if (selectRow !== undefined && selectRow !== null) {
+          onRowChange({
+            ...row,
+            name: row.name,
+            molds: moldInUse.map(v => {
+              return {
+                mold: {
+                  sequence: v.sequence,
+                  mold: {
+                    ...v
+                  },
+                  setting: v.setting
+                }
+              }
+            }),
+            cavity,
+            isChange: true
+          })
+      }}
+
+      if(moldInUse.length > 1) {
+        throw ('금형을 하나만 사용해 주시기 바랍니다.')
+      } else {
+        Notiflix.Report.info('알림', '캐비티가 바뀌면 자재 사용량이 바뀌어 재고가 부족할 수 있습니다.', '확인', () => {
+          update()
+          onClose()
+        })
+      }
+    } catch (errMsg) {
+        Notiflix.Report.warning('경고', errMsg,'확인')
     }
   }
 
@@ -177,7 +190,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>금형 정보 (해당 제품을 만드는데 사용한 금형을 선택해주세요.{/* 선택 가능 금형이 없으면 금형 수정 버튼을 눌러 금형 정보를 수정해주세요*/})</p>
+            }}>금형 정보 (해당 제품을 만드는 데 사용한 금형을 선택해주세요.{/* 선택 가능 금형이 없으면 금형 수정 버튼을 눌러 금형 정보를 수정해주세요*/})</p>
             <div style={{display: 'flex'}}>
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
@@ -232,15 +245,16 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
               width={1746}
               rowHeight={32}
               height={552}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
+              onRowClick={clicked => {
+                const rowIdx = searchList.indexOf(clicked)
+                if(!searchList[rowIdx]?.border){
+                  const newSearchList = searchList.map((v,i)=> ({
+                    ...v,
+                    border : i === rowIdx
+                  }))
+                  setSearchList(newSearchList)
+                  setSelectRow(rowIdx)
                 }
-                setSelectRow(e)
               }}
               type={'searchModal'}
               headerAlign={'center'}
@@ -258,7 +272,6 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
             <div
               onClick={() => {
                 onConfirm()
-                onClose()
               }}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
