@@ -24,6 +24,8 @@ import {BarcodeDataType} from "shared/src/common/barcodeType";
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
+import {CompleteButton} from "shared/src/components/Buttons/CompleteButton";
+
 interface IProps {
   children?: any
   page?: number
@@ -132,6 +134,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     params['exp'] = _expState !== undefined && _expState !== null ? _expState : expState
     params['nz'] = _nzState !== undefined && _nzState !== null ? _nzState : nzState
     params['completed'] = params['nz']
+    params['status'] = [0,1]
     return params
   }
 
@@ -181,7 +184,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           }
         }
       })
-
+      if(column.key == "return") menuData = {id:"return", name:column.name, width:column.width, }
       if(menuData){
         return {
           ...column,
@@ -203,8 +206,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         }
       }
     }).filter((v: any) => v) : []
-
-    // tmpRow = res.info_list
 
     loadAllSelectItems( [
       ...tmpColumn,
@@ -264,16 +265,27 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         id: `rawin_${random_id}`,
         onClickEvent: (row) =>  row.is_complete ? SaveBasic(row)
           : Notiflix.Confirm.show(`재고 수량이 '0'으로 변경됩니다. 진행 하시겠습니까?`, '*사용완료 처리된 자재는 작업이력 수정 시 수정불가해집니다.', '예','아니오', () => SaveBasic(row), ()=>{},
-            {width: '400px'})
+            {width: '400px'}),
+        onClickReturnEvent: (row, remark) => Notiflix.Confirm.show(`경고`, '반납처리하겠습니까?', '예','아니오', () => SaveBasic(row, remark, 2), ()=>{}, {width: '400px'})
       }
     })
     setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
-  async function SaveBasic(row: any) {
+  async function SaveBasic(row: any, remark?:string, status?:number) {
     let res: any
-    res = await RequestMethod('post', `lotRmComplete`,{...row, current: row.realCurrent, is_complete: !row.is_complete})
+
+    res = await RequestMethod('post', status ? `lotRmSave` : `lotRmComplete`, status ?
+     [{
+      ...row,
+      warehousing: row.amount,
+      type: row.type_id,
+      raw_material: {...row.raw_material, type:row.raw_material?.type_id},
+      status:status,
+      remark:remark ?? null
+    }]
+        : {...row, current: row.realCurrent, is_complete: !row.is_complete,})
       .catch((error) => {
         if(error.status === 409){
           Notiflix.Report.warning("경고", error.data.message, "확인",)

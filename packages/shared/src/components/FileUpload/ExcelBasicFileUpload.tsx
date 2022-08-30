@@ -7,6 +7,7 @@ import {DeleteImage, UploadButton} from '../../styles/styledComponents'
 import {uploadTempFile} from '../../common/fileFuctuons'
 import {RequestMethod} from "../../common/RequestFunctions";
 import ImageOpenModal from "../Modal/ImageOpenModal";
+import {SF_ENDPOINT} from "../../common/configset";
 
 interface IProps {
   row: any
@@ -31,16 +32,15 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
   }
 
 
-  const cleanText = () => {
-      switch(true){
-          case column.type === "image":
-              return "이미지 확인"
-          case column.readonly :
-              return "등록된 이미지가 없습니다."
-          default:
-              return "파일 다운로드"
+  const fileTypeCheck = async(res:any, type:string) => {
+      if(type == "image"){
+          setImgUrl(res.url)
+          setOnImage(true)
+      }else{
+          const aTag = document.createElement("a")
+          aTag.setAttribute("href", `${SF_ENDPOINT}/anonymous/download/${res.UUID}`)
+          aTag.click()
       }
-      {column.type === "image" ? "이미지 확인" : "파일 다운로드" }
   }
 
   return (
@@ -81,33 +81,17 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                 textDecoration:"underline"
               }}
               onClick={() => {
-                  if(typeof row[column.key] === "object"){
                       RequestMethod("get", "anonymousLoad", {
                           path:{
-                              uuid:row[column.key].uuid
+                              uuid:typeof row[column.key] === "object" ? row[column.key].uuid : row[column.key]
                           }
                       })
                           .then((res) => {
-                              setImgUrl(res.url)
-                              setOnImage(true)
+                              fileTypeCheck(res, column.type)
                           })
                           .catch((err) => {
                               Notiflix.Report.failure("에러","에러입니다.","확인")
                           })
-                  }else{
-                      RequestMethod("get", "anonymousLoad", {
-                          path:{
-                              uuid:row[column.key]
-                          }
-                      })
-                          .then((res) => {
-                              setImgUrl(res.url)
-                              setOnImage(true)
-                          })
-                          .catch((err) => {
-                              Notiflix.Report.failure("에러","에러입니다.","확인")
-                          })
-                  }
 
               }}
             >
@@ -136,7 +120,8 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         hidden
         onChange={async (e) => {
           if(e.target.files && e.target.files.length !== 0) {
-              const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true);
+              console.log(e.target.files[0].name)
+              const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true, e.target.files[0].name);
               e.target.value = ''
               if(uploadImg !== undefined){
                       onRowChange({

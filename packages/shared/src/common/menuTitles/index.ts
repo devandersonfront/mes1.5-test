@@ -47,20 +47,23 @@ export const defaultMesTitles = {
   _opReList : menuLogic('작업 일보 리스트','/mes/recordV2/list'),
   _opComList : menuLogic('작업 완료 리스트','/mes/finishV2/list'),
 
-  rawMgmt : menuLogic('원자재 관리', '' , ['_rawReg','_rawStock']),
+  rawMgmt : menuLogic('원자재 관리', '' , ['_rawReg','_rawStock', '_rawReturn']),
   _rawReg : menuLogic('원자재 입고 등록','/mes/rawmaterialV1u/input'),
   _rawStock : menuLogic('원자재 재고 현황','/mes/rawmaterialV1u/stock'),
+  _rawReturn : menuLogic('원자재 반납 현황 ','/mes/rawmaterialV1u/returnlist'),
 
-  subMgmt : menuLogic('부자재 관리','',['_subReg','_subStock']),
+  subMgmt : menuLogic('부자재 관리','',['_subReg','_subStock', '_subReturn']),
   _subReg : menuLogic('부자재 입고 등록','/mes/submaterialV1u/input'),
   _subStock : menuLogic('부자재 재고 현황','/mes/submaterialV1u/stock'),
+  _subReturn : menuLogic('부자재 반납 현황 ','/mes/submaterialV1u/returnlist'),
 
   toolMgmt : menuLogic('공구 관리','',['_toolReg','_toolList','_toolStock']),
   _toolReg : menuLogic('공구 입고 등록','/mes/tool/register'),
   _toolList : menuLogic('공구 입고 리스트','/mes/tool/warehousinglist'),
   _toolStock : menuLogic('공구 재고 현황','/mes/tool/list'),
 
-  qualityMgmt : menuLogic('품질 관리','',['_midRangeList','_stdList','_changeNoti','_changeList']),
+  qualityMgmt : menuLogic('품질 관리','',['_defectList','_midRangeList','_stdList','_changeNoti','_changeList']),
+  _defectList : menuLogic('불량 통계 (자주검사 관리)' ,'/mes/quality/defect'),
   _midRangeList : menuLogic('초ㆍ중ㆍ종 검사 리스트','/mes/quality/midrange/list'),
   _stdList : menuLogic('작업 표준서 관리','/mes/quality/work/standardlist'),
   _changeNoti : menuLogic('변경점 정보 등록','/mes/quality/product/change/register'),

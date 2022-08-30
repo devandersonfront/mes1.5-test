@@ -112,6 +112,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     params['to'] = date ? date.to : selectDate.to
     params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
     params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+    params['status'] = [0,1]
     return params
   }
 
@@ -165,6 +166,11 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
             }
           });
 
+        menuData = {
+          id: "sub_return_1",
+          name: column.name,
+
+        }
         if (menuData) {
           return {
             ...column,
@@ -241,12 +247,27 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         customer_id: row.sub_material?.customer?.name ?? "-",
         ...appendAdditional,
         id: `subin_${random_id}`,
+        onClickReturnEvent: (row, remark) => Notiflix.Confirm.show(`경고`, '반납처리하겠습니까?', '예','아니오', () => ReturnSaveBasic(row, remark,2), ()=>{}, {width: '400px'})
       };
     });
     setSelectList(new Set());
     setBasicRow([...tmpBasicRow]);
   };
 
+  const ReturnSaveBasic = async(row:any, remark:string, status:number) => {
+    const res = await RequestMethod('post', `lotSmSave`,
+            [{
+              ...row,
+              customer: row.sub_material.customer,
+              customerArray: row.sub_material.customer,
+              status:status,
+              remark:remark
+            }]
+          )
+    if(res){
+      Notiflix.Report.success('저장되었습니다.','','확인', () => reload())
+    }
+  }
   const DeleteBasic = async () => {
     Notiflix.Loading.circle();
 

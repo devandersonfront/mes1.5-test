@@ -10,11 +10,11 @@ import Notiflix from "notiflix";
  * @param {string} data BLOB 객체
  * @returns X
  */
-export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, fileType?: string) => {
+export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, fileName?:string,fileType?: string) => {
   // const res = await requestApi('post',`${SF_ENDPOINT}/anonymous/upload`, data, )
     let result:any;
     const type = data.type.split("/")[0];
-      await Axios.post(`${SF_ENDPOINT}/anonymous/upload`, data,
+      await Axios.post(`${SF_ENDPOINT}/anonymous/upload/${fileName}`, data,
           {
                   headers:
                       // type === "image"?
@@ -22,6 +22,9 @@ export const uploadTempFile = async (data:any, length: number, isUrl?: boolean, 
                           "Content-Type": data.type,
                           "Content-Length": length
                       }
+                  // ,params:{
+                  //       ["file-name"]:fileName
+                  // }
                       // : fileType !== undefined ?
                       //     {
                       //         "Content-Type": fileType,
