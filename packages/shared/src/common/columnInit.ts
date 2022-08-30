@@ -520,7 +520,7 @@ export const columnlist: any = {
     {key: 'date', name: '입고일', width: 118, headerRenderer: HeaderSort, sortOption: "none",sorts: {} },
     {key: 'lot_number', name: '부자재 LOT 번호', width: 118},
     {key: 'current', name: 'LOT 재고량', width: 118},
-    {key: 'return', name: '반납처리', formatter: ReturnButton, width: 118,}
+    {key: 'return', name: '반납취소', formatter: CompleteButton, width: 118, beforeEventTitle:'반납 취소'}
   ],
 
   baseItem: [

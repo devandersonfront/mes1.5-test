@@ -37,7 +37,7 @@ type ModalType = {
     isVisible : boolean
 }
 
-const optionList = ['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처']
+const optionList = ["부자재 CODE", "부자재 품명", "부자재 LOT 번호", "거래처",]
 
 const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
     const router = useRouter()
@@ -94,7 +94,7 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
     }, [pageInfo.page]);
 
     useEffect(() => {
-        dispatch(setMenuSelectState({main:"원자재 관리",sub:router.pathname}))
+        dispatch(setMenuSelectState({ main: "부자재 관리", sub: router.pathname }))
         return(() => {
             dispatch(deleteMenuSelectState())
         })
@@ -247,23 +247,14 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
             let random_id = Math.random()*1000;
             return {
                 ...row,
-                code : row.raw_material.rm_id,
-                rm_id: row.raw_material.code,
-                name: row.raw_material.name,
-                texture: row.raw_material.texture,
-                depth: row.raw_material.depth,
-                width: row.raw_material.width,
-                height: row.raw_material.height,
-                type: TransferCodeToValue(row.raw_material.type, 'rawMaterialType'),
-                customer_id: row.raw_material?.customer?.name ?? "-",
-                expiration: row.raw_material.expiration,
-                exhaustion: row.current ? '-' : '사용완료',
-                current: row.is_complete? 0 : row.current,
-                realCurrent: row.current,
+                wip_id: row.sub_material?.code,
+                unit: row.sub_material?.unit,
+                name: row.sub_material?.name,
+                customer_id: row.sub_material?.customer?.name ?? "-",
                 ...appendAdditional,
-                id: `rawin_${random_id}`,
+                id: `subin_${random_id}`,
                 onClickEvent: (row) =>
-                    Notiflix.Confirm.show(`반납취소 하시겠습니까?`, '', '예','아니오', () => SaveBasic(row, 0), ()=>{},
+                    Notiflix.Confirm.show(`경고`, '반납취소 하시겠습니까?', '예','아니오', () => SaveBasic(row), ()=>{},
                         {width: '400px'}),
             }
         })
@@ -271,104 +262,24 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
         setBasicRow([...tmpBasicRow])
     }
 
-    async function SaveBasic(row: any, status?:number) {
-        let res: any
-
-        res = await RequestMethod('post', `lotRmSave`,
+    async function SaveBasic(row:any) {
+        const res = await RequestMethod('post', `lotSmSave`,
             [{
                 ...row,
-                warehousing: row.amount,
-                type: row.type_id,
-                raw_material: {...row.raw_material, type:row.raw_material?.type_id},
-                status:status
-            }])
-            .catch((error) => {
-                if(error.status === 409){
-                    Notiflix.Report.warning("경고", error.data.message, "확인",)
-                    return true
-                }
-                return false
-            })
+                customer: row.sub_material.customer,
+                customerArray: row.sub_material.customer,
+                status:0,
+                remark:null
+            }]
+        )
 
         if(res){
             Notiflix.Report.success('저장되었습니다.','','확인', () => reload())
         }
     }
 
-    const DeleteBasic = async () => {
-
-        const res = await RequestMethod('delete', `rawinDelete`,
-            basicRow.map((row, i) => {
-                if(selectList.has(row.id)){
-                    let selectKey: string[] = []
-                    let additional:any[] = []
-                    column.map((v) => {
-                        if(v.selectList){
-                            selectKey.push(v.key)
-                        }
-
-                        if(v.type === 'additional'){
-                            additional.push(v)
-                        }
-                    })
-
-                    return {
-                        ...row,
-                        additional: [
-                            ...additional.map(v => {
-                                if(row[v.name]) {
-                                    return {
-                                        id: v.id,
-                                        title: v.name,
-                                        value: row[v.name],
-                                        unit: v.unit
-                                    }
-                                }
-                            }).filter((v) => v)
-                        ]
-                    }
-
-                }
-            }).filter((v) => v))
-
-        if(res) {
-            Notiflix.Report.success('삭제되었습니다.','','확인', () => reload());
-        }
-
-    }
 
 
-    const handleBarcode = async (dataurl : string , clientIP : string) => {
-        Notiflix.Loading.circle()
-        const data = {
-            "functions":
-                {"func0":{"checkLabelStatus":[]},
-                    "func1":{"clearBuffer":[]},
-                    "func2":{"drawBitmap":[dataurl,20,0,800,0]},
-                    "func3":{"printBuffer":[]}
-                }
-        }
-
-        await fetch(`http://${clientIP}:18080/WebPrintSDK/Printer1`,{
-            method : 'POST',
-            headers : {
-                'Content-Type' : 'application/x-www-form-urlencoded'
-            },
-            body : JSON.stringify(data)
-        }).then((res)=>{
-            Notiflix.Loading.remove(2000)
-        }).catch((error) => {
-            Notiflix.Loading.remove()
-            if(error){
-                Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-                return false
-            }
-        })
-    }
-
-    const handleModal = (type : 'barcode',isVisible) => {
-        setModal({type , isVisible})
-    }
 
     return (
         <div>
@@ -414,14 +325,6 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
                 setSelectList={setSelectList}
                 width={1576}
                 height={setExcelTableHeight(basicRow.length)}
-            />
-            <BarcodeModal
-                title={'바코드 미리보기'}
-                handleBarcode={handleBarcode}
-                handleModal={handleModal}
-                type={'rawMaterial'}
-                data={barcodeData}
-                isVisible={modal.type === 'barcode' && modal.isVisible}
             />
             <PaginationComponent
                 currentPage={pageInfo.page}

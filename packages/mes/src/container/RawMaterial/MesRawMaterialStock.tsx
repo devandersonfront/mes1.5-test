@@ -133,6 +133,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     params['exp'] = _expState !== undefined && _expState !== null ? _expState : expState
     params['nz'] = _nzState !== undefined && _nzState !== null ? _nzState : nzState
     params['completed'] = params['nz']
+    params['status'] = [0,1]
     return params
   }
 
@@ -182,7 +183,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           }
         }
       })
-      // {key: 'return', name: '반납처리', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소'}
       if(column.key == "return") menuData = {id:"return", name:column.name, width:column.width, }
       if(menuData){
         return {
@@ -205,8 +205,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         }
       }
     }).filter((v: any) => v) : []
-
-    // tmpRow = res.info_list
 
     loadAllSelectItems( [
       ...tmpColumn,
@@ -267,16 +265,15 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         onClickEvent: (row) =>  row.is_complete ? SaveBasic(row)
           : Notiflix.Confirm.show(`재고 수량이 '0'으로 변경됩니다. 진행 하시겠습니까?`, '*사용완료 처리된 자재는 작업이력 수정 시 수정불가해집니다.', '예','아니오', () => SaveBasic(row), ()=>{},
             {width: '400px'}),
-        onClickReturnEvent: (row) => Notiflix.Confirm.show(`Test?`, '반납처리하겠습니까?', '예','아니오', () => SaveBasic(row, 2), ()=>{}, {width: '400px'})
+        onClickReturnEvent: (row, remark) => Notiflix.Confirm.show(`경고`, '반납처리하겠습니까?', '예','아니오', () => SaveBasic(row, remark, 2), ()=>{}, {width: '400px'})
       }
     })
     setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
-  async function SaveBasic(row: any, status?:number) {
+  async function SaveBasic(row: any, remark?:string, status?:number) {
     let res: any
-
 
     res = await RequestMethod('post', status ? `lotRmSave` : `lotRmComplete`, status ?
      [{
@@ -284,7 +281,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       warehousing: row.amount,
       type: row.type_id,
       raw_material: {...row.raw_material, type:row.raw_material?.type_id},
-      status:status
+      status:status,
+      remark:remark ?? null
     }]
         : {...row, current: row.realCurrent, is_complete: !row.is_complete,})
       .catch((error) => {
