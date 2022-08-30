@@ -158,7 +158,7 @@ const ProductSearchModal = ({column, row, onRowChange}: IProps) => {
         {
           !row[`${column.key}`]
             ? column.type === 'Modal'
-              ? <LineBorderContainer row={row} column={column} setRow={() => {}}/>
+              ? <LineBorderContainer row={row} column={column} onRowChange={() => {}}/>
               : <PlaceholderBox row={row} column={column} setRow={() => {}} />
             : row[`${column.key}`]
         }
