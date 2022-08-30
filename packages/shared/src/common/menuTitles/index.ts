@@ -62,7 +62,8 @@ export const defaultMesTitles = {
   _toolList : menuLogic('공구 입고 리스트','/mes/tool/warehousinglist'),
   _toolStock : menuLogic('공구 재고 현황','/mes/tool/list'),
 
-  qualityMgmt : menuLogic('품질 관리','',['_midRangeList','_stdList','_changeNoti','_changeList']),
+  qualityMgmt : menuLogic('품질 관리','',['_defectList','_midRangeList','_stdList','_changeNoti','_changeList']),
+  _defectList : menuLogic('불량 통계 (자주검사 관리)' ,'/mes/quality/defect'),
   _midRangeList : menuLogic('초ㆍ중ㆍ종 검사 리스트','/mes/quality/midrange/list'),
   _stdList : menuLogic('작업 표준서 관리','/mes/quality/work/standardlist'),
   _changeNoti : menuLogic('변경점 정보 등록','/mes/quality/product/change/register'),
