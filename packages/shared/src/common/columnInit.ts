@@ -246,6 +246,10 @@ export const columnlist: any = {
         {pk: '1', name: '재공품'},
         {pk: '2', name: '완제품'},
       ]},
+    {key: 'product_type', name: '외주 여부',  formatter: DropDownEditor, selectList: [
+        {pk: '3', name: '생산품'},
+        {pk: '4', name: '외주품'},
+      ]},
     {key: 'unit', name: '단위', formatter: DropDownEditor, selectList: [
         {pk: 'EA', name: 'EA'},
         {pk: 'g', name: 'g'},
