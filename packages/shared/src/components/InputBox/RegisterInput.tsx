@@ -6,9 +6,10 @@ interface IProps {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void
   placeholder?: string
   unit?: string
+  inputType?: string
 }
 
-const RegisterInput = ({value, onChange, placeholder, unit}: IProps) => (
+const RegisterInput = ({value, onChange, placeholder, unit, inputType}: IProps) => (
   <div style={{
     width: '100%',
     height: '100%',
@@ -21,6 +22,7 @@ const RegisterInput = ({value, onChange, placeholder, unit}: IProps) => (
         <p>{unit}</p>
       </div>
       <RegInput
+        type={inputType ?? 'text'}
         value={value}
         onChange={onChange}
         placeholder={placeholder}

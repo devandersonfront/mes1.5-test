@@ -41,7 +41,7 @@ const MoldInfoModal = ({column, row, onRowChange}: IProps) => {
           }
         }))
       } else {
-        setSearchList([{seq: 1 , setting : 1}])
+        setSearchList([{sequence: 1 , setting : 1}])
       }
     }
   }, [ isOpen ])
