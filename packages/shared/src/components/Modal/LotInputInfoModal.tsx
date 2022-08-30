@@ -49,23 +49,16 @@ const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: st
 ]
 
 const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
-  const [bomDummy, setBomDummy] = useState<any[]>([])
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
   const [summaryData, setSummaryData] = useState<any>({})
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
   const [lotList, setLotList] = useState<any[]>([])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [selectProduct, setSelectProduct] = useState<string>('')
   const [selectType, setSelectType] = useState<string>('')
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
+  const cavity = row.molds?.filter(mold => mold.mold.setting === 1)?.[0]?.mold?.mold?.cavity ?? 1
+
   useEffect(() => {
     if(isOpen) {
       setSummaryData({
@@ -93,12 +86,10 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         Notiflix.Report.warning("경고","투입 자재가 없습니다.","확인", () => setIsOpen(false))
       }
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen])
 
   const changeRow = (tmpRow: any, key?: string) => {
-    let tmpData = []
-    let tmpRows = tmpRow;
-    tmpData = tmpRows?.map((v, i) => {
+    const newRows = tmpRow?.map((v, i) => {
       let childData: any = {}
       let childDataType: TransferType = null
       let product = null
@@ -131,7 +122,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       }
       const bomLots = getBomLots(bomId, childDataType)
       const stock = getTotalStock(bomLots)
-
+      const sumOfUsage = bomLots?.length > 0 ? lodash.sum(bomLots.map(bom => new Big(bom.lot.amount).times(bom.bom.usage).toNumber())) : new Big(row.good_quantity).div(cavity)
 
       return {
         ...childData,
@@ -140,6 +131,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         type: TransferCodeToValue(childData?.type, childDataType),
         tab: v.bom.type,
         type_name: TransferCodeToValue(childData?.type, childDataType),
+        cavity,
         unit: childData.unit,
         parent: v.bom.parent,
         usage: v.bom.usage,
@@ -147,7 +139,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         setting: v.bom.setting,
         stock,
         bom_lot_list: tmpRow,
-        disturbance: row.good_quantity,
+        disturbance: sumOfUsage,
         processArray: childData.process ?? null,
         process: childData.process ? childData.process.name : '-',
         bom: bomLots,
@@ -157,18 +149,11 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       }
     })
 
-    setSearchList([...tmpData])
+    setSearchList(newRows)
   }
 
   function getTotalStock(lots){
-    let stock = 0
-    if(lots === null) {}
-    else if(lots.length > 1){
-      stock = lodash.sum(lots.map((lot) => lot.lot.current - lot.lot.amount))
-    }else {
-      stock = lots[0]?.lot.current - lots[0]?.lot.amount
-    }
-    return stock
+    return lots.length > 0 ? lodash.sum(lots.map((lot) => new Big(lot.lot.current).minus(new Big(lot.lot.amount).times(lot.bom.usage)).toNumber())) : 0
   }
 
   function getBomLots(id:number, type: TransferType) {
@@ -208,7 +193,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         fontSize: 22,
         fontWeight: 'bold',
         margin: 0
-      }}>투입 자재 정보 (해당 제품을 만드는데 사용한 자재는 아래와 같습니다)</p>
+      }}>투입 자재 정보 (해당 제품을 만드는 데 사용한 자재는 아래와 같습니다)</p>
       <div style={{display: 'flex'}}>
 
         <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
@@ -312,8 +297,9 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                         if(v.lotList){
                           const newLots = v.lotList.map(lot => ({
                             ...lot,
+                            amount: new Big(lot.amount).times(cavity),
                             unit: v.unit,
-                            current: lot.current - lot.amount
+                            current: new Big(lot.current).minus(new Big(lot.amount).times(v.usage)).toNumber()
                           }))
                           setSelectType(v.type_name)
                           setLotList(newLots)

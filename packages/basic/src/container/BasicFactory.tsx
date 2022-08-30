@@ -426,6 +426,7 @@ const BasicFactory = ({}: IProps) => {
                 appointment: row.manager ? row.manager.appointment : '',
                 telephone: row.manager ? row.manager.telephone : '',
                 id: `factory_${random_id}`,
+                reload
             }
         })
         setBasicRow([...tmpBasicRow])
@@ -445,15 +446,10 @@ const BasicFactory = ({}: IProps) => {
                 setExcelOpen(true)
                 break;
             case 1:
-
-                router.push(`/mes/item/manage/factory`)
-
-                break;
-            case 2:
                 // SaveBasic()
                 router.push(`/mes/item/manage/factory`)
                 break;
-            case 3:
+            case 2:
                 const random_id = Math.random() * 1000
 
                 setBasicRow([
@@ -464,10 +460,10 @@ const BasicFactory = ({}: IProps) => {
                     ...basicRow
                 ])
                 break;
-            case 4:
+            case 3:
                 SaveBasic();
                 break;
-            case 5:
+            case 4:
 
                 if (selectList.size === 0) {
                     return Notiflix.Report.warning(
@@ -514,7 +510,7 @@ const BasicFactory = ({}: IProps) => {
                 optionIndex={optionIndex}
                 title={"공장 기준정보"}
                 buttons={
-                    ['', '', '항목관리', '행추가', '저장하기', '삭제']
+                    ['', '항목관리', '행추가', '저장하기', '삭제']
                 }
                 buttonsOnclick={onClickHeaderButton}
             />

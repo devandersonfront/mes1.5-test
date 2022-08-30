@@ -96,6 +96,9 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
       path: {
         page: pageInfo.page,
         renderItem: 22,
+      },
+      params: {
+        sorts: ['process']
       }
     })
 
@@ -148,7 +151,7 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const ModalButtons = () => {
     return <>
-    <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
+    <div style={{ height: 40, marginTop:10, display: 'flex', alignItems: 'space-between'}}>
       {
         column.type !== 'readonly' && <div
               onClick={onCancelEvent}
@@ -230,7 +233,7 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
       }}>
         <div style={{
           width: 1776,
-          height: 800
+          height: 800,
         }}>
           <div style={{
             margin: '24px 16px 16px',
@@ -302,7 +305,7 @@ const DefectInfoModal = ({column, row, onRowChange}: IProps) => {
               }}
               width={1746}
               rowHeight={32}
-              height={718}
+              height={706}
               onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                 setSelectRow(e)
               }}

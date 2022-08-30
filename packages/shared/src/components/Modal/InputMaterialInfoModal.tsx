@@ -52,18 +52,11 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   const bomInfoList = useSelector((root:RootState) => root.infoModal)
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [summaryData, setSummaryData] = useState<any>({})
   const [searchList, setSearchList] = useState<any[]>([])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
   const [focusIndex, setFocusIndex] = useState<number>(0)
+  const cavity = row.product.molds?.filter(mold => mold.setting === 1)?.[0]?.mold?.cavity ?? 1
 
   useEffect(() => {
     if(isOpen) {
@@ -86,7 +79,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
     }else{
       dispatch(reset_summary_info())
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen])
 
   useEffect(() => {
     if(isOpen){
@@ -172,6 +165,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
         type: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterial" : v.type === 1 ? "subMaterial" : "product"),
         tab: v.type,
         type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterial" : v.type === 1 ? "subMaterial" : "product"),
+        cavity,
         unit: childData.unit ?? type,
         usage: v.usage,
         version: v.version,
@@ -190,7 +184,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
         }: null,
         parent:v.parent,
         setting:v.setting === 0 ? "기본" : "스페어",
-        disturbance: new Big(parent?.goal).times(v.usage).toNumber()
+        disturbance: new Big(parent?.goal).div(cavity).times(v.usage).toNumber()
       }
     })
     return tmpData
@@ -259,7 +253,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>투입 자재 정보 (해당 제품을 만드는데 사용할 자재는 아래와 같습니다)</p>
+            }}>투입 자재 정보 (해당 제품을 만드는 데 사용할 자재는 아래와 같습니다)</p>
             <div style={{display: 'flex'}}>
 
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
@@ -353,16 +347,13 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
               width={1746}
               rowHeight={32}
               height={552}
-              // onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-              //   setSelectRow(e)
-              // }}
               onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                 if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
+                  const newSearchList = searchList.map((row,rowIdx)=>({
+                    ...row,
+                    border: e === rowIdx
+                  }))
+                  setSearchList(newSearchList)
                 }
                 setSelectRow(e)
               }}

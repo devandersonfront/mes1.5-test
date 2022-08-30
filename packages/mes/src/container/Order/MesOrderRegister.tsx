@@ -82,6 +82,7 @@ const MesOrderRegister = ({ }: IProps) => {
     }
   }
 
+  console.log(basicRow)
   const SaveBasic = async () => {
     try {
       if (selectList.size < 1) throw ("데이터를 선택해주세요.")
@@ -102,7 +103,6 @@ const MesOrderRegister = ({ }: IProps) => {
           ...row,
           customer: row.customerArray,
           amount: row.amount ?? 0,
-          version: 0
         }))
       Notiflix.Loading.circle()
       const res = await RequestMethod('post', `contractSave`, postBody)
