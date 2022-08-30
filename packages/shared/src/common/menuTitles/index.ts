@@ -66,6 +66,7 @@ export const defaultMesTitles = {
   _changeNoti : menuLogic('변경점 정보 등록','/mes/quality/product/change/register'),
   _changeList : menuLogic('변경점 정보 리스트','/mes/quality/product/change/list'),
 
+
   stockMgmt : menuLogic('재고 관리','',['_stockList','_productList','_productListAdmin']),
   _stockList : menuLogic('재고 현황','/mes/stock/list'),
   _productList : menuLogic('생산/납품 현황','/mes/stock/productlist'),

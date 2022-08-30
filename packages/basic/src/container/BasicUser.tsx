@@ -20,6 +20,7 @@ import {
 } from "shared/src/reducer/menuSelectState";
 import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import {TableSortingOptionType} from "shared/src/@types/type";
+import addColumnClass from '../../../main/common/unprintableKey'
 
 export interface IProps {
   children?: any;
@@ -55,6 +56,8 @@ const BasicUser = ({}: IProps) => {
     page: 1,
     total: 1,
   });
+
+
 
   const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
@@ -632,6 +635,7 @@ const BasicUser = ({}: IProps) => {
         row.tmpId !== ""
     );
 
+
     if (spliceRow) {
       if (isCheck) {
         return Notiflix.Report.warning(
@@ -645,9 +649,16 @@ const BasicUser = ({}: IProps) => {
     setBasicRow(rows);
   };
 
+  // 데이터를 받아올때, print되지 말아야할 header에 클래스명을 부여한다.
+  // 그리고 그 나머지 애들한테는 어떻게 이동하라는 클래스를 부여한다.
+  // 각 cell과 해더에 클래스명을 준다. 하나씩 땡기고 , 어떤건 두개씩 땡긴다.
+
+
+
+
 
   return (
-    <div>
+    <div className={'excelPageContainer'}>
       <PageHeader
         isSearch
         searchKeyword={keyword}
@@ -666,7 +677,7 @@ const BasicUser = ({}: IProps) => {
         resizable
         resizeSave
         selectable
-        headerList={[SelectColumn, ...column]}
+        headerList={[SelectColumn, ...addColumnClass(column)]}
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {

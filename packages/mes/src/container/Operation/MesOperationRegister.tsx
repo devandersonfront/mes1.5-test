@@ -361,7 +361,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   },[])
 
   return (
-      <div>
+      <div className={'excelPageContainer'}>
         <PageHeader
             isCode
             onChangeCode={(value)=> {

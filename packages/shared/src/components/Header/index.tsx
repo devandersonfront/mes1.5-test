@@ -165,9 +165,9 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
   return (
       <div>
         <div style={{position: 'relative', textAlign: 'left',}}>
-          <div style={{display: 'flex', textAlign: 'left', marginBottom: 23, justifyContent: 'space-between', ...style}}>
+          <div className={'header'} style={{display: 'flex', textAlign: 'left', marginBottom: 23, justifyContent: 'space-between', ...style}}>
             <div style={{width: '100%',display: 'flex', justifyContent:"space-between"}}>
-              <div style={{marginTop:20}}>
+              <div className={'header_title'} style={{marginTop:20}}>
                 {
                     title && <span style={{fontSize: 22, marginRight: 18, marginLeft: 3, fontWeight: 'bold', color: 'white'}}>{title}</span>
                 }
@@ -175,7 +175,7 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                     pageHelper && <span style={{fontSize: 12, color: 'white'}}>*{pageHelper}</span>
                 }
               </div>
-              <ButtonWrapper style={{  marginTop: 20}}>
+              <ButtonWrapper className={'buttonWrapper unprintable'} style={{  marginTop: 20}}>
                 {
                     isCalendar &&
                     selectCalendarType(calendarType)
@@ -354,7 +354,7 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                 )
             }
             {
-                isCode && <div style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
+                isCode && <div  className={'unprintable'} style={{display:"flex", alignItems:"center", borderRadius: 6, marginRight: 8 }}>
                 {
                   !noCode && <>
                       <input id='codeTrue' name={'code'} type={'radio'} style={{ display: 'none' }} onClick={() => {

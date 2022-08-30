@@ -215,7 +215,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
 
   const addSearchButton = () => {
-    return <SearchIcon  onClick={() => {
+    return <SearchIcon
+        className={'img_wrapper unprintable'}
+        onClick={() => {
       setIsOpen(true)
     }} modalType={column.modalType}>
       <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
@@ -258,7 +260,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             LoadBasic(1)
           }}/>
         }
-        <div style={{cursor: 'pointer', marginLeft: 22}} onClick={() => {
+        <div className={'img_wrapper unprintable'} style={{cursor: 'pointer', marginLeft: 22}} onClick={() => {
           setIsOpen(false)
         }}>
           <img style={{width: 20, height: 20}} src={IcX}/>
@@ -350,6 +352,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         }}
       />
       <div
+        className={'img_wrapper unprintable'}
         style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
         onClick={() => {
           LoadBasic(1);

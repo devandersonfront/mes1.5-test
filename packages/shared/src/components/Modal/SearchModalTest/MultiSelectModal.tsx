@@ -134,7 +134,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
 
   const getContents = () => {
     return <>
-        <div style={{ paddingLeft: 8, opacity: row[column.key] ? 1 : .3,width: row.isFirst ? 'calc(100% - 38px)' : '100%' }}>
+        <div className={'layoutCenter'}  style={{ paddingLeft: 8, opacity: row[column.key] ? 1 : .3,width: row.isFirst ? 'calc(100% - 38px)' : '100%' }}>
       {
         row[column.key] ? typeof row[column.key] === "string" ? row[column.key] : row[column.key].name
           : searchModalInit?.placeholder ?? column?.placeholder
@@ -146,7 +146,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       </>
   }
 
-  const addSearchButton = () => (<SearchIcon><img style={{width: "20px", height:"20px"}} src={IcSearchButton} /></SearchIcon>)
+  const addSearchButton = () => (<SearchIcon  className={'unprintable'}><img style={{width: "20px", height:"20px"}} src={IcSearchButton} /></SearchIcon>)
 
   const ContentHeader = () => {
     return <div id={'content-header'} style={{
@@ -162,7 +162,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
           margin: 0,
         }}>{searchModalInit?.title}</p>
       </div>
-      <div id={'content-close-button'} style={{ display: 'flex' , cursor: 'pointer', marginLeft: 4}} onClick={() => {
+      <div  className={'unprintable'} id={'content-close-button'} style={{ display: 'flex' , cursor: 'pointer', marginLeft: 4}} onClick={() => {
         onClose()
       }}>
         <img style={{ width: 20, height: 20 }} src={IcX} />
@@ -234,6 +234,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
         }}
       />
       <div
+        className={'unprintable'}
         style={{ background: "#19B9DF", width: "32px", height: "32px", display: "flex", justifyContent: "center", alignItems: "center", cursor: 'pointer' }}
         onClick={() => {
           LoadBasic(1);

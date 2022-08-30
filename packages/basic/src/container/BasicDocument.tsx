@@ -200,7 +200,7 @@ const BasicDocument = ({page, keyword, option, doc_id}: IProps) => {
     },[])
 
     return (
-        <div>
+        <div className={'excelPageContainer'}>
             <PageHeader
                 title={parentData?.name ?? "표준 문서 관리"}
                 buttons={selectList.size >= 2 ? ["", "", "문서 다운로드","", "", "삭제"] : ["문서 폴더 추가", "문서 업로드", "문서 다운로드", "문서 로그", "파일 이동", "삭제"]}

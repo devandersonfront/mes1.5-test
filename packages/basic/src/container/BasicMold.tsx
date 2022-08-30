@@ -23,6 +23,7 @@ import {
 } from "shared/src/reducer/menuSelectState";
 import {getTableSortingOptions, setExcelTableHeight} from "shared/src/common/Util";
 import {TableSortingOptionType} from "shared/src/@types/type";
+import addColumnClass from '../../../main/common/unprintableKey'
 
 export interface IProps {
   children?: any;
@@ -507,8 +508,7 @@ const BasicMold = ({}: IProps) => {
   }
 
   return (
-    <div>
-
+    <div className={'excelPageContainer'}>
         <PageHeader
           isSearch
           searchKeyword={keyword}
@@ -531,7 +531,7 @@ const BasicMold = ({}: IProps) => {
           selectable
           headerList={[
             SelectColumn,
-            ...column
+            ...addColumnClass(column)
           ]}
           row={basicRow}
           setRow={(e) => {

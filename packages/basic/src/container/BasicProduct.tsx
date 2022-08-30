@@ -24,6 +24,7 @@ import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Uti
 import { BarcodeDataType } from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
+import renewalColumn from '../../../main/common/unprintableKey'
 
 export interface IProps {
   children?: any
@@ -641,7 +642,7 @@ const BasicProduct = ({}: IProps) => {
   }
 
   return (
-      <div>
+      <div className={'excelPageContainer'}>
         <PageHeader
             isSearch
             searchKeyword={keyword}
@@ -663,7 +664,7 @@ const BasicProduct = ({}: IProps) => {
             selectable
             headerList={[
               SelectColumn,
-              ...column
+            ...renewalColumn(column)
             ]}
             row={basicRow}
             // setRow={setBasicRow}
