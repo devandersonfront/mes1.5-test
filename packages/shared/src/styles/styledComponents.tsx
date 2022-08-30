@@ -193,6 +193,31 @@ export const DeleteImage = styled.img`
     }
 `;
 
+export const FooterButton = styled.div`
+  width: 50%; 
+  height: 40px;
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  p {
+    font-size: 14px;
+    font-weight: bold;
+  }
+`
+
+export const ModalTextArea = styled.textarea`
+        resize: none;
+        white-space: pre-line;
+        // color: white;
+        font-size: 16px;
+        border: none;
+        // background-color: #353B48;
+        padding: 8px 0 0 8px;
+        line-height: 17px;
+        height: 100%;
+        width: 100%;
+`
+
 export const Handler = styled.div`
   position: relative;
   width: 3px;
