@@ -263,7 +263,7 @@ const MesRawMaterialReturnList = ({page, search, option}: IProps) => {
                 ...appendAdditional,
                 id: `rawin_${random_id}`,
                 onClickEvent: (row) =>
-                    Notiflix.Confirm.show(`반납취소 하시겠습니까?`, '', '예','아니오', () => SaveBasic(row, 0), ()=>{},
+                    Notiflix.Confirm.show(`경고`, '반납취소 하시겠습니까?', '예','아니오', () => SaveBasic(row), ()=>{},
                         {width: '400px'}),
             }
         })
@@ -271,7 +271,7 @@ const MesRawMaterialReturnList = ({page, search, option}: IProps) => {
         setBasicRow([...tmpBasicRow])
     }
 
-    async function SaveBasic(row: any, status?:number) {
+    async function SaveBasic(row: any) {
         let res: any
 
         res = await RequestMethod('post', `lotRmSave`,
@@ -280,7 +280,8 @@ const MesRawMaterialReturnList = ({page, search, option}: IProps) => {
                 warehousing: row.amount,
                 type: row.type_id,
                 raw_material: {...row.raw_material, type:row.raw_material?.type_id},
-                status:status
+                status:0,
+                remark:null
             }])
             .catch((error) => {
                 if(error.status === 409){

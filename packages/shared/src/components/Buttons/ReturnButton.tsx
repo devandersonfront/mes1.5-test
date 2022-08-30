@@ -13,6 +13,7 @@ interface IProps {
 const ReturnButton = ({row, column}: IProps) => {
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const [remark, setRemark] = useState<string>()
     const returnButton = () => {
         return <CellButton
                     onClick={() => {
@@ -75,7 +76,10 @@ const ReturnButton = ({row, column}: IProps) => {
                             </HeaderTable>
                             <HeaderTable style={{height:"initial", display:"flex", alignItems:"flex-start"}}>
                                 <HeaderTableTitle style={{marginTop:"5px"}}>사유</HeaderTableTitle>
-                                <ModalTextArea style={{height:"90px", borderRadius:"5px", border:"0.5px solid #B3B3B3"}}>사유 내용</ModalTextArea>
+                                <ModalTextArea style={{height:"90px", borderRadius:"5px", border:"0.5px solid #B3B3B3"}} onBlur={(e) => {
+                                    console.log(e.target.value)
+                                    setRemark(e.target.value)
+                                }}/>
                             </HeaderTable>
                         </div>
                         <div style={{display:"flex", width:"100%"}}>
@@ -85,7 +89,7 @@ const ReturnButton = ({row, column}: IProps) => {
                                 취소
                             </FooterButton>
                             <FooterButton onClick={() => {
-                                row.onClickReturnEvent(row)
+                                row.onClickReturnEvent(row, remark)
                             }} style={{background:"cyan"}}>
                                 확인
                             </FooterButton>
