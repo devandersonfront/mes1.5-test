@@ -95,7 +95,6 @@ export const bkMesTitles = {
   _opComList : menuLogic('작업 이력 관리(작업 완료 리스트)','/mes/finishV2/list'),
   _opDefect : menuLogic('불량 이력 관리','/mes/defect/list'),
 
-  qualityMgmt : menuLogic('품질 관리','',['_midRangeList','_stdList','_changeNoti','_changeList']),
   _midRangeList : menuLogic('자주 검사 관리(초ㆍ중ㆍ종 검사 리스트)','/mes/quality/midrange/list'),
   _stdList : menuLogic('작업 표준서 관리','/mes/quality/work/standardlist'),
   _changeNoti : menuLogic('제품 변경점 관리(변경점 정보 등록)','/mes/quality/product/change/register'),

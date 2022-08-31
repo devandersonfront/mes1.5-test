@@ -105,7 +105,7 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
         model: v.model?.model ?? "-",
         code: v.code ?? "-",
         material_name: v.name ?? "-",
-        type: column[4].selectList[v.type].name,
+        type: column[column.findIndex((col) => col.key == "type")]?.selectList[v.type].name,
         work_standard_image: v.work_standard_image,
       };
     });

@@ -466,7 +466,6 @@ const BasicProduct = ({}: IProps) => {
       })
 
       let random_id = Math.random()*1000;
-
       return {
         ...row,
         ...appendAdditional,
@@ -477,7 +476,7 @@ const BasicProduct = ({}: IProps) => {
         process_id: row.process?.name,
         processArray: row.process,
         type_id: row.type,
-        type: column[4].selectList[row.type].name,
+        type: column[column.findIndex((col) => col.key == "type")]?.selectList[row.type].name,
         id: `product_${random_id}`,
         reload
       }

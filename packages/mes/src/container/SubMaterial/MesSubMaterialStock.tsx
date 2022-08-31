@@ -258,8 +258,6 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     const res = await RequestMethod('post', `lotSmSave`,
             [{
               ...row,
-              customer: row.sub_material.customer,
-              customerArray: row.sub_material.customer,
               status:status,
               remark:remark
             }]

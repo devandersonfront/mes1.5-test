@@ -277,9 +277,6 @@ const MesRawMaterialReturnList = ({page, search, option}: IProps) => {
         res = await RequestMethod('post', `lotRmSave`,
             [{
                 ...row,
-                warehousing: row.amount,
-                type: row.type_id,
-                raw_material: {...row.raw_material, type:row.raw_material?.type_id},
                 status:0,
                 remark:null
             }])

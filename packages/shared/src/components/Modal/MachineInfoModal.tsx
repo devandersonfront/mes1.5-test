@@ -27,7 +27,7 @@ interface IProps {
 const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 1}])
+  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 0}])
   const hasSaved = !!row.product_id
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           }
         }))
       } else {
-        setSearchList([{seq: 1 , setting : 1}])
+        setSearchList([{seq: 1 , setting : 0}])
       }
     }
   }, [isOpen])
