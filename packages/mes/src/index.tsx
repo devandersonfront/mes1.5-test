@@ -62,3 +62,6 @@ export {MesLeadtimeOrder} from './container/kpi/MesLeadtimeOrder'
 export {MesToolRegister} from "./container/Tool/MesToolRegister"
 export {MesToolWarehousingList} from "./container/Tool/MesToolWarehousingList"
 export {MesToolUpdate} from "./container/Tool/MesToolUpdate"
+
+//외주
+export {MesOutsourcingOrder} from "./container/Outsourcing/MesOutsourcingOrder"

@@ -76,7 +76,7 @@ const BasicOrder = (customTarget?: string): BasicOrderType[] => {
 }
 
 const MesOrder = (customTarget?: string): MesOrderType[] => {
-    const defaultOrder: MesOrderType[] = ['businessMgmt','pmReg','rawMgmt','subMgmt','toolMgmt','qualityMgmt','stockMgmt','kpi']
+    const defaultOrder : MesOrderType[] = ['businessMgmt','pmReg','rawMgmt','subMgmt','toolMgmt','qualityMgmt','stockMgmt', 'outsourcingMgmt', 'kpi']
     switch(customTarget){
         default: return defaultOrder
     }
@@ -119,7 +119,7 @@ const MES_MENUS: IMenuType[] = MesOrder(customTarget).map(menu => ({
 }))
 
 const PMS_MENUS: IMenuType[] = PmsOrder(customTarget).map(menu => ({
-    title:PmsTitles(customTarget)[menu].title,
+    title: PmsTitles(customTarget)[menu].title,
     url: PmsTitles(customTarget)[menu].url,
     subMenu: PmsTitles(customTarget)[menu]?.subMenu?.map(sub => ({
         title: PmsTitles(customTarget)[sub].title,

@@ -67,7 +67,7 @@ import { HeaderSort } from '../components/HeaderSort/HeaderSort'
 import CommonProgressBar from '../../../main/component/InputBox/CommonProgressBar'
 import {ExportButton} from "../components/Buttons/ExportButton";
 import { PasswordBox } from '../components/Formatter/PasswordBox'
-
+import {InputMaterialListModal} from "../components/Modal/InputMaterialListModal";
 
 export const columnlist: any = {
   member: [
@@ -1514,4 +1514,14 @@ export const columnlist: any = {
     { key: 'poor_rate', name: '불량률', type: 'machineInfo', formatter: PlaceholderBox, summaryType: 'product_no_cavity', width: 120, placeholder: '0' },
     { key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', summaryType: 'product_no_cavity', width: 170 },
   ],
+  outsourcingOrder: [
+    {key: 'product_name', name: '품명', formatter:SearchModalTest, type: 'product', placeholder: '-'},
+    {key: 'code', name: 'CODE', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'user', name: '발주자', formatter:SearchModalTest, type: 'user', placeholder: '-'},
+    {key: 'customer', name: '거래처', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'order_date', name: '발주 날짜', formatter:CalendarBox, placeholder: '-'},
+    {key: 'input_date', name: '입고 날짜', formatter:CalendarBox, placeholder: '-'},
+    {key: 'input', name: '투입 자재', formatter:InputMaterialListModal, textAlign: 'center', type:'basic', action:'register'},
+    {key: 'good_quantity', name: '수량', formatter:PlaceholderBox, editor:TextEditor, placeholder: '-'},
+  ]
 }
