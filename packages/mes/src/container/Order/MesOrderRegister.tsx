@@ -82,7 +82,6 @@ const MesOrderRegister = ({ }: IProps) => {
     }
   }
 
-  console.log(basicRow)
   const SaveBasic = async () => {
     try {
       if (selectList.size < 1) throw ("데이터를 선택해주세요.")

@@ -81,7 +81,7 @@ const MesMidrangeList = ({ option }: IProps) => {
                 identification: info.operation_sheet?.identification ?? '-',
                 code: info.operation_sheet?.product?.code ?? '-',
                 name: info.operation_sheet?.product?.name ?? '-',
-                type: column[4].selectList[info.operation_sheet?.product?.type]?.name ?? '-',
+                type: column[column.findIndex((col) => col.key == "type")]?.selectList[info.operation_sheet?.product?.type]?.name ?? '-',
                 unit: info.operation_sheet?.product?.unit ?? '-',
                 process_id: info.operation_sheet?.product?.process?.name ?? '-',
                 lot_number: info.lot_number ?? '-',

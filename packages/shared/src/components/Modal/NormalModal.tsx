@@ -54,7 +54,7 @@ const NormalModal: React.FunctionComponent<Props> = ({
                                                       onClose,
                                                       onConfirm,
                                                       onDelete,
-                                                      headers, 
+                                                      headers,
                                                       data,
                                                       setData,
                                                       dataIndex,
@@ -108,7 +108,7 @@ const NormalModal: React.FunctionComponent<Props> = ({
           setData(prev =>[
             ...prev,
             {
-              setting: 1,
+              setting: 0,
               [indexKey]: prev.length+1,
             }
           ])

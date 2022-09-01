@@ -26,7 +26,7 @@ interface IProps {
 const MoldInfoModal = ({column, row, onRowChange}: IProps) => {
   const [ isOpen, setIsOpen ] = useState<boolean>(false)
   const [ selectRow, setSelectRow ] = useState<number>()
-  const [ searchList, setSearchList ] = useState<any[]>([ { sequence: 1, setting: 1 } ])
+  const [ searchList, setSearchList ] = useState<any[]>([ { sequence: 1, setting: 0 } ])
 
   useEffect(() => {
     if (isOpen) {
@@ -41,7 +41,7 @@ const MoldInfoModal = ({column, row, onRowChange}: IProps) => {
           }
         }))
       } else {
-        setSearchList([{sequence: 1 , setting : 1}])
+        setSearchList([{sequence: 1 , setting : 0}])
       }
     }
   }, [ isOpen ])
