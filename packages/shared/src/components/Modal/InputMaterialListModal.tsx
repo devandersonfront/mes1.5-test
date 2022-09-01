@@ -71,7 +71,11 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen){
-      getInputMaterialList(row.osId, row.bom_root_id)
+      if(row.osId){
+        getInputMaterialList(row.osId, row.bom_root_id)
+      }else{
+        getInputMaterialList2()
+      }
       setHeaderItemsValue({
         identification: row.identification,
         lot_number: row.lot_number ?? '-',
@@ -100,6 +104,34 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       setInputMaterialList(tmpInput)
     }
   }, [ inputMaterial ])
+
+  const getInputMaterialList2 = async() => {
+    console.log(row)
+    if(row.bom_root_id){
+      await RequestMethod("get", "bomLoad", {path:[row.bom_root_id]})
+          .then((res) => {
+            let inputBom = [];
+            if(typeof res === 'string'){
+              let tmpRowArray = res.split('\n')
+              inputBom = tmpRowArray.map(v => {
+                if(v !== ""){
+                  let tmp = JSON.parse(v)
+                  return tmp
+                }
+              }).filter(v=>v)
+            }else{
+              inputBom = res
+            }
+            console.log(inputBom)
+            if(res){
+              const inputMaterialList = toInputMaterialList(inputBom)
+              setInputMaterialList(inputMaterialList)
+            }
+          })
+    }else{
+      Notiflix.Report.warning("경고","BOM이 없습니다.","확인",() => setIsOpen(false))
+    }
+  }
 
   const getInputMaterialList = async (os_id: number | string, key: string) => {
     const res = await RequestMethod('get', `sheetBomLoad`,{

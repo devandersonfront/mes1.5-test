@@ -74,6 +74,12 @@ export const defaultMesTitles = {
   _productList : menuLogic('생산/납품 현황','/mes/stock/productlist'),
   _productListAdmin : menuLogic('생산/납품 현황(관리자용)','/mes/stock/admin'),
 
+  outsourcing : menuLogic('외주 관리','',['_outsourcingOrder', '_outsourcingReceive', '_outsourcingDelivery', '_outsourcingList']),
+  _outsourcingOrder : menuLogic('외주 발주','/mes/outsourcing/order'),
+  _outsourcingReceive : menuLogic('외주 입고','/mes/outsourcing/receive'),
+  _outsourcingDelivery : menuLogic('외주 납품','/mes/outsourcing/delivery'),
+  _outsourcingList : menuLogic('외주 리스트','/mes/outsourcing/list'),
+
   kpi : menuLogic('KPI','',['_pLeadTime','_manHour','_defect','_oLeadTime','_powerUsage','_uph','_operation']),
   _pLeadTime : menuLogic('제조리드타임(P)','/mes/kpi/leadtime/manufacture'),
   _manHour : menuLogic('작업공수(C)','/mes/kpi/manhour'),

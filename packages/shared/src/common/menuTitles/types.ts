@@ -5,4 +5,4 @@ export type BasicOrderType =
 
 export type MesOrderType =
     'businessMgmt' | 'pmReg' | 'rawMgmt' | 'subMgmt' | 'toolMgmt' | 'qualityMgmt' |
-    'stockMgmt' | 'kpi'
+    'stockMgmt' | 'outsourcing' | 'kpi'
