@@ -23,7 +23,6 @@ import {RecordDetailFormatter} from '../components/Formatter/RecordDetailFormatt
 import {OperationMachineSearchModal} from "../components/Modal/OperationMachineSearchModal";
 // @ts-ignore
 import {StatusComponent} from '../components/Formatter/StatusComponent'
-import {MultipleSelectModal} from "../components/Modal/MultipleSelectModal";
 import {FactoryInfoModal} from '../components/Modal/FactoryInfoModal'
 import {DeviceInfoModal} from '../components/Modal/DeviceInfoModal'
 import {PlaceholderBox} from '../components/Formatter/PlaceholderBox'
@@ -846,14 +845,14 @@ export const columnlist: any = {
       options:[{status:0, name:"개수"},{status:1, name:"개수 많은순"},{status:2, name:"개수 적은순"}],
     },
   ],
-  delivery: [
-    {key:"customer_id", name:"거래처명",   },
-    {key:"cm_id", name:"모델",  },
-    {key:"code", name:"CODE", formatter: /*ProductSearchModal*/ MultipleSelectModal},
-    {key:"name", name:"품명"},
-    {key:"date", name:"납품 날짜", editor: CalendarBox, maxDate:true},
-    {key:"amount", name:"납품 개수", editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
-  ],
+  // delivery: [
+  //   {key:"customer_id", name:"거래처명",   },
+  //   {key:"cm_id", name:"모델",  },
+  //   {key:"code", name:"CODE", formatter: /*ProductSearchModal*/ MultipleSelectModal},
+  //   {key:"name", name:"품명"},
+  //   {key:"date", name:"납품 날짜", editor: CalendarBox, maxDate:true},
+  //   {key:"amount", name:"납품 개수", editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
+  // ],
   operationCodeRegisterV2: [
     {key:"contract_id", name:"수주 번호", type: 'order', formatter: PlaceholderBox, placeholder: '-', disableType:"true", width: 118},
     {key:"date", name:"지시 날짜", formatter: CalendarBox, width: 118, type: 'date'},
