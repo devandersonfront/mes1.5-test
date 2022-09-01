@@ -16,7 +16,6 @@ interface IProps {
     onClose: (state: boolean) => void
 }
 
-
 const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
     const fileRef = useRef(null)
 

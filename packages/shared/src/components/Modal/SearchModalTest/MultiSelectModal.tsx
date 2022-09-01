@@ -113,6 +113,8 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       }
     }
 
+
+    // 1122 
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`, {
       path: getPath(row),
       params: getParams()
@@ -130,8 +132,11 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       const newSearchList = SearchResultSort(idAddedRows, searchModalInit.excelColumnType)
       const borderedRows = markSelectedRows(newSearchList)
 
+      console.log("basicRowMap : ", basicRowMap);
+
+
       const new_border_rows = borderedRows.map((row) => {
-        if (column.currentSelectedRows.includes(row.code)) {
+        if (basicRowMap.has(row.product_id)) {
           return {
             ...row,
             border: true
@@ -298,9 +303,8 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   const modalOpen = () => {
 
     // 1122
-
     const new_temp_list = searchList.map((row) => {
-      if (column.currentSelectedRows.includes(row.code)) {
+      if (basicRowMap.has(row.product_id)) {
         return {
           ...row,
           border: true
@@ -357,9 +361,13 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
                 <button style={{ marginLeft: 10, marginRight: 15 }} onClick={() => {
                   setSearchList(setAllBorder(searchList, false))
                   setAllDeselected(true)
-                  column.setCurrentSelectedRows([]);
+
+                  // 1122 
+                  basicRowMap.clear()
+                  // setBasicRowMap(new_basic_row_map);
+                  // column.setCurrentSelectedRows([]);
                 }}>모두 취소</button>
-                출력 개수: {searchList.length} 선택 개수: {column.currentSelectedRows.length}
+                {/* 출력 개수: {searchList.length} 선택 개수: {column.currentSelectedRows.length} */}
               </div>
 
               <ExcelTable
@@ -370,35 +378,53 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
                 height={600}
                 onRowClick={(clicked) => {
 
-                  // 1122
-                  // currentSelectedRows
-                  // setCurrentSelectedRows.push  
-
-
+                  // 1122 1122 여기 고쳐
                   const clickedIdx = searchList.indexOf(clicked)
                   const tmpSearchList = searchList.slice()
-                  tmpSearchList[clickedIdx].border = !tmpSearchList[clickedIdx].border
+                  tmpSearchList[clickedIdx].border = !clicked.border
+                  // tmpSearchList[clickedIdx].border = !tmpSearchList[clickedIdx].border
                   console.log("tempSearchList : ", tmpSearchList);
 
-                  const selected_code = tmpSearchList[clickedIdx].code;
-                  column.setCurrentSelectedRows((prev) => [...prev, selected_code]);
+                  // const selected_code = clicked.code;
+                  // 1122
+                  // const new_temp_list = tmpSearchList.map((row) => {
+                    
+                  //   if (basicRowMap.has(row.product_id)) {
+                  //     console.log("row.product_id : ", row.product_id);
+                      
+                  //     // basicRowMap.delete(row.product_id)
+                      
+                  //     return {
+                  //       ...row,
+                  //       // border: true
+                  //     }
+                  //   } else {
+                  //     // console.log("basicRowMap :::::: ", basicRowMap);
+                  //     // const newMap = new Map()
+                  //     // newMap.set(row.product_id, row)
+                  //     // 1122
+                  //     // setBasicRowMap((prev) => new Map(prev).set(row.product_id, row))
+                  //     return {
+                  //       ...row,
+                  //       // border:false
+                  //     }
+                  //   }
+                  // })
 
-                  const new_temp_list = tmpSearchList.map((row) => {
-                    if (column.currentSelectedRows.includes(row.code)) {
-                      return {
-                        ...row,
-                        border: true
-                      }
-                    } else {
-                      return {
-                        ...row,
-                        // border:false
-                      }
-                    }
-                  })
+                  if (basicRowMap.has(row.product_id)) {
+                    basicRowMap.delete(row.product_id)
+                  } else {
+                    setBasicRowMap((prev) => new Map(prev).set(clicked.product_id, row));
+
+                  }
+
+                  // if (searchList[clickedIdx].product_id === .product_id) {
 
 
-                  setSearchList([...new_temp_list])
+                  // } else {
+                  // }
+
+                  // setSearchList([...new_temp_list])
 
                 }}
                 type={'searchModal'}
@@ -411,6 +437,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
                 }}
               />
             </div>
+
             <div style={{ height: 40, display: 'flex', alignItems: 'flex-end', }}>
               <FooterButton
                 onClick={onClose}
