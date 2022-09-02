@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
 import moment from 'moment'
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
-import { useDispatch,  } from "react-redux";
+import { useDispatch, } from "react-redux";
 import { setExcelTableHeight } from 'shared/src/common/Util'
 
 
@@ -30,6 +30,23 @@ const MesOrderRegister = ({ }: IProps) => {
     isFirst: true
   }])
   const [column, setColumn] = useState<any>(columnlist["orderRegister"]())
+  const [currentSelectedRows, setCurrentSelectedRows] = useState([]);
+
+  // useEffect(() => {
+  //   if (basicRow.length > 0 && currentSelectedRows.length > 0) {
+
+  //     const new_rows = basicRow.map((row) => {
+  //       if (currentSelectedRows.includes(row.code)) {
+  //         return {
+  //           ...row,
+  //           border: true
+  //         }
+  //       }
+  //     })
+
+  //     setBasicRow([...new_rows])
+  //   }
+  // }, [basicRow, currentSelectedRows])
 
   useEffect(() => {
     getMenus()
@@ -49,7 +66,7 @@ const MesOrderRegister = ({ }: IProps) => {
         unit: menu.unit,
         moddable: menu.moddable
       }))
-      return {...col, ...newMenus[0]}
+      return { ...col, ...newMenus[0] }
     })
   )
 
@@ -67,15 +84,14 @@ const MesOrderRegister = ({ }: IProps) => {
 
   const SaveBasic = async () => {
     try {
-      if(selectList.size < 1) throw("데이터를 선택해주세요.")
+      if (selectList.size < 1) throw ("데이터를 선택해주세요.")
 
       basicRow.map((row) => {
-        if(selectList.has(row.id))
-        {
+        if (selectList.has(row.id)) {
           if (!row.code) {
-            throw("CODE를 입력해주세요.")
+            throw ("CODE를 입력해주세요.")
           } else if (!Number.isInteger(Number(row.amount)) || row.amount < 1) {
-            throw("수주량을 정확히 입력해주세요.")
+            throw ("수주량을 정확히 입력해주세요.")
           }
         }
       })
@@ -87,16 +103,17 @@ const MesOrderRegister = ({ }: IProps) => {
           customer: row.customerArray,
           amount: row.amount ?? 0,
         }))
+
       Notiflix.Loading.circle()
-      const res = await RequestMethod('post', `contractSave`,postBody)
+      
+      const res = await RequestMethod('post', `contractSave`, postBody)
 
       if (res) {
         Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
           router.push('/mes/order/list')
         });
       }
-    } catch(errMsg)
-    {
+    } catch (errMsg) {
       Notiflix.Report.warning("경고", errMsg, "확인")
     }
   }
@@ -146,13 +163,13 @@ const MesOrderRegister = ({ }: IProps) => {
         resizable
         headerList={[
           SelectColumn,
-          ...column.map(col => ({...col, basicRow, setBasicRow}))
+          ...column.map(col => ({ ...col, basicRow, setBasicRow, currentSelectedRows, setCurrentSelectedRows }))
         ]}
         row={basicRow}
         setRow={(row) => {
           let tmp: Set<any> = selectList
           row.map(v => {
-            if(v.isChange) tmp.add(v.id)
+            if (v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
           setBasicRow(row)

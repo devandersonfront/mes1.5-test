@@ -45,7 +45,6 @@ interface IProps {
 const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff, onDoubleClick, onRowClick}: IProps) => {
   const [ selectedRows, setSelectedRows ] = useState<ReadonlySet<number>>(selectList ?? new Set())
 
-
   useEffect(() => {
     setSelectedRows(selectList)
   }, [selectList])
