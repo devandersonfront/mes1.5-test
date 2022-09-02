@@ -107,7 +107,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   }, [ inputMaterial ])
 
   const getInputMaterialList2 = async() => {
-    console.log(row)
     if(row.bom_root_id){
       await RequestMethod("get", "bomLoad", {path:[row.bom_root_id]})
           .then((res) => {
@@ -123,7 +122,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             }else{
               inputBom = res
             }
-            console.log(inputBom)
             if(res){
               const inputMaterialList = toInputMaterialList(inputBom)
               setInputMaterialList(inputMaterialList)

@@ -7,10 +7,13 @@ import { NextPageContext } from 'next'
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
 import { useDispatch,  } from "react-redux";
 import { setExcelTableHeight } from 'shared/src/common/Util'
+import {useRouter} from "next/router";
 
 
 
-const MesOutsourcingOrder = () => {
+const MesOutsourcingReceiveRegister = () => {
+    const dispatch = useDispatch()
+    const router = useRouter()
 
     const [basicRow, setBasicRow] = useState<any[]>([{}])
 
@@ -28,10 +31,19 @@ const MesOutsourcingOrder = () => {
         }
     }
 
+    useEffect(() => {
+        dispatch(
+            setMenuSelectState({ main: "외주 관리", sub: router.pathname })
+        )
+        return () => {
+            dispatch(deleteMenuSelectState())
+        }
+    }, [])
+
     return (
         <div>
             <PageHeader
-                title={"외주 발주 등록"}
+                title={"외주 입고"}
                 buttons={
                     ['저장하기', '삭제']
                 }
@@ -42,7 +54,7 @@ const MesOutsourcingOrder = () => {
                 resizable
                 headerList={[
                     SelectColumn,
-                    ...columnlist.outsourcingOrder
+                    ...columnlist.outsourcingReceive
                 ]}
                 row={basicRow}
                 setRow={(row) => {
@@ -67,4 +79,4 @@ export const getServerSideProps = (ctx: NextPageContext) => {
     }
 }
 
-export { MesOutsourcingOrder };
+export { MesOutsourcingReceiveRegister };

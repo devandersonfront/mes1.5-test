@@ -1,10 +1,10 @@
 import React from 'react'
-import MenuNavigation from '../../../component/MenuNav/MenuNavigation'
-import ProfileHeader from '../../../component/Profile/ProfileHeader'
+import MenuNavigation from '../../../../component/MenuNav/MenuNavigation'
+import ProfileHeader from '../../../../component/Profile/ProfileHeader'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {NextPageContext} from 'next'
-import {MesOutsourcingOrder} from "mes";
+import {MesOutsourcingDeliveryList} from "mes";
 
 
 const BasicContainer = () => {
@@ -14,7 +14,7 @@ const BasicContainer = () => {
             <MenuNavigation pageType={'MES'}/>
             <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
-                <MesOutsourcingOrder/>
+                <MesOutsourcingDeliveryList/>
             </div>
         </div>
     );
