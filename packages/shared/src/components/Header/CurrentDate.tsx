@@ -6,7 +6,7 @@ export const CurrentDate = () => {
 
     return (
         <DateWrapper>
-            <Title>현재날짜</Title>
+            <Title className={'unprintable'}>현재날짜</Title>
             <div>
                 {new Date().toISOString().slice(0, 10)}
             </div>

@@ -51,7 +51,7 @@ const HeaderSort = ({row, column, setRow, onChangeOption}: IProps) => {
       }
     }}>
       {column.name}
-      <SortIcon>
+      <SortIcon className={'icon unprintable'}>
         {SortIcons()}
         {SortOrderNum()}
       </SortIcon>

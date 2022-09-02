@@ -111,7 +111,8 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction}:
   }
 
   return (
-      <Modal isOpen={isOpen} style={{
+      <Modal
+          isOpen={isOpen} style={{
         content: {
           top: '50%',
           left: '50%',

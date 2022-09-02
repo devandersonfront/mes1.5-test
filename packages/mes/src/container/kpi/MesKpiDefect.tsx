@@ -154,7 +154,7 @@ const MesKpiDefect = () => {
     },[])
 
     return (
-        <div>
+        <div className={'excelPageContainer'}>
             <PageHeader title={"품질 불량률(Q)"} />
             <ExcelTable
                 editable

@@ -3,14 +3,19 @@ import React, { useEffect, useState, useRef } from "react";
 import Modal from 'react-modal'
 import styled from 'styled-components'
 import AddIcon from '@mui/icons-material/Add';
+//@ts-ignore
 import Icon_X from '../../../public/images/file_delete_button.png';
-
+//@ts-ignore
 import Plus from '../../../public/images/plus-solid.svg';
+//@ts-ignore
 import Minus from '../../../public/images/minus-solid.svg';
-
+//@ts-ignore
 import rotation_right from '../../../public/images/rotate-right-solid.svg';
+//@ts-ignore
 import rotation_left from '../../../public/images/rotate-left-solid.svg';
+//@ts-ignore
 import Close from '../../../public/images/xmark-solid.svg';
+//@ts-ignore
 import floppy_disk from '../../../public/images/floppy-disk-solid.svg';
 import { RequestMethod, SF_ENDPOINT } from '../../../../shared';
 
@@ -382,27 +387,27 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
 
                             <img
                                 onClick={imageButtonClickHandler}
-                                name="enlargement"
+                                id="enlargement"
                                 src={Plus}
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />
 
                             <img
                                 onClick={imageButtonClickHandler}
-                                name="reduction"
+                                id="reduction"
 
                                 src={Minus}
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />
                             <img
                                 onClick={imageButtonClickHandler}
-                                name="rotation+"
+                                id="rotation+"
                                 src={rotation_right}
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />
                             <img
                                 onClick={imageButtonClickHandler}
-                                name="rotation-"
+                                id="rotation-"
                                 src={rotation_left}
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />

@@ -263,7 +263,7 @@ const BasicDefect = ({}: IProps) => {
           />
         </div>
         <div>
-          <div style={{display:"flex", justifyContent:"space-between", margin:"0 0 15px 0"}}>
+          <div className={'unprintable'} style={{display:"flex", justifyContent:"space-between", margin:"0 0 15px 0"}}>
                             <span style={{color:"white", fontSize:22, fontWeight:"bold"}}>
                                 {processBasicRow[selectRow] && processBasicRow[selectRow].name}
                             </span>

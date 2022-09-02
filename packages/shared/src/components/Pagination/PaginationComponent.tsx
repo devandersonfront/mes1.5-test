@@ -49,6 +49,7 @@ const PaginationComponent = ({totalPage, currentPage, setPage, themeType}: IProp
           defaultPage={1}
           variant="outlined"
           shape="rounded"
+          color={"standard"}
           onChange={(e, page) => {
             setPage(page)
           }}

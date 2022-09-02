@@ -23,7 +23,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
   return (
     <div style={{display: 'flex', }}>
       <MenuNavigation pageType={'BASIC'} subType={0}/>
-      <div style={{paddingBottom: 40}}>
+      <div className={'pageContainer'}>
         <ProfileHeader/>
         <BasicUser page={page} keyword={keyword} option={option}/>
       </div>

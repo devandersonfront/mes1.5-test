@@ -2,6 +2,7 @@ import React from 'react'
 import MenuNavigation from '../../../../component/MenuNav/MenuNavigation'
 import ProfileHeader from '../../../../component/Profile/ProfileHeader'
 import {BasicFactory} from 'basic'
+
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {NextPageContext} from 'next'
@@ -18,7 +19,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
   return (
     <div style={{display: 'flex', }}>
       <MenuNavigation pageType={'BASIC'}/>
-      <div style={{paddingBottom: 40}}>
+      <div className={'pageContainer'} style={{paddingBottom: 40}}>
         <ProfileHeader/>
         <BasicFactory page={page} keyword={keyword} option={option}/>
       </div>

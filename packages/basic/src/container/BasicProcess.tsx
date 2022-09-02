@@ -496,7 +496,7 @@ const BasicProcess = ({}: IProps) => {
   }
 
   return (
-    <div>
+    <div className={'excelPageContainer'}>
       <PageHeader
         isSearch
         searchKeyword={keyword}

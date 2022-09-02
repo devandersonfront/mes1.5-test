@@ -23,6 +23,7 @@ import {
 } from "shared/src/reducer/menuSelectState";
 import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import {TableSortingOptionType} from "shared/src/@types/type";
+import addColumnClass from '../../../main/common/unprintableKey'
 
 export interface IProps {
   children?: any;
@@ -484,7 +485,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
   };
 
   return (
-      <div>
+      <div className={'excelPageContainer'}>
         <PageHeader
             title={"공구 기준정보"}
             isSearch
@@ -502,7 +503,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
             resizable
             resizeSave
             selectable
-            headerList={[SelectColumn, ...column]}
+            headerList={[SelectColumn, ...addColumnClass(column)]}
             row={basicRow}
             setRow={(e) => {
               let tmp: Set<any> = selectList

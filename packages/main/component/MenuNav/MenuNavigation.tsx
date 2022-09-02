@@ -77,7 +77,7 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
   }
 
   return (
-      <div style={{display: 'flex'}}>
+      <div className={'nav unprintable'} style={{display: 'flex'}}>
         <MenuNavComponent>
           <div>
             <MenuNavItem style={{backgroundColor: menuType === "HOME" ? POINT_COLOR : undefined}} onClick={() => {
