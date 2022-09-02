@@ -74,11 +74,13 @@ export const defaultMesTitles = {
   _productList : menuLogic('생산/납품 현황','/mes/stock/productlist'),
   _productListAdmin : menuLogic('생산/납품 현황(관리자용)','/mes/stock/admin'),
 
-  outsourcing : menuLogic('외주 관리','',['_outsourcingOrder', '_outsourcingReceive', '_outsourcingDelivery', '_outsourcingList']),
+  outsourcing : menuLogic('외주 관리','',['_outsourcingOrder', '_outsourcingOrderList', '_outsourcingReceive', '_outsourcingReceiveList', '_outsourcingDelivery', '_outsourcingDeliveryList']),
   _outsourcingOrder : menuLogic('외주 발주','/mes/outsourcing/order'),
+  _outsourcingOrderList : menuLogic('외주 발주 리스트','/mes/outsourcing/order/list'),
   _outsourcingReceive : menuLogic('외주 입고','/mes/outsourcing/receive'),
+  _outsourcingReceiveList : menuLogic('외주 입고 리스트','/mes/outsourcing/receive/list'),
   _outsourcingDelivery : menuLogic('외주 납품','/mes/outsourcing/delivery'),
-  _outsourcingList : menuLogic('외주 리스트','/mes/outsourcing/list'),
+  _outsourcingDeliveryList : menuLogic('외주 납품 리스트','/mes/outsourcing/delivery/list'),
 
   kpi : menuLogic('KPI','',['_pLeadTime','_manHour','_defect','_oLeadTime','_powerUsage','_uph','_operation']),
   _pLeadTime : menuLogic('제조리드타임(P)','/mes/kpi/leadtime/manufacture'),

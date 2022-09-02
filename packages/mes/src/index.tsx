@@ -64,4 +64,13 @@ export {MesToolWarehousingList} from "./container/Tool/MesToolWarehousingList"
 export {MesToolUpdate} from "./container/Tool/MesToolUpdate"
 
 //외주
-export {MesOutsourcingOrder} from "./container/Outsourcing/MesOutsourcingOrder"
+
+export {MesOutsourcingOrderRegister} from "./container/Outsourcing/Order/MesOutsourcingOrderRegister"
+export {MesOutsourcingOrderModify} from "./container/Outsourcing/Order/MesOutsourcingOrderModify"
+export {MesOutsourcingOrderList} from "./container/Outsourcing/Order/MesOutsourcingOrderList"
+
+export {MesOutsourcingReceiveRegister} from "./container/Outsourcing/Receive/MesOutsourcingReceiveRegister"
+export {MesOutsourcingReceiveList} from "./container/Outsourcing/Receive/MesOutsourcingReceiveList"
+
+export {MesOutsourcingDeliveryRegister} from "./container/Outsourcing/Delivery/MesOutsourcingDeliveryRegister"
+export {MesOutsourcingDeliveryList} from "./container/Outsourcing/Delivery/MesOutsourcingDeliveryList"
