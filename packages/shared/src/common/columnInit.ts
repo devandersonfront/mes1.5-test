@@ -22,37 +22,36 @@ import { AuthoritySearchModal } from '../components/Modal/AuthoritySearchModal'
 import { RecordDetailFormatter } from '../components/Formatter/RecordDetailFormatter'
 import { OperationMachineSearchModal } from "../components/Modal/OperationMachineSearchModal";
 // @ts-ignore
-import { StatusComponent } from '../components/Formatter/StatusComponent'
-import { MultipleSelectModal } from "../components/Modal/MultipleSelectModal";
-import { FactoryInfoModal } from '../components/Modal/FactoryInfoModal'
-import { DeviceInfoModal } from '../components/Modal/DeviceInfoModal'
-import { PlaceholderBox } from '../components/Formatter/PlaceholderBox'
-import { ProductInfoModal } from '../components/Modal/ProductInfoModal'
-import { MoldInfoModal } from '../components/Modal/MoldInfoModal'
-import { MachineInfoModal } from '../components/Modal/MachineInfoModal'
-import { BomInfoModal } from '../components/Modal/BomInfoModal'
-import { UseDateCell } from '../components/Cell/UseDateCell'
-import { BomRegisterInit } from '../components/Modal/InfoModal/InfoModalInit'
-import { BomRegisterModal } from '../components/Modal/BomRegisterModal'
-import { InputMaterialInfoModal } from '../components/Modal/InputMaterialInfoModal'
-import { WorkRegisterModal } from '../components/Modal/WorkRegisterModal'
-import { WorkListModal } from '../components/Modal/WorkListModal'
-import { MoldListModal } from '../components/Modal/MoldListModal'
-import { MachineListModal } from '../components/Modal/MachineListModal'
-import { DefectInfoModal } from '../components/Modal/DefectInfoModal'
-import { SearchModalTest } from '../components/Modal/SearchModalTest'
-import { LotInfoModal } from '../components/Modal/LotInfoModal'
-import { OperationInfoModal } from '../components/Modal/OperationInfoModal'
-import { DeliveryInfoModal } from '../components/Modal/DeliveryInfoModal'
-import { FinishButton } from '../components/Buttons/FinishButton'
-import { CompleteButton } from '../components/Buttons/CompleteButton'
-import { PauseInfoModal } from '../components/Modal/PauseInfoModal'
-import { FinishCancelButton } from '../components/Buttons/FinishCancelButton'
-import { OrderRegisterButton } from '../components/Buttons/OrderRegisterButton'
-import { LotDeliveryInfoModal } from '../components/Modal/LotDeliveryInfoModal'
-import { subFactorySearchModal } from "../components/Modal/SearchModalTest/subFactorySearchModal";
-import { LotInputInfoModal } from '../components/Modal/LotInputInfoModal'
-import { MidRangeButton } from "../components/Buttons/MidRangeButton";
+import {StatusComponent} from '../components/Formatter/StatusComponent'
+import {FactoryInfoModal} from '../components/Modal/FactoryInfoModal'
+import {DeviceInfoModal} from '../components/Modal/DeviceInfoModal'
+import {PlaceholderBox} from '../components/Formatter/PlaceholderBox'
+import {ProductInfoModal} from '../components/Modal/ProductInfoModal'
+import {MoldInfoModal} from '../components/Modal/MoldInfoModal'
+import {MachineInfoModal} from '../components/Modal/MachineInfoModal'
+import {BomInfoModal} from '../components/Modal/BomInfoModal'
+import {UseDateCell} from '../components/Cell/UseDateCell'
+import {BomRegisterInit} from '../components/Modal/InfoModal/InfoModalInit'
+import {BomRegisterModal} from '../components/Modal/BomRegisterModal'
+import {InputMaterialInfoModal} from '../components/Modal/InputMaterialInfoModal'
+import {WorkRegisterModal} from '../components/Modal/WorkRegisterModal'
+import {WorkListModal} from '../components/Modal/WorkListModal'
+import {MoldListModal} from '../components/Modal/MoldListModal'
+import {MachineListModal} from '../components/Modal/MachineListModal'
+import {DefectInfoModal} from '../components/Modal/DefectInfoModal'
+import {SearchModalTest} from '../components/Modal/SearchModalTest'
+import {LotInfoModal} from '../components/Modal/LotInfoModal'
+import {OperationInfoModal} from '../components/Modal/OperationInfoModal'
+import {DeliveryInfoModal} from '../components/Modal/DeliveryInfoModal'
+import {FinishButton} from '../components/Buttons/FinishButton'
+import {CompleteButton} from '../components/Buttons/CompleteButton'
+import {PauseInfoModal} from '../components/Modal/PauseInfoModal'
+import {FinishCancelButton} from '../components/Buttons/FinishCancelButton'
+import {OrderRegisterButton} from '../components/Buttons/OrderRegisterButton'
+import {LotDeliveryInfoModal} from '../components/Modal/LotDeliveryInfoModal'
+import {subFactorySearchModal} from "../components/Modal/SearchModalTest/subFactorySearchModal";
+import {LotInputInfoModal} from '../components/Modal/LotInputInfoModal'
+import {MidRangeButton} from "../components/Buttons/MidRangeButton";
 import placeholder from "lodash/fp/placeholder";
 import InputInfoModal from "../components/Modal/InfoModal/InputInfoModal";
 import { LineBorderContainer } from "../components/Formatter/LineBorderContainer";
@@ -275,14 +274,14 @@ export const columnlist: any = {
       ], headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister"},
     // {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"product"},
-    { key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type: "process", placeholder: "-", noSelect: true, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'mold_id', name: '금형', formatter: MoldInfoModal },
-    { key: 'tool_id', name: '공구', formatter: ToolInfoModal },
-    { key: 'machine_id', name: '기계', formatter: MachineInfoModal },
-    { key: 'standard_uph', name: '기준 UPH', editor: TextEditor, inputType: 'number', formatter: UnitContainer, placeholder: '0', toFix: 1 },
-    { key: 'price', name: '단가', editor: TextEditor, inputType: 'number', formatter: UnitContainer, placeholder: '0', toFix: 1, unitData: '원' },
-    { key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer },
-    { key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' }
+    {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process", placeholder: "-", noSelect:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
+    {key: 'mold_id', name: '금형', formatter: MoldInfoModal},
+    {key: 'tool_id', name: '공구', formatter: ToolInfoModal},
+    {key: 'machine_id', name: '기계', formatter: MachineInfoModal},
+    {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, inputType:'number', formatter: UnitContainer, placeholder: '0', toFix:1},
+    {key: 'price', name: '단가', editor: TextEditor, inputType:'number', formatter: UnitContainer, placeholder: '0', toFix:1, unitData:'원'},
+    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer},
+    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' }
   ],
   rawMaterial: [
     { key: 'code', name: '원자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: "CODE 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
@@ -815,40 +814,36 @@ export const columnlist: any = {
     { key: 'type', name: '품목 종류', width: 120 },
   ],
   midrangeLegendary: [
-    { key: "sequence", name: '구분', formatter: PlaceholderBox, width: 48 },
-    { key: 'legendary', name: '범례', formatter: PlaceholderBox, width: 908, placeholder: '범례 입력', editor: TextEditor },
-    { key: 'LegendaryExplain', name: '범례 설명', formatter: PlaceholderBox, width: 588, placeholder: '범례 설명 입력', editor: TextEditor },
+    {key: "sequence", name: '구분', formatter: PlaceholderBox, width:48},
+    {key: 'legendary', name: '범례', formatter: PlaceholderBox, width:908 , placeholder: '범례 입력', editor: TextEditor},
+    {key: 'LegendaryExplain', name: '범례 설명',  formatter: PlaceholderBox, width:588, placeholder: '범례 설명 입력', editor: TextEditor},
   ],
   midrangeLegendaryDetail: [
     { key: 'legendary', name: '범례', width: 968, },
     { key: 'LegendaryExplain', name: '범례 설명', width: 608 },
   ],
   midrangeInspectionItem: [
-    { key: "sequence", name: '구분', formatter: PlaceholderBox, width: 48, },
-    { key: 'name', name: '검사 항목', width: 480, formatter: PlaceholderBox, placeholder: '검사 항목 입력', editor: TextEditor },
-    {
-      key: 'unit', name: '단위', width: 80, formatter: DropDownEditor, selectList: [
-        { pk: 'mm', name: 'mm' },
-        { pk: 'cm', name: 'cm' },
-        { pk: 'm', name: 'm' },
-        { pk: 'EA', name: 'EA' },
-        { pk: 'g', name: 'g' },
-        { pk: 'kg', name: 'kg' },
-        { pk: 'Ton', name: 'Ton' },
-        { pk: 'ml', name: 'ml' },
-        { pk: 'L', name: 'L' },
-        { pk: 'phi', name: 'phi(내경)' },
-      ]
-    },
-    { key: 'standard', name: '점검 기준', width: 384, placeholder: '점검 기준 입력', editor: TextEditor, formatter: PlaceholderBox, },
-    { key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216, formatter: UnitContainer, placeholder: '최소값 입력', editor: TextEditor, inputType: 'number' },
-    { key: 'error_maximum', name: '최대값(오차범위 최대)', width: 216, formatter: UnitContainer, placeholder: '최대값 입력', editor: TextEditor, inputType: 'number' },
-    {
-      key: 'type', name: '기록 방법', width: 118, formatter: DropDownEditor, selectList: [
-        { pk: '0', name: '수치 입력' },
-        { pk: '1', name: '범례 적용' },
-      ]
-    },
+    {key: "sequence", name: '구분', formatter: PlaceholderBox, width: 48,},
+    {key: 'name', name: '검사 항목',width: 480, formatter: PlaceholderBox, placeholder: '검사 항목 입력', editor: TextEditor},
+    {key: 'unit', name: '단위', width: 80, formatter: DropDownEditor, selectList: [
+        {pk: 'mm', name: 'mm'},
+        {pk: 'cm', name: 'cm'},
+        {pk: 'm', name: 'm'},
+        {pk: 'EA', name: 'EA'},
+        {pk: 'g', name: 'g'},
+        {pk: 'kg', name: 'kg'},
+        {pk: 'Ton', name: 'Ton'},
+        {pk: 'ml', name: 'ml'},
+        {pk: 'L', name: 'L'},
+        {pk: 'phi', name: 'phi(내경)'},
+      ]},
+    {key: 'standard', name: '점검 기준', width: 384, placeholder: '점검 기준 입력', editor: TextEditor, formatter: PlaceholderBox,},
+    {key: 'error_minimum', name: '최소값(오차범위 최소)', width: 216, formatter: UnitContainer, placeholder: '최소값 입력',editor: TextEditor, inputType:'number'},
+    {key: 'error_maximum', name: '최대값(오차범위 최대)', width: 216, formatter: UnitContainer, placeholder: '최대값 입력',editor: TextEditor, inputType:'number'},
+    {key: 'type', name: '기록 방법', width: 118, formatter: DropDownEditor, selectList: [
+        {pk: '0', name: '수치 입력'},
+        {pk: '1', name: '범례 적용'},
+      ] },
   ],
   midrangeInspectionItemDetail: [
     { key: 'name', name: '검사 항목', width: 480, },
@@ -892,14 +887,14 @@ export const columnlist: any = {
       options: [{ status: 0, name: "개수" }, { status: 1, name: "개수 많은순" }, { status: 2, name: "개수 적은순" }],
     },
   ],
-  delivery: [
-    { key: "customer_id", name: "거래처명", },
-    { key: "cm_id", name: "모델", },
-    { key: "code", name: "CODE", formatter: /*ProductSearchModal*/ MultipleSelectModal },
-    { key: "name", name: "품명" },
-    { key: "date", name: "납품 날짜", editor: CalendarBox, maxDate: true },
-    { key: "amount", name: "납품 개수", editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
-  ],
+  // delivery: [
+  //   {key:"customer_id", name:"거래처명",   },
+  //   {key:"cm_id", name:"모델",  },
+  //   {key:"code", name:"CODE", formatter: /*ProductSearchModal*/ MultipleSelectModal},
+  //   {key:"name", name:"품명"},
+  //   {key:"date", name:"납품 날짜", editor: CalendarBox, maxDate:true},
+  //   {key:"amount", name:"납품 개수", editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
+  // ],
   operationCodeRegisterV2: [
     { key: "contract_id", name: "수주 번호", type: 'order', formatter: PlaceholderBox, placeholder: '-', disableType: "true", width: 118 },
     { key: "date", name: "지시 날짜", formatter: CalendarBox, width: 118, type: 'date' },
