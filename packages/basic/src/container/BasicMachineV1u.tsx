@@ -296,7 +296,6 @@ const BasicMachineV1u = ({option}: IProps) => {
       }
     }).filter((v: any) => v) : []
 
-
     tmpRow = res.info_list
 
 

@@ -551,8 +551,6 @@ const TestSearchModalTest = ({column, row, onRowChange}: IProps) => {
                             SearchBox()
                         }
                         <ExcelTable
-                            // searchModalColumn
-                            // headerList={ searchModalInit && searchModalList[`${searchModalInit.excelColumnType}Search`]}
                             headerList={ searchModalInit && searchModalColumn}
                             row={searchList ?? []}
                             setRow={() => {}}

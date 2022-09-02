@@ -37,8 +37,9 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     page: 1,
     total: 1
   })
-  const [ basicRowMap, setBasicRowMap ] = useState<Map<number, any>>(new Map())
-  const [ allDeselected, setAllDeselected ] = useState<boolean>(false)
+  const [basicRowMap, setBasicRowMap] = useState<Map<number, any>>(new Map())
+  const [allDeselected, setAllDeselected] = useState<boolean>(false)
+  // const [currentSelectedRows, setCurrentSelectedRows] = useState([]);
 
   useEffect(() => {
     const newMap = new Map()
@@ -47,20 +48,20 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   }, [column.basicRow])
 
   useEffect(() => {
-      setSearchModalInit(SearchInit[column.type])
-      setSearchModalColumn(
-        [ ...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((col, index) => {
-          if (index === 0) return ({
-            ...col, colSpan(args) {
-              if (args.row?.isFirst) {
-                return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
-              } else {
-                return undefined
-              }
+    setSearchModalInit(SearchInit[column.type])
+    setSearchModalColumn(
+      [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((col, index) => {
+        if (index === 0) return ({
+          ...col, colSpan(args) {
+            if (args.row?.isFirst) {
+              return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
+            } else {
+              return undefined
             }
-          })
-          else return ({ ...col })
-        }) ])
+          }
+        })
+        else return ({ ...col })
+      })])
   }, [column.type])
 
   useEffect(() => {
@@ -71,39 +72,40 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   }, [isOpen, searchModalInit, pageInfo.page])
 
   const markSelectedRows = (rows: any[]) => (
-   rows.map(row => {
-     if(basicRowMap.has(row.product_id) && !allDeselected)
-     {
-       const newRows = {
-         ...row,
-         id: basicRowMap.get(row.product_id).id ?? row.id,
-         date: basicRowMap.get(row.product_id).date,
-         deadline: basicRowMap.get(row.product_id).deadline,
-         amount: basicRowMap.get(row.product_id).amount,
-         border:true }
-       return newRows
-     }else {
-       return row
-     }
-   })
+    rows.map(row => {
+      if (basicRowMap.has(row.product_id) && !allDeselected) {
+        const newRows = {
+          ...row,
+          id: basicRowMap.get(row.product_id).id ?? row.id,
+          date: basicRowMap.get(row.product_id).date,
+          deadline: basicRowMap.get(row.product_id).deadline,
+          amount: basicRowMap.get(row.product_id).amount,
+          border: true
+        }
+        return newRows
+      } else {
+        return row
+      }
+    })
   )
 
 
   const LoadBasic = async (page: number = 1) => {
+    // alert("hi")
     Notiflix.Loading.circle();
     const getParams = () => {
-      switch(column.type){
+      switch (column.type) {
         default:
           return keyword ? {
             keyword,
-            opt:optionIndex
+            opt: optionIndex
           } : {}
       }
     }
 
-    const getPath = (row:any) => {
-      switch(column.type){
-        default :
+    const getPath = (row: any) => {
+      switch (column.type) {
+        default:
           return {
             page,
             renderItem: 22,
@@ -111,6 +113,8 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       }
     }
 
+
+    // 1122 
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`, {
       path: getPath(row),
       params: getParams()
@@ -120,33 +124,51 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       const idAddedRows = res.info_list.map(info => ({
         ...info,
         id: Math.random() * 1000,
-        date:  moment().format('YYYY-MM-DD'),
-        deadline:  moment().format('YYYY-MM-DD')
+        date: moment().format('YYYY-MM-DD'),
+        deadline: moment().format('YYYY-MM-DD')
       }))
 
       setPageInfo({ page: res.page, total: res.totalPages })
       const newSearchList = SearchResultSort(idAddedRows, searchModalInit.excelColumnType)
       const borderedRows = markSelectedRows(newSearchList)
-      setSearchList(page === 1 ? borderedRows : prev => [...prev, ...borderedRows])
+
+      console.log("basicRowMap : ", basicRowMap);
+
+
+      const new_border_rows = borderedRows.map((row) => {
+        if (basicRowMap.has(row.product_id)) {
+          return {
+            ...row,
+            border: true
+          }
+        } else {
+          return {
+            ...row
+          }
+        }
+      })
+
+      setSearchList(page === 1 ? new_border_rows : prev => [...prev, ...new_border_rows])
     }
+
     Notiflix.Loading.remove();
   }
 
   const getContents = () => {
     return <>
-        <div style={{ paddingLeft: 8, opacity: row[column.key] ? 1 : .3,width: row.isFirst ? 'calc(100% - 38px)' : '100%' }}>
+      <div style={{ paddingLeft: 8, opacity: row[column.key] ? 1 : .3, width: row.isFirst ? 'calc(100% - 38px)' : '100%' }}>
+        {
+          row[column.key] ? typeof row[column.key] === "string" ? row[column.key] : row[column.key].name
+            : searchModalInit?.placeholder ?? column?.placeholder
+        }
+      </div>
       {
-        row[column.key] ? typeof row[column.key] === "string" ? row[column.key] : row[column.key].name
-          : searchModalInit?.placeholder ?? column?.placeholder
+        row.isFirst && addSearchButton()
       }
-    </div>
-    {
-      row.isFirst && addSearchButton()
-    }
-      </>
+    </>
   }
 
-  const addSearchButton = () => (<SearchIcon><img style={{width: "20px", height:"20px"}} src={IcSearchButton} /></SearchIcon>)
+  const addSearchButton = () => (<SearchIcon><img style={{ width: "20px", height: "20px" }} src={IcSearchButton} /></SearchIcon>)
 
   const ContentHeader = () => {
     return <div id={'content-header'} style={{
@@ -162,7 +184,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
           margin: 0,
         }}>{searchModalInit?.title}</p>
       </div>
-      <div id={'content-close-button'} style={{ display: 'flex' , cursor: 'pointer', marginLeft: 4}} onClick={() => {
+      <div id={'content-close-button'} style={{ display: 'flex', cursor: 'pointer', marginLeft: 4 }} onClick={() => {
         onClose()
       }}>
         <img style={{ width: 20, height: 20 }} src={IcX} />
@@ -194,22 +216,22 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
         borderRight: 'none',
       }}>
         <select key={searchModalInit?.searchFilter[0]}
-                defaultValue={searchModalInit?.searchFilter[getDefaultSearchOptionIndex(0)]}
-                onChange={(e) => {
-                  const option = switchSearchOption(Number(e.target.value))
-                  setOptionIndex(option)
-                }}
-                style={{
-                  color: 'black',
-                  backgroundColor: '#00000000',
-                  border: 0,
-                  height: 32,
-                  width: 120,
-                  fontSize: 15,
-                  fontWeight: 'bold'
-                }}>
+          defaultValue={searchModalInit?.searchFilter[getDefaultSearchOptionIndex(0)]}
+          onChange={(e) => {
+            const option = switchSearchOption(Number(e.target.value))
+            setOptionIndex(option)
+          }}
+          style={{
+            color: 'black',
+            backgroundColor: '#00000000',
+            border: 0,
+            height: 32,
+            width: 120,
+            fontSize: 15,
+            fontWeight: 'bold'
+          }}>
           {
-            searchModalInit?.searchFilter.map((filter, i) => ( filter !== "" && <option key={i.toString()} value={getDefaultSearchOptionIndex(i)}>{filter}</option>))
+            searchModalInit?.searchFilter.map((filter, i) => (filter !== "" && <option key={i.toString()} value={getDefaultSearchOptionIndex(i)}>{filter}</option>))
           }
         </select>
       </div>
@@ -245,11 +267,11 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
 
   const onConfirm = () => {
     const tmpBasicRowMap = new Map(basicRowMap)
-    let newBasicRow =  searchList.map(row => {
-        if(tmpBasicRowMap.has(row.product_id)){
-          tmpBasicRowMap.delete(row.product_id)
-        }
-        return row
+    let newBasicRow = searchList.map(row => {
+      if (tmpBasicRowMap.has(row.product_id)) {
+        tmpBasicRowMap.delete(row.product_id)
+      }
+      return row
     }).filter(row => row.border).map(row => (
       {
         ...SearchModalResult(row, searchModalInit.excelColumnType, column.staticCalendar),
@@ -257,110 +279,185 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     tmpBasicRowMap.size > 0 && !allDeselected && newBasicRow.push(...Array.from(tmpBasicRowMap.values()))
     newBasicRow = newBasicRow.length === 0
       ? [{
-      date: moment().format('YYYY-MM-DD'),
-      deadline: moment().format('YYYY-MM-DD'),
-      isFirst: true }]
-      : newBasicRow.map((row, rowIdx) => ({...row, isFirst: rowIdx === 0 }))
+        date: moment().format('YYYY-MM-DD'),
+        deadline: moment().format('YYYY-MM-DD'),
+        isFirst: true
+      }]
+      : newBasicRow.map((row, rowIdx) => ({ ...row, isFirst: rowIdx === 0 }))
 
     column.setBasicRow(newBasicRow)
     setBasicRowMap(new Map())
   }
 
-  const setAllBorder = (rows: any[], border:boolean) => {
-    return rows.map(row => ({...row, border}))
+  const setAllBorder = (rows: any[], border: boolean) => {
+    return rows.map(row => ({ ...row, border }))
   }
 
   const onClose = () => {
-    setPageInfo({page: 1, total: 1})
+    setPageInfo({ page: 1, total: 1 })
     setIsOpen(false)
     setKeyword('')
     setAllDeselected(false)
   }
 
+  const modalOpen = () => {
+
+    // 1122
+    const new_temp_list = searchList.map((row) => {
+      if (basicRowMap.has(row.product_id)) {
+        return {
+          ...row,
+          border: true
+        }
+      } else {
+        return {
+          ...row,
+          // border:false
+        }
+      }
+    })
+    setIsOpen(true)
+    setSearchList([...new_temp_list]);
+  }
+
   return (
     <>
-    <SearchModalWrapper >
-      <div style={{display:'flex', justifyContent:'space-between', width:'100%'}} onClick={() => row.isFirst && setIsOpen(true)}>
-        {getContents()}
-      </div>
-      <Modal isOpen={isOpen} style={{
-        content: {
-          top: '50%',
-          left: '50%',
-          right: 'auto',
-          bottom: 'auto',
-          marginRight: '-50%',
-          transform: 'translate(-50%, -50%)',
-          padding: 0,
+      <SearchModalWrapper >
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }} onClick={() => row.isFirst && modalOpen()}>
+          {getContents()}
+        </div>
+        <Modal isOpen={isOpen} style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            padding: 0,
 
-        },
-        overlay: {
-          background: 'rgba(0,0,0,.6)',
-          zIndex: 5,
-        }
-      }}>
-        <div style={{
-          width: 1776,
-          height: 816,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
+          },
+          overlay: {
+            background: 'rgba(0,0,0,.6)',
+            zIndex: 5,
+          }
         }}>
-          <div id={'content-root'}>
-            {
-              ContentHeader()
-            }
-            {
-              SearchBox()
-            }
-            <div style={{ marginBottom: "10px" }}>
-              <button style={{marginLeft: 20}} onClick={() => setSearchList(setAllBorder(searchList,true))}>모두 선택</button>
-              <button style={{marginLeft: 10, marginRight: 15}} onClick={() => {setSearchList(setAllBorder(searchList,false))
-              setAllDeselected(true)}}>모두 취소</button>
-              출력 개수: {searchList.length}
+          <div style={{
+            width: 1776,
+            height: 816,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}>
+            <div id={'content-root'}>
+              {
+                ContentHeader()
+              }
+              {
+                SearchBox()
+              }
+              <div style={{ marginBottom: "10px" }}>
+                <button style={{ marginLeft: 20 }} onClick={() => setSearchList(setAllBorder(searchList, true))}>모두 선택</button>
+                <button style={{ marginLeft: 10, marginRight: 15 }} onClick={() => {
+                  setSearchList(setAllBorder(searchList, false))
+                  setAllDeselected(true)
+
+                  // 1122 
+                  basicRowMap.clear()
+                  // setBasicRowMap(new_basic_row_map);
+                  // column.setCurrentSelectedRows([]);
+                }}>모두 취소</button>
+                {/* 출력 개수: {searchList.length} 선택 개수: {column.currentSelectedRows.length} */}
+              </div>
+
+              <ExcelTable
+                headerList={searchModalColumn && [...searchModalColumn]}
+                row={searchList ?? []}
+                width={1744}
+                rowHeight={32}
+                height={600}
+                onRowClick={(clicked) => {
+
+                  // 1122 1122 여기 고쳐
+                  const clickedIdx = searchList.indexOf(clicked)
+                  const tmpSearchList = searchList.slice()
+                  tmpSearchList[clickedIdx].border = !clicked.border
+                  // tmpSearchList[clickedIdx].border = !tmpSearchList[clickedIdx].border
+                  console.log("tempSearchList : ", tmpSearchList);
+
+                  // const selected_code = clicked.code;
+                  // 1122
+                  // const new_temp_list = tmpSearchList.map((row) => {
+                    
+                  //   if (basicRowMap.has(row.product_id)) {
+                  //     console.log("row.product_id : ", row.product_id);
+                      
+                  //     // basicRowMap.delete(row.product_id)
+                      
+                  //     return {
+                  //       ...row,
+                  //       // border: true
+                  //     }
+                  //   } else {
+                  //     // console.log("basicRowMap :::::: ", basicRowMap);
+                  //     // const newMap = new Map()
+                  //     // newMap.set(row.product_id, row)
+                  //     // 1122
+                  //     // setBasicRowMap((prev) => new Map(prev).set(row.product_id, row))
+                  //     return {
+                  //       ...row,
+                  //       // border:false
+                  //     }
+                  //   }
+                  // })
+
+                  if (basicRowMap.has(row.product_id)) {
+                    basicRowMap.delete(row.product_id)
+                  } else {
+                    setBasicRowMap((prev) => new Map(prev).set(clicked.product_id, row));
+
+                  }
+
+                  // if (searchList[clickedIdx].product_id === .product_id) {
+
+
+                  // } else {
+                  // }
+
+                  // setSearchList([...new_temp_list])
+
+                }}
+                type={'searchModal'}
+                scrollEnd={(isBottom) => {
+                  if (isBottom) {
+                    if (pageInfo.total > pageInfo.page) {
+                      setPageInfo({ ...pageInfo, page: pageInfo.page + 1 })
+                    }
+                  }
+                }}
+              />
             </div>
 
-            <ExcelTable
-              headerList={ searchModalColumn && [...searchModalColumn]}
-              row={searchList ?? []}
-              width={1744}
-              rowHeight={32}
-              height={600}
-              onRowClick={(clicked) => {
-                const clickedIdx = searchList.indexOf(clicked)
-                const tmpSearchList = searchList.slice()
-                tmpSearchList[clickedIdx].border = !tmpSearchList[clickedIdx].border
-                setSearchList([...tmpSearchList])
-              }}
-              type={'searchModal'}
-              scrollEnd={(isBottom) => {
-                if (isBottom) {
-                  if (pageInfo.total > pageInfo.page) {
-                    setPageInfo({ ...pageInfo, page: pageInfo.page + 1 })
-                  }
-                }
-              }}
-            />
+            <div style={{ height: 40, display: 'flex', alignItems: 'flex-end', }}>
+              <FooterButton
+                onClick={onClose}
+                style={{ backgroundColor: '#E7E9EB' }}
+              >
+                <p style={{ color: '#717C90' }}>취소</p>
+              </FooterButton>
+              <FooterButton
+                onClick={() => {
+                  onConfirm()
+                  onClose()
+                }}
+                style={{ backgroundColor: POINT_COLOR }}
+              >
+                <p style={{ color: '#0D0D0D' }}>등록하기</p>
+              </FooterButton>
+            </div>
           </div>
-          <div style={{ height: 40, display: 'flex', alignItems: 'flex-end', }}>
-            <FooterButton
-              onClick={onClose}
-              style={{ backgroundColor: '#E7E9EB' }}
-            >
-              <p style={{ color: '#717C90' }}>취소</p>
-            </FooterButton>
-            <FooterButton
-              onClick={() => {
-                onConfirm()
-                onClose()}}
-              style={{ backgroundColor: POINT_COLOR }}
-            >
-              <p style={{ color: '#0D0D0D' }}>등록하기</p>
-            </FooterButton>
-          </div>
-        </div>
-      </Modal>
-    </SearchModalWrapper>
+        </Modal>
+      </SearchModalWrapper>
     </>
   )
 
