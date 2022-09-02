@@ -65,7 +65,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Pr
     const getBarcodeImage = async (data : BarcodeDataType) => {
         let blobData :Blob
         Notiflix.Loading.circle()
-        await axios.post('http://220.126.8.137:29408/api/v1/barcode/generate', {
+        await axios.post('http://3.37.196.98:9408/api/v1/barcode/generate', {
                 ...data,
             },
             {responseType:'blob'})
