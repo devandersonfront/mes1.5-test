@@ -37,19 +37,19 @@ const ImageOpenModal = ({ url, open, changeSetOnImage }: IProps) => {
         }
         if (e.target.name == "enlargement") {
             console.log("enlargement");
-            if (imagePercent < 100) {
+            if (imagePercent < 500) {
                 setImagePercent((prev) => prev + 10)
             } else {
-                alert("100이상은 증가할수 없습니다.");
+                alert("500이상은 증가할수 없습니다.");
             }
         }
         if (e.target.name == "reduction") {
             console.log("reduction");
 
-            if (imagePercent > 10) {
+            if (imagePercent > 25) {
                 setImagePercent((prev) => prev - 10)
             } else {
-                alert("10% 이하는 감소할수 없습니다.");
+                alert("25% 이하는 감소할수 없습니다.");
             }
 
         }

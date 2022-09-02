@@ -103,7 +103,9 @@ const MesOrderRegister = ({ }: IProps) => {
           customer: row.customerArray,
           amount: row.amount ?? 0,
         }))
+
       Notiflix.Loading.circle()
+      
       const res = await RequestMethod('post', `contractSave`, postBody)
 
       if (res) {

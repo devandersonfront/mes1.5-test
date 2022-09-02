@@ -398,6 +398,7 @@ const BasicUser = ({}: IProps) => {
     }
     setSelectList(new Set());
     Notiflix.Loading.remove()
+    
   };
 
   const changeRow = (row: any) => {

@@ -149,22 +149,85 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
 
         if (e.target.name == "enlargement") {
             console.log("enlargement");
-            if (imagePercent < 100) {
-                setImagePercent((prev) => prev + 10)
+            console.log("imagePercent : ", imagePercent);
+
+            if (imagePercent <= 500) {
+                switch (imagePercent) {
+                    case 100:
+                        setImagePercent((prev) => prev + 10)
+                        break;
+                    case 110:
+                        setImagePercent((prev) => prev + 15)
+                        break;
+                    case 125:
+                        setImagePercent((prev) => prev + 25)
+                        break;
+
+                    case 150:
+                        setImagePercent((prev) => prev + 25)
+                        break;
+
+                    case 175:
+                        setImagePercent((prev) => prev + 25)
+                        break;
+
+                    case 200:
+                        setImagePercent((prev) => prev + 50)
+                        break;
+
+                    case 250:
+                        setImagePercent((prev) => prev + 50)
+                        break;
+
+                    case 300:
+                        setImagePercent((prev) => prev + 100)
+                        break;
+
+                    case 400:
+                        setImagePercent((prev) => prev + 100)
+                        break;
+
+                }
             } else {
-                alert("100이상은 증가할수 없습니다.");
+                alert("500이상은 증가할수 없습니다.");
             }
         }
         if (e.target.name == "reduction") {
             console.log("reduction");
+            switch (imagePercent) {
+                case 500:
+                    setImagePercent((prev) => prev - 100)
+                    break;
 
-            if (imagePercent > 10) {
-                setImagePercent((prev) => prev - 10)
+                case 400:
+                    setImagePercent((prev) => prev - 100)
+                    break;
 
-            } else {
-                alert("10% 이하는 감소할수 없습니다.");
+                case 300:
+                    setImagePercent((prev) => prev - 50)
+                    break;
+
+                case 250:
+                    setImagePercent((prev) => prev - 50)
+                    break;
+
+                case 200:
+                    setImagePercent((prev) => prev - 25)
+                    break;
+
+                case 175:
+                    setImagePercent((prev) => prev - 25)
+                    break;
+                    
+                case 150:
+                    setImagePercent((prev) => prev - 25)
+                    break;
+                    
+                case 125:
+                    setImagePercent((prev) => prev - 25)
+                    break;
+
             }
-
         }
 
         if (e.target.name == "rotation+") {
@@ -197,7 +260,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
             setImageDegree((prev) => {
 
                 switch (prev) {
-                    case 360:
+                    case 270:
                         return 0;
                     default:
                         return prev + 90;
@@ -215,7 +278,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
 
             setImageDegree((prev) => {
                 switch (prev) {
-                    case 360:
+                    case 90:
                         return 0;
                     default:
                         return prev - 90;
@@ -327,7 +390,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                             <img
                                 onClick={imageButtonClickHandler}
                                 name="reduction"
-                                
+
                                 src={Minus}
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />
