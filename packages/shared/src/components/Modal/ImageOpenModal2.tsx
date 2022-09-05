@@ -51,8 +51,6 @@ interface ImgProps {
 const Img = styled.img`
     flex:"auto"; // 쓰나 마나 인듯 
     object-fit: ${(props: ImgProps) => props.objectFit === "none" ? "contain" : "contain"};
-    /* width: "auto"; */
-    /* height: "auto"; */
     width: ${(props: ImgProps) => props.width} + "px";
     height: ${(props: ImgProps) => props.height} + "px";
     border: "10px solid blue";
@@ -71,7 +69,6 @@ function makeid(length) {
     let day = today.getDay();
 
     const option = year + "-" + month + "-" + day;
-    // console.log("option : ", option);
 
     const date = new Date(option);
     for (var i = 0; i < length; i++) {
