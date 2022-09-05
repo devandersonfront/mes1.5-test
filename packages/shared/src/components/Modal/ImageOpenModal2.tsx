@@ -71,15 +71,13 @@ function makeid(length) {
     let day = today.getDay();
 
     const option = year + "-" + month + "-" + day;
-    console.log("option : ", option);
+    // console.log("option : ", option);
 
     const date = new Date(option);
     for (var i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-
-    console.log("file name !!!!!!!!!!!!!! : ", result);
-
+    // console.log("file name !!!!!!!!!!!!!! : ", result);
 
     return result;
 }
@@ -152,7 +150,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
         if (e.target.id == "enlargement") {
 
             if (imagePercent <= 500) {
-                console.log("500 보다 작아 ", imagePercent);
+                // console.log("500 보다 작아 ", imagePercent);
 
                 switch (imagePercent) {
 
@@ -286,7 +284,6 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
         }
 
         if (e.target.id == "rotation+") {
-            console.log("rotation");
 
             let img = new Image();
             img.src = url;
@@ -308,7 +305,6 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
         }
 
         if (e.target.id == "rotation-") {
-            // console.log("rotation");
             let img = new Image();
             img.src = url;
             let width = img.width;
@@ -341,7 +337,6 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
         const ratio = imagePercent / 100;
 
         if (option === "original_image") {
-            // console.log("width X ratio: ", width, ratio);
             return width * ratio;
         } else if (option === "custom_image") {
             return 1400 * ratio
