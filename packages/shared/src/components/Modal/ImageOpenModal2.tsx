@@ -3,19 +3,20 @@ import React, { useEffect, useState, useRef } from "react";
 import Modal from 'react-modal'
 import styled from 'styled-components'
 import AddIcon from '@mui/icons-material/Add';
-//@ts-ignore
+
+// @ts-ignore
 import Icon_X from '../../../public/images/file_delete_button.png';
-//@ts-ignore
+// @ts-ignore
 import Plus from '../../../public/images/plus-solid.svg';
-//@ts-ignore
+// @ts-ignore
 import Minus from '../../../public/images/minus-solid.svg';
-//@ts-ignore
+// @ts-ignore
 import rotation_right from '../../../public/images/rotate-right-solid.svg';
-//@ts-ignore
+// @ts-ignore
 import rotation_left from '../../../public/images/rotate-left-solid.svg';
-//@ts-ignore
+// @ts-ignore
 import Close from '../../../public/images/xmark-solid.svg';
-//@ts-ignore
+// @ts-ignore
 import floppy_disk from '../../../public/images/floppy-disk-solid.svg';
 import { RequestMethod, SF_ENDPOINT } from '../../../../shared';
 
@@ -50,10 +51,10 @@ interface ImgProps {
 const Img = styled.img`
     flex:"auto"; // 쓰나 마나 인듯 
     object-fit: ${(props: ImgProps) => props.objectFit === "none" ? "contain" : "contain"};
-    width: "auto";
-    height: "auto";
-    /* max-width: ${(props: ImgProps) => props.width} + "px"; */
-    /* max-height: ${(props: ImgProps) => props.height} + "px"; */
+    /* width: "auto"; */
+    /* height: "auto"; */
+    width: ${(props: ImgProps) => props.width} + "px";
+    height: ${(props: ImgProps) => props.height} + "px";
     border: "10px solid blue";
     aspect-ratio: "auto " + ${(props: ImgProps) => props.aspectRatio};
     transform: rotate(${(props: ImgProps) => props.imageDegree + "deg"});
@@ -83,7 +84,6 @@ function makeid(length) {
     return result;
 }
 
-/* packages/shared/src/components/Modal/ImageOpenModal.tsx */
 const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps) => {
     const [imagePercent, setImagePercent] = useState(100);
     const [objectFit, setObjectFit] = useState("cover");
@@ -92,7 +92,6 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
     const [imageDegree, setImageDegree] = useState(0);
 
     const child1 = useRef(null);
-
 
     const mode = (mode: any) => {
         let imgMode;
@@ -136,28 +135,52 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
     }
 
     const imageButtonClickHandler = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
 
-        if (e.target.name == "original") {
-            console.log("original");
+        if (e.target.id == "original") {
             setObjectFit("none")
             setImagePercent(100);
             setImageDegree(0)
-            set_original_width_height();
+            // set_original_width_height();
         }
-        if (e.target.name == "custom") {
-            console.log("custom");
+        if (e.target.id == "custom") {
             setObjectFit("cover")
             setImageDegree(0)
             setImagePercent(100);
         }
 
-        if (e.target.name == "enlargement") {
-            console.log("enlargement");
-            console.log("imagePercent : ", imagePercent);
+        if (e.target.id == "enlargement") {
 
             if (imagePercent <= 500) {
+                console.log("500 보다 작아 ", imagePercent);
+
                 switch (imagePercent) {
+
+                    case 20:
+                        setImagePercent((prev) => prev + 10)
+                        break;
+                    case 30:
+                        setImagePercent((prev) => prev + 10)
+                        break;
+                    case 40:
+                        setImagePercent((prev) => prev + 10)
+                        break;
+                    case 50:
+                        setImagePercent((prev) => prev + 10)
+                        break;
+                    case 60:
+                        setImagePercent((prev) => prev + 10)
+                        break;
+                    case 70:
+                        setImagePercent((prev) => prev + 10)
+                        break;
+                    case 80:
+                        setImagePercent((prev) => prev + 10)
+                        break;
+                    case 90:
+                        setImagePercent((prev) => prev + 10)
+                        break;
+
                     case 100:
                         setImagePercent((prev) => prev + 10)
                         break;
@@ -197,7 +220,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                 alert("500이상은 증가할수 없습니다.");
             }
         }
-        if (e.target.name == "reduction") {
+        if (e.target.id == "reduction") {
             console.log("reduction");
             switch (imagePercent) {
                 case 500:
@@ -223,19 +246,46 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                 case 175:
                     setImagePercent((prev) => prev - 25)
                     break;
-                    
+
                 case 150:
                     setImagePercent((prev) => prev - 25)
                     break;
-                    
+
                 case 125:
-                    setImagePercent((prev) => prev - 25)
+                    setImagePercent((prev) => prev - 15)
+                    break;
+                case 110:
+                    setImagePercent((prev) => prev - 10)
+                    break;
+                case 100:
+                    setImagePercent((prev) => prev - 10)
+                    break;
+                case 90:
+                    setImagePercent((prev) => prev - 10)
+                    break;
+                case 80:
+                    setImagePercent((prev) => prev - 10)
+                    break;
+                case 70:
+                    setImagePercent((prev) => prev - 10)
+                    break;
+                case 60:
+                    setImagePercent((prev) => prev - 10)
+                    break;
+                case 50:
+                    setImagePercent((prev) => prev - 10)
+                    break;
+                case 40:
+                    setImagePercent((prev) => prev - 10)
+                    break;
+                case 30:
+                    setImagePercent((prev) => prev - 10)
                     break;
 
             }
         }
 
-        if (e.target.name == "rotation+") {
+        if (e.target.id == "rotation+") {
             console.log("rotation");
 
             let img = new Image();
@@ -244,23 +294,6 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
             let width = img.width;
             let height = img.height;
 
-            console.log("objectFit : ", objectFit);
-            console.log("origianlWidth : ", originalWidth);
-            console.log("originalHeight : ", originalHeight);
-
-            // if (imageDegree === 0) {
-            //     console.log("90니까 높이 넓이 바꿔");
-            //     // setOriginalWidth(height);
-            //     // setOriginalHeight(width);
-            // } else if (imageDegree === 180) {
-            //     console.log("180니까 넓이 높이 바꿔");
-            //     // setOriginalWidth(height);
-            //     // setOriginalHeight(width);
-            // } else {
-            //     console.log("원래 대로 유지");
-            //     // setOriginalWidth(width);
-            //     // setOriginalHeight(height);
-            // }
 
             setImageDegree((prev) => {
 
@@ -274,8 +307,8 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
             )
         }
 
-        if (e.target.name == "rotation-") {
-            console.log("rotation");
+        if (e.target.id == "rotation-") {
+            // console.log("rotation");
             let img = new Image();
             img.src = url;
             let width = img.width;
@@ -305,18 +338,14 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
         let img = new Image();
         img.src = url;
         let width = img.width;
-        console.log("imagePercent : ", imagePercent);
         const ratio = imagePercent / 100;
-        console.log("ratio : ", ratio);
-
 
         if (option === "original_image") {
-            console.log("width : ", width);
+            // console.log("width X ratio: ", width, ratio);
             return width * ratio;
         } else if (option === "custom_image") {
-            return 700 * ratio
+            return 1400 * ratio
         }
-        console.log("hi");
     }
 
     const calculateHeight = (option: string, imagePercent: number) => {
@@ -325,40 +354,14 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
         let height = img.height;
         const ratio = imagePercent / 100;
 
-        console.log("imagePercent : ", imagePercent);
-        console.log("height : ", height);
 
         if (option === "original_image") {
-            return height;
+            return height * ratio;
         } else if (option === "custom_image") {
             return 700 * ratio
         }
 
     }
-
-    // https://stackoverflow.com/questions/11876175/how-to-get-a-file-or-blob-from-an-object-url
-    // const forceDownload = async () => {
-    //     console.log("uuid : ", uuid);
-    //     // let blob = await fetch(url).then(r => r.blob());
-    //     const config = {
-    //         responseType: 'blob'
-    //     }
-    //     // const result = await axios.post(`http://3.36.78.194:8443/anonymous/download/554337a9-9615-420b-9a17-01317c1e00ec`, config)
-    //     await axios.get(`${SF_ENDPOINT}/anonymous/download/${uuid}`)
-    //         .then((result: any) => {
-    //             console.log("result : ", result);
-    //         })
-    //         .catch((error) => {
-    //             if (error) {
-    //                 console.log("error : ", error);
-    //                 Notiflix.Report.failure('다운로드 할 수 없습니다.', '파일 다운로드 에러 !', '확인')
-    //             } else if (error.response.status === 500) {
-    //                 Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
-    //             }
-    //         })
-
-    // }
-
 
     return (
         <div>
@@ -382,8 +385,8 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                     <div style={{ display: "flex", flexDirection: "column" }}>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", height: "20px", zIndex: 5 }}>
 
-                            <Button size="medium" variant="outlined" onClick={imageButtonClickHandler} name="original">원본</Button>
-                            <Button size="medium" variant="outlined" onClick={imageButtonClickHandler} name="custom">맞춤</Button>
+                            <Button size="medium" variant="outlined" onClick={imageButtonClickHandler} id="original">원본</Button>
+                            <Button size="medium" variant="outlined" onClick={imageButtonClickHandler} id="custom">맞춤</Button>
 
                             <img
                                 onClick={imageButtonClickHandler}
@@ -412,15 +415,12 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />
 
-                            {/* <a href = {`${SF_ENDPOINT}/anonymous/download/${uuid}}`> download </a> */}
                             <a href={`${SF_ENDPOINT}/anonymous/download/${uuid}`}>
                                 <img
-                                    // onClick={forceDownload}
                                     src={floppy_disk}
                                     style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                                 />
                             </a>
-
 
                             <img
                                 onClick={() => close_modal(false)}
@@ -428,18 +428,14 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                                 style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }}
                             />
 
-                            {/* <a className="download-icon" onClick={() => forceDownload(url, 'images.jpg')}> Download</a> */}
-
                         </div>
                         <br />
 
                         <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px" }}>
-                            {/* 
-                            모드: {mode(objectFit)} &nbsp;&nbsp;
-                            폭 : {originalWidth}, 높이: {originalHeight} &nbsp;&nbsp;
-                            비율: {imagePercent} &nbsp;&nbsp;
-                            각도: {imageDegree} &nbsp;&nbsp; 
-                            */}
+                            {/* 모드: {objectFit} &nbsp;&nbsp;
+                            폭 : {originalWidth}, 높이: {originalHeight} &nbsp;&nbsp; */}
+                            {imagePercent} &nbsp;&nbsp;
+                            {/* 각도: {imageDegree} &nbsp;&nbsp;  */}
                         </div>
 
                         <div style={{ display: "flex", justifyContent: "center", gap: "10px", height: "20px" }}>
@@ -450,7 +446,7 @@ const ImageOpenModal2 = ({ url, open, changeSetOnImage, uuid, photoId }: IProps)
                                 imagePercent={imagePercent}
                                 imageDegree={imageDegree}
                                 width={objectFit === "none" ? calculateWidth("original_image", imagePercent) : calculateWidth("custom_image", imagePercent)}
-                                height={objectFit === "none" ? calculateHeight("original_image", imageDegree) : calculateHeight("custom_image", imagePercent)}
+                                height={objectFit === "none" ? calculateHeight("original_image", imagePercent) : calculateHeight("custom_image", imagePercent)}
                                 aspectRatio={originalWidth / originalHeight}
                             />
                         </div>
