@@ -6,7 +6,7 @@ import Notiflix from "notiflix";
 import {DeleteImage, UploadButton} from '../../styles/styledComponents'
 import {uploadTempFile} from '../../common/fileFuctuons'
 import {RequestMethod} from "../../common/RequestFunctions";
-import ImageOpenModal2 from "../Modal/ImageOpenModal2";
+import ImageOpenModal from "../Modal/ImageOpenModal";
 import {SF_ENDPOINT} from "../../common/configset";
 
 interface IProps {
@@ -30,21 +30,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
         setOnImage(value)
     }
 
-
-  const fileTypeCheck = async(res:any, type:string) => {
-      if(type == "image"){
-          setImgUrl(res.url)
-          setOnImage(true)
-      }else{
-          const aTag = document.createElement("a")
-          aTag.setAttribute("href", `${SF_ENDPOINT}/anonymous/download/${res.UUID}`)
-          aTag.click()
-      }
-  }
-
-    console.log("row for uuid : ", row);
-    
-
     return (
         <div style={{
             width: "100%",
@@ -53,7 +38,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
             justifyContent: 'center',
             alignItems: 'center'
         }}>
-            <ImageOpenModal2 url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage} uuid = {row.photo} photoId = {row.id}/>
+            <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage} uuid = {row.photo} photoId = {row.id}/>
             {
                 (row[column.key]?.uuid) || typeof row[column.key] !== "object" && row[column.key] ?
                     <div style={{
