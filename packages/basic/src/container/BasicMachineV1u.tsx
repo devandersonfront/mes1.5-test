@@ -399,7 +399,7 @@ const BasicMachineV1u = ({option}: IProps) => {
         }
       }).filter((v) => v)
     ]
-
+    tempData.products = null
     // tempData.device.manager
     return tempData
 

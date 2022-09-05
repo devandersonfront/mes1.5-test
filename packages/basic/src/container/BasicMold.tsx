@@ -156,6 +156,7 @@ const BasicMold = ({}: IProps) => {
           return {
             ...row,
             ...selectData,
+            product_id:null,
             additional: [
               ...additional
                 .map((v, index) => {
