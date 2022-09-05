@@ -185,11 +185,10 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         Notiflix.Loading.remove()
       }else{
         if(res.page !== 1){
-          setSearchList([ ...searchList,...SearchResultSort(!column.noSelect ? [ ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
+          setSearchList([ ...searchList,...SearchResultSort( res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
           Notiflix.Loading.remove()
         }else{
-          // setSearchList([...SearchResultSort(!column.noSelect ? [null, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
           setSearchList([...SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
           Notiflix.Loading.remove()
