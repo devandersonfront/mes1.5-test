@@ -166,11 +166,6 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
             }
           });
 
-        menuData = {
-          id: "sub_return_1",
-          name: column.name,
-
-        }
         if (menuData) {
           return {
             ...column,

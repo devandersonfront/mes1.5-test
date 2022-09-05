@@ -184,7 +184,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           }
         }
       })
-      if(column.key == "return") menuData = {id:"return", name:column.name, width:column.width, }
       if(menuData){
         return {
           ...column,
