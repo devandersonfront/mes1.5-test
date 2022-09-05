@@ -3,11 +3,10 @@ import { IExcelHeaderType } from '../../@types/type'
 //@ts-ignore
 import Icon_X from '../../../public/images/file_delete_button.png'
 import Notiflix from "notiflix";
-import {DeleteImage, UploadButton} from '../../styles/styledComponents'
+import {UploadButton} from '../../styles/styledComponents'
 import {uploadTempFile} from '../../common/fileFuctuons'
 import {RequestMethod} from "../../common/RequestFunctions";
 import ImageOpenModal from "../Modal/ImageOpenModal";
-import {SF_ENDPOINT} from "../../common/configset";
 
 interface IProps {
     row: any
@@ -19,7 +18,7 @@ interface IProps {
 const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
     const fileRef = useRef(null)
 
-    const onClickImageUpload = (index: string) => {// input[type='file']
+    const onClickImageUpload = (index: string) => {
         // @ts-ignore
         fileRef.current.click();
     }
@@ -29,7 +28,6 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
     const changeSetOnImage = (value: boolean) => {
         setOnImage(value)
     }
-
     return (
         <div style={{
             width: "100%",
@@ -38,7 +36,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
             justifyContent: 'center',
             alignItems: 'center'
         }}>
-            <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage} uuid = {row.photo} photoId = {row.id}/>
+            <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage} uuid = {row.photo?.uuid ?? row.photo} photoId = {row.id}/>
             {
                 (row[column.key]?.uuid) || typeof row[column.key] !== "object" && row[column.key] ?
                     <div style={{
@@ -123,7 +121,7 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                 hidden
                 onChange={async (e) => {
                     if (e.target.files && e.target.files.length !== 0) {
-                        const uploadImg = await uploadTempFile(e.target.files[0], e.target.files[0].size, true);
+                        const uploadImg = await uploadTempFile(e.target.files[0], e.target.files[0].size, true, e.target.files[0].name);
                         e.target.value = ''
                         if (uploadImg !== undefined) {
                             onRowChange({
