@@ -26,6 +26,102 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
+const setSavedKey = (type: string, map: Map<number, any>, row: any) => {
+  switch(type){
+    case 'product':
+      row.product?.product_id && map.set(row.product.product_id, row)
+      break
+    case 'machine':
+      row.machine_id && map.set(row.machine_id, row)
+      break
+    default: break
+  }
+}
+
+const addData = (type: string, loaded: any, saved: any) => {
+  switch(type){
+    case 'product': return loaded
+    case 'machine':
+      loaded.setting = saved?.setting ?? 0
+      // loaded.name = loaded?.name ?? '-'
+      return loaded
+    default: return loaded
+  }
+}
+
+const syncWithSaved = (type:string, mapValue: any, row) => {
+  switch (type) {
+    case 'product': return {
+      id: mapValue.id ?? row.id,
+      date: mapValue.date,
+      deadline: mapValue.deadline,
+      amount: mapValue.amount,
+    }
+    case 'machine': return {
+      id: mapValue.id ?? row.id,
+      setting: mapValue.setting ?? 0,
+    }
+    default: return {}
+  }
+}
+
+const initRowByType = (type:string) => {
+  switch(type){
+    case 'product': return {
+      date:  moment().format('YYYY-MM-DD'),
+      deadline:  moment().format('YYYY-MM-DD')
+    }
+    case 'machine': return {
+    }
+    default: return {}
+  }
+}
+
+const getModalTextKey = (type: string) => {
+  switch (type) {
+    case 'product':
+      return 'code'
+    case 'machine':
+      return 'name'
+    default:
+      return 'name'
+  }
+}
+
+const emptyRowByType = (type:string) => {
+  const emptyRow = {isFirst: true}
+  switch(type){
+    case 'product':
+      emptyRow['date'] = moment().format('YYYY-MM-DD')
+      emptyRow['deadline'] = moment().format('YYYY-MM-DD')
+      break
+    case 'machine':
+      emptyRow['seq'] = 1
+      emptyRow['setting'] = 0
+      break
+    default: break
+  }
+  return emptyRow
+}
+
+const getMapKey = (type:string) => {
+  switch(type){
+    case 'product': return 'product_id'
+    case 'machine': return 'machine_id'
+    default: return ''
+  }
+}
+
+const getModule = (type: string) => ({
+      key: getMapKey(type),
+      textKey: getModalTextKey(type),
+      setSavedKey,
+      syncWithSaved,
+      initRow: initRowByType(type),
+      emptyRow: emptyRowByType(type),
+      addData
+    })
+
 const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   const [searchList, setSearchList] = useState<any[]>([])
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -37,13 +133,12 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     page: 1,
     total: 1
   })
-  const [basicRowMap, setBasicRowMap] = useState<Map<number, any>>(new Map())
-  const [allDeselected, setAllDeselected] = useState<boolean>(false)
-  // const [currentSelectedRows, setCurrentSelectedRows] = useState([]);
+  const [ basicRowMap, setBasicRowMap ] = useState<Map<number, any>>(new Map())
+  const module = getModule(column.type)
 
   useEffect(() => {
     const newMap = new Map()
-    column.basicRow?.map(row => row?.product?.product_id && newMap.set(row.product.product_id, row))
+    column.basicRow?.map(row => module.setSavedKey(column.type, newMap, row))
     setBasicRowMap(newMap)
   }, [column.basicRow])
 
@@ -71,15 +166,13 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     }
   }, [isOpen, searchModalInit, pageInfo.page])
 
-  const markSelectedRows = (rows: any[]) => (
-    rows.map(row => {
-      if (basicRowMap.has(row.product_id) && !allDeselected) {
+  const markSelectedRows = (rows: any[]) => {
+
+    return rows.map(row => {
+      if (basicRowMap.has(row[module.key])) {
         const newRows = {
           ...row,
-          id: basicRowMap.get(row.product_id).id ?? row.id,
-          date: basicRowMap.get(row.product_id).date,
-          deadline: basicRowMap.get(row.product_id).deadline,
-          amount: basicRowMap.get(row.product_id).amount,
+          ...module.syncWithSaved(column.type, basicRowMap.get(row[module.key]), row),
           border: true
         }
         return newRows
@@ -87,7 +180,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
         return row
       }
     })
-  )
+  }
 
 
   const LoadBasic = async (page: number = 1) => {
@@ -113,8 +206,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       }
     }
 
-
-    // 1122 
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`, {
       path: getPath(row),
       params: getParams()
@@ -124,8 +215,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       const idAddedRows = res.info_list.map(info => ({
         ...info,
         id: Math.random() * 1000,
-        date: moment().format('YYYY-MM-DD'),
-        deadline: moment().format('YYYY-MM-DD')
+        ...module.initRow
       }))
 
       setPageInfo({ page: res.page, total: res.totalPages })
@@ -156,11 +246,11 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
 
   const getContents = () => {
     return <>
-      <div style={{ paddingLeft: 8, opacity: row[column.key] ? 1 : .3, width: row.isFirst ? 'calc(100% - 38px)' : '100%' }}>
-        {
-          row[column.key] ? typeof row[column.key] === "string" ? row[column.key] : row[column.key].name
-            : searchModalInit?.placeholder ?? column?.placeholder
-        }
+        <div style={{ paddingLeft: 8, opacity: row[column.key] || row[module.key] ? 1 : .3, width: row.isFirst ? column.modalType ?  'calc(100% - 30px)' : 'calc(100% - 38px)' : '100%', textAlign:'left', backgroundColor: column.modalType && row.border ? '#19B9DF80' : undefined}}>
+          {
+            row[module.key] ? row[column.type] ? row[column.type][module.textKey] ?? '-' : row[module.textKey] ?? '-'
+              : searchModalInit?.placeholder ?? column?.placeholder
+          }
       </div>
       {
         row.isFirst && addSearchButton()
@@ -168,7 +258,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     </>
   }
 
-  const addSearchButton = () => (<SearchIcon  className={'unprintable'}><img style={{width: "20px", height:"20px"}} src={IcSearchButton} /></SearchIcon>)
+  const addSearchButton = () => (<SearchIcon  className={'unprintable'} modalType={column.modalType}><img style={{width: "20px", height:"20px"}} src={IcSearchButton} /></SearchIcon>)
 
   const ContentHeader = () => {
     return <div id={'content-header'} style={{
@@ -267,38 +357,36 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   }
 
   const onConfirm = () => {
-    const tmpBasicRowMap = new Map(basicRowMap)
-    let newBasicRow = searchList.map(row => {
-      if (tmpBasicRowMap.has(row.product_id)) {
-        tmpBasicRowMap.delete(row.product_id)
-      }
-      return row
-    }).filter(row => row.border).map(row => (
-      {
-        ...SearchModalResult(row, searchModalInit.excelColumnType, column.staticCalendar),
-      }))
-    tmpBasicRowMap.size > 0 && !allDeselected && newBasicRow.push(...Array.from(tmpBasicRowMap.values()))
+    let newBasicRow = basicRowMap.size > 0 ? Array.from(basicRowMap.values()) : []
     newBasicRow = newBasicRow.length === 0
-      ? [{
-        date: moment().format('YYYY-MM-DD'),
-        deadline: moment().format('YYYY-MM-DD'),
-        isFirst: true
-      }]
-      : newBasicRow.map((row, rowIdx) => ({ ...row, isFirst: rowIdx === 0 }))
-
+      ? [module.emptyRow]
+      : newBasicRow.map((row, rowIdx) => ({...row, isFirst: rowIdx === 0, seq: rowIdx + 1 }))
     column.setBasicRow(newBasicRow)
     setBasicRowMap(new Map())
   }
 
-  const setAllBorder = (rows: any[], border: boolean) => {
-    return rows.map(row => ({ ...row, border }))
+  const setAllSelected = (rows: any) => {
+    setSearchList(rows.map(row => {
+      if(!basicRowMap.has(row[module.key])){
+        const newRow = module.addData(column.type, row, null)
+        setBasicRowMap(prev => {
+            prev.set(newRow[module.key], SearchModalResult(newRow, searchModalInit.excelColumnType, column.staticCalendar))
+            return prev
+          })
+      }
+      return {...row, border:true}
+    }))
+  }
+
+  const setAllDeselected = (rows: any) => {
+    setSearchList(rows.map(row => ({...row, border:false})))
+    setBasicRowMap(new Map())
   }
 
   const onClose = () => {
     setPageInfo({ page: 1, total: 1 })
     setIsOpen(false)
     setKeyword('')
-    setAllDeselected(false)
   }
 
   const modalOpen = () => {
@@ -324,7 +412,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   return (
     <>
       <SearchModalWrapper >
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }} onClick={() => row.isFirst && modalOpen()}>
+        <div style={{display:'flex', justifyContent:'space-between', width:'100%', height: '100%'}} onClick={() => row.isFirst && setIsOpen(true)}>
           {getContents()}
         </div>
         <Modal isOpen={isOpen} style={{
@@ -358,75 +446,34 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
                 SearchBox()
               }
               <div style={{ marginBottom: "10px" }}>
-                <button style={{ marginLeft: 20 }} onClick={() => setSearchList(setAllBorder(searchList, true))}>모두 선택</button>
-                <button style={{ marginLeft: 10, marginRight: 15 }} onClick={() => {
-                  setSearchList(setAllBorder(searchList, false))
-                  setAllDeselected(true)
-
-                  // 1122 
-                  basicRowMap.clear()
-                  // setBasicRowMap(new_basic_row_map);
-                  // column.setCurrentSelectedRows([]);
-                }}>모두 취소</button>
-                {/* 출력 개수: {searchList.length} 선택 개수: {column.currentSelectedRows.length} */}
+                <button style={{marginLeft: 20}} onClick={() => setAllSelected(searchList)}
+                >모두 선택</button>
+                <button style={{marginLeft: 10, marginRight: 15}} onClick={() => setAllDeselected(searchList)}>모두 취소</button>
+                출력 개수: {searchList.length}
               </div>
 
               <ExcelTable
-                headerList={searchModalColumn && [...searchModalColumn]}
+                headerList={ searchModalColumn && [...searchModalColumn]}
                 row={searchList ?? []}
                 width={1744}
                 rowHeight={32}
                 height={600}
                 onRowClick={(clicked) => {
-
-                  // 1122 1122 여기 고쳐
                   const clickedIdx = searchList.indexOf(clicked)
                   const tmpSearchList = searchList.slice()
-                  tmpSearchList[clickedIdx].border = !clicked.border
-                  // tmpSearchList[clickedIdx].border = !tmpSearchList[clickedIdx].border
-                  console.log("tempSearchList : ", tmpSearchList);
+                  const borderInverted = !tmpSearchList[clickedIdx].border
+                  tmpSearchList[clickedIdx].border = borderInverted
+                  module.addData(column.type, tmpSearchList[clickedIdx], basicRowMap.get(clicked[module.key]))
 
-                  // const selected_code = clicked.code;
-                  // 1122
-                  // const new_temp_list = tmpSearchList.map((row) => {
-                    
-                  //   if (basicRowMap.has(row.product_id)) {
-                  //     console.log("row.product_id : ", row.product_id);
-                      
-                  //     // basicRowMap.delete(row.product_id)
-                      
-                  //     return {
-                  //       ...row,
-                  //       // border: true
-                  //     }
-                  //   } else {
-                  //     // console.log("basicRowMap :::::: ", basicRowMap);
-                  //     // const newMap = new Map()
-                  //     // newMap.set(row.product_id, row)
-                  //     // 1122
-                  //     // setBasicRowMap((prev) => new Map(prev).set(row.product_id, row))
-                  //     return {
-                  //       ...row,
-                  //       // border:false
-                  //     }
-                  //   }
-                  // })
-
-                  if (basicRowMap.has(row.product_id)) {
-                    basicRowMap.delete(row.product_id)
-                  } else {
-                    setBasicRowMap((prev) => new Map(prev).set(clicked.product_id, row));
-
-                  }
-
-                  // if (searchList[clickedIdx].product_id === .product_id) {
-
-
-                  // } else {
-                  // }
-
-                  // setSearchList([...new_temp_list])
-
+                  setBasicRowMap(prev => {
+                    if(borderInverted) {
+                      prev.set(clicked[module.key],  SearchModalResult(tmpSearchList[clickedIdx], searchModalInit.excelColumnType, column.staticCalendar))
+                    } else {
+                      prev.delete(clicked[module.key])
+                    }
+                    return prev
+                  })
+                  setSearchList([...tmpSearchList])
                 }}
                 type={'searchModal'}
                 scrollEnd={(isBottom) => {
@@ -438,7 +485,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
                 }}
               />
             </div>
-
             <div style={{ height: 40, display: 'flex', alignItems: 'flex-end', }}>
               <FooterButton
                 onClick={onClose}
@@ -449,8 +495,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
               <FooterButton
                 onClick={() => {
                   onConfirm()
-                  onClose()
-                }}
+                  onClose()}}
                 style={{ backgroundColor: POINT_COLOR }}
               >
                 <p style={{ color: '#0D0D0D' }}>등록하기</p>

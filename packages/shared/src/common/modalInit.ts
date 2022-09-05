@@ -23,6 +23,7 @@ import {ToolListModal} from "../components/Modal/ToolListModal";
 import {LotInputInfoModal} from "../components/Modal/LotInputInfoModal";
 import { BomInfoModal } from '../components/Modal/BomInfoModal'
 import {TestSearchModalTest} from "../components/Modal/SearchModalTest/TestSearchModalTest";
+import { MultiSelectModal } from '../components/Modal/SearchModalTest/MultiSelectModal'
 
 export const searchModalList: any  = {
   member: [
@@ -167,16 +168,16 @@ export const searchModalList: any  = {
     {key: 'customer', name: '거래처', formatter: LineBorderContainer, placeholder: "-"},
     {key: 'stock', name: '재고량', formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
   ],
-  machineInfo: [
+  machineInfo: (basicRow? , setBasicRow?) => ([
     {key: 'seq', name: '번호', width: 80, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'name', name: '기계 이름', width: 560, formatter: SearchModalTest, type: 'machine', modalType: true, noSelect:true, placeholder:'기계를 선택해 주세요.'},
+    {key: 'name', name: '기계 이름', width: 560, formatter: MultiSelectModal, type: 'machine', modalType: true, placeholder:'-', basicRow, setBasicRow},
     {key: 'mfrCode', name: '제조 번호', width: 160, formatter: LineBorderContainer, placeholder: '-', type: 'Modal', textAlign: 'center' },
     {key: 'type', name: '기계 종류', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '기본'},
         {pk: 'spare', name: '스페어'},
       ], type: 'Modal'},
-  ],
+  ]),
   bomInfo: (searchList, tabIndex) => ([
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 425, formatter: tabIndex === 0 ? SearchModalTest : LineBorderContainer, placeholder: '-', type: 'bom', modalType: true, noSelect:true},

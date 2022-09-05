@@ -27,24 +27,20 @@ interface Props {
   onModalButtonClick: () => void
   onClose: () => void
   onConfirm: () => void
-  onDelete?: () => void
   headers: headerItem[][]
   data: any
   setData: (e: any) => void
-  dataIndex: number
-  setDataIndex: (e: number) => void
   dataColumnKey: string
   addLimit?: number
   indexKey?: string
   changeRow?: (e: any) => any
   validateConfirm?: () => void
-  duplicateCheckKey: string
 }
 
 
 
 
-const NormalModal: React.FunctionComponent<Props> = ({
+const MultiSelectModal: React.FunctionComponent<Props> = ({
                                                       children,
                                                       title,
                                                       buttonTitle,
@@ -53,18 +49,14 @@ const NormalModal: React.FunctionComponent<Props> = ({
                                                       onModalButtonClick,
                                                       onClose,
                                                       onConfirm,
-                                                      onDelete,
                                                       headers,
                                                       data,
                                                       setData,
-                                                      dataIndex,
-                                                      setDataIndex,
                                                       dataColumnKey,
                                                       addLimit = 10,
                                                       indexKey = 'seq',
                                                       changeRow,
                                                       validateConfirm,
-                                                       duplicateCheckKey
                                                     }) => {
 
   const ModalButton = () =>
@@ -98,94 +90,6 @@ const NormalModal: React.FunctionComponent<Props> = ({
     )
   )
 
-  const getButtons = () => (
-      <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-      <Button onClick={() => {
-        if(data?.length === addLimit) {
-          Notiflix.Report.warning('경고', `최대 ${addLimit}까지 등록할 수 있습니다.`, '확인')
-          return
-        } else {
-          setData(prev =>[
-            ...prev,
-            {
-              setting: 0,
-              [indexKey]: prev.length+1,
-            }
-          ])
-        }
-      }}>
-        <p>행 추가</p>
-      </Button>
-      <Button style={{marginLeft: 16}} onClick={() => {
-        if(dataIndex === undefined || dataIndex === 0){
-          return;
-        }else{
-          let tmpRow = data.slice()
-          let tmp = tmpRow[dataIndex]
-          tmpRow[dataIndex] = {...tmpRow[dataIndex - 1], [indexKey]: tmpRow[dataIndex - 1][indexKey] + 1, isChange: true}
-          tmpRow[dataIndex - 1] = {...tmp, [indexKey]: tmp[indexKey] - 1, isChange: true}
-          setData(tmpRow)
-          setDataIndex(dataIndex-1)
-        }
-      }}>
-        <p>위로</p>
-      </Button>
-      <Button style={{marginLeft: 16}} onClick={() => {
-        if(dataIndex === data.length-1 || dataIndex === undefined){
-          return
-        } else {
-          let tmpRow = data.slice()
-          let tmp = tmpRow[dataIndex]
-          tmpRow[dataIndex] = {...tmpRow[dataIndex + 1], [indexKey]: tmpRow[dataIndex + 1][indexKey] - 1, isChange: true}
-          tmpRow[dataIndex + 1] = {...tmp, [indexKey]: tmp[indexKey] + 1, isChange: true}
-          setData(tmpRow)
-          setDataIndex(dataIndex + 1)
-        }
-      }}>
-        <p>아래로</p>
-      </Button>
-      <Button style={{marginLeft: 16}} onClick={() =>
-      {
-        if(onDelete){
-          onDelete()
-        } else {
-          if(dataIndex === undefined){
-            return Notiflix.Report.warning(
-              '경고',
-              alertMsg.noSelectedData,
-              '확인',
-            );
-          } else {
-            let tmpRow = [...data]
-            tmpRow.splice(dataIndex, 1)
-            const filterRow = tmpRow.map((v , i)=>{
-              return {...v , [indexKey] : i + 1, isChange:true}
-            })
-            setData(filterRow)
-            setDataIndex(undefined)
-          }
-        }
-      }}>
-        <p>삭제</p>
-      </Button>
-    </div>
-  )
-
-  const checkDuplicate = (rows) => {
-
-    const tempRow = [...rows]
-    const spliceRow = [...rows]
-    spliceRow.splice(dataIndex, 1)
-
-    const isCheck = spliceRow.some((row)=> row[duplicateCheckKey] === tempRow[dataIndex]?.[duplicateCheckKey] && row[duplicateCheckKey] !==undefined && row[duplicateCheckKey] !=='')
-
-    if(spliceRow){
-      if(isCheck){
-        throw(`중복된 ${decideKoreanSuffix(buttonTitle, '이','가')} 존재합니다.`)
-      }
-    }
-  }
-
   return <ModalWrapper >
     { ModalButton() }
     <Modal isOpen={isOpen} style={{
@@ -205,7 +109,7 @@ const NormalModal: React.FunctionComponent<Props> = ({
     }}>
       <div style={{
         width: 1776,
-        height: 819,
+        height: 795,
         display:'flex',
         flexDirection:'column',
         justifyContent:'space-between'
@@ -231,74 +135,69 @@ const NormalModal: React.FunctionComponent<Props> = ({
               </div>
             </div>
           </div>
-          {
-            Headers()
-          }
-          {
-            getButtons()
-          }
-          <div style={{padding: '0 16px', width: 1776, display:"flex", justifyContent:"left"}}>
-            <ExcelTable
-              headerList={searchModalList[dataColumnKey]}
-              row={data ?? [{}]}
-              setRow={(e, index) => {
-                let newSearchList = changeRow ? e.map((row) => changeRow(row)) : e
+            {
+              Headers()
+            }
+            <div style={{padding: '0 16px', width: 1776, display:"flex", justifyContent:"left", marginTop: 20}}>
+              <ExcelTable
+                headerList={searchModalList[dataColumnKey](data, setData)}
+                row={data ?? [{}]}
+                setRow={(e, index) => {
+                  let newSearchList = changeRow ? e.map((row) => changeRow(row)) : e
+                  try{
+                    setData(newSearchList)
+                  } catch(errMsg){
+                    Notiflix.Report.warning('경고',errMsg, '확인')
+                  }
+                }}
+                width={searchModalList[dataColumnKey]()?.map(column => column.width).reduce((prevValue, currentValue) => prevValue + currentValue) + 8}
+                rowHeight={32}
+                height={552}
+                onRowClick={clicked => {
+                  const rowIdx = data.indexOf(clicked)
+                  if(!data[rowIdx]?.border){
+                    const newSearchList = data.map((v,i)=> ({
+                      ...v,
+                      border : i === rowIdx
+                    }))
+                    setData(newSearchList)
+                  }
+                }}
+                type={'searchModal'}
+                headerAlign={'center'}
+              />
+            </div>
+          </div>
+          <div style={{height: 40, display: 'flex', alignItems: 'flex-end'}}>
+            <div
+              onClick={onClose}
+              style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+            >
+              <p>취소</p>
+            </div>
+            <div
+              onClick={async () => {
                 try{
-                  checkDuplicate(newSearchList)
-                  setData(newSearchList)
+                  validateConfirm && validateConfirm()
+                  await onConfirm()
+                  onClose()
                 } catch(errMsg){
-                  Notiflix.Report.warning('경고',errMsg, '확인')
+                  Notiflix.Report.warning('경고', errMsg, '확인')
                 }
               }}
-              width={searchModalList[dataColumnKey]?.map(column => column.width).reduce((prevValue, currentValue) => prevValue + currentValue)}
-              rowHeight={32}
-              height={552}
-              onRowClick={clicked => {
-                const rowIdx = data.indexOf(clicked)
-                if(!data[rowIdx]?.border){
-                  const newSearchList = data.map((v,i)=> ({
-                    ...v,
-                    border : i === rowIdx
-                  }))
-                  setData(newSearchList)
-                  setDataIndex(rowIdx)
-                }
-              }}
-              type={'searchModal'}
-              headerAlign={'center'}
-            />
+              style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+            >
+              <p>등록하기</p>
+            </div>
           </div>
         </div>
-        <div style={{height: 40, display: 'flex', alignItems: 'flex-end'}}>
-          <div
-            onClick={onClose}
-            style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-          >
-            <p>취소</p>
-          </div>
-          <div
-            onClick={async () => {
-              try{
-                validateConfirm && validateConfirm()
-                await onConfirm()
-                onClose()
-              } catch(errMsg){
-                Notiflix.Report.warning('경고', errMsg, '확인')
-              }
-            }}
-            style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-          >
-            <p>등록하기</p>
-          </div>
-        </div>
-      </div>
     </Modal>
   </ModalWrapper>
 
 
 }
 
-export default NormalModal
+export default MultiSelectModal
 
 const ModalWrapper = styled.div`
   display: flex;
