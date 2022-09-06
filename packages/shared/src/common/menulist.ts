@@ -46,11 +46,11 @@ const BASIC_MENUS: IMenuType[] = BasicOrder.map(menu => ({
 const MesOrder : MesOrderType[] = ['businessMgmt','pmReg','rawMgmt','subMgmt','toolMgmt','qualityMgmt','stockMgmt','kpi']
 
 const MES_MENUS: IMenuType[] = MesOrder.map(menu => ({
-    title:bkMesTitles[menu].title,
-    url: bkMesTitles[menu].url,
-    subMenu: bkMesTitles[menu]?.subMenu?.map(sub => ({
-        title: bkMesTitles[sub].title,
-        url: bkMesTitles[sub].url
+    title:defaultMesTitles[menu].title,
+    url: defaultMesTitles[menu].url,
+    subMenu: defaultMesTitles[menu]?.subMenu?.map(sub => ({
+        title: defaultMesTitles[sub].title,
+        url: defaultMesTitles[sub].url
     }))
 }))
 
