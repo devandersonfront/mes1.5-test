@@ -1,7 +1,7 @@
 # .env 파일 구성
 ### 우선순위
     .env.local > .env.development
-    .env.local > .en.production
+    .env.local > .env.production
 ### 설정방법
     접두사 'NEXT_PUBLIC_' 를 붙여서 변수 선언
     NEXT_PUBLIC_SF_ADDRESS= 백엔드 api 주소
