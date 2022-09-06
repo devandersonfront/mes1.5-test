@@ -70,16 +70,6 @@ const MesRawMaterialReturnList = ({page, search, option}: IProps) => {
         reload(undefined, date)
     }
 
-    const onCompRadioChange = (hideComplete:boolean) => {
-        setNzState(hideComplete)
-        reload(undefined, undefined, undefined, hideComplete)
-    }
-
-    const onExpRadioChange = (onlyExpired:boolean) => {
-        setExpState(onlyExpired)
-        reload(undefined, undefined, undefined, undefined, onlyExpired)
-    }
-
     const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType, _nzState?: boolean, _expState?: boolean) => {
         setKeyword(keyword)
         if(pageInfo.page > 1) {
@@ -435,12 +425,6 @@ const MesRawMaterialReturnList = ({page, search, option}: IProps) => {
     return (
         <div>
             <PageHeader
-                // isNz
-                // isExp
-                // nz={nzState}
-                // exp={expState}
-                // onChangeNz={onCompRadioChange}
-                // onChangeExp={onExpRadioChange}
                 isSearch
                 searchKeyword={keyword}
                 onSearch={reload}
@@ -455,9 +439,7 @@ const MesRawMaterialReturnList = ({page, search, option}: IProps) => {
                 selectDate={selectDate}
                 //@ts-ignore
                 setSelectDate={onSelectDate}
-                title={"원자재 반납 현황"}
-                // buttons={['', '수정하기', '삭제']}
-                // buttonsOnclick={onClickHeaderButton}
+                title={"원자재 출고 현황"}
             />
             <ExcelTable
                 editable

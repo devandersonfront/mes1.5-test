@@ -38,9 +38,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   const dispatch = useDispatch();
 
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(
-    columnlist["substockV1u"]
-  );
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["substockV1u"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
@@ -255,7 +253,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   };
 
   const ReturnSaveBasic = async(row:any, remark:string, status:number) => {
-    const res = await RequestMethod('post', `lotSmSave`,
+    const res = await RequestMethod('post', `shipmentExportSave`,
             [{
               ...row,
               status:status,
