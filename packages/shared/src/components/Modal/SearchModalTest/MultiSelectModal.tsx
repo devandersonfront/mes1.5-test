@@ -221,10 +221,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       setPageInfo({ page: res.page, total: res.totalPages })
       const newSearchList = SearchResultSort(idAddedRows, searchModalInit.excelColumnType)
       const borderedRows = markSelectedRows(newSearchList)
-
-      console.log("basicRowMap : ", basicRowMap);
-
-
       const new_border_rows = borderedRows.map((row) => {
         if (basicRowMap.has(row.product_id)) {
           return {

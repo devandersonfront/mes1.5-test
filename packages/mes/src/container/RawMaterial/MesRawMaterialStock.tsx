@@ -274,7 +274,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   async function SaveBasic(row: any, remark?:string, status?:number) {
     let res: any
-    console.log(row)
     res = await RequestMethod('post', status ? `lotRmSave` : `lotRmComplete`, status ?
      [{
       ...row,

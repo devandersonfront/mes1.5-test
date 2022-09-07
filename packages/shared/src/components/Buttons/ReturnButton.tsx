@@ -77,7 +77,6 @@ const ReturnButton = ({row, column}: IProps) => {
                             <HeaderTable style={{height:"initial", display:"flex", alignItems:"flex-start"}}>
                                 <HeaderTableTitle style={{marginTop:"5px"}}>사유</HeaderTableTitle>
                                 <ModalTextArea style={{height:"90px", borderRadius:"5px", border:"0.5px solid #B3B3B3"}} onBlur={(e) => {
-                                    console.log(e.target.value)
                                     setRemark(e.target.value)
                                 }}/>
                             </HeaderTable>

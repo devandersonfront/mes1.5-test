@@ -133,7 +133,6 @@ const PauseInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       }
       <div
         onClick={() => {
-          console.log('row',row)
           try{
             if(column.type !== 'readonly'){
               if(selectRow !== undefined && selectRow !== null){

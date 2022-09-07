@@ -106,8 +106,6 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
         }).filter(v => v.mfrCode !== undefined),
         isChange: true,
       }
-      console.log(selectRow)
-      console.log(newrow)
       onRowChange(newrow)
     }
   }
