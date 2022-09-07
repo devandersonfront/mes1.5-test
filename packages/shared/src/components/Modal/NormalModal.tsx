@@ -250,7 +250,7 @@ const NormalModal: React.FunctionComponent<Props> = ({
                   Notiflix.Report.warning('경고',errMsg, '확인')
                 }
               }}
-              width={searchModalList[dataColumnKey]?.map(column => column.width).reduce((prevValue, currentValue) => prevValue + currentValue)}
+              width={1760}
               rowHeight={32}
               height={552}
               onRowClick={clicked => {

@@ -120,6 +120,7 @@ export const searchModalList: any  = {
     {key: 'name', name: '품명', formatter: LineBorderContainer, placeholder: '-'},
     {key: 'product_type', name: '종류', formatter: LineBorderContainer, placeholder: '-'},
     {key: 'unit', name: '단위', formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'spare', name: '기본/스페어 설정', formatter: LineBorderContainer, placeholder: '-'},
     {key: 'average', name: '평균 공구 교환주기', formatter: LineBorderContainer, placeholder: '-'},
   ],
   productInfo: [

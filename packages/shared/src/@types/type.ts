@@ -50,7 +50,6 @@ export interface IExcelHeaderType {
   title?: string
   subTitle?:string
   url?: string
-  headerType?:any[]
   toolType?: 'register'
   callback?: (data : any) => void
   idx?:number

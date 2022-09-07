@@ -307,6 +307,9 @@ const ApiList = {
   productChangeLoad: `/cnc/api/v1/product-changes/load`,
   moldPrdMoldLinkLoad: `/api/v1/mold/prd-mold-link/load`,
   machinePrdMachineLinkLoad: `/api/v1/machine/prd-machine-link/load`,
+  productToMachine: '/api/v1/machine/prd-related/load',
+  productToMold: '/api/v1/mold/prd-related/load',
+  productToTool: '/cnc/api/v1/tool/prd-related/load',
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -319,7 +322,6 @@ const ApiList = {
   processDelete: `/api/v1/process/delete`,
   machineDelete: `/api/v1/machine/delete`,
   productDelete: `/cnc/api/v1/product/delete`,
-  rawmaterialDelete: `/api/v1/rawmaterial/delete`,
   rawMaterialDelete: `/api/v1/raw-material/delete`,
   subMaterialDelete: `/api/v1/sub-material/delete`,
   moldDelete: `/api/v1/mold/delete`,
