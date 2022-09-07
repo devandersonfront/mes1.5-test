@@ -60,8 +60,6 @@ const CncOrder = (customTarget?: string): CncOrderType[] => {
 
 
 const BASIC_MENUS: IMenuType[] = BasicOrder(customTarget).map(menu => {
-    console.log(menu)
-    console.log(BasicTitles(customTarget)['userAuthMgmt'])
     return {
         title:BasicTitles(customTarget)[menu].title,
           url: BasicTitles(customTarget)[menu].url,

@@ -62,7 +62,6 @@ import { MidrangeFrameButton } from "../components/Buttons/MidrangeFrameButton";
 import { UnderLineContainer } from '../components/Formatter/UnderLineContainer'
 import { OnClickContainer } from '../components/InputBox/OnClickContainer'
 import { InputWithDropDown } from '../components/Dropdown/InputWithDropDown'
-import { ToolModal } from "../components/Modal/ToolModal";
 import { MultiSelectModal } from '../components/Modal/SearchModalTest/MultiSelectModal'
 import { HeaderSort } from '../components/HeaderSort/HeaderSort'
 import CommonProgressBar from '../../../main/component/InputBox/CommonProgressBar'
@@ -192,7 +191,7 @@ export const columnlist: any = {
     { key: 'volt', name: '사용 전압', editor: TextEditor, formatter: UnitContainer, inputType: 'number', unitData: 'V', width: 118, placeholder: "0", toFix: 1 },
     { key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory', placeholder: "-" },
     { key: 'affiliated_id', name: '공장 세분화명', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory', placeholder: "-" },
-    { key: 'product_id', name: '생산 품목', width: 118, formatter: ProductInfoModal, type: "machine", headerType: [{ name: "기계명" }] ,unprintable : true},
+    { key: 'product_id', name: '생산 품목', width: 118, formatter: ProductInfoModal, type: "machine", headerItems: [[{key: 'name', title:'기계명', infoWidth: 300},{ key: 'mfrCode', title: '제조 번호', infoWidth: 300 }]] ,unprintable : true},
   ],
   device: [
     { key: 'mfrName', name: '장치 제조사', editor: TextEditor, formatter: PlaceholderBox, placeholder: "제조사 입력" },
@@ -359,10 +358,8 @@ export const columnlist: any = {
       inputType: 'number',
     },
     {
-      key: 'product_id', name: '생산품목', formatter: ProductInfoModal, type: "mold", headerType: [{ code: "CODE", name: "금형명" },
-      { cavity: "캐비티", spm: "SPM", slideHeight: "슬라이드 위치" },
-      { limit: "최대 타수", inspect: "점검 타수", current: "현재 타수" },
-      ],unprintable : true
+      key: 'product_id', name: '생산품목', formatter: ProductInfoModal, type: "mold",
+      headerItems: [[{key: 'code', title:'CODE', infoWidth: 300},{ key: 'name', title: '금형명', infoWidth: 300 }]],unprintable : true
     },
     { key: 'form_id', name: '일상 점검', width: 118, formatter: CellButtonComponent /*FactoryInfoModal*/, type: 'inspection' ,unprintable : true},
   ],
@@ -1445,7 +1442,7 @@ export const columnlist: any = {
     },
     { key: "customer_id", name: '거래처', formatter: SearchModalTest, placeholder: '거래처 입력', type: "customer" },
     { key: "stock", name: '공구 재고량', formatter: UnitContainer, unitData: "EA", },
-    { key: "product_id", name: '생산 품목', formatter: ToolModal, type: "tool", headerType: [{ code: "공구 CODE", name: "공구명" }, { customer: "거래처" }] ,unprintable : true},
+    { key: "product_id", name: '생산 품목', formatter: ProductInfoModal, type: "tool", headerItems: [[{key: 'name', title:'공구 품명', infoWidth: 300},{ key: 'code', title: '공구 CODE', infoWidth: 300 }]] ,unprintable : true},
   ],
   toolList: [
     {key: "code", name: '공구 CODE',  formatter: PlaceholderBox, placeholder: 'CODE 입력'},
@@ -1453,7 +1450,6 @@ export const columnlist: any = {
     {key: "unit", name: '단위', },
     {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '-', type:"customer"},
     {key: "stock", name: '공구 재고량', formatter: UnitContainer, unitData:"EA", },
-    {key: "product_id", name: '생산 품목', formatter: ToolModal, type: "tool", headerType:[ {code: "공구 CODE", name: "공구명"}, {customer: "거래처"} ] , unprintable : true},
   ],
   toolWarehousingRegister:[
     {key: "tool_id", name: '공구 CODE', formatter: SearchModalTest, type:"tool", placeholder: 'CODE 입력', toolType: 'register', noSelect:true},

@@ -75,8 +75,6 @@ const BasicDocument = ({ page, keyword, option, doc_id }: IProps) => {
         const downloadDatas = []
         basicRow.map((row) => {
 
-            console.log("row for data download !!: ", row);
-
             if (selectList.has(row.id)) {
                 downloadDatas.push(row);
             }

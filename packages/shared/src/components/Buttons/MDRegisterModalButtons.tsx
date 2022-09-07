@@ -22,7 +22,6 @@ const MDRegisterModalButtons = ({seqKey = 'seq', data, setData, dataIndex, setDa
         Notiflix.Report.warning('경고', `최대 ${addLimit}까지 등록할 수 있습니다.`, '확인')
         return
       } else {
-        console.log('data',data)
         setData(prev =>[
           ...prev,
           {

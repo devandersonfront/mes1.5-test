@@ -183,7 +183,6 @@ const ApiList = {
   processDelete: `/api/v1/process/delete`,
   machineDelete: `/api/v1/machine/delete`,
   productDelete: `/api/v1/product/delete`,
-  rawmaterialDelete: `/api/v1/rawmaterial/delete`,
   moldDelete: `/api/v1/mold/delete`,
   pauseDelete: `/api/v1/process/reason/pause/delete`,
   defectDelete: `/api/v1/process/reason/defect/delete`,
