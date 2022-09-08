@@ -93,15 +93,15 @@ const MidrangeFormReviewModal = ({ data, isOpen, setIsOpen}: IProps) => {
                                 width={1746}
                                 rowHeight={32}
                                 height={552}
-                                onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-                                    if(!searchList[e].border){
-                                        searchList.map((v,i)=>{
-                                            v.border = false;
-                                        })
-                                        searchList[e].border = true
-                                        setSearchList([...searchList])
+                                onRowClick={(clicked) => {const rowIdx = searchList.indexOf(clicked)
+                                    if(!searchList[rowIdx]?.border){
+                                        const newSearchList = searchList.map((v,i)=> ({
+                                            ...v,
+                                            border : i === rowIdx
+                                        }))
+                                        setSearchList(newSearchList)
+                                        setSelectRow(rowIdx)
                                     }
-                                    setSelectRow(e)
                                 }}
                                 type={'searchModal'}
                                 headerAlign={'center'}
