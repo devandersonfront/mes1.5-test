@@ -31,7 +31,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     total: 1
   })
   const isModify = row.shipment_id && !column.readonly
-  console.log('aa',row)
 
   useEffect(() => {
     if(isOpen) {
@@ -94,7 +93,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     setSearchList([...tmpData])
   }
 
-  console.log('s',searchList)
   const changeRow = (tmpRow: any) => {
     return tmpRow.map((v, i) => {
       let current = v.sum.current
@@ -279,8 +277,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               headerList={column.readonly ? searchModalList.lotDeliveryInfoReadonly : searchModalList.lotDeliveryInfo}
               row={searchList }
               setRow={(e) => {
-                console.log('e',e)
-
                 let total = 0
                 const newSearchList = e.map(v => {
                   if(v.amount){
