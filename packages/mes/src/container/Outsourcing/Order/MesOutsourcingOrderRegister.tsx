@@ -14,14 +14,22 @@ const MesOutsourcingOrderRegister = () => {
     const dispatch = useDispatch()
     const router = useRouter()
 
-    const [basicRow, setBasicRow] = useState<any[]>([{}])
+    const [basicRow, setBasicRow] = useState<any[]>([{isFirst:true}])
+    const [selectRows, setSelectRows] = useState<Set<number>>(new Set())
 
     const buttonEvent = (buttonIndex:number) => {
         switch (buttonIndex) {
             case 0:
-                console.log("good : ", basicRow)
+                const tmpRows = [...basicRow]
+                const random:number = Number(Math.random().toFixed(3)) * 1000
+                console.log(random)
+                tmpRows.push({id:"outsourcing_"+random})
+                setBasicRow(tmpRows)
                 break
             case 1:
+                console.log("good : ", basicRow)
+                break
+            case 2:
                 console.log("good : ", )
                 break
             default:
@@ -44,7 +52,7 @@ const MesOutsourcingOrderRegister = () => {
             <PageHeader
                 title={"외주 발주 등록"}
                 buttons={
-                    ['저장하기', '삭제']
+                    ['행 추가', '저장하기', '삭제']
                 }
                 buttonsOnclick={buttonEvent}
             />
@@ -53,13 +61,11 @@ const MesOutsourcingOrderRegister = () => {
                 resizable
                 headerList={[
                     SelectColumn,
-                    ...columnlist.outsourcingOrder
+                    ...columnlist.outsourcingOrder().map(col => ({ ...col, basicRow, setBasicRow}))
                 ]}
                 row={basicRow}
                 setRow={(row) => {
-
                     console.log(row)
-
                     setBasicRow(row)
                 }}
                 width={1576}

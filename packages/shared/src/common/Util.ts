@@ -1,12 +1,14 @@
 import {BomObjectType, BomType, TableSortingOptionType} from '../@types/type'
 
-export const ParseResponse = (res: {info_list: any[]} | string | any[]) : any[] => {
+export const ParseResponse = (res: any | string | any[]) : any[] => {
   if (typeof res === 'string') {
     const rows = res.split('\n')
     const filteredRows = rows.filter(v => v !== "").map(v => JSON.parse(v))
     return filteredRows
   } else if(Array.isArray(res)){
     return res
+  } else if(!res?.info_list){
+    return [res]
   } else {
     return res?.info_list
   }

@@ -43,7 +43,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
-
+  console.log(column)
   useEffect(() => {
     if(column.type === "bom" ){
       setSearchList([{}])

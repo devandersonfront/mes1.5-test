@@ -15,15 +15,16 @@ const MesOutsourcingReceiveRegister = () => {
     const dispatch = useDispatch()
     const router = useRouter()
 
-    const [basicRow, setBasicRow] = useState<any[]>([{}])
-
+    const [basicRow, setBasicRow] = useState<any[]>([{isFirst:true}])
+    const [column, setColumn] = useState<() => any[]>(columnlist["outsourcingReceive"]())
+    const [radioValue, setRadioValue] = useState<number>(0)
     const buttonEvent = (buttonIndex:number) => {
         switch (buttonIndex) {
             case 0:
                 console.log("good : ", basicRow)
                 break
             case 1:
-                console.log("good : ", )
+                console.log("good : ", basicRow)
                 break
             default:
                 console.log("good : ", )
@@ -40,6 +41,9 @@ const MesOutsourcingReceiveRegister = () => {
         }
     }, [])
 
+    useEffect(() => {
+        console.log("render : ")
+    },[radioValue])
     return (
         <div>
             <PageHeader
@@ -48,18 +52,25 @@ const MesOutsourcingReceiveRegister = () => {
                     ['저장하기', '삭제']
                 }
                 buttonsOnclick={buttonEvent}
+                isRadio
+                radioTexts={["발주 입고", "그냥 입고"]}
+                radioValue={radioValue}
+                onChangeRadioValues={(index) => {
+                    setRadioValue(index)
+                }}
             />
             <ExcelTable
                 editable
                 resizable
                 headerList={[
                     SelectColumn,
-                    ...columnlist.outsourcingReceive
+                    // ...column.map(col => col)
+                    // ...columnlist["outsourcingReceive"](basicRow, setBasicRow, radioValue)
+                    // ...column(basicRow, setBasicRow, Boolean(radioValue))
+                    ...column()
                 ]}
                 row={basicRow}
                 setRow={(row) => {
-
-
                     console.log(row)
                     setBasicRow(row)
                 }}

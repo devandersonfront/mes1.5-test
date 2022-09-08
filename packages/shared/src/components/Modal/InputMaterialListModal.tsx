@@ -125,6 +125,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             if(res){
               const inputMaterialList = toInputMaterialList(inputBom)
               setInputMaterialList(inputMaterialList)
+            }else{
+              Notiflix.Report.warning("경고","BOM이 없습니다.","확인",() => setIsOpen(false))
             }
           })
     }else{
@@ -163,6 +165,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const toInputMaterialList = (sheetBom: any) => {
+    console.log("sheetBom : ", sheetBom)
     const inputMaterialList = ParseResponse(sheetBom)
     const firstModify = !!!row.bom_info && isModify
     const bomIdAndLotMap = firstModify && getBomLotMap()
