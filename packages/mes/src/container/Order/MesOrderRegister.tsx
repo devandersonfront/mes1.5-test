@@ -30,23 +30,6 @@ const MesOrderRegister = ({ }: IProps) => {
     isFirst: true
   }])
   const [column, setColumn] = useState<any>(columnlist["orderRegister"]())
-  const [currentSelectedRows, setCurrentSelectedRows] = useState([]);
-
-  // useEffect(() => {
-  //   if (basicRow.length > 0 && currentSelectedRows.length > 0) {
-
-  //     const new_rows = basicRow.map((row) => {
-  //       if (currentSelectedRows.includes(row.code)) {
-  //         return {
-  //           ...row,
-  //           border: true
-  //         }
-  //       }
-  //     })
-
-  //     setBasicRow([...new_rows])
-  //   }
-  // }, [basicRow, currentSelectedRows])
 
   useEffect(() => {
     getMenus()
@@ -130,16 +113,17 @@ const MesOrderRegister = ({ }: IProps) => {
         } else {
           Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
             () => {
-              const filteredRows = basicRow.filter((row, index) => !selectList.has(row.id))
+              let filteredRows = basicRow.filter((row, index) => !selectList.has(row.id))
               if (filteredRows.length === 0) {
-                setBasicRow([{
+                filteredRows = [{
                   date: moment().format('YYYY-MM-DD'),
                   deadline: moment().format('YYYY-MM-DD'),
                   isFirst: true
-                }])
+                }]
               } else {
-                setBasicRow(filteredRows)
+                filteredRows[0] = {...filteredRows[0], isFirst: true}
               }
+              setBasicRow(filteredRows)
               setSelectList(new Set())
             },
             () => { }
@@ -163,7 +147,7 @@ const MesOrderRegister = ({ }: IProps) => {
         resizable
         headerList={[
           SelectColumn,
-          ...column.map(col => ({ ...col, basicRow, setBasicRow, currentSelectedRows, setCurrentSelectedRows }))
+          ...column.map(col => ({ ...col, basicRow, setBasicRow }))
         ]}
         row={basicRow}
         setRow={(row) => {
