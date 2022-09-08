@@ -172,7 +172,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         })
         return {
           ...row,
-          lots: row.lot_number,
+          lots: row.lots,
           additional: [
             ...additional.map(v => {
               if(row[v.name]) {
