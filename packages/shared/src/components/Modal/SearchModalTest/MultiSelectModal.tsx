@@ -184,7 +184,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
 
 
   const LoadBasic = async (page: number = 1) => {
-    // alert("hi")
     Notiflix.Loading.circle();
     const getParams = () => {
       switch (column.type) {
@@ -383,6 +382,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     setPageInfo({ page: 1, total: 1 })
     setIsOpen(false)
     setKeyword('')
+    setBasicRowMap(new Map())
   }
 
   const modalOpen = () => {
