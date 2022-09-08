@@ -1098,7 +1098,7 @@ export const columnlist: any = {
     {key:"type", name:"품목 종류", width: 118, formatter: PlaceholderBox, placeholder: '자동입력'   },
     {key:"unit", name:"단위", width: 118 , formatter: PlaceholderBox, placeholder: '자동입력'  },
     {key:"date", name:"납품 날짜", width: 118, formatter: CalendarBox, type: 'delivery'},
-    {key:"lot_number", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base', searchType: 'code'   },
+    {key:"lot_number", name:"LOT 선택", width: 118, formatter: LotDeliveryInfoModal, searchType: 'code'},
     {key:"amount", name:"총 납품 수량", width: 118, formatter: PlaceholderBox, placeholder: '0', type:"placeholder" },
   ],
   deliveryIdentificationRegister: [
@@ -1110,11 +1110,11 @@ export const columnlist: any = {
     { key: "type", name: "품목 종류", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     { key: "unit", name: "단위", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     { key: "date", name: "납품 날짜", width: 118, formatter: CalendarBox, type: 'delivery' },
-    { key: "lot_number", name: "LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base', searchType: 'contract' },
+    { key: "lot_number", name: "LOT 선택", width: 118, formatter: LotDeliveryInfoModal, searchType: 'contract' },
     { key: "amount", name: "총 납품 수량", width: 118, formatter: PlaceholderBox, placeholder: '0', type: "placeholder" },
   ],
   deliveryList: [
-    { key: "identification", name: "납품 번호", width: 118 },
+    { key: "identification", name: "납품 번호",  width: 118 },
     { key: "contract_id", name: "수주 번호", width: 118 },
     { key: "customer_id", name: "거래처", width: 118 },
     { key: "cm_id", name: "모델", width: 118 },
@@ -1124,7 +1124,7 @@ export const columnlist: any = {
     { key: "unit", name: "단위", width: 118 },
     { key: "date", name: "납품 날짜", width: 118, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
     { key: "amount", name: "총 납품 수량", width: 118 },
-    { key: "lot_number", name: "LOT별 납품 수량", width: 118, formatter: LotDeliveryInfoModal, type: 'baseReadonly' ,unprintable : true},
+    { key: "lot_number", name: "LOT별 납품 수량", width: 118, formatter: LotDeliveryInfoModal, readonly: true ,unprintable : true},
   ],
   deliveryModify: [
     { key: "identification", name: "수주 번호", width: 118, type: 'order' },
@@ -1135,7 +1135,7 @@ export const columnlist: any = {
     { key: "type", name: "품목 종류", width: 118 },
     { key: "unit", name: "단위", width: 118 },
     { key: "date", name: "납품 날짜", width: 118, formatter: CalendarBox },
-    { key: "lot_number", name: "LOT 선택", width: 118, formatter: LotDeliveryInfoModal, type: 'base' },
+    { key: "lot_number", name: "LOT 선택", width: 118, formatter: LotDeliveryInfoModal },
     { key: "amount", name: "총 납품 수량", width: 118 },
   ],
   productChangeRegister: [

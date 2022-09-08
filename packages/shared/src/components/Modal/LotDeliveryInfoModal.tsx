@@ -22,31 +22,31 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
 const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [totalDelivery, setTotalDelivery] = useState<number>(0)
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+  const isModify = row.shipment_id && !column.readonly
+  console.log('aa',row)
 
   useEffect(() => {
     if(isOpen) {
-      if (row.lots && row.lots.length && column.key === 'lot_number') {
+      if(column.readonly){
         initData()
-      }else if (row.product?.product_id) {
-        SearchBasic()
       } else {
-        setIsOpen(false)
-        Notiflix.Report.warning('수주 또는 품목을 선택해 주세요.', '', '확인',)
+        if(row.product?.product_id) {
+          SearchBasic()
+        } else {
+          setIsOpen(false)
+          Notiflix.Report.warning('수주 또는 품목을 선택해 주세요.', '', '확인',)
+        }
       }
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen])
 
   const initData = async() => {
     let tmpData = []
@@ -61,7 +61,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
             lot_number: v.group.sum.lot_number,
             start: v.group.sum.start,
             end: v.group.sum.end,
-            worker_name: v.group.sum.worker.name,
+            worker_name: v.group.sum.worker?.name ?? '-',
             good_quantity: v.group.sum.good_quantity,
             current: v.group.sum.current,
             amount: row.lots[index].amount ?? row.amount,
@@ -78,7 +78,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           lot_number: v.group.sum.lot_number,
           start: v.group.sum.start,
           end: v.group.sum.end,
-          worker_name: v.group.sum.worker.name,
+          worker_name: v.group.sum.worker?.name,
           good_quantity: v.group.sum.good_quantity,
           current: v.group.sum.current,
           amount: v.amount ?? row.amount,
@@ -94,80 +94,72 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     setSearchList([...tmpData])
   }
 
+  console.log('s',searchList)
   const changeRow = (tmpRow: any) => {
-    let tmpData = []
-    let row = [];
-    // if(typeof tmpRow === 'string'){
-    //   let tmpRowArray = tmpRow.split('\n')
-    //
-    //   row = tmpRowArray.map(v => {
-    //     if(v !== ""){
-    //       let tmp = JSON.parse(v)
-    //       return tmp
-    //     }
-    //   }).filter(v=>v)
-    // }else{
-      row = [...tmpRow]
-    // }
-
-    tmpData = row.map((v, i) => {
+    return tmpRow.map((v, i) => {
+      let current = v.sum.current
+      const matchedLot = row.lots?.filter(lot => lot.group.sum.lot_number === v.sum.lot_number)?.[0]
+      if(isModify){
+        const originalLot = row.originalLots?.filter(lot => lot.group.sum.lot_number === v.sum.lot_number)?.[0]
+        const originalAmount = originalLot?.amount ?? 0
+        const amount = matchedLot?.amount ?? 0
+        current = current + originalAmount - Number(amount)
+      }
+      const amount = matchedLot?.amount ?? undefined
       return {
         seq: i+1,
         lot_number: v.sum.lot_number,
         start: v.sum.start,
         end: v.sum.end,
-        worker_name: v.sum.worker.name,
+        worker_name: v.sum.worker?.name ?? '-',
         good_quantity: v.sum.good_quantity,
-        current: v.sum.current,
-        amount: v.sum.lot?.amount,
+        current,
+        originalCurrent: current,
+        amount,
         group: {
           ...v,
         }
       }
     })
-    return tmpData
   }
 
   const SearchBasic = async () => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', row.contract?.contract_id? `recordGroupListByContract` : `recordGroupList` ,{
+    const searchType = column.searchType ?? (row.contract?.contract_id ? 'contract' : 'code')
+    const res = await RequestMethod('get', searchType === 'contract' ? `recordGroupListByContract` : `recordGroupList` ,{
       path: {
         product_id: row.product.product_id,
-        contract_id: row.contract?.contract_id?? null,
+        contract_id: searchType === 'contract' ? row.contract?.contract_id : null,
         page: 1,
         renderItem: 18,
       },
     })
-    if(res && res.info_list.length <= 0){
-      Notiflix.Report.warning("경고","해당 품목의 재고가 없습니다.","확인", () => setIsOpen(false))
-      return
+    if(res && res.info_list?.length === 0){
+      return Notiflix.Report.warning("경고","해당 품목의 재고가 없습니다.","확인", () => setIsOpen(false))
     }else if(res){
       const searchList = changeRow(res.info_list)
       setPageInfo({
-        ...pageInfo,
         page: res.page,
         total: res.totalPages,
       })
 
       setSearchList([...searchList])
-      return searchList
     }
+    Notiflix.Loading.remove()
   }
 
   const ModalContents = () => (
       <UploadButton onClick={() => {
         setIsOpen(true)
       }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
-        <p>
-          {column.type === "placeholder" ? totalDelivery : "LOT 보기"}
-        </p>
+        <p>LOT 보기</p>
       </UploadButton>
   )
 
   const onClickCloseEvent = () => {
     setIsOpen(false)
     setPageInfo({page:1, total:1})
-    setSearchList([{seq: 1}])
+    setSearchList([])
   }
 
   return (
@@ -257,7 +249,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               <HeaderTableText>{row.unit ?? '-'}</HeaderTableText>
             </HeaderTableTextInput>
             {
-              column.type === 'base' &&
+              !column.readonly &&
               <>
                   <HeaderTableTitle>
                       <HeaderTableText style={{fontWeight: 'bold'}}>총 재고량</HeaderTableText>
@@ -284,24 +276,34 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={column.type === 'baseReadonly'  || column.type === "placeholder" ? searchModalList.lotDeliveryInfoReadonly : searchModalList.lotDeliveryInfo}
+              headerList={column.readonly ? searchModalList.lotDeliveryInfoReadonly : searchModalList.lotDeliveryInfo}
               row={searchList }
               setRow={(e) => {
-                  let total = 0
-                  setSearchList([...e])
-                  e.map(v => {
-                    if(v.amount){
-                      total += Number(v.amount)
-                    }
-                  })
-                  setTotalDelivery(total)
+                console.log('e',e)
+
+                let total = 0
+                const newSearchList = e.map(v => {
+                  if(v.amount){
+                    total += Number(v.amount)
+                  }
+                  let current = v.originalCurrent
+                  if(isModify){
+                    const originalLot = row.originalLots?.filter(lot => lot.group.sum.lot_number === v.group.sum.lot_number)?.[0]
+                    const originalAmount = originalLot?.amount ?? 0
+                    const amount = v?.amount ?? 0
+                    current = current + originalAmount - Number(amount)
+                  }
+                  return {
+                    ...v,
+                    current
+                  }
+                })
+                setSearchList(newSearchList)
+                setTotalDelivery(total)
               }}
               width={1746}
               rowHeight={32}
               height={568}
-              // onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-              //   setSelectRow(e)
-              // }}
               onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
                 if(!searchList[e].border){
                   searchList.map((v,i)=>{
@@ -310,7 +312,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                   searchList[e].border = true
                   setSearchList([...searchList])
                 }
-                setSelectRow(e)
               }}
               type={'searchModal'}
               headerAlign={'center'}
@@ -327,20 +328,10 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
             
           </div>
-          { column.type === "readonly" || column.type === "baseReadonly" ?
+          { column.readonly ?
             <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
               <div
-                onClick={() => {
-                  if (selectRow !== undefined && selectRow !== null) {
-                    onRowChange({
-                      ...row,
-                      ...searchList[selectRow],
-                      name: row.name,
-                      isChange: true
-                    })
-                  }
-                  setIsOpen(false)
-                }}
+                onClick={() => onClickCloseEvent()}
                 style={{
                   width: '100%',
                   height: 40,
@@ -371,25 +362,9 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                 onClick={() => {
                   if(NoAmountValidation('amount', searchList,)) return
                   else if(OverAmountValidation('current', 'amount', searchList, '재고량 보다 납품 수량이 많습니다.')) return
-                  let lot = searchList.map(v => {
-                    return {
-                      ...v,
-                      amount: v.amount ?? 0
-                    }
-                  })
-
                   onRowChange({
                     ...row,
-                    [column.key]: [...lot.map(v => {
-                      if(Number(v.amount)){
-                        return v
-                      }
-                    }).filter(v=>v)],
-                    lots: [...lot.map(v => {
-                      if(Number(v.amount)){
-                        return v
-                      }
-                    }).filter(v=>v)],
+                    lots: searchList.filter(row => !!row.amount && Number(row.amount)),
                     amount: totalDelivery,
                     name: row.name,
                     isChange: true
