@@ -10,10 +10,10 @@ export const initalState: IModifyInfoType = {
   type: undefined
 }
 
-export const setModifyInitData = (menuState: IModifyInfoType) => {
+export const setModifyInitData = (state: IModifyInfoType) => {
   return {
     type: SET_MENU_STATE,
-    modifyInit: menuState
+    modifyInit: state
   }
 }
 

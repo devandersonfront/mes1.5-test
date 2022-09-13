@@ -109,8 +109,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
 
     if(res){
       if(res.length > 0) {
-        console.log(res)
-
         const newSearchList = await Promise.all(await res.map(product => toTableData(column.type, product)))
         setSearchList(newSearchList)
 

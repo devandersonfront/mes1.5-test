@@ -1,18 +1,12 @@
 import React, {useState} from 'react'
 import MenuNavigation from '../../../component/MenuNav/MenuNavigation'
 import ProfileHeader from '../../../component/Profile/ProfileHeader'
-import {Header as PageHeader} from 'shared/src/components/Header'
-
-import {IExcelHeaderType} from '../../../common/@types/type'
 import {HomeProductionLog} from "../../../container/home/HomeProductionLog";
 
 interface IProps {
   children?: any,
   title: string,
-  user: any
   cookies: any
-  row?: Array<any>
-  column?: IExcelHeaderType[]
 }
 
 const DashboardPage = ({children, title, cookies}: IProps) => {

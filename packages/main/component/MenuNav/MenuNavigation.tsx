@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import {menuSelect} from 'shared/src/common/menulist'
-import {IMenuType} from '../../common/@types/type'
 import {MenuNavComponent, MenuNavItem, MenuText, SideMenuItem} from '../../styles/styledComponents'
 import {POINT_COLOR} from 'shared/src/common/configset'
 //@ts-ignore
@@ -19,12 +18,18 @@ import ic_wms from '../../public/images/ic_wms.png'
 import ic_ums from '../../public/images/ic_ums.png'
 //@ts-ignore
 import ic_setting from '../../public/images/ic_setting.png'
-import Router,{useRouter} from 'next/router'
+import {useRouter} from 'next/router'
 import {useDispatch, useSelector} from 'react-redux'
 import {RootState} from 'shared/src/reducer'
 import { selectMenuState, setMenuState } from 'shared/src/reducer/menuState'
 
 type IMenu = 'HOME' | 'BASIC' | 'MES' | 'PMS' | 'WMS' | 'UMS' | 'SETTING' | "CNC" | ""
+
+interface IMenuType {
+  title: string
+  url: string
+  subMenu?: IMenuType[]
+}
 
 interface IProps {
   pageType?: IMenu,

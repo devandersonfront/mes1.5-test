@@ -15,6 +15,7 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {TransferCodeToValue} from "../../common/TransferFunction";
 import {UploadButton} from "../../styles/styledComponents";
+import { getUsageType } from '../../common/Util'
 
 interface IProps {
     column: IExcelHeaderType
@@ -90,7 +91,8 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                     ...v.machine,
                     machineType: TransferCodeToValue(v.machine.type, 'machine'),
                     sequence: index+1,
-                    setting: v.machine.machine_id === selectedMachine ? 1 : 0
+                    setting: v.machine.machine_id === selectedMachine ? 1 : 0,
+                    isDefault: getUsageType(v.setting)
                 }
             }))
         }

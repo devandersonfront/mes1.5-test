@@ -22,8 +22,6 @@ interface IProps {
     onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
 const headerItems: {title: string, infoWidth: number, key: string, unit?: string}[][] = [
     [
         {title: '지시 고유번호', infoWidth: 144, key: 'identification'},
@@ -48,31 +46,20 @@ const headerItems: {title: string, infoWidth: number, key: string, unit?: string
 
 const ToolListModal = ({column, row, onRowChange}: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
-    const [title, setTitle] = useState<string>('기계')
-    const [optionIndex, setOptionIndex] = useState<number>(0)
-    const [keyword, setKeyword] = useState<string>('')
     const [summaryData, setSummaryData] = useState<any>({})
-    const [selectRow, setSelectRow] = useState<number>()
-    const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
-    const [searchKeyword, setSearchKeyword] = useState<string>('')
-    const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-        page: 1,
-        total: 1
-    })
+    const [searchList, setSearchList] = useState<any[]>([])
 
     useEffect(() => {
         if(isOpen) {
             if(!!row.tools && row.tools.length){
-                setSearchList([...row.tools.map(v => {
-                    return {
-                        ...v,
-                        ...v.tool,
-                        ...v.tool.tool,
-                        customer: v.tool?.tool?.customer?.name
-                    }
-                })])
-            }else{
-                setSearchList([])
+                const newSearchList = row.tools.map((tool, idx) => ({
+                    ...tool.tool.tool,
+                    used: tool.tool.used,
+                    customer: tool.tool.tool.customer?.name ?? '-',
+                    sequence: idx+1,
+                  })
+                )
+                setSearchList(newSearchList)
             }
             setSummaryData({
                 // ...res.parent
@@ -91,19 +78,7 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
                 poor_quantity: row.poor_quantity ?? 0,
             })
         }
-    }, [isOpen, searchKeyword])
-
-    const changeRow = (row: any, key?: string) => {
-        let tmpData = {
-            ...row,
-            machine_id: row.name,
-            machine_idPK: row.machine_id,
-            manager: row.manager ? row.manager.name : null
-        }
-
-        return tmpData
-    }
-
+    }, [isOpen])
 
     const getSummaryInfo = (info) => {
         return summaryData[info.key] ?? '-'
@@ -200,18 +175,14 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
                             width={1746}
                             rowHeight={32}
                             height={552}
-                            // onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                            //   setSelectRow(e)
-                            // }}
-                            onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                                if(!searchList[e].border){
-                                    searchList.map((v,i)=>{
-                                        v.border = false;
-                                    })
-                                    searchList[e].border = true
-                                    setSearchList([...searchList])
+                            onRowClick={(clicked) => {const rowIdx = searchList.indexOf(clicked)
+                                if(!searchList[rowIdx]?.border){
+                                    const newSearchList = searchList.map((v,i)=> ({
+                                        ...v,
+                                        border : i === rowIdx
+                                    }))
+                                    setSearchList(newSearchList)
                                 }
-                                setSelectRow(e)
                             }}
                             type={'searchModal'}
                             headerAlign={'center'}
