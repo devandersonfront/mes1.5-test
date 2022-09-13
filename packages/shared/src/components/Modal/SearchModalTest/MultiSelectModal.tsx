@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { IExcelHeaderType } from '../../../common/@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import { POINT_COLOR } from '../../../common/configset'
@@ -19,6 +18,7 @@ import { SearchIcon } from "../../../styles/styledComponents";
 // @ts-ignore
 import { SelectColumn } from 'react-data-grid'
 import moment from 'moment'
+import { IExcelHeaderType } from '../../../@types/type'
 
 interface IProps {
   column: IExcelHeaderType

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
+import { IExcelHeaderType } from 'shared/src/@types/type'
 import {UnitBox, UnitValue, UnitWrapper} from '../../styles/styledComponents'
 
 interface IProps {

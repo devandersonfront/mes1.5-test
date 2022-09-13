@@ -1,10 +1,10 @@
 import React, {useRef} from 'react'
-import {IExcelHeaderType} from '../../common/@types/type'
 //@ts-ignore
 import Icon_X from '../../public/images/file_delete_button.png'
 import {UploadButton} from '../../styles/styledComponents'
 import {uploadTempFile} from '../../common/fileFuctuons'
 import {SF_ENDPOINT_RESOURCE} from 'shared/src/common/configset'
+import { IExcelHeaderType } from 'shared/src/@types/type'
 
 interface IProps {
   row: any
