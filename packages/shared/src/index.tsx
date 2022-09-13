@@ -167,7 +167,6 @@ export {BarcodeModal} from "./components/Modal/BarcodeModal"
 export {MidrangeFormReviewModal} from "./components/Modal/MidrangeFormReviewModal"
 
 //test
-export {TestToolSelectModal} from './components/Modal/TestToolSelectModal'
 export {WorkRegisterModal} from './components/Modal/WorkRegisterModal'
 export {TestSearchModalTest} from "./components/Modal/SearchModalTest/TestSearchModalTest"
 
