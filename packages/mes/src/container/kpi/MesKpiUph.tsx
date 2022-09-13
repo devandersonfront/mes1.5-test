@@ -130,7 +130,7 @@ const MesKpiUph = () => {
     },[])
 
     return (
-        <div>
+        <div className={'excelPageContainer'}>
             <PageHeader title={"UPH(P)"} />
             <ExcelTable
                 editable

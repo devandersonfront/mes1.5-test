@@ -14,6 +14,7 @@ import {ThemeProvider as StyledThemeProvider} from 'styled-components';
 import {theme} from '../common/theme';
 import {global as GlobalStyles} from '../common/global';
 import '../styles/globals.css'
+import '../styles/printPages.css'
 import wrapper from '../store'
 
 const App = ({ Component, pageProps, store }: any) => {

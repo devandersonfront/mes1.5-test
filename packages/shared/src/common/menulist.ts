@@ -1,13 +1,13 @@
 import {IMenuType} from '../@types/type'
-import {bkMesTitles, defaultBasicTitles, defaultMesTitles} from "./menuTitles";
-import {BasicOrderType, MesOrderType} from "./menuTitles/types";
+import {BasicTitles, MesTitles, CncTitles, PmsTitles} from "./menuTitles";
+import { BasicOrderType, CncOrderType, MesOrderType, PmsOrderType } from './menuTitles/types'
 
 type IMenu = 'HOME' | 'BASIC' | 'MES' | 'PMS' | 'WMS' | 'UMS' | 'SETTING' | "CNC" | ""
 
 export const menuSelect = (type: IMenu) => {
     switch(type){
         case 'HOME'   :
-            return HOME_MENUS
+            return []
         case 'BASIC'  :
             return BASIC_MENUS
         case 'MES'    :
@@ -27,115 +27,73 @@ export const menuSelect = (type: IMenu) => {
     }
 }
 
-const HOME_MENUS: IMenuType[] = [
+const customTarget = process.env.NEXT_PUBLIC_CUSTOM_TARGET
 
-]
+const BasicOrder = (customTarget?: string): BasicOrderType[] => {
+    const defaultOrder: BasicOrderType[] = [ 'userAuthMgmt', 'factoryMgmt', 'customerMgmt', 'processMgmt', 'qualityMgmt', 'deviceMgmt',
+        'machineMgmt', 'moldMgmt', 'toolMgmt', 'rawMgmt', 'subMgmt', 'productMgmt', 'documentMgmt' ]
+    switch(customTarget){
+        default: return defaultOrder
+    }
+}
 
-const BasicOrder : BasicOrderType[] = ['userAuthMgmt', 'factoryInfo', 'manageMgmt','processMgmt','qualityInfo','deviceInfo',
-'machineInfo','moldInfo','toolInfo','rawInfo','subInfo','productMgmt','documentMgmt']
+const MesOrder = (customTarget?: string): MesOrderType[] => {
+    const defaultOrder: MesOrderType[] = ['businessMgmt','pmReg','rawMgmt','subMgmt','toolMgmt','qualityMgmt','stockMgmt','kpi']
+    switch(customTarget){
+        default: return defaultOrder
+    }
+}
 
-const BASIC_MENUS: IMenuType[] = BasicOrder.map(menu => ({
-    title:defaultBasicTitles[menu].title,
-    url: defaultBasicTitles[menu].url,
-    subMenu: defaultBasicTitles[menu]?.subMenu?.map(sub => ({
-        title: defaultBasicTitles[sub].title,
-        url: defaultBasicTitles[sub].url
+const PmsOrder = (customTarget?: string): PmsOrderType[] => {
+    const defaultOrder: PmsOrderType[] = ['pressMon', 'pressStats', 'pressMnt', 'moldMnt']
+    switch(customTarget){
+        default: return defaultOrder
+    }
+}
+
+const CncOrder = (customTarget?: string): CncOrderType[] => {
+    const defaultOrder: CncOrderType[] = ['cncMon', 'cncStats', 'cncMnt']
+    switch(customTarget){
+        default: return defaultOrder
+    }
+}
+
+
+const BASIC_MENUS: IMenuType[] = BasicOrder(customTarget).map(menu => {
+    return {
+        title:BasicTitles(customTarget)[menu].title,
+          url: BasicTitles(customTarget)[menu].url,
+      subMenu: BasicTitles(customTarget)[menu]?.subMenu?.map(sub => ({
+        title: BasicTitles(customTarget)[sub].title,
+        url: BasicTitles(customTarget)[sub].url
+    }))
+    }
+})
+
+
+const MES_MENUS: IMenuType[] = MesOrder(customTarget).map(menu => ({
+    title:MesTitles(customTarget)[menu].title,
+    url: MesTitles(customTarget)[menu].url,
+    subMenu: MesTitles(customTarget)[menu]?.subMenu?.map(sub => ({
+        title: MesTitles(customTarget)[sub].title,
+        url: MesTitles(customTarget)[sub].url
     }))
 }))
 
-const MesOrder : MesOrderType[] = ['businessMgmt','pmReg','rawMgmt','subMgmt','toolMgmt','qualityMgmt','stockMgmt','kpi']
-
-const MES_MENUS: IMenuType[] = MesOrder.map(menu => ({
-    title:bkMesTitles[menu].title,
-    url: bkMesTitles[menu].url,
-    subMenu: bkMesTitles[menu]?.subMenu?.map(sub => ({
-        title: bkMesTitles[sub].title,
-        url: bkMesTitles[sub].url
+const PMS_MENUS: IMenuType[] = PmsOrder(customTarget).map(menu => ({
+    title:PmsTitles(customTarget)[menu].title,
+    url: PmsTitles(customTarget)[menu].url,
+    subMenu: PmsTitles(customTarget)[menu]?.subMenu?.map(sub => ({
+        title: PmsTitles(customTarget)[sub].title,
+        url: PmsTitles(customTarget)[sub].url
     }))
 }))
 
-const PMS_MENUS: IMenuType[] = [
-    // { title: '프레스 모니터링', url: '/pms/monitoring/press' },
-    // { title: '프레스별 분석 모니터링', url: '/pms/v2/factoryMonitoring' },
-    {
-        title: '프레스 모니터링', url: '',
-        subMenu: [
-            { title: '프레스 분석 모니터링', url: '/pms/v2/factoryMonitoring' },
-            { title: '프레스 현황 모니터링', url: '/pms/new/monitoring/press' }
-        ]
-    },
-    {
-        title: '프레스 통계 및 분석', url: '',
-        subMenu: [
-            { title : '생산량' , url : '/pms/v2/analysis/output'},
-            { title : '능력' , url : '/pms/v2/analysis/ability'},
-            { title : '에러' , url : '/pms/v2/analysis/error'},
-            { title : '전력' , url : '/pms/v2/analysis/power'},
-            { title : '기계 비가동 시간' , url: '/pms/v2/analysis/idleTime'},
-            { title : '작업시간' , url : '/pms/v2/analysis/workTime'},
-        ]
-    },
-    {
-        title: '프레스 관리', url: '',
-        subMenu: [
-            { title : '에러 보기' , url : '/pms/v2/press/maintenance/errorview'},
-            { title : '파라미터 보기' , url : '/pms/v2/press/maintenance/parameterview'},
-            { title : '캠 보기' , url : '/pms/v2/press/maintenance/camview'},
-            { title : '클러치&브레이크' , url : '/pms/v2/press/maintenance/clutchandbrake'},
-            { title : '설비 수리 요청 등록' , url : '/pms/v2/press/maintenance/facilities'},
-            { title : '설비 수리 요청 리스트' , url : '/pms/v2/press/maintenance/list'},
-            { title : '설비 수리 완료 리스트' , url : '/pms/v2/press/maintenance/complete'},
-            { title : '설비 수리 완료 리스트(관리자용)' , url : '/pms/v2/press/maintenance/complete/admin'},
-            { title : '설비 문제 유형 등록' , url : '/pms/v2/press/maintenance/problem'},
-            { title : '프레스 일상점검 등록' , url : '/pms/v2/press/maintenance/PressDailyRegister'},
-            { title : '프레스 일상점검 일일현황' , url : '/pms/v2/press/maintenance/PressDailyStatus'}
-
-        ]
-    },
-    {
-        title: '금형 관리', url: '',
-        subMenu: [
-            { title : '금형 타수 관리' , url : '/pms/v2/mold/maintenance'},
-            { title : '금형 수리 요청 등록' , url : '/pms/v2/mold/maintenance/repairs'},
-            { title : '금형 수리 요청 리스트' , url : '/pms/v2/mold/maintenance/list'},
-            { title : '금형 수리 완료 리스트' , url : '/pms/v2/mold/maintenance/complete'},
-            { title : '금형 수리 완료 리스트(관리자용)' , url : '/pms/v2/mold/maintenance/complete/admin'},
-            { title : '금형 문제 유형 등록' , url : '/pms/v2/mold/maintenance/problem'},
-            { title : '금형 일상정검 등록' , url : '/pms/v2/press/maintenance/moldDailyRegister'},
-            { title : '금형 일상정검 일일현황' , url : '/pms/v2/press/maintenance/moldDailyStatus'}
-
-        ]
-    },
-    // {
-    //   title: '프레스 데이터 통계', url: '',
-    //   subMenu: [
-    //     { title: '비가동시간 통계 및 분석' , url: '/pms/analysis/readytime'}
-    //   ]
-    // },
-]
-const CNC_MENUS: IMenuType[] = [
-    {
-        title: '설비 모니터링', url: '',
-        subMenu: [
-            { title: 'CNC 설비 모니터링', url: '/pms/v2/factoryMonitoring' },
-        ]
-    },
-    {
-        title: 'CNC 데이터 통계', url: '',
-        subMenu: [
-            { title : '생산량' , url : '/pms/v2/analysis/output'},
-            { title : '에러' , url : '/pms/v2/analysis/error'},
-            { title : '기계 비가동 시간' , url: '/pms/v2/analysis/idleTime'},
-        ]
-    },
-    {
-        title: 'CNC 관리', url: '',
-        subMenu: [
-            { title : '설비 수리 요청 등록' , url : '/pms/v2/press/maintenance/facilities'},
-            { title : '설비 수리 요청 리스트' , url : '/pms/v2/press/maintenance/list'},
-            { title : '설비 수리 완료 리스트' , url : '/pms/v2/press/maintenance/complete'},
-            { title : '설비 수리 완료 리스트(관리자용)' , url : '/pms/v2/press/maintenance/complete/admin'},
-            { title : '설비 문제 유형 등록' , url : '/pms/v2/press/maintenance/problem'},
-        ]
-    },
-]
+const CNC_MENUS: IMenuType[] = CncOrder(customTarget).map(menu => ({
+    title:CncTitles(customTarget)[menu].title,
+    url: CncTitles(customTarget)[menu].url,
+    subMenu: CncTitles(customTarget)[menu]?.subMenu?.map(sub => ({
+        title: CncTitles(customTarget)[sub].title,
+        url: CncTitles(customTarget)[sub].url
+    }))
+}))

@@ -23,6 +23,7 @@ import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/U
 import {BarcodeDataType} from "shared/src/common/barcodeType";
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
+import addColumnClass from '../../../../main/common/unprintableKey'
 import {CompleteButton} from "shared/src/components/Buttons/CompleteButton";
 
 interface IProps {
@@ -183,7 +184,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           }
         }
       })
-      if(column.key == "return") menuData = {id:"return", name:column.name, width:column.width, }
       if(menuData){
         return {
           ...column,
@@ -274,7 +274,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   async function SaveBasic(row: any, status?:number) {
     let res: any
-    console.log(row)
     res = await RequestMethod('post', status ? `shipmentExportSave` : `lotRmComplete`, status ?
      {
       ...row,
@@ -436,7 +435,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   }
 
   return (
-    <div>
+    <div className={'excelPageContainer'}>
       <PageHeader
         isNz
         isExp
@@ -473,7 +472,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         selectable
         headerList={[
           SelectColumn,
-          ...column
+        ...addColumnClass(column)
         ]}
         row={basicRow}
         setRow={(e) => {

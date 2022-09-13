@@ -18,7 +18,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-
+import addColumnClass from '../../../../main/common/unprintableKey'
 interface IProps {
   children?: any;
   page?: number;
@@ -105,7 +105,7 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
         model: v.model?.model ?? "-",
         code: v.code ?? "-",
         material_name: v.name ?? "-",
-        type: column[4].selectList[v.type].name,
+        type: column[column.findIndex((col) => col.key == "type")]?.selectList[v.type].name,
         work_standard_image: v.work_standard_image,
       };
     });
@@ -114,7 +114,7 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
 
 
     return (
-        <div>
+        <div className={'excelPageContainer noCheckBox'}>
             <PageHeader
                 isSearch
                 searchKeyword={keyword}
@@ -127,7 +127,7 @@ const MesWorkStandardList = ({ search, option }: IProps) => {
             />
             <ExcelTable
                 resizable
-                headerList={column}
+                headerList={addColumnClass(column)}
                 width={1576}
                 row={basicRow}
                 setRow={setBasicRow}

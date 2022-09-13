@@ -23,7 +23,7 @@ import {
 import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
-
+import addColumnClass from '../../../../main/common/unprintableKey'
 interface IProps {
   children?: any;
   page?: number;
@@ -164,11 +164,6 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
             }
           });
 
-        menuData = {
-          id: "sub_return_1",
-          name: column.name,
-
-        }
         if (menuData) {
           return {
             ...column,
@@ -371,7 +366,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   };
 
   return (
-    <div>
+    <div className={'excelPageContainer'}>
       <PageHeader
         isSearch
         searchKeyword={keyword}
@@ -397,7 +392,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         selectable
         headerList={[
           SelectColumn,
-          ...column
+        ...addColumnClass(column)
         ]}
         row={basicRow}
         setRow={(e) => {

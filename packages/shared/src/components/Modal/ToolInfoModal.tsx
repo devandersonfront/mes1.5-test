@@ -26,7 +26,7 @@ interface IProps {
 const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [selectRow, setSelectRow] = useState<number>(undefined)
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 1}])
+  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 0}])
 
   useEffect(() => {
     if(isOpen) {
@@ -40,14 +40,16 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           }
         }))
       } else {
-        setSearchList([{seq: 1 , setting : 1}])
+        setSearchList([{seq: 1 , setting : 0}])
       }
     }
   }, [isOpen])
 
   const executeValidation = () => {
-    console.log(searchList)
+    const hasNoData = searchList.length === 0
+    if(hasNoData) return
     const hasInvalidData = searchList.some(row => !row.tool_id)
+    if(searchList.length === 1 && hasInvalidData) return
     const defaultSettingCount = searchList.filter(row => row.setting === 1).length
 
     if(hasInvalidData){
@@ -58,13 +60,20 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }
 
   const onConfirm = () => {
-      if(selectRow !== undefined && selectRow !== null) {
-        onRowChange({
+    const hasNoData = row.tools?.length === 0 && searchList.length === 1 && !searchList[0]?.tool_id
+    const isChanged = () => row?.tools?.length !== searchList.length ||
+      row?.tools?.some((tool, tIdx) => tool?.tool?.tool_id !== searchList?.[tIdx]?.tool?.tool_id)
+
+    if (!hasNoData && isChanged()) {
+      onRowChange({
           ...row,
           tools: searchList.map((v, i) => {
             return {
               sequence: i + 1,
-              tool: v,
+              tool: {
+                ...v,
+                border: false
+              },
               setting: v.setting
             }
           }),

@@ -16,7 +16,7 @@ interface IProps {
 const BasicContainer = ({page, keyword, option}: IProps) => {
 
   return (
-    <div style={{display: 'flex', }}>
+    <div style={{display: 'flex'}}>
       <MenuNavigation pageType={'BASIC'}/>
       <div style={{paddingBottom: 40}}>
         <ProfileHeader/>

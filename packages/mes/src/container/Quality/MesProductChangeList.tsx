@@ -15,7 +15,7 @@ import Notiflix from "notiflix";
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { setExcelTableHeight } from 'shared/src/common/Util'
-
+import addColumnClass from '../../../../main/common/unprintableKey'
 interface IProps {
     children?: any
     page?: number
@@ -109,7 +109,7 @@ const MesProductChangeList = ({}: IProps) => {
                 cm_id: v.product.model === null ? '-' : v.product.model.model,
                 code: v.product.code,
                 material_name: v.product.name === null ? '-' : v.product.name,
-                type: column[4].selectList[v.product.type].name,
+                type: column[column.findIndex((col) => col.key == "type")]?.selectList[v.product.type].name,
                 process_id: v.product.process === null ? '-' : v.product.process.name,
                 title: v.title,
                 register: moment(v.created).format('YYYY.MM.DD'),
@@ -161,7 +161,7 @@ const MesProductChangeList = ({}: IProps) => {
     }
 
     return (
-        <div>
+        <div className={'excelPageContainer'}>
             <PageHeader
                 isSearch
                 isCalendar
@@ -188,7 +188,7 @@ const MesProductChangeList = ({}: IProps) => {
                 selectable
                 headerList={[
                     SelectColumn,
-                    ...column
+                    ...addColumnClass(column)
                 ]}
                 row={basicRow}
                 // setRow={setBasicRow}

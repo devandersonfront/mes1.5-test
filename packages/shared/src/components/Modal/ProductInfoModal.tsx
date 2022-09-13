@@ -14,6 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
+import { TransferCodeToValue } from '../../common/TransferFunction'
 
 interface IProps {
   column: IExcelHeaderType
@@ -21,167 +22,113 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
+const getApiType = (type: string) => {
+  switch(type){
+    case 'machine': return 'productToMachine'
+    case 'mold': return 'productToMold'
+    case 'tool': return 'productToTool'
+    default: return
+  }
+}
+
+const getKey = (type: string) => {
+  switch(type){
+    case 'machine': return 'machine_id'
+    case 'mold': return 'mold_id'
+    case 'tool': return 'tool_id'
+    default: return
+  }
+}
+
+const getDefaultSetting= (type: string, product:any, id: number) => {
+  switch(type){
+    case 'machine':
+      return product.machines?.filter(machine => machine.machine.machine_id === id).map(machine => machine.setting)[0]
+    case 'mold': return product.molds?.filter(mold => mold.mold.mold_id === id).map(mold => mold.setting)[0]
+    case 'tool': return product.tools?.filter(tool => tool.tool.tool_id === id).map(tool => tool.setting)[0]
+    default: return
+  }
+}
+
+const getModule = (type:string) => ({
+  key: getKey(type),
+  apiType: getApiType(type),
+  defaultSetting: (product: any, id: number) => getDefaultSetting(type, product, id)
+})
+
+
 const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
+  const [searchList, setSearchList] = useState<any[]>([])
+  const module = getModule(column.type)
 
   useEffect(() => {
     if(isOpen) {
-      cleanUpData();
+      loadData()
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen])
 
-
-  const cleanType = (type:number) => {
-    switch(type) {
-      case 0:
-        return "반제품"
-      case 1:
-        return "재공품"
-      case 2:
-        return "완제품"
-      default:
-        break;
+  const toTableData = async (type: string, product: any) => {
+    const defaultData = {
+      customer: product.customer?.name ?? '-',
+      model: product.model?.name ?? '-',
+      code: product.code,
+      name: product.name ?? '-',
+      product_type: TransferCodeToValue(product.type, 'productType'),
+      unit: product.unit,
+      stock: product.stock,
+      spare: module.defaultSetting(product, row[module.key]) === 0 ? '스페어' : '기본'
     }
-  }
-
-
-  const cleanUpData = () => {
-    if(row.product_id){
-      switch(column.type){
-        case "mold" :
-          let moldArray = [];
-          row?.product_id.map((data)=>{
-            let result:any = {...data};
-            result.customerData = data?.customer;
-            result.customer = data?.customer?.name;
-            result.modelData = data?.model;
-            result.model = data?.model?.model;
-            result.type_id = data.type;
-            result.product_type = cleanType(data.type);
-            result.unit = data.unit;
-            result.stock = data.stock;
-            result.spare = data.molds.filter(mold => mold.mold.mold_id === row.mold_id)[0]?.setting == 1 ? '기본' : '스페어',
-            moldArray.push(result);
-          })
-          setSearchList(moldArray);
-
-
-          return
-        case "machine" :
-          let machineArray = [];
-          row?.product_id?.map((data)=>{
-            let result:any = {...data};
-            result.customerData = data?.customer;
-            result.customer = data?.customer?.name;
-            result.modelData = data?.model;
-            result.model = data?.model?.model;
-            result.type_id = data?.type;
-            result.product_type = cleanType(data?.type);
-            result.unit = data?.unit;
-            result.stock = data?.stock;
-
-
-            machineArray.push(result);
-          })
-          setSearchList(machineArray);
-          return
-
-        case "tool" :
-          let toolArray = [];
-          row?.product_id?.map((data)=>{
-            let result:any = {...data};
-            result.customerData = data?.customer;
-            result.customer = data?.customer?.name;
-            result.modelData = data?.model;
-            result.model = data?.model?.model;
-            result.type_id = data?.type;
-            result.product_type = cleanType(data?.type);
-            result.unit = data?.unit;
-            result.stock = data?.stock;
-
-
-            toolArray.push(result);
-          })
-          setSearchList(toolArray);
-
-          return
-        default :
-          break;
+    switch(type){
+      case 'tool': return {
+       ...defaultData,
+       average: await getToolAverage(product.product_id, row.tool_id)
       }
-    }else{
-      if(row?.products){
-        let productArray = [];
-        row?.products?.map((data) => {
-          let result:any = {...data}
-          result.customerData = data?.customer;
-          result.customer = data?.customer?.name;
-          result.modelData = data?.model;
-          result.model = data?.model?.model;
-          result.type_id = data?.type;
-          result.product_type = cleanType(data?.type);
-          result.unit = data?.unit;
-          result.stock = data?.stock;
 
-          productArray.push(result);
-        })
-        setSearchList(productArray);
-      }else{
-        Notiflix.Report.warning("경고","품목이 없습니다.","확인",() => setIsOpen(false))
-      }
+      default: return defaultData
     }
   }
 
-
-  const settingTitle = (index:number, inindex?:number) => {
-    if(column.type === "mold" && index === 0 ? 450 : 144)
-      switch(column.type){
-        case "mold":
-          let width ;
-          if(index === 0){
-            // width = 450;
-            return 450;
-          }else{
-            // width = 144
-            return 144;
-          }
-
-        case "machine":
-          if(index === 0 && inindex === 1){
-            return 755;
-          }else{
-            return 144;
-          }
-          return
-        case "tool" :
-          return 450
+  async function getToolAverage(productId:number, toolId:number) {
+    const res = await RequestMethod("get", "toolAverage", {
+      path:{
+        product_id: productId,
+        tool_id: toolId
       }
+    })
+    return res? res : 0.0
+  }
+
+  const loadData = async () => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', module.apiType,{
+      path: {
+        id: row[module.key]
+      }
+    })
+
+    if(res){
+      if(res.length > 0) {
+        console.log(res)
+
+        const newSearchList = await Promise.all(await res.map(product => toTableData(column.type, product)))
+        setSearchList(newSearchList)
+
+      } else {
+        Notiflix.Report.warning('경고', '품목이 없습니다.', '확인',() => setIsOpen(false))
+      }
+    }
+
+    Notiflix.Loading.remove()
   }
 
   const ModalContents = () => (
       <UploadButton style={{width: '100%', backgroundColor: '#ffffff00'}} onClick={() => {
         setIsOpen(true)
       }} hoverColor={"#19B9DF"} haveId>
-        {/*<p style={{color: 'white', textDecoration: 'underline'}}>품목 보기</p>*/}
         <p>품목 보기</p>
       </UploadButton>
   )
-
-  const cleanUp = (row:any, value:any) => {
-
-    if(typeof row[value] === "object" && row[value] !== null){
-      return row[value].name
-    }else{
-      return row[value] === null ? "-" : row[value];
-    }
-
-  }
 
   return (
       <SearchModalWrapper >
@@ -220,9 +167,6 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
                   margin: 0,
                 }}>생산 품목 정보</p>
                 <div style={{display: 'flex'}}>
-                  {/*<Button>*/}
-                  {/*  <p>엑셀로 받기</p>*/}
-                  {/*</Button>*/}
                   <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                     setIsOpen(false)
                   }}>
@@ -230,104 +174,37 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
                   </div>
                 </div>
               </div>
-              {column.headerType.map((header,index)=>{
-                // {machineType.map((header,index)=>{
-                return (
-                    <HeaderTable>
-                      {Object.keys(header).map((value,i)=> {
-                        cleanUp(row,  value)
-                        return (
+              {column.headerItems.map((items,index)=>{
+                return <HeaderTable>
+                  {
+                    items.map(item => {
+                      return (
                             <>
                               <HeaderTableTitle>
-                                <HeaderTableText style={{fontWeight: 'bold'}}>{header[value]}</HeaderTableText>
+                                <HeaderTableText style={{fontWeight: 'bold'}}>{item.title}</HeaderTableText>
                               </HeaderTableTitle>
-                              <HeaderTableTextInput style={{width: settingTitle(index, i)}}>
-                                {/*<HeaderTableText>{typeof row[value] === "boolean" ? row[value] ? "유" : "무" : row[value]}</HeaderTableText>*/}
-                                <HeaderTableText>{cleanUp(row, value)}</HeaderTableText>
+                              <HeaderTableTextInput style={{width: item.infoWidth}}>
+                                <HeaderTableText>{!!row[item.key] ? row[item.key] : '-'}</HeaderTableText>
                               </HeaderTableTextInput>
                             </>
-                        )}
-                      )}
-                    </HeaderTable>
-                )
+                        )
+                    })
+                  }
+                </HeaderTable>
               })}
-              {column.type !== "tool" &&
-              <div style={{display: 'flex', justifyContent: 'flex-start', margin: '24px 0 8px 16px'}}>
-                <Button style={{backgroundColor: '#19B9DF'}}
-                    // onClick={() => {
-                    //   let tmp = searchList
-                    //   setSearchList([
-                    //     ...searchList,
-                    //     {
-                    //       seq: searchList.length+1
-                    //     }
-                    //   ])
-                    // }}
-                >
-                  <p style={{fontWeight: 'bold'}}>반·완제품</p>
-                </Button>
-              </div>
-              }
-
-              <div style={{padding: '0 16px', width: 1776}}>
+              <div style={{padding: '16px 16px 0 16px', width: 1776}}>
                 <ExcelTable
-                    headerList={row.products ? searchModalList.productToolInfo : searchModalList.productInfo}
+                    headerList={column.type === 'tool' ? searchModalList.productToolInfo : searchModalList.productInfo}
                     row={searchList}
                     setRow={(e) => setSearchList([...e])}
                     width={1746}
                     rowHeight={32}
                     height={491}
-                    onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-                      setSelectRow(e)
-                    }}
                     type={'searchModal'}
                     headerAlign={'center'}
                 />
               </div>
             </div>
-
-            {/*{column.type !== "tool" ?*/}
-            {/*  <div style={{height: 84, display: 'flex', alignItems: 'flex-end'}}>*/}
-            {/*    <div*/}
-            {/*        onClick={() => {*/}
-            {/*          setIsOpen(false)*/}
-            {/*        }}*/}
-            {/*        style={{*/}
-            {/*          width: 888,*/}
-            {/*          height: 40,*/}
-            {/*          backgroundColor: '#b3b3b3',*/}
-            {/*          display: 'flex',*/}
-            {/*          justifyContent: 'center',*/}
-            {/*          alignItems: 'center'*/}
-            {/*        }}*/}
-            {/*    >*/}
-            {/*      <p>취소</p>*/}
-            {/*    </div>*/}
-            {/*    <div*/}
-            {/*        onClick={() => {*/}
-            {/*          if (selectRow !== undefined && selectRow !== null) {*/}
-            {/*            onRowChange({*/}
-            {/*              ...row,*/}
-            {/*              ...searchList[selectRow],*/}
-            {/*              name: row.name,*/}
-            {/*              isChange: true*/}
-            {/*            })*/}
-            {/*          }*/}
-            {/*          setIsOpen(false)*/}
-            {/*        }}*/}
-            {/*        style={{*/}
-            {/*          width: 888,*/}
-            {/*          height: 40,*/}
-            {/*          backgroundColor: POINT_COLOR,*/}
-            {/*          display: 'flex',*/}
-            {/*          justifyContent: 'center',*/}
-            {/*          alignItems: 'center'*/}
-            {/*        }}*/}
-            {/*    >*/}
-            {/*      <p>등록하기</p>*/}
-            {/*    </div>*/}
-            {/*  </div>*/}
-            {/*:*/}
                 <div style={{height: 84, display: 'flex', alignItems: 'flex-end'}}>
                   <div
                       onClick={() => {
@@ -336,7 +213,7 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
                       style={{
                         width: "100%",
                         height: 40,
-                        backgroundColor: '#b3b3b3',
+                        backgroundColor: POINT_COLOR,
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center'
@@ -359,20 +236,6 @@ const SearchModalWrapper = styled.div`
   justify-content:center;
   align-items:center;
 `
-
-const Button = styled.button`
-    width:112px;
-    height:32px;
-    color:white;
-    font-size:15px;
-    border:none;
-    border-radius:6px;
-    background:#717C90;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    
-`;
 
 const HeaderTable = styled.div`
   width: 1744px;

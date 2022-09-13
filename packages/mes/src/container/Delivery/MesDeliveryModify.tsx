@@ -38,7 +38,7 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     if(selector && selector.type && selector.modifyInfo){
-      setBasicRow([...selector.modifyInfo])
+      setBasicRow(selector.modifyInfo.map(info => ({...info, originalLots: info.lots})))
     }else{
       router.push('/mes/delivery/list')
     }
@@ -130,10 +130,7 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
         editable
         resizable
         selectable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
+        headerList={column}
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {

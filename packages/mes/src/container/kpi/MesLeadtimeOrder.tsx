@@ -127,7 +127,7 @@ const MesLeadtimeOrder = () => {
     },[])
 
     return (
-        <div>
+        <div className={'excelPageContainer'}>
             <PageHeader title={"수주/납품 리드타임(D)"} />
             <ExcelTable
                 editable

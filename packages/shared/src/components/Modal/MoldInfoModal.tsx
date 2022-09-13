@@ -26,7 +26,7 @@ interface IProps {
 const MoldInfoModal = ({column, row, onRowChange}: IProps) => {
   const [ isOpen, setIsOpen ] = useState<boolean>(false)
   const [ selectRow, setSelectRow ] = useState<number>()
-  const [ searchList, setSearchList ] = useState<any[]>([ { sequence: 1, setting: 1 } ])
+  const [ searchList, setSearchList ] = useState<any[]>([ { sequence: 1, setting: 0 } ])
 
   useEffect(() => {
     if (isOpen) {
@@ -41,13 +41,16 @@ const MoldInfoModal = ({column, row, onRowChange}: IProps) => {
           }
         }))
       } else {
-        setSearchList([{sequence: 1 , setting : 1}])
+        setSearchList([{sequence: 1 , setting : 0}])
       }
     }
   }, [ isOpen ])
 
   const executeValidation = () => {
+    const hasNoData = searchList.length === 0
+    if(hasNoData) return
     const hasInvalidData = searchList.some(row => !row.mold_id)
+    if(searchList.length === 1 && hasInvalidData) return
     const defaultSettingCount = searchList.filter(row => row.setting === 1).length
 
     if (hasInvalidData) {
@@ -58,8 +61,11 @@ const MoldInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const onConfirm = () => {
-    if (selectRow !== undefined && selectRow !== null) {
-      if (column.name === '금형') {
+    const hasNoData = row.molds?.length === 0 && searchList.length === 1 && !searchList[0]?.mold_id
+    const isChanged = () => row?.molds?.length !== searchList.length ||
+      row?.molds?.some((mold, mIdx) => mold?.mold?.mold_id !== searchList?.[mIdx]?.mold?.mold_id || mold?.setting !== searchList?.[mIdx]?.setting)
+
+    if (!hasNoData && isChanged()) {
         onRowChange({
           ...row,
           molds: searchList.map((v, i) => {
@@ -73,20 +79,6 @@ const MoldInfoModal = ({column, row, onRowChange}: IProps) => {
           name: row.name,
           isChange: true
         })
-      } else {
-
-        onRowChange({
-          ...row,
-          molds: searchList.map((v, i) => {
-            return {
-              sequence: i + 1,
-              mold: { mold: { ...v } }
-            }
-          }),
-          name: row.name,
-          isChange: true
-        })
-      }
     }
   }
 

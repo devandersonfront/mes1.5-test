@@ -140,7 +140,7 @@ const MesKpiOperation = () => {
     },[])
 
     return (
-        <div>
+        <div className={'excelPageContainer'}>
             <PageHeader title={"설비가동률(P)"} />
             <ExcelTable
                 editable

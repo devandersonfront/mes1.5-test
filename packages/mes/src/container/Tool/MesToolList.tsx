@@ -19,7 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {setToolDataAdd} from "shared/src/reducer/toolInfo";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { setExcelTableHeight } from 'shared/src/common/Util'
-
+import addColumnClass from '../../../../main/common/unprintableKey'
 interface IProps {
     children?: any
     page?: number
@@ -212,7 +212,7 @@ const MesToolList = ({ page, search, option }: IProps) => {
     }
 
     return (
-        <div>
+        <div className={'excelPageContainer noCheckBox'}>
             <PageHeader
                 title={"공구 재고 현황"}
                 dataLimit
@@ -225,7 +225,7 @@ const MesToolList = ({ page, search, option }: IProps) => {
             />
             <ExcelTable
                 resizable
-                headerList={column}
+                headerList={addColumnClass(column)}
                 row={basicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = selectList

@@ -54,7 +54,7 @@ const NormalModal: React.FunctionComponent<Props> = ({
                                                       onClose,
                                                       onConfirm,
                                                       onDelete,
-                                                      headers, 
+                                                      headers,
                                                       data,
                                                       setData,
                                                       dataIndex,
@@ -108,7 +108,7 @@ const NormalModal: React.FunctionComponent<Props> = ({
           setData(prev =>[
             ...prev,
             {
-              setting: 1,
+              setting: 0,
               [indexKey]: prev.length+1,
             }
           ])
@@ -205,64 +205,69 @@ const NormalModal: React.FunctionComponent<Props> = ({
     }}>
       <div style={{
         width: 1776,
-        height: 795
+        height: 819,
+        display:'flex',
+        flexDirection:'column',
+        justifyContent:'space-between'
       }}>
-        <div style={{
-          margin: '24px 16px 16px',
-          display: 'flex',
-          justifyContent: 'space-between'
-        }}>
-          <p style={{
-            color: 'black',
-            fontSize: 22,
-            fontWeight: 'bold',
-            margin: 0,
-          }}>{title}</p>
-          <div style={{display: 'flex'}}>
-            {/*<Button>*/}
-            {/*  <p>엑셀로 받기</p>*/}
-            {/*</Button>*/}
-            <div style={{cursor: 'pointer', marginLeft: 20}} onClick={onClose}>
-              <img style={{width: 20, height: 20}} src={IcX}/>
+        <div>
+          <div style={{
+            margin: '24px 16px 16px',
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}>
+            <p style={{
+              color: 'black',
+              fontSize: 22,
+              fontWeight: 'bold',
+              margin: 0,
+            }}>{title}</p>
+            <div style={{display: 'flex'}}>
+              {/*<Button>*/}
+              {/*  <p>엑셀로 받기</p>*/}
+              {/*</Button>*/}
+              <div style={{cursor: 'pointer', marginLeft: 20}} onClick={onClose}>
+                <img style={{width: 20, height: 20}} src={IcX}/>
+              </div>
             </div>
           </div>
-        </div>
-        {
-          Headers()
-        }
-        {
-          getButtons()
-        }
-        <div style={{padding: '0 16px', width: 1776, display:"flex", justifyContent:"left"}}>
-          <ExcelTable
-            headerList={searchModalList[dataColumnKey]}
-            row={data ?? [{}]}
-            setRow={(e, index) => {
-              let newSearchList = changeRow ? e.map((row) => changeRow(row)) : e
-              try{
-                checkDuplicate(newSearchList)
-                setData(newSearchList)
-              } catch(errMsg){
-                Notiflix.Report.warning('경고',errMsg, '확인')
-              }
-            }}
-            width={searchModalList[dataColumnKey]?.map(column => column.width).reduce((prevValue, currentValue) => prevValue + currentValue)}
-            rowHeight={32}
-            height={552}
-            onRowClick={clicked => {
-              const rowIdx = data.indexOf(clicked)
-              if(!data[rowIdx]?.border){
-                const newSearchList = data.map((v,i)=> ({
-                  ...v,
-                  border : i === rowIdx
-                }))
-                setData(newSearchList)
-                setDataIndex(rowIdx)
-              }
-            }}
-            type={'searchModal'}
-            headerAlign={'center'}
-          />
+          {
+            Headers()
+          }
+          {
+            getButtons()
+          }
+          <div style={{padding: '0 16px', width: 1776, display:"flex", justifyContent:"left"}}>
+            <ExcelTable
+              headerList={searchModalList[dataColumnKey]}
+              row={data ?? [{}]}
+              setRow={(e, index) => {
+                let newSearchList = changeRow ? e.map((row) => changeRow(row)) : e
+                try{
+                  checkDuplicate(newSearchList)
+                  setData(newSearchList)
+                } catch(errMsg){
+                  Notiflix.Report.warning('경고',errMsg, '확인')
+                }
+              }}
+              width={1760}
+              rowHeight={32}
+              height={552}
+              onRowClick={clicked => {
+                const rowIdx = data.indexOf(clicked)
+                if(!data[rowIdx]?.border){
+                  const newSearchList = data.map((v,i)=> ({
+                    ...v,
+                    border : i === rowIdx
+                  }))
+                  setData(newSearchList)
+                  setDataIndex(rowIdx)
+                }
+              }}
+              type={'searchModal'}
+              headerAlign={'center'}
+            />
+          </div>
         </div>
         <div style={{height: 40, display: 'flex', alignItems: 'flex-end'}}>
           <div

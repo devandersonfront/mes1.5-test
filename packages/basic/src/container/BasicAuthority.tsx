@@ -255,7 +255,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
         leftButtonOnClick={leftButtonOnClick}
         pageHelper={"권한 등록, 삭제는 하나씩 가능"}
       />
-      <div style={{display: 'flex', justifyContent: 'space-between', paddingRight: 40, marginBottom: 16}}>
+      <div className={'unprintable'} style={{display: 'flex', justifyContent: 'space-between', paddingRight: 40, marginBottom: 16}}>
         <div style={{display: 'flex'}}>
           <HeaderButton style={{marginLeft: 0}} onClick={() => addRow()}>
             {'행추가'}

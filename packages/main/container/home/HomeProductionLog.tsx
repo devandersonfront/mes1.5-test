@@ -42,7 +42,7 @@ const HomeProductionLog = ({}: IProps) => {
             LoadBasic()
             const dashboard = setInterval(()=>{
                 LoadBasic()
-            },3000)
+            },30000)
             return () => {
                 clearInterval(dashboard)
             }

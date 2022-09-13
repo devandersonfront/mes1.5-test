@@ -20,7 +20,7 @@ import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/U
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { TableSortingOptionType } from 'shared/src/@types/type'
-
+import addColumnClass from '../../../../main/common/unprintableKey'
 interface IProps {
   children?: any
   page?: number
@@ -312,7 +312,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
   }
 
   return (
-    <div>
+    <div className={'excelPageContainer'}>
       <PageHeader
         isSearch
         isCalendar
@@ -376,7 +376,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
       selectable
       headerList={[
         SelectColumn,
-        ...column
+        ...addColumnClass(column)
       ]}
       row={basicRow}
       // setRow={setBasicRow}

@@ -1,20 +1,11 @@
 import React, {useEffect, useState} from 'react'
 import {IExcelHeaderType} from '../../@types/type'
-import styled from 'styled-components'
-import Modal from 'react-modal'
-import {POINT_COLOR} from '../../common/configset'
 //@ts-ignore
 import IcSearchButton from '../../../public/images/ic_search.png'
 //@ts-ignore
 import IcX from '../../../public/images/ic_x.png'
-import {ExcelTable} from '../Excel/ExcelTable'
-import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
-import {RequestMethod} from '../../common/RequestFunctions'
-import Notiflix from 'notiflix'
-import {UploadButton} from '../../styles/styledComponents'
-import { MDRegisterModalButtons } from '../Buttons/MDRegisterModalButtons'
 import NormalModal from './NormalModal'
 import { alertMsg } from '../../common/AlertMsg'
 
@@ -106,8 +97,6 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
         }).filter(v => v.mfrCode !== undefined),
         isChange: true,
       }
-      console.log(selectRow)
-      console.log(newrow)
       onRowChange(newrow)
     }
   }
@@ -117,7 +106,7 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   return (
-    <NormalModal title={'주변장치 정보'} buttonTitle={'주변장치'}  hasData={row.devices.length > 0} isOpen={isOpen} onModalButtonClick={() => setIsOpen(true)} onClose={onCloseEvent}
+    <NormalModal title={'주변장치 정보'} buttonTitle={'주변장치'}  hasData={row?.devices?.length > 0} isOpen={isOpen} onModalButtonClick={() => setIsOpen(true)} onClose={onCloseEvent}
      validateConfirm={validateConfirm} duplicateCheckKey={'mfrCode'}
      onConfirm={onConfirm} headers={[
       [{key:'기계 제조사', value: row.mfrName}, {key:'기계 이름', value: row.name, width: 770},],
@@ -131,57 +120,5 @@ const DeviceInfoModal = ({column, row, onRowChange}: IProps) => {
     })} />
   )
 }
-
-const SearchModalWrapper = styled.div`
-  display: flex;
-  width: 100%;
-`
-
-const Button = styled.button`
-    width:112px;
-    height:32px;
-    color:white;
-    font-size:15px;
-    border:none;
-    border-radius:6px;
-    background:#717C90;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-    
-`;
-
-const HeaderTable = styled.div`
-  width: 1744px;
-  height: 32px;
-  margin: 0 16px;
-  background-color: #F4F6FA;
-  border: 0.5px solid #B3B3B3;
-  display: flex
-`
-
-const HeaderTableTextInput = styled.div`
-  background-color: #ffffff;
-  padding-left: 3px;
-  height: 27px;
-  border: 0.5px solid #B3B3B3;
-  margin-top:2px;
-  margin-right: 70px;
-  display: flex;
-  align-items: center;
-`
-
-const HeaderTableText = styled.p`
-  margin: 0;
-  font-size: 15px;
-`
-
-const HeaderTableTitle = styled.div`
-  width: 99px;
-  padding: 0 8px;
-  display: flex; 
-  align-items: center;
-`
 
 export {DeviceInfoModal}

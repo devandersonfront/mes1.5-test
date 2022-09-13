@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
 import moment from 'moment'
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
-import { useDispatch,  } from "react-redux";
+import { useDispatch, } from "react-redux";
 import { setExcelTableHeight } from 'shared/src/common/Util'
 
 
@@ -49,7 +49,7 @@ const MesOrderRegister = ({ }: IProps) => {
         unit: menu.unit,
         moddable: menu.moddable
       }))
-      return {...col, ...newMenus[0]}
+      return { ...col, ...newMenus[0] }
     })
   )
 
@@ -65,18 +65,16 @@ const MesOrderRegister = ({ }: IProps) => {
     }
   }
 
-  console.log(basicRow)
   const SaveBasic = async () => {
     try {
-      if(selectList.size < 1) throw("데이터를 선택해주세요.")
+      if (selectList.size < 1) throw ("데이터를 선택해주세요.")
 
       basicRow.map((row) => {
-        if(selectList.has(row.id))
-        {
+        if (selectList.has(row.id)) {
           if (!row.code) {
-            throw("CODE를 입력해주세요.")
+            throw ("CODE를 입력해주세요.")
           } else if (!Number.isInteger(Number(row.amount)) || row.amount < 1) {
-            throw("수주량을 정확히 입력해주세요.")
+            throw ("수주량을 정확히 입력해주세요.")
           }
         }
       })
@@ -88,16 +86,17 @@ const MesOrderRegister = ({ }: IProps) => {
           customer: row.customerArray,
           amount: row.amount ?? 0,
         }))
+
       Notiflix.Loading.circle()
-      const res = await RequestMethod('post', `contractSave`,postBody)
+      
+      const res = await RequestMethod('post', `contractSave`, postBody)
 
       if (res) {
         Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
           router.push('/mes/order/list')
         });
       }
-    } catch(errMsg)
-    {
+    } catch (errMsg) {
       Notiflix.Report.warning("경고", errMsg, "확인")
     }
   }
@@ -114,16 +113,17 @@ const MesOrderRegister = ({ }: IProps) => {
         } else {
           Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
             () => {
-              const filteredRows = basicRow.filter((row, index) => !selectList.has(row.id))
+              let filteredRows = basicRow.filter((row, index) => !selectList.has(row.id))
               if (filteredRows.length === 0) {
-                setBasicRow([{
+                filteredRows = [{
                   date: moment().format('YYYY-MM-DD'),
                   deadline: moment().format('YYYY-MM-DD'),
                   isFirst: true
-                }])
+                }]
               } else {
-                setBasicRow(filteredRows)
+                filteredRows[0] = {...filteredRows[0], isFirst: true}
               }
+              setBasicRow(filteredRows)
               setSelectList(new Set())
             },
             () => { }
@@ -147,13 +147,13 @@ const MesOrderRegister = ({ }: IProps) => {
         resizable
         headerList={[
           SelectColumn,
-          ...column.map(col => ({...col, basicRow, setBasicRow}))
+          ...column.map(col => ({ ...col, basicRow, setBasicRow }))
         ]}
         row={basicRow}
         setRow={(row) => {
           let tmp: Set<any> = selectList
           row.map(v => {
-            if(v.isChange) tmp.add(v.id)
+            if (v.isChange) tmp.add(v.id)
           })
           setSelectList(tmp)
           setBasicRow(row)
