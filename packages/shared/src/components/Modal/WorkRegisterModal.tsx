@@ -19,6 +19,7 @@ import moment from 'moment'
 import {transferStringToCode} from "../../common/codeTransferFunctions";
 import Big from 'big.js'
 import { alertMsg } from '../../common/AlertMsg'
+import { CheckRecordLotNumber } from '../../common/Util'
 
 
 interface IProps {
@@ -80,7 +81,9 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   const SaveBasic = async () => {
     try{
       const postBody = searchList.map((v) => {
-        if(!v.lot_number){
+        if(CheckRecordLotNumber(v.lot_number)){
+          throw(alertMsg.wrongLotNumber)
+        }else if(!v.lot_number){
           throw(alertMsg.noLotNumber)
         }else if(!v.manager){
           throw(alertMsg.noWorker)

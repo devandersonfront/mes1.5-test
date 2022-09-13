@@ -88,3 +88,8 @@ export const decideKoreanSuffix = (word: string, existCoda: string, notExistCoda
 
   return word+markingParticle
 }
+
+export const CheckRecordLotNumber = (lotNumber:string) : boolean => {
+  const regex = new RegExp(/^basicstock-\d+$/)
+  return regex.test(lotNumber)
+}

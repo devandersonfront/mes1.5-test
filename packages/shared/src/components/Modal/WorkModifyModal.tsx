@@ -16,6 +16,7 @@ import {TransferCodeToValue} from '../../common/TransferFunction'
 import moment from "moment";
 import Big from 'big.js'
 import { alertMsg } from '../../common/AlertMsg'
+import { CheckRecordLotNumber } from '../../common/Util'
 
 interface IProps {
   row: any
@@ -101,6 +102,9 @@ const WorkModifyModal = ({row, isOpen, setIsOpen}: IProps) => {
   const SaveBasic = async () => {
     try{
       const postBody = searchList.map((v) => {
+        if(CheckRecordLotNumber(v.lot_number)){
+          throw(alertMsg.wrongLotNumber)
+        }else
         if(!v.lot_number){
           throw(alertMsg.noLotNumber)
         }else if(!v.worker){
