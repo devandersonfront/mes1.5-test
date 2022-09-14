@@ -3,9 +3,10 @@ import styled from "styled-components"
 import {IExcelHeaderType} from '../../@types/type'
 import {CellButton, FooterButton, ModalTextArea} from '../../styles/styledComponents'
 import Modal from 'react-modal'
-import {TitleTextArea} from "../TextAreaBox/TitleTextArea";
 import NotTableDropdown from "../Dropdown/NotTableDropdown";
 import {TransferValueToCode} from "../../common/TransferFunction";
+import Notiflix from "notiflix"
+import {TransferType} from "../../common/Util";
 
 interface IProps {
     row: any
@@ -58,7 +59,7 @@ const ExportButton = ({row, column}: IProps) => {
                 }}>
                     <ModalArea>
                         <div>
-                            <ModalTitle>반납</ModalTitle>
+                            <ModalTitle>출고</ModalTitle>
                             <HeaderTable>
                                 <HeaderTableTitle>
                                     <HeaderTableText>품명</HeaderTableText>
@@ -79,7 +80,7 @@ const ExportButton = ({row, column}: IProps) => {
                                     </HeaderTableTextInput>
                                 </div>
                                 <div style={{display:"flex", width:"50%"}}>
-                                    <HeaderTableTitle>수량</HeaderTableTitle>
+                                    <HeaderTableTitle>{TransferType(row.type ?? row.sub_material?.unit ?? row.lot_sub_material?.sub_material?.unit)}</HeaderTableTitle>
                                     <HeaderTableTextInput style={{width:"200px"}}>
                                         <input style={{border:"none", width:"100%", height:"100%"}} defaultValue={column.state == "edit" ? row.count : 0} type={"number"} onBlur={(e) => {
                                             setRowData({...rowData, count: Number(e.target.value)})
@@ -100,7 +101,6 @@ const ExportButton = ({row, column}: IProps) => {
                                 }} selectData={row.export_type}
                                 />
                             </HeaderTable>
-
                             {remarkFormOpen &&
                                 <HeaderTable style={{height:"initial", display:"flex", alignItems:"flex-start"}}>
                                     <HeaderTableTitle style={{marginTop:"5px"}}>내용</HeaderTableTitle>
@@ -118,6 +118,10 @@ const ExportButton = ({row, column}: IProps) => {
                                 취소
                             </FooterButton>
                             <FooterButton onClick={() => {
+                                if(!rowData.count ||rowData.count <= 0){
+                                    Notiflix.Report.warning("경고","수량은 양수여야 합니다.","확인",() => setIsOpen(false))
+                                    return
+                                }
                                 if(!rowData.export_type){
                                     rowData.export_type = 1
                                 }else if(isNaN(Number(rowData.export_type))){

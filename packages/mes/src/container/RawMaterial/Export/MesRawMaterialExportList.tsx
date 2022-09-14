@@ -18,25 +18,14 @@ import {TransferCodeToValue, TransferValueToCode} from 'shared/src/common/Transf
 import {useDispatch} from 'react-redux'
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
-import {BarcodeDataType} from "shared/src/common/barcodeType";
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../../main/common/unprintableKey'
 
-interface IProps {
-    children?: any
-    page?: number
-    search?: string
-    option?: number
-}
 
-type ModalType = {
-    type : 'barcode' | 'quantity'
-    isVisible : boolean
-}
 
 const optionList = ['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처']
 
-const MesRawMaterialExportList = ({page, search, option}: IProps) => {
+const MesRawMaterialExportList = () => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -368,14 +357,5 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
     );
 }
 
-export const getServerSideProps = (ctx: NextPageContext) => {
-    return {
-        props: {
-            page: ctx.query.page ?? 1,
-            keyword: ctx.query.keyword ?? "",
-            option: ctx.query.opt ?? 0,
-        }
-    }
-}
 
 export {MesRawMaterialExportList};
