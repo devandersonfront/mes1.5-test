@@ -1286,10 +1286,10 @@ export const columnlist: any = {
     { key: "manufacturing_leadtime_average", name: '평균 제조리드타임 (초)', width: 208, formatter: PlaceholderBox, placeholder: '자동 입력' }
   ],
   kpiLeadtimeManufactureContent: [
-    { key: 'osd_id', name: '지시 고유 번호', width: 126 },
+    { key: 'osd_id', name: '지시 고유 번호', width: 126, formatter: PlaceholderBox, placeholder: '-'  },
     { key: 'code', name: 'CODE', width: 120, disableType: 'record' },
-    { key: 'name', name: '품명', width: 120 },
-    { key: 'process_id', name: '생산 공정', width: 120 },
+    { key: 'name', name: '품명', width: 120, formatter: PlaceholderBox, placeholder: '-'  },
+    { key: 'process_id', name: '생산 공정', width: 120, formatter: PlaceholderBox, placeholder: '-'  },
     { key: 'lot_number', name: 'LOT 번호', width: 120, },
     { key: 'user_id', name: '작업자', width: 120 },
     { key: 'start', name: '작업 시작 일시', width: 120 },
@@ -1308,10 +1308,10 @@ export const columnlist: any = {
     { key: "manDays_average", name: '평균 작업공수 (일)', width: 150, formatter: PlaceholderBox, placeholder: '자동 입력' }
   ],
   kpiManHourContent: [
-    { key: 'osd_id', name: '지시 고유 번호', width: 126 },
+    { key: 'osd_id', name: '지시 고유 번호', width: 126, formatter: PlaceholderBox, placeholder: '-'  },
     { key: 'code', name: 'CODE', width: 120, disableType: 'record' },
-    { key: 'name', name: '품명', width: 120 },
-    { key: 'process_id', name: '생산 공정', width: 120 },
+    { key: 'name', name: '품명', width: 120, formatter: PlaceholderBox, placeholder: '-'  },
+    { key: 'process_id', name: '생산 공정', width: 120, formatter: PlaceholderBox, placeholder: '-'  },
     { key: 'lot_number', name: 'LOT 번호', width: 120, },
     { key: 'user_id', name: '작업자', width: 120, },
     { key: 'start', name: '작업 시작 일시', width: 120, },
@@ -1333,10 +1333,10 @@ export const columnlist: any = {
     { key: "defectiveRate_average", name: '평균 불량률(%)', width: 120, formatter: PlaceholderBox, placeholder: '자동 입력' }
   ],
   kpiDefectContent: [
-    { key: 'osd_id', name: '지시 고유 번호', width: 126 },
+    { key: 'osd_id', name: '지시 고유 번호', width: 126, formatter: PlaceholderBox, placeholder: '-'  },
     { key: 'code', name: 'CODE', width: 120, },
-    { key: 'name', name: '품명', width: 120 },
-    { key: 'process_id', name: '생산 공정', width: 120 },
+    { key: 'name', name: '품명', width: 120, formatter: PlaceholderBox, placeholder: '-'  },
+    { key: 'process_id', name: '생산 공정', width: 120, formatter: PlaceholderBox, placeholder: '-'  },
     { key: 'lot_number', name: 'LOT 번호', width: 120, },
     { key: 'user_id', name: '작업자', width: 120, },
     { key: 'start', name: '작업 시작 일시', width: 120, },
@@ -1355,7 +1355,7 @@ export const columnlist: any = {
     { key: "leadTime_average", name: '평균 수주/납품 리드타임(일)', width: 208, formatter: PlaceholderBox, placeholder: '자동 입력' }
   ],
   kpiLeadtimeOrderContent: [
-    { key: 'identification', name: '수주 번호', width: 688 },
+    { key: 'identification', name: '수주 번호', width: 688, formatter: PlaceholderBox, placeholder: '-'  },
     { key: 'date', name: '수주 날짜', width: 120, },
     { key: 'deadline', name: '납품 기한', width: 120 },
     { key: 'amount', name: '수주량', width: 120 },
@@ -1371,14 +1371,14 @@ export const columnlist: any = {
     { key: "powerUsage_average", name: '개당 평균 전력 사용량 (kW)', width: 208, formatter: PlaceholderBox, placeholder: '자동 입력' }
   ],
   kpiPowerUsageContent: [
-    { key: 'osd_id', name: '지시 고유 번호', formatter: OperationSearchModal, width: 126 },
-    { key: 'code', name: 'CODE', formatter: ProductSearchModal, width: 120, disableType: 'record' },
-    { key: 'name', name: '품명', width: 120 },
-    { key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type: "process", width: 120 },
+    { key: 'osd_id', name: '지시 고유 번호', width: 126, formatter: PlaceholderBox, placeholder: '-'  },
+    { key: 'code', name: 'CODE', width: 120},
+    { key: 'name', name: '품명', width: 120, formatter: PlaceholderBox, placeholder: '-'  },
+    { key: 'process_id', name: '생산 공정', formatter: PlaceholderBox, placeholder: '-' },
     { key: 'lot_number', name: 'LOT 번호', width: 120, },
-    { key: 'user_id', name: '작업자', width: 120, formatter: MemberSearchModal },
-    { key: 'start', name: '작업 시작 일시', width: 120, formatter: DatetimePickerBox },
-    { key: 'end', name: '작업 종료 일시', width: 120, formatter: DatetimePickerBox },
+    { key: 'user_id', name: '작업자', width: 120 },
+    { key: 'start', name: '작업 시작 일시', width: 120},
+    { key: 'end', name: '작업 종료 일시', width: 120},
     { key: 'paused_time', name: '일시 정지 시간', width: 120, formatter: PauseInfoModal, type: 'readonly', modalType: false },
     { key: 'good_quantity', name: '양품 수량', width: 120, editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
     { key: 'poor_quantity', name: '불량 수량', width: 120, editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
@@ -1392,10 +1392,10 @@ export const columnlist: any = {
     { key: "uph_average", name: '평균 UPH(시간당 생산량)', width: 208, formatter: PlaceholderBox, placeholder: '자동 입력' }
   ],
   kpiUphContent: [
-    { key: 'osd_id', name: '지시 고유 번호', width: 126 },
+    { key: 'osd_id', name: '지시 고유 번호', width: 126, formatter: PlaceholderBox, placeholder: '-'  },
     { key: 'code', name: 'CODE', width: 120, },
-    { key: 'name', name: '품명', width: 120 },
-    { key: 'process_id', name: '생산 공정', width: 120 },
+    { key: 'name', name: '품명', width: 120, formatter: PlaceholderBox, placeholder: '-'  },
+    { key: 'process_id', name: '생산 공정', width: 120, formatter: PlaceholderBox, placeholder: '-'  },
     { key: 'lot_number', name: 'LOT 번호', width: 120, },
     { key: 'user_id', name: '작업자', width: 120, },
     { key: 'start', name: '작업 시작 일시', width: 120 },
@@ -1413,10 +1413,10 @@ export const columnlist: any = {
     { key: "operation_average", name: '평균 설비가동률', width: 208, formatter: PlaceholderBox, placeholder: '자동 입력' }
   ],
   kpiOperationContent: [
-    { key: 'osd_id', name: '지시 고유 번호', width: 126 },
+    { key: 'osd_id', name: '지시 고유 번호', width: 126, formatter: PlaceholderBox, placeholder: '-'  },
     { key: 'code', name: 'CODE', width: 120, },
-    { key: 'name', name: '품명', width: 120 },
-    { key: 'process_id', name: '생산 공정', width: 120 },
+    { key: 'name', name: '품명', width: 120, formatter: PlaceholderBox, placeholder: '-'  },
+    { key: 'process_id', name: '생산 공정', width: 120, formatter: PlaceholderBox, placeholder: '-'  },
     { key: 'lot_number', name: 'LOT 번호', width: 120, },
     { key: 'user_id', name: '작업자', width: 120, },
     { key: 'start', name: '작업 시작 일시', width: 200, },

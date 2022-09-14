@@ -131,10 +131,10 @@ export const searchModalList: any  = {
     {key: 'stock', name: '재고 수량', width: 160, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
   ],
-  moldInfo: [
+  moldInfo: (basicRow? , setBasicRow?) => ([
     {key: 'sequence', name: '번호', textAlign: 'center', width: 80, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력' },
-    {key: 'name', name: '금형명', width: 472, formatter: SearchModalTest, type: 'mold', modalType: true, noSelect:true, placeholder: '금형을 선택해 주세요.'},
+    {key: 'name', name: '금형명', width: 472, formatter: MultiSelectModal, type: 'mold', modalType: true, placeholder: '-', basicRow, setBasicRow},
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '기본'},
         {pk: 'spare', name: '스페어'},
@@ -142,11 +142,11 @@ export const searchModalList: any  = {
     {key: 'cavity', name: '캐비티', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'spm', name: 'SPM', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     {key: 'slideHeight', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
-  ],
-  toolInfo: [
+  ]),
+  toolInfo: (basicRow? , setBasicRow?) => ([
     {key: 'seq', name: '번호', textAlign: 'center', width: 80, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력' },
-    {key: 'name', name: '공구명', width: 472, formatter: SearchModalTest, type: 'tool', modalType: true, noSelect:true, placeholder: '공구를 선택해 주세요.'},
+    {key: 'name', name: '공구명', width: 472, formatter: MultiSelectModal, type: 'tool', modalType: true, placeholder: '-', basicRow, setBasicRow},
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: '1', name: '기본'},
         {pk: '0', name: '스페어'},
@@ -154,7 +154,7 @@ export const searchModalList: any  = {
     // {key: 'cavity', name: '재고량', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     // {key: 'spm', name: 'SPM', width: 160, formatter: LineBorderContainer, placeholder: '0'},
     // {key: 'slideHeight', name: '슬라이드 위치', width: 160, formatter: LineBorderContainer, placeholder: '0'},
-  ],
+  ]),
   toolProductSearch: [
     {key: 'code', name: '공구 CODE', formatter: LineBorderContainer, placeholder: 'CODE 입력' },
     {key: 'name', name: '공구 품명', formatter: LineBorderContainer, type: 'tool', modalType: true, placeholder: "-"  },

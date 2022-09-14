@@ -190,23 +190,9 @@ const BasicProduct = ({}: IProps) => {
                 setting: machine.setting,
                 // machine:{...machine.machine, type:machine.machine.type_id, weldingType:machine.machine.weldingType_id}
                 machine : {
-                  machine_id : machine.machine.machine_id,
-                  mfrName : machine.machine.mfrName,
-                  name : machine.machine.name,
+                  ...machine.machine,
                   type : machine.machine.type_id,
                   weldingType : machine.machine.weldingType_id,
-                  madeAt:machine.machine.madeAt,
-                  mfrCode:machine.machine.mfrCode,
-                  manager:machine.machine.manager,
-                  photo:machine.machine.photo,
-                  capacity:machine.machine.capacity,
-                  qualify:machine.machine.qualify,
-                  guideline:machine.machine.guideline,
-                  interwork:machine.machine.interwork,
-                  devices:machine.machine.devices,
-                  factory:machine.machine.factory,
-                  subFactory:machine.machine.subFactory,
-                  additional :machine.machine.additional,
                 }
               }
             }).filter((machine) => machine.machine.machine_id)?? []

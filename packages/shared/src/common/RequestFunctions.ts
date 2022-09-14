@@ -261,6 +261,8 @@ const ApiList = {
   // productSave: `/api/v1/product/save`,
   productSave: `/cnc/api/v1/product/save`,
   prdMachineSave: `/api/v1/machine/prd-machine-link/save`,
+  prdMoldSave: `/api/v1/mold/prd-mold-link/save`,
+  prdToolSave: `/cnc/api/v1/tool/prd-tool-link/save`,
   rawmaterialSave: `/api/v1/rawmaterial/save`,
   moldSave: `/api/v1/mold/save`,
   pauseSave: `/api/v1/process/reason/pause/save`,

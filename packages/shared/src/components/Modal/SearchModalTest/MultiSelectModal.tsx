@@ -34,6 +34,12 @@ const setSavedKey = (type: string, map: Map<number, any>, row: any) => {
     case 'machine':
       row.machine_id && map.set(row.machine_id, row)
       break
+    case 'mold':
+      row.mold_id && map.set(row.mold_id, row)
+      break
+    case 'tool':
+      row.tool_id && map.set(row.tool_id, row)
+      break
     default: break
   }
 }
@@ -42,6 +48,8 @@ const addData = (type: string, loaded: any, saved: any) => {
   switch(type){
     case 'product': return loaded
     case 'machine':
+    case 'mold':
+    case 'tool':
       loaded.setting = saved?.setting ?? 0
       // loaded.name = loaded?.name ?? '-'
       return loaded
@@ -57,7 +65,10 @@ const syncWithSaved = (type:string, mapValue: any, row) => {
       deadline: mapValue.deadline,
       amount: mapValue.amount,
     }
-    case 'machine': return {
+    case 'machine':
+    case 'mold':
+    case 'tool':
+      return {
       id: mapValue.id ?? row.id,
       setting: mapValue.setting ?? 0,
     }
@@ -71,8 +82,6 @@ const initRowByType = (type:string) => {
       date:  moment().format('YYYY-MM-DD'),
       deadline:  moment().format('YYYY-MM-DD')
     }
-    case 'machine': return {
-    }
     default: return {}
   }
 }
@@ -81,8 +90,6 @@ const getModalTextKey = (type: string) => {
   switch (type) {
     case 'product':
       return 'code'
-    case 'machine':
-      return 'name'
     default:
       return 'name'
   }
@@ -96,6 +103,8 @@ const emptyRowByType = (type:string) => {
       emptyRow['deadline'] = moment().format('YYYY-MM-DD')
       break
     case 'machine':
+    case 'mold':
+    case 'tool':
       emptyRow['seq'] = 1
       emptyRow['setting'] = 0
       break
@@ -108,13 +117,23 @@ const getMapKey = (type:string) => {
   switch(type){
     case 'product': return 'product_id'
     case 'machine': return 'machine_id'
+    case 'mold': return 'mold_id'
+    case 'tool': return 'tool_id'
     default: return ''
+  }
+}
+
+const getIndexKey = (type:string) => {
+  switch(type){
+    case 'mold': return 'sequence'
+    default: return 'seq'
   }
 }
 
 const getModule = (type: string) => ({
       key: getMapKey(type),
       textKey: getModalTextKey(type),
+      indexKey: getIndexKey(type),
       setSavedKey,
       syncWithSaved,
       initRow: initRowByType(type),
@@ -355,7 +374,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     let newBasicRow = basicRowMap.size > 0 ? Array.from(basicRowMap.values()) : []
     newBasicRow = newBasicRow.length === 0
       ? [module.emptyRow]
-      : newBasicRow.map((row, rowIdx) => ({...row, isFirst: rowIdx === 0, seq: rowIdx + 1 }))
+      : newBasicRow.map((row, rowIdx) => ({...row, isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1 }))
     column.setBasicRow(newBasicRow)
     setBasicRowMap(new Map())
   }
