@@ -16,6 +16,7 @@ import Notiflix from 'notiflix'
 import {MoldInfoModal} from './MoldInfoModal'
 import {TransferCodeToValue} from "../../common/TransferFunction";
 import {UploadButton} from "../../styles/styledComponents";
+import { getUsageType } from '../../common/Util'
 
 interface IProps {
   column: IExcelHeaderType
@@ -92,7 +93,8 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
         return {
           ...v.mold,
           sequence: index+1,
-          setting: v.mold.mold_id === selectedMold ? 1 : 0
+          setting: v.mold.mold_id === selectedMold ? 1 : 0,
+          isDefault: getUsageType(v.setting)
         }
       }))
     }

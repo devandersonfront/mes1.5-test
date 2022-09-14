@@ -16,7 +16,7 @@ const MATERIAL_CODE: Array<CodeType> = [
 ]
 
 const RAW_MATERIAL_TYPE_CODE: Array<CodeType> = [
-  {code: 0, value: "반제품"},
+  {code: 0, value: "NONE"},
   {code: 1, value: "COIL"},
   {code: 2, value: "SHEET"},
 ]

@@ -509,7 +509,7 @@ const TestSearchModalTest = ({column, row, onRowChange}: IProps) => {
     return (
         <SearchModalWrapper>
             <div style={ column.modalType
-                ? {width: 'calc(100% - 32px)', height: 32, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
+                ? {width: 'calc(100% - 32px)', height: 32, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3, backgroundColor: row.border ? '#19B9DF80' : undefined}
                 : {width: 'calc(100% - 40px)', height: 40, paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3}
             } onClick={() => {
                 if(row.first || !column.disableType){

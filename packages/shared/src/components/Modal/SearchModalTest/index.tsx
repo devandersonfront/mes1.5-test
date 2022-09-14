@@ -19,6 +19,8 @@ import {SearchModalResult, SearchResultSort} from '../../../Functions/SearchResu
 import {Select} from '@material-ui/core'
 import {SearchIcon} from "../../../styles/styledComponents";
 import {useDispatch, useSelector} from "react-redux";
+import { RootState } from '../../../reducer'
+import modifyInfo from '../../../reducer/modifyInfo'
 
 
 interface IProps {
@@ -36,6 +38,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [tab, setTab] = useState<number>(0)
   const [searchModalInit, setSearchModalInit] = useState<any>()
   const [searchModalColumn, setSearchModalColumn] = useState<Array<IExcelHeaderType>>()
+  const originalInfo = useSelector((state:RootState) => state.modifyInfo);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -92,20 +95,19 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             })])
           break;
         }
-      }
-      if(tab === null){
-        setSearchModalInit(SearchInit[column.type])
-        setSearchModalColumn(
-          [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column, index) => {
-            if(index === 0) return ({...column, colSpan(args) {
-                if(args.row?.first){
-                  return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
-                }else{
-                  return undefined
-                }
-              }})
-            else return ({...column})
-          })])
+        case null: setSearchModalInit(SearchInit[column.type])
+          setSearchModalColumn(
+            [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column, index) => {
+              if(index === 0) return ({...column, colSpan(args) {
+                  if(args.row?.first){
+                    return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
+                  }else{
+                    return undefined
+                  }
+                }})
+              else return ({...column})
+            })])
+          break;
       }
     }else{
       setSearchModalInit(SearchInit[column.type])
@@ -144,7 +146,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             opt:optionIndex,
             customer_id: row.product?.customerId ?? null
           }
-        case "searchToolModal":
+        case "toolProduct":
           return {}
         default:
           return {
@@ -155,7 +157,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
     const searchToolInProduct = (row:any) => {
       switch(column.type){
-        case "searchToolModal":
+        case "toolProduct":
           return {
             product_id:row.product_id
           }
@@ -180,21 +182,39 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
     if(res){
       if(searchModalInit.excelColumnType === "toolProduct"){
-        setSearchList([...SearchResultSort(!column.noSelect ? [null, ...res] : res, searchModalInit.excelColumnType)])
-        setPageInfo({page:res.page, total:res.totalPages});
-        Notiflix.Loading.remove()
+        if(row.isModify){
+          const savedTools = originalInfo.modifyInfo?.length ? originalInfo.modifyInfo[0]?.tools?.map(tool => ({...tool.tool.tool})) : []
+          const numOfSavedTools = savedTools.reduce((acc, cur) => {
+            acc.set(cur.tool_id, (acc.get(cur.tool_id) || 0) + 1)
+            return acc
+          }, new Map())
+          const numOftools = column.basicRow.reduce((acc, cur) => {
+            acc.set(cur.tool_id, (acc.get(cur.tool_id) || 0) + 1)
+            return acc
+          }, new Map())
+          const newRes = res.map(tool => {
+            const numOfSavedTool = numOfSavedTools.get(tool.tool_id) ?? 0
+            const numOfTool = numOftools.get(tool.tool_id) ?? 0
+            let fakeStock = tool.stock + numOfSavedTool - numOfTool
+            fakeStock = row.tool_id && row.tool_id === tool.tool_id ? fakeStock + 1 : fakeStock
+            return { ...tool, stock: fakeStock, originalStock: tool.stock }
+          })
+          setSearchList(SearchResultSort(newRes, searchModalInit.excelColumnType))
+        }else {
+          setSearchList(SearchResultSort(res, searchModalInit.excelColumnType))
+        }
+
       }else{
         if(res.page !== 1){
           setSearchList([ ...searchList,...SearchResultSort( res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
-          Notiflix.Loading.remove()
         }else{
           setSearchList([...SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
-          Notiflix.Loading.remove()
         }
       }
     }
+    Notiflix.Loading.remove()
   }
   const getContents = () => {
     if(row[`${column.key}`]){
@@ -396,8 +416,10 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             contract_id: null
           }
         )
-      }else if(column.type === "searchToolModal"){
-        onRowChange({...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType)})
+      }else if(column.type === "toolProduct"){
+        const res = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType)
+        delete res.doubleClick
+        onRowChange(res)
       }else if(column.type === 'customer'){
         onRowChange(
           {
@@ -547,7 +569,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             {
               ContentHeader()
             }
-            {column.type !== "searchToolModal" &&
+            {column.type !== "toolProduct" &&
               SearchBox()
             }
             <ExcelTable

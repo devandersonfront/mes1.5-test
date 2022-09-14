@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import {ExcelTable, Header as PageHeader, HeaderFilter, RequestMethod, TextEditor} from 'shared'
+import { ExcelTable, Header as PageHeader, HeaderFilter, IMenu, RequestMethod, TextEditor } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {IMenu} from '../../../main/common/@types/type'
 import {AUTHORITY_LIST} from 'shared/src/common/configset'
 import {AxiosResponse} from 'axios'
 import styled from 'styled-components'

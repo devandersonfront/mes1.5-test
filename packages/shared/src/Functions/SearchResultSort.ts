@@ -1,6 +1,7 @@
 import {TransferCodeToValue} from '../common/TransferFunction'
 import {LineBorderContainer} from "../components/Formatter/LineBorderContainer";
 import { searchModalList } from '../common/modalInit'
+import { getUsageType } from '../common/Util'
 
 export const SearchResultSort = (infoList, type: string) => {
   const noneSelected = '(선택 없음)'
@@ -187,32 +188,19 @@ export const SearchResultSort = (infoList, type: string) => {
     }
 
     case 'toolProduct' : {
-      const columnKeys = searchModalList.toolSearch.map(columns => columns.key)
-      return infoList.map((v) => {
-        let obj = {}
-        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
-        return {
-          ...v,
-          ...obj,
-          customer: v.customer?.name,
-          customerArray: v.customer,
-          name: v?.name,
-          stock: v?.stock,
-        }
-      })
-    }
-    case 'toolProductSearch' :{
       const columnKeys = searchModalList.toolProductSearch.map(columns => columns.key)
       return infoList.map((v) => {
+        const tool = v.tool
         let obj = {}
-        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
+        columnKeys.map(column => obj[column] = tool[column] === undefined ? noneSelected : tool[column])
         return {
-          ...v,
+          ...tool,
           ...obj,
-          product_id:v.product_id
+          customer: tool.customer?.name,
+          customerArray: tool.customer,
+          isDefault: getUsageType(v.setting)
         }
       })
-
     }
     default :
       return infoList

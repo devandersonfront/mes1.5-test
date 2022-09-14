@@ -8,7 +8,6 @@ import {
     TreeViewHeader,
     TreeViewWrapper
 } from '../../styles/styledComponents'
-import {IMenu} from '../../common/@types/type'
 //@ts-ignore
 import menuOpen from "../../public/images/ic_monitoring_open.png"
 //@ts-ignore
@@ -17,6 +16,7 @@ import menuClose from "../../public/images/ic_monitoring_close.png"
 import checkIcon from "../../public/images/ic_check.png"
 import Notiflix from 'notiflix'
 import TreeView from '../../../shared/src/components/TreeView/TreeView'
+import { IMenu } from 'shared/src/@types/type'
 
 interface IProps {
   item: IMenu[]

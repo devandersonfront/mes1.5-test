@@ -301,21 +301,23 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 rowHeight={32}
                                 height={632}
                                 setRow={()=>{}}
-                                onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                                    if(!searchList[e].border){
-                                        searchList.map((v,i)=>{
-                                            v.border = false;
-                                        })
-                                        searchList[e].border = true
-                                        setSearchList([...searchList])
-                                    }
-                                    setSearchList([...searchList.map((row, index) => {
-                                        if(index === e) {
-                                            row.doubleClick = confirmFunction
-                                            return row
+                                onRowClick={(clicked) => {
+                                    const e = searchList.indexOf(clicked)
+                                    const update = searchList.map(
+                                      (row, index) => index === e
+                                        ? {
+                                            ...row,
+                                            doubleClick: confirmFunction,
+                                            border: true,
                                         }
-                                        else return row
-                                    })])
+                                        : {
+                                            ...row,
+                                            border: false
+                                        }
+                                    );
+
+                                    setSearchList(update)
+
                                     setSelectRow(e)
                                 }}
                                 type={'searchModal'}

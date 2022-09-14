@@ -57,7 +57,7 @@ export const SearchInit: Record<string, SearchInitType> = {
     searchFilter: ['공구CODE', '공구 품명', '거래처',],
     excelColumnType: 'tool'
   },
-  searchToolModal: {
+  toolProduct: {
     title: '공구 리스트',
     searchFilter: ['공구CODE', '공구 품명', '거래처',],
     excelColumnType: 'toolProduct'
