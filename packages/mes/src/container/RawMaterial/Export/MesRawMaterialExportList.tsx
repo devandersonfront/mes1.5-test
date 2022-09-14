@@ -40,7 +40,7 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])
-    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawstockOutsourcing"])
+    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawstockExport"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [keyword, setKeyword] = useState<string>();
@@ -138,7 +138,7 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
     };
 
     const cleanUpData = (res: any, date?: {from:string, to:string}, _nzState?:boolean, _expState?:boolean) => {
-        let tmpColumn = columnlist["rawstockOutsourcing"];
+        let tmpColumn = columnlist["rawstockExport"];
         tmpColumn = tmpColumn.map((column: any) => {
             let menuData: object | undefined;
             res.menus && res.menus.map((menu: any) => {
@@ -232,11 +232,11 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
                 id: row.lme_id,
                 rm_id:row.lot_raw_material.raw_material.code,
                 name:row.lot_raw_material.raw_material.name,
-                texture:TransferCodeToValue(row.lot_raw_material.raw_material.type, 'rawMaterialType'),
+                texture:row.lot_raw_material.raw_material.texture,
                 depth:row.lot_raw_material.raw_material.depth,
                 width:row.lot_raw_material.raw_material.width,
                 height:row.lot_raw_material.raw_material.height,
-                type:row.lot_raw_material.raw_material.type,
+                type:TransferCodeToValue(row.lot_raw_material.raw_material.type, 'rawMaterialType'),
                 export_count:row.count,
                 lot_number:row.lot_raw_material.lot_number,
                 date:moment(row.date).format("YYYY-MM-DD"),
@@ -246,8 +246,11 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
                 onClickEvent: (row) =>
                     Notiflix.Confirm.show(`경고`, '출고 취소 하시겠습니까?', '예','아니오', () => DeleteBasic(row), ()=>{},
                         {width: '400px'}),
-                onClickReturnEvent: (row) =>
-                    Notiflix.Confirm.show(`경고`, '수정하시겠습니까?', '예','아니오', () => SaveBasic(row), ()=>{},
+                onClickReturnEvent: (row, setIsOpen) =>
+                    Notiflix.Confirm.show(`경고`, '수정하시겠습니까?', '예','아니오', () => {
+                            setIsOpen(false)
+                            SaveBasic(row)
+                        }, ()=>{},
                         {width: '400px'}),
             }
         })
@@ -258,9 +261,7 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
     async function SaveBasic(row: any) {
         let res: any
         res = await RequestMethod('post', `shipmentExportSave`,
-            [{
-                ...row,
-            }])
+            [row])
             .catch((error) => {
                 if(error.status === 409){
                     Notiflix.Report.warning("경고", error.data.message, "확인",)
@@ -270,6 +271,7 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
             })
 
         if(res){
+
             Notiflix.Report.success('저장되었습니다.','','확인', () => reload())
         }
     }

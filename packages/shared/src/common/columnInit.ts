@@ -492,7 +492,7 @@ export const columnlist: any = {
     //   ]},
   ],
 
-  rawstockOutsourcing: [
+  rawstockExport: [
     {key: 'rm_id',name:'원자재 CODE', formatter: PlaceholderBox, placeholder: '원자재 CODE', width: 118},
     {key: 'name', name:'원자재 품명', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
     {key: 'texture', name:'재질', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
@@ -509,23 +509,6 @@ export const columnlist: any = {
     {key: 'remark', name: '비고', formatter: PlaceholderBox, overlay:true, placeholder:"-", width: 118},
     {key: 'cancel', name: '출고 취소', formatter: CompleteButton, width: 118, beforeEventTitle:'출고 취소'},
     {key: 'export', name: '출고', formatter: ExportButton, state:"edit", width: 118,}
-  ],
-
-  rawstockOutsourcingModify: [
-    {key: 'rm_id',name:'원자재 CODE', formatter: PlaceholderBox, placeholder: '원자재 CODE', width: 118},
-    {key: 'name', name:'원자재 품명', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
-    {key: 'texture', name:'재질', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
-    {key: 'depth', name:'두께', formatter: UnitContainer, unitData: 'T', placeholder: '0', width: 118},
-    {key: 'width', name:'가로(COIL 폭)', formatter: UnitContainer, unitData: 'mm', placeholder: '0', width: 118 },
-    {key: 'height', name:'세로(Feeder)', formatter: UnitContainer, unitData: 'mm', placeholder: '0', width: 118},
-    {key: 'type', name:'재질 종류',formatter: PlaceholderBox, placeholder:'자동 입력', width: 118 },
-    {key: 'export_count',name: '출고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', width: 118},
-    {key: 'date', name: '출고일', width: 118, headerRenderer: HeaderSort, sortOption: "none",sorts: {} },
-    {key: 'export_type', name: '출고 형태', formatter: PlaceholderBox, width: 118},
-    {key: 'lot_number', name: '원자재 LOT 번호', width: 118},
-    {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',width: 118},
-    {key: 'customer_id', name: '거래처', formatter: PlaceholderBox, placeholder:"-", width: 118},
-    {key: 'remark', name: '비고', formatter: PlaceholderBox, overlay:true, placeholder:"-", width: 118},
   ],
 
   subinV1u: [
@@ -560,7 +543,7 @@ export const columnlist: any = {
     { key: 'lot_number', name: '부자재 LOT 번호', editor: TextEditor, width: 118 },
   ],
 
-  substockOutsourcingList: [
+  substockExportList: [
     {key: 'wip_id',name:'부자재 CODE', formatter: PlaceholderBox, placeholder: '부자재 CODE', width: 118},
     {key: 'name', name:'부자재 품명', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
     {key: 'unit', name:'단위', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},

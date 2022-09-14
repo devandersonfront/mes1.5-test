@@ -5,6 +5,7 @@ import {CellButton, FooterButton, ModalTextArea} from '../../styles/styledCompon
 import Modal from 'react-modal'
 import {TitleTextArea} from "../TextAreaBox/TitleTextArea";
 import NotTableDropdown from "../Dropdown/NotTableDropdown";
+import {TransferValueToCode} from "../../common/TransferFunction";
 
 interface IProps {
     row: any
@@ -24,13 +25,11 @@ const ExportButton = ({row, column}: IProps) => {
     }
 
     useEffect(() => {
-        console.log(row)
         if(row?.rmId){
             rowData["lot_raw_material"] = row
             rowData["material_type"] = 0
 
         }else{
-            console.log("no")
             setRowData(row)
         }
 
@@ -120,10 +119,11 @@ const ExportButton = ({row, column}: IProps) => {
                             </FooterButton>
                             <FooterButton onClick={() => {
                                 if(!rowData.export_type){
-                                    console.log('없다 : ', rowData.export_type)
                                     rowData.export_type = 1
+                                }else if(isNaN(Number(rowData.export_type))){
+                                    rowData.export_type = TransferValueToCode(rowData.export_type, "export")
                                 }
-                                row.onClickReturnEvent(rowData)
+                                row.onClickReturnEvent(rowData, setIsOpen)
                             }} style={{background:"cyan"}}>
                                 확인
                             </FooterButton>

@@ -44,7 +44,7 @@ const
     const router = useRouter()
     const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])
-    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["substockOutsourcingList"])
+    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["substockExportList"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [keyword, setKeyword] = useState<string>();
@@ -142,7 +142,7 @@ const
     };
 
     const cleanUpData = (res: any, date?: {from:string, to:string}, _nzState?:boolean, _expState?:boolean) => {
-        let tmpColumn = columnlist["substockOutsourcingList"];
+        let tmpColumn = columnlist["substockExportList"];
         tmpColumn = tmpColumn.map((column: any) => {
             let menuData: object | undefined;
             res.menus && res.menus.map((menu: any) => {
@@ -249,8 +249,11 @@ const
                 onClickEvent: (row) =>
                     Notiflix.Confirm.show(`경고`, '반납취소 하시겠습니까?', '예','아니오', () => DeleteBasic(row), ()=>{},
                         {width: '400px'}),
-                onClickReturnEvent: (row) =>
-                    Notiflix.Confirm.show(`경고`, '수정하시겠습니까?', '예','아니오', () => SaveBasic(row), ()=>{},
+                onClickReturnEvent: (row, setIsOpen) =>
+                    Notiflix.Confirm.show(`경고`, '수정하시겠습니까?', '예','아니오', () => {
+                            setIsOpen(false)
+                            SaveBasic(row)
+                        }, ()=>{},
                         {width: '400px'}),
             }
         })

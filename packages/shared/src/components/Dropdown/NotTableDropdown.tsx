@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from "react"
 import styled from "styled-components"
 import 'rc-tooltip/assets/bootstrap_white.css';
+//@ts-ignore
 import arrow_down from "../../../public/images/filter_open_b.png"
+//@ts-ignore
 import arrow_up from "../../../public/images/filter_close_b.png"
 
 interface Option {
