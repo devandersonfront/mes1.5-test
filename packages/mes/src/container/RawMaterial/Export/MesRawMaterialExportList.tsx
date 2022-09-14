@@ -21,11 +21,17 @@ import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/U
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../../main/common/unprintableKey'
 
+interface IProps {
+    children?: any
+    page?: number
+    search?: string
+    option?: number
+}
 
 
 const optionList = ['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처']
 
-const MesRawMaterialExportList = () => {
+const MesRawMaterialExportList = ({page, search, option}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])

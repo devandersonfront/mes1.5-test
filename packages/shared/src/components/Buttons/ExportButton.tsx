@@ -119,7 +119,7 @@ const ExportButton = ({row, column}: IProps) => {
                             </FooterButton>
                             <FooterButton onClick={() => {
                                 if(!rowData.count ||rowData.count <= 0){
-                                    Notiflix.Report.warning("경고","수량은 양수여야 합니다.","확인",() => setIsOpen(false))
+                                    Notiflix.Report.warning("경고","0 이상 입력해야합니다.","확인",() => setIsOpen(false))
                                     return
                                 }
                                 if(!rowData.export_type){
