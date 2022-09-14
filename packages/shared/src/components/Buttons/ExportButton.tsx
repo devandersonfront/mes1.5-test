@@ -4,9 +4,13 @@ import {IExcelHeaderType} from '../../@types/type'
 import {CellButton, FooterButton, ModalTextArea} from '../../styles/styledComponents'
 import Modal from 'react-modal'
 import NotTableDropdown from "../Dropdown/NotTableDropdown";
-import {TransferValueToCode} from "../../common/TransferFunction";
+import { TransferEngToKor, TransferValueToCode } from '../../common/TransferFunction'
 import Notiflix from "notiflix"
-import {TransferType} from "../../common/Util";
+import { POINT_COLOR } from '../../common/configset'
+import moment from 'moment'
+import Calendar from 'react-calendar'
+//@ts-ignore
+import Calendar_icon from '../../../public/images/calendar_icon_black.png'
 
 interface IProps {
     row: any
@@ -17,25 +21,36 @@ const ExportButton = ({row, column}: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [rowData, setRowData] = useState<any>({})
     const [remarkFormOpen, setRemarkFormOpen] = useState<boolean>(false)
+    const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
+    const [selectDate, setSelectDate] = useState<string>(moment().format('YYYY-MM-DD'))
+    const noStock = column.action === 'register' && row?.current === 0
     const returnButton = () => {
-        return <CellButton
+        return <CellButton style={{opacity: noStock || row.readonly ? .3: 1}}
                     onClick={() => {
-                        setIsOpen(true)
+                        if(noStock){
+                            Notiflix.Report.warning('경고', '재고가 없습니다.', '확인')
+                        } else if(row.readonly) {
+                            row.onClickReturnEvent()
+                        } else {
+                            setIsOpen(true)
+                        }
                     }}
-                >{column.name}</CellButton>
+                >{column.name} 하기</CellButton>
     }
-
     useEffect(() => {
-        if(row?.rmId){
-            rowData["lot_raw_material"] = row
-            rowData["material_type"] = 0
+        if(isOpen){
+            if(column.type === 'rawMaterial' && column.action === 'register'){
+                rowData["lot_raw_material"] = row
+                rowData["material_type"] = 0
+            }else{
+                row.date && setSelectDate(row.date)
+                setRowData(row)
+            }
 
-        }else{
-            setRowData(row)
+            if(row.export_type === "기타") setRemarkFormOpen(true)
         }
+    },[isOpen])
 
-        if(row.export_type === "기타") setRemarkFormOpen(true)
-    },[])
     return (
         <div style={{width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center"}}>
             {returnButton()}
@@ -59,39 +74,58 @@ const ExportButton = ({row, column}: IProps) => {
                 }}>
                     <ModalArea>
                         <div>
-                            <ModalTitle>출고</ModalTitle>
+                            <ModalTitle>{TransferEngToKor(column.type)} 출고</ModalTitle>
                             <HeaderTable>
                                 <HeaderTableTitle>
-                                    <HeaderTableText>품명</HeaderTableText>
+                                    <HeaderTableText>CODE</HeaderTableText>
                                 </HeaderTableTitle>
-                                <HeaderTableTextInput style={{width:"100%"}}>
-                                    <HeaderTableText>
-                                        {row?.name ?? "-"}
-                                    </HeaderTableText>
+                                <HeaderTableTextInput style={{width: 390}}>
+                                    <HeaderTableText>{column.type === 'rawMaterial' ? row?.raw_material?.code : row?.sub_material?.code ?? "-"}</HeaderTableText>
                                 </HeaderTableTextInput>
                             </HeaderTable>
                             <HeaderTable>
-                                <div style={{display:"flex", width:"50%", justifyContent:"space-between"}}>
                                     <HeaderTableTitle>LOT</HeaderTableTitle>
-                                    <HeaderTableTextInput style={{width:"200px"}}>
+                                    <HeaderTableTextInput style={{width: 165}}>
                                         <HeaderTableText>
                                             {row.lot_number}
                                         </HeaderTableText>
                                     </HeaderTableTextInput>
-                                </div>
-                                <div style={{display:"flex", width:"50%"}}>
-                                    <HeaderTableTitle>{TransferType(row.type ?? row.sub_material?.unit ?? row.lot_sub_material?.sub_material?.unit)}</HeaderTableTitle>
-                                    <HeaderTableTextInput style={{width:"200px"}}>
-                                        <input style={{border:"none", width:"100%", height:"100%"}} defaultValue={column.state == "edit" ? row.count : 0} type={"number"} onBlur={(e) => {
+                                    <HeaderTableTitle>출고량</HeaderTableTitle>
+                                    <HeaderTableTextInput style={{width: 165}}>
+                                        <input style={{border:"none", width:"100%", height:"100%"}} defaultValue={column.action == "modify" ? row.count : 0} type={"number"} onBlur={(e) => {
+                                            if(column.action === 'register'){
+                                                if(row.current < Number(e.target.value)) return Notiflix.Report.warning('경고', '재고량보다 출고량이 많습니다.','확인')
+                                            }else {
+
+                                            }
                                             setRowData({...rowData, count: Number(e.target.value)})
                                         }}/>
                                     </HeaderTableTextInput>
-                                </div>
                             </HeaderTable>
-                            <HeaderTable style={{height:"initial", display:"flex", alignItems:"flex-start"}}>
-                                <HeaderTableTitle style={{marginTop:"5px"}}>사유</HeaderTableTitle>
+                            <HeaderTable>
+                                <HeaderTableTitle>
+                                    <HeaderTableText>출고일</HeaderTableText>
+                                </HeaderTableTitle>
+                                <HeaderTableTextInput style={{width: 90}}>
+                                    <HeaderTableText>{selectDate}</HeaderTableText>
+                                </HeaderTableTextInput>
+                                    <img className={'unprintable'} src={Calendar_icon} style={{width:32,height:32,fill:"black"}} onClick={() => setCalendarOpen(!calendarOpen)}/>
+
+                                {
+                                  calendarOpen &&  <div style={{position:"absolute",top:39, zIndex:1}} >
+                                   <Calendar defaultView={"month"} minDate={column.action === 'register' ? new Date(row.date) : column.type === 'rawMaterial' ? new Date(row.lot_raw_material.date) : new Date(row.lot_sub_material.date)} onClickDay={(e)=>{
+                                       const selectDate = moment(e).format('YYYY-MM-DD')
+                                       setSelectDate(selectDate)
+                                       setRowData({...rowData, date: selectDate})
+                                       setCalendarOpen(false)
+                                   }}/>
+                                  </div>
+                                }
+                            </HeaderTable>
+                            <HeaderTable>
+                                <HeaderTableTitle>사유</HeaderTableTitle>
                                 <NotTableDropdown options={[
-                                    {title:"반납", value:1},
+                                    {title:"반품", value:1},
                                     {title:"판매", value:2},
                                     {title:"기타", value:3},
                                 ]} onChangeEvent={(option) => {
@@ -102,9 +136,9 @@ const ExportButton = ({row, column}: IProps) => {
                                 />
                             </HeaderTable>
                             {remarkFormOpen &&
-                                <HeaderTable style={{height:"initial", display:"flex", alignItems:"flex-start"}}>
-                                    <HeaderTableTitle style={{marginTop:"5px"}}>내용</HeaderTableTitle>
-                                    <ModalTextArea style={{height:"90px", borderRadius:"5px", border:"0.5px solid #B3B3B3"}} onBlur={(e) => {
+                                <HeaderTable style={{height:"90px"}}>
+                                    <HeaderTableTitle>내용</HeaderTableTitle>
+                                    <ModalTextArea style={{borderRadius:"5px", border:"0.5px solid #B3B3B3", width: 390}} onBlur={(e) => {
                                         setRowData({...rowData, remark: e.target.value})
                                     }} defaultValue={row.remark}
                                     />
@@ -119,7 +153,7 @@ const ExportButton = ({row, column}: IProps) => {
                             </FooterButton>
                             <FooterButton onClick={() => {
                                 if(!rowData.count ||rowData.count <= 0){
-                                    Notiflix.Report.warning("경고","0 이상 입력해야합니다.","확인",() => setIsOpen(false))
+                                    Notiflix.Report.warning("경고","0 이상 입력해야합니다.","확인")
                                     return
                                 }
                                 if(!rowData.export_type){
@@ -128,7 +162,7 @@ const ExportButton = ({row, column}: IProps) => {
                                     rowData.export_type = TransferValueToCode(rowData.export_type, "export")
                                 }
                                 row.onClickReturnEvent(rowData, setIsOpen)
-                            }} style={{background:"cyan"}}>
+                            }} style={{background:POINT_COLOR}}>
                                 확인
                             </FooterButton>
                         </div>
@@ -141,7 +175,7 @@ const ExportButton = ({row, column}: IProps) => {
 
 const ModalArea = styled.div`
     width:500px;
-    min-height:300px;
+    min-height:350px;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -161,7 +195,6 @@ const HeaderTable = styled.div`
   width: 450px;
   height: 32px;
   margin-bottom: 16px;
-  background-color: #F4F6FA;
   // border: 0.5px solid #B3B3B3;
   display: flex
 `
@@ -181,10 +214,10 @@ const HeaderTableTextInput = styled.p`
 `
 
 const HeaderTableTitle = styled.div`
-  width: 60px;
   padding: 0 8px;
   display: flex;
   align-items: center;
+  width: 60px;
 `
 
 const HeaderTableText = styled.p`

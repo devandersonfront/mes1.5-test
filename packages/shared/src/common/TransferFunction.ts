@@ -44,6 +44,7 @@ const WELDING_TYPE : Array<CodeType> = [
 ]
 
 const EXPORT_TYPE : Array<CodeType> = [
+  {code:0, value:"생산"},
   {code:1, value:"반납"},
   {code:2, value:"판매"},
   {code:3, value:"기타"},
@@ -134,6 +135,14 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
     return value
   }
 }
+
+export const TransferEngToKor = (value:string) => {
+  switch(value){
+    case 'rawMaterial': return '원자재'
+    case 'subMaterial': return '부자재'
+  }
+}
+
 
 export const TransferValueToCode = (value: string, type:TransferType) => {
   let code = 0;

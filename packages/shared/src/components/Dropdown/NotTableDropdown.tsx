@@ -50,7 +50,7 @@ const NotTableDropdown = ({options, width, selectData, onChangeEvent}:Props) => 
 
 const Container = styled.div`
     position: relative;
-    width: 400px;
+    width: 390px;
     height: 35px;
     border-radius: 4px;
     border: 0.5px solid #B3B3B3;
@@ -66,23 +66,22 @@ const Label = styled.button`
     height: inherit;
     border: 0 none;
     outline: 0 none;
-    padding-left: 15px;
     background: transparent;
     cursor: pointer;
+    font-size: 16px;
 `
 
 const Select = styled.ul<{open:boolean}>`
     width: 100%;
-    background: #e9ebff;
+    background: #F4F6FA;
     color: black;
     list-style-type: none;
     padding: 0;
-    border-radius: 6px;
     overflow: hidden;
     max-height: 0;
     transition: .3s ease-in;
     ${props => props.open ? "max-height: 100px;" : "none"}
-    overflow:scroll;
+    overflow: auto;
     margin:0;
 `
 

@@ -298,7 +298,7 @@ const MesRecordList = ({}: IProps) => {
                 product_id: row.operation_sheet?.product?.code ?? "-",
                 name: row.operation_sheet?.product?.name ?? "-",
                 type:
-                    row.operation_sheet?.product?.type !== null
+                    row.operation_sheet?.product
                         ? TransferCodeToValue(row.operation_sheet.product.type, "product")
                         : "-",
                 unit: row.operation_sheet?.product?.unit,

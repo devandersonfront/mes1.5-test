@@ -238,10 +238,11 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
                 export_type:TransferCodeToValue(row.export_type, 'export'),
                 current:row.lot_raw_material.current,
                 customer_id:row.lot_raw_material.raw_material.customer?.name,
-                onClickEvent: (row) =>
+                readonly: row.export_type === 0,
+                onClickEvent: row.export_type === 0 ? () => Notiflix.Report.warning('경고', '생산 출고 취소는 작업 일보 삭제를 통해서만 가능합니다.', '확인') : (row) =>
                     Notiflix.Confirm.show(`경고`, '출고 취소 하시겠습니까?', '예','아니오', () => DeleteBasic(row), ()=>{},
                         {width: '400px'}),
-                onClickReturnEvent: (row, setIsOpen) =>
+                onClickReturnEvent: row.export_type === 0 ? () => Notiflix.Report.warning('경고', '생산 출고 수정은 작업 일보 수정을 통해서만 가능합니다.', '확인') : (row, setIsOpen) =>
                     Notiflix.Confirm.show(`경고`, '수정하시겠습니까?', '예','아니오', () => {
                             setIsOpen(false)
                             SaveBasic(row)
@@ -273,21 +274,26 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
 
     const DeleteBasic = async (row?) => {
         let selectedData;
-        if(row){
-            selectedData = [row]
-            selectedData[0].export_type = TransferValueToCode(row.export_type, "export")
-        }else{
-            selectedData = basicRow.map((row) => {
-                if(selectList.has(row.id)){
-                    return {...row,export_type: TransferValueToCode(row.export_type, "export")}
-                }
-            }).filter(v => v)
-        }
+        try {
+            if (row) {
+                selectedData = [ row ]
+                selectedData[0].export_type = TransferValueToCode(row.export_type, "export")
+            } else {
+                selectedData = basicRow.map((row) => {
+                    if (selectList.has(row.id)) {
+                        const export_type = TransferValueToCode(row.export_type, "export")
+                        if (export_type === 0) throw('생산 출고 취소는 작업 일보 삭제를 통해서만 가능합니다.')
+                        return { ...row, export_type }
+                    }
+                }).filter(v => v)
+            }
+            const res = await RequestMethod('delete', `exportDelete`,selectedData)
 
-        const res = await RequestMethod('delete', `exportDelete`,selectedData)
-
-        if(res) {
-            Notiflix.Report.success('삭제되었습니다.','','확인', () => reload());
+            if(res) {
+                Notiflix.Report.success('삭제되었습니다.','','확인', () => reload());
+            }
+        } catch(errMsg) {
+            Notiflix.Report.warning('경고', errMsg, '확인')
         }
 
     }

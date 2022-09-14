@@ -44,7 +44,7 @@ const
     const router = useRouter()
     const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])
-    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["substockExportList"])
+    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["substockExport"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [keyword, setKeyword] = useState<string>();
@@ -142,7 +142,7 @@ const
     };
 
     const cleanUpData = (res: any, date?: {from:string, to:string}, _nzState?:boolean, _expState?:boolean) => {
-        let tmpColumn = columnlist["substockExportList"];
+        let tmpColumn = columnlist["substockExport"];
         tmpColumn = tmpColumn.map((column: any) => {
             let menuData: object | undefined;
             res.menus && res.menus.map((menu: any) => {
@@ -246,10 +246,11 @@ const
                 current: row.lot_sub_material.current,
                 date: moment(row.date).format("YYYY-MM-DD"),
                 id: `subin_${random_id}`,
-                onClickEvent: (row) =>
+                readonly: row.export_type === 0,
+                onClickEvent: row.export_type === 0 ? () => Notiflix.Report.warning('경고', '생산 출고 취소는 작업 일보 삭제를 통해서만 가능합니다.', '확인') : (row) =>
                     Notiflix.Confirm.show(`경고`, '반납취소 하시겠습니까?', '예','아니오', () => DeleteBasic(row), ()=>{},
                         {width: '400px'}),
-                onClickReturnEvent: (row, setIsOpen) =>
+                onClickReturnEvent: row.export_type === 0 ? () => Notiflix.Report.warning('경고', '생산 출고 수정은 작업 일보 수정을 통해서만 가능합니다.', '확인') : (row, setIsOpen) =>
                     Notiflix.Confirm.show(`경고`, '수정하시겠습니까?', '예','아니오', () => {
                             setIsOpen(false)
                             SaveBasic(row)
@@ -273,23 +274,28 @@ const
 
     const DeleteBasic = async (row?) => {
         let selectedData;
-        if(row){
-            selectedData = [row]
-            selectedData[0].export_type = TransferValueToCode(row.export_type, "export")
-        }else{
-            selectedData = basicRow.map((row) => {
-                if(selectList.has(row.id)){
-                    return {...row,export_type: TransferValueToCode(row.export_type, "export")}
-                }
-            }).filter(v => v)
+        try {
+            if (row) {
+                selectedData = [ row ]
+                selectedData[0].export_type = TransferValueToCode(row.export_type, "export")
+            } else {
+                selectedData = basicRow.map((row) => {
+                    if (selectList.has(row.id)) {
+                        const export_type = TransferValueToCode(row.export_type, "export")
+                        if (export_type === 0) throw('생산 출고 취소는 작업 일보 삭제를 통해서만 가능합니다.')
+                        return { ...row, export_type }
+                    }
+                }).filter(v => v)
+            }
+
+            const res = await RequestMethod('delete', `exportDelete`, selectedData)
+
+            if (res) {
+                Notiflix.Report.success('삭제되었습니다.', '', '확인', () => reload());
+            }
+        } catch(errMsg){
+            Notiflix.Report.warning('경고', errMsg, '확인')
         }
-
-        const res = await RequestMethod('delete', `exportDelete`,selectedData)
-
-        if(res) {
-            Notiflix.Report.success('삭제되었습니다.','','확인', () => reload());
-        }
-
     }
 
     return (
@@ -309,7 +315,7 @@ const
                 selectDate={selectDate}
                 //@ts-ignore
                 setSelectDate={onSelectDate}
-                title={"부자재 반납 현황"}
+                title={"부자재 출고 현황"}
                 buttons={["삭제"]}
                 buttonsOnclick={(e) => {
                     switch(e){
