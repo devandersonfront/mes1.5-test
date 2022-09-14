@@ -65,6 +65,7 @@ export interface IExcelHeaderType {
   noSelect?:boolean
   inputType?: string
   overlay?:boolean
+  state?:string
   orderRegisterManage?:() => any[]
 
 }
@@ -214,7 +215,7 @@ export interface MidrangeRecordRegister extends MidrangeRecordType {
   samples?:number
 }
 
-export type TransferType = "productType" | "material" | "rawMaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "subMaterial" | "welding" | null
+export type TransferType = "productType" | "material" | "rawMaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "subMaterial" | "welding" | "export" | null
 
 export interface BomType {
   childProductId: number | null

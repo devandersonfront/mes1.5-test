@@ -38,9 +38,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
   const dispatch = useDispatch();
 
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(
-    columnlist["substockV1u"]
-  );
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["substockV1u"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
@@ -242,20 +240,24 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
         customer_id: row.sub_material?.customer?.name ?? "-",
         ...appendAdditional,
         id: `subin_${random_id}`,
-        onClickReturnEvent: (row, remark) => Notiflix.Confirm.show(`경고`, '반납처리하겠습니까?', '예','아니오', () => ReturnSaveBasic(row, remark,2), ()=>{}, {width: '400px'})
+        onClickReturnEvent: (row, remark) => Notiflix.Confirm.show(`경고`, '반납처리하겠습니까?', '예','아니오', () => ReturnSaveBasic(row), ()=>{}, {width: '400px'})
       };
     });
     setSelectList(new Set());
     setBasicRow([...tmpBasicRow]);
   };
 
-  const ReturnSaveBasic = async(row:any, remark:string, status:number) => {
-    const res = await RequestMethod('post', `lotSmSave`,
-            [{
-              ...row,
-              status:status,
-              remark:remark
-            }]
+  const ReturnSaveBasic = async(row:any) => {
+    let outsourcingResult:any = {}
+    outsourcingResult.lot_sub_material = row
+    outsourcingResult.count = row.count
+    outsourcingResult.material_type = 1
+    outsourcingResult.date = moment().format('YYYY-MM-DD')
+    outsourcingResult.remark = row.remark
+    outsourcingResult.export_type = row.export_type
+
+    const res = await RequestMethod('post', `shipmentExportSave`,
+            [outsourcingResult]
           )
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => reload())

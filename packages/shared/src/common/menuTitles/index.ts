@@ -49,15 +49,15 @@ export const MesTitles = (customTarget?: string) => {
     _opReList : toMenu('작업 일보 리스트','/mes/recordV2/list'),
     _opComList : toMenu('작업 완료 리스트','/mes/finishV2/list'),
 
-    rawMgmt : toMenu('원자재 관리', '' , ['_rawReg','_rawStock', /*'_rawReturn'*/]),
+    rawMgmt : toMenu('원자재 관리', '' , ['_rawReg','_rawStock', '_rawExportList']),
     _rawReg : toMenu('원자재 입고 등록','/mes/rawmaterialV1u/input'),
     _rawStock : toMenu('원자재 재고 현황','/mes/rawmaterialV1u/stock'),
-    // _rawExport : toMenu('원자재 반납 현황 ','/mes/rawmaterialV1u/returnlist'),
+    _rawExportList : toMenu('원자재 출고 현황 ','/mes/rawmaterialV1u/export/list'),
 
-    subMgmt : toMenu('부자재 관리','',['_subReg','_subStock', /*'_subReturn'*/]),
+    subMgmt : toMenu('부자재 관리','',['_subReg','_subStock', '_subExportList']),
     _subReg : toMenu('부자재 입고 등록','/mes/submaterialV1u/input'),
     _subStock : toMenu('부자재 재고 현황','/mes/submaterialV1u/stock'),
-    // _subExport : toMenu('부자재 반납 현황 ','/mes/submaterialV1u/returnlist'),
+    _subExportList : toMenu('부자재 출고 현황 ','/mes/submaterialV1u/export/list'),
 
     toolMgmt : toMenu('공구 관리','',['_toolReg','_toolList','_toolStock']),
     _toolReg : toMenu('공구 입고 등록','/mes/tool/register'),
@@ -112,7 +112,7 @@ export const CncTitles = (customTarget?: string) => {
     _errorStats: toMenu('에러', '/pms/v2/analysis/error'),
     _idleStats: toMenu('기계 비가동 시간', '/pms/v2/analysis/idleTime'),
     cncMnt: toMenu('CNC 관리', '', ['_repReqReg', '_repReqList', '_repCompList','_repCompListAdmin', '_problemReg']),
-    _repReqReg: toMenu('설비 수리 요청 등록' , '/pms/v2/press/maintenance/facilities'), 
+    _repReqReg: toMenu('설비 수리 요청 등록' , '/pms/v2/press/maintenance/facilities'),
     _repReqList: toMenu('설비 수리 요청 리스트', '/pms/v2/press/maintenance/list'),
     _repCompList: toMenu('설비 수리 완료 리스트', '/pms/v2/press/maintenance/complete'),
     _repCompListAdmin: toMenu('설비 수리 완료 리스트(관리자용)', '/pms/v2/press/maintenance/complete/admin'),
