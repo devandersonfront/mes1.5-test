@@ -15,6 +15,8 @@ import {UploadButton} from '../../styles/styledComponents'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import Notiflix from 'notiflix'
 import NormalModal from './NormalModal'
+import { RequestMethod } from '../../common/RequestFunctions'
+import MultiSelectModal from './MultiSelectModal'
 
 interface IProps {
   column: IExcelHeaderType
@@ -23,24 +25,26 @@ interface IProps {
   modify: boolean
 }
 
+const initData = {seq: 1 , setting : 0}
 const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [selectRow, setSelectRow] = useState<number>(undefined)
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 0}])
+  const [searchList, setSearchList] = useState<any[]>([initData])
+  const hasSaved = !!row.product_id
 
   useEffect(() => {
     if(isOpen) {
-      setSelectRow(undefined)
       if(row?.tools && row?.tools.length > 0){
         setSearchList(row.tools.map((v,i) => {
           return {
             ...v,
             ...v.tool,
-            seq: i+1
+            border: false,
+            seq: i+1,
+            isFirst: i === 0
           }
         }))
       } else {
-        setSearchList([{seq: 1 , setting : 0}])
+        setSearchList([initData])
       }
     }
   }, [isOpen])
@@ -59,21 +63,39 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
     }
   }
 
+  const getRequestBody = () =>
+    searchList.map((tool)=> (
+      {
+        sequence : tool.sequence,
+        setting : tool.setting,
+        tool: {...tool}
+      }
+    )).filter((tool) => tool.tool.tool_id)
+
+  const updateData = async () => {
+    const requestBody = getRequestBody()
+    return await RequestMethod('post', 'prdToolSave', requestBody, null, null, null, row.product_id).then(() =>
+      Notiflix.Report.success('저장되었습니다.','','확인', () =>
+      {
+        row.reload()
+        // setIsOpen(false)
+      }))
+  }
+
   const onConfirm = () => {
     const hasNoData = row.tools?.length === 0 && searchList.length === 1 && !searchList[0]?.tool_id
     const isChanged = () => row?.tools?.length !== searchList.length ||
       row?.tools?.some((tool, tIdx) => tool?.tool?.tool_id !== searchList?.[tIdx]?.tool?.tool_id)
-
     if (!hasNoData && isChanged()) {
-      onRowChange({
+      if (hasSaved) {
+        return updateData()
+      } else {
+        onRowChange({
           ...row,
           tools: searchList.map((v, i) => {
             return {
               sequence: i + 1,
-              tool: {
-                ...v,
-                border: false
-              },
+              tool: v,
               setting: v.setting
             }
           }),
@@ -81,6 +103,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
           isChange: true
         })
       }
+    }
   }
 
   const onCloseEvent = () => {
@@ -88,8 +111,8 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   }
 
   return (
-    <NormalModal buttonTitle={'공구'} title={'공구 정보 (해당 제품을 만드는 데 필요한 공구를 등록해주세요)'} hasData={row.tools?.length > 0} isOpen={isOpen}
-                 onModalButtonClick={() => setIsOpen(true)} onClose={onCloseEvent} duplicateCheckKey={'code'}
+    <MultiSelectModal buttonTitle={'공구'} title={'공구 정보 (해당 제품을 만드는 데 필요한 공구를 등록해주세요)'} hasData={row.tools?.length > 0} isOpen={isOpen}
+                 onModalButtonClick={() => setIsOpen(true)} onClose={onCloseEvent}
                  onConfirm={onConfirm}
                  validateConfirm={executeValidation} headers={[
       [ { key: '거래처명', value: row.customerArray?.name ?? "-" }, { key: '모델', value: row.modelArray?.model ?? "-" }, ],
@@ -98,9 +121,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         value: row.type ? TransferCodeToValue(row.type, 'material') : "-"
       }, { key: '생산 공정', value: row.process?.name ?? "-" } ],
       [ { key: '단위', value: row.unit ?? "-" } ]
-    ]} data={searchList} setData={setSearchList} dataIndex={selectRow} setDataIndex={setSelectRow}
-                 dataColumnKey={'toolInfo'}/>
-
+    ]} data={searchList} setData={setSearchList} dataColumnKey={'toolInfo'}/>
   )
 }
 

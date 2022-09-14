@@ -21,21 +21,18 @@ interface IProps {
   column: IExcelHeaderType
   row: any
   onRowChange: (e: any) => void
-  modify
 }
 
 const initData = {seq: 1 , setting : 0, isFirst: true}
 
-const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
+const MachineInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([initData])
   const hasSaved = !!row.product_id
 
   useEffect(() => {
     if(isOpen) {
-      setSelectRow(undefined)
-      if(row?.machines && row?.machines.length > 0){
+      if(row.machines?.length){
         setSearchList(row.machines.map((v,i) => {
           return {
             ...v,
@@ -102,23 +99,9 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         sequence : machine.sequence,
         setting : machine.setting,
         machine : {
-          machine_id : machine.machine_id,
-          mfrName : machine.mfrName,
-          name : machine.name,
+          ...machine,
           type : machine.type_id,
           weldingType : machine.weldingType_id,
-          madeAt:machine.madeAt,
-          mfrCode:machine.mfrCode,
-          manager:machine.manager,
-          photo:machine.photo,
-          capacity:machine.capacity,
-          qualify:machine.qualify,
-          guideline:machine.guideline,
-          interwork:machine.interwork,
-          devices:machine.devices,
-          factory:machine.factory,
-          subFactory:machine.subFactory,
-          additional :machine.additional,
         }
       }
     )).filter((machine) => machine.machine.machine_id)
