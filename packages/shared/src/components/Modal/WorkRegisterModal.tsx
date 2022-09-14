@@ -20,7 +20,8 @@ import {transferStringToCode} from "../../common/codeTransferFunctions";
 import Big from 'big.js'
 import { alertMsg } from '../../common/AlertMsg'
 import { CheckRecordLotNumber } from '../../common/Util'
-
+import Tooltip from 'rc-tooltip'
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 interface IProps {
   column: IExcelHeaderType
@@ -203,9 +204,14 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                             <HeaderTableText style={{fontWeight: 'bold'}}>{info.title}</HeaderTableText>
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
-                            <HeaderTableText>
-                              {getSummaryInfo(info)}
-                            </HeaderTableText>
+                            <Tooltip placement={'rightTop'}
+                                     overlay={
+                                       <div style={{fontWeight : 'bold'}}>
+                                         {getSummaryInfo(info)}
+                                       </div>
+                                     } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                              <HeaderTableText>{getSummaryInfo(info)}</HeaderTableText>
+                            </Tooltip>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>
                         </>

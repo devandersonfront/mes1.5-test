@@ -573,6 +573,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               SearchBox()
             }
             <ExcelTable
+              resizable
               headerList={ searchModalInit && searchModalColumn}
               row={searchList ?? []}
               width={1744}

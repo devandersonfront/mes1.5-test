@@ -17,6 +17,8 @@ import {TransferCodeToValue} from '../../common/TransferFunction'
 import {useDispatch} from 'react-redux'
 import {change_summary_info_index, insert_summary_info, reset_summary_info} from '../../reducer/infoModal'
 import {UploadButton} from "../../styles/styledComponents";
+import Tooltip from 'rc-tooltip'
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 interface IProps {
   column: IExcelHeaderType
@@ -321,9 +323,14 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                             <HeaderTableText style={{fontWeight: 'bold'}}>{info.title ?? "-"}</HeaderTableText>
                           </HeaderTableTitle>
                           <HeaderTableTextInput style={{width: info.infoWidth}}>
-                            <HeaderTableText>
-                              {summaryData[info.key] ?? "-"}
-                            </HeaderTableText>
+                            <Tooltip placement={'rightTop'}
+                                     overlay={
+                                       <div style={{fontWeight : 'bold'}}>
+                                         {summaryData[info.key] ?? "-"}
+                                       </div>
+                                     } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                              <HeaderTableText>{summaryData[info.key] ?? "-"}</HeaderTableText>
+                            </Tooltip>
                             {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                           </HeaderTableTextInput>
                         </React.Fragment>
@@ -533,8 +540,8 @@ const HeaderTableTextInput = styled.div`
 const HeaderTableText = styled.p`
   margin: 0;
   font-size: 15px;
-  overflow: hidden;
   white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
 `
 

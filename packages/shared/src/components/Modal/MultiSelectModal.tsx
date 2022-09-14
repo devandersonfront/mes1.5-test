@@ -12,6 +12,8 @@ import { UploadButton } from '../../styles/styledComponents'
 import Notiflix from 'notiflix'
 import { decideKoreanSuffix } from '../../common/Util'
 import { alertMsg } from '../../common/AlertMsg'
+import Tooltip from 'rc-tooltip'
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 type headerItem = {
   key: string,
@@ -81,7 +83,14 @@ const MultiSelectModal: React.FunctionComponent<Props> = ({
                 <HeaderTableText style={{fontWeight: 'bold'}}>{headerItem.key}</HeaderTableText>
               </HeaderTableTitle>
               <HeaderTableTextInput style={{width: headerItem.width ?? 144}}>
-                <HeaderTableText>{headerItem.value ?? '-'}</HeaderTableText>
+                <Tooltip placement={'rightTop'}
+                         overlay={
+                           <div style={{fontWeight : 'bold'}}>
+                             {headerItem.value ?? '-'}
+                           </div>
+                         } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                  <HeaderTableText>{headerItem.value ?? '-'}</HeaderTableText>
+                </Tooltip>
               </HeaderTableTextInput>
             </>
           )
@@ -227,6 +236,8 @@ const HeaderTableTextInput = styled.div`
 const HeaderTableText = styled.p`
   margin: 0;
   font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const HeaderTableTitle = styled.div`
