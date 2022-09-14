@@ -3,7 +3,6 @@ import { columnlist, ExcelDownloadModal, ExcelTable, Header as PageHeader, IExce
 // @ts-ignore
 import { SelectColumn } from 'react-data-grid'
 import Notiflix from "notiflix";
-import { NextPageContext } from 'next'
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
 import { useDispatch,  } from "react-redux";
 import {useRouter} from "next/router";
@@ -20,17 +19,16 @@ const MesOutsourcingOrderRegister = () => {
     const buttonEvent = (buttonIndex:number) => {
         switch (buttonIndex) {
             case 0:
-                const tmpRows = [...basicRow]
-                const random:number = Number(Math.random().toFixed(3)) * 1000
-                console.log(random)
-                tmpRows.push({id:"outsourcing_"+random})
-                setBasicRow(tmpRows)
-                break
-            case 1:
                 console.log("good : ", basicRow)
                 break
-            case 2:
-                console.log("good : ", )
+            case 1:
+                console.log("Delete : ", selectRows)
+                const liveData = [...basicRow.filter(row => !selectRows.has(row.id))]
+                liveData[0].isFirst = true
+
+                setBasicRow(liveData)
+                setSelectRows(new Set())
+
                 break
             default:
                 console.log("good : ", )
@@ -52,7 +50,7 @@ const MesOutsourcingOrderRegister = () => {
             <PageHeader
                 title={"외주 발주 등록"}
                 buttons={
-                    ['행 추가', '저장하기', '삭제']
+                    ['저장하기', '삭제']
                 }
                 buttonsOnclick={buttonEvent}
             />
@@ -68,20 +66,14 @@ const MesOutsourcingOrderRegister = () => {
                     console.log(row)
                     setBasicRow(row)
                 }}
+                //@ts-ignore
+                setSelectList={setSelectRows}
+                selectList={selectRows}
                 width={1576}
             />
         </div>
     );
 }
 
-export const getServerSideProps = (ctx: NextPageContext) => {
-    return {
-        props: {
-            page: ctx.query.page ?? 1,
-            keyword: ctx.query.keyword ?? "",
-            option: ctx.query.opt ?? 0,
-        }
-    }
-}
 
 export { MesOutsourcingOrderRegister };

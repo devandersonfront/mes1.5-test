@@ -375,6 +375,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     newBasicRow = newBasicRow.length === 0
       ? [module.emptyRow]
       : newBasicRow.map((row, rowIdx) => ({...row, isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1 }))
+    console.log("newBasicRow : ", newBasicRow)
     column.setBasicRow(newBasicRow)
     setBasicRowMap(new Map())
   }

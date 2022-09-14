@@ -65,9 +65,9 @@ const MesOutsourcingReceiveRegister = () => {
                 headerList={[
                     SelectColumn,
                     // ...column.map(col => col)
-                    // ...columnlist["outsourcingReceive"](basicRow, setBasicRow, radioValue)
+                    ...columnlist["outsourcingReceive"](basicRow, setBasicRow, radioValue)
                     // ...column(basicRow, setBasicRow, Boolean(radioValue))
-                    ...column()
+                    // ...column()
                 ]}
                 row={basicRow}
                 setRow={(row) => {
