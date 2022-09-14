@@ -18,7 +18,8 @@ import {TransferCodeToValue} from '../../common/TransferFunction'
 import {useDispatch} from "react-redux";
 import {change_operation_searchKey} from "../../reducer/operationRegisterState";
 import {useRouter} from "next/router";
-
+import Tooltip from 'rc-tooltip'
+import 'rc-tooltip/assets/bootstrap_white.css';
 interface IProps {
   column: IExcelHeaderType
   row: any
@@ -118,6 +119,51 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
           </UploadButton>
       )
 
+  const headers = [
+    [
+      {key:'수주번호', value: row.identification ?? '-'},
+      {key:'수주 날짜', value:  row.date ?? '-'},
+      {key:'납품 기한', value: row.deadline ?? '-'},
+    ],
+    [
+      {key:'거래처', value: row.customer_id ?? '-'},
+      {key:'모델', value: row.cm_id ?? '-'},
+      {key:'CODE', value: row.code ?? '-'},
+      {key:'품명', value: row.name ?? '-'},
+      {key:'품목 종류', value: row.type ?? '-'}
+    ],
+    [
+      {key:'단위', value: row.unit ?? '-'},
+      {key:'수주량', value: row.amount ?? '-'}
+    ]
+  ]
+
+  const Headers = () => (
+    headers.map(header =>
+      <HeaderTable>
+        {
+          header.map(headerItem =>
+            <>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>{headerItem.key}</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <Tooltip placement={'rightTop'}
+                         overlay={
+                           <div style={{fontWeight : 'bold'}}>
+                             {headerItem.value}
+                           </div>
+                         } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                  <HeaderTableText>{headerItem.value}</HeaderTableText>
+                </Tooltip>
+              </HeaderTableTextInput>
+            </>
+          )
+        }
+      </HeaderTable>
+    )
+  )
+
   return (
       <SearchModalWrapper >
         { ModalContents() }
@@ -159,72 +205,9 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
                 </div>
               </div>
             </div>
-            <HeaderTable>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>수주번호</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{row.identification ?? '-'}</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>수주 날짜</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{row.date ?? '-'}</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>납품 기한</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{row.deadline ?? ''}</HeaderTableText>
-              </HeaderTableTextInput>
-            </HeaderTable>
-            <HeaderTable>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>거래처</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{row.customer_id ?? '-'}</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{row.cm_id ?? '-'}</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{row.code ?? '-'}</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{row.name ?? '-'}</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{row.type ?? '-'}</HeaderTableText>
-              </HeaderTableTextInput>
-            </HeaderTable>
-            <HeaderTable>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{row.unit ?? '-'}</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>수주량</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{row.amount ?? '-'}</HeaderTableText>
-              </HeaderTableTextInput>
-            </HeaderTable>
+            {
+              Headers()
+            }
             <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
               <Button onClick={() => {
                 let tmp = searchList
@@ -364,6 +347,8 @@ const HeaderTableTextInput = styled.div`
 const HeaderTableText = styled.p`
   margin: 0;
   font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const HeaderTableTitle = styled.div`

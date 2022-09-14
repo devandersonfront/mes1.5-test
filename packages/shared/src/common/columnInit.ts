@@ -1491,7 +1491,7 @@ export const columnlist: any = {
     {key:"date", name:"날짜", width:224},
   ],
   productionLog : [
-    {key: 'order',frozen:true, name: '순서',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 48,},
+    {key: 'order',frozen:true, name: '순서',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 48 },
     {key: 'machine_name',frozen:true, name: '기계 이름',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120, placeholder : '-'},
     // {key: 'machine_type',frozen:true, name: '기계 종류',  type: 'machineInfo', formatter:PlaceholderBox, summaryType: 'product_no_cavity', width: 120,},
     { key: 'identification', frozen: true, name: '지시 고유 번호', type: 'machineInfo', formatter: PlaceholderBox, summaryType: 'product_no_cavity', width: 120, placeholder: '-' },

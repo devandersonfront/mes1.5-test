@@ -14,8 +14,8 @@ import Search_icon from '../../../public/images/btn_search.png'
 import Notiflix from 'notiflix'
 import {TransferCodeToValue} from "../../common/TransferFunction";
 import {UploadButton} from "../../styles/styledComponents";
-import { useSelector } from 'react-redux'
-import { RootState } from '../../reducer'
+import Tooltip from 'rc-tooltip'
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 interface IProps {
     column: IExcelHeaderType
@@ -186,10 +186,14 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                                         <HeaderTableText style={{fontWeight: 'bold'}}>{info.title}</HeaderTableText>
                                                     </HeaderTableTitle>
                                                     <HeaderTableTextInput style={{width: info.infoWidth}}>
-                                                        <HeaderTableText>
-                                                            {getSummaryInfo(info)}
-                                                            {/*-*/}
-                                                        </HeaderTableText>
+                                                        <Tooltip placement={'rightTop'}
+                                                                 overlay={
+                                                                     <div style={{fontWeight : 'bold'}}>
+                                                                         {getSummaryInfo(info)}
+                                                                     </div>
+                                                                 } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                                                            <HeaderTableText>{getSummaryInfo(info)}</HeaderTableText>
+                                                        </Tooltip>
                                                         {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                                                     </HeaderTableTextInput>
                                                 </>
@@ -325,6 +329,8 @@ const HeaderTableTextInput = styled.div`
 const HeaderTableText = styled.p`
   margin: 0;
   font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const HeaderTableTitle = styled.div`
