@@ -49,15 +49,15 @@ export const MesTitles = (customTarget?: string) => {
     _opReList : toMenu('작업 일보 리스트','/mes/recordV2/list'),
     _opComList : toMenu('작업 완료 리스트','/mes/finishV2/list'),
 
-    rawMgmt : toMenu('원자재 관리', '' , ['_rawReg','_rawStock', '_rawReturn']),
+    rawMgmt : toMenu('원자재 관리', '' , ['_rawReg','_rawStock', '_rawOutsourcingList']),
     _rawReg : toMenu('원자재 입고 등록','/mes/rawmaterialV1u/input'),
     _rawStock : toMenu('원자재 재고 현황','/mes/rawmaterialV1u/stock'),
-    _rawReturn : toMenu('원자재 출고 현황 ','/mes/rawmaterialV1u/returnlist'),
+    _rawOutsourcingList : toMenu('원자재 출고 현황 ','/mes/rawmaterialV1u/outsourcing/list'),
 
-  subMgmt : toMenu('부자재 관리','',['_subReg','_subStock', '_subReturn']),
-  _subReg : toMenu('부자재 입고 등록','/mes/submaterialV1u/input'),
-  _subStock : toMenu('부자재 재고 현황','/mes/submaterialV1u/stock'),
-  _subReturn : toMenu('부자재 출고 현황 ','/mes/submaterialV1u/returnlist'),
+    subMgmt : toMenu('부자재 관리','',['_subReg','_subStock', '_subOutsourcingList']),
+    _subReg : toMenu('부자재 입고 등록','/mes/submaterialV1u/input'),
+    _subStock : toMenu('부자재 재고 현황','/mes/submaterialV1u/stock'),
+    _subOutsourcingList : toMenu('부자재 출고 현황 ','/mes/submaterialV1u/outsourcing/list'),
 
     toolMgmt : toMenu('공구 관리','',['_toolReg','_toolList','_toolStock']),
     _toolReg : toMenu('공구 입고 등록','/mes/tool/register'),

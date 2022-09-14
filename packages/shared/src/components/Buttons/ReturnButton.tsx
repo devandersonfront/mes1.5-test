@@ -12,7 +12,6 @@ interface IProps {
 }
 
 const ReturnButton = ({row, column}: IProps) => {
-    console.log("row : ", row)
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [rowData, setRowData] = useState<any>({})
     const [remarkFormOpen, setRemarkFormOpen] = useState<boolean>(false)
@@ -25,19 +24,17 @@ const ReturnButton = ({row, column}: IProps) => {
     }
 
     useEffect(() => {
+        console.log(row)
         if(row?.rmId){
-            // 자재_lot_pk : lm_id(number)
-            // 자재_pk : material_id(number)
-            // 자재타입 : material_type(number) // 0: 원자재, 1:부자재
-            // 출고타입 : export_type(number) // 0: 생산, 1: 반품, 2: 판매, 3: 기타
-            // 수량 : count(number)
-
+            rowData["lot_raw_material"] = row
             rowData["material_type"] = 0
-            rowData["lm_id"] = row.lot_rm_id
-            rowData["material_id"] = row.rmId
 
+        }else{
+            console.log("no")
+            setRowData(row)
         }
-        // setRowData(rowData)
+
+        if(row.export_type === "기타") setRemarkFormOpen(true)
     },[])
 
     return (
@@ -86,8 +83,7 @@ const ReturnButton = ({row, column}: IProps) => {
                                 <div style={{display:"flex", width:"50%"}}>
                                     <HeaderTableTitle>수량</HeaderTableTitle>
                                     <HeaderTableTextInput style={{width:"200px"}}>
-                                        <input style={{border:"none", width:"100%", height:"100%"}} type={"number"} onBlur={(e) => {
-                                            console.log(e.target.value)
+                                        <input style={{border:"none", width:"100%", height:"100%"}} defaultValue={column.state == "edit" ? row.count : 0} type={"number"} onBlur={(e) => {
                                             setRowData({...rowData, count: Number(e.target.value)})
                                         }}/>
                                     </HeaderTableTextInput>
@@ -103,16 +99,17 @@ const ReturnButton = ({row, column}: IProps) => {
                                     setRowData({...rowData, export_type: option.value})
                                     if(option.value == 3) setRemarkFormOpen(true)
                                     else setRemarkFormOpen(false)
-                                }} />
+                                }} selectData={row.export_type}
+                                />
                             </HeaderTable>
 
                             {remarkFormOpen &&
                                 <HeaderTable style={{height:"initial", display:"flex", alignItems:"flex-start"}}>
                                     <HeaderTableTitle style={{marginTop:"5px"}}>내용</HeaderTableTitle>
                                     <ModalTextArea style={{height:"90px", borderRadius:"5px", border:"0.5px solid #B3B3B3"}} onBlur={(e) => {
-                                        // setRemark(e.target.value)
                                         setRowData({...rowData, remark: e.target.value})
-                                    }}/>
+                                    }} defaultValue={row.remark}
+                                    />
                                 </HeaderTable>
                             }
                         </div>
@@ -123,7 +120,6 @@ const ReturnButton = ({row, column}: IProps) => {
                                 취소
                             </FooterButton>
                             <FooterButton onClick={() => {
-
                                 row.onClickReturnEvent(rowData)
                             }} style={{background:"cyan"}}>
                                 확인

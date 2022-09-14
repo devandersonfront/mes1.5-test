@@ -28,7 +28,7 @@ export {MesFinishList} from './container/FinishWork/MesFinishList'
 export {MesRawMaterialInput} from './container/RawMaterial/MesRawMaterialInput'
 export {MesRawMaterialStock} from './container/RawMaterial/MesRawMaterialStock'
 export {MesRawMaterialStockModify} from './container/RawMaterial/MesRawMaterialStockModify'
-export {MesRawMaterialReturnList} from './container/RawMaterial/MesRawMaterialReturnList'
+export {MesRawMaterialOutsourcingList} from './container/RawMaterial/Outsourcing/MesRawMaterialOutsourcingList'
 
 //부자재 관리
 export {MesSubMaterialInput} from './container/SubMaterial/MesSubMaterialInput'

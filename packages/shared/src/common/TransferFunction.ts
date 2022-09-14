@@ -43,18 +43,17 @@ const WELDING_TYPE : Array<CodeType> = [
   {code: 3, value: '통합'},
 ]
 
+const OUTSOURCING_TYPE : Array<CodeType> = [
+  {code:1, value:"반납"},
+  {code:2, value:"판매"},
+  {code:3, value:"기타"},
+]
+
 export const TransferCodeToValue = (code: number, type:TransferType) => {
   let value = "";
 
   switch (type) {
-    case "productType": {
-      PRODUCT_TYPE.map(v => {
-        if(v.code === code){
-          value = v.value;
-        }
-      })
-      break;
-    }
+    case "productType":
     case "product": {
       PRODUCT_TYPE.map(v => {
         if(v.code === code){
@@ -112,6 +111,14 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
       WELDING_TYPE.map(v => {
         if(v.code === code){
           value = v.value;
+        }
+      })
+      break
+    }
+    case 'outsourcing':{
+      OUTSOURCING_TYPE.map(v => {
+        if(v.code === code){
+          value = v.value
         }
       })
       break
@@ -196,6 +203,14 @@ export const TransferValueToCode = (value: string, type:TransferType) => {
       WELDING_TYPE.map(v => {
         if(v.value === value){
           code = v.code;
+        }
+      })
+      break
+    }
+    case 'outsourcing':{
+      OUTSOURCING_TYPE.map(v => {
+        if(v.value === value){
+          code = v.code
         }
       })
       break

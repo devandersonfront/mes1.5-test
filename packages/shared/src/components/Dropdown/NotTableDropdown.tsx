@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import styled from "styled-components"
 import 'rc-tooltip/assets/bootstrap_white.css';
 import arrow_down from "../../../public/images/filter_open_b.png"
@@ -12,20 +12,25 @@ interface Props {
     options:Option[]
     width?: number | string
     onChangeEvent:(option:Option) => void
-
+    selectData?: string
 }
 
-const NotTableDropdown = ({options, width, onChangeEvent}:Props) => {
+const NotTableDropdown = ({options, width, selectData, onChangeEvent}:Props) => {
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [selectValue, setSelectValue] = useState<{title:string, value:any}>()
+
+    useEffect(() => {
+        const selectedValue = options.find((option) => option.title === selectData)
+        if(selectedValue !== undefined) setSelectValue(selectedValue)
+    },[])
 
     return (
         <Container style={{width:width}}>
             <Label onClick={(e) => {
                 setIsOpen(open => !open)
             }}>
-                <>{selectValue?.title ?? options[0].title}</>
+                <>{selectValue?.title ?? selectData ?? options[0].title}</>
                 <img  src={isOpen ? arrow_up : arrow_down} style={{width:35, height:35,}}/>
             </Label>
             <Select open={isOpen}  >
