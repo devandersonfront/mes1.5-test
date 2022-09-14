@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import {
-    BarcodeModal,
     columnlist,
     ExcelTable,
     Header as PageHeader,
     IExcelHeaderType,
-    MAX_VALUE,
     PaginationComponent,
     RequestMethod,
     TextEditor
@@ -16,15 +14,14 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
-import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
+import {TransferCodeToValue, TransferValueToCode} from 'shared/src/common/TransferFunction'
 import {useDispatch} from 'react-redux'
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
 import {BarcodeDataType} from "shared/src/common/barcodeType";
-import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
-import {CompleteButton} from "shared/src/components/Buttons/CompleteButton";
-import addColumnClass from '../../../../main/common/unprintableKey'
+import addColumnClass from '../../../../../main/common/unprintableKey'
+
 interface IProps {
     children?: any
     page?: number
@@ -37,13 +34,13 @@ type ModalType = {
     isVisible : boolean
 }
 
-const optionList = ["부자재 CODE", "부자재 품명", "부자재 LOT 번호", "거래처",]
+const optionList = ['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처']
 
-const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
+const MesRawMaterialExportList = ({page, search, option}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [basicRow, setBasicRow] = useState<Array<any>>([])
-    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["substockReturn"])
+    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawstockOutsourcing"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [keyword, setKeyword] = useState<string>();
@@ -56,28 +53,11 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
         from: moment().subtract(1,'month').format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD')
     });
-    const [nzState, setNzState] = useState<boolean>(false);
     const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
-    const [expState, setExpState] = useState<boolean>(false);
-    const [barcodeData , setBarcodeData] = useState<BarcodeDataType[]>([])
-    const [modal , setModal] = useState<ModalType>({
-        type : 'barcode',
-        isVisible : false
-    })
 
     const onSelectDate = (date: {from:string, to:string}) => {
         setSelectDate(date)
         reload(undefined, date)
-    }
-
-    const onCompRadioChange = (hideComplete:boolean) => {
-        setNzState(hideComplete)
-        reload(undefined, undefined, undefined, hideComplete)
-    }
-
-    const onExpRadioChange = (onlyExpired:boolean) => {
-        setExpState(onlyExpired)
-        reload(undefined, undefined, undefined, undefined, onlyExpired)
     }
 
     const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType, _nzState?: boolean, _expState?: boolean) => {
@@ -85,7 +65,7 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
         if(pageInfo.page > 1) {
             setPageInfo({...pageInfo, page: 1})
         } else {
-            getData(undefined, keyword, date, sortingOptions, _nzState, _expState)
+            getData(undefined, keyword, date, sortingOptions)
         }
     }
 
@@ -94,7 +74,7 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
     }, [pageInfo.page]);
 
     useEffect(() => {
-        dispatch(setMenuSelectState({ main: "부자재 관리", sub: router.pathname }))
+        dispatch(setMenuSelectState({main:"원자재 관리",sub:router.pathname}))
         return(() => {
             dispatch(deleteMenuSelectState())
         })
@@ -120,7 +100,7 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
         setColumn(tmpColumn);
     }
 
-    const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType, _nzState?: boolean, _expState?:boolean) => {
+    const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType) => {
         let params = {}
         if(keyword) {
             params['keyword'] = keyword
@@ -130,18 +110,18 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
         params['to'] = date ? date.to : selectDate.to
         params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
         params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
-        params['status'] = 2
+        params['material_type'] = 0
         return params
     }
 
-    const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType, _nzState?:boolean, _expState?:boolean) => {
+    const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType) => {
         Notiflix.Loading.circle();
-        const res = await RequestMethod("get", keyword ? 'lotSmSearch' : 'lotSmList', {
+        const res = await RequestMethod("get", keyword ? 'exportSearch' : 'exportList', {
             path: {
                 page: page,
                 renderItem: 18,
             },
-            params: getRequestParams(keyword, date, _sortingOptions,_nzState, _expState)
+            params: getRequestParams(keyword, date, _sortingOptions)
         });
         if(res){
             if (res.totalPages > 0 && res.totalPages < res.page) {
@@ -151,14 +131,14 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
                     page: res.page,
                     total: res.totalPages
                 })
-                cleanUpData(res, date, _nzState, _expState);
+                cleanUpData(res, date);
             }
         }
         Notiflix.Loading.remove()
     };
 
     const cleanUpData = (res: any, date?: {from:string, to:string}, _nzState?:boolean, _expState?:boolean) => {
-        let tmpColumn = columnlist["substockReturn"];
+        let tmpColumn = columnlist["rawstockOutsourcing"];
         tmpColumn = tmpColumn.map((column: any) => {
             let menuData: object | undefined;
             res.menus && res.menus.map((menu: any) => {
@@ -180,8 +160,13 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
                     }
                 }
             })
-            // {key: 'return', name: '반납처리', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소'}
-            if(column.key == "return") menuData = {id:"return", name:column.name, width:column.width, }
+            if(column.key === "export") menuData = {
+                id: column.id,
+                name: "수정",
+                width: column.width,
+                tab:column.tab,
+                unit:column.unit
+            }
             if(menuData){
                 return {
                     ...column,
@@ -204,7 +189,6 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
             }
         }).filter((v: any) => v) : []
 
-        // tmpRow = res.info_list
 
         loadAllSelectItems( [
             ...tmpColumn,
@@ -243,18 +227,27 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
                     [v.title]: v.value
                 }
             })
-
-            let random_id = Math.random()*1000;
             return {
                 ...row,
-                wip_id: row.sub_material?.code,
-                unit: row.sub_material?.unit,
-                name: row.sub_material?.name,
-                customer_id: row.sub_material?.customer?.name ?? "-",
-                ...appendAdditional,
-                id: `subin_${random_id}`,
+                id: row.lme_id,
+                rm_id:row.lot_raw_material.raw_material.code,
+                name:row.lot_raw_material.raw_material.name,
+                texture:TransferCodeToValue(row.lot_raw_material.raw_material.type, 'rawMaterialType'),
+                depth:row.lot_raw_material.raw_material.depth,
+                width:row.lot_raw_material.raw_material.width,
+                height:row.lot_raw_material.raw_material.height,
+                type:row.lot_raw_material.raw_material.type,
+                export_count:row.count,
+                lot_number:row.lot_raw_material.lot_number,
+                date:moment(row.date).format("YYYY-MM-DD"),
+                export_type:TransferCodeToValue(row.export_type, 'export'),
+                current:row.lot_raw_material.current,
+                customer_id:row.lot_raw_material.raw_material.customer?.name,
                 onClickEvent: (row) =>
-                    Notiflix.Confirm.show(`경고`, '반납취소 하시겠습니까?', '예','아니오', () => SaveBasic(row), ()=>{},
+                    Notiflix.Confirm.show(`경고`, '출고 취소 하시겠습니까?', '예','아니오', () => DeleteBasic(row), ()=>{},
+                        {width: '400px'}),
+                onClickReturnEvent: (row) =>
+                    Notiflix.Confirm.show(`경고`, '수정하시겠습니까?', '예','아니오', () => SaveBasic(row), ()=>{},
                         {width: '400px'}),
             }
         })
@@ -262,23 +255,58 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
         setBasicRow([...tmpBasicRow])
     }
 
-    async function SaveBasic(row:any) {
-        const res = await RequestMethod('post', `lotSmSave`,
+    async function SaveBasic(row: any) {
+        let res: any
+        res = await RequestMethod('post', `shipmentExportSave`,
             [{
                 ...row,
-                customer: row.sub_material.customer,
-                customerArray: row.sub_material.customer,
-                status:0,
-                remark:null
-            }]
-        )
+            }])
+            .catch((error) => {
+                if(error.status === 409){
+                    Notiflix.Report.warning("경고", error.data.message, "확인",)
+                    return true
+                }
+                return false
+            })
 
         if(res){
             Notiflix.Report.success('저장되었습니다.','','확인', () => reload())
         }
     }
 
+    const DeleteBasic = async (row?) => {
+        let selectedData;
+        if(row){
+            selectedData = [row]
+            selectedData[0].export_type = TransferValueToCode(row.export_type, "export")
+        }else{
+            selectedData = basicRow.map((row) => {
+                if(selectList.has(row.id)){
+                    return {...row,export_type: TransferValueToCode(row.export_type, "export")}
+                }
+            }).filter(v => v)
+        }
 
+        const res = await RequestMethod('delete', `exportDelete`,selectedData)
+
+        if(res) {
+            Notiflix.Report.success('삭제되었습니다.','','확인', () => reload());
+        }
+
+    }
+
+
+    const onClickHeaderButton = (index: number) => {
+        const noneSelected = selectList.size <= 0
+        if(noneSelected){
+            return Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
+        }
+        switch(index){
+            case 0:
+                Notiflix.Confirm.show("경고","데이터를 삭제하시겠습니까?", "확인", "취소", () => DeleteBasic())
+                return;
+        }
+    }
 
 
     return (
@@ -291,14 +319,15 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
                 onChangeSearchOption={(option) => {
                     setOptionIndex(option)
                 }}
-                calendarTitle={'입고일'}
                 optionIndex={optionIndex}
                 isCalendar
                 calendarType={'period'}
                 selectDate={selectDate}
                 //@ts-ignore
                 setSelectDate={onSelectDate}
-                title={"부자재 반납 현황"}
+                buttons={["삭제"]}
+                buttonsOnclick={onClickHeaderButton}
+                title={"원자재 출고 현황"}
             />
             <ExcelTable
                 editable
@@ -306,7 +335,7 @@ const MesSubMaterialReturnList = ({page, search, option}: IProps) => {
                 selectable
                 headerList={[
                     SelectColumn,
-                ...addColumnClass(column)
+                    ...addColumnClass(column)
                 ]}
                 row={basicRow}
                 setRow={(e) => {
@@ -347,4 +376,4 @@ export const getServerSideProps = (ctx: NextPageContext) => {
     }
 }
 
-export {MesSubMaterialReturnList};
+export {MesRawMaterialExportList};

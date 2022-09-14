@@ -43,7 +43,7 @@ const WELDING_TYPE : Array<CodeType> = [
   {code: 3, value: '통합'},
 ]
 
-const OUTSOURCING_TYPE : Array<CodeType> = [
+const EXPORT_TYPE : Array<CodeType> = [
   {code:1, value:"반납"},
   {code:2, value:"판매"},
   {code:3, value:"기타"},
@@ -115,8 +115,8 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
       })
       break
     }
-    case 'outsourcing':{
-      OUTSOURCING_TYPE.map(v => {
+    case 'export':{
+      EXPORT_TYPE.map(v => {
         if(v.code === code){
           value = v.value
         }
@@ -207,8 +207,8 @@ export const TransferValueToCode = (value: string, type:TransferType) => {
       })
       break
     }
-    case 'outsourcing':{
-      OUTSOURCING_TYPE.map(v => {
+    case 'export':{
+      EXPORT_TYPE.map(v => {
         if(v.value === value){
           code = v.code
         }

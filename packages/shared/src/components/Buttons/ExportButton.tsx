@@ -11,7 +11,7 @@ interface IProps {
     column: IExcelHeaderType
 }
 
-const ReturnButton = ({row, column}: IProps) => {
+const ExportButton = ({row, column}: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [rowData, setRowData] = useState<any>({})
     const [remarkFormOpen, setRemarkFormOpen] = useState<boolean>(false)
@@ -36,7 +36,6 @@ const ReturnButton = ({row, column}: IProps) => {
 
         if(row.export_type === "기타") setRemarkFormOpen(true)
     },[])
-
     return (
         <div style={{width:"100%", height:"100%", display:"flex", justifyContent:"center", alignItems:"center"}}>
             {returnButton()}
@@ -120,6 +119,10 @@ const ReturnButton = ({row, column}: IProps) => {
                                 취소
                             </FooterButton>
                             <FooterButton onClick={() => {
+                                if(!rowData.export_type){
+                                    console.log('없다 : ', rowData.export_type)
+                                    rowData.export_type = 1
+                                }
                                 row.onClickReturnEvent(rowData)
                             }} style={{background:"cyan"}}>
                                 확인
@@ -188,4 +191,4 @@ const HeaderTableText = styled.p`
   text-overflow: ellipsis;
 `
 
-export {ReturnButton};
+export {ExportButton};
