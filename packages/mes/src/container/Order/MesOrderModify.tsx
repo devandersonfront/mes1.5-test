@@ -17,6 +17,7 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {useDispatch, useSelector} from 'react-redux'
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 interface IProps {
   children?: any
@@ -29,7 +30,6 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const selector = useSelector((state:RootState) => state.modifyInfo)
-  const [excelOpen, setExcelOpen] = useState<boolean>(false)
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     name: "", id: "", order_date: moment().format('YYYY-MM-DD'),
@@ -37,21 +37,16 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
   }])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["orderModify"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionList, setOptionList] = useState<string[]>(['수주 번호', '거래처명', '모델', 'CODE', '품명', '지시 고유 번호'])
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment(new Date()).startOf("month").format('YYYY-MM-DD') ,
-    to:  moment(new Date()).endOf("month").format('YYYY-MM-DD')
-  });
-
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
 
   useEffect(() => {
     if(selector && selector.type && selector.modifyInfo){
-      setBasicRow([...selector.modifyInfo])
+      setBasicRow(selector.modifyInfo.map(info => ({
+          ...info,
+          customer_id: info?.product?.customer?.name ?? '-',
+          cm_id: info?.product?.model?.model ?? '-',
+          name: info.product?.name ?? '-'
+        })
+      ))
     }else{
       router.push('/mes/order/list')
     }
@@ -65,9 +60,9 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
   },[])
 
   const SaveBasic = async () => {
-    let res: any
-    res = await RequestMethod('post', `contractSave`,
-      basicRow.map((row, i) => {
+    try {
+
+      const postBody = basicRow.map((row, i) => {
         if(selectList.has(row.id)){
           let selectKey: string[] = []
           let additional:any[] = []
@@ -109,15 +104,20 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
               }).filter((v) => v)
             ]
           }
-
         }
-      }).filter((v) => v))
-
-
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인', () => {
-        router.push('/mes/order/list')
-      });
+      }).filter((v) => v)
+      if(postBody.length < 1)
+      {
+        throw(alertMsg.noSelectedData)
+      }
+      const res = await RequestMethod('post', `contractSave`, postBody)
+      if(res){
+        Notiflix.Report.success('저장되었습니다.','','확인', () => {
+          router.push('/mes/order/list')
+        });
+      }
+    } catch (errMsg){
+      Notiflix.Report.warning('경고', errMsg, '확인')
     }
   }
 
@@ -154,7 +154,6 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
           ...column
         ]}
         row={basicRow}
-        // setRow={setBasicRow}
         setRow={(e) => {
           let tmp: Set<any> = selectList
           e.map(v => {
@@ -172,16 +171,6 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
         width={1576}
         height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
       />
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`금형기준정보`}*/}
-      {/*  sheetname={`금형기준정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
     </div>
   );
 }

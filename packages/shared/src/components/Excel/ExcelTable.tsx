@@ -143,7 +143,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
       }}
       rowHeight={rowHeight ?? 40}
       defaultColumnOptions={{
-        resizable: resizable,
+        resizable: true,
         editable: editable,
       }}
       onRowsChange={(data, idx) => {

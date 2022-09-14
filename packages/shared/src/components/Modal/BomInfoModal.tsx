@@ -25,6 +25,8 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../reducer";
 import ModalButton from '../Buttons/ModalButton'
+import Tooltip from 'rc-tooltip'
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 interface IProps {
   column: IExcelHeaderType
@@ -457,6 +459,49 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
     </div>
   }
 
+  const headers = [
+    [
+      {key:'거래처명', value: headerData?.customer?.name ?? row?.customerArray?.name ?? "-"},
+      {key:'모델', value:  headerData?.model?.model ?? row?.modelArray?.model ?? "-"}
+    ],
+    [
+      {key:'CODE', value: headerData?.code ?? row?.code ?? "-"},
+      {key:'품명', value: headerData?.name ?? row?.name ?? "-"},
+      {key:'품목 종류', value: headerData?.type ? TransferCodeToValue(headerData.type, 'productType') : row?.type || row?.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"},
+      {key:'생산 공정', value: headerData?.process?.name ?? row?.processArray?.name ?? "-"}
+    ],
+    [
+      {key:'생산수량', value: 1},
+      {key:'단위', value: headerData?.unit ?? row?.unit ?? "-"}
+    ]
+]
+
+  const Headers = () => (
+    headers.map(header =>
+      <HeaderTable>
+        {
+          header.map(headerItem =>
+            <>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>{headerItem.key}</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <Tooltip placement={'rightTop'}
+                         overlay={
+                           <div style={{fontWeight : 'bold'}}>
+                             {headerItem.value}
+                           </div>
+                         } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                  <HeaderTableText>{headerItem.value}</HeaderTableText>
+                </Tooltip>
+              </HeaderTableTextInput>
+            </>
+          )
+        }
+      </HeaderTable>
+    )
+  )
+
   return (
       <SearchModalWrapper >
         { ModalContents() }
@@ -489,7 +534,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
                 fontSize: 22,
                 fontWeight: 'bold',
                 margin: 0,
-              }}>BOM 정보 {column.type === 'readonly' ? '' : '(해당 제품을 만드는데 필요한 BOM을 등록해주세요)'}</p>
+              }}>BOM 정보 {column.type === 'readonly' ? '' : '(해당 제품을 만드는 데 필요한 BOM을 등록해주세요)'}</p>
               <div style={{display: 'flex'}}>
                 <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                   setIsOpen(false)
@@ -498,61 +543,9 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
                 </div>
               </div>
             </div>
-            <HeaderTable>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>거래처명</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData && headerData.customer?.name ? headerData.customer?.name : row.customerArray ? row.customerArray.name : "-"}</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData && headerData.model?.model ? headerData.model?.model : row.modelArray ? row.modelArray.model : "-"}</HeaderTableText>
-              </HeaderTableTextInput>
-            </HeaderTable>
-            <HeaderTable>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.code ?? "-" :row.code ?? "-"}</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData && headerData.name ? headerData.name : row.name ?? "-"}</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? TransferCodeToValue(headerData.type, 'productType') :row.type || row.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"}</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>생산 공정</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.process?.name ?? "-" : row.processArray ? row.processArray.name : "-"}</HeaderTableText>
-              </HeaderTableTextInput>
-            </HeaderTable>
-            <HeaderTable>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>생산수량</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>1</HeaderTableText>
-              </HeaderTableTextInput>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
-              </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: 144}}>
-                <HeaderTableText>{headerData ? headerData.unit : row.unit ?? "-"}</HeaderTableText>
-              </HeaderTableTextInput>
-
-            </HeaderTable>
+            {
+              Headers()
+            }
             <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
               <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                 <div style={{ display: 'flex', width: 1200}}>
@@ -704,8 +697,8 @@ const HeaderTableTextInput = styled.div`
 const HeaderTableText = styled.p`
   margin: 0;
   font-size: 15px;
-  overflow: hidden;
   white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
 `
 

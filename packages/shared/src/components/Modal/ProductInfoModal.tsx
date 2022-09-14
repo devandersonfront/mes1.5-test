@@ -15,7 +15,8 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
 import { TransferCodeToValue } from '../../common/TransferFunction'
-
+import Tooltip from 'rc-tooltip'
+import 'rc-tooltip/assets/bootstrap_white.css';
 interface IProps {
   column: IExcelHeaderType
   row: any
@@ -182,7 +183,14 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
                                 <HeaderTableText style={{fontWeight: 'bold'}}>{item.title}</HeaderTableText>
                               </HeaderTableTitle>
                               <HeaderTableTextInput style={{width: item.infoWidth}}>
-                                <HeaderTableText>{!!row[item.key] ? row[item.key] : '-'}</HeaderTableText>
+                                <Tooltip placement={'rightTop'}
+                                         overlay={
+                                           <div style={{fontWeight : 'bold'}}>
+                                             {!!row[item.key] ? row[item.key] : '-'}
+                                           </div>
+                                         } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                                  <HeaderTableText>{!!row[item.key] ? row[item.key] : '-'}</HeaderTableText>
+                                </Tooltip>
                               </HeaderTableTextInput>
                             </>
                         )
@@ -258,6 +266,8 @@ const HeaderTableTextInput = styled.div`
 const HeaderTableText = styled.p`
   margin: 0;
   font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const HeaderTableTitle = styled.div`
