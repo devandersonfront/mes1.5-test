@@ -13,6 +13,7 @@ export interface IProps {
 }
 
 export interface IExcelHeaderType {
+  unit: any
   setBasicRow?: any
   headerType?:any[]
   basicRow?: any

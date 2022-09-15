@@ -66,6 +66,7 @@ import { MultiSelectModal } from '../components/Modal/SearchModalTest/MultiSelec
 import { HeaderSort } from '../components/HeaderSort/HeaderSort'
 import CommonProgressBar from '../../../main/component/InputBox/CommonProgressBar'
 import {ExportButton} from "../components/Buttons/ExportButton";
+import { PasswordBox } from '../components/Formatter/PasswordBox'
 
 
 export const columnlist: any = {
@@ -77,8 +78,8 @@ export const columnlist: any = {
     { key: 'authority', formatter: AuthoritySearchModal },
     // {key: 'authority', formatter: DropDownEditor, selectList: []},
     { key: 'tmpId', formatter: PlaceholderBox, placeholder: "아이디 입력", editor: TextEditor, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'password', formatter: PlaceholderBox, placeholder: "비밀번호 입력", editor: TextEditor },
-    { key: 'password-confirm', formatter: PlaceholderBox, placeholder: "비밀번호 확인", editor: TextEditor },
+    { key: 'password',formatter: PasswordBox, placeholder: "비밀번호 입력", editor: TextEditor },
+    { key: 'password-confirm', formatter: PasswordBox, placeholder: "비밀번호 확인", editor: TextEditor },
     { key: 'profile', formatter: FileEditer, type: "image" , unprintable : true},
   ],
   factory: [

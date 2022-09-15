@@ -65,7 +65,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onClose(true)
           Notiflix.Report.warning('수정할 수 없습니다.', '작업지시 고유 번호가 있으면 수정할 수 없습니다.', '확인')
         }else if(column.key === 'tmpId' && row[column.key]){
-          if(!row.isChange || row.user_id){
+          if(!row.isChange && row.user_id){
             onClose(true)
             return Notiflix.Report.warning('수정할 수 없습니다.', '아이디는 수정할 수 없습니다.', '확인')
           }
