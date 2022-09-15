@@ -49,7 +49,6 @@ export const SearchResultSort = (infoList, type: string) => {
       })
     }
     case 'product': {
-      console.log(infoList)
       const columnKeys = searchModalList.productSearch.map(columns => columns.key)
       return infoList.map((v) => {
         let obj = {}

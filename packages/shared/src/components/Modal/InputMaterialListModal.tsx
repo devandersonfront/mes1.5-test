@@ -165,7 +165,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const toInputMaterialList = (sheetBom: any) => {
-    console.log("sheetBom : ", sheetBom)
     const inputMaterialList = ParseResponse(sheetBom)
     const firstModify = !!!row.bom_info && isModify
     const bomIdAndLotMap = firstModify && getBomLotMap()

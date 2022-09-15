@@ -57,7 +57,6 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
 
   switch (type) {
     case "productType": {
-      console.log(code)
       value = code === undefined ? '(선택 없음)' : code < 3 ? '생산품' : '외주품'
       break;
     }
