@@ -268,8 +268,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const executeValidation = () => {
-
-    const hasNoData = searchList.length === 0
+    const hasNoData = Number(row.type_id) < 3 && searchList.length === 0
     const hasInvalidData = searchList.some(v => !v.rm_id && !v.sm_id && !v.product?.product_id)
     const hasDefaultSetting = checkDefaultSetting()
 
@@ -281,7 +280,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
       throw("품목별 기본설정은 최소 한개 이상 필요합니다.")
     }
   }
-
 
   const SaveBasic = async () => {
       const body = filterList()
