@@ -16,10 +16,35 @@ const MesOutsourcingOrderRegister = () => {
     const [basicRow, setBasicRow] = useState<any[]>([{isFirst:true}])
     const [selectRows, setSelectRows] = useState<Set<number>>(new Set())
 
-    const buttonEvent = (buttonIndex:number) => {
+    const buttonEvent = async(buttonIndex:number) => {
         switch (buttonIndex) {
             case 0:
-                console.log("good : ", basicRow)
+                const resultData = basicRow.map((row) => {
+                    const obj:any = {}
+                    console.log("row : ", row)
+                    row.bom.map((value, index) => {
+                        console.log(row.bom_info[index])
+                        // value.bom = row.bom_info[index]
+                    })
+                    obj.work = row.worker
+                    obj.product = row.product
+                    obj.order_quantity = row.good_quantity
+                    obj.order_date = row.order_date
+                    obj.due_date = row.due_date
+                    obj.bom = row?.bom
+
+                    console.log(obj)
+                    return obj
+                }).filter(v => v)
+
+                await RequestMethod("post", "outsourcingExportSave", resultData)
+                    .then((res) => {
+                        console.log(res)
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+
                 break
             case 1:
                 console.log("Delete : ", selectRows)

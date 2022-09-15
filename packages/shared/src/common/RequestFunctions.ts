@@ -294,6 +294,8 @@ const ApiList = {
   inspecMoldSave: `/api/v1/inspec/daily/mold/save`,
   lotRmComplete: `/api/v1/lot-rm/complete`,
   stockSave: `/api/v1/stock/basic/save`,
+  outsourcingExportSave: `/api/v1/outsourcing/export/save`,
+
   //modify
   operationModify: `/api/v1/operation/modify`,
 
@@ -404,6 +406,7 @@ const ApiList = {
   productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
   sheetDefectList: `/api/v1/sheet/defect`,
   exportList: `/api/v1/shipment/export/list`,
+  outsourcingExportList: `/api/v1/outsourcing/export/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,

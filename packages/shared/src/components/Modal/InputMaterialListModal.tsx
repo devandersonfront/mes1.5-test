@@ -317,6 +317,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       inputBomIdMap.set(bomObject.bomKey, bom)
     })
     inputMaterialList.map((bom, index) => {
+      console.log(bom)
       let totalAmount = 0
       if(bom.lots !== undefined) {
         bom.lots?.map(lot => {

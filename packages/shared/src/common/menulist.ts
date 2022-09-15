@@ -76,7 +76,7 @@ const BasicOrder = (customTarget?: string): BasicOrderType[] => {
 }
 
 const MesOrder = (customTarget?: string): MesOrderType[] => {
-    const defaultOrder : MesOrderType[] = ['businessMgmt','pmReg','rawMgmt','subMgmt','toolMgmt','qualityMgmt','stockMgmt', 'outsourcingMgmt', 'kpi']
+    const defaultOrder : MesOrderType[] = ['businessMgmt','pmReg','rawMgmt','subMgmt','toolMgmt','qualityMgmt','stockMgmt','outsourceMgmt', 'kpi']
     switch(customTarget){
         default: return defaultOrder
     }

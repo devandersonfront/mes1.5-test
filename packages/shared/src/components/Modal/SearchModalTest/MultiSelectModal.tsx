@@ -223,7 +223,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
           }
       }
     }
-
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`, {
       path: getPath(row),
       params: getParams()
