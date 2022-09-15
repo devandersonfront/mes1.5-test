@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {menuSelect} from 'shared/src/common/menulist'
+import {MENUS, menuSelect} from 'shared/src/common/menulist'
 import {MenuNavComponent, MenuNavItem, MenuText, SideMenuItem} from '../../styles/styledComponents'
 import {POINT_COLOR} from 'shared/src/common/configset'
 //@ts-ignore
@@ -80,11 +80,6 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
         }),
       }))
     }
-  }
-
-  const MENUS = () => {
-    const configMenus = process.env.NEXT_PUBLIC_MENUS
-    return configMenus === undefined ? ['HOME', 'BASIC', 'MES', 'PMS'] : configMenus.split(',')
   }
 
   return (

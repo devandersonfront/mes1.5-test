@@ -4,7 +4,6 @@ import { ExcelTable, Header as PageHeader, HeaderFilter, IMenu, RequestMethod, T
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
-import {AUTHORITY_LIST} from 'shared/src/common/configset'
 import {AxiosResponse} from 'axios'
 import styled from 'styled-components'
 import {useDispatch} from "react-redux";
@@ -13,6 +12,7 @@ import {IExcelHeaderType, TableSortingOptionType} from "shared/src/@types/type";
 import TreeViewTable from 'shared/src/components/TreeView/TreeViewTable';
 import {HeaderSort} from "shared/src/components/HeaderSort/HeaderSort";
 import {getTableSortingOptions} from "shared/src/common/Util";
+import { AUTHORITY_LIST } from 'shared/src/common/menulist';
 
 export interface IProps {
   children?: any
@@ -27,7 +27,7 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [row, setRow] = useState<Array<any>>([])
-  const [auth, setAuth] = useState<Array<IMenu>>(AUTHORITY_LIST)
+  const [auth, setAuth] = useState<IMenu[] | any[]>(AUTHORITY_LIST)
   const [selectIndex, setSelectIndex] = useState<number>(-1)
   const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({sorts:[], orders:[]})
   const [column, setColumn] = useState<IExcelHeaderType[]>(

@@ -56,7 +56,6 @@ export {
   SF_ENDPOINT_FILE,
   SF_ENDPOINT_RESOURCE,
   //권한관리
-  AUTHORITY_LIST
 } from "./common/configset"
 
 export {excelDownload} from "./common/excelDownloadFunction"
