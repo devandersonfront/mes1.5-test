@@ -84,7 +84,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         model: row.product?.model?.model,
         code: row.product?.code,
         name: row.product?.name,
-        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'product') : "-",
         process: row.product?.process?.name,
         unit: row.product?.unit,
         goal: row.goal,

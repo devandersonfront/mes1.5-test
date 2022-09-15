@@ -8,6 +8,8 @@ const PRODUCT_TYPE : Array<CodeType> = [
   {code: 2, value: '완제품'},
   {code: 0, value: '반제품'},
   {code: 1, value: '재공품'},
+  {code: 3, value: '반제품'},
+  {code: 4, value: '완제품'},
 ]
 const MATERIAL_CODE: Array<CodeType> = [
   {code: 0, value: "원자재"},
@@ -45,7 +47,7 @@ const WELDING_TYPE : Array<CodeType> = [
 
 const EXPORT_TYPE : Array<CodeType> = [
   {code:0, value:"생산"},
-  {code:1, value:"반납"},
+  {code:1, value:"반품"},
   {code:2, value:"판매"},
   {code:3, value:"기타"},
 ]
@@ -54,7 +56,11 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
   let value = "";
 
   switch (type) {
-    case "productType":
+    case "productType": {
+      console.log(code)
+      value = code === undefined ? '(선택 없음)' : code < 3 ? '생산품' : '외주품'
+      break;
+    }
     case "product": {
       PRODUCT_TYPE.map(v => {
         if(v.code === code){

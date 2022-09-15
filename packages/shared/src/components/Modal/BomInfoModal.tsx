@@ -465,7 +465,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
     [
       {key:'CODE', value: headerData?.code ?? row?.code ?? "-"},
       {key:'품명', value: headerData?.name ?? row?.name ?? "-"},
-      {key:'품목 종류', value: headerData?.type ? TransferCodeToValue(headerData.type, 'productType') : row?.type || row?.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"},
+      {key:'품목 종류', value: headerData?.type ? TransferCodeToValue(headerData.type, 'product') : row?.type || row?.type === 0 ? TransferCodeToValue(row.type, 'product') : "-"},
       {key:'생산 공정', value: headerData?.process?.name ?? row?.processArray?.name ?? "-"}
     ],
     [

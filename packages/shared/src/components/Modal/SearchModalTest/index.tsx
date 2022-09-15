@@ -145,6 +145,18 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             opt:optionIndex,
             customer_id: row.product?.customerId ?? null
           }
+        case "allProduct":
+          return {
+            keyword:keyword,
+            opt:optionIndex,
+            outsourcing: 0
+          }
+        case "outsourceProduct":
+          return {
+            keyword:keyword,
+            opt:optionIndex,
+            outsourcing: 2
+          }
         case "toolProduct":
           return {}
         default:
@@ -301,9 +313,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   }
 
   const getDefaultSearchOptionIndex = (index:number) => {
-    if(column.type === 'product' && index === 0){
+    if(['product','allProduct','outsourceProduct'].includes(column.type) && index === 0){
       return 2
-    }else if(column.type === 'product' && index === 2){
+    }else if(['product','allProduct','outsourceProduct'].includes(column.type) && index === 2){
       return 0
     }else{
       return index
