@@ -58,6 +58,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      console.log("row : ", row)
       setSearchList([{
         modify: true,
         osId: row.os_id,
@@ -82,6 +83,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
   const SaveBasic = async () => {
     try{
       const postBody = searchList.map((v) => {
+        console.log("v : ", v)
         if(CheckRecordLotNumber(v.lot_number)){
           throw(alertMsg.wrongLotNumber)
         }else if(!v.lot_number){
@@ -251,6 +253,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 row={searchList ?? [{}]}
                 setRow={(e) => {
                   setSearchList(e.map(v => {
+                    console.log(v)
                     return {
                       ...v,
                       border:false,

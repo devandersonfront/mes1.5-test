@@ -62,6 +62,8 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      console.log("row : ", row)
+      console.log("state : ",column.state)
       setSummaryData({
         // ...res.parent
         identification: row.identification,
@@ -83,6 +85,8 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         changeRow(filter_input_bom)
       }else if(row.input_bom?.length > 0){
         changeRow(row.input_bom)
+      }else if(row.bom?.length > 0){
+        changeRow(row.bom)
       }else{
         Notiflix.Report.warning("경고","투입 자재가 없습니다.","확인", () => setIsOpen(false))
       }
@@ -293,7 +297,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
               <ExcelTable
                   headerList={searchModalList.InputListReadonly}
                   row={searchList ?? [{}]}
-                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
+                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                     setSelectRow(e)
                   }}
                   setRow={(e) => {

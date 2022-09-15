@@ -120,8 +120,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                 }
               }).filter(v=>v)
             }else{
-              inputBom = res
+              inputBom = [res]
             }
+            inputBom.map(bom => {
+              bom.originalBom = bom
+              bom.originalBom66 = bom
+              return bom
+            })
             if(res){
               const inputMaterialList = toInputMaterialList(inputBom)
               setInputMaterialList(inputMaterialList)
@@ -179,7 +184,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           {
             bom_info = bomIdAndLotMap.get(`rm${inputMaterial.childRmId}`)?.map((lots) => ({...lots.child_lot_rm, amount: lots.amount}))
           }
-          originalBom = row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.rmId === inputMaterial.childRmId)?.[0] ?? bom_info : bom_info
+          originalBom = column.state === "outsourcing" ? bom : row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.rmId === inputMaterial.childRmId)?.[0] ?? bom_info : bom_info
           break;
         }
         case 'subMaterial':{
@@ -189,7 +194,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           {
             bom_info = bomIdAndLotMap.get(`sm${inputMaterial.childSmId}`)?.map((lots) => ({...lots.child_lot_sm, amount: lots.amount}))
           }
-          originalBom = row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.smId === inputMaterial.childSmId)?.[0] ?? bom_info : bom_info
+          originalBom = column.state === "outsourcing" ? bom : row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.smId === inputMaterial.childSmId)?.[0] ?? bom_info : bom_info
           break;
         }
         case 'product':{
@@ -213,7 +218,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         const originalAmount = new Big(row.originalSum ?? row.sum).div(row.originalCavity).times(bom.usage)
         stock = stock.plus(originalAmount)
       }
-
       return {
         ...bom,
         ...bom.detail,
@@ -255,7 +259,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     const bomSavedAndUnChanged: boolean = bomSaved && !lotAmountChanged
     const lotNumAndLotMap = new Map()
     const originalLotNumAndLotMap = new Map()
-    input.originalBom && input.originalBom.map((lot) => originalLotNumAndLotMap.set(getBomKey(input.tab, lot), lot))
+    input.originalBom && Array.isArray(input.originalBom) && input.originalBom.map((lot) => originalLotNumAndLotMap.set(getBomKey(input.tab, lot), lot))
     if(lotAmountChanged){
       input.lots.map((lot) => lotNumAndLotMap.set(getBomKey(input.tab, lot), lot))
     }
@@ -388,7 +392,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         })
         onRowChange({
           ...row,
-          bom: bomToSave,
+          bom: bomToSave.map((bom, index) => {
+            if(column.state === "outsourcing"){
+              return {...bom, bom: inputMaterialList[index].originalBom66}
+            }else{
+              return bom
+            }
+          }),
           bom_info: bomLotInfo,
           quantity: quantity,
           good_quantity: quantity,

@@ -7,8 +7,10 @@ export const ParseResponse = (res: {info_list: any[]} | string | any[]) : any[] 
     return filteredRows
   } else if(Array.isArray(res)){
     return res
-  } else {
+  } else if(res?.info_list && Array.isArray(res.info_list)) {
     return res?.info_list
+  } else {
+    return [res]
   }
 }
 

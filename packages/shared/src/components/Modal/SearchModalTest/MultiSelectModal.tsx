@@ -374,7 +374,8 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     let newBasicRow = basicRowMap.size > 0 ? Array.from(basicRowMap.values()) : []
     newBasicRow = newBasicRow.length === 0
       ? [module.emptyRow]
-      : newBasicRow.map((row, rowIdx) => ({...row, isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1 }))
+      : newBasicRow.map((row, rowIdx) => ({...row, id:row.product.product_id , isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1 }))
+    console.log(newBasicRow)
     column.setBasicRow(newBasicRow)
     setBasicRowMap(new Map())
   }
@@ -404,25 +405,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     setBasicRowMap(new Map())
   }
 
-  const modalOpen = () => {
-
-    // 1122
-    const new_temp_list = searchList.map((row) => {
-      if (basicRowMap.has(row.product_id)) {
-        return {
-          ...row,
-          border: true
-        }
-      } else {
-        return {
-          ...row,
-          // border:false
-        }
-      }
-    })
-    setIsOpen(true)
-    setSearchList([...new_temp_list]);
-  }
 
   return (
     <>

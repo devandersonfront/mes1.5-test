@@ -78,6 +78,14 @@ export const MesTitles = (customTarget?: string) => {
     _productList : toMenu('생산/납품 현황','/mes/stock/productlist'),
     _productListAdmin : toMenu('생산/납품 현황(관리자용)','/mes/stock/admin'),
 
+    outsourcing : toMenu('외주 관리','',['_outsourcingOrder', '_outsourcingOrderList', '_outsourcingReceive', '_outsourcingReceiveList', '_outsourcingDelivery', '_outsourcingDeliveryList']),
+    _outsourcingOrder : toMenu('외주 발주','/mes/outsourcing/order'),
+    _outsourcingOrderList : toMenu('외주 발주 리스트','/mes/outsourcing/order/list'),
+    _outsourcingReceive : toMenu('외주 입고','/mes/outsourcing/receive'),
+    _outsourcingReceiveList : toMenu('외주 입고 리스트','/mes/outsourcing/receive/list'),
+    _outsourcingDelivery : toMenu('외주 납품','/mes/outsourcing/delivery'),
+    _outsourcingDeliveryList : toMenu('외주 납품 리스트','/mes/outsourcing/delivery/list'),
+
     kpi : toMenu('KPI','',['_pLeadTime','_manHour','_defect','_oLeadTime','_powerUsage','_uph','_operation']),
     _pLeadTime : toMenu('제조리드타임(P)','/mes/kpi/leadtime/manufacture'),
     _manHour : toMenu('작업공수(C)','/mes/kpi/manhour'),
