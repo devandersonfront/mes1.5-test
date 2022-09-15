@@ -255,10 +255,16 @@ export const columnlist: any = {
     {key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-'},
     {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', overlay:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
+    {key: 'product_type', name: '구분',  formatter: DropDownEditor, selectList: [
+        {pk: '0', name: '생산품'},
+        {pk: '1', name: '외주품'},
+      ]},
     {key: 'type', name: '품목 종류',  formatter: DropDownEditor, selectList: [
-        {pk: '0', name: '반제품'},
+        [{pk: '0', name: '반제품'},
         {pk: '1', name: '재공품'},
-        {pk: '2', name: '완제품'},
+        {pk: '2', name: '완제품'}],
+        [{pk: '3', name: '반제품'},
+        {pk: '4', name: '완제품'}],
       ]},
     // {key: 'product_type', name: '외주 여부',  formatter: DropDownEditor, selectList: [
     //     {pk: '3', name: '생산품'},

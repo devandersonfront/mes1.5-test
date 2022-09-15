@@ -115,7 +115,7 @@ const MoldInfoModal = ({column, row, onRowChange}: IProps) => {
   return (
     <MultiSelectModal buttonTitle={'금형'} title={'금형 정보 (해당 제품을 만드는 데 필요한 금형을 등록해주세요)'} hasData={row.molds?.length > 0} isOpen={isOpen}
                       onModalButtonClick={() => setIsOpen(true)} onClose={onCloseEvent}
-                      onConfirm={onConfirm}
+                      onConfirm={onConfirm} disabled={row.readonly}
                       validateConfirm={executeValidation} indexKey={'sequence'} headers={[
       [ { key: '거래처명', value: row.customerArray?.name ?? "-" }, { key: '모델', value: row.modelArray?.model ?? "-" }, ],
       [ { key: 'CODE', value: row.code ?? "-" }, { key: '품명', value: row.name ?? "-" }, {

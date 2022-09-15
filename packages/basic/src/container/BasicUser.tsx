@@ -150,10 +150,9 @@ const BasicUser = ({}: IProps) => {
       if(selectList.size === 0){
         throw(alertMsg.noSelectedData)
       }
-      const selectedRows = basicRow.filter(row => selectList.has(row.id))
-      const postBody = selectedRows.map(row => {
+      const addedColumn = column.filter(col => col.type === 'additional')
+      const postBody = basicRow.filter(row => selectList.has(row.id)).map(row => {
         validate(row)
-        const addedColumn = column.filter(col => col.type === 'additional')
         return {
           ...row,
           id: row.tmpId,
@@ -170,12 +169,14 @@ const BasicUser = ({}: IProps) => {
           }))
         }
       })
+      Notiflix.Loading.circle()
       const res = await RequestMethod('post', 'memberSave',postBody)
       if (res) {
               Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
       }
     } catch(errMsg){
       Notiflix.Report.warning('경고', errMsg, '확인')
+      Notiflix.Loading.remove()
     }
   };
 
@@ -582,7 +583,6 @@ const BasicUser = ({}: IProps) => {
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {
-          console.log('set',e)
           let newSelectList: Set<any> = selectList;
 
           e.map((v, i) => {

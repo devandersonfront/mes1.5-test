@@ -25,6 +25,7 @@ import { BarcodeDataType } from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import renewalColumn from '../../../main/common/unprintableKey'
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 export interface IProps {
   children?: any
@@ -81,98 +82,23 @@ const BasicProduct = ({}: IProps) => {
     })
   },[])
 
-
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    const changeOrder = (sort:string, order:string) => {
-      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-      setSortingOptions(_sortingOptions)
-      reload(null, _sortingOptions)
-    }
-    let tmpColumn = column.map((v: any) => {
-      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-      return {
-        ...v,
-        pk: v.unit_id,
-        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-        sorts: v.sorts ? sortingOptions : null,
-        result: v.sortOption ? changeOrder : null,
-      }
-    });
-
-    Promise.all(tmpColumn).then(res => {
-      setColumn([...res.map(v=> {
-        return {
-          ...v,
-          name: v.moddable ? v.name+'(필수)' : v.name
-        }
-      })])
-    })
+  const validate = (row) => {
+    if(!!!row.code) throw('CODE는 필수입니다.')
+    if(!!!row.product_id && !!!row.bom && Number(row.type_id) < 3 ) throw('BOM은 필수입니다.')
+    if(!!!row.process_id) throw('생산 공정은 필수입니다.')
   }
 
   const SaveBasic = async () => {
-    let selectCheck = false
-    let codeCheck = true
-    let processCheck = true
-    let bom = true
-    const searchAiID = (rowAdditional:any[], index:number) => {
-      let result:number = undefined;
-      rowAdditional.map((addi, i)=>{
-        if(index === i){
-          result = addi.ai_id;
-        }
-      })
-      return result;
-    }
-
-    Notiflix.Loading.standard();
-    let result = basicRow.map((row, i) => {
-
-      if(selectList.has(row.id)){
-        selectCheck = true;
-        if(!row.code) codeCheck = false
-        if(!row.bom) bom = false
-        if(!row.process_id) processCheck = false
-        let additional:any[] = []
-        column.map((v) => {
-          if(v.type === 'additional'){
-            additional.push(v)
-          }
-        })
-
-        let selectData: any = {}
-
-        Object.keys(row).map(v => {
-          if(v.indexOf('PK') !== -1) {
-            selectData = {
-              ...selectData,
-              [v.split('PK')[0]]: row[v]
-            }
-          }
-
-          if(v === 'unitWeight') {
-            selectData = {
-              ...selectData,
-              unitWeight: Number(row['unitWeight'])
-            }
-          }
-
-          if(v === 'tmpId') {
-            selectData = {
-              ...selectData,
-              id: row['tmpId']
-            }
-          }
-        })
-
+    try {
+      if(!!!selectList.size) throw(alertMsg.noSelectedData)
+      const addedColumn = column.filter(col => col.type === 'additional')
+      const postBody = basicRow.filter(row => selectList.has(row.id)).map(row => {
+        validate(row)
         return {
           ...row,
-          ...selectData,
-          // setting: row?.typePK ?? row.setting,
           customer: row?.customerArray?.customer_id ? row.customerArray : null,
-          // customer_id: row.customerArray.customer_id,
           customer_id: undefined,
           model: row?.modelArray?.cm_id ? row.modelArray : null,
-          // standard_uph: row.uph,
           molds:row?.molds?.map((mold)=>{
             return { setting:mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
           }).filter((mold) => mold.mold.mold_id) ?? [],
@@ -198,52 +124,26 @@ const BasicProduct = ({}: IProps) => {
             }).filter((machine) => machine.machine.machine_id)?? []
           ],
           work_standard_image:row.work_standard_image?.uuid,
-          type:row.type_id ?? row.typeId ?? row.typePK,
-          additional: [
-            ...additional.map((v, index)=>{
-              //if(!row[v.colName]) return undefined;
-              return {
-                mi_id: v.id,
-                title: v.name,
-                value: row[v.colName] ?? "",
-                unit: v.unit,
-                ai_id: searchAiID(row.additional, index) ?? undefined,
-                version:row.additional[index]?.version ?? undefined
-              }
-            }).filter((v) => v)
-          ]
+          type: row.type_id,
+          additional: addedColumn.map((col, colIdx)=> ({
+                mi_id: col.id,
+                title: col.name,
+                value: row[col.key] ?? "",
+                unit: col.unit,
+                ai_id: row.additional[colIdx]?.ai_id ?? undefined,
+                version:row.additional[colIdx]?.version ?? undefined
+              }))
         }
-
-      }
-    }).filter((v) => v)
-
-    if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
-      let res = await RequestMethod('post', `productSave`,result).catch((error)=>{
-        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
       })
-
+      Notiflix.Loading.circle();
+      const res = await RequestMethod('post', `productSave`,postBody)
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인', () => reload());
       }
-    }else if(!selectCheck){
       Notiflix.Loading.remove()
-      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
-    }else if(!codeCheck){
-      Notiflix.Loading.remove()
-      Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인");
-    }else if(!bom){
-      Notiflix.Loading.remove()
-      Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
+    } catch(errMsg) {
+      Notiflix.Report.warning('경고', errMsg, '확인')
     }
-    else if(!processCheck){
-      Notiflix.Loading.remove()
-      Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
-    }
-    // else if(!bomCheck){
-    //   Notiflix.Loading.remove()
-    //   Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
-    // }
-
   }
 
   const convertDataToMap = () => {
@@ -338,123 +238,68 @@ const BasicProduct = ({}: IProps) => {
     Notiflix.Loading.remove()
   }
 
+  const setNewColumn = (menus:any[]) => {
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(null, _sortingOptions)
+    }
+    let addedCols = []
+    const menuMap = menus?.reduce((map, menu) => {
+      if(false === menu.hide){
+        if(menu.colName){
+          map.set(menu.colName, menu)
+        }else {
+          addedCols.push({
+            id: menu.mi_id,
+            name: menu.title,
+            width: menu.width,
+            key: menu.mi_id,
+            editor: TextEditor,
+            type: 'additional',
+            unit: menu.unit,
+            tab: menu.tab,
+            version: menu.version,
+            colName: menu.mi_id,
+          })
+        }
+      }
+      return map
+    }, new Map())
+    let newCols =column.filter(col => menuMap.has(col.key)).map(col => {
+      const menu = menuMap.get(col.key)
+      const sortIndex = sortingOptions.sorts.findIndex(sort => sort ===col.key)
+      return {
+        ...col,
+        id: menu.mi_id,
+        name: !menu.moddable ? `${menu.title}(필수)`: menu.title,
+        width: menu.width,
+        tab:menu.tab,
+        unit:menu.unit,
+        moddable: !menu.moddable,
+        version: menu.version,
+        sequence: menu.sequence,
+        hide: menu.hide,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : col.sortOption ?? null,
+        sorts: col.sorts ? sortingOptions : null,
+        result: col.sortOption ? changeOrder : null,
+
+      }
+    })
+    setColumn(newCols.concat(addedCols))
+  }
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["productV1u"];
-    let tmpRow = []
-    tmpColumn = tmpColumn.map((column: any) => {
-      let menuData: object | undefined;
-      res.menus && res.menus.map((menu: any) => {
-        if(!menu.hide){
-          if(column.key === "product_type"){
-            menuData = {
-              id: column.key,
-              name: column.name,
-              width: menu.width,
-              // tab:menu.tab,
-              // unit:menu.unit,
-              // moddable: !menu.moddable,
-              // version: menu.version,
-              // sequence: menu.sequence,
-              hide: menu.hide
-            }
-          }
-          if(menu.colName === column.key){
-            menuData = {
-              id: menu.mi_id,
-              name: menu.title,
-              width: menu.width,
-              tab:menu.tab,
-              unit:menu.unit,
-              moddable: !menu.moddable,
-              version: menu.version,
-              sequence: menu.sequence,
-              hide: menu.hide
-            }
-          } else if(menu.colName === 'id' && column.key === 'tmpId'){
-            menuData = {
-              id: menu.mi_id,
-              name: menu.title,
-              width: menu.width,
-              tab:menu.tab,
-              unit:menu.unit,
-              moddable: !menu.moddable,
-              version: menu.version,
-              sequence: menu.sequence,
-              hide: menu.hide
-            }
-          }
-        }
-      })
-
-      if(menuData){
-        return {
-          ...column,
-          ...menuData
-        }
-      }
-    }).filter((v:any) => v)
-
-    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-      if(menu.colName === null && !menu.hide){
-        return {
-          id: menu.mi_id,
-          name: menu.title,
-          width: menu.width,
-          // key: menu.title,
-          key: menu.mi_id,
-          editor: TextEditor,
-          type: 'additional',
-          unit: menu.unit,
-          tab: menu.tab,
-          version: menu.version,
-          colName: menu.mi_id,
-        }
-      }
-    }).filter((v: any) => v) : []
-
-
-    tmpRow = res.info_list
-
-
-    loadAllSelectItems( [...tmpColumn, ...additionalMenus])
-
-
-    let selectKey = ""
-    let additionalData: any[] = []
-    tmpColumn.map((v: any) => {
-      if(v.selectList){
-        selectKey = v.key
-      }
-    })
-
-    additionalMenus.map((v: any) => {
-      if(v.type === 'additional'){
-        additionalData.push(v.key)
-      }
-    })
-
-    let pk = "";
-    Object.keys(tmpRow).map((v) => {
-      if(v.indexOf('_id') !== -1){
-        pk = v
-      }
-    })
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-      let appendAdditional: any = {}
-
-      row.additional && row.additional.map((v: any) => {
-        appendAdditional = {
-          ...appendAdditional,
-          [v.mi_id]: v.value
-        }
-      })
+    res.menus?.length && setNewColumn(res.menus)
+    const newRows = res.info_list.map((row: any) => {
+      const additionalData = row.additional.map(add => ({
+        [add.mi_id]: add.value
+      }))
 
       let random_id = Math.random()*1000;
       return {
         ...row,
-        ...appendAdditional,
+        ...additionalData,
         customer_id: row.customer?.name,
         customerArray: row.customer,
         cm_id: row.model?.model,
@@ -462,13 +307,14 @@ const BasicProduct = ({}: IProps) => {
         process_id: row.process?.name,
         processArray: row.process,
         type_id: row.type,
-        type: column[column.findIndex((col) => col.key == "type")]?.selectList[row.type].name,
+        type: column.filter(col => col.key === 'type')?.[0]?.selectList[row.type < 3 ? 0 : 1][row.type > 2 ? row.type - 3 : row.type].name,
+        product_type: column.filter(col => col.key === 'product_type')?.[0]?.selectList[row.type < 3 ? 0 : 1].name,
         id: `product_${random_id}`,
+        readonly: row.type > 2,
         reload
       }
     })
-
-    setBasicRow([...tmpBasicRow])
+    setBasicRow([...newRows])
   }
 
   const downloadExcel = () => {
@@ -496,12 +342,12 @@ const BasicProduct = ({}: IProps) => {
       case 2:
         let items = {}
 
-        column.map((value) => {
-          if(value.selectList && value.selectList.length){
+        column.map((col) => {
+          if(col.selectList && col.selectList.length){
+            const selectList = col.key === 'type' ? col.selectList[0][0] : col.selectList[0]
             items = {
-              ...value.selectList[0],
-              [value.key] : value.selectList[0].name,
-              [value.key+'PK'] : value.selectList[0].pk, //여기 봐야됨!
+              ...selectList,
+              [col.key] : selectList.name,
               type_id : '0',
               ...items,
             }

@@ -33,9 +33,9 @@ const MidRangeButton = ({row, column }: IProps) => {
         <div style={{
             padding: '3.5px 0px 0px 3.5px',
             width: '100%',
-            opacity : row.product_id ? 1 : .3
+            opacity : row.readonly ? .3 : row.product_id   ? 1 : .3
         }}>
-            <UploadButton style={buttonStyle}  onClick={onClickEvent}>
+            <UploadButton style={buttonStyle}  onClick={() => row.readonly ? undefined : onClickEvent()}>
                 <p style={titleStyle}>{title}</p>
             </UploadButton>
         </div>
