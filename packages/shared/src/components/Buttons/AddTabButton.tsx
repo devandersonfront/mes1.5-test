@@ -140,7 +140,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   }
 
   const lotNotReadOnlyEvent = () => {
-    console.log('addrow',row)
     if(row.action === 'modifyAndNoStock') {
       loadMaterialLot(row.tab, 1, row.action)
     } else if(row.originalStock === 0){

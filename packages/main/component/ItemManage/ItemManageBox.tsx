@@ -1,7 +1,7 @@
 import {ItemListTableHeader, ItemListTableWrapper, ItemWrapper} from '../../styles/styledComponents'
 import React from 'react'
 import ItemBox from './ItemBox'
-import {IItemMenuType} from '../../common/@types/type'
+import { IItemMenuType } from 'shared'
 
 interface IProps {
   title: string,

@@ -1,3 +1,17 @@
+# .env 파일 구성
+### 우선순위
+    .env.local > .env.development
+    .env.local > .env.production
+### 설정방법
+    접두사 'NEXT_PUBLIC_' 를 붙여서 변수 선언
+    NEXT_PUBLIC_SF_ADDRESS= 백엔드 api 주소
+    NEXT_PUBLIC_SF_ENDPOINT_S3= s3 api 주소
+    NEXT_PUBLIC_SF_ENDPOINT_PMS= pms api 주소
+    NEXT_PUBLIC_SF_ENDPOINT_EXCEL= excel api 주소
+    NEXT_PUBLIC_CUSTOM_TARGET= 커스텀 대상 회사 키 ('bk')
+    NEXT_PUBLIC_MENUS= 메인 메뉴 커스텀 (ex: HOME,BASIC,MES,PMS,CNC)
+  
+
 # monorepo 구성
 
 ```

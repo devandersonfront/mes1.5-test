@@ -32,7 +32,7 @@ const MoveButtons = ({row, column ,onRowChange }:Props) => {
     }
 
     return (
-        <div style={{height:"100%", display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+        <div className={'unprintable'} style={{height:"100%", display:"flex", justifyContent:"space-between", alignItems:"center"}}>
             <Button onClick={()=>{
                 moveUp();
             }}>위로</Button>

@@ -19,7 +19,7 @@ const PlaceholderBox = ({row, column, setRow}: IProps) => {
           )
       }
       return(
-          <Background>
+          <Background className={row[column.key] ?? 'unprintable'}>
               {
                   column.overlay ?
                   <Tooltip placement={'rightTop'} overlay={overLayNode} arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>

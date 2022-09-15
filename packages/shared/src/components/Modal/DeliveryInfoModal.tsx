@@ -14,6 +14,8 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {TransferCodeToValue} from '../../common/TransferFunction'
+import Tooltip from 'rc-tooltip'
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 interface IProps {
   column: IExcelHeaderType
@@ -25,17 +27,8 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
-  const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [total, setTotal] = useState<number>(0)
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
 
   useEffect(() => {
     if(isOpen) {
@@ -108,6 +101,51 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     </>
   }
 
+  const headers = [
+    [
+      {key:'수주번호', value: row.identification ?? '-'},
+      {key:'수주 날짜', value:  row.date ?? '-'},
+      {key:'납품 기한', value: row.deadline ?? '-'},
+    ],
+    [
+      {key:'거래처', value: row.customer_id ?? '-'},
+      {key:'모델', value: row.cm_id ?? '-'},
+      {key:'CODE', value: row.code ?? '-'},
+      {key:'품명', value: row.name ?? '-'},
+      {key:'품목 종류', value: row.type ?? '-'}
+    ],
+    [
+      {key:'단위', value: row.unit ?? '-'},
+      {key:'수주량', value: row.amount ?? '-'}
+    ]
+  ]
+
+  const Headers = () => (
+    headers.map(header =>
+      <HeaderTable>
+        {
+          header.map(headerItem =>
+            <>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>{headerItem.key}</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <Tooltip placement={'rightTop'}
+                         overlay={
+                           <div style={{fontWeight : 'bold'}}>
+                             {headerItem.value}
+                           </div>
+                         } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                  <HeaderTableText>{headerItem.value}</HeaderTableText>
+                </Tooltip>
+              </HeaderTableTextInput>
+            </>
+          )
+        }
+      </HeaderTable>
+    )
+  )
+
   return (
     <SearchModalWrapper >
       { ModalContents() }
@@ -149,72 +187,9 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
           </div>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>수주번호</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.identification ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>수주 날짜</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.date ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>납품 기한</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.deadline ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>거래처</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.product?.customer?.name ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.product?.model?.model ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.product?.code ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.product?.name ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{(row.product?.type || row.product?.type === 0) ? TransferCodeToValue(row.product.type, 'productType') : '-' }</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.product?.unit ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>수주량</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.amount ?? 0}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
+          {
+            Headers()
+          }
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
@@ -231,18 +206,14 @@ const DeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               width={1746}
               rowHeight={32}
               height={560}
-              // onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-              //   setSelectRow(e)
-              // }}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
+              onRowClick={(clicked) => {const rowIdx = searchList.indexOf(clicked)
+                if(!searchList[rowIdx]?.border){
+                  const newSearchList = searchList.map((v,i)=> ({
+                    ...v,
+                    border : i === rowIdx
+                  }))
+                  setSearchList(newSearchList)
                 }
-                setSelectRow(e)
               }}
               type={'searchModal'}
               headerAlign={'center'}
@@ -307,6 +278,8 @@ const HeaderTableTextInput = styled.div`
 const HeaderTableText = styled.p`
   margin: 0;
   font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const HeaderTableTitle = styled.div`

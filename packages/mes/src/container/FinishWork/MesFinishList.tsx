@@ -20,7 +20,7 @@ import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
-
+import addColumnClass from '../../../../main/common/unprintableKey'
 interface IProps {
   children?: any
   page?: number
@@ -241,7 +241,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
   }
 
   return (
-    <div>
+    <div className={'excelPageContainer'}>
       <PageHeader
         isSearch
         isCalendar
@@ -265,7 +265,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         selectable
         headerList={[
           SelectColumn,
-          ...column
+        ...addColumnClass(column)
         ]}
         row={basicRow}
         setRow={(e) => {

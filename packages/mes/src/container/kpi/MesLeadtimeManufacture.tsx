@@ -129,7 +129,7 @@ const MesLeadtimeManufacture = () => {
     },[])
 
     return (
-        <div>
+        <div className={'excelPageContainer'}>
             <PageHeader title={"제조리드타임(P)"} />
             <ExcelTable
                 editable

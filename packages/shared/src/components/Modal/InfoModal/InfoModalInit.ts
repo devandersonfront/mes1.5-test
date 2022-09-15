@@ -54,7 +54,7 @@ export const productInfoInit = {
 }
 
 export const BomRegisterInit = {
-  title: 'BOM정보 (해당 제품을 만드는데 사용할 자재를 선택해주세요. 자재 정보가 없으면 BOM 수정 버튼을 눌러 BOM 정보를 수정해주세요)',
+  title: 'BOM정보 (해당 제품을 만드는 데 사용할 자재를 선택해주세요. 자재 정보가 없으면 BOM 수정 버튼을 눌러 BOM 정보를 수정해주세요)',
   buttonText: '자재확인',
   modalKey: 'bomRegister',
   summaryInfo: [
@@ -71,7 +71,7 @@ export const BomRegisterInit = {
 }
 
 export const BomInfoInit = {
-  title: 'BOM정보 (해당 제품을 만드는데 사용할 자재를 선택해주세요. 자재 정보가 없으면 BOM 수정 버튼을 눌러 BOM 정보를 수정해주세요)',
+  title: 'BOM정보 (해당 제품을 만드는 데 사용할 자재를 선택해주세요. 자재 정보가 없으면 BOM 수정 버튼을 눌러 BOM 정보를 수정해주세요)',
   buttonText: 'BOM 보기',
   modalKey: 'bomRegister',
   summaryInfo: [
@@ -132,7 +132,7 @@ export const InfoInit: Record<string, InfoInitType> = {
   },
   bomInfo: {
     buttonText: 'BOM 등록',
-    title: 'BOM 정보 (해당 제품을 만드는데 필요한 BOM을 등록해주세요)',
+    title: 'BOM 정보 (해당 제품을 만드는 데 필요한 BOM을 등록해주세요)',
     excelColumnType: 'bomInfo',
     excelDownload: true,
     leftTopHeader: {
@@ -146,7 +146,7 @@ export const InfoInit: Record<string, InfoInitType> = {
   bomInfoReadOnly: {
     buttonText: 'BOM 등록',
     existText: '자재 보기',
-    title: 'BOM 정보 (해당 제품을 만드는데 사용할 자재를 선택해주세요. 자재 정보가 없으면 BOM 수정 버튼을 눌러 BOM 정보를 수정해주세요)',
+    title: 'BOM 정보 (해당 제품을 만드는 데 사용할 자재를 선택해주세요. 자재 정보가 없으면 BOM 수정 버튼을 눌러 BOM 정보를 수정해주세요)',
     excelColumnType: 'bomRegister',
     excelDownload: true,
     leftTopHeader: {
@@ -158,7 +158,7 @@ export const InfoInit: Record<string, InfoInitType> = {
   },
   moldInfo: {
     buttonText: '금형 등록',
-    title: '금형 정보 (해당 제품을 만드는데 필요한 금형을 등록해주세요)',
+    title: '금형 정보 (해당 제품을 만드는 데 필요한 금형을 등록해주세요)',
     excelColumnType: 'moldInfo',
     excelDownload: true,
     rightTopHeader: {

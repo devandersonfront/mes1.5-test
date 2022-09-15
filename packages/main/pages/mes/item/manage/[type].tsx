@@ -5,25 +5,20 @@ import ProfileHeader from '../../../../component/Profile/ProfileHeader'
 import {Header as PageHeader} from 'shared/src/components/Header'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
-import {IExcelHeaderType, IItemMenuType} from '../../../../common/@types/type'
 
 import {columnlist} from 'shared/src/common/columnInit'
 import {HeaderButton} from '../../../../styles/styledComponents'
 import ItemManageBox from '../../../../component/ItemManage/ItemManageBox'
 //@ts-ignore
 import Notiflix from "notiflix";
-import {RequestMethod, RootState} from "shared";
+import { IItemMenuType, RequestMethod, RootState } from 'shared'
 import { useRouter } from 'next/router'
 import cookie from 'react-cookies'
 
 interface IProps {
-  children?: any
   title: string
-  user: any
   type: string
   code: string
-  row?: Array<any>
-  column?: IExcelHeaderType[]
 }
 
 export const getServerSideProps = async (ctx: any) => {
@@ -55,12 +50,12 @@ export const getServerSideProps = async (ctx: any) => {
           title: '제품 등록 관리',
           code: 'ROLE_BASE_15'
         }
-      case 'rawMaterial':
+      case 'rawmaterial':
         return {
           title: '원자재 기준정보',
           code: 'ROLE_BASE_06'
         }
-      case 'subMaterial':
+      case 'submaterial':
         return {
           title: '부자재 기준정보',
           code: 'ROLE_BASE_13'

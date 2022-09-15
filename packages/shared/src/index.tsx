@@ -131,7 +131,6 @@ export {DefectSearchModal} from './components/Modal/DefectSearchModal'
 export {MachineSearchModal} from './components/Modal/MachineSearchModal'
 export {MemberSearchModal} from './components/Modal/MemeberSearchModal'
 export {ModelSearchModal} from './components/Modal/ModelSearchModal'
-export {MultipleSelectModal} from './components/Modal/MultipleSelectModal'
 export {OperationMachineSearchModal} from './components/Modal/OperationMachineSearchModal'
 export {OperationSearchModal} from './components/Modal/OperationSearchModal'
 export {PauseModal} from './components/Modal/PauseModal'
@@ -168,7 +167,6 @@ export {BarcodeModal} from "./components/Modal/BarcodeModal"
 export {MidrangeFormReviewModal} from "./components/Modal/MidrangeFormReviewModal"
 
 //test
-export {TestToolSelectModal} from './components/Modal/TestToolSelectModal'
 export {WorkRegisterModal} from './components/Modal/WorkRegisterModal'
 export {TestSearchModalTest} from "./components/Modal/SearchModalTest/TestSearchModalTest"
 

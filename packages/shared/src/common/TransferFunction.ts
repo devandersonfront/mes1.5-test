@@ -16,7 +16,7 @@ const MATERIAL_CODE: Array<CodeType> = [
 ]
 
 const RAW_MATERIAL_TYPE_CODE: Array<CodeType> = [
-  {code: 0, value: "반제품"},
+  {code: 0, value: "NONE"},
   {code: 1, value: "COIL"},
   {code: 2, value: "SHEET"},
 ]
@@ -43,18 +43,18 @@ const WELDING_TYPE : Array<CodeType> = [
   {code: 3, value: '통합'},
 ]
 
+const EXPORT_TYPE : Array<CodeType> = [
+  {code:0, value:"생산"},
+  {code:1, value:"반납"},
+  {code:2, value:"판매"},
+  {code:3, value:"기타"},
+]
+
 export const TransferCodeToValue = (code: number, type:TransferType) => {
   let value = "";
 
   switch (type) {
-    case "productType": {
-      PRODUCT_TYPE.map(v => {
-        if(v.code === code){
-          value = v.value;
-        }
-      })
-      break;
-    }
+    case "productType":
     case "product": {
       PRODUCT_TYPE.map(v => {
         if(v.code === code){
@@ -116,6 +116,14 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
       })
       break
     }
+    case 'export':{
+      EXPORT_TYPE.map(v => {
+        if(v.code === code){
+          value = v.value
+        }
+      })
+      break
+    }
     case null : {
       return "-"
     }
@@ -127,6 +135,14 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
     return value
   }
 }
+
+export const TransferEngToKor = (value:string) => {
+  switch(value){
+    case 'rawMaterial': return '원자재'
+    case 'subMaterial': return '부자재'
+  }
+}
+
 
 export const TransferValueToCode = (value: string, type:TransferType) => {
   let code = 0;
@@ -196,6 +212,14 @@ export const TransferValueToCode = (value: string, type:TransferType) => {
       WELDING_TYPE.map(v => {
         if(v.value === value){
           code = v.code;
+        }
+      })
+      break
+    }
+    case 'export':{
+      EXPORT_TYPE.map(v => {
+        if(v.value === value){
+          code = v.code
         }
       })
       break

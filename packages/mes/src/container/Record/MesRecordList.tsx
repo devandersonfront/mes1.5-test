@@ -23,6 +23,8 @@ import {
 import { useDispatch } from "react-redux";
 import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
+import addColumnClass from '../../../../main/common/unprintableKey'
+import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 
 interface IProps {
     children?: any;
@@ -296,14 +298,14 @@ const MesRecordList = ({}: IProps) => {
                 product_id: row.operation_sheet?.product?.code ?? "-",
                 name: row.operation_sheet?.product?.name ?? "-",
                 type:
-                    row.operation_sheet?.product?.type !== null
+                    row.operation_sheet?.product
                         ? TransferCodeToValue(row.operation_sheet.product.type, "product")
                         : "-",
                 unit: row.operation_sheet?.product?.unit,
                 process_id: row.operation_sheet?.product?.process?.name ?? "-",
                 user: row.worker,
                 sic_id: row.inspection_category,
-                worker: row.worker.name,
+                worker: row.worker?.name ?? '-',
                 worker_object: row.worker_object ?? row.worker,
                 id: `sheet_${random_id}`,
                 reload: _reload
@@ -313,7 +315,7 @@ const MesRecordList = ({}: IProps) => {
         setSelectList(new Set)
     }
     return (
-        <div>
+        <div className={'excelPageContainer'}>
             <PageHeader
                 isSearch
                 isCalendar
@@ -339,6 +341,14 @@ const MesRecordList = ({}: IProps) => {
                     switch (e) {
                         case 1: {
                             if (selectList.size === 1) {
+                                dispatch(setModifyInitData({
+                                    modifyInfo: basicRow.map(v => {
+                                        if (selectList.has(v.id)) {
+                                            return v
+                                        }
+                                    }).filter(v => v),
+                                    type: 'workModify'
+                                }))
                                 setExcelOpen(true);
                             } else if (selectList.size === 0) {
                                 Notiflix.Report.warning(
@@ -381,7 +391,7 @@ const MesRecordList = ({}: IProps) => {
                 selectable
                 headerList={[
                     SelectColumn,
-                    ...column
+                ...addColumnClass(column)
                 ]}
                 row={basicRow}
                 // setRow={setBasicRow}

@@ -15,6 +15,8 @@ import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from "../../styles/styledComponents";
 import {NoAmountValidation, OverAmountValidation} from '../../validations/Validation'
+import Tooltip from 'rc-tooltip'
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 interface IProps {
   column: IExcelHeaderType
@@ -22,31 +24,30 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
-
 const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [totalDelivery, setTotalDelivery] = useState<number>(0)
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
   })
+  const isModify = row.shipment_id && !column.readonly
 
   useEffect(() => {
     if(isOpen) {
-      if (row.lots && row.lots.length && column.key === 'lot_number') {
+      if(column.readonly){
         initData()
-      }else if (row.product?.product_id) {
-        SearchBasic()
       } else {
-        setIsOpen(false)
-        Notiflix.Report.warning('수주 또는 품목을 선택해 주세요.', '', '확인',)
+        if(row.product?.product_id) {
+          SearchBasic()
+        } else {
+          setIsOpen(false)
+          Notiflix.Report.warning('수주 또는 품목을 선택해 주세요.', '', '확인',)
+        }
       }
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen])
 
   const initData = async() => {
     let tmpData = []
@@ -61,7 +62,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
             lot_number: v.group.sum.lot_number,
             start: v.group.sum.start,
             end: v.group.sum.end,
-            worker_name: v.group.sum.worker.name,
+            worker_name: v.group.sum.worker?.name ?? '-',
             good_quantity: v.group.sum.good_quantity,
             current: v.group.sum.current,
             amount: row.lots[index].amount ?? row.amount,
@@ -78,7 +79,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           lot_number: v.group.sum.lot_number,
           start: v.group.sum.start,
           end: v.group.sum.end,
-          worker_name: v.group.sum.worker.name,
+          worker_name: v.group.sum.worker?.name,
           good_quantity: v.group.sum.good_quantity,
           current: v.group.sum.current,
           amount: v.amount ?? row.amount,
@@ -95,80 +96,117 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const changeRow = (tmpRow: any) => {
-    let tmpData = []
-    let row = [];
-    // if(typeof tmpRow === 'string'){
-    //   let tmpRowArray = tmpRow.split('\n')
-    //
-    //   row = tmpRowArray.map(v => {
-    //     if(v !== ""){
-    //       let tmp = JSON.parse(v)
-    //       return tmp
-    //     }
-    //   }).filter(v=>v)
-    // }else{
-      row = [...tmpRow]
-    // }
-
-    tmpData = row.map((v, i) => {
+    return tmpRow.map((v, i) => {
+      let current = v.sum.current
+      const matchedLot = row.lots?.filter(lot => lot.group.sum.lot_number === v.sum.lot_number)?.[0]
+      if(isModify){
+        const originalLot = row.originalLots?.filter(lot => lot.group.sum.lot_number === v.sum.lot_number)?.[0]
+        const originalAmount = originalLot?.amount ?? 0
+        const amount = matchedLot?.amount ?? 0
+        current = current + originalAmount - Number(amount)
+      }
+      const amount = matchedLot?.amount ?? undefined
       return {
         seq: i+1,
         lot_number: v.sum.lot_number,
         start: v.sum.start,
         end: v.sum.end,
-        worker_name: v.sum.worker.name,
+        worker_name: v.sum.worker?.name ?? '-',
         good_quantity: v.sum.good_quantity,
-        current: v.sum.current,
-        amount: v.sum.lot?.amount,
+        current,
+        originalCurrent: current,
+        amount,
         group: {
           ...v,
         }
       }
     })
-    return tmpData
   }
 
   const SearchBasic = async () => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', row.contract?.contract_id? `recordGroupListByContract` : `recordGroupList` ,{
+    const searchType = column.searchType ?? (row.contract?.contract_id ? 'contract' : 'code')
+    const res = await RequestMethod('get', searchType === 'contract' ? `recordGroupListByContract` : `recordGroupList` ,{
       path: {
         product_id: row.product.product_id,
-        contract_id: row.contract?.contract_id?? null,
+        contract_id: searchType === 'contract' ? row.contract?.contract_id : null,
         page: 1,
         renderItem: 18,
       },
     })
-    if(res && res.info_list.length <= 0){
-      Notiflix.Report.warning("경고","해당 품목의 재고가 없습니다.","확인", () => setIsOpen(false))
-      return
+    if(res && res.info_list?.length === 0){
+      return Notiflix.Report.warning("경고","해당 품목의 재고가 없습니다.","확인", () => setIsOpen(false))
     }else if(res){
       const searchList = changeRow(res.info_list)
       setPageInfo({
-        ...pageInfo,
         page: res.page,
         total: res.totalPages,
       })
 
       setSearchList([...searchList])
-      return searchList
     }
+    Notiflix.Loading.remove()
   }
 
   const ModalContents = () => (
       <UploadButton onClick={() => {
         setIsOpen(true)
       }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
-        <p>
-          {column.type === "placeholder" ? totalDelivery : "LOT 보기"}
-        </p>
+        <p>LOT 보기</p>
       </UploadButton>
   )
 
   const onClickCloseEvent = () => {
     setIsOpen(false)
     setPageInfo({page:1, total:1})
-    setSearchList([{seq: 1}])
+    setSearchList([])
   }
+
+  const headers = [
+    [
+      {key:'수주번호', value: row.identification ?? '-'},
+      {key:'거래처', value:  row.customer_id ?? '-'},
+      {key:'모델', value: row.cm_id ?? '-'},
+    ],
+    [
+      {key:'CODE', value: row.product_id ?? '-'},
+      {key:'품명', value: row.name ?? '-'},
+      {key:'품목 종류', value: row.type ?? '-'}
+    ],
+    [
+      {key:'단위', value: row.unit ?? '-'},
+      !column.readonly && {key:'총 재고량', value: row.product?.stock ?? 0},
+      {key:'총 납품 수량', value: totalDelivery}
+    ]
+  ]
+
+  const Headers = () => (
+    headers.map(header =>
+      <HeaderTable>
+        {
+          header.map(headerItem => {
+            if(headerItem){
+            return <>
+              <HeaderTableTitle>
+                <HeaderTableText style={{fontWeight: 'bold'}}>{headerItem.key}</HeaderTableText>
+              </HeaderTableTitle>
+              <HeaderTableTextInput style={{width: 144}}>
+                <Tooltip placement={'rightTop'}
+                         overlay={
+                           <div style={{fontWeight : 'bold'}}>
+                             {headerItem.value}
+                           </div>
+                         } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                  <HeaderTableText>{headerItem.value}</HeaderTableText>
+                </Tooltip>
+              </HeaderTableTextInput>
+            </>
+            }
+          })
+        }
+      </HeaderTable>
+    )
+  )
 
   return (
     <SearchModalWrapper >
@@ -209,71 +247,9 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
           </div>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>수주번호</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.contract?.identification ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>거래처</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.customer_id ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.cm_id ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.product_id ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.name ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.type ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.unit ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            {
-              column.type === 'base' &&
-              <>
-                  <HeaderTableTitle>
-                      <HeaderTableText style={{fontWeight: 'bold'}}>총 재고량</HeaderTableText>
-                  </HeaderTableTitle>
-                  <HeaderTableTextInput style={{width: 144}}>
-                      <HeaderTableText>{row.product?.stock ?? 0}</HeaderTableText>
-                  </HeaderTableTextInput>
-              </>
-            }
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>총 납품 수량</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{totalDelivery}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
+          {
+            Headers()
+          }
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
@@ -284,33 +260,40 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={column.type === 'baseReadonly'  || column.type === "placeholder" ? searchModalList.lotDeliveryInfoReadonly : searchModalList.lotDeliveryInfo}
+              headerList={column.readonly ? searchModalList.lotDeliveryInfoReadonly : searchModalList.lotDeliveryInfo}
               row={searchList }
               setRow={(e) => {
-                  let total = 0
-                  setSearchList([...e])
-                  e.map(v => {
-                    if(v.amount){
-                      total += Number(v.amount)
-                    }
-                  })
-                  setTotalDelivery(total)
+                let total = 0
+                const newSearchList = e.map(v => {
+                  if(v.amount){
+                    total += Number(v.amount)
+                  }
+                  let current = v.originalCurrent
+                  if(isModify){
+                    const originalLot = row.originalLots?.filter(lot => lot.group.sum.lot_number === v.group.sum.lot_number)?.[0]
+                    const originalAmount = originalLot?.amount ?? 0
+                    const amount = v?.amount ?? 0
+                    current = current + originalAmount - Number(amount)
+                  }
+                  return {
+                    ...v,
+                    current
+                  }
+                })
+                setSearchList(newSearchList)
+                setTotalDelivery(total)
               }}
               width={1746}
               rowHeight={32}
               height={568}
-              // onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-              //   setSelectRow(e)
-              // }}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
+              onRowClick={(clicked) => {const rowIdx = searchList.indexOf(clicked)
+                if(!searchList[rowIdx]?.border){
+                  const newSearchList = searchList.map((v,i)=> ({
+                    ...v,
+                    border : i === rowIdx
+                  }))
+                  setSearchList(newSearchList)
                 }
-                setSelectRow(e)
               }}
               type={'searchModal'}
               headerAlign={'center'}
@@ -327,20 +310,10 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
 
             
           </div>
-          { column.type === "readonly" || column.type === "baseReadonly" ?
+          { column.readonly ?
             <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
               <div
-                onClick={() => {
-                  if (selectRow !== undefined && selectRow !== null) {
-                    onRowChange({
-                      ...row,
-                      ...searchList[selectRow],
-                      name: row.name,
-                      isChange: true
-                    })
-                  }
-                  setIsOpen(false)
-                }}
+                onClick={() => onClickCloseEvent()}
                 style={{
                   width: '100%',
                   height: 40,
@@ -371,25 +344,9 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                 onClick={() => {
                   if(NoAmountValidation('amount', searchList,)) return
                   else if(OverAmountValidation('current', 'amount', searchList, '재고량 보다 납품 수량이 많습니다.')) return
-                  let lot = searchList.map(v => {
-                    return {
-                      ...v,
-                      amount: v.amount ?? 0
-                    }
-                  })
-
                   onRowChange({
                     ...row,
-                    [column.key]: [...lot.map(v => {
-                      if(Number(v.amount)){
-                        return v
-                      }
-                    }).filter(v=>v)],
-                    lots: [...lot.map(v => {
-                      if(Number(v.amount)){
-                        return v
-                      }
-                    }).filter(v=>v)],
+                    lots: searchList.filter(row => !!row.amount && Number(row.amount)),
                     amount: totalDelivery,
                     name: row.name,
                     isChange: true
@@ -460,6 +417,8 @@ const HeaderTableTextInput = styled.div`
 const HeaderTableText = styled.p`
   margin: 0;
   font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const HeaderTableTitle = styled.div`

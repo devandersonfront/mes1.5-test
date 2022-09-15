@@ -1,10 +1,10 @@
 import React from 'react'
-import MenuNavigation from '../../../component/MenuNav/MenuNavigation'
-import ProfileHeader from '../../../component/Profile/ProfileHeader'
+import MenuNavigation from '../../../../component/MenuNav/MenuNavigation'
+import ProfileHeader from '../../../../component/Profile/ProfileHeader'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {NextPageContext} from 'next'
-import {MesRawMaterialReturnList} from '../../../../mes'
+import {MesRawMaterialExportList} from 'mes'
 
 interface IProps {
     children?: any
@@ -20,7 +20,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
             <MenuNavigation pageType={'MES'}/>
             <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
-                <MesRawMaterialReturnList page={page} search={keyword} option={option}/>
+                <MesRawMaterialExportList page={page} search={keyword} option={option}/>
             </div>
         </div>
     );

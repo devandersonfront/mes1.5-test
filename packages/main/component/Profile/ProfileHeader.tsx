@@ -34,7 +34,7 @@ const ProfileHeader = () => {
 
 
   return (
-    <div style={{width: '100%', height: 50, display: 'flex', justifyContent: 'flex-end', paddingTop: 20}}>
+    <div className={'profile unprintable'} style={{width: '100%', height: 50, display: 'flex', justifyContent: 'flex-end', paddingTop: 20}}>
       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         {/*<Profile src={userInfo.profile ? SF_ENDPOINT_RESOURCE+'/'+userInfo.profile : ic_profile}/>*/}
         <Profile src={userInfo.profile ? "https://sizl-resource2.s3.ap-northeast-2.amazonaws.com"+'/'+userInfo.profile : ic_profile}/>

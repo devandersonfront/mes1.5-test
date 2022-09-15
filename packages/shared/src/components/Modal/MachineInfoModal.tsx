@@ -15,25 +15,24 @@ import {UploadButton} from '../../styles/styledComponents'
 import {TransferCodeToValue} from '../../common/TransferFunction'
 import Notiflix from 'notiflix'
 import { RequestMethod } from '../../common/RequestFunctions'
-import NormalModal from './NormalModal'
+import MultiSelectModal from './MultiSelectModal'
 
 interface IProps {
   column: IExcelHeaderType
   row: any
   onRowChange: (e: any) => void
-  modify
 }
 
-const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
+const initData = {seq: 1 , setting : 0, isFirst: true}
+
+const MachineInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [selectRow, setSelectRow] = useState<number>()
-  const [searchList, setSearchList] = useState<any[]>([{seq: 1 , setting : 0}])
+  const [searchList, setSearchList] = useState<any[]>([initData])
   const hasSaved = !!row.product_id
 
   useEffect(() => {
     if(isOpen) {
-      setSelectRow(undefined)
-      if(row?.machines && row?.machines.length > 0){
+      if(row.machines?.length){
         setSearchList(row.machines.map((v,i) => {
           return {
             ...v,
@@ -41,11 +40,12 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             border:false,
             type_id:v.machine.type,
             type:selectMachineType(v.machine.type),
-            seq: i+1
+            seq: i+1,
+            isFirst: i === 0
           }
         }))
       } else {
-        setSearchList([{seq: 1 , setting : 0}])
+        setSearchList([initData])
       }
     }
   }, [isOpen])
@@ -83,6 +83,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
 
   const executeValidation = () => {
     const hasInvalidData = searchList.some(row => !row.machine_id)
+    if(searchList.length === 1 && hasInvalidData) return
     const defaultSettingCount = searchList.filter(row =>row.setting === 1).length
 
     if(hasInvalidData){
@@ -98,23 +99,9 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         sequence : machine.sequence,
         setting : machine.setting,
         machine : {
-          machine_id : machine.machine_id,
-          mfrName : machine.mfrName,
-          name : machine.name,
+          ...machine,
           type : machine.type_id,
           weldingType : machine.weldingType_id,
-          madeAt:machine.madeAt,
-          mfrCode:machine.mfrCode,
-          manager:machine.manager,
-          photo:machine.photo,
-          capacity:machine.capacity,
-          qualify:machine.qualify,
-          guideline:machine.guideline,
-          interwork:machine.interwork,
-          devices:machine.devices,
-          factory:machine.factory,
-          subFactory:machine.subFactory,
-          additional :machine.additional,
         }
       }
     )).filter((machine) => machine.machine.machine_id)
@@ -125,17 +112,19 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       Notiflix.Report.success('저장되었습니다.','','확인', () =>
       {
         row.reload()
-        setIsOpen(false)
+        // setIsOpen(false)
       }))
   }
 
   const onConfirm = () => {
     try{
-      executeValidation()
-      if(hasSaved) {
-        updateData()
+      const hasNoData = row.machines?.length === 0 && searchList.length === 1 && !searchList[0]?.machine_id
+      const isChanged = () => row?.machines?.length !== searchList.length ||
+        row?.machines?.some((machine, mIdx) => machine?.machine?.machine_id !== searchList?.[mIdx]?.machine?.machine_id || machine?.setting !== searchList?.[mIdx]?.setting)
+      if(hasSaved && !hasNoData && isChanged()) {
+        return updateData()
       } else {
-        if(selectRow !== undefined && selectRow !== null){
+        if (!hasNoData && isChanged()) {
           onRowChange({
             ...row,
             machines: searchList.map((v, i) => {
@@ -148,7 +137,6 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
             isChange: true
           })
         }
-        setIsOpen(false)
       }
     }catch(errMsg){
       Notiflix.Report.warning('경고', errMsg, '확인')
@@ -162,8 +150,8 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const changeRow = (machine) => typeof machine.type !== "string" ? ({...machine, type_id:machine.type, type:selectMachineType(machine.type)}) : ({...machine})
 
   return (
-    <NormalModal buttonTitle={'기계'} title={'기계 정보 (제품 생산되는 데 사용되는 모든 기계를 입력해주세요)'} hasData={row.machines?.length > 0} isOpen={isOpen}
-                 onModalButtonClick={() => setIsOpen(true)} onClose={onCloseEvent} duplicateCheckKey={'mfrCode'}
+    <MultiSelectModal buttonTitle={'기계'} title={'기계 정보 (제품 생산되는 데 사용되는 모든 기계를 입력해주세요)'} hasData={row.machines?.length > 0} isOpen={isOpen}
+                 onModalButtonClick={() => setIsOpen(true)} onClose={onCloseEvent}
                  onConfirm={onConfirm}
                  validateConfirm={executeValidation} headers={[
       [ { key: '거래처명', value: row.customerArray?.name ?? "-" }, { key: '모델', value: row.modelArray?.model ?? "-" }, ],
@@ -172,7 +160,7 @@ const MachineInfoModal = ({column, row, onRowChange, modify}: IProps) => {
         value: row.type ? TransferCodeToValue(row.type, 'material') : "-"
       }, { key: '생산 공정', value: row.process?.name ?? "-" } ],
       [ { key: '단위', value: row.unit ?? "-" } ]
-    ]} data={searchList} setData={setSearchList} dataIndex={selectRow} setDataIndex={setSelectRow}
+    ]} data={searchList} setData={setSearchList}
                  dataColumnKey={'machineInfo'} changeRow={changeRow}/>
   )
 }

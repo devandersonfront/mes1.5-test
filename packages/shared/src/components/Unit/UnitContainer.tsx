@@ -50,7 +50,7 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
             : <p style={{ color: column.textType === 'Modal' ? 'black' : 'white', textAlign: column.textAlign ?? null }}>{title}</p>
         }
       </UnitValue>
-      <UnitBox>
+      <UnitBox className={'layoutCenter'}>
         {
           column.searchType === 'rawin'
             ? <span>{row.type ? row.type === 'COIL' ? 'kg' : '장' : ''}</span>

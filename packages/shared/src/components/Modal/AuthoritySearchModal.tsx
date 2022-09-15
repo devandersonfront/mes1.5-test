@@ -97,7 +97,9 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
       <div style={{width: 'calc(100% - 40px)', height: 40}}>
         { row[`${column.key}`] ?? "-"}
       </div>
-      <SearchIcon  onClick={() => {
+      <SearchIcon
+          className={'imageWrapper unprintable'}
+          onClick={() => {
         // 마스터 일때는 클릭 되면 안됨
         if(column.key === 'authority' && row[column.key] !== 'MASTER'){
             setIsOpen(true)
@@ -163,7 +165,9 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
                 fontWeight: 'bold',
                 margin: 0,
               }}>{title} 검색</p>
-              <div style={{cursor: 'pointer'}} onClick={() => {
+              <div
+                  className={'imageWrapper unprintable'}
+                  style={{cursor: 'pointer'}} onClick={() => {
                 setIsOpen(false)
               }}>
                 <img style={{width: 20, height: 20}} src={IcX}/>
@@ -223,6 +227,7 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
                 }}
               />
               <div
+                  className={'imageWrapper unprintable'}
                 style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
                 onClick={() => {
                   setSearchKeyword(keyword)

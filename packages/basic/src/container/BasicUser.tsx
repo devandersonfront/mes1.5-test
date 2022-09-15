@@ -20,6 +20,8 @@ import {
 } from "shared/src/reducer/menuSelectState";
 import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import {TableSortingOptionType} from "shared/src/@types/type";
+import addColumnClass from '../../../main/common/unprintableKey'
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 export interface IProps {
   children?: any;
@@ -110,169 +112,70 @@ const BasicUser = ({}: IProps) => {
     });
   };
 
-  // 내가 선택한 Row의 성명, 권한 , 아이디 ,비밀번호 , 비밀번호 확인등 값이 존재하지 않을경우 해당 Row의 컬럼명을 리턴해준다.
-  // Map으로 변환하는 함수
-  const covertDataToMap = (data: Array<any>) => {
-    const rowMap = new Map();
-    data.map((row) => {
-      rowMap.set(row.id, row);
-    });
-    return rowMap;
-  };
-
-  // 내가 선택한 Row
-  const selectRowList = () => {
-    let temp = [];
-
-    const convertMap = covertDataToMap(basicRow);
-    selectList.forEach((list) => {
-      if (convertMap.has(list)) {
-        return temp.push(convertMap.get(list));
+  const checkValid = (input: string, type:'password' | 'id') => {
+    let regex = undefined
+    if(input.length > 0){
+      switch (type){
+        case 'id':
+          regex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+          break;
+        case 'password':
+          regex = /^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,16}$/;
+          break;
       }
-    });
-    return temp;
-  };
-
-  // 선택을 했는데, isChange가 바뀌지 않은 것들만 예외 처리
-
-  const valueExistence = () => {
-    const selectedRows = selectRowList();
-    const newRows = selectedRows.filter((row) => row.user_id === undefined);
-
-    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
-    if (newRows.length > 0) {
-      const nameCheck = newRows.every((data) => data.name);
-      const idCheck = newRows.every((data) => data.tmpId);
-      const authorityCheck = newRows.every((data) => data.authority);
-      const passwordCheck = newRows.every((data) => data.password);
-      const passwordConfirmCheck = newRows.every(
-        (data) => data["password-confirm"]
-      );
-
-      if (!nameCheck) {
-        return "성명";
-      } else if (!authorityCheck) {
-        return "권한";
-      } else if (!idCheck) {
-        return "아이디";
-      } else if (!passwordCheck) {
-        return "비밀번호";
-      } else if (!passwordConfirmCheck) {
-        return "비밀번호 확인";
-      }
+      return regex.test(input)
     } else {
-      const nameCheck = selectedRows.every((data) => data.name);
-      const authorityCheck = selectedRows.every((data) => data.authority);
-
-      if (!nameCheck) {
-        return "성명";
-      } else if (!authorityCheck) {
-        return "권한";
-      }
+      return true
     }
+  }
 
-    return false;
-  };
-
-  const passwordCompete = () => {
-    const selectedRows = selectRowList();
-
-    return selectedRows.every((row) => {
-      const passwordConfirm = row["password-confirm"] ?? null;
-      return row.password === passwordConfirm;
-    });
-  };
+  const validate = (row) =>{
+      if(!!!row.name) throw('이름은 필수입니다.')
+      if(!!!row.authorityPK) throw('권한은 필수입니다.')
+      if(!!!row.tmpId) throw('아이디는 필수입니다.')
+      if(!!row.tmpId && checkValid(row.tmpId, 'id')) throw('아이디에 한글이 들어갈 수 없습니다.')
+      if(!!!row.user_id){
+        if(!!!row.password) throw('비밀번호는 필수입니다.')
+        if(!!!row['password-confirm']) throw('비밀번호 확인은 필수입니다.')
+      } else {
+        if(!!row.password &&!!!row['password-confirm']) throw('비밀번호 확인은 필수입니다.')
+        if(!!row['password-confirm'] && !!!row.password) throw('비밀번호는 필수입니다.')
+      }
+      if(!!row.password && !!row['password-confirm'] && row.password !== row['password-confirm']) throw('비밀번호와 비밀번호 확인이 서로 일치하지 않습니다.')
+      if(!!row.password && !checkValid(row.password, 'password')) throw('비밀번호는 8자 이상 16자 이하이어야 하며, 숫자/영문/특수문자(#?!@$%^&*-)를 모두 포함해야 합니다.')
+  }
 
   const SaveBasic = async () => {
-    const existence = valueExistence();
-
-    if (selectList.size === 0) {
-      return Notiflix.Report.warning(
-        "선택 경고",
-        `선택된 정보가 없습니다.`,
-        "확인"
-      );
-    }
-
-    if (!existence) {
-      const passwordCheck = passwordCompete();
-
-      if (passwordCheck) {
-        const searchAiID = (rowAdditional: any[], index: number) => {
-          let result: number = undefined;
-          rowAdditional.map((addi, i) => {
-            if (index === i) {
-              result = addi.ai_id;
-            }
-          });
-          return result;
-        };
-
-        basicRow.map((row) => {
-        });
-
-        let res = await RequestMethod(
-          "post",
-          `memberSave`,
-          basicRow
-            .map((row, i) => {
-              if (selectList.has(row.id)) {
-                let additional: any[] = [];
-                column.map((v) => {
-                  if (v.type === "additional") {
-                    additional.push(v);
-                  }
-                });
-
-                return {
-                  ...row,
-                  id: row.tmpId,
-                  authority: row.authorityPK,
-                  // user_id: row.tmpId,
-                  profile: row.profile?.uuid,
-                  version: row.version ?? null,
-                  additional: [
-                    ...additional
-                      .map((v, index) => {
-                        //if(!row[v.colName]) return undefined;
-                        return {
-                          mi_id: v.id,
-                          title: v.name,
-                          value: row[v.colName] ?? "",
-                          unit: v.unit,
-                          ai_id: searchAiID(row.additional, index) ?? undefined,
-                          version: row.additional[index]?.version ?? undefined,
-                        };
-                      })
-                      .filter((v) => v),
-                  ],
-                };
-              }
-            })
-            .filter((v) => v)
-        ).catch((error) => {
-          return (
-            error.data &&
-            Notiflix.Report.warning("경고", `${error.data.message}`, "확인")
-          );
-        });
-
-        if (res) {
-          Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
-        }
-      } else {
-        Notiflix.Report.warning(
-          "비밀번호 경고",
-          `비밀번호와 비밀번호 확인이 서로 일치하지 않습니다.`,
-          "확인"
-        );
+    try{
+      if(selectList.size === 0){
+        throw(alertMsg.noSelectedData)
       }
-    } else {
-      return Notiflix.Report.warning(
-        "필수값 경고",
-        `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
-        "확인"
-      );
+      const selectedRows = basicRow.filter(row => selectList.has(row.id))
+      const postBody = selectedRows.map(row => {
+        validate(row)
+        const addedColumn = column.filter(col => col.type === 'additional')
+        return {
+          ...row,
+          id: row.tmpId,
+          authority: row.authorityPK,
+          profile: row.profile?.uuid,
+          version: row.version ?? undefined,
+          additional: addedColumn.map((col,colIdx) => ({
+            mi_id: col.id,
+            title: col.name,
+            value: row[col.key] ?? "",
+            unit: col.unit,
+            ai_id: row.additional[colIdx]?.ai_id ?? undefined,
+            version: row.additional[colIdx]?.version ?? undefined,
+          }))
+        }
+      })
+      const res = await RequestMethod('post', 'memberSave',postBody)
+      if (res) {
+              Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
+      }
+    } catch(errMsg){
+      Notiflix.Report.warning('경고', errMsg, '확인')
     }
   };
 
@@ -398,6 +301,7 @@ const BasicUser = ({}: IProps) => {
     }
     setSelectList(new Set());
     Notiflix.Loading.remove()
+    
   };
 
   const changeRow = (row: any) => {
@@ -632,6 +536,7 @@ const BasicUser = ({}: IProps) => {
         row.tmpId !== ""
     );
 
+
     if (spliceRow) {
       if (isCheck) {
         return Notiflix.Report.warning(
@@ -645,9 +550,16 @@ const BasicUser = ({}: IProps) => {
     setBasicRow(rows);
   };
 
+  // 데이터를 받아올때, print되지 말아야할 header에 클래스명을 부여한다.
+  // 그리고 그 나머지 애들한테는 어떻게 이동하라는 클래스를 부여한다.
+  // 각 cell과 해더에 클래스명을 준다. 하나씩 땡기고 , 어떤건 두개씩 땡긴다.
+
+
+
+
 
   return (
-    <div>
+    <div className={'excelPageContainer'}>
       <PageHeader
         isSearch
         searchKeyword={keyword}
@@ -666,19 +578,20 @@ const BasicUser = ({}: IProps) => {
         resizable
         resizeSave
         selectable
-        headerList={[SelectColumn, ...column]}
+        headerList={[SelectColumn, ...addColumnClass(column)]}
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {
-          let tmp: Set<any> = selectList;
+          console.log('set',e)
+          let newSelectList: Set<any> = selectList;
 
           e.map((v, i) => {
             if (v.isChange) {
-              tmp.add(v.id)
+              newSelectList.add(v.id)
               v.isChange = false
             }
           });
-          setSelectList(tmp);
+          setSelectList(newSelectList);
           competeId(e);
         }}
         onRowClick={(clicked) => {
@@ -698,22 +611,7 @@ const BasicUser = ({}: IProps) => {
           setPageInfo({ ...pageInfo, page: page });
         }}
       />
-      {/* <ExcelDownloadModal
-        isOpen={excelDownOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`유저관리`}
-        sheetname={`유저관리`}
-        selectList={selectList}
-        tab={'ROLE_HR_02'}
-        setIsOpen={setExcelDownOpen}
-      />
-      <ExcelUploadModal
-        isOpen={excelUploadOpen}
-        setIsOpen={setExcelUploadOpen}
-        tab={'ROLE_HR_02'}
-        cleanUpBasicData={cleanUpBasicData}
-      /> */}
+
     </div>
   );
 };

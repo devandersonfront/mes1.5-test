@@ -33,6 +33,7 @@ const LoginPage = ({children, data, setData } : IProps) => {
       const res = await requestApi('post', '/anonymous/login', data)
 
       if(res) {
+
         setToken( res )
         dispatch(setUserInfo({
           name: res.name,

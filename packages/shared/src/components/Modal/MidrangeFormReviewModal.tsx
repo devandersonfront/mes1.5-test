@@ -93,15 +93,15 @@ const MidrangeFormReviewModal = ({ data, isOpen, setIsOpen}: IProps) => {
                                 width={1746}
                                 rowHeight={32}
                                 height={552}
-                                onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
-                                    if(!searchList[e].border){
-                                        searchList.map((v,i)=>{
-                                            v.border = false;
-                                        })
-                                        searchList[e].border = true
-                                        setSearchList([...searchList])
+                                onRowClick={(clicked) => {const rowIdx = searchList.indexOf(clicked)
+                                    if(!searchList[rowIdx]?.border){
+                                        const newSearchList = searchList.map((v,i)=> ({
+                                            ...v,
+                                            border : i === rowIdx
+                                        }))
+                                        setSearchList(newSearchList)
+                                        setSelectRow(rowIdx)
                                     }
-                                    setSelectRow(e)
                                 }}
                                 type={'searchModal'}
                                 headerAlign={'center'}
@@ -128,53 +128,6 @@ const MidrangeFormReviewModal = ({ data, isOpen, setIsOpen}: IProps) => {
 const SearchModalWrapper = styled.div`
   display: flex;
   width: 100%;
-`
-
-const Button = styled.button`
-    width:112px;
-    height:32px;
-    color:white;
-    font-size:15px;
-    border:none;
-    border-radius:6px;
-    background:#717C90;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-    
-`;
-
-const HeaderTable = styled.div`
-  width: 1744px;
-  height: 32px;
-  margin: 0 16px;
-  background-color: #F4F6FA;
-  border: 0.5px solid #B3B3B3;
-  display: flex
-`
-
-const HeaderTableTextInput = styled.div`
-  background-color: #ffffff;
-  padding-left: 3px;
-  height: 27px;
-  border: 0.5px solid #B3B3B3;
-  margin-top:2px;
-  margin-right: 70px;
-  display: flex;
-  align-items: center;
-`
-
-const HeaderTableText = styled.p`
-  margin: 0;
-  font-size: 15px;
-`
-
-const HeaderTableTitle = styled.div`
-  width: 99px;
-  padding: 0 8px;
-  display: flex; 
-  align-items: center;
 `
 
 export {MidrangeFormReviewModal};

@@ -11,6 +11,7 @@ import {RequestMethod} from "../../common/RequestFunctions";
 import ScrollState from "AdazzleReactDataGrid.ScrollState";
 
 interface IProps {
+  className ?: string
   headerList: Array<IExcelHeaderType>
   setHeaderList?:(value:Array<IExcelHeaderType>) => void
   row: Array<any>
@@ -41,9 +42,8 @@ interface IProps {
   onRowClick?: (row: any) => void
 }
 
-const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff, onDoubleClick, onRowClick}: IProps) => {
+const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff, onDoubleClick, onRowClick}: IProps) => {
   const [ selectedRows, setSelectedRows ] = useState<ReadonlySet<number>>(selectList ?? new Set())
-
 
   useEffect(() => {
     setSelectedRows(selectList)
@@ -101,7 +101,7 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       rowClass={(row) => row?.border ? 'selectRow' : undefined}
       headerRowHeight={customHeaderRowHeight ?? 40}
       rowKeyGetter={rowKeyGetter}
-      className={'cell'}
+      className={className}
       columns={headerList}
       rows={row.length > 0 ? row : []}
       components={{noRowsFallback: <EmptyRowsRenderer />}}
@@ -143,7 +143,7 @@ const ExcelTable = ({customHeaderRowHeight,headerList, setHeaderList, row, width
       }}
       rowHeight={rowHeight ?? 40}
       defaultColumnOptions={{
-        resizable: resizable,
+        resizable: true,
         editable: editable,
       }}
       onRowsChange={(data, idx) => {
@@ -217,10 +217,6 @@ const DataGridTable = styled(DataGrid)`
     padding: 0 8px;
   }
   
-  
-  
-   
-    
   ${(props:any) => props.state === "searchModal" ? `
     .rdg-checkbox-input:not(checked) + div{
         width:20px;

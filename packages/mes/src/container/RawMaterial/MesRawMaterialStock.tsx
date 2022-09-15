@@ -23,6 +23,7 @@ import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/U
 import {BarcodeDataType} from "shared/src/common/barcodeType";
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
+import addColumnClass from '../../../../main/common/unprintableKey'
 import {CompleteButton} from "shared/src/components/Buttons/CompleteButton";
 
 interface IProps {
@@ -183,7 +184,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           }
         }
       })
-      if(column.key == "return") menuData = {id:"return", name:column.name, width:column.width, }
       if(menuData){
         return {
           ...column,
@@ -265,33 +265,29 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         onClickEvent: (row) =>  row.is_complete ? SaveBasic(row)
           : Notiflix.Confirm.show(`재고 수량이 '0'으로 변경됩니다. 진행 하시겠습니까?`, '*사용완료 처리된 자재는 작업이력 수정 시 수정불가해집니다.', '예','아니오', () => SaveBasic(row), ()=>{},
             {width: '400px'}),
-        onClickReturnEvent: (row, remark) => Notiflix.Confirm.show(`경고`, '반납처리하겠습니까?', '예','아니오', () => SaveBasic(row, remark, 2), ()=>{}, {width: '400px'})
+        onClickReturnEvent: (row, remark) => Notiflix.Confirm.show(`경고`, '출고 처리 하시겠습니까?', '예','아니오', () => SaveBasic(row, true), ()=>{}, {width: '400px'})
       }
     })
     setSelectList(new Set)
     setBasicRow([...tmpBasicRow])
   }
 
-  async function SaveBasic(row: any, remark?:string, status?:number) {
+  async function SaveBasic(row: any, isExport?:boolean) {
     let res: any
-    console.log(row)
-    res = await RequestMethod('post', status ? `lotRmSave` : `lotRmComplete`, status ?
-     [{
-      ...row,
-      // warehousing: row.amount,
-      // type: row.type_id,
-      // raw_material: {...row.raw_material, type:row.raw_material?.type_id},
-      status:status,
-      remark:remark ?? null
-    }]
-        : {...row, current: row.realCurrent, is_complete: !row.is_complete,})
-      .catch((error) => {
-        if(error.status === 409){
-          Notiflix.Report.warning("경고", error.data.message, "확인",)
-          return true
-        }
-        return false
-      })
+    res = await RequestMethod('post', isExport ? `shipmentExportSave` : `lotRmComplete`, isExport ?
+       [{
+        ...row,
+        material_type:0,
+        remark:row.remark ?? "",
+      }]
+          : {...row, current: row.realCurrent, is_complete: !row.is_complete,})
+        .catch((error) => {
+          if(error.status === 409){
+            Notiflix.Report.warning("경고", error.data.message, "확인",)
+            return true
+          }
+          return false
+        })
 
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => reload())
@@ -438,7 +434,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   }
 
   return (
-    <div>
+    <div className={'excelPageContainer'}>
       <PageHeader
         isNz
         isExp
@@ -475,7 +471,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         selectable
         headerList={[
           SelectColumn,
-          ...column
+        ...addColumnClass(column)
         ]}
         row={basicRow}
         setRow={(e) => {

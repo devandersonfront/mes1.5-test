@@ -1,5 +1,5 @@
-import {IExcelHeaderType} from "../../common/@types/type";
 import React, { useEffect, useState } from 'react'
+import { IExcelHeaderType } from 'shared/src/@types/type';
 import Styled from 'styled-components'
 import settingRowColor from '../../../shared/src/Functions/settingRowColor';
 interface Props {

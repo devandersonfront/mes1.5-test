@@ -158,7 +158,9 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 {getContents()}
                 {/*{row.affiliated_id ?? ""}*/}
             </div>
-            <SearchIcon onClick={() => {
+            <SearchIcon
+                className={'unprintable'}
+                onClick={() => {
                 setIsOpen(true)
             }}>
                 <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
@@ -219,7 +221,9 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                         LoadBasic();
                                     }}/>
                                 }
-                                <div style={{cursor: 'pointer', marginLeft: 22}} onClick={() => {
+                                <div
+                                    className={'unprintable'}
+                                    style={{cursor: 'pointer', marginLeft: 22}} onClick={() => {
                                     setIsOpen(false)
                                 }}>
                                     <img style={{width: 20, height: 20}} src={IcX}/>
@@ -279,6 +283,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 }}
                             />
                             <div
+                                className={'unprintable'}
                                 style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
                                 onClick={() => {
                                     // SearchBasic(keyword, optionIndex)
@@ -296,21 +301,23 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                                 rowHeight={32}
                                 height={632}
                                 setRow={()=>{}}
-                                onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                                    if(!searchList[e].border){
-                                        searchList.map((v,i)=>{
-                                            v.border = false;
-                                        })
-                                        searchList[e].border = true
-                                        setSearchList([...searchList])
-                                    }
-                                    setSearchList([...searchList.map((row, index) => {
-                                        if(index === e) {
-                                            row.doubleClick = confirmFunction
-                                            return row
+                                onRowClick={(clicked) => {
+                                    const e = searchList.indexOf(clicked)
+                                    const update = searchList.map(
+                                      (row, index) => index === e
+                                        ? {
+                                            ...row,
+                                            doubleClick: confirmFunction,
+                                            border: true,
                                         }
-                                        else return row
-                                    })])
+                                        : {
+                                            ...row,
+                                            border: false
+                                        }
+                                    );
+
+                                    setSearchList(update)
+
                                     setSelectRow(e)
                                 }}
                                 type={'searchModal'}

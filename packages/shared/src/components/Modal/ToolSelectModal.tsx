@@ -11,19 +11,17 @@ import {ExcelTable} from '../Excel/ExcelTable'
 import {searchModalList} from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
-import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
-import {MachineInfoModal} from './MachineInfoModal'
 import {TransferCodeToValue} from "../../common/TransferFunction";
 import {UploadButton} from "../../styles/styledComponents";
+import Tooltip from 'rc-tooltip'
+import 'rc-tooltip/assets/bootstrap_white.css';
 
 interface IProps {
     column: IExcelHeaderType
     row: any
     onRowChange: (e: any) => void
 }
-
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
     [
@@ -52,6 +50,7 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<any[]>([])
     const [summaryData, setSummaryData] = useState<any>({})
+    const isModify = !!row.record_id
 
     useEffect(() => {
         if(isOpen) {
@@ -71,26 +70,24 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                 good_quantity: row.good_quantity ?? 0,
                 poor_quantity: row.poor_quantity ?? 0,
             })
-            if(row?.tools){
-                const tools = []
-                row.tools.map(({tool}) => {
-                    let toolObject:any = {...tool.tool}
-                    toolObject.sequence = tool?.sequence
-                    toolObject.code = tool.tool?.code
-                    toolObject.name = tool.tool?.name
-                    toolObject.customer = tool.tool?.customer
-                    toolObject.customerArray = tool.tool?.customerArray
-                    toolObject.product_id = tool.tool?.product_id
-                    toolObject.stock = tool.tool?.stock
-                    toolObject.version = tool.tool?.version
-                    tools.push(toolObject)
-                })
+            if(!!row?.tools?.length){
+                const tools = row.tools.map((tool, idx) => {
+                    return{
+                        ...tool.tool.tool,
+                        customer: tool.tool.tool.customer?.name,
+                        border: false,
+                        product_id: row.productId,
+                        used: tool.tool.used ?? undefined,
+                        sequence: idx + 1,
+                        isModify,
+                    }})
                 setSearchList(tools)
             }else{
-                setSearchList([{sequence: 1, product_id:row.productId}])
+                setSearchList([{sequence: 1, product_id:row.productId, isModify}])
             }
         }
     }, [isOpen, ])
+
 
     const ModalContents = () => (
         <UploadButton onClick={() => {
@@ -104,25 +101,38 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
         return summaryData[info.key] ?? '-'
     }
     const confirmFunction = () => {
-        if(searchList[0]?.name !== undefined) {
+        try{
+            searchList.map(row => {
+                if(!!!row.tool_id) {
+                    throw ('데이터를 선택해 주세요.')
+                }else if(!!!row.used) {throw ('생산량을 입력해 주세요.')}
+                })
             onRowChange({
                 ...row,
                 tools: searchList.map((v, i) => {
                     return {
-                        ...row.tools === undefined ? undefined : {...row.tools[i]},
                         record_id: row.record_id,
+                        record_tool_id: row.tools?.[i]?.record_tool_id,
                         tool: {
-                            ...row.tools === undefined ? undefined : {...row.tools[i]?.tool},
-                            tool: {...v}
+                            tool: {...v},
+                            used: v.used
                         },
+                        version: row.tools?.[i]?.version
                     }
                 }),
                 name: row.name,
                 isChange: true
             })
+            onClose()
+        }catch(errMsg) {
+            Notiflix.Report.warning('경고', errMsg,'확인')
         }
-        // }
+    }
+
+    const onClose = () => {
         setIsOpen(false)
+        setSelectRow(undefined)
+        setSearchList([{sequence: 1, product_id:row.productId}])
     }
 
     return (
@@ -159,12 +169,7 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                             margin: 0,
                         }}>공구 정보 (해당 제품 생산하는 데 사용한 공구를 입력해주세요.)</p>
                         <div style={{display: 'flex'}}>
-                            {/*<Button>*/}
-                            {/*  <p>엑셀로 받기</p>*/}
-                            {/*</Button>*/}
-                            <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
-                                setIsOpen(false)
-                            }}>
+                            <div style={{cursor: 'pointer', marginLeft: 20}} onClick={onClose}>
                                 <img style={{width: 20, height: 20}} src={IcX}/>
                             </div>
                         </div>
@@ -181,10 +186,14 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                                         <HeaderTableText style={{fontWeight: 'bold'}}>{info.title}</HeaderTableText>
                                                     </HeaderTableTitle>
                                                     <HeaderTableTextInput style={{width: info.infoWidth}}>
-                                                        <HeaderTableText>
-                                                            {getSummaryInfo(info)}
-                                                            {/*-*/}
-                                                        </HeaderTableText>
+                                                        <Tooltip placement={'rightTop'}
+                                                                 overlay={
+                                                                     <div style={{fontWeight : 'bold'}}>
+                                                                         {getSummaryInfo(info)}
+                                                                     </div>
+                                                                 } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                                                            <HeaderTableText>{getSummaryInfo(info)}</HeaderTableText>
+                                                        </Tooltip>
                                                         {info.unit && <div style={{marginRight:8, fontSize: 15}}>{info.unit}</div>}
                                                     </HeaderTableTextInput>
                                                 </>
@@ -207,18 +216,20 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                     ...searchList,
                                     {
                                         sequence: searchList.length + 1,
-                                        product_id:row.productId
+                                        product_id:row.productId,
+                                        isModify
                                     }
                                 ])
                             }}>
                                 <p>행 추가</p>
                             </Button>
                             <Button onClick={() => {
-                                let tmp = searchList
-                                tmp.splice(tmp.length-1, 1)
-                                setSearchList([
-                                    ...tmp
-                                ])
+                                if(selectRow !== undefined){
+                                    let tmp = searchList.slice()
+                                    tmp.splice(selectRow, 1)
+                                    tmp = tmp.map((row, idx) => ({...row, sequence: idx + 1}))
+                                    setSearchList(tmp)
+                                }
                             }}>
                                 <p>행 삭제</p>
                             </Button>
@@ -226,31 +237,30 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
                         <ExcelTable
-                            headerList={searchModalList.toolUse}
+                            headerList={searchModalList.toolUse(searchList)}
                             row={searchList ?? [{}]}
                             setRow={(e) => {
-                                if(e[0].stock === 0){
+                                if(e[selectRow].stock <= 0 ){
                                     return Notiflix.Report.warning("경고", "재고량이 없습니다.", "확인",  );
                                 }
                                 const update = e.map((data, index) => {
-                                    return { ...data, sequence: index + 1, productId: row.productId }
+                                    return { ...data, sequence: index + 1, product_id: row.productId, isModify }
                                 })
-
                                 setSearchList(update)
                             }}
                             width={1746}
                             rowHeight={32}
                             height={552}
-                            onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                                if(!searchList[e].border){
-
-                                    searchList.map((v,i)=>{
-                                        v.border = false;
-                                    })
-                                    searchList[e].border = true
-                                    setSearchList([...searchList])
+                            onRowClick={(clicked) => {
+                                const rowIdx = searchList.indexOf(clicked)
+                                if(!searchList[rowIdx]?.border){
+                                    const newSearchList = searchList.map((v,i)=> ({
+                                        ...v,
+                                        border : i === rowIdx
+                                    }))
+                                    setSearchList(newSearchList)
+                                    setSelectRow(rowIdx)
                                 }
-                                setSelectRow(e)
                             }}
                             type={'searchModal'}
                             headerAlign={'center'}
@@ -258,9 +268,7 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                     </div>
                     <div style={{ height: 45, display: 'flex', alignItems: 'flex-end'}}>
                         <div
-                            onClick={() => {
-                                setIsOpen(false)
-                            }}
+                            onClick={onClose}
                             style={{width: 888, height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >
                             <p style={{color: '#717C90'}}>취소</p>
@@ -321,6 +329,8 @@ const HeaderTableTextInput = styled.div`
 const HeaderTableText = styled.p`
   margin: 0;
   font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const HeaderTableTitle = styled.div`

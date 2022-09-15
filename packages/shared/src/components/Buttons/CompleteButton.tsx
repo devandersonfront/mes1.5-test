@@ -9,19 +9,15 @@ interface IProps {
 
 const CompleteButton = ({ row, column}: IProps) => {
   const afterCompleteUi = () => {
-    return <CellButton
-      onClick={() => {
-        row.onClickEvent(row)
-      }
-      }>{column.afterEventTitle}</CellButton>
+    return <CellButton style={{opacity: row.readonly ? .3 : 1}} onClick={() => row.onClickEvent && row.onClickEvent(row)}>
+      {column.afterEventTitle}
+    </CellButton>
   }
 
   const beforeCompleteUi = () => {
-    return <CellButton
-      onClick={() => {
-      row.onClickEvent(row)
-    }
-    }>{column.beforeEventTitle}</CellButton>
+    return <CellButton style={{opacity: row.readonly ? .3 : 1}} onClick={() => row.onClickEvent && row.onClickEvent(row)}>
+      {column.beforeEventTitle}
+    </CellButton>
   }
 
   return (

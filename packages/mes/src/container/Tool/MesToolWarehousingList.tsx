@@ -244,7 +244,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
     }
 
     return (
-        <div>
+        <div className={'excelPageContainer'}>
 
             <PageHeader
                 title={"공구 입고 리스트"}

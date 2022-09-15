@@ -35,7 +35,6 @@ const HomeProductionLog = ({}: IProps) => {
         totalPages : 1
     });
     const userInfo = cookie.load('userInfo')
-
     useEffect(() => {
         if(userInfo?.ca_id?.authorities?.some(auth => ['ROLE_PROD_02', 'ROLE_PROD_06'].includes(auth))){
             Notiflix.Loading.circle()

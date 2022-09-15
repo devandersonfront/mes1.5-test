@@ -1,4 +1,3 @@
-import UserInfo, { UserInfoState } from '../reducer/userInfo'
 
 export interface IMenuType {
   title: string
@@ -14,6 +13,10 @@ export interface IProps {
 }
 
 export interface IExcelHeaderType {
+  unit: any
+  setBasicRow?: any
+  headerType?:any[]
+  basicRow?: any
   isFloatFormat?: number
   onClickEvent?: (any) => {any}
   beforeEventTitle?: string
@@ -50,7 +53,6 @@ export interface IExcelHeaderType {
   title?: string
   subTitle?:string
   url?: string
-  headerType?:any[]
   toolType?: 'register'
   callback?: (data : any) => void
   idx?:number
@@ -64,6 +66,7 @@ export interface IExcelHeaderType {
   noSelect?:boolean
   inputType?: string
   overlay?:boolean
+  state?:string
   orderRegisterManage?:() => any[]
 
 }
@@ -90,6 +93,12 @@ export interface IItemMenuType {
   hide?: boolean
   width?: number
   unit?: number
+  unit_id?:number
+  sequence?:number
+  colName?:string
+  tab?:string
+  moddable?:boolean
+  moddablePK?:any
 }
 
 export type MachineType = {
@@ -207,7 +216,7 @@ export interface MidrangeRecordRegister extends MidrangeRecordType {
   samples?:number
 }
 
-export type TransferType = "productType" | "material" | "rawMaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "subMaterial" | "welding" | null
+export type TransferType = "productType" | "material" | "rawMaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "subMaterial" | "welding" | "export" | "unit" | null
 
 export interface BomType {
   childProductId: number | null

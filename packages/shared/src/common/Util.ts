@@ -88,3 +88,20 @@ export const decideKoreanSuffix = (word: string, existCoda: string, notExistCoda
 
   return word+markingParticle
 }
+
+export const CheckRecordLotNumber = (lotNumber:string) : boolean => {
+  const regex = new RegExp(/^basicstock-\d+$/)
+  return regex.test(lotNumber)
+}
+
+export const TransferType = (type:"COIL" | "SHEET" | string) => {
+  switch(type){
+    case "COIL" :
+      return "KG"
+    case "SHEET" :
+      return "장"
+    default:
+      return type
+  }
+
+}

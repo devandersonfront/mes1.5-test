@@ -14,7 +14,8 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from "../../styles/styledComponents";
-
+import Tooltip from 'rc-tooltip'
+import 'rc-tooltip/assets/bootstrap_white.css';
 interface IProps {
   column: IExcelHeaderType
   row: any
@@ -25,35 +26,23 @@ const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const LotInfoModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [title, setTitle] = useState<string>('기계')
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [keyword, setKeyword] = useState<string>('')
-  const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
-    page: 1,
-    total: 1
-  })
+  const [ pageInfo, setPageInfo ] = useState({ page : 1, total :1})
 
   useEffect(() => {
     if(isOpen) {
       if(row.productId){
         SearchBasic('', 0, 1)
-      }else{
-        setSearchList([...row.lots.map(v => {
-          return {
-            seq: 1,
-            lot_number: v.group.sum.lot_number,
-            start: v.group.sum.start,
-            end: v.group.sum.end,
-            worker: v.group.sum.worker?.name ?? '-',
-            amount: v.group.sum.current
-          }
-        })])
       }
     }
-  }, [isOpen, searchKeyword])
+  }, [isOpen])
+
+  useEffect(() => {
+    if(isOpen && pageInfo.page > 1){
+      SearchBasic('', 0, pageInfo.page)
+    }
+  }, [ pageInfo.page ])
+
 
   const changeRow = (row: any, i: number) => {
 
@@ -70,8 +59,6 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const SearchBasic = async (keyword: any, option: number, page: number) => {
     Notiflix.Loading.circle()
-    setKeyword(keyword)
-    setOptionIndex(option)
     const res = await RequestMethod('get', `recordGroupList`,{
       path: {
         product_id: row.productId,
@@ -103,11 +90,10 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
         return changeRow(row, index)
       })
 
-      // setPageInfo({
-      //   ...pageInfo,
-      //   page: res.results.page,
-      //   total: res.results.totalPages,
-      // })
+      setPageInfo({
+        page: res.page,
+        total: res.totalPages,
+      })
 
       setSearchList([...searchList])
     }
@@ -119,6 +105,50 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
       }} hoverColor={POINT_COLOR} haveId >
           <p style={{textDecoration: 'underline', padding: 0, margin: 0}}>LOT 보기</p>
       </UploadButton>
+
+  const headers = [
+    [
+      {key:'거래처', value: row.customer_id ?? '-'},
+      {key:'모델', value:  row.cm_id ?? '-'},
+    ],
+    [
+      {key:'CODE', value: row.code ?? '-'},
+      {key:'품명', value: row.name ?? '-'},
+      {key:'품목 종류', value: row.type ?? '-'}
+    ],
+    [
+      {key:'단위', value: row.unit ?? '-'},
+      {key:'재고량', value: row.stock ?? 0}
+    ]
+  ]
+
+  const Headers = () => (
+    headers.map(header =>
+      <HeaderTable>
+        {
+          header.map(headerItem => {
+            if(headerItem){
+              return <>
+                <HeaderTableTitle>
+                  <HeaderTableText style={{fontWeight: 'bold'}}>{headerItem.key}</HeaderTableText>
+                </HeaderTableTitle>
+                <HeaderTableTextInput style={{width: 144}}>
+                  <Tooltip placement={'rightTop'}
+                           overlay={
+                             <div style={{fontWeight : 'bold'}}>
+                               {headerItem.value}
+                             </div>
+                           } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                    <HeaderTableText>{headerItem.value}</HeaderTableText>
+                  </Tooltip>
+                </HeaderTableTextInput>
+              </>
+            }
+          })
+        }
+      </HeaderTable>
+    )
+  )
 
   return (
     <SearchModalWrapper >
@@ -164,91 +194,15 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
           </div>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>거래처</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.customer_id ?? "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>모델</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.cm_id ?? "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>CODE</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.code ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>품명</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.name ?? "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>품목 종류</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.type ?? "-"}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
-          <HeaderTable>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>단위</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.unit ?? '-'}</HeaderTableText>
-            </HeaderTableTextInput>
-            <HeaderTableTitle>
-              <HeaderTableText style={{fontWeight: 'bold'}}>재고량</HeaderTableText>
-            </HeaderTableTitle>
-            <HeaderTableTextInput style={{width: 144}}>
-              <HeaderTableText>{row.stock ?? 0}</HeaderTableText>
-            </HeaderTableTextInput>
-          </HeaderTable>
+          {
+            Headers()
+          }
           <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
             <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
               <div style={{ display: 'flex', width: 1200}}>
                 <p style={{fontSize: 22, padding: 0, marginBottom: 8}}>{column.type === 'readonly'? "LOT 별 수량" : "작업이력"}</p>
               </div>
             </div>
-            {/*<div style={{height: '100%', display: 'flex', alignItems:"flex-end", paddingBottom: 7}}>*/}
-            {/*  <div style={{*/}
-            {/*    display:"flex", justifyContent: 'flex-end', width: "400px", height: "32px", borderRadius: 6, backgroundColor: '#F4F6FA', marginRight: 16,*/}
-            {/*    border:'0.5px solid #b3b3b3'*/}
-            {/*  }}>*/}
-            {/*    <div style={{*/}
-            {/*      width: 120, height:32, display: 'flex', justifyContent: 'center', alignItems: 'center',*/}
-            {/*      backgroundColor: POINT_COLOR, borderRadius: 6,*/}
-            {/*    }}>*/}
-            {/*        LOT 번호*/}
-            {/*    </div>*/}
-            {/*    <input*/}
-            {/*      value={keyword ?? ""}*/}
-            {/*      type={"text"}*/}
-            {/*      placeholder="검색어를 입력해주세요."*/}
-            {/*      onChange={(e) => {setKeyword(e.target.value)}}*/}
-            {/*      onKeyDown={(e) => {*/}
-            {/*        if(e.key === 'Enter'){*/}
-            {/*          // SearchBasic(keyword,)*/}
-            {/*        }*/}
-            {/*      }}*/}
-            {/*      style={{width:"248px", height:"31px", borderRadius: '6px', paddingLeft:"10px", border:"none", backgroundColor: 'rgba(0,0,0,0)'}}*/}
-            {/*    />*/}
-            {/*    <div*/}
-            {/*      style={{background:"#19b9df", width:"31px",height:"31px",display:"flex",justifyContent:"center",alignItems:"center",borderRadius:"6px"}}*/}
-            {/*      onClick={() => {}}*/}
-            {/*    >*/}
-            {/*      <img src={Search_icon} style={{width:"16.3px",height:"16.3px"}} />*/}
-            {/*    </div>*/}
-            {/*  </div>*/}
-            {/*</div>*/}
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
@@ -258,35 +212,29 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
               width={1746}
               rowHeight={32}
               height={568}
-              // onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-              //   setSelectRow(e)
-              // }}
-              onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
-                if(!searchList[e].border){
-                  searchList.map((v,i)=>{
-                    v.border = false;
-                  })
-                  searchList[e].border = true
-                  setSearchList([...searchList])
+              onRowClick={(clicked) => {const rowIdx = searchList.indexOf(clicked)
+                if(!searchList[rowIdx]?.border){
+                  const newSearchList = searchList.map((v,i)=> ({
+                    ...v,
+                    border : i === rowIdx
+                  }))
+                  setSearchList(newSearchList)
                 }
-                setSelectRow(e)
               }}
               type={'searchModal'}
               headerAlign={'center'}
+              scrollEnd={(isEnd) => {
+                if(isEnd) {
+                  if (pageInfo.total > pageInfo.page) {
+                    setPageInfo({ ...pageInfo, page: pageInfo.page + 1 })
+                  }
+                }
+              }}
             />
           </div>
-          { column.type === "readonly" ?
             <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
               <div
                 onClick={() => {
-                  if (selectRow !== undefined && selectRow !== null) {
-                    onRowChange({
-                      ...row,
-                      ...searchList[selectRow],
-                      name: row.name,
-                      isChange: true
-                    })
-                  }
                   setIsOpen(false)
                 }}
                 style={{
@@ -301,46 +249,6 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
                 <p>확인</p>
               </div>
             </div>
-            : <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
-            <div
-              onClick={() => {
-                setIsOpen(false)
-              }}
-              style={{
-                width: 888,
-                height: 40,
-                backgroundColor: '#b3b3b3',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <p>취소</p>
-            </div>
-            <div
-              onClick={() => {
-                if (selectRow !== undefined && selectRow !== null) {
-                  onRowChange({
-                    ...row,
-                    ...searchList[selectRow],
-                    name: row.name,
-                    isChange: true
-                  })
-                }
-                setIsOpen(false)
-              }}
-              style={{
-                width: 888,
-                height: 40,
-                backgroundColor: POINT_COLOR,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <p>등록하기</p>
-            </div>
-          </div>}
         </div>
       </Modal>
     </SearchModalWrapper>
@@ -378,6 +286,8 @@ const HeaderTableTextInput = styled.div`
 const HeaderTableText = styled.p`
   margin: 0;
   font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const HeaderTableTitle = styled.div`

@@ -22,7 +22,7 @@ import {
   setMenuSelectState,
 } from "../../../../shared/src/reducer/menuSelectState";
 import { setExcelTableHeight } from 'shared/src/common/Util'
-
+import addColumnClass from '../../../../main/common/unprintableKey'
 interface IProps {
   children?: any;
   page?: number;
@@ -90,6 +90,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
       let random_id = Math.random() * 1000;
       return {
         ...row,
+        product: row,
         customer_name: row.customer?.name ?? "-",
         customer_model: row.model?.model ?? "-",
         customer_id: row.customer?.name ?? "-",
@@ -126,8 +127,6 @@ const MesStockList = ({ page, search, option }: IProps) => {
     const res = await RequestMethod("post", "stockSave",data)
     if(res){
       Notiflix.Report.success("저장되었습니다.","","확인", () => reload())
-    }else{
-      Notiflix.Report.failure("서버에러 입니다.","","확인")
     }
   }
 
@@ -135,14 +134,14 @@ const MesStockList = ({ page, search, option }: IProps) => {
     switch(index){
       case 0:
         const filterRow = basicRow.filter(row => selectList.has(row.id))
-        const renewalRow = filterRow.map(row => ({ product_id:row.productId, stock : row?.basic_stock}))
+        const renewalRow = filterRow.map(row => ({ product:row.product, stock : row?.basic_stock}))
         stockSave(renewalRow)
     }
   }
 
 
   return (
-      <div>
+      <div className={'excelPageContainer'}>
         <PageHeader
             isSearch
             searchKeyword={keyword}
@@ -160,7 +159,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
             selectable
             headerList={[
               SelectColumn,
-              ...column
+              ...addColumnClass(column)
             ]}
             row={basicRow}
             setRow={(e) => {

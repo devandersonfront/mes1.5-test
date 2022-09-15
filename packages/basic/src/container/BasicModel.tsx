@@ -526,7 +526,7 @@ const BasicModel = ({}: IProps) => {
   }
 
   return (
-    <div>
+    <div className={'excelPageContainer'}>
       <PageHeader
         isSearch
         searchKeyword={keyword}

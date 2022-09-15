@@ -33,13 +33,14 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
 
   return (
     <div>
-      <Background onClick={() => {
+      <Background
+          onClick={() => {
           if(!column.readonly) setIsOpen(true)
       }}>
         <p style={{padding: 0, margin: 0, color: column.type === "Modal" ? 'black' : row[column.key] ? '#ffffff' : '#ffffff4d', textAlign: 'center', width: '100%' }}>
           {row[column.key] ? row[column.key] : moment().format("YYYY-MM-DD")}
         </p>
-        <img src={column.type !== "Modal" ? calendarWhite : calendarBlack} style={{width: 24, height: 24}}/>
+        <img  className={'unprintable'} src={column.type !== "Modal" ? calendarWhite : calendarBlack} style={{width: 24, height: 24}}/>
       </Background>
       <Modal
         isOpen={isOpen}
