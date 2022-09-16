@@ -10,16 +10,6 @@ import { setExcelTableHeight } from 'shared/src/common/Util'
 import {useRouter} from "next/router";
 import moment from "moment";
 
-// @field:JsonProperty("osi_id") osiId: Long
-// @field:JsonProperty("outsourcing_export") outsourcingExport: OutsourcingExport
-// @field:JsonProperty("worker") worker: Member
-// @field:JsonProperty("product") product: Product
-// @field:JsonProperty("warehousing") warehousing
-// @field:JsonProperty("current") current: Float
-// @field:JsonProperty("import_date") @field:Pattern(regexp = "^[0-9]{4}.[0-9]{2}.[0-9]{2}$") @field:Length(max = 255) importDate: String
-// @field:JsonProperty("lot_number") lotNumber: String,
-// @field:JsonProperty("version") version: Int
-
 const MesOutsourcingImportRegister = () => {
     const dispatch = useDispatch()
     const router = useRouter()

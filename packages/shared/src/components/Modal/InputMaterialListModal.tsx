@@ -311,7 +311,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           ...row,
           bom: bomToSave.map((bom, index) => {
             if(column.state === "outsourcing"){
-              return {...bom, bom: inputMaterialList[index].outOriginalBom}
+              return {...bom, bom: inputMaterialList[index]?.outOriginalBom}
             }else{
               return bom
             }

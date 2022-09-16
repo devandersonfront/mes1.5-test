@@ -97,7 +97,8 @@ const MesOutsourcingImportModify = () => {
                     ...info,
                     identification : info.outsourcing_export?.identification,
                     order_date : info.outsourcing_export?.order_date,
-                    order_quantity : info.outsourcing_export?.order_quantity
+                    order_quantity : info.outsourcing_export?.order_quantity,
+                    bom : info.outsourcing_export?.bom
                 })
             ))
         }else{
