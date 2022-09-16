@@ -66,8 +66,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log("row : ", row)
-      console.log("state : ",column.state)
       setSummaryData({
         // ...res.parent
         identification: row.identification,
@@ -120,7 +118,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
         case 2:{
-          console.log('bom',v.bom)
           bomDetail['childData'] = v.bom.child_product
           bomDetail['bomType'] = 'product'
           bomDetail['bomId'] = v.bom.childProductId
@@ -130,7 +127,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       const bomLots = getBomLots(bomDetail.bomId, bomDetail.bomType)
       const stock = getTotalStock(bomLots)
       const sumOfUsage = bomLots?.length > 0 ? lodash.sum(bomLots.map(bom => new Big(bom.lot.amount).times(bom.bom.usage).toNumber())) : new Big(row.good_quantity).div(cavity)
-      console.log('dd',bomLots)
       return {
         ...bomDetail.childData,
         seq: i+1,

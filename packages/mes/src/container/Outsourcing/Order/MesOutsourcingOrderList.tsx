@@ -34,40 +34,44 @@ const MesOutsourcingOrderList = () => {
         from: moment().subtract(1, 'month').format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD')
     })
-    const [modifyModalOpen, setModifyModalOpen] = useState<boolean>(false)
-    const buttonEvent = (buttonIndex: number) => {
+    const buttonEvent = async(buttonIndex: number) => {
         switch (buttonIndex) {
+            // case 0:
+            //     if (selectList.size === 0 || selectList.size > 1) {
+            //         Notiflix.Report.warning("경고", selectList.size > 1 ? "발주 수정은 한 개씩만 가능합니다." : "데이터를 선택해주세요.", "확인", () => {
+            //         })
+            //     } else {
+            //         dispatch(setModifyInitData({
+            //             modifyInfo: basicRow.map(v => {
+            //                 if (selectList.has(v.id)) {
+            //                     return v
+            //                 }
+            //             }).filter(v => v),
+            //             type: 'workModify'
+            //         }))
+            //         setModifyModalOpen(true);
+            //     }
+            //     break
             case 0:
-                if (selectList.size === 0 || selectList.size > 1) {
-                    Notiflix.Report.warning("경고", selectList.size > 1 ? "발주 수정은 한 개씩만 가능합니다." : "데이터를 선택해주세요.", "확인", () => {
-                    })
-                } else {
-                    dispatch(setModifyInitData({
-                        modifyInfo: basicRow.map(v => {
-                            if (selectList.has(v.id)) {
-                                return v
-                            }
-                        }).filter(v => v),
-                        type: 'workModify'
-                    }))
-                    setModifyModalOpen(true);
-                }
-                break
-            case 1:
                 const deleteDatas = basicRow.map((row) =>{
                     if(selectList.has(row.id)){
                         row.worker = row.worker_object
+                        delete row.worker_object
                         return row
                     }
                 }).filter(v =>v)
-                RequestMethod("delete","outsourcingExportDelete",deleteDatas)
+
+
+                await RequestMethod("delete","outsourcingExportDelete", deleteDatas)
                     .then((res) => {
-                        console.log(res)
-                        Notiflix.Report.success("메세지", "삭제되었습니다.", "확인", () => reload())
+                        Notiflix.Report.success("메세지", "삭제되었습니다.", "확인", () => {console.log("ddodo")})
                     })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+
                 break
             default:
-                console.log("good : ",)
                 break
         }
     }
@@ -284,7 +288,7 @@ const MesOutsourcingOrderList = () => {
                 searchOptionList={optionList}
                 optionIndex={optionIndex}
                 buttons={
-                    [/*'수정하기'*/, '삭제']
+                    ['삭제']
                 }
                 buttonsOnclick={buttonEvent}
             />

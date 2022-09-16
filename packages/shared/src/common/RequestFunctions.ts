@@ -295,6 +295,8 @@ const ApiList = {
   lotRmComplete: `/api/v1/lot-rm/complete`,
   stockSave: `/api/v1/stock/basic/save`,
   outsourcingExportSave: `/api/v1/outsourcing/export/save`,
+  outsourcingShipmentSave: `/api/v1/outsourcing/shipment/save`,
+
   //modify
   operationModify: `/api/v1/operation/modify`,
 
@@ -350,7 +352,7 @@ const ApiList = {
   productChangeDelete: `/cnc/api/v1/product-changes/remove`,
   exportDelete: `/api/v1/shipment/export/delete`,
   outsourcingExportDelete: `/api/v1/outsourcing/export/delete`,
-
+  outsourcingShipmentDelete: `/api/v1/outsourcing/shipment/delete`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,
@@ -408,6 +410,9 @@ const ApiList = {
   sheetDefectList: `/api/v1/sheet/defect`,
   exportList: `/api/v1/shipment/export/list`,
   outsourcingExportList: `/api/v1/outsourcing/export/list`,
+  outsourcingShipmentList: `/api/v1/outsourcing/shipment/list`,
+
+  outsourcingLotList: `/api/v1/outsourcing/import/groups`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -453,6 +458,7 @@ const ApiList = {
   exportSearch: `/api/v1/shipment/export/search`,
   outsourcingExportSearch: `/api/v1/outsourcing/export/search`,
   outsourcingImportSearch: `/api/v1/outsourcing/import/search`,
+  outsourcingShipmentSearch: `/api/v1/outsourcing/shipment/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,

@@ -93,8 +93,6 @@ const MesOutsourcingOrderRegister = () => {
                 ]}
                 row={basicRow}
                 setRow={(rows) => {
-
-                    console.log(rows)
                     rows.map((row) => {
                         if(row.isChange){
                             setSelectList((select) => select.add(row.id))

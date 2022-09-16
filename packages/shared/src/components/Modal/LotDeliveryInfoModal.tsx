@@ -62,6 +62,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
             lot_number: v.group.sum.lot_number,
             start: v.group.sum.start,
             end: v.group.sum.end,
+            date: v.group.sum.import_date,
             worker_name: v.group.sum.worker?.name ?? '-',
             good_quantity: v.group.sum.good_quantity,
             current: v.group.sum.current,
@@ -90,7 +91,6 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         }
       })
     }
-
     setTotalDelivery(totalAmount)
     setSearchList([...tmpData])
   }
@@ -109,6 +109,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
       return {
         seq: i+1,
         lot_number: v.sum.lot_number,
+        import_date: v.sum?.import_date ?? null,
         start: v.sum.start,
         end: v.sum.end,
         worker_name: v.sum.worker?.name ?? '-',
@@ -126,7 +127,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   const SearchBasic = async () => {
     Notiflix.Loading.circle()
     const searchType = column.searchType ?? (row.contract?.contract_id ? 'contract' : 'code')
-    const res = await RequestMethod('get', searchType === 'contract' ? `recordGroupListByContract` : `recordGroupList` ,{
+    const res = await RequestMethod('get', column.state === "outsourcing" ? 'outsourcingLotList' : searchType === 'contract' ? `recordGroupListByContract` : `recordGroupList` ,{
       path: {
         product_id: row.product.product_id,
         contract_id: searchType === 'contract' ? row.contract?.contract_id : null,
@@ -170,7 +171,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     ],
     [
       {key:'CODE', value: row.product_id ?? '-'},
-      {key:'품명', value: row.name ?? '-'},
+      {key:'품명', value: row.name ?? row.product?.name ?? '-'},
       {key:'품목 종류', value: row.type ?? '-'}
     ],
     [
@@ -207,6 +208,17 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
       </HeaderTable>
     )
   )
+
+  const columnSortation = () => {
+    switch(true){
+      case column.readonly:
+        return column.state == "outsourcing" ? searchModalList.lotDeliveryOutsourcingInfoReadonly : searchModalList.lotDeliveryInfoReadonly
+        break
+
+      default:
+        return column.state == "outsourcing" ? searchModalList.lotDeliveryOutsourcingInfo : searchModalList.lotDeliveryInfo
+    }
+  }
 
   return (
     <SearchModalWrapper >
@@ -260,7 +272,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={column.readonly ? searchModalList.lotDeliveryInfoReadonly : searchModalList.lotDeliveryInfo}
+              headerList={columnSortation()}
               row={searchList }
               setRow={(e) => {
                 let total = 0
@@ -304,11 +316,11 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                   }
                 }
               }}
-              
+
             />
 
 
-            
+
           </div>
           { column.readonly ?
             <div style={{height: 45, display: 'flex', alignItems: 'flex-end'}}>
