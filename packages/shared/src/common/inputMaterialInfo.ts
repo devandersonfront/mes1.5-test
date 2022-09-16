@@ -60,7 +60,7 @@ export const getHeaderItems = (row:any, type:string) => {
     product_type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
     type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'product') : "-",
     unit: row.product?.unit,
-    worker_name: row.worker.name ?? row.worker ?? '-',
+    worker_name: row.worker?.name ?? row.worker ?? '-',
   }
   if(type === 'outsourcing') {
     headerItems['order_quantity'] = row.order_quantity ?? 0
@@ -74,7 +74,7 @@ export const getHeaderItems = (row:any, type:string) => {
 }
 
 export const InputListHeaders = (isOutsourcing: boolean, readonly:boolean) => {
-  const headers = isOutsourcing ? searchModalList.OutsourcingInputListReadonly : searchModalList.InputListReadonly
+  const headers = isOutsourcing ? [...searchModalList.OutsourcingInputListReadonly] : [...searchModalList.InputListReadonly]
   if(!readonly) {
     if(isOutsourcing){
       headers.splice(9,0, {key: 'disturbance', name: '발주량', formatter: UnitContainer, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"})
@@ -84,6 +84,7 @@ export const InputListHeaders = (isOutsourcing: boolean, readonly:boolean) => {
       headers.splice(12,0,{...headers[12], readonly: false})
     }
   }
+  console.log(headers)
   return headers
 }
 // export const lotListHeaders = searchModalList.InputListReadonly

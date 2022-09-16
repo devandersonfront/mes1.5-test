@@ -40,7 +40,7 @@ const setSavedKey = (type: string, map: Map<number, any>, row: any) => {
     case 'tool':
       row.tool_id  && map.set(row.tool_id, row)
       break
-    case 'outsourcingExport':
+    case 'outsourcingOrder':
       row.ose_id && map.set(row.ose_id, row)
       break
     default: break
@@ -93,7 +93,7 @@ const getModalTextKey = (type: string) => {
   switch (type) {
     case 'product':
       return 'code'
-    case 'outsourcingExport':
+    case 'outsourcingOrder':
       return 'identification'
     default:
       return 'name'
@@ -124,7 +124,7 @@ const getMapKey = (type:string) => {
     case 'machine': return 'machine_id'
     case 'mold': return 'mold_id'
     case 'tool': return 'tool_id'
-    case 'outsourcingExport' : return 'ose_id'
+    case 'outsourcingOrder' : return 'ose_id'
     default: return ''
   }
 }
@@ -381,7 +381,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     let newBasicRow = basicRowMap.size > 0 ? Array.from(basicRowMap.values()) : []
     newBasicRow = newBasicRow.length === 0
       ? [module.emptyRow]
-      : newBasicRow.map((row, rowIdx) => ({...row, id:row.product.product_id , isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1 }))
+      : newBasicRow.map((row, rowIdx) => ({...row, id:row[module.key] , isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1, border:false }))
     column.setBasicRow(newBasicRow)
     setBasicRowMap(new Map())
   }

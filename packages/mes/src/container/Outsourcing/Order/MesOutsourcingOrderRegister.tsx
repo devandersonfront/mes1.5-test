@@ -45,7 +45,7 @@ const MesOutsourcingOrderRegister = () => {
                         bom: row.bom,
                       }
                   })
-                  const res = await RequestMethod("post", "outsourcingExportSave", postBody)
+                  const res = await RequestMethod("post", "outsourcingOrderSave", postBody)
                   if(res) Notiflix.Report.success("저장되었습니다.","","확인", () => router.push("/mes/outsourcing/order/list"))
                 } catch (errMsg){
                   Notiflix.Report.warning('경고', errMsg,'확인')

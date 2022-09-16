@@ -64,13 +64,10 @@ const MesOutsourcingImportRegister = () => {
     }
 
     const deleteRow = () => {
-        Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
-            () => {
-                let filteredRows = basicRow.filter((row, index) => !selectList.has(row.id))
-                setBasicRow(filteredRows.length !== 0 ? filteredRows : [{isFirst:true}])
-                setSelectList(new Set())
-            },
-        )
+        let filteredRows = basicRow.filter((row, index) => !selectList.has(row.id))
+        setBasicRow(filteredRows.length !== 0 ? filteredRows : [{isFirst:true}])
+        setSelectList(new Set())
+
     }
 
     const buttonEventHandler = (buttonIndex:number) => {
@@ -83,7 +80,8 @@ const MesOutsourcingImportRegister = () => {
                 saveRows()
                 break
             case 1:
-                deleteRow()
+                Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
+                    () => deleteRow())
                 break
             default:
                 break

@@ -76,14 +76,12 @@ const MesOutsourcingOrderList = () => {
                         return row
                     }
                 }).filter(v =>v)
-                RequestMethod("delete","outsourcingExportDelete",deleteDatas)
+                RequestMethod("delete","outsourcingOrderDelete",deleteDatas)
                     .then((res) => {
-                        console.log(res)
                         Notiflix.Report.success( "삭제되었습니다.", "","확인", () => reload())
                     })
                 break
             default:
-                console.log("good : ",)
                 break
         }
     }
@@ -117,7 +115,7 @@ const MesOutsourcingOrderList = () => {
 
     const getData = async (page: number = 1, keyword?: string, date?: { from: string, to: string }, _sortingOptions?: TableSortingOptionType) => {
         Notiflix.Loading.circle();
-        const res = await RequestMethod("get", keyword ? 'outsourcingExportSearch' : 'outsourcingExportList', {
+        const res = await RequestMethod("get", keyword ? 'outsourcingOrderSearch' : 'outsourcingOrderList', {
             path: {
                 page: page,
                 renderItem: 18,

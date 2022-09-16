@@ -25,7 +25,7 @@ interface IProps {
   modify: boolean
 }
 
-const initData = {seq: 1 , setting : 0}
+const initData = {seq: 1 , setting : 0, isFirst:true}
 const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [searchList, setSearchList] = useState<any[]>([initData])

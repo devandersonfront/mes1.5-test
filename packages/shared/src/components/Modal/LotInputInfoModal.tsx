@@ -61,7 +61,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     }
   }, [isOpen])
 
-  console.log(searchList)
   const changeRow = (tmpRow: any, key?: string) => {
     const newRows = tmpRow?.map((v, i) => {
       const bomDetail:{childData:any, bomType: TransferType, bomId:number, productType?: string} = {

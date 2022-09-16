@@ -642,7 +642,7 @@ export const searchModalList: any  = {
     {key: 'reason', name: '문제 원인', formatter: LineBorderContainer, editor:TextEditor, width: 560, placeholder:"문제 원인을 입력해주세요.", textType: 'Modal'},
     {key: 'action', name: '대책 및 조치사항', formatter: LineBorderContainer, editor:TextEditor, placeholder:"대책 및 조치사항을 입력해주세요.", textType: 'Modal'},
   ],
-  outsourcingExportSearch : [
+  outsourcingOrderSearch : [
     {key: 'identification', name: '발주 고유 번호', formatter:LineBorderContainer,placeholder: '-'},
     {key: 'name', name: '품명', formatter:LineBorderContainer, placeholder: '-'},
     {key: 'product_id', name: 'CODE', formatter:LineBorderContainer, type: 'user', placeholder: '-'},
@@ -650,6 +650,5 @@ export const searchModalList: any  = {
     {key: 'order_quantity', name: '총 발주량', formatter:LineBorderContainer, readonly:true, placeholder: '-'},
     {key: 'order_date', name: '발주일', formatter:LineBorderContainer, readonly:true, placeholder: '-'},
     {key: 'due_date', name: '입고 희망일', formatter:LineBorderContainer, readonly:true, type:'basic', action:'register'},
-    {key: 'bom', name: '투입 자재', formatter: LotInputInfoModal, textAlign: 'center',  type: 'readonly', modalType: true },
   ]
 }

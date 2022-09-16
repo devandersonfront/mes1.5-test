@@ -76,7 +76,6 @@ const MesOutsourcingImportList = () => {
         })
     }
 
-
     const convertColumn = (menus) => {
         const colNames = menus.map(menu => menu.colName)
         return column.filter((data)=> colNames.includes(data.key))
@@ -126,6 +125,7 @@ const MesOutsourcingImportList = () => {
 
     // 외주 입고 삭제
     const deleteApi = async () => {
+
         const selectedRows = filterSelectedRows()
         const result = await RequestMethod('delete', 'outsourcingImportDelete', selectedRows)
         if(result){
@@ -143,7 +143,6 @@ const MesOutsourcingImportList = () => {
         dispatch(setModifyInitData({modifyInfo: filterSelectedRows(), type: "import"}));
         Notiflix.Loading.remove(300);
         router.push("/mes/outsourcing/import/modify");
-
     }
 
     const buttonEvent = (buttonIndex:number) => {
@@ -155,10 +154,12 @@ const MesOutsourcingImportList = () => {
                     : Notiflix.Report.warning('선택 경고','선택된 정보가 없습니다.','확인')
                 break
             case 1:
-                selectList?.size > 0 ? deleteApi() : Notiflix.Report.warning('선택 경고','선택된 정보가 없습니다.','확인')
+                selectList?.size > 0 ?
+                    Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
+                        () => deleteApi())
+                    : Notiflix.Report.warning('선택 경고','선택된 정보가 없습니다.','확인')
                 break
             default:
-                console.log("good : ", )
                 break
         }
     }

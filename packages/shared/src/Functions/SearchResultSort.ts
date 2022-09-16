@@ -203,8 +203,8 @@ export const SearchResultSort = (infoList, type: string) => {
         }
       })
     }
-    case 'outsourcingExport' : {
-      const columnKeys = searchModalList.outsourcingExportSearch.map(columns => columns.key)
+    case 'outsourcingOrder' : {
+      const columnKeys = searchModalList.outsourcingOrderSearch.map(columns => columns.key)
       return infoList.map((v) => {
         let obj = {}
         //데이터와 내가 지정한 키가 같을경우에는 바인딩 시켜주고 없을경우에는 선택없음으로 나오게
