@@ -300,8 +300,8 @@ export const MesTitles = (customTarget?: string) => {
     outsourceMgmt: toMenu(titles.outsourceMgmt,'',['_outsourcingOrder', '_outsourcingOrderList', '_outsourcingImport', '_outsourcingImportList','_outsourcingExport','_outsourcingExportList']),
     _outsourcingOrder: toMenu(titles._outsourcingOrder,'/mes/outsourcing/order'),
     _outsourcingOrderList: toMenu(titles._outsourcingOrderList,'/mes/outsourcing/order/list'),
-    _outsourcingImport: toMenu(titles._outsourcingImport,'/mes/outsourcing/receive'),
-    _outsourcingImportList: toMenu(titles._outsourcingImportList,'/mes/outsourcing/receive/list'),
+    _outsourcingImport: toMenu(titles._outsourcingImport,'/mes/outsourcing/import'),
+    _outsourcingImportList: toMenu(titles._outsourcingImportList,'/mes/outsourcing/import/list'),
     _outsourcingExport: toMenu(titles._outsourcingExport,'/mes/outsourcing/delivery'),
     _outsourcingExportList: toMenu(titles._outsourcingExportList,'/mes/outsourcing/delivery/list'),
 

@@ -38,7 +38,10 @@ const setSavedKey = (type: string, map: Map<number, any>, row: any) => {
       row.mold_id && map.set(row.mold_id, row)
       break
     case 'tool':
-      row.tool_id && map.set(row.tool_id, row)
+      row.tool_id  && map.set(row.tool_id, row)
+      break
+    case 'outsourcingExport':
+      row.ose_id && map.set(row.ose_id, row)
       break
     default: break
   }
@@ -90,6 +93,8 @@ const getModalTextKey = (type: string) => {
   switch (type) {
     case 'product':
       return 'code'
+    case 'outsourcingExport':
+      return 'identification'
     default:
       return 'name'
   }
@@ -119,6 +124,7 @@ const getMapKey = (type:string) => {
     case 'machine': return 'machine_id'
     case 'mold': return 'mold_id'
     case 'tool': return 'tool_id'
+    case 'outsourcingExport' : return 'ose_id'
     default: return ''
   }
 }
@@ -152,6 +158,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     page: 1,
     total: 1
   })
+
   const [ basicRowMap, setBasicRowMap ] = useState<Map<number, any>>(new Map())
   const module = getModule(column.type)
 
@@ -236,7 +243,9 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       }))
 
       setPageInfo({ page: res.page, total: res.totalPages })
+
       const newSearchList = SearchResultSort(idAddedRows, searchModalInit.excelColumnType)
+
       const borderedRows = markSelectedRows(newSearchList)
       const new_border_rows = borderedRows.map((row) => {
         if (basicRowMap.has(row.product_id)) {
@@ -250,7 +259,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
           }
         }
       })
-
       setSearchList(page === 1 ? new_border_rows : prev => [...prev, ...new_border_rows])
     }
 

@@ -69,8 +69,9 @@ export {MesOutsourcingOrderRegister} from "./container/Outsourcing/Order/MesOuts
 export {MesOutsourcingOrderModify} from "./container/Outsourcing/Order/MesOutsourcingOrderModify"
 export {MesOutsourcingOrderList} from "./container/Outsourcing/Order/MesOutsourcingOrderList"
 
-export {MesOutsourcingReceiveRegister} from "./container/Outsourcing/Receive/MesOutsourcingReceiveRegister"
-export {MesOutsourcingReceiveList} from "./container/Outsourcing/Receive/MesOutsourcingReceiveList"
+export {MesOutsourcingImportRegister} from "./container/Outsourcing/Import/MesOutsourcingImportRegister"
+export {MesOutsourcingImportList} from "./container/Outsourcing/Import/MesOutsourcingImportList"
+export {MesOutsourcingImportModify} from "./container/Outsourcing/Import/MesOutsourcingImportModify"
 
 export {MesOutsourcingDeliveryRegister} from "./container/Outsourcing/Delivery/MesOutsourcingDeliveryRegister"
 export {MesOutsourcingDeliveryList} from "./container/Outsourcing/Delivery/MesOutsourcingDeliveryList"

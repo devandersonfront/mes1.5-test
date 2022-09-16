@@ -129,6 +129,11 @@ export const SearchInit: Record<string, SearchInitType> = {
     title:"공정 검색",
     searchFilter:["공정명"],
     excelColumnType:"process",
-
+  },
+  outsourcingExport : {
+    title: '발주내역 검색',
+    searchFilter: ['발주 고유번호', 'CODE', '품명'],
+    excelColumnType: 'outsourcingExport',
+    placeholder: '발주내역입력'
   }
 }

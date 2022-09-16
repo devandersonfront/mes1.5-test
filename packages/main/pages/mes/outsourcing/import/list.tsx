@@ -4,7 +4,7 @@ import ProfileHeader from '../../../../component/Profile/ProfileHeader'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {NextPageContext} from 'next'
-import {MesOutsourcingReceiveRegister} from "mes";
+import {MesOutsourcingImportList} from "mes";
 
 
 const BasicContainer = () => {
@@ -14,7 +14,7 @@ const BasicContainer = () => {
             <MenuNavigation pageType={'MES'}/>
             <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
-                <MesOutsourcingReceiveRegister/>
+                <MesOutsourcingImportList/>
             </div>
         </div>
     );

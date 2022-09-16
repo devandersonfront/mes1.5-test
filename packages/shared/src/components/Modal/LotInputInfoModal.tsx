@@ -47,8 +47,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log("row : ", row)
-      console.log("state : ",column.state)
       setSummaryData(getHeaderItems(row, column.type))
       if(row.operation_sheet && row.operation_sheet?.input_bom?.length > 0){
         const filter_input_bom = row.operation_sheet.input_bom.filter((bom) => bom.bom.setting === 1)
