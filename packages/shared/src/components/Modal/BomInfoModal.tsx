@@ -268,8 +268,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const executeValidation = () => {
-
-    const hasNoData = searchList.length === 0
+    const hasNoData = Number(row.type_id) < 3 && searchList.length === 0
     const hasInvalidData = searchList.some(v => !v.rm_id && !v.sm_id && !v.product?.product_id)
     const hasDefaultSetting = checkDefaultSetting()
 
@@ -281,7 +280,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
       throw("품목별 기본설정은 최소 한개 이상 필요합니다.")
     }
   }
-
 
   const SaveBasic = async () => {
       const body = filterList()
@@ -467,7 +465,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
     [
       {key:'CODE', value: headerData?.code ?? row?.code ?? "-"},
       {key:'품명', value: headerData?.name ?? row?.name ?? "-"},
-      {key:'품목 종류', value: headerData?.type ? TransferCodeToValue(headerData.type, 'productType') : row?.type || row?.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"},
+      {key:'품목 종류', value: headerData?.type ? TransferCodeToValue(headerData.type, 'product') : row?.type || row?.type === 0 ? TransferCodeToValue(row.type, 'product') : "-"},
       {key:'생산 공정', value: headerData?.process?.name ?? row?.processArray?.name ?? "-"}
     ],
     [

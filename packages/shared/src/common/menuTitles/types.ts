@@ -5,7 +5,7 @@ export type BasicOrderType =
 
 export type MesOrderType =
     'businessMgmt' | 'pmReg' | 'rawMgmt' | 'subMgmt' | 'toolMgmt' | 'qualityMgmt' |
-    'stockMgmt' | 'outsourcing' | 'kpi'
+    'stockMgmt' | 'kpi' | 'outsourceMgmt'
 
 export type PmsOrderType =
   'pressMon' | 'pressStats' | 'pressMnt' | 'moldMnt'

@@ -17,7 +17,6 @@ import {useRouter} from "next/router";
 import {TransferCodeToValue} from "shared/src/common/TransferFunction";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import moment from "moment";
-import {WorkModifyModal} from "shared/src/components/Modal/WorkModifyModal";
 import {setModifyInitData} from "shared/src/reducer/modifyInfo";
 
 const optionList = ["고유번호", "CODE", "품명", "발주자 이름"]
@@ -26,23 +25,23 @@ const MesOutsourcingOrderList = () => {
     const dispatch = useDispatch()
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<any[]>([{}])
-    const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:1})
+    const [pageInfo, setPageInfo] = useState<{ page: number, total: number }>({page: 1, total: 1})
     const [keyword, setKeyword] = useState<string>()
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
-    const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-        from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders: [], sorts: []})
+    const [selectDate, setSelectDate] = useState<{ from: string, to: string }>({
+        from: moment().subtract(1, 'month').format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD')
     })
     const [modifyModalOpen, setModifyModalOpen] = useState<boolean>(false)
-
-    const buttonEvent = (buttonIndex:number) => {
+    const buttonEvent = (buttonIndex: number) => {
         switch (buttonIndex) {
             case 0:
-                if(selectList.size === 0 || selectList.size > 1){
-                    Notiflix.Report.warning("경고",selectList.size > 1 ? "발주 수정은 한 개씩만 가능합니다." : "데이터를 선택해주세요.","확인",() => {})
-                }else{
+                if (selectList.size === 0 || selectList.size > 1) {
+                    Notiflix.Report.warning("경고", selectList.size > 1 ? "발주 수정은 한 개씩만 가능합니다." : "데이터를 선택해주세요.", "확인", () => {
+                    })
+                } else {
                     dispatch(setModifyInitData({
                         modifyInfo: basicRow.map(v => {
                             if (selectList.has(v.id)) {
@@ -55,42 +54,42 @@ const MesOutsourcingOrderList = () => {
                 }
                 break
             case 1:
-                console.log("good : ", )
+                console.log("good : ",)
                 break
             default:
-                console.log("good : ", )
+                console.log("good : ",)
                 break
         }
     }
 
-    const onSelectDate = (date: {from:string, to:string}) => {
+    const onSelectDate = (date: { from: string, to: string }) => {
         setSelectDate(date)
         reload(null, date)
     }
 
-    const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType) => {
+    const reload = (keyword?: string, date?: { from: string, to: string }, sortingOptions?: TableSortingOptionType) => {
         setKeyword(keyword)
-        if(pageInfo.page > 1) {
+        if (pageInfo.page > 1) {
             setPageInfo({...pageInfo, page: 1})
         } else {
             getData(undefined, keyword, date, sortingOptions)
         }
     }
 
-    const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType) => {
+    const getRequestParams = (keyword?: string, date?: { from: string, to: string }, _sortingOptions?: TableSortingOptionType) => {
         let params = {}
-        if(keyword) {
+        if (keyword) {
             params['keyword'] = keyword
             params['opt'] = optionIndex
         }
-        params['from'] = date ? date.from: selectDate.from
+        params['from'] = date ? date.from : selectDate.from
         params['to'] = date ? date.to : selectDate.to
         params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
         params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
         return params
     }
 
-    const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType) => {
+    const getData = async (page: number = 1, keyword?: string, date?: { from: string, to: string }, _sortingOptions?: TableSortingOptionType) => {
         Notiflix.Loading.circle();
         const res = await RequestMethod("get", keyword ? 'outsourcingExportSearch' : 'outsourcingExportList', {
             path: {
@@ -99,7 +98,7 @@ const MesOutsourcingOrderList = () => {
             },
             params: getRequestParams(keyword, date, _sortingOptions)
         });
-        if(res){
+        if (res) {
             if (res.totalPages > 0 && res.totalPages < res.page) {
                 reload();
             } else {
@@ -114,8 +113,8 @@ const MesOutsourcingOrderList = () => {
     };
 
 
-    const loadAllSelectItems = async (column: IExcelHeaderType[], date?: {from:string, to:string}) => {
-        const changeOrder = (sort:string, order:string) => {
+    const loadAllSelectItems = async (column: IExcelHeaderType[], date?: { from: string, to: string }) => {
+        const changeOrder = (sort: string, order: string) => {
             const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
             setSortingOptions(_sortingOptions)
             reload(null, date, _sortingOptions)
@@ -134,7 +133,7 @@ const MesOutsourcingOrderList = () => {
         // setColumn(tmpColumn);
     }
 
-    const cleanUpData = (res: any,date?: {from:string, to:string}) => {
+    const cleanUpData = (res: any, date?: { from: string, to: string }) => {
         let tmpColumn = columnlist["outsourcingOrderList"];
         let tmpRow = [];
         tmpColumn = tmpColumn
@@ -189,7 +188,7 @@ const MesOutsourcingOrderList = () => {
 
         tmpRow = res.info_list;
 
-        loadAllSelectItems([...tmpColumn, ...additionalMenus],date);
+        loadAllSelectItems([...tmpColumn, ...additionalMenus], date);
 
         let selectKey = "";
         let additionalData: any[] = [];
@@ -231,7 +230,7 @@ const MesOutsourcingOrderList = () => {
                 modelArray: row.model,
                 process_id: row.product.process?.name,
                 product_id: row.product.code,
-                name:row.product.name,
+                name: row.product.name,
                 worker: row.worker.name,
                 type: TransferCodeToValue(row.product.type, "product"),
                 unit: row.product.unit,
@@ -245,16 +244,14 @@ const MesOutsourcingOrderList = () => {
         setBasicRow([...tmpBasicRow]);
     };
 
-
     useEffect(() => {
         dispatch(
-            setMenuSelectState({ main: "외주 관리", sub: router.pathname })
+            setMenuSelectState({main: "외주 관리", sub: router.pathname})
         )
         return () => {
             dispatch(deleteMenuSelectState())
         }
     }, [])
-
 
     useEffect(() => {
         getData(pageInfo.page, keyword)
@@ -306,5 +303,4 @@ const MesOutsourcingOrderList = () => {
         </div>
     );
 }
-
 export { MesOutsourcingOrderList };

@@ -65,10 +65,9 @@ import { InputWithDropDown } from '../components/Dropdown/InputWithDropDown'
 import { MultiSelectModal } from '../components/Modal/SearchModalTest/MultiSelectModal'
 import { HeaderSort } from '../components/HeaderSort/HeaderSort'
 import CommonProgressBar from '../../../main/component/InputBox/CommonProgressBar'
-import {InputMaterialListModal} from "../components/Modal/InputMaterialListModal";
 import {ExportButton} from "../components/Buttons/ExportButton";
 import { PasswordBox } from '../components/Formatter/PasswordBox'
-
+import {InputMaterialListModal} from "../components/Modal/InputMaterialListModal";
 
 export const columnlist: any = {
   member: [
@@ -256,10 +255,21 @@ export const columnlist: any = {
     {key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-'},
     {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', overlay:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
+    {key: 'product_type', name: '구분',  formatter: DropDownEditor, editorOptions: { editOnClick: true }, headerRenderer: HeaderFilter,
+      options: [
+        { status: '0', name: "구분" },
+        {status: '1', name: '생산품'},
+        {status: '2', name: '외주품'},
+      ],selectList: [
+        {pk: '0', name: '생산품'},
+        {pk: '1', name: '외주품'},
+      ]},
     {key: 'type', name: '품목 종류',  formatter: DropDownEditor, selectList: [
-        {pk: '0', name: '반제품'},
+        [{pk: '0', name: '반제품'},
         {pk: '1', name: '재공품'},
-        {pk: '2', name: '완제품'},
+        {pk: '2', name: '완제품'}],
+        [{pk: '3', name: '반제품'},
+        {pk: '4', name: '완제품'}],
       ]},
     // {key: 'product_type', name: '외주 여부',  formatter: DropDownEditor, selectList: [
     //     {pk: '3', name: '생산품'},
@@ -1146,7 +1156,7 @@ export const columnlist: any = {
   productChangeRegister: [
     { key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력', width: 168, type: 'autoInput' },
     { key: "cm_id", name: '모델', formatter: PlaceholderBox, placeholder: '자동 입력', width: 480, type: 'autoInput' },
-    { key: "code", name: 'CODE', formatter: SearchModalTest, type: 'product', width: 480 },
+    { key: "code", name: 'CODE', formatter: SearchModalTest, type: 'allProduct', width: 480 },
     { key: "name", name: "품명", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput' },
   ],
   productChangeList: [
@@ -1538,22 +1548,22 @@ export const columnlist: any = {
     {key: 'customer', name: '거래처', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'order_date', name: '발주 날짜', formatter:CalendarBox, placeholder: '-'},
     {key: 'input_date', name: '입고 날짜', formatter:CalendarBox, placeholder: '-'},
-    {key: 'input', name: '투입 자재', formatter:InputMaterialListModal, textAlign: 'center', type:'basic', action:'register'},
+    {key: 'input', name: '투입 자재', formatter:InputMaterialInfoModal, type: 'readonly',unprintable : true,},
     {key: 'good_quantity', name: '수량', formatter:PlaceholderBox, placeholder: '-'},
   ],
-  outsourcingReceive: [
-    {key: 'product_name', name: '품명', formatter:SearchModalTest, type: 'product', placeholder: '-'},
+  outsourcingReceive:(basicRow?, setBasicRow?, receiveType?:boolean) =>( [
+    {key: 'product_name', name: '품명', formatter:MultiSelectModal, type: 'product', basicRow, setBasicRow,},
     {key: 'code', name: 'CODE', formatter:PlaceholderBox, placeholder: '-'},
-    {key: 'user', name: '발주내역', formatter:SearchModalTest, type: 'user', placeholder: '-'},
+    {key: 'user', name: '발주내역', formatter:receiveType ? PlaceholderBox : SearchModalTest, type: 'user', placeholder: '-'},
     {key: 'customer', name: '거래처', formatter:PlaceholderBox, placeholder: '-'},
-    {key: 'order_date', name: '발주 날짜', formatter:CalendarBox, readonly:true, placeholder: '-'},
+    {key: 'order_date', name: '발주 날짜', formatter:CalendarBox, placeholder: '-'},
     {key: 'input_date', name: '입고 날짜', formatter:CalendarBox, placeholder: '-'},
     {key: 'input', name: '투입 자재', formatter:InputMaterialListModal, textAlign: 'center', type:'basic', action:'register'},
     {key: 'total_quantity', name: '총 입고량', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'good_quantity', name: '현재까지 입고량', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'good_quantity', name: '입고량', formatter:PlaceholderBox, editor:TextEditor, inputType:'number', placeholder: '-'},
     {key: 'lot_number', name: 'Lot번호', formatter:PlaceholderBox, editor:TextEditor, placeholder: '-'},
-  ],
+  ]),
   outsourcingReceiveList: [
     {key: 'product_name', name: '품명', formatter:PlaceholderBox, type: 'product', placeholder: '-'},
     {key: 'code', name: 'CODE', formatter:PlaceholderBox, placeholder: '-'},

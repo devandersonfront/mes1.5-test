@@ -37,6 +37,7 @@ interface Props {
   indexKey?: string
   changeRow?: (e: any) => any
   validateConfirm?: () => void
+  disabled?: boolean
 }
 
 
@@ -59,6 +60,7 @@ const MultiSelectModal: React.FunctionComponent<Props> = ({
                                                       indexKey = 'seq',
                                                       changeRow,
                                                       validateConfirm,
+                                                      disabled
                                                     }) => {
 
   const ModalButton = () =>
@@ -67,7 +69,7 @@ const MultiSelectModal: React.FunctionComponent<Props> = ({
           padding: '3.5px 0px 0px 3.5px',
           width: '100%'
         }}>
-          <UploadButton style={hasData ? {width: '100%', backgroundColor: '#ffffff00'} : undefined} onClick={onModalButtonClick}>
+          <UploadButton style={hasData ? {width: '100%', backgroundColor: '#ffffff00'} : { opacity: disabled ? .3 : 1}} onClick={() => disabled ? undefined : onModalButtonClick()}>
             <p style={hasData ? {color: 'white', textDecoration: 'underline'} : undefined}>{buttonTitle} {hasData ? '보기' : '등록'}</p>
           </UploadButton>
         </div>

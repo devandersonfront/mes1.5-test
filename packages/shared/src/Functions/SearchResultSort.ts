@@ -56,9 +56,10 @@ export const SearchResultSort = (infoList, type: string) => {
         return {
           ...v,
           ...obj,
+          product_type: TransferCodeToValue(v.type, 'productType'),
           customer_name: v.customer ? v.customer.name : "",
           model_name: v.model ? v.model.model : "",
-          type_name: TransferCodeToValue(v.type, 'productType'),
+          type_name: TransferCodeToValue(v.type, 'product'),
           type_id:v.type
         }
       })

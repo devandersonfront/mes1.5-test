@@ -83,7 +83,7 @@ export interface IMenu {
   checkable: boolean //체크박스 표시 여부
   check?: boolean //체크 여부
   value?: string //체크시 넘길 값
-  child: IMenu[] // 하위 트리뷰 리스트
+  child: IMenu[] | any[] // 하위 트리뷰 리스트
 }
 
 export interface IItemMenuType {

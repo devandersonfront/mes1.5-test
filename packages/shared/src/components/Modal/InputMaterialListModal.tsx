@@ -84,7 +84,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         model: row.product?.model?.model,
         code: row.product?.code,
         name: row.product?.name,
-        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'product') : "-",
         process: row.product?.process?.name,
         unit: row.product?.unit,
         goal: row.goal,
@@ -124,7 +124,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             }
             inputBom.map(bom => {
               bom.originalBom = bom
-              bom.originalBom66 = bom
+              bom.outOriginalBom = bom
               return bom
             })
             if(res){
@@ -318,6 +318,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       inputBomIdMap.set(bomObject.bomKey, bom)
     })
     inputMaterialList.map((bom, index) => {
+      console.log(bom)
       let totalAmount = 0
       if(bom.lots !== undefined) {
         bom.lots?.map(lot => {
@@ -394,7 +395,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           ...row,
           bom: bomToSave.map((bom, index) => {
             if(column.state === "outsourcing"){
-              return {...bom, bom: inputMaterialList[index].originalBom66}
+              return {...bom, bom: inputMaterialList[index].outOriginalBom}
             }else{
               return bom
             }

@@ -42,6 +42,44 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationCodeRegisterV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
+
+
+  useEffect(() => {
+    if(router.query.key !== undefined && firstCheck){
+      setColumn(columnlist["operationIdentificationRegisterV2"])
+      RequestMethod("get", "contractSearch", {
+        params:{
+          keyword:router.query.key,
+          opt:0
+        }
+      })
+        .then(async(res) => {
+          const identification = res.info_list[0].identification
+          const goal = res.info_list[0].amount
+          await loadGraphSheet(res.info_list[0]?.productId,  SearchModalResult(SearchResultSort(res.info_list, "contract")[0], "receiveContract"))
+            .then((res) => {
+              setBasicRow(res.filter(row => row.product?.type < 3).map((row, index) => {
+                return {...row, contract_id:identification, goal}
+              }))
+              setCodeCheck(false)
+              setFirstCheck(false)
+            })
+
+        })
+    }else{
+      getMenus()
+      setFirstCheck(false)
+    }
+  }, [codeCheck])
+
+  useEffect(() => {
+    dispatch(setMenuSelectState({main:"생산관리 등록",sub:router.pathname}))
+    return(() => {
+      dispatch(delete_operation_searchKey())
+      dispatch(deleteMenuSelectState())
+    })
+  },[])
+
   const getMenus = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
       path: {
@@ -325,42 +363,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     }
   }
 
-  useEffect(() => {
-    if(router.query.key !== undefined && firstCheck){
-      setColumn(columnlist["operationIdentificationRegisterV2"])
-      RequestMethod("get", "contractSearch", {
-        params:{
-          keyword:router.query.key,
-          opt:0
-        }
-      })
-          .then(async(res) => {
-            const identification = res.info_list[0].identification
-            const goal = res.info_list[0].amount
-            await loadGraphSheet(res.info_list[0]?.productId,  SearchModalResult(SearchResultSort(res.info_list, "contract")[0], "receiveContract"))
-                .then((res) => {
-                  setBasicRow(res.map((row, index) => {
-                      return {...row, contract_id:identification, goal}
-                  }))
-                  setCodeCheck(false)
-                  setFirstCheck(false)
-                })
-
-          })
-    }else{
-      getMenus()
-      setFirstCheck(false)
-    }
-  }, [codeCheck])
-
-  useEffect(() => {
-    dispatch(setMenuSelectState({main:"생산관리 등록",sub:router.pathname}))
-    return(() => {
-      dispatch(delete_operation_searchKey())
-      dispatch(deleteMenuSelectState())
-    })
-  },[])
-
   return (
       <div className={'excelPageContainer'}>
         <PageHeader
@@ -409,7 +411,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                   id: `operation_${Math.random()*1000}`, date: e[0].date ?? moment().format('YYYY-MM-DD'),
                   deadline: e[0].deadline ?? moment().format('YYYY-MM-DD'),first:true
                 }])
-                else setBasicRow([...resultData])
+                else setBasicRow(resultData.filter(row => row.product?.type < 3))
                 // }
               }
               let tmp: Set<any> = selectList;

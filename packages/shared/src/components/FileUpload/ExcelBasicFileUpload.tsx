@@ -34,7 +34,8 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
             height: "100%",
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            opacity: row.readonly ? .3:1
         }}>
             <ImageOpenModal url={imgUrl} open={onImage} changeSetOnImage={changeSetOnImage} uuid = {row.photo?.uuid ?? row.photo} photoId = {row.id}/>
             {
@@ -105,9 +106,8 @@ const FileEditer = ({ row, column, onRowChange, onClose }: IProps) => {
                         </>
                         :
                         <>
-                            <UploadButton onClick={() => {
-                                if (!column.readonly) onClickImageUpload(column.key)
-                            }} style={column.readonly && { background: "#B3B3B3" }}>
+                            <UploadButton onClick={() => !row.readonly && !column.readonly && onClickImageUpload(column.key)}
+                                          style={column.readonly && { background: "#B3B3B3" }}>
                                 <p>파일 첨부하기</p>
                             </UploadButton>
                         </>

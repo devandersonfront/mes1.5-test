@@ -42,12 +42,12 @@ const MesOutsourcingOrderRegister = () => {
                         }
                     }).filter(v => v)
                     await RequestMethod("post", "outsourcingExportSave", [...resultData])
-                    .then((res) => {
-                        Notiflix.Report.success("메세지","등록되었습니다.","확인", () => router.push("/mes/outsourcing/order/list"))
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    })
+                        .then((res) => {
+                            Notiflix.Report.success("메세지","등록되었습니다.","확인", () => router.push("/mes/outsourcing/order/list"))
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                        })
 
                 }else{
                     Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인", () =>{})

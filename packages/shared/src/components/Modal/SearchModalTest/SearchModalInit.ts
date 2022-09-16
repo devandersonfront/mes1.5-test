@@ -100,6 +100,18 @@ export const SearchInit: Record<string, SearchInitType> = {
     excelColumnType: 'product',
     placeholder: 'CODE 검색'
   },
+  allProduct: {
+    title: '제품 검색',
+    searchFilter: ['CODE', '모델', '거래처', '품명'],
+    excelColumnType: 'product',
+    placeholder: 'CODE 검색'
+  },
+  outsourceProduct: {
+    title: '제품 검색',
+    searchFilter: ['CODE', '모델', '거래처', '품명'],
+    excelColumnType: 'product',
+    placeholder: 'CODE 검색'
+  },
   bom: {
     title: '제품 검색',
     searchFilter: ['거래처', '모델', 'CODE', '품명'],
