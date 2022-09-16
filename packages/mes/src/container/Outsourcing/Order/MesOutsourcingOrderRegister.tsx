@@ -10,12 +10,9 @@ import {useRouter} from "next/router";
 import moment from "moment";
 import { alertMsg } from 'shared/src/common/AlertMsg'
 
-
-
 const MesOutsourcingOrderRegister = () => {
     const dispatch = useDispatch()
     const router = useRouter()
-
     const [basicRow, setBasicRow] = useState<any[]>([{}])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
@@ -57,7 +54,6 @@ const MesOutsourcingOrderRegister = () => {
             case 1:
                 const liveData = [...basicRow.filter(row => !selectList.has(row.id))]
                 liveData[0].isFirst = true
-
                 setBasicRow(liveData)
                 setSelectList(new Set())
                 break
@@ -84,8 +80,6 @@ const MesOutsourcingOrderRegister = () => {
                 ]}
                 row={basicRow}
                 setRow={(rows) => {
-
-                    console.log('rw',rows)
                     rows.map((row) => {
                         if(row.isChange){
                             setSelectList((select) => select.add(row.id))

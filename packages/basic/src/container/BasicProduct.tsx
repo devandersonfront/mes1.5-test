@@ -254,7 +254,6 @@ const BasicProduct = ({}: IProps) => {
     setColumn(newCols.concat(addedCols))
   }
 
-  console.log(basicRow)
   const cleanUpData = (res: any) => {
     res.menus?.length && setNewColumn(res.menus)
     const newRows = res.info_list.map((row: any) => {
@@ -262,8 +261,6 @@ const BasicProduct = ({}: IProps) => {
       row.additional.map(add => {
         additionalData[add.mi_id] = add.value
       })
-      console.log(additionalData)
-
       let random_id = Math.random()*1000;
       return {
         ...row,
