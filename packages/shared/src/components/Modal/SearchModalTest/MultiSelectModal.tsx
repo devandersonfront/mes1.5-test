@@ -160,12 +160,14 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   })
 
   const [ basicRowMap, setBasicRowMap ] = useState<Map<number, any>>(new Map())
+  const [ initMap, setInitMap ] = useState<Map<number, any>>(new Map())
   const module = getModule(column.type)
 
   useEffect(() => {
-    const newMap = new Map()
-    column.basicRow?.map(row => module.setSavedKey(column.type, newMap, row))
-    setBasicRowMap(newMap)
+      const newMap = new Map()
+      column.basicRow?.map(row => module.setSavedKey(column.type, newMap, row))
+      setBasicRowMap(newMap)
+      setInitMap(new Map(newMap))
   }, [column.basicRow])
 
   useEffect(() => {
@@ -193,8 +195,8 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   }, [isOpen, searchModalInit, pageInfo.page])
 
   const markSelectedRows = (rows: any[]) => {
-
     return rows.map(row => {
+      console.log(row)
       if (basicRowMap.has(row[module.key])) {
         const newRows = {
           ...row,
@@ -245,21 +247,8 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       setPageInfo({ page: res.page, total: res.totalPages })
 
       const newSearchList = SearchResultSort(idAddedRows, searchModalInit.excelColumnType)
-
       const borderedRows = markSelectedRows(newSearchList)
-      const new_border_rows = borderedRows.map((row) => {
-        if (basicRowMap.has(row.product_id)) {
-          return {
-            ...row,
-            border: true
-          }
-        } else {
-          return {
-            ...row
-          }
-        }
-      })
-      setSearchList(page === 1 ? new_border_rows : prev => [...prev, ...new_border_rows])
+      setSearchList(page === 1 ? borderedRows : prev => [...prev, ...borderedRows])
     }
 
     Notiflix.Loading.remove();
@@ -383,7 +372,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       ? [module.emptyRow]
       : newBasicRow.map((row, rowIdx) => ({...row, id:row[module.key] , isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1, border:false }))
     column.setBasicRow(newBasicRow)
-    setBasicRowMap(new Map())
   }
 
   const setAllSelected = (rows: any) => {
@@ -403,12 +391,12 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     setSearchList(rows.map(row => ({...row, border:false})))
     setBasicRowMap(new Map())
   }
-
+  console.log('init',initMap)
   const onClose = () => {
     setPageInfo({ page: 1, total: 1 })
     setIsOpen(false)
     setKeyword('')
-    setBasicRowMap(new Map())
+    setBasicRowMap(new Map(initMap))
   }
 
 
