@@ -80,12 +80,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           break;
         }
         case 2:{
-          setSearchModalInit(SearchInit.product)
+          setSearchModalInit(SearchInit.allProduct)
           setSearchModalColumn(
-            [...searchModalList[`${SearchInit.product.excelColumnType}Search`].map((column, index) => {
+            [...searchModalList[`${SearchInit.allProduct.excelColumnType}Search`].map((column, index) => {
               if(index === 0) return ({...column, colSpan(args) {
                   if(args.row?.first){
-                    return searchModalList[`${SearchInit.product.excelColumnType}Search`].length
+                    return searchModalList[`${SearchInit.allProduct.excelColumnType}Search`].length
                   }else{
                     return undefined
                   }
@@ -156,6 +156,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             keyword:keyword,
             opt:optionIndex,
             outsourcing: 2
+          }
+        case "bom":
+          return {
+            keyword:keyword,
+            opt:optionIndex,
+            outsourcing: 0
           }
         case "toolProduct":
           return {}

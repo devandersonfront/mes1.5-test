@@ -56,8 +56,12 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
   const [lotList, setLotList] = useState<any[]>([])
-  const [selectProduct, setSelectProduct] = useState<string>('')
-  const [selectType, setSelectType] = useState<string>('')
+  const [selected, setSelected] = useState<{index: number | null, product:string, type:string, productType:string}>({
+    index: null,
+    product: '',
+    type: '',
+    productType:''
+  })
   const cavity = row.molds?.filter(mold => mold.mold.setting === 1)?.[0]?.mold?.mold?.cavity ?? 1
 
   useEffect(() => {
@@ -91,49 +95,48 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const changeRow = (tmpRow: any, key?: string) => {
     const newRows = tmpRow?.map((v, i) => {
-      let childData: any = {}
-      let childDataType: TransferType = null
-      let product = null
-      let raw_material = null
-      let sub_material = null
-      let bomId = null
+      const bomDetail:{childData:any, bomType: TransferType, bomId:number, productType?: string, rmType?: string} = {
+        childData: {},
+        bomType: undefined,
+        bomId: undefined,
+      }
       switch(v.bom.type){
         case 0:{
-          childData = v.bom.child_rm
-          childData.unit = v.bom.child_rm.type == "1" ? "kg" : v.bom.child_rm.type == "2" ? "장" : "-";
-          childDataType = 'rawMaterial'
-          raw_material = childData
-          bomId = v.bom.childRmId
+          const childData = v.bom.child_rm
+          bomDetail['rmType'] = v.bom.child_rm.type == "1" ? "kg" : v.bom.child_rm.type == "2" ? "장" : "-";
+          bomDetail['childData'] = childData
+          bomDetail['bomType'] = 'rawMaterial'
+          bomDetail['bomId'] = v.bom.childRmId
           break;
         }
         case 1:{
-          childData = v.bom.child_sm
-          childDataType = 'subMaterial'
-          sub_material = childData
-          bomId = v.bom.childSmId
+          bomDetail['childData'] = v.bom.child_sm
+          bomDetail['bomType'] = 'subMaterial'
+          bomDetail['bomId'] = v.bom.childSmId
           break;
         }
         case 2:{
-          childData = v.bom.child_product
-          childDataType = 'product'
-          product = childData
-          bomId = v.bom.childProductId
+          console.log('bom',v.bom)
+          bomDetail['childData'] = v.bom.child_product
+          bomDetail['bomType'] = 'product'
+          bomDetail['bomId'] = v.bom.childProductId
           break;
         }
       }
-      const bomLots = getBomLots(bomId, childDataType)
+      const bomLots = getBomLots(bomDetail.bomId, bomDetail.bomType)
       const stock = getTotalStock(bomLots)
       const sumOfUsage = bomLots?.length > 0 ? lodash.sum(bomLots.map(bom => new Big(bom.lot.amount).times(bom.bom.usage).toNumber())) : new Big(row.good_quantity).div(cavity)
-
+      console.log('dd',bomLots)
       return {
-        ...childData,
+        ...bomDetail.childData,
         seq: i+1,
-        code: childData.code,
-        type: TransferCodeToValue(childData?.type, childDataType),
+        code: bomDetail.childData.code,
+        type: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
         tab: v.bom.type,
-        type_name: TransferCodeToValue(childData?.type, childDataType),
+        product_type: v.bom.type !== 2 ? '-' : TransferCodeToValue(bomDetail.childData?.type, 'productType'),
+        type_name: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
         cavity,
-        unit: childData.unit,
+        unit: bomDetail.childData.unit ?? bomDetail.rmType,
         parent: v.bom.parent,
         usage: v.bom.usage,
         version: v.bom.version,
@@ -141,15 +144,12 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         stock,
         bom_lot_list: tmpRow,
         disturbance: sumOfUsage,
-        processArray: childData.process ?? null,
-        process: childData.process ? childData.process.name : '-',
+        processArray: bomDetail.childData.process ?? null,
+        process: bomDetail.childData.process ? bomDetail.childData.process.name : '-',
         bom: bomLots,
-        product,
-        raw_material,
-        sub_material,
+        [bomDetail.bomType]: bomDetail.childData,
       }
     })
-
     setSearchList(newRows)
   }
 
@@ -164,7 +164,8 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       case 'subMaterial':
         return row.bom?.filter((bom) => bom?.lot?.child_lot_sm?.smId === id)
       case 'product':
-        return row.bom?.filter((bom) => bom?.lot?.child_lot_record?.operation_sheet?.productId === id)
+        console.log(row)
+          return row.bom?.filter((bom) => bom.bom?.child_product?.type > 2 ? bom?.lot?.child_lot_outsourcing?.product?.product_id === id : bom?.lot?.child_lot_record?.operation_sheet?.productId === id)
       default:
         return null
     }
@@ -219,10 +220,10 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     </div>
   }
 
-  const isProduct = selectType === '반제품' || selectType === '재공품' || selectType === '완제품'
-
+  const isProduct = ['반제품', '재공품', '완제품'].includes(selected.type)
+  const isOutsource = selected.productType === '외주품'
   const LotListColumns = () => {
-    return isProduct ? searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
+    return isProduct ? isOutsource? searchModalList.OutsourceLotReadonlyInfo : searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
   }
 
   return (
@@ -293,13 +294,12 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
               <ExcelTable
                   headerList={searchModalList.InputListReadonly}
                   row={searchList ?? [{}]}
-                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
+                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                     setSelectRow(e)
                   }}
                   setRow={(e) => {
                     let tmp = e.map((v, index) => {
                       if(v.bom){
-                        setSelectProduct(v.code)
                         if(v.lotList){
                           const newLots = v.lotList.map(lot => ({
                             ...lot,
@@ -307,9 +307,9 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                             unit: v.unit,
                             current: new Big(lot.current).minus(new Big(lot.amount).times(v.usage)).toNumber()
                           }))
-                          setSelectType(v.type_name)
                           setLotList(newLots)
                         }
+                        setSelected({...selected, type:v.type_name, product: v.code, productType: v.product_type})
                       }
                       delete v.lotList
                       return {
@@ -328,7 +328,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
             <div id='body-2-title' style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
               <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                 <div style={{ display: 'flex', width: 1200}}>
-                  <p style={{fontSize: 22, padding: 0, margin: 0}}>{selectType} LOT 리스트 ({selectProduct})</p>
+                  <p style={{fontSize: 22, padding: 0, margin: 0}}>{selected.type} LOT 리스트 ({selected.product})</p>
                 </div>
               </div>
               <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>

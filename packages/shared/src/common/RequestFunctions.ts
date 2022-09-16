@@ -450,7 +450,7 @@ const ApiList = {
   qualityRecordInspectSearch: '/cnc/api/v1/quality/record/inspect/search',
   productChangeSearch: `/cnc/api/v1/product-changes/search`,
   exportSearch: `/api/v1/shipment/export/search`,
-
+  outsourcingImportSearch: `/api/v1/outsourcing/import/search`,
   //all
   authorityAll: `/api/v1/auth/all`,
   recordAll: `/cnc/api/v1/record/all`,

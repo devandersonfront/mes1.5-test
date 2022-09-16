@@ -59,10 +59,11 @@ const headerItems: {title: string, infoWidth: number, key: string, unit?: string
 const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [headerItemsValue, setHeaderItemsValue] = useState<any>({})
-  const [selected, setSelected] = useState<{index: number | null, product:string, type:string}>({
+  const [selected, setSelected] = useState<{index: number | null, product:string, type:string, productType:string}>({
     index: null,
     product: '',
-    type: ''
+    type: '',
+    productType:''
   })
   const [inputMaterialList, setInputMaterialList] = useState<any[]>([])
   const [lotList, setLotList] = useState<any[]>([])
@@ -221,6 +222,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         ...bom.detail,
         seq: index+1,
         type_name: TransferCodeToValue(bom.detail?.type, bom.typeName),
+        product_type: bom.typeName === 'product' ? TransferCodeToValue(bom.detail?.type, 'productType') : '-',
         cavity,
         real_disturbance: totalUsage.toNumber(),
         disturbance: sumQuantity ?? 0,
@@ -430,16 +432,18 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     setSelected({
       index: null,
       product: '',
-      type: ''
+      type: '',
+      productType: '',
     })
     setInputMaterialList([])
     setIsOpen(false)
   }
 
-  const isProduct = selected.type === '반제품' || selected.type === '재공품' || selected.type === '완제품'
+  const isProduct = ['반제품', '재공품', '완제품'].includes(selected.type)
+  const isOutsource = selected.productType === '외주품'
 
   const LotListColumns = () => {
-    const defaultColumns = isProduct ? searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
+    const defaultColumns = isProduct ? isOutsource ? searchModalList.OutsourceLotReadonlyInfo : searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
     const extraCols:any[] = [{key: 'maxAmount', name: '최대 생산가능수량', formatter: UnitContainer, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"}]
     isModify && extraCols.push({ key: 'isComplete', name: '사용완료 상태', formatter: LineBorderContainer, textAlign: 'center'})
     return defaultColumns?.map(column =>
@@ -535,7 +539,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   setRow={(inputMaterials, idx) => {
                     let tmp = inputMaterials.map((input, inputIdx) => {
                       if(input.lotList && idx === inputIdx ){
-                        setSelected({index: idx, type: input.type_name, product: input.code})
+                        setSelected({index: idx, type: input.type_name, product: input.code, productType: input.product_type})
                         const rowLotList = toLotList(input)
                         setLotList(rowLotList)
                       }

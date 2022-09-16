@@ -257,7 +257,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         usage: selectData.usage,
         process: selectData.process?.name ?? "-",
         product_name: selectData.name,
-        product_type: TransferCodeToValue(selectData.type, 'product'),
+        product_type: TransferCodeToValue(selectData.type, 'productType'),
         product_unit: selectData.unit,
         product: {...selectData},
         bom_root_id: selectData.bom_root_id,

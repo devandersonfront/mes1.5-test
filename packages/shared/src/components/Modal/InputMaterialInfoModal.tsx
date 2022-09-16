@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {IExcelHeaderType} from '../../@types/type'
+import { IExcelHeaderType, TransferType } from '../../@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'
@@ -140,50 +140,45 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
       inputBom = tmpRow
     }
     tmpData = inputBom.map((v, i) => {
-      let childData: any = {}
-      let type = "";
-      let usage = 1
+      const bomDetail:{childData:any, bomType: TransferType, rmType?: string} = {
+        childData: {},
+        bomType: undefined,
+      }
       switch(v.type){
         case 0:{
-          childData = v.child_rm
-          type = v.child_rm.type == "1" ? "kg" : v.child_rm.type == "2" ? "장" : "-";
+          bomDetail['childData'] = v.child_rm
+          bomDetail['bomType'] = 'rawMaterial'
+          bomDetail['rmType'] = v.child_rm.type === 1 ? 'kg' : '장'
           break;
         }
         case 1:{
-          childData = v.child_sm
-          type = "1";
+          bomDetail['childData'] = v.child_sm
+          bomDetail['bomType'] = 'subMaterial'
           break;
         }
         case 2:{
-          childData = v.child_product
-          type = "2";
+          bomDetail['childData'] = v.child_product
+          bomDetail['bomType'] = 'product'
           break;
         }
       }
       return {
-        ...childData,
+        ...bomDetail.childData,
         seq: i+1,
-        code: childData.code,
-        type: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterial" : v.type === 1 ? "subMaterial" : "product"),
+        code: bomDetail.childData.code,
+        type: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
         tab: v.type,
-        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterial" : v.type === 1 ? "subMaterial" : "product"),
+        product_type: v.type !== 2 ? '-' : TransferCodeToValue(bomDetail.childData?.type, 'productType'),
+        type_name: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
         cavity,
-        unit: childData.unit ?? type,
+        unit: bomDetail.childData.unit ?? bomDetail.rmType,
         usage: v.usage,
         version: v.version,
-        processArray: childData.process ?? null,
-        process: childData.process ? childData.process.name : null,
-        // bom_root_id: childData.bom_root_id,
-        product: v.type === 2 ?{
-          ...childData,
-        }: null,
+        processArray: bomDetail.childData.process ?? null,
+        process: bomDetail.childData.process ? bomDetail.childData.process.name : null,
+        // bom_root_id: bomDetail.childData.bom_root_id,
+        [bomDetail.bomType]: {...bomDetail.childData},
         product_id: v?.parent?.product_id,
-        raw_material: v.type === 0 ?{
-          ...childData,
-        }: null,
-        sub_material: v.type === 1 ?{
-          ...childData,
-        }: null,
         parent:v.parent,
         setting:v.setting === 0 ? "기본" : "스페어",
         disturbance: new Big(parent?.goal).div(cavity).times(v.usage).toNumber()
