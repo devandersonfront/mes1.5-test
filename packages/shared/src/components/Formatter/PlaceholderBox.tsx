@@ -18,6 +18,7 @@ const PlaceholderBox = ({row, column, setRow}: IProps) => {
               </div>
           )
       }
+      console.log(column.key, row[column.key], column.placeholder)
       return(
           <Background className={row[column.key] ?? 'unprintable'}>
               {

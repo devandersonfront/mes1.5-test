@@ -78,10 +78,10 @@ export const InputListHeaders = (isOutsourcing: boolean, readonly:boolean) => {
   if(!readonly) {
     if(isOutsourcing){
       headers.splice(9,0, {key: 'disturbance', name: '발주량', formatter: UnitContainer, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"})
-      headers.splice(11,0,{...headers[11], readonly: false})
+      headers.splice(11,1,{...headers[11], readonly: false})
     }else {
       headers.splice(9,0,{key: 'disturbance', name: '생산량', formatter: UnitContainer, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"})
-      headers.splice(12,0,{...headers[12], readonly: false})
+      headers.splice(12,1,{...headers[12], readonly: false})
     }
   }
   console.log(headers)

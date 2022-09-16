@@ -117,12 +117,13 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   }
 
   const updateLotList = () => {
-    const lots = row.bom?.map((bom) => bom.lot)
+    const lots = Array.isArray(row.bom) ? row.bom.map((bom) => bom.lot) : [row.bom].map((bom) => bom.lot)
     onRowChange({
       ...row,
       lotList: lots.map((v, i) => {
+        console.log("v : ", v)
         let type, date, warehousing, elapsed
-        switch(v.type){
+        switch(v?.type){
           case 0:
             type = 'child_lot_rm'
             date = v.date

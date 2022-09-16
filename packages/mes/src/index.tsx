@@ -75,3 +75,4 @@ export {MesOutsourcingImportModify} from "./container/Outsourcing/Import/MesOuts
 
 export {MesOutsourcingDeliveryRegister} from "./container/Outsourcing/Delivery/MesOutsourcingDeliveryRegister"
 export {MesOutsourcingDeliveryList} from "./container/Outsourcing/Delivery/MesOutsourcingDeliveryList"
+export {MesOutsourcingDeliveryModify} from "./container/Outsourcing/Delivery/MesOutsourcingDeliveryModify"

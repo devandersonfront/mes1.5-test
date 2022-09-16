@@ -20,7 +20,7 @@ import moment from "moment";
 import {setModifyInitData} from "shared/src/reducer/modifyInfo";
 import { titles } from 'shared/src/common/menuTitles'
 
-const optionList = ["고유번호", "CODE", "품명", "발주자 이름"]
+const optionList = ["고유번호", "CODE", "품명"]
 
 const MesOutsourcingOrderList = () => {
     const dispatch = useDispatch()
@@ -53,26 +53,27 @@ const MesOutsourcingOrderList = () => {
 
     const buttonEvent = (buttonIndex: number) => {
         switch (buttonIndex) {
+            // case 0:
+            //     if (selectList.size === 0 || selectList.size > 1) {
+            //         Notiflix.Report.warning("경고", selectList.size > 1 ? "발주 수정은 한 개씩만 가능합니다." : "데이터를 선택해주세요.", "확인", () => {
+            //         })
+            //     } else {
+            //         dispatch(setModifyInitData({
+            //             modifyInfo: basicRow.map(v => {
+            //                 if (selectList.has(v.id)) {
+            //                     return v
+            //                 }
+            //             }).filter(v => v),
+            //             type: 'workModify'
+            //         }))
+            //         setModifyModalOpen(true);
+            //     }
+            //     break
             case 0:
-                if (selectList.size === 0 || selectList.size > 1) {
-                    Notiflix.Report.warning("경고", selectList.size > 1 ? "발주 수정은 한 개씩만 가능합니다." : "데이터를 선택해주세요.", "확인", () => {
-                    })
-                } else {
-                    dispatch(setModifyInitData({
-                        modifyInfo: basicRow.map(v => {
-                            if (selectList.has(v.id)) {
-                                return v
-                            }
-                        }).filter(v => v),
-                        type: 'workModify'
-                    }))
-                    setModifyModalOpen(true);
-                }
-                break
-            case 1:
                 const deleteDatas = basicRow.map((row) =>{
                     if(selectList.has(row.id)){
                         row.worker = row.worker_object
+                        delete row.worker_object
                         return row
                     }
                 }).filter(v =>v)
@@ -80,6 +81,10 @@ const MesOutsourcingOrderList = () => {
                     .then((res) => {
                         Notiflix.Report.success( "삭제되었습니다.", "","확인", () => reload())
                     })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+
                 break
             default:
                 break
@@ -214,7 +219,7 @@ const MesOutsourcingOrderList = () => {
                 searchOptionList={optionList}
                 optionIndex={optionIndex}
                 buttons={
-                    [/*'수정하기'*/, '삭제']
+                    ['삭제']
                 }
                 buttonsOnclick={buttonEvent}
             />

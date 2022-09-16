@@ -294,8 +294,10 @@ const ApiList = {
   inspecMoldSave: `/api/v1/inspec/daily/mold/save`,
   lotRmComplete: `/api/v1/lot-rm/complete`,
   stockSave: `/api/v1/stock/basic/save`,
+  outsourcingShipmentSave: `/api/v1/outsourcing/shipment/save`,
   outsourcingOrderSave: `/api/v1/outsourcing/export/save`,
   outsourcingImportSave : `/api/v1/outsourcing/import/save`,
+
   //modify
   operationModify: `/api/v1/operation/modify`,
 
@@ -350,6 +352,7 @@ const ApiList = {
   documentDelete: `/cnc/api/v1/document/delete`,
   productChangeDelete: `/cnc/api/v1/product-changes/remove`,
   exportDelete: `/api/v1/shipment/export/delete`,
+  outsourcingShipmentDelete: `/api/v1/outsourcing/shipment/delete`,
   outsourcingOrderDelete: `/api/v1/outsourcing/export/delete`,
   outsourcingImportDelete : `/api/v1/outsourcing/import/delete`,
 
@@ -408,6 +411,8 @@ const ApiList = {
   productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
   sheetDefectList: `/api/v1/sheet/defect`,
   exportList: `/api/v1/shipment/export/list`,
+  outsourcingShipmentList: `/api/v1/outsourcing/shipment/list`,
+  outsourcingLotList: `/api/v1/outsourcing/import/groups`,
   outsourcingOrderList: `/api/v1/outsourcing/export/list`,
   outsourcingImportList : `/api/v1/outsourcing/import/list`,
 
@@ -455,6 +460,7 @@ const ApiList = {
   exportSearch: `/api/v1/shipment/export/search`,
   outsourcingOrderSearch: `/api/v1/outsourcing/export/search`,
   outsourcingImportSearch: `/api/v1/outsourcing/import/search`,
+  outsourcingShipmentSearch: `/api/v1/outsourcing/shipment/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,
