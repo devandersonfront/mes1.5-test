@@ -140,15 +140,16 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
       inputBom = tmpRow
     }
     tmpData = inputBom.map((v, i) => {
-      const bomDetail:{childData:any, bomType: TransferType, rmType?: string} = {
+      const bomDetail:{childData:any, bomType: TransferType} = {
         childData: {},
         bomType: undefined,
       }
       switch(v.type){
         case 0:{
-          bomDetail['childData'] = v.child_rm
+          const childData = {...v.child_rm}
+          childData.unit = childData.unit === 1 ? "장" : 'kg'
+          bomDetail['childData'] = childData
           bomDetail['bomType'] = 'rawMaterial'
-          bomDetail['rmType'] = v.child_rm.type === 1 ? 'kg' : '장'
           break;
         }
         case 1:{
@@ -171,7 +172,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
         product_type: v.type !== 2 ? '-' : TransferCodeToValue(bomDetail.childData?.type, 'productType'),
         type_name: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
         cavity,
-        unit: bomDetail.childData.unit ?? bomDetail.rmType,
+        unit: bomDetail.childData.unit,
         usage: v.usage,
         version: v.version,
         processArray: bomDetail.childData.process ?? null,

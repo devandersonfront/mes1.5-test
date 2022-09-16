@@ -257,10 +257,10 @@ const BasicProduct = ({}: IProps) => {
   const cleanUpData = (res: any) => {
     res.menus?.length && setNewColumn(res.menus)
     const newRows = res.info_list.map((row: any) => {
-      const additionalData = row.additional.map(add => ({
-        [add.mi_id]: add.value
-      }))
-
+      let additionalData = {}
+      row.additional.map(add => {
+        additionalData[add.mi_id] = add.value
+      })
       let random_id = Math.random()*1000;
       return {
         ...row,
@@ -279,7 +279,7 @@ const BasicProduct = ({}: IProps) => {
         reload
       }
     })
-    setBasicRow([...newRows])
+    setBasicRow(newRows)
   }
 
   const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {

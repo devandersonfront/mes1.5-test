@@ -8,56 +8,52 @@ import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/me
 import { useDispatch,  } from "react-redux";
 import {useRouter} from "next/router";
 import moment from "moment";
-
-
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 const MesOutsourcingOrderRegister = () => {
     const dispatch = useDispatch()
     const router = useRouter()
-
-    const [basicRow, setBasicRow] = useState<any[]>([{isFirst:true}])
+    const [basicRow, setBasicRow] = useState<any[]>([{}])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
-    const buttonEvent = async(buttonIndex:number) => {
+    useEffect(() => {
+      dispatch(
+        setMenuSelectState({ main: "외주 관리", sub: router.pathname })
+      )
+      return () => {
+        dispatch(deleteMenuSelectState())
+      }
+    }, [])
+
+
+  const buttonEvent = async(buttonIndex:number) => {
         switch (buttonIndex) {
             case 0:
-                if(selectList.size > 0){
-                    const resultData = basicRow.map((row) => {
-                        if(selectList.has(row.id)){
-                            const obj:any = {}
-                            console.log(row.bom)
-                            obj.worker = row.worker
-                            obj.product = row.product
-                            obj.order_quantity = row.good_quantity
-                            obj.current = row.good_quantity
-                            obj.order_date = row.order_date ?? moment().format("YYYY-MM-DD")
-                            obj.due_date = row.due_date ?? moment().format("YYYY-MM-DD")
-                            obj.bom = row.bom.map((bomRow) => {
-                                delete bomRow.bom.originalBom
-                                delete bomRow.bom.outOriginalBom
-
-                                return bomRow
-                            })
-                            return obj
-                        }
-                    }).filter(v => v)
-                    await RequestMethod("post", "outsourcingExportSave", [...resultData])
-                        .then((res) => {
-                            Notiflix.Report.success("메세지","등록되었습니다.","확인", () => router.push("/mes/outsourcing/order/list"))
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-
-                }else{
-                    Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인", () =>{})
+                try{
+                    if(selectList.size === 0) throw(alertMsg.noSelectedData)
+                    const postBody =basicRow.map((row) => {
+                      if(!!!row.product) throw(alertMsg.noProduct)
+                      if(!!!row.worker) throw('발주자를 선택해 주세요.')
+                      if(!!!row.bom) throw(alertMsg.needsBom)
+                      return {
+                        worker: row.worker,
+                        product: row.product,
+                        order_quantity: row.order_quantity,
+                        current: row.order_quantity,
+                        order_date: row.order_date ?? moment().format("YYYY-MM-DD"),
+                        due_date: row.due_date ?? moment().format("YYYY-MM-DD"),
+                        bom: row.bom,
+                      }
+                  })
+                  const res = await RequestMethod("post", "outsourcingOrderSave", postBody)
+                  if(res) Notiflix.Report.success("저장되었습니다.","","확인", () => router.push("/mes/outsourcing/order/list"))
+                } catch (errMsg){
+                  Notiflix.Report.warning('경고', errMsg,'확인')
                 }
-
                 break
             case 1:
                 const liveData = [...basicRow.filter(row => !selectList.has(row.id))]
                 liveData[0].isFirst = true
-
                 setBasicRow(liveData)
                 setSelectList(new Set())
                 break
@@ -65,15 +61,6 @@ const MesOutsourcingOrderRegister = () => {
                 break
         }
     }
-
-    useEffect(() => {
-        dispatch(
-            setMenuSelectState({ main: "외주 관리", sub: router.pathname })
-        )
-        return () => {
-            dispatch(deleteMenuSelectState())
-        }
-    }, [])
 
     return (
         <div>
@@ -89,7 +76,7 @@ const MesOutsourcingOrderRegister = () => {
                 resizable
                 headerList={[
                     SelectColumn,
-                    ...columnlist.outsourcingOrder().map(col => ({ ...col, basicRow, setBasicRow}))
+                    ...columnlist.outsourcingOrder
                 ]}
                 row={basicRow}
                 setRow={(rows) => {

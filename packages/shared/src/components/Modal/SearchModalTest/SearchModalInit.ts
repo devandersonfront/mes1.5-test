@@ -13,6 +13,7 @@ export const SearchInit: Record<string, SearchInitType> = {
   },
   user: {
     title: '유저 검색',
+    placeholder: '사용자 검색',
     searchFilter: ['성명', '이메일', '직책명'],
     excelColumnType: 'user'
   },
@@ -128,6 +129,11 @@ export const SearchInit: Record<string, SearchInitType> = {
     title:"공정 검색",
     searchFilter:["공정명"],
     excelColumnType:"process",
-
+  },
+  outsourcingOrder : {
+    title: '발주내역 검색',
+    searchFilter: ['발주 고유번호', 'CODE', '품명'],
+    excelColumnType: 'outsourcingOrder',
+    placeholder: '발주내역입력'
   }
 }

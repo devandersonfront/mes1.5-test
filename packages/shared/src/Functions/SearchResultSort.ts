@@ -203,6 +203,29 @@ export const SearchResultSort = (infoList, type: string) => {
         }
       })
     }
+    case 'outsourcingOrder' : {
+      const columnKeys = searchModalList.outsourcingOrderSearch.map(columns => columns.key)
+      return infoList.map((v) => {
+        let obj = {}
+        //데이터와 내가 지정한 키가 같을경우에는 바인딩 시켜주고 없을경우에는 선택없음으로 나오게
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
+        return {
+          ...v,
+          ...obj,
+          identification: v.identification,
+          name: v.product?.name,
+          product_id: v.product?.code,
+          current : v.current,
+          order_quantity : v.order_quantity,
+          order_date : v.order_date,
+          bom: v.bom,
+          customer_id : v.product.customer?.name,
+          user: v.worker?.name
+        }
+      })
+
+    }
+
     default :
       return infoList
 
@@ -285,30 +308,13 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
       }
     }
     case 'rawMaterial': {
-      const unitResult = () => {
-        let result = "-";
-        switch (selectData.type){
-          // case "반제품" :
-          //   result = "EA";
-          //   break;
-          case "COIL" :
-            result = "kg";
-            break;
-          case "SHEET" :
-            result = "장";
-            break;
-          default :
-            break;
-        }
-        return result;
-      }
       return {
         ...selectData,
         rm_id: selectData.code,
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
         type_name:"원자재",
         customer_id: selectData.customerArray?.name,
-        unit:unitResult(),
+        unit: selectData.unit === 1 ? '장' : 'kg',
         raw_material: {
           ...selectData,
           customer: selectData.customerArray

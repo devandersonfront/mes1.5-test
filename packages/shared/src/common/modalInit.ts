@@ -22,6 +22,8 @@ import {ToolListModal} from "../components/Modal/ToolListModal";
 import {LotInputInfoModal} from "../components/Modal/LotInputInfoModal";
 import { BomInfoModal } from '../components/Modal/BomInfoModal'
 import { MultiSelectModal } from '../components/Modal/SearchModalTest/MultiSelectModal'
+import {PlaceholderBox} from "../components/Formatter/PlaceholderBox";
+import {CalendarBox} from "../components/CalendarBox/CalendarBox";
 
 export const searchModalList: any  = {
   member: [
@@ -380,7 +382,7 @@ export const searchModalList: any  = {
     {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'amount', name: '생산량', formatter: UnitContainer, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"},
   ],
-  InputList: [
+  OutsourcingInputListReadonly: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'code', name: 'CODE', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'name', name: '품명', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
@@ -389,11 +391,9 @@ export const searchModalList: any  = {
     {key: 'unit', name: '단위', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'usage', name: '1회 사용량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'real_disturbance', name: '소요량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
-    {key: 'cavity', name: '캐비티', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", unitData:'EA'},
-    {key: 'disturbance', name: '생산량', formatter: UnitContainer, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"},
     {key: 'stock', name: '재고량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
-    {key: 'lot', name: '투입 LOT', width: 160, formatter: AddTabButton, placeholder: '-', type: '' },
+    {key: 'lot', name: '투입 LOT', width: 160, formatter: AddTabButton, placeholder: '-', readonly:true },
   ],
   InputListReadonly: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center',placeholder: "-"},
@@ -403,12 +403,11 @@ export const searchModalList: any  = {
     {key: 'type_name', name: '품목 종류', formatter: LineBorderContainer, textAlign: 'center',placeholder: "-"},
     {key: 'unit', name: '단위', formatter: LineBorderContainer, textAlign: 'center',placeholder: "-"},
     {key: 'usage', name: '1회 사용량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
-    {key: 'disturbance', name: '소요량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
+    {key: 'real_disturbance', name: '소요량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'cavity', name: '캐비티', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", unitData:'EA'},
     {key: 'stock', name: '재고량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center', placeholder: "-"},
-    {key: 'lot', name: '투입 LOT', width: 160, formatter: AddTabButton, placeholder: '-', type: 'readonly'},
-
+    {key: 'lot', name: '투입 LOT', width: 160, formatter: AddTabButton, placeholder: '-', readonly:true},
   ],
   workRegister: [
     {key: 'sequence', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
@@ -657,5 +656,14 @@ export const searchModalList: any  = {
     {key: 'details', name: '문제 내역', formatter: LineBorderContainer, editor:TextEditor, width: 480, placeholder:"문제 내역을 입력해주세요.", textType: 'Modal'},
     {key: 'reason', name: '문제 원인', formatter: LineBorderContainer, editor:TextEditor, width: 560, placeholder:"문제 원인을 입력해주세요.", textType: 'Modal'},
     {key: 'action', name: '대책 및 조치사항', formatter: LineBorderContainer, editor:TextEditor, placeholder:"대책 및 조치사항을 입력해주세요.", textType: 'Modal'},
+  ],
+  outsourcingOrderSearch : [
+    {key: 'identification', name: '발주 고유 번호', formatter:LineBorderContainer,placeholder: '-'},
+    {key: 'name', name: '품명', formatter:LineBorderContainer, placeholder: '-'},
+    {key: 'product_id', name: 'CODE', formatter:LineBorderContainer, type: 'user', placeholder: '-'},
+    {key: 'current', name: '발주량(잔량)', formatter:LineBorderContainer, placeholder: '-'},
+    {key: 'order_quantity', name: '총 발주량', formatter:LineBorderContainer, readonly:true, placeholder: '-'},
+    {key: 'order_date', name: '발주일', formatter:LineBorderContainer, readonly:true, placeholder: '-'},
+    {key: 'due_date', name: '입고 희망일', formatter:LineBorderContainer, readonly:true, type:'basic', action:'register'},
   ]
 }
