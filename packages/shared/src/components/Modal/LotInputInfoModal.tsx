@@ -120,7 +120,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
         case 2:{
-          console.log('bom',v.bom)
           bomDetail['childData'] = v.bom.child_product
           bomDetail['bomType'] = 'product'
           bomDetail['bomId'] = v.bom.childProductId
@@ -130,7 +129,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       const bomLots = getBomLots(bomDetail.bomId, bomDetail.bomType)
       const stock = getTotalStock(bomLots)
       const sumOfUsage = bomLots?.length > 0 ? lodash.sum(bomLots.map(bom => new Big(bom.lot.amount).times(bom.bom.usage).toNumber())) : new Big(row.good_quantity).div(cavity)
-      console.log('dd',bomLots)
       return {
         ...bomDetail.childData,
         seq: i+1,
@@ -168,7 +166,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       case 'subMaterial':
         return row.bom?.filter((bom) => bom?.lot?.child_lot_sm?.smId === id)
       case 'product':
-        console.log(row)
           return row.bom?.filter((bom) => bom.bom?.child_product?.type > 2 ? bom?.lot?.child_lot_outsourcing?.product?.product_id === id : bom?.lot?.child_lot_record?.operation_sheet?.productId === id)
       default:
         return null

@@ -36,7 +36,6 @@ export const getUsageType = (setting: number) => {
 }
 
 export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) => {
-  console.log('bo',bom)
   switch(bom.type){
     case 0:
       return {
@@ -53,7 +52,8 @@ export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) 
       id: bom.childSmId,
       detail: bom.child_sm
     }
-    case 2: return {
+    case 2:
+      return {
       ...bom,
       typeName: 'product',
       bomKey: `p${bom.childProductId}`,

@@ -134,7 +134,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
         }
       }
 
-      console.log(bomDetail.childData?.type)
       return {
         ...bomDetail.childData,
         seq: i+1,

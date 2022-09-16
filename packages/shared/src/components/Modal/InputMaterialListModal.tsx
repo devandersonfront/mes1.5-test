@@ -199,13 +199,20 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
         case 'product':{
+          const outsource = bom.detail.type > 2
           if(!!row.bom_info) {
-            bom_info = row.bom_info.filter(bom => bom[0].operation_sheet?.productId === inputMaterial.childProductId)?.[0]
+            bom_info = row.bom_info.filter(bom => {
+              const productId = outsource ? bom[0].product?.product_id : bom[0].operation_sheet?.productId
+              return productId === inputMaterial.childProductId
+            })?.[0]
           } else if (firstModify)
           {
-            bom_info = bomIdAndLotMap.get(`p${inputMaterial.childProductId}`)?.map((lots) => ({...lots.child_lot_record, amount: lots.amount}))
+            bom_info = bomIdAndLotMap.get(`p${inputMaterial.childProductId}`)?.map((lots) => (outsource ? {...lots.child_lot_outsourcing, amount: lots.amount} :{...lots.child_lot_record, amount: lots.amount}))
           }
-          originalBom = row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.operation_sheet?.productId === inputMaterial.childProductId)?.[0] ?? bom_info : bom_info
+          originalBom = row.originalBom ? row.originalBom.filter(bom => {
+            const productId = outsource ? bom?.[0]?.product?.product_id : bom?.[0]?.operation_sheet?.productId
+            return productId === inputMaterial.childProductId
+          })?.[0] ?? bom_info : bom_info
           break;
         }
       }
@@ -250,7 +257,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     switch(type){
       case 0: return lot.lot_rm_id
       case 1: return lot.lot_sm_id
-      case 2: return lot.record_id
+      case 2: return lot.osId ? lot.record_id : lot.osi_id
       default: return
     }
   }
@@ -279,7 +286,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           ...lot,
           seq: lotIdx + 1,
           usage: input.usage,
-          date: lot.date ?? moment(lot.end).format("YYYY-MM-DD"),
+          date: lot.date ?? moment(lot.osId ? lot.end : lot.import_date).format("YYYY-MM-DD"),
           warehousing: lot.warehousing ?? lot.good_quantity,
           amount: lotAmount,
           unit: input.unit,
@@ -320,57 +327,28 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       inputBomIdMap.set(bomObject.bomKey, bom)
     })
     inputMaterialList.map((bom, index) => {
-      console.log(bom)
       let totalAmount = 0
-      if(bom.lots !== undefined) {
-        bom.lots?.map(lot => {
-          if (Number(lot.amount)) {
-            totalAmount += Number(lot.amount)
-            bomToSave.push({
-              ...inputBomIdMap.get(bom.bomKey),
-              record_id: undefined,
-              lot: {
-                elapsed: lot.elapsed,
-                type: bom.tab,
-                child_lot_rm: bom.tab === 0 ? {...lot, current: lot.originalCurrent ?? lot.current,} : null,
-                child_lot_sm: bom.tab === 1 ? {...lot, current: lot.originalCurrent ?? lot.current} : null,
-                child_lot_record: bom.tab === 2 ? {...lot, current: lot.originalCurrent ?? lot.current} : null,
-                warehousing: lot.warehousing,
-                date: lot.date,
-                current: lot.originalCurrent ?? lot.current,
-                amount: lot.amount,
-                version: lot?.version ?? undefined,
-                actualCurrent: lot.actualCurrent ?? lot.current
-              }
-            })
-          }
-        })
-      }
-      else {
-        bom.bom_info?.map(lot => {
-          if (Number(lot.amount)) {
-            totalAmount += Number(lot.amount)
-
-            bomToSave.push({
-              ...inputBomIdMap.get(bom.bomKey),
-              record_id: undefined,
-              lot: {
-                elapsed: lot.elapsed,
-                type: bom.tab,
-                child_lot_rm: bom.tab === 0 ? {...lot, current: lot.originalCurrent ?? lot.current} : null,
-                child_lot_sm: bom.tab === 1 ? {...lot, current: lot.originalCurrent ?? lot.current} : null,
-                child_lot_record: bom.tab === 2 ? {...lot, current: lot.originalCurrent ?? lot.current} : null,
-                warehousing: lot.warehousing,
-                date: lot.date,
-                current: lot.originalCurrent ?? lot.current,
-                amount: lot.amount,
-                version: lot?.version ?? undefined,
-                actualCurrent: lot.actualCurrent ?? lot.current
-              }
-            })
-          }
-        })
-      }
+      const bomInfo = bom.lots !== undefined ? bom.lots : bom.bom_info
+      bomInfo?.map(lot => {
+        if (Number(lot.amount)) {
+          totalAmount += Number(lot.amount)
+          const lotObjectKey = bom.tab === 0 ? 'child_lot_rm' : bom.tab === 1 ? 'child_lot_sm' : bom.type < 3 ? 'child_lot_record' : 'child_lot_outsourcing'
+          bomToSave.push({
+            ...inputBomIdMap.get(bom.bomKey),
+            record_id: undefined,
+            lot: {
+              elapsed: lot.elapsed,
+              type: bom.tab,
+              [lotObjectKey]:{...lot, current: lot.originalCurrent ?? lot.current},
+              warehousing: lot.warehousing,
+              date: lot.date,
+              current: lot.originalCurrent ?? lot.current,
+              amount: lot.amount,
+              version: lot?.version ?? undefined,
+              actualCurrent: lot.actualCurrent ?? lot.current
+            }
+          })
+        }})
       const defectTotal = lodash.sum(row.defect_reasons?.filter((reason) => !!reason.amount).map((reason)=> Number(reason.amount)))
       if(totalAmount < defectTotal) {
         Notiflix.Report.warning("생산량은 불량 수량보다 작을 수 없습니다.", "", "확인")
@@ -601,6 +579,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                         // const originalTotalUsage = new Big(lot.originalAmount).div(row.originalCavity).times(lot.usage)
                         if(!!lot.amount)
                         {
+                          if(!Number.isInteger(Number(lot.amount))) throw(alertMsg.onlyInteger)
                           const totalUsage = new Big(lot.amount).div(cavity).times(lot.usage)
                           if(actualCurrent.lt(totalUsage)) throw(alertMsg.overStock)
                           sumOfTotalUsage += totalUsage.toNumber()

@@ -118,11 +118,9 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
 
   const updateLotList = () => {
     const lots = row.bom?.map((bom) => bom.lot)
-    console.log(row)
     onRowChange({
       ...row,
       lotList: lots.map((v, i) => {
-        console.log('lot',v)
         let type, date, warehousing, elapsed
         switch(v.type){
           case 0:
@@ -169,8 +167,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
     if(row.action === 'modifyAndNoStock') {
       loadMaterialLot(row.tab, 1, row.action)
     } else if(row.originalStock === 0){
-      loadMaterialLot(row.tab, 1, row.action)
-      // return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
+      return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
     }
     // if(row.bom_info !== null){
     else {
