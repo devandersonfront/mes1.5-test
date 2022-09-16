@@ -80,7 +80,7 @@ const MesOutsourcingOrderRegister = () => {
             <PageHeader
                 title={"외주 발주 등록"}
                 buttons={
-                    ['저장하기', '삭제']
+                    ['저장하기', /*'삭제'*/]
                 }
                 buttonsOnclick={buttonEvent}
             />

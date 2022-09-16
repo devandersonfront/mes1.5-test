@@ -349,6 +349,8 @@ const ApiList = {
   documentDelete: `/cnc/api/v1/document/delete`,
   productChangeDelete: `/cnc/api/v1/product-changes/remove`,
   exportDelete: `/api/v1/shipment/export/delete`,
+  outsourcingExportDelete: `/api/v1/outsourcing/export/delete`,
+
 
   //list
   authorityList: `/api/v1/member/auth/list`,
@@ -450,6 +452,7 @@ const ApiList = {
   productChangeSearch: `/cnc/api/v1/product-changes/search`,
   exportSearch: `/api/v1/shipment/export/search`,
   outsourcingExportSearch: `/api/v1/outsourcing/export/search`,
+  outsourcingImportSearch: `/api/v1/outsourcing/import/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,

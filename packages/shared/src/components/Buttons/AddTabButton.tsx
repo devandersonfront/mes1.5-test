@@ -58,21 +58,39 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         })
         break;
       case 2:
-        res = await RequestMethod('get', `cncRecordSearch`, {
-          path:{
-            page:initPage? initPage: inputMaterial.page,
-            renderItem:15
-          },
-          params: {
-            from: "2000-01-01",
-            to:moment().format("YYYY-MM-DD"),
-            productIds: inputMaterial.product_id,
-            nz: action === 'register',
-            rangeNeeded:true,
-            sorts:['end', 'recordId'],
-            order:['asc', 'asc']
-          }
-        })
+        if(inputMaterial.type < 3)
+        {
+          res = await RequestMethod('get', `cncRecordSearch`, {
+            path:{
+              page:initPage? initPage: inputMaterial.page,
+              renderItem:15
+            },
+            params: {
+              from: "2000-01-01",
+              to:moment().format("YYYY-MM-DD"),
+              productIds: inputMaterial.product_id,
+              nz: action === 'register',
+              rangeNeeded:true,
+              sorts:['end', 'recordId'],
+              order:['asc', 'asc']
+            }
+          })
+        } else {
+          res = await RequestMethod('get', 'outsourcingImportSearch', {
+            path:{
+              page:initPage? initPage: inputMaterial.page,
+              renderItem:15
+            },
+            params: {
+              from: "2000-01-01",
+              to:moment().format("YYYY-MM-DD"),
+              productIds: inputMaterial.product_id,
+              nz: action === 'register',
+              sorts:['importDate', 'osiId'],
+              order:['asc', 'asc']
+            }
+          })
+        }
         break;
     }
     if(res){
@@ -99,12 +117,13 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   }
 
   const updateLotList = () => {
-    let lots = []
-    lots = row.bom?.map((bom) => bom.lot)
+    const lots = row.bom?.map((bom) => bom.lot)
+    console.log(row)
     onRowChange({
       ...row,
-      lotList: [...lots.map((v, i) => {
-        let type, date, warehousing, elapsed, current
+      lotList: lots.map((v, i) => {
+        console.log('lot',v)
+        let type, date, warehousing, elapsed
         switch(v.type){
           case 0:
             type = 'child_lot_rm'
@@ -119,10 +138,17 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
             elapsed = null
             break
           case 2:
-            type = 'child_lot_record'
-            date = moment(v[type].end).format("YYYY-MM-DD")
-            warehousing = v[type].good_quantity
-            elapsed = null
+            if(row.product_type === '외주품'){
+              type = 'child_lot_outsourcing'
+              date = moment(v[type].import_date).format("YYYY-MM-DD")
+              warehousing = v[type].warehousing
+              elapsed = null
+            } else {
+              type = 'child_lot_record'
+              date = moment(v[type].end).format("YYYY-MM-DD")
+              warehousing = v[type].good_quantity
+              elapsed = null
+            }
             break
         }
         return {
@@ -135,7 +161,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           amount: v.amount,
           seq: i+1,
         }
-      })]
+      })
     })
   }
 
@@ -143,7 +169,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
     if(row.action === 'modifyAndNoStock') {
       loadMaterialLot(row.tab, 1, row.action)
     } else if(row.originalStock === 0){
-      return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
+      loadMaterialLot(row.tab, 1, row.action)
+      // return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
     }
     // if(row.bom_info !== null){
     else {

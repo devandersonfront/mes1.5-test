@@ -36,6 +36,7 @@ export const getUsageType = (setting: number) => {
 }
 
 export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) => {
+  console.log('bo',bom)
   switch(bom.type){
     case 0:
       return {

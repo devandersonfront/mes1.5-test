@@ -54,7 +54,17 @@ const MesOutsourcingOrderList = () => {
                 }
                 break
             case 1:
-                console.log("good : ",)
+                const deleteDatas = basicRow.map((row) =>{
+                    if(selectList.has(row.id)){
+                        row.worker = row.worker_object
+                        return row
+                    }
+                }).filter(v =>v)
+                RequestMethod("delete","outsourcingExportDelete",deleteDatas)
+                    .then((res) => {
+                        console.log(res)
+                        Notiflix.Report.success("메세지", "삭제되었습니다.", "확인", () => reload())
+                    })
                 break
             default:
                 console.log("good : ",)
@@ -231,6 +241,7 @@ const MesOutsourcingOrderList = () => {
                 process_id: row.product.process?.name,
                 product_id: row.product.code,
                 name: row.product.name,
+                worker_object: row.worker,
                 worker: row.worker.name,
                 type: TransferCodeToValue(row.product.type, "product"),
                 unit: row.product.unit,
@@ -273,7 +284,7 @@ const MesOutsourcingOrderList = () => {
                 searchOptionList={optionList}
                 optionIndex={optionIndex}
                 buttons={
-                    ['수정하기', '삭제']
+                    [/*'수정하기'*/, '삭제']
                 }
                 buttonsOnclick={buttonEvent}
             />

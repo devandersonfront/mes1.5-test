@@ -103,10 +103,18 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
             //   lotTotalAmountMap.set(bom.osb_id, currentAmount + Number(bom.lot.amount))
           })
         }
-
         return {
           ...v,
-          bom: v.molds?.length > 0 ? v.bom.map(bom => ({...bom, lot: {...bom.lot, amount: new Big(Number(bom.lot.amount)).div(v.cavity).toString()}})) : v.bom,
+          bom: v.bom.map(bom => {
+            const outsourcing = bom.bom.type === 2 && bom.bom.child_product.type > 2
+            return {
+              ...bom,
+              lot: {
+                ...bom.lot,
+                child_lot_record: outsourcing ? undefined : bom.lot?.child_lot_record,
+                child_lot_outsourcing: outsourcing ? bom.lot?.child_lot_record : undefined,
+                amount: v.molds?.length > 0 ? new Big(Number(bom.lot.amount)).div(v.cavity).toString() : bom.lot.amount}}
+          }),
           operation_sheet: {
             ...row,
             status: typeof row.status_no === "string" ? transferStringToCode('workStatus', row.status_no) : row.status_no
