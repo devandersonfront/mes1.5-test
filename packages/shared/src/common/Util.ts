@@ -1,14 +1,16 @@
 import {BomObjectType, BomType, TableSortingOptionType} from '../@types/type'
 
-export const ParseResponse = (res: {info_list: any[]} | string | any[]) : any[] => {
+export const ParseResponse = (res: any | string | any[]) : any[] => {
   if (typeof res === 'string') {
     const rows = res.split('\n')
     const filteredRows = rows.filter(v => v !== "").map(v => JSON.parse(v))
     return filteredRows
   } else if(Array.isArray(res)){
     return res
-  } else {
+  } else if(res?.info_list && Array.isArray(res.info_list)) {
     return res?.info_list
+  } else {
+    return [res]
   }
 }
 
@@ -41,7 +43,7 @@ export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) 
       typeName: 'rawMaterial',
       bomKey: `rm${bom.childRmId}`,
       id: bom.childRmId,
-      detail: {...bom.child_rm, unit: bom.child_rm?.unit === 0 ? 'kg' : '장' ?? getRawMaterialUnit(bom.child_rm.type)},
+      detail: {...bom.child_rm, unit: bom.child_rm?.unit === 1 ? '장' : 'kg' ?? getRawMaterialUnit(bom.child_rm.type)},
       }
     case 1: return {
       ...bom,
@@ -50,7 +52,8 @@ export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) 
       id: bom.childSmId,
       detail: bom.child_sm
     }
-    case 2: return {
+    case 2:
+      return {
       ...bom,
       typeName: 'product',
       bomKey: `p${bom.childProductId}`,

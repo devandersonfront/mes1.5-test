@@ -103,7 +103,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
         customerArray: { name: row.customer?.name ?? "-" },
         name: row.name ?? "-",
         type: !Number.isNaN(row.type)
-            ? TransferCodeToValue(row.type, "productType")
+            ? TransferCodeToValue(row.type, "product")
             : "-",
         unit: row.unit ?? "-",
         id: `stock${random_id}`,

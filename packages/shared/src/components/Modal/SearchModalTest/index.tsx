@@ -43,7 +43,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
-
   useEffect(() => {
     if(column.type === "bom" ){
       setSearchList([{}])
@@ -81,12 +80,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           break;
         }
         case 2:{
-          setSearchModalInit(SearchInit.product)
+          setSearchModalInit(SearchInit.allProduct)
           setSearchModalColumn(
-            [...searchModalList[`${SearchInit.product.excelColumnType}Search`].map((column, index) => {
+            [...searchModalList[`${SearchInit.allProduct.excelColumnType}Search`].map((column, index) => {
               if(index === 0) return ({...column, colSpan(args) {
                   if(args.row?.first){
-                    return searchModalList[`${SearchInit.product.excelColumnType}Search`].length
+                    return searchModalList[`${SearchInit.allProduct.excelColumnType}Search`].length
                   }else{
                     return undefined
                   }
@@ -145,6 +144,24 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             keyword:keyword,
             opt:optionIndex,
             customer_id: row.product?.customerId ?? null
+          }
+        case "allProduct":
+          return {
+            keyword:keyword,
+            opt:optionIndex,
+            outsourcing: 0
+          }
+        case "outsourceProduct":
+          return {
+            keyword:keyword,
+            opt:optionIndex,
+            outsourcing: 2
+          }
+        case "bom":
+          return {
+            keyword:keyword,
+            opt:optionIndex,
+            outsourcing: 0
           }
         case "toolProduct":
           return {}
@@ -302,9 +319,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   }
 
   const getDefaultSearchOptionIndex = (index:number) => {
-    if(column.type === 'product' && index === 0){
+    if(['product','allProduct','outsourceProduct'].includes(column.type) && index === 0){
       return 2
-    }else if(column.type === 'product' && index === 2){
+    }else if(['product','allProduct','outsourceProduct'].includes(column.type) && index === 2){
       return 0
     }else{
       return index

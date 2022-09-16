@@ -52,6 +52,7 @@ const BasicProduct = ({}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectRow , setSelectRow ] = useState<any>(0)
   const [keyword, setKeyword] = useState<string>();
+  const [productType, setProductType] = useState<number>(0);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -61,6 +62,11 @@ const BasicProduct = ({}: IProps) => {
     isVisible : false
   })
   const [barcodeData , setBarcodeData] = useState<BarcodeDataType[]>([])
+
+  const changeProductType = (value:number) => {
+    setPageInfo({page:1, total:1})
+    setProductType(value);
+  }
 
   const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
@@ -73,7 +79,7 @@ const BasicProduct = ({}: IProps) => {
 
   useEffect(() => {
     getData(pageInfo.page, keyword)
-  }, [pageInfo.page]);
+  }, [pageInfo.page, productType]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"제품 등록 관리",sub:""}))
@@ -197,47 +203,6 @@ const BasicProduct = ({}: IProps) => {
 
   }
 
-  const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
-    let params = {}
-    if(keyword) {
-      params['keyword'] = keyword
-      params['opt'] = optionIndex
-    }
-    if(sortingOptions.orders.length > 0){
-      params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
-      params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
-      params['sorts'] = params['sorts']?.map(sort => sort === 'process_id' ? 'pc.name' : sort)
-
-    }
-    return params
-  }
-
-  const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
-    Notiflix.Loading.circle()
-    const res = await RequestMethod('get', keyword ? 'productSearch' : 'productList',{
-      path: {
-        page: page ?? 1,
-        renderItem: 18,
-      },
-      params: getRequestParams(keyword, _sortingOptions)
-    })
-
-    if(res){
-      if (res.totalPages > 0 && res.totalPages < res.page) {
-        reload();
-      } else {
-        setPageInfo({
-          ...pageInfo,
-          page: res.page,
-          total: res.totalPages
-        })
-        cleanUpData(res);
-      }
-    }
-    setSelectList(new Set())
-    Notiflix.Loading.remove()
-  }
-
   const setNewColumn = (menus:any[]) => {
     const changeOrder = (sort:string, order:string) => {
       const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
@@ -282,7 +247,7 @@ const BasicProduct = ({}: IProps) => {
         hide: menu.hide,
         sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : col.sortOption ?? null,
         sorts: col.sorts ? sortingOptions : null,
-        result: col.sortOption ? changeOrder : null,
+        result: col.sortOption ? changeOrder : col.selectList ? changeProductType : null,
 
       }
     })
@@ -292,10 +257,10 @@ const BasicProduct = ({}: IProps) => {
   const cleanUpData = (res: any) => {
     res.menus?.length && setNewColumn(res.menus)
     const newRows = res.info_list.map((row: any) => {
-      const additionalData = row.additional.map(add => ({
-        [add.mi_id]: add.value
-      }))
-
+      let additionalData = {}
+      row.additional.map(add => {
+        additionalData[add.mi_id] = add.value
+      })
       let random_id = Math.random()*1000;
       return {
         ...row,
@@ -314,7 +279,48 @@ const BasicProduct = ({}: IProps) => {
         reload
       }
     })
-    setBasicRow([...newRows])
+    setBasicRow(newRows)
+  }
+
+  const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    if(sortingOptions.orders.length > 0){
+      params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+      params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+      params['sorts'] = params['sorts']?.map(sort => sort === 'process_id' ? 'pc.name' : sort)
+    }
+    if(productType !== undefined) params['outsourcing'] = productType
+    return params
+  }
+
+  const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', keyword ? 'productSearch' : 'productList',{
+      path: {
+        page: page ?? 1,
+        renderItem: 18,
+      },
+      params: getRequestParams(keyword, _sortingOptions)
+    })
+
+    if(res){
+      if (res.totalPages > 0 && res.totalPages < res.page) {
+        reload();
+      } else {
+        setPageInfo({
+          ...pageInfo,
+          page: res.page,
+          total: res.totalPages
+        })
+        cleanUpData(res);
+      }
+    }
+    setSelectList(new Set())
+    Notiflix.Loading.remove()
   }
 
   const downloadExcel = () => {

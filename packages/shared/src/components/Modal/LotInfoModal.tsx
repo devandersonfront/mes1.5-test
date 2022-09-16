@@ -47,7 +47,7 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
   const changeRow = (row: any, i: number) => {
 
     return {
-      seq: i+1,
+      seq: i + 1,
       lot_number: row.sum?.lot_number,
       start: row.sum?.start,
       end: row.sum?.end,
@@ -71,22 +71,7 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
     })
 
     if(res){
-
-      let tmp
-      if(typeof res === 'string'){
-        let tmpRowArray = res.split('\n')
-
-        tmp = tmpRowArray.map(v => {
-          if(v !== ""){
-            let tmp = JSON.parse(v)
-            return tmp
-          }
-        }).filter(v=>v)
-      }else{
-        tmp = [...res?.info_list]
-      }
-
-      let searchList = tmp.map((row: any, index: number) => {
+      const searchList = res.info_list.map((row: any, index: number) => {
         return changeRow(row, index)
       })
 
@@ -95,7 +80,7 @@ const LotInfoModal = ({column, row, onRowChange}: IProps) => {
         total: res.totalPages,
       })
 
-      setSearchList([...searchList])
+      setSearchList(prev => (page > 1 ? prev.concat(searchList).map((row, idx) => ({...row, seq: idx+ 1}) ) : searchList))
     }
   }
 

@@ -75,7 +75,7 @@ const ProductInfoModal = ({column, row, onRowChange}: IProps) => {
       model: product.model?.name ?? '-',
       code: product.code,
       name: product.name ?? '-',
-      product_type: TransferCodeToValue(product.type, 'productType'),
+      product_type: TransferCodeToValue(product.type, 'product'),
       unit: product.unit,
       stock: product.stock,
       spare: module.defaultSetting(product, row[module.key]) === 0 ? '스페어' : '기본'

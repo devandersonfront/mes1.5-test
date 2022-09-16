@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {IExcelHeaderType} from '../../@types/type'
+import { IExcelHeaderType, TransferType } from '../../@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'
@@ -111,49 +111,46 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
     }
 
     tmpData = row.map((v, i) => {
-      let childData: any = {}
-      let type = "";
+      const bomDetail:{childData:any, bomType: TransferType} = {
+        childData: {},
+        bomType: undefined,
+      }
       switch(v.type){
         case 0:{
-          childData = v.child_rm
-          type = v.child_rm.type == "1" ? "Kg" : v.child_rm.type == "2" ? "장" : "-";
+          const childData = {...v.child_rm}
+          childData.unit = childData.unit === 1 ? '장' : 'kg';
+          bomDetail['childData'] = childData
+          bomDetail['bomType'] = 'rawMaterial'
           break;
         }
         case 1:{
-          childData = v.child_sm
-          type = "1";
+          bomDetail['childData'] = v.child_sm
+          bomDetail['bomType'] = 'subMaterial'
           break;
         }
         case 2:{
-          childData = v.child_product
-          type = "2";
+          bomDetail['childData'] = v.child_product
+          bomDetail['bomType'] = 'product'
           break;
         }
       }
+
       return {
-        ...childData,
+        ...bomDetail.childData,
         seq: i+1,
-        code: childData.code,
+        code: bomDetail.childData.code,
         type: v.type,
         tab: v.type,
-        name: childData.name,
-        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterial" : v.type === 1 ? "subMaterial" : "product"),
-        unit: childData.unit ?? type,
+        name: bomDetail.childData.name,
+        product_type: v.type !== 2 ? '-' : TransferCodeToValue(bomDetail.childData?.type, 'productType'),
+        type_name: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
+        unit: bomDetail.childData.unit,
         usage: v.usage,
         version: v.version,
-        processArray: childData.process ?? null,
-        process: childData.process ? childData.process.name : null,
-        // bom_root_id: childData.bom_root_id,
-        product: v.type === 2 ?{
-          ...childData,
-        }: null,
+        processArray: bomDetail.childData.process ?? null,
+        process: bomDetail.childData.process ? bomDetail.childData.process.name : null,
+        [bomDetail.bomType]: {...bomDetail.childData},
         product_id: v.parent?.product_id,
-        raw_material: v.type === 0 ?{
-          ...childData,
-        }: null,
-        sub_material: v.type === 1 ?{
-          ...childData,
-        }: null,
         parent:v.parent,
         setting:v.setting
       }
@@ -465,7 +462,8 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
     [
       {key:'CODE', value: headerData?.code ?? row?.code ?? "-"},
       {key:'품명', value: headerData?.name ?? row?.name ?? "-"},
-      {key:'품목 종류', value: headerData?.type ? TransferCodeToValue(headerData.type, 'productType') : row?.type || row?.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"},
+      {key:'구분', value: headerData?.type_id ? TransferCodeToValue(headerData.type_id, 'productType') : row?.type_id || row?.type_id === 0 ? TransferCodeToValue(row.type_id, 'productType') : "-"},
+      {key:'품목 종류', value: headerData?.type ? TransferCodeToValue(headerData.type, 'product') : row?.type || row?.type === 0 ? TransferCodeToValue(row.type, 'product') : "-"},
       {key:'생산 공정', value: headerData?.process?.name ?? row?.processArray?.name ?? "-"}
     ],
     [

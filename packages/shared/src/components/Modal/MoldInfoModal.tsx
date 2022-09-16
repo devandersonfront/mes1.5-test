@@ -25,7 +25,7 @@ interface IProps {
   modify: boolean
 }
 
-const initData = {sequence: 1 , setting : 0}
+const initData = {sequence: 1 , setting : 0, isFirst: true}
 
 const MoldInfoModal = ({column, row, onRowChange}: IProps) => {
   const [ isOpen, setIsOpen ] = useState<boolean>(false)
