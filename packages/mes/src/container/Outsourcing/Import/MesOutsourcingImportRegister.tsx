@@ -136,8 +136,14 @@ const MesOutsourcingImportRegister = () => {
                     ...columnlist["outsourcingImport"](basicRow, setBasicRow, radioValue)
                 ]}
                 row={basicRow}
-                setRow={(row) => {
-                    setBasicRow(row)
+                setRow={(rows) => {
+                    rows.map((row) => {
+                        if(row.isChange){
+                            setSelectList((select) => select.add(row.id))
+                        }
+                    })
+
+                    setBasicRow(rows)
                 }}
                 width={1576}
             />

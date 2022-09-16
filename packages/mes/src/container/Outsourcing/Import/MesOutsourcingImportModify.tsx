@@ -130,8 +130,14 @@ const MesOutsourcingImportModify = () => {
                     ...columnlist["outsourcingImportModify"](basicRow, setBasicRow)
                 ]}
                 row={basicRow}
-                setRow={(row) => {
-                    setBasicRow(row)
+                setRow={(rows) => {
+                    rows.map((row) => {
+                        if(row.isChange){
+                            setSelectList((select) => select.add(row.id))
+                        }
+                    })
+
+                    setBasicRow(rows)
                 }}
                 width={1576}
             />
