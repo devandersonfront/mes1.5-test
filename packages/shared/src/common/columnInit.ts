@@ -1519,8 +1519,8 @@ export const columnlist: any = {
     { key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', summaryType: 'product_no_cavity', width: 170 },
   ],
   outsourcingOrder:(basicRow?, setBasicRow?,) =>( [
-    // {key: 'product_name', name: '품명', formatter:SearchModalTest, type: 'product', placeholder: '-'},
-    {key: 'product_name', name: '품명', formatter:MultiSelectModal, type: 'product', state:"outsourcing", basicRow, setBasicRow,},
+    {key: 'product_name', name: '품명', formatter:SearchModalTest, type: 'product', placeholder: '-'},
+    // {key: 'product_name', name: '품명', formatter:MultiSelectModal, type: 'product', state:"outsourcing", basicRow, setBasicRow,},
     {key: 'code', name: 'CODE', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'user', name: '발주자', formatter:SearchModalTest, type: 'user', placeholder: '-'},
     {key: 'customer', name: '거래처', formatter:PlaceholderBox, placeholder: '-'},
@@ -1578,7 +1578,7 @@ export const columnlist: any = {
     {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, type: 'readonly'},
   ],
   outsourcingDelivery: [
-    {key: 'product_name', name: '품명', formatter:PlaceholderBox, type: 'product', placeholder: '-'},
+    {key: 'product_name', name: '품명', formatter:SearchModalTest, type: 'outsourceProduct', placeholder: '-'},
     {key: 'code', name: 'CODE', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'user', name: '발주번호', formatter:PlaceholderBox, type: 'user', placeholder: '-'},
     {key: 'customer', name: '거래처', formatter:PlaceholderBox, placeholder: '-'},
@@ -1588,7 +1588,7 @@ export const columnlist: any = {
     {key: 'present_quantity', name: '현재까지 입고량', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'good_quantity', name: '입고량', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'lot_number', name: 'Lot번호', formatter:PlaceholderBox, placeholder: '-'},
-    {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, type: 'readonly'},
+    {key: 'input', name: '투입 자재', formatter: LotDeliveryInfoModal, width: 118, type: 'readonly'},
   ],
   outsourcingDeliveryList: [
     {key: 'product_name', name: '품명', formatter:PlaceholderBox, type: 'product', placeholder: '-'},

@@ -53,7 +53,7 @@ const MesOutsourcingDeliveryRegister = () => {
                 resizable
                 headerList={[
                     SelectColumn,
-                    ...columnlist.outsourcingOrder
+                    ...columnlist.outsourcingDelivery
                 ]}
                 row={basicRow}
                 setRow={(row) => {

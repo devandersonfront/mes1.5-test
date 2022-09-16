@@ -34,7 +34,7 @@ const MesOutsourcingOrderRegister = () => {
                             obj.due_date = row.due_date ?? moment().format("YYYY-MM-DD")
                             obj.bom = row.bom.map((bomRow) => {
                                 delete bomRow.bom.originalBom
-                                delete bomRow.bom.originalBom66
+                                delete bomRow.bom.outOriginalBom
 
                                 return bomRow
                             })
