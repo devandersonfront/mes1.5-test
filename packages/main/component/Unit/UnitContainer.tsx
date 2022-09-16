@@ -48,7 +48,7 @@ const UnitContainer = ({ row, column, setRow}: IProps) => {
       <UnitBox>
         {
           column.searchType === 'rawin'
-            ? <span>{row.type === 'COIL' ? 'kg' : '장'}</span>
+            ? <span>{row.unit === 1 ? '장' : 'kg'}</span>
             : <span>{column.key === 'carryforward' ? (row[column.key] || row[column.key] === 0) ? column.unitData : '' : column.unitData}</span>
         }
       </UnitBox>

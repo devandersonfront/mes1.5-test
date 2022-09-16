@@ -204,7 +204,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           cursor: 'pointer',
         }} onClick={() => {
           if(column.key === 'lot'){
-            if(column.type === 'readonly'){
+            if(column.readonly){
               lotReadOnlyEvent()
             }else{
               lotNotReadOnlyEvent()

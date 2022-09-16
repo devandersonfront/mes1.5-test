@@ -53,7 +53,7 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
       <UnitBox className={'layoutCenter'}>
         {
           column.searchType === 'rawin'
-            ? <span>{row.type ? row.type === 'COIL' ? 'kg' : '장' : ''}</span>
+            ? <span>{row.unit ? row.unit === '1' ? '장' : 'kg' : 'kg'}</span>
             : column.type === 'selectUnit'
               ? <span>{row.unit}</span>
               : column.selectList ?

@@ -285,30 +285,13 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
       }
     }
     case 'rawMaterial': {
-      const unitResult = () => {
-        let result = "-";
-        switch (selectData.type){
-          // case "반제품" :
-          //   result = "EA";
-          //   break;
-          case "COIL" :
-            result = "kg";
-            break;
-          case "SHEET" :
-            result = "장";
-            break;
-          default :
-            break;
-        }
-        return result;
-      }
       return {
         ...selectData,
         rm_id: selectData.code,
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
         type_name:"원자재",
         customer_id: selectData.customerArray?.name,
-        unit:unitResult(),
+        unit: selectData.unit === 1 ? '장' : 'kg',
         raw_material: {
           ...selectData,
           customer: selectData.customerArray

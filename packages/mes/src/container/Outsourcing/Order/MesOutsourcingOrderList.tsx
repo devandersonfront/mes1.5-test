@@ -12,29 +12,45 @@ import { SelectColumn } from 'react-data-grid'
 import Notiflix from "notiflix";
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
 import { useDispatch,  } from "react-redux";
-import {getTableSortingOptions} from 'shared/src/common/Util'
+import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
 import {useRouter} from "next/router";
 import {TransferCodeToValue} from "shared/src/common/TransferFunction";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import moment from "moment";
 import {setModifyInitData} from "shared/src/reducer/modifyInfo";
+import { titles } from 'shared/src/common/menuTitles'
 
 const optionList = ["고유번호", "CODE", "품명", "발주자 이름"]
 
 const MesOutsourcingOrderList = () => {
     const dispatch = useDispatch()
     const router = useRouter()
-    const [basicRow, setBasicRow] = useState<any[]>([{}])
+    const [basicRow, setBasicRow] = useState<any[]>([])
     const [pageInfo, setPageInfo] = useState<{ page: number, total: number }>({page: 1, total: 1})
     const [keyword, setKeyword] = useState<string>()
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
+    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["outsourcingOrderList"])
     const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders: [], sorts: []})
     const [selectDate, setSelectDate] = useState<{ from: string, to: string }>({
         from: moment().subtract(1, 'month').format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD')
     })
     const [modifyModalOpen, setModifyModalOpen] = useState<boolean>(false)
+
+    useEffect(() => {
+        dispatch(
+          setMenuSelectState({main: "외주 관리", sub: router.pathname})
+        )
+        return () => {
+            dispatch(deleteMenuSelectState())
+        }
+    }, [])
+
+    useEffect(() => {
+        getData(pageInfo.page, keyword)
+    }, [pageInfo.page]);
+
     const buttonEvent = (buttonIndex: number) => {
         switch (buttonIndex) {
             case 0:
@@ -63,7 +79,7 @@ const MesOutsourcingOrderList = () => {
                 RequestMethod("delete","outsourcingExportDelete",deleteDatas)
                     .then((res) => {
                         console.log(res)
-                        Notiflix.Report.success("메세지", "삭제되었습니다.", "확인", () => reload())
+                        Notiflix.Report.success( "삭제되었습니다.", "","확인", () => reload())
                     })
                 break
             default:
@@ -122,118 +138,48 @@ const MesOutsourcingOrderList = () => {
         Notiflix.Loading.remove()
     };
 
-
-    const loadAllSelectItems = async (column: IExcelHeaderType[], date?: { from: string, to: string }) => {
+    const setNewColumn = (menus:any[], date?: { from: string, to: string }) => {
         const changeOrder = (sort: string, order: string) => {
             const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
             setSortingOptions(_sortingOptions)
             reload(null, date, _sortingOptions)
         }
-        let tmpColumn = column.map((v: any) => {
-            const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-            return {
-                ...v,
-                pk: v.unit_id,
-                sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-                sorts: v.sorts ? sortingOptions : null,
-                result: v.sortOption ? changeOrder : null,
+        const menuMap = menus?.reduce((map, menu) => {
+            if(false === menu.hide){
+                if(menu.colName){
+                    map.set(menu.colName, menu)
+                }
             }
-        });
+            return map
+        }, new Map())
+        let newCols =column.filter(col => menuMap.has(col.key)).map(col => {
+            const menu = menuMap.get(col.key)
+            const sortIndex = sortingOptions.sorts.findIndex(sort => sort ===col.key)
+            return {
+                ...col,
+                id: menu.mi_id,
+                name: !menu.moddable ? `${menu.title}(필수)`: menu.title,
+                // width: menu.width,
+                tab:menu.tab,
+                unit:menu.unit,
+                moddable: !menu.moddable,
+                version: menu.version,
+                sequence: menu.sequence,
+                hide: menu.hide,
+                sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : col.sortOption ?? null,
+                sorts: col.sorts ? sortingOptions : null,
+                result: col.sortOption ? changeOrder : null,
 
-        // setColumn(tmpColumn);
+            }
+        })
+        setColumn(newCols)
     }
 
     const cleanUpData = (res: any, date?: { from: string, to: string }) => {
-        let tmpColumn = columnlist["outsourcingOrderList"];
-        let tmpRow = [];
-        tmpColumn = tmpColumn
-            .map((column: any) => {
-                let menuData: object | undefined;
-                res.menus &&
-                res.menus.map((menu: any) => {
-                    if (menu.colName === column.key) {
-                        menuData = {
-                            id: menu.id,
-                            name: menu.title,
-                            width: menu.width,
-                            tab: menu.tab,
-                            unit: menu.unit,
-                        };
-                    } else if (menu.colName === "id" && column.key === "tmpId") {
-                        menuData = {
-                            id: menu.id,
-                            name: menu.title,
-                            width: menu.width,
-                            tab: menu.tab,
-                            unit: menu.unit,
-                        };
-                    }
-                });
-
-                if (menuData) {
-                    return {
-                        ...column,
-                        ...menuData,
-                    };
-                }
-            })
-            .filter((v: any) => v);
-        let additionalMenus = res.menus
-            ? res.menus
-                .map((menu: any) => {
-                    if (menu.colName === null) {
-                        return {
-                            id: menu.id,
-                            name: menu.title,
-                            width: menu.width,
-                            key: menu.title,
-                            editor: TextEditor,
-                            type: "additional",
-                            unit: menu.unit,
-                        };
-                    }
-                })
-                .filter((v: any) => v)
-            : [];
-
-        tmpRow = res.info_list;
-
-        loadAllSelectItems([...tmpColumn, ...additionalMenus], date);
-
-        let selectKey = "";
-        let additionalData: any[] = [];
-        tmpColumn.map((v: any) => {
-            if (v.selectList) {
-                selectKey = v.key;
-            }
-        });
-
-        additionalMenus.map((v: any) => {
-            if (v.type === "additional") {
-                additionalData.push(v.key);
-            }
-        });
-
-        let pk = "";
-        Object.keys(tmpRow).map((v) => {
-            if (v.indexOf("_id") !== -1) {
-                pk = v;
-            }
-        });
-
-        let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-            let appendAdditional: any = {};
-
-            row.additional &&
-            row.additional.map((v: any) => {
-                appendAdditional = {
-                    ...appendAdditional,
-                    [v.title]: v.value,
-                };
-            });
+        res.menus?.length && setNewColumn(res.menus, date)
+        const newRows = res.info_list.map((row: any) => {
             return {
                 ...row,
-                ...appendAdditional,
                 code: row.product.code,
                 customer_id: row.product.customer?.name,
                 cm_id: row.product.model?.model,
@@ -251,22 +197,8 @@ const MesOutsourcingOrderList = () => {
                 // reload
             };
         });
-        // setSelectList(new Set());
-        setBasicRow([...tmpBasicRow]);
+        setBasicRow(newRows);
     };
-
-    useEffect(() => {
-        dispatch(
-            setMenuSelectState({main: "외주 관리", sub: router.pathname})
-        )
-        return () => {
-            dispatch(deleteMenuSelectState())
-        }
-    }, [])
-
-    useEffect(() => {
-        getData(pageInfo.page, keyword)
-    }, [pageInfo.page]);
 
     return (
         <div>
@@ -279,7 +211,7 @@ const MesOutsourcingOrderList = () => {
                 onChangeSearchOption={setOptionIndex}
                 // //@ts-ignore
                 setSelectDate={onSelectDate}
-                title={"외주 발주 리스트"}
+                title={titles._outsourcingOrderList}
                 isSearch
                 searchOptionList={optionList}
                 optionIndex={optionIndex}
@@ -292,8 +224,7 @@ const MesOutsourcingOrderList = () => {
                 editable
                 resizable
                 headerList={[
-                    SelectColumn,
-                    ...columnlist.outsourcingOrderList
+                    SelectColumn, ...column
                 ]}
                 row={basicRow}
                 setRow={(row) => {
@@ -303,6 +234,8 @@ const MesOutsourcingOrderList = () => {
                 //@ts-ignore
                 setSelectList={setSelectList}
                 width={1576}
+                height={setExcelTableHeight(basicRow.length)}
+
             />
             <PaginationComponent
                 currentPage={pageInfo.page}
