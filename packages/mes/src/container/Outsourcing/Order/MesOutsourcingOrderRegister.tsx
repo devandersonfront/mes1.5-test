@@ -15,7 +15,6 @@ const MesOutsourcingOrderRegister = () => {
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<any[]>([{}])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-
     useEffect(() => {
       dispatch(
         setMenuSelectState({ main: "외주 관리", sub: router.pathname })
@@ -25,7 +24,6 @@ const MesOutsourcingOrderRegister = () => {
       }
     }, [])
 
-
   const buttonEvent = async(buttonIndex:number) => {
         switch (buttonIndex) {
             case 0:
@@ -34,7 +32,8 @@ const MesOutsourcingOrderRegister = () => {
                     const postBody =basicRow.map((row) => {
                       if(!!!row.product) throw(alertMsg.noProduct)
                       if(!!!row.worker) throw('발주자를 선택해 주세요.')
-                      if(!!!row.bom) throw(alertMsg.needsBom)
+                      if(!row.bomChecked) throw(alertMsg.needsBom)
+                      if(!!!row.order_quantity) throw(alertMsg.noOrderAmount)
                       return {
                         worker: row.worker,
                         product: row.product,

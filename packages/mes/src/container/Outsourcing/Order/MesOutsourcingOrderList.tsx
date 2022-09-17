@@ -19,6 +19,7 @@ import {TableSortingOptionType} from "shared/src/@types/type";
 import moment from "moment";
 import {setModifyInitData} from "shared/src/reducer/modifyInfo";
 import { titles } from 'shared/src/common/menuTitles'
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 const optionList = ["고유번호", "CODE", "품명"]
 
@@ -36,7 +37,6 @@ const MesOutsourcingOrderList = () => {
         from: moment().subtract(1, 'month').format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD')
     })
-    const [modifyModalOpen, setModifyModalOpen] = useState<boolean>(false)
 
     useEffect(() => {
         dispatch(
@@ -51,40 +51,48 @@ const MesOutsourcingOrderList = () => {
         getData(pageInfo.page, keyword)
     }, [pageInfo.page]);
 
+    const filterSelectedRows = () => basicRow.filter((row) => selectList.has(row.id))
+
+    const deleteApi = async (filtered) => {
+        const result = await RequestMethod('delete', 'outsourcingOrderDelete', filtered)
+        if(result){
+            Notiflix.Report.success(
+              '성공',
+              '삭제가 되었습니다.',
+              '확인',
+              () => getData())
+        }
+        setSelectList(new Set())
+    }
+
+    const moveModifyPage = (filtered) => {
+        Notiflix.Loading.circle();
+        dispatch(setModifyInitData({modifyInfo: filtered, type: "order"}));
+        router.push("/mes/outsourcing/order/modify").then(() => Notiflix.Loading.remove());
+    }
+
     const buttonEvent = (buttonIndex: number) => {
         switch (buttonIndex) {
-            // case 0:
-            //     if (selectList.size === 0 || selectList.size > 1) {
-            //         Notiflix.Report.warning("경고", selectList.size > 1 ? "발주 수정은 한 개씩만 가능합니다." : "데이터를 선택해주세요.", "확인", () => {
-            //         })
-            //     } else {
-            //         dispatch(setModifyInitData({
-            //             modifyInfo: basicRow.map(v => {
-            //                 if (selectList.has(v.id)) {
-            //                     return v
-            //                 }
-            //             }).filter(v => v),
-            //             type: 'workModify'
-            //         }))
-            //         setModifyModalOpen(true);
-            //     }
-            //     break
             case 0:
-                const deleteDatas = basicRow.map((row) =>{
-                    if(selectList.has(row.id)){
-                        row.worker = row.worker_object
-                        delete row.worker_object
-                        return row
-                    }
-                }).filter(v =>v)
-                RequestMethod("delete","outsourcingOrderDelete",deleteDatas)
-                    .then((res) => {
-                        Notiflix.Report.success( "삭제되었습니다.", "","확인", () => reload())
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    })
-
+                try {
+                    if(selectList?.size === 0) throw(alertMsg.noSelectedData)
+                    if(selectList.size > 1) throw(alertMsg.onlyOne)
+                    const filtered = filterSelectedRows()
+                    filtered.map(row => {if(row.order_quantity !== row.current) throw(alertMsg.importedNotUpdatable)})
+                    moveModifyPage(filtered)
+                } catch(errMsg){
+                    Notiflix.Report.warning('경고',errMsg,"확인")
+                }
+                break
+            case 1:
+                try {
+                    if(selectList?.size === 0) throw(alertMsg.noSelectedData)
+                    if(selectList.size > 1) throw(alertMsg.onlyOne)
+                    const filtered = filterSelectedRows().map(row => ({...row, worker: row.worker_object}))
+                    Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소", () => deleteApi(filtered))
+                } catch(errMsg){
+                    Notiflix.Report.warning('경고',errMsg,"확인")
+                }
                 break
             default:
                 break
@@ -219,7 +227,7 @@ const MesOutsourcingOrderList = () => {
                 searchOptionList={optionList}
                 optionIndex={optionIndex}
                 buttons={
-                    ['삭제']
+                    ['수정하기','삭제']
                 }
                 buttonsOnclick={buttonEvent}
             />

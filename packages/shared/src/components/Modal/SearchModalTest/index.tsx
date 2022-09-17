@@ -524,7 +524,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           )
         }
       }else{
-        const modalRes = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType)
+        const modalRes = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType, column.type)
         onRowChange({
           ...row,
           ...modalRes,

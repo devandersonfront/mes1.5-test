@@ -84,7 +84,6 @@ export const InputListHeaders = (isOutsourcing: boolean, readonly:boolean) => {
       headers.splice(12,1,{...headers[12], readonly: false})
     }
   }
-  console.log(headers)
   return headers
 }
 // export const lotListHeaders = searchModalList.InputListReadonly

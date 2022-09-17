@@ -7,6 +7,7 @@ import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/me
 import { useDispatch,  } from "react-redux";
 import {useRouter} from "next/router";
 import moment from "moment";
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 
 
@@ -16,13 +17,59 @@ const MesOutsourcingDeliveryRegister = () => {
     const [selectList, setSelectList] = useState<Set<number>>(new Set());
     const [basicRow, setBasicRow] = useState<any[]>([{}])
 
+    useEffect(() => {
+        dispatch(
+          setMenuSelectState({ main: "외주 관리", sub: router.pathname })
+        )
+        return () => {
+            dispatch(deleteMenuSelectState())
+        }
+    }, [])
+
     const buttonEvent = (buttonIndex:number) => {
         switch (buttonIndex) {
             case 0:
-                shipmentSave()
+                saveRows()
                 break
             default:
                 break
+        }
+    }
+
+    const save = async (postBody: any) => {
+        const result = await RequestMethod("post", "outsourcingShipmentSave",postBody)
+        if(result){
+            Notiflix.Report.success(
+              '성공',
+              '저장되었습니다.',
+              '확인',
+              () => router.push('/mes/outsourcing/delivery/list')
+            )
+        }
+        setSelectList(new Set())
+    }
+
+    const validate = (row:any) => {
+        if(!!!row.product_id) throw(alertMsg.noProduct)
+        if(!!!row.lots) throw(alertMsg.needsBom)
+    }
+
+    const saveRows = async () => {
+        try {
+            if(selectList.size === 0 ) throw(alertMsg.noSelectedData)
+            const postBody = basicRow.filter(row => selectList.has(row.id)).map(row => {
+                validate(row)
+                return { ...row,
+                    // identification: row.identification,
+                    product: row.product,
+                    date: row.date ?? moment().format("YYYY_MM_DD"),
+                    lots: row.lots,
+                    version: row.version,
+                }
+            })
+            save(postBody)
+        } catch (errMsg){
+            Notiflix.Report.warning('경고',errMsg,'확인')
         }
     }
 
@@ -48,19 +95,10 @@ const MesOutsourcingDeliveryRegister = () => {
             })
     }
 
-    useEffect(() => {
-        dispatch(
-            setMenuSelectState({ main: "외주 관리", sub: router.pathname })
-        )
-        return () => {
-            dispatch(deleteMenuSelectState())
-        }
-    }, [])
-
     return (
         <div>
             <PageHeader
-                title={"외주 납품"}
+                title={"외주 출고"}
                 buttons={
                     ['저장하기']
                 }

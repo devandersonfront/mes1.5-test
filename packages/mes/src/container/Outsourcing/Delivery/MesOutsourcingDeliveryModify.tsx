@@ -8,6 +8,7 @@ import {useDispatch, useSelector,} from "react-redux";
 import {useRouter} from "next/router";
 import moment from "moment";
 import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 
 
@@ -19,43 +20,9 @@ const MesOutsourcingDeliveryModify = () => {
     const [basicRow, setBasicRow] = useState<any[]>([{}])
     const [column, setColumn] = useState<any[]>(columnlist.outsourcingDeliveryModify)
 
-    const buttonEvent = (buttonIndex:number) => {
-        switch (buttonIndex) {
-            case 0:
-                shipmentSave()
-                break
-            default:
-                break
-        }
-    }
-
-    const shipmentSave = async() => {
-        const result = basicRow.map(row => {
-            if(selectList.has(row.id)){
-                const obj:any = {}
-                obj.outsourcing_shipment_id = row.outsourcing_shipment_id
-                obj.contract = row.contract
-                obj.identification = row.identification
-                obj.product = row.product
-                obj.date = row.date
-                obj.lots = row.lots
-                obj.version = row.version
-                return obj
-            }
-        }).filter(v => v)
-
-        await RequestMethod("post", "outsourcingShipmentSave", result)
-            .then(() => {
-                Notiflix.Report.success("메세지","저장되었습니다.","확인", () => router.push("/mes/outsourcing/delivery/list"))
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    }
-
     useEffect(() => {
         dispatch(
-            setMenuSelectState({ main: "외주 관리", sub: router.pathname })
+          setMenuSelectState({ main: "외주 관리", sub: router.pathname })
         )
         return () => {
             dispatch(deleteMenuSelectState())
@@ -65,22 +32,42 @@ const MesOutsourcingDeliveryModify = () => {
     useEffect(() => {
         if(selector && selector.type && selector.modifyInfo){
             setBasicRow(selector.modifyInfo.map(info => ({
-                    ...info,
-                    // identification : info.outsourcing_export?.identification,
-                    // order_date : info.outsourcing_export?.order_date,
-                    // order_quantity : info.outsourcing_export?.order_quantity,
-                    // bom : info.outsourcing_export?.bom
-                })
+                  ...info, originalLots: info.lots
+              })
             ))
         }else{
             router.push('/mes/outsourcing/delivery/list')
         }
     }, [selector])
 
+    const buttonEvent = (buttonIndex:number) => {
+        switch (buttonIndex) {
+            case 0:
+                save()
+                break
+            default:
+                break
+        }
+    }
+
+    const save = async () => {
+        const postBody = basicRow.filter((row) => selectList.has(row.id))
+        const result = await RequestMethod("post", "outsourcingShipmentSave", postBody)
+        if(result){
+            Notiflix.Report.success(
+              '성공',
+              '저장 되었습니다.',
+              '확인',
+              () => router.push('/mes/outsourcing/delivery/list')
+            )
+        }
+        setSelectList(new Set())
+    }
+
     return (
         <div>
             <PageHeader
-                title={"외주 납품 수정"}
+                title={"외주 출고(수정)"}
                 buttons={
                     ['저장하기']
                 }

@@ -121,7 +121,6 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
     onRowChange({
       ...row,
       lotList: lots.map((v, i) => {
-        console.log("v : ", v)
         let type, date, warehousing, elapsed
         switch(v?.type){
           case 0:

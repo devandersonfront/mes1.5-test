@@ -31,6 +31,18 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
     }
   }, [isOpen])
 
+  const minDate = () => {
+    switch(column.type)
+    {
+      case 'deadline': return moment(row.date).toDate()
+      case 'delivery': if(!!row.contract?.date) return moment(row.contract.date).toDate()
+      case 'outsourcingOrder':
+      case 'outsourcingImport': return moment(row.order_date).toDate()
+      default: return moment('1900-01-01').subtract(1, 'days').toDate()
+    }
+  }
+
+
   return (
     <div>
       <Background
@@ -71,7 +83,7 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
             <div  style={{display: 'inline-block', float: 'left', flex: 1, marginRight: 20}}>
               <Calendar
                   maxDate={new Date(8640000000000000)}
-                  minDate={column.type === "deadline" ? moment(row.date).toDate() : column.type === 'delivery' && !!row.contract?.date ? moment(row.contract.date).toDate() : moment('1900-01-01').subtract(1, 'days').toDate()}
+                  minDate={minDate()}
                 onChange={(date) => {
                   setSelect(date)
                 }}

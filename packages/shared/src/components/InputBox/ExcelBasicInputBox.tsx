@@ -72,11 +72,12 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
         }else if(column.key === 'amount' && row.setting){
           onClose(true)
           Notiflix.Report.warning('수정할 수 없습니다.', '사용여부가 부 입니다.', '확인')
-        }else if(column.readonly && row.mold_id){
+        }else if(column.readonly && row.mold_id) {
           onClose(true)
           return Notiflix.Report.warning('수정할 수 없습니다.', '', '확인')
-        }
-        if(column.type === "stockAdmin"){
+        }else if(column.key === 'order_quantity' && !!row.bom){
+          return Notiflix.Report.warning('경고', '발주량을 수정할 수 없습니다.', '확인')
+        }if(column.type === "stockAdmin"){
           if(row?.changeRows && !row.changeRows?.includes(column.key)){
             onRowChange({...row, changeRows:[...row.changeRows, column.key]})
           }else if(row?.changeRows){

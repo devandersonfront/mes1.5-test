@@ -232,7 +232,7 @@ export const SearchResultSort = (infoList, type: string) => {
   }
 }
 
-export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean, usedInModal?: boolean) => {
+export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean, usedInModal?: boolean, columnType?: string) => {
   switch(type) {
     case 'user': {
       return {
@@ -265,7 +265,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
       }
     }
     case 'product': {
-      return {
+      const result = {
         ...selectData,
         code: selectData.code,
         name: selectData.name,
@@ -296,8 +296,15 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         lead_time : selectData.lead_time,
         uph : selectData.uph,
         identification : selectData.identification,
-        border: usedInModal
+        border: usedInModal,
       }
+      if(columnType === 'outsourceProduct'){
+        result['order_quantity'] = undefined
+        result['bomChecked'] = undefined
+        result['bom_info'] = undefined
+        result['lots'] = undefined
+      }
+      return result
     }
     case "process": {
       return {

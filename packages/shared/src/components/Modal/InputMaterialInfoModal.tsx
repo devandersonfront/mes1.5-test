@@ -58,7 +58,7 @@ const InputMaterialInfoModal = ({column, row, onRowChange}: IProps) => {
   const [summaryData, setSummaryData] = useState<any>({})
   const [searchList, setSearchList] = useState<any[]>([])
   const [focusIndex, setFocusIndex] = useState<number>(0)
-  const cavity = row.product.molds?.filter(mold => mold.setting === 1)?.[0]?.mold?.cavity ?? 1
+  const cavity = row.product?.molds?.filter(mold => mold.setting === 1)?.[0]?.mold?.cavity ?? 1
 
   useEffect(() => {
     if(isOpen) {

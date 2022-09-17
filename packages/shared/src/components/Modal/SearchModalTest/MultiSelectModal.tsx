@@ -28,6 +28,8 @@ interface IProps {
 
 const setSavedKey = (type: string, map: Map<number, any>, row: any) => {
   switch(type){
+    case 'allProduct':
+    case 'outsourceProduct':
     case 'product':
       row.product?.product_id && map.set(row.product.product_id, row)
       break
@@ -91,6 +93,7 @@ const initRowByType = (type:string) => {
 
 const getModalTextKey = (type: string) => {
   switch (type) {
+    case 'outsourceProduct':
     case 'product':
       return 'code'
     case 'outsourcingOrder':
@@ -120,6 +123,7 @@ const emptyRowByType = (type:string) => {
 
 const getMapKey = (type:string) => {
   switch(type){
+    case 'outsourceProduct':
     case 'product': return 'product_id'
     case 'machine': return 'machine_id'
     case 'mold': return 'mold_id'
@@ -196,7 +200,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
 
   const markSelectedRows = (rows: any[]) => {
     return rows.map(row => {
-      console.log(row)
       if (basicRowMap.has(row[module.key])) {
         const newRows = {
           ...row,
@@ -214,23 +217,26 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   const LoadBasic = async (page: number = 1) => {
     Notiflix.Loading.circle();
     const getParams = () => {
+      const defaultParams = keyword ? {
+        keyword,
+        opt: optionIndex
+      } : {}
       switch (column.type) {
+        case 'outsourceProduct': defaultParams['outsourcing'] = 2
+          break
+        case 'allProduct': defaultParams['outsourcing'] = 0
+          break
         default:
-          return keyword ? {
-            keyword,
-            opt: optionIndex
-          } : {}
       }
+      return defaultParams
     }
 
     const getPath = (row: any) => {
+      const defaultPathVar =  { page, renderItem: 22,}
       switch (column.type) {
         default:
-          return {
-            page,
-            renderItem: 22,
-          }
       }
+      return defaultPathVar
     }
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`, {
       path: getPath(row),
@@ -370,7 +376,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     let newBasicRow = basicRowMap.size > 0 ? Array.from(basicRowMap.values()) : []
     newBasicRow = newBasicRow.length === 0
       ? [module.emptyRow]
-      : newBasicRow.map((row, rowIdx) => ({...row, id:row[module.key] , isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1, border:false }))
+      : newBasicRow.map((row, rowIdx) => ({...row, id:row[module.key], isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1, border:false }))
     column.setBasicRow(newBasicRow)
   }
 
@@ -391,7 +397,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     setSearchList(rows.map(row => ({...row, border:false})))
     setBasicRowMap(new Map())
   }
-  console.log('init',initMap)
   const onClose = () => {
     setPageInfo({ page: 1, total: 1 })
     setIsOpen(false)

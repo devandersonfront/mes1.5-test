@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'
 //@ts-ignore
-import IcSearchButton from '../../../public/images/ic_search.png'
+import IcMSearchButton from '../../../public/images/ic_search.png'
 //@ts-ignore
 import IcX from '../../../public/images/ic_x.png'
 import {ExcelTable} from '../Excel/ExcelTable'

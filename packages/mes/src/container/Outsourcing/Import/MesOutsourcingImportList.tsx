@@ -20,33 +20,8 @@ import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
 import {CalendarBox} from "shared/src/components/CalendarBox/CalendarBox";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import {setModifyInitData} from "shared/src/reducer/modifyInfo";
-
-
-
-// {key: 'product_name', name: '품명', formatter:PlaceholderBox, type: 'product', placeholder: '-'},
-// {key: 'code', name: 'CODE', formatter:PlaceholderBox, placeholder: '-'},
-// {key: 'number', name: '발주번호', formatter:PlaceholderBox, type: 'user', placeholder: '-'},
-// {key: 'customer', name: '거래처', formatter:PlaceholderBox, placeholder: '-'},
-// {key: 'order_date', name: '발주 날짜', formatter:CalendarBox, readonly:true, placeholder: '-'},
-// {key: 'input_date', name: '입고 날짜', formatter:CalendarBox, readonly:true, placeholder: '-'},
-// {key: 'total_quantity', name: '총 입고량', formatter:PlaceholderBox, placeholder: '-'},
-// {key: 'present_quantity', name: '현재까지 입고량', formatter:PlaceholderBox, placeholder: '-'},
-// {key: 'good_quantity', name: '입고량', formatter:PlaceholderBox, placeholder: '-'},
-// {key: 'lot_number', name: 'Lot번호', formatter:PlaceholderBox, placeholder: '-'},
-// {key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, type: 'readonly'},
-
-// current
-// import_date
-// lot_number
-// oseId
-// osi_id
-// outsourcing_export
-// product
-// version
-// warehousing
-// worker
-
-
+import moment from 'moment'
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 const MesOutsourcingImportList = () => {
 
@@ -54,10 +29,27 @@ const MesOutsourcingImportList = () => {
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<any[]>([{}])
     const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:4})
-    const [selectList, setSelectList] = useState<Set<any>>(new Set());
-    const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["outsourcingImportList"]);
     const [keyword , setKeyword] = useState<string>('')
     const [optionIndex, setOptionIndex] = useState<number>(0);
+    const [selectList, setSelectList] = useState<Set<any>>(new Set());
+    const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["outsourcingImportList"]);
+    const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders: [], sorts: []})
+    const [selectDate, setSelectDate] = useState<{ from: string, to: string }>({
+        from: moment().subtract(1, 'month').format('YYYY-MM-DD'),
+        to: moment().format('YYYY-MM-DD')
+    })
+    useEffect(() => {
+        dispatch(
+          setMenuSelectState({ main: "외주 관리", sub: router.pathname })
+        )
+        return () => {
+            dispatch(deleteMenuSelectState())
+        }
+    }, [])
+
+    useEffect(() => {
+        getData(pageInfo.page, keyword)
+    }, [pageInfo.page]);
 
     const convertData = (list) => {
         return list.map((data)=>{
@@ -81,12 +73,17 @@ const MesOutsourcingImportList = () => {
         return column.filter((data)=> colNames.includes(data.key))
     }
 
-    const reload = (keyword?:string ) => {
+    const onSelectDate = (date: { from: string, to: string }) => {
+        setSelectDate(date)
+        reload(null, date)
+    }
+
+    const reload = (keyword?: string, date?: { from: string, to: string }, sortingOptions?: TableSortingOptionType) => {
         setKeyword(keyword)
-        if(pageInfo.page > 1) {
+        if (pageInfo.page > 1) {
             setPageInfo({...pageInfo, page: 1})
         } else {
-            getData(undefined, keyword)
+            getData(undefined, keyword, date, sortingOptions)
         }
     }
 
@@ -94,21 +91,25 @@ const MesOutsourcingImportList = () => {
        return basicRow.filter((row) => selectList.has(row.id))
     };
 
-    const getRequestParams = (keyword?: string, date?: {from:string, to:string}) => {
+    const getRequestParams = (keyword?: string, date?: { from: string, to: string }, _sortingOptions?: TableSortingOptionType) => {
         let params = {}
-        if(keyword) {
+        if (keyword) {
             params['keyword'] = keyword
             params['opt'] = optionIndex
         }
+        params['from'] = date ? date.from : selectDate.from
+        params['to'] = date ? date.to : selectDate.to
+        params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+        params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
         return params
     }
 
     // 외주 입고 리스트
-    const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
+    const getData = async (page: number = 1, keyword?: string, date?: { from: string, to: string }, _sortingOptions?: TableSortingOptionType) => {
         Notiflix.Loading.circle();
         const res = await RequestMethod("get", keyword? 'outsourcingImportSearch':'outsourcingImportList', {
             path: { page: page ?? 1, renderItem: 18},
-            params: getRequestParams(keyword)
+            params: getRequestParams(keyword, date, _sortingOptions)
         });
 
         if(res){
@@ -124,10 +125,8 @@ const MesOutsourcingImportList = () => {
     };
 
     // 외주 입고 삭제
-    const deleteApi = async () => {
-
-        const selectedRows = filterSelectedRows()
-        const result = await RequestMethod('delete', 'outsourcingImportDelete', selectedRows)
+    const deleteApi = async (filtered) => {
+        const result = await RequestMethod('delete', 'outsourcingImportDelete', filtered)
         if(result){
             Notiflix.Report.success(
                 '성공',
@@ -138,25 +137,31 @@ const MesOutsourcingImportList = () => {
         setSelectList(new Set())
     }
 
-    const moveModifyPage = () => {
+    const moveModifyPage = (filtered) => {
         Notiflix.Loading.circle();
-        dispatch(setModifyInitData({modifyInfo: filterSelectedRows(), type: "import"}));
-        Notiflix.Loading.remove(300);
-        router.push("/mes/outsourcing/import/modify");
+        dispatch(setModifyInitData({modifyInfo: filtered, type: "import"}));
+        router.push("/mes/outsourcing/import/modify").then(() => Notiflix.Loading.remove());
     }
 
     const buttonEvent = (buttonIndex:number) => {
         switch (buttonIndex) {
             case 0:
-                selectList?.size > 0 ?
-                    selectList?.size > 1 ? Notiflix.Report.warning("데이터를 한개만 선택해주세요.","","확인")
-                    : moveModifyPage()
-                    : Notiflix.Report.warning('선택 경고','선택된 정보가 없습니다.','확인')
+                try {
+                    if(selectList?.size === 0) throw(alertMsg.noSelectedData)
+                    if(selectList.size > 1) throw(alertMsg.onlyOne)
+                    const filtered = filterSelectedRows()
+                    filtered.map(row => {if(row.warehousing !== row.current) throw(alertMsg.exportedNotUpdatable)})
+                    moveModifyPage(filtered)
+                } catch(errMsg){
+                      Notiflix.Report.warning('경고',errMsg,"확인")
+                }
                 break
             case 1:
                 selectList?.size > 0 ?
                     Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
-                        () => deleteApi())
+                        () => {
+                            const filtered = filterSelectedRows()
+                            deleteApi(filtered)})
                     : Notiflix.Report.warning('선택 경고','선택된 정보가 없습니다.','확인')
                 break
             default:
@@ -164,31 +169,20 @@ const MesOutsourcingImportList = () => {
         }
     }
 
-    useEffect(() => {
-        dispatch(
-            setMenuSelectState({ main: "외주 관리", sub: router.pathname })
-        )
-        return () => {
-            dispatch(deleteMenuSelectState())
-        }
-    }, [])
-
-    useEffect(() => {
-        getData(pageInfo.page, keyword)
-    }, [pageInfo.page]);
-
     return (
         <div>
             <PageHeader
-                title={"외주 입고 리스트"}
-                isSearch
+                isCalendar
+                calendarType={'period'}
+                selectDate={selectDate}
                 searchKeyword={keyword}
                 onSearch={reload}
-                optionIndex={0}
+                onChangeSearchOption={setOptionIndex}
+                setSelectDate={onSelectDate}
+                title={"외주 입고 현황"}
+                isSearch
+                optionIndex={optionIndex}
                 searchOptionList={["Lot번호", "CODE","품명"]}
-                onChangeSearchOption={(option) => {
-                    setOptionIndex(option)
-                }}
                 buttons={
                     ['수정하기', '삭제']
                 }
@@ -209,6 +203,7 @@ const MesOutsourcingImportList = () => {
                     setBasicRow(row)
                 }}
                 width={1576}
+                height={setExcelTableHeight(basicRow.length)}
             />
             <PaginationComponent
                 currentPage={pageInfo.page}

@@ -243,8 +243,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     }
   }
 
-
-
   return (
       <div>
         <PageHeader

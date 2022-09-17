@@ -32,14 +32,15 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
-  const isModify = row.shipment_id && !column.readonly
-
+  const isModify = (row.shipment_id || row.outsourcing_shipment_id) && !column.readonly
+  const isOutsourcing = column.type === 'outsourcing'
   useEffect(() => {
     if(isOpen) {
       if(column.readonly){
         initData()
       } else {
         if(row.product?.product_id) {
+          isModify && setTotalDelivery(row.amount ?? 0)
           SearchBasic()
         } else {
           setIsOpen(false)
@@ -50,50 +51,31 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
   }, [isOpen])
 
   const initData = async() => {
-    let tmpData = []
-    let totalAmount = 0
-    if(row?.lots.length > 0){
-      tmpData = row?.lots.map((v, i) => {
-        let index = row.lots.findIndex((lot) => lot.group.sum.lot_number === v.group.sum.lot_number)
-        if (index !== -1) {
-          totalAmount += row.lots[index].amount
-          return  {
-            seq: i + 1,
-            lot_number: v.group.sum.lot_number,
-            start: v.group.sum.start,
-            end: v.group.sum.end,
-            date: v.group.sum.import_date,
-            worker_name: v.group.sum.worker?.name ?? '-',
-            good_quantity: v.group.sum.good_quantity,
-            current: v.group.sum.current,
-            amount: row.lots[index].amount ?? row.amount,
-            group: {
-              ...v,
-            },
-            ...v,
+    if(row?.lots?.length > 0){
+      const newSearchList = row.lots.map((lot, lotIdx) => {
+        const result = {
+          seq: lotIdx +1,
+          lot_number: lot.group.sum.lot_number,
+          worker_name: lot.group.sum.worker?.name ?? '-',
+          current: lot.group.sum.current ?? 0,
+          amount: lot.amount ?? 0,
+          group: {
+            ...lot
           }
         }
-
-        // totalAmount += row.amount
-        return {
-          seq: i + 1,
-          lot_number: v.group.sum.lot_number,
-          start: v.group.sum.start,
-          end: v.group.sum.end,
-          worker_name: v.group.sum.worker?.name,
-          good_quantity: v.group.sum.good_quantity,
-          current: v.group.sum.current,
-          amount: v.amount ?? row.amount,
-          group: {
-            ...v,
-          },
-          ...v,
+        if(isOutsourcing){
+          result['import_date'] = lot.group.sum?.import_date
+        }else {
+          result['start']= lot.group.sum.start
+          result['end']= lot.group.sum.end
+          result['good_quantity']= lot.group.sum.good_quantity
         }
+        return result
       })
-    }
-    setTotalDelivery(totalAmount)
-    setSearchList([...tmpData])
-  }
+
+    setTotalDelivery(row.amount)
+    setSearchList(newSearchList)
+  }}
 
   const changeRow = (tmpRow: any) => {
     return tmpRow.map((v, i) => {
@@ -106,28 +88,31 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         current = current + originalAmount - Number(amount)
       }
       const amount = matchedLot?.amount ?? undefined
-      return {
+      const result = {
         seq: i+1,
         lot_number: v.sum.lot_number,
-        import_date: v.sum?.import_date ?? null,
-        start: v.sum.start,
-        end: v.sum.end,
         worker_name: v.sum.worker?.name ?? '-',
-        good_quantity: v.sum.good_quantity,
         current,
         originalCurrent: current,
         amount,
         group: {
-          ...v,
-        }
+          ...v, }
       }
+      if(isOutsourcing){
+        result['import_date'] = v.sum?.import_date
+      }else {
+        result['start']= v.sum.start
+        result['end']= v.sum.end
+        result['good_quantity']= v.sum.good_quantity
+      }
+      return result
     })
   }
 
   const SearchBasic = async () => {
     Notiflix.Loading.circle()
     const searchType = column.searchType ?? (row.contract?.contract_id ? 'contract' : 'code')
-    const res = await RequestMethod('get', column.state === "outsourcing" ? 'outsourcingLotList' : searchType === 'contract' ? `recordGroupListByContract` : `recordGroupList` ,{
+    const res = await RequestMethod('get', isOutsourcing ? 'outsourcingLotList' : searchType === 'contract' ? `recordGroupListByContract` : `recordGroupList` ,{
       path: {
         product_id: row.product.product_id,
         contract_id: searchType === 'contract' ? row.contract?.contract_id : null,
@@ -172,6 +157,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     [
       {key:'CODE', value: row.product_id ?? '-'},
       {key:'품명', value: row.name ?? row.product?.name ?? '-'},
+      {key:'구분', value: row.product_type ?? '-'},
       {key:'품목 종류', value: row.type ?? '-'}
     ],
     [
@@ -209,14 +195,14 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
     )
   )
 
-  const columnSortation = () => {
+  const columns = () => {
     switch(true){
       case column.readonly:
-        return column.state == "outsourcing" ? searchModalList.lotDeliveryOutsourcingInfoReadonly : searchModalList.lotDeliveryInfoReadonly
+        return isOutsourcing ? searchModalList.lotDeliveryOutsourcingInfoReadonly : searchModalList.lotDeliveryInfoReadonly
         break
 
       default:
-        return column.state == "outsourcing" ? searchModalList.lotDeliveryOutsourcingInfo : searchModalList.lotDeliveryInfo
+        return isOutsourcing ? searchModalList.lotDeliveryOutsourcingInfo : searchModalList.lotDeliveryInfo
     }
   }
 
@@ -272,7 +258,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={columnSortation()}
+              headerList={columns()}
               row={searchList }
               setRow={(e) => {
                 let total = 0
@@ -363,6 +349,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
                     name: row.name,
                     isChange: true
                   })
+                  setSearchList([])
                   setIsOpen(false)
                 }}
                 style={{

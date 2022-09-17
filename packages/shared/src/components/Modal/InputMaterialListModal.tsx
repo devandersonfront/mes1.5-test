@@ -1,31 +1,32 @@
-import React, {useEffect, useRef, useState} from 'react'
-import {IExcelHeaderType} from '../../@types/type'
+import React, { useEffect, useState } from 'react'
+import { IExcelHeaderType } from '../../@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
-import {POINT_COLOR} from '../../common/configset'
+import { POINT_COLOR } from '../../common/configset'
 //@ts-ignore
 import IcSearchButton from '../../../public/images/ic_search.png'
 //@ts-ignore
 import IcX from '../../../public/images/ic_x.png'
-import {ExcelTable} from '../Excel/ExcelTable'
-import {searchModalList} from '../../common/modalInit'
+import { ExcelTable } from '../Excel/ExcelTable'
+import { searchModalList } from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
-import {RequestMethod} from '../../common/RequestFunctions'
+import { RequestMethod } from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
-import {TransferCodeToValue} from '../../common/TransferFunction'
-import moment from "moment"
+import { TransferCodeToValue } from '../../common/TransferFunction'
+import moment from 'moment'
 import lodash from 'lodash'
 import Big from 'big.js'
 import { getBomObject, ParseResponse } from '../../common/Util'
-import {UploadButton} from "../../styles/styledComponents";
+import { UploadButton } from '../../styles/styledComponents'
 import { LineBorderContainer } from '../Formatter/LineBorderContainer'
 import { TextEditor } from '../InputBox/ExcelBasicInputBox'
 import { UnitContainer } from '../Unit/UnitContainer'
 import { alertMsg } from '../../common/AlertMsg'
 import Tooltip from 'rc-tooltip'
-import 'rc-tooltip/assets/bootstrap_white.css';
+import 'rc-tooltip/assets/bootstrap_white.css'
 import { getHeaderItems, InputListHeaders, InputModalHeaderItems } from '../../common/inputMaterialInfo'
+
 interface IProps {
   column: IExcelHeaderType
   row: any
@@ -52,7 +53,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen){
-      getInputMaterialList(row.bom_root_id, row.osId)
+      getInputMaterialList( row.bom_root_id, row.osId)
       setHeaderItemsValue(getHeaderItems(row, column.type))
     }
   },[isOpen])
@@ -78,6 +79,12 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       if(res){
         const inputMaterialList = toInputMaterialList(res)
         setInputMaterialList(inputMaterialList)
+      } else {
+        Notiflix.Report.warning("경고",alertMsg.noBom,"확인",() => {
+          isOutsourcing && onRowChange({...row, bomChecked: true})
+          setIsOpen(false)
+        }
+      )
       }
     } else {
       Notiflix.Report.warning("경고",alertMsg.noBom,"확인",() => setIsOpen(false))
@@ -115,7 +122,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           {
             bom_info = bomIdAndLotMap.get(`rm${inputMaterial.childRmId}`)?.map((lots) => ({...lots.child_lot_rm, amount: lots.amount}))
           }
-          originalBom = column.state === "outsourcing" ? bom : row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.rmId === inputMaterial.childRmId)?.[0] ?? bom_info : bom_info
+          originalBom = row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.rmId === inputMaterial.childRmId)?.[0] ?? bom_info : bom_info
           break;
         }
         case 'subMaterial':{
@@ -125,7 +132,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           {
             bom_info = bomIdAndLotMap.get(`sm${inputMaterial.childSmId}`)?.map((lots) => ({...lots.child_lot_sm, amount: lots.amount}))
           }
-          originalBom = column.state === "outsourcing" ? bom : row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.smId === inputMaterial.childSmId)?.[0] ?? bom_info : bom_info
+          originalBom = row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.smId === inputMaterial.childSmId)?.[0] ?? bom_info : bom_info
           break;
         }
         case 'product':{
@@ -156,23 +163,23 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         const originalAmount = new Big(row.originalSum ?? row.sum).div(row.originalCavity).times(bom.usage)
         stock = stock.plus(originalAmount)
       }
-      const newInputMaterialList = {
+      return {
         ...bom,
         ...bom.detail,
-        seq: index+1,
+        seq: index + 1,
         type_name: TransferCodeToValue(bom.detail?.type, bom.typeName),
         product_type: bom.typeName === 'product' ? TransferCodeToValue(bom.detail?.type, 'productType') : '-',
         cavity,
         real_disturbance: totalUsage.toNumber(),
         disturbance: sumQuantity ?? 0,
-        stock : stock.minus(totalUsage).toNumber(),
+        stock: stock.minus(totalUsage).toNumber(),
         process: bom.detail.process?.name ?? null,
         bom_info: bom_info ?? null,
         tab: bom.type,
-        product: bom.typeName === 'product' ?{
+        product: bom.typeName === 'product' ? {
           ...bom.detail,
-        }: null,
-        originalBom : originalBom ?? null,
+        } : null,
+        originalBom: originalBom ?? null,
         // originalStock : isModify ? row.originalQty ? new Big(row.originalQty).times(bom.usage).plus(bom.detail.stock).toNumber() : bom.detail.stock : bom.detail.stock,
         originalStock: stock.toNumber(),
         action,
@@ -180,7 +187,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         page: 1,
         total: 1
       }
-      return newInputMaterialList
     })
   }
 
@@ -309,18 +315,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         })
         const newRow = {
           ...row,
-          bom: bomToSave.map((bom, index) => {
-            if(column.state === "outsourcing"){
-              return {...bom, bom: inputMaterialList[index]?.outOriginalBom}
-            }else{
-              return bom
-            }
-          }),
+          bom: bomToSave,
           bom_info: bomLotInfo,
           originalBom: originalBom,
         }
         if(isOutsourcing){
           newRow['order_quantity'] = quantity
+          newRow['bomChecked'] = true
         }else{
           newRow['quantity'] = quantity,
           newRow['good_quantity'] = quantity,

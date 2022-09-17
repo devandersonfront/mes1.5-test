@@ -25,6 +25,7 @@ import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/U
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
+import { alertMsg } from 'shared/src/common/AlertMsg'
 interface IProps {
   children?: any;
   page?: number;
@@ -138,76 +139,16 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
     Notiflix.Loading.remove()
   };
 
-  const DeleteBasic = async () => {
-    const res = await RequestMethod(
-      "delete",
-      "shipmentDelete",
-      basicRow
-        .map((row, i) => {
-          if (selectList.has(row.id)) {
-            let selectKey: string[] = [];
-            let additional: any[] = [];
-            column.map((v) => {
-              if (v.selectList) {
-                selectKey.push(v.key);
-              }
-
-              if (v.type === "additional") {
-                additional.push(v);
-              }
-            });
-
-            let selectData: any = {};
-
-            Object.keys(row).map((v) => {
-              if (v.indexOf("PK") !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split("PK")[0]]: row[v],
-                };
-              }
-
-              if (v === "unitWeight") {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row["unitWeight"]),
-                };
-              }
-
-              if (v === "tmpId") {
-                selectData = {
-                  ...selectData,
-                  id: row["tmpId"],
-                };
-              }
-            });
-            return {
-              ...row,
-              ...selectData,
-              type: row.type_id,
-              additional: [
-                ...additional
-                  .map((v) => {
-                    if (row[v.name]) {
-                      return {
-                        id: v.id,
-                        title: v.name,
-                        value: row[v.name],
-                        unit: v.unit,
-                      };
-                    }
-                  })
-                  .filter((v) => v),
-              ],
-            };
-          }
-        })
-        .filter((v) => v)
-    );
-
-    if (res) {
-      Notiflix.Report.success("삭제 성공!", "", "확인", () => reload());
+  const deleteApi = async (filtered) => {
+    const result = await RequestMethod('delete', 'shipmentDelete', filtered)
+    if(result){
+      Notiflix.Report.success(
+        '성공',
+        '삭제가 되었습니다.',
+        '확인',
+        () => getData())
     }
+    setSelectList(new Set())
   };
 
   const cleanUpData = (res: any,date?: {from:string, to:string}) => {
@@ -327,6 +268,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
         code: row.product.code ?? "-",
         name: row.product.name ?? "-",
         type: TransferCodeToValue(row.product.type, "product"),
+        product_type: TransferCodeToValue(row.product.type, "productType"),
         unit: row.product?.unit ?? "-",
         process_id: row.product?.process?.name ?? "-",
         amount: tmpAmount,
@@ -336,6 +278,16 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
 
     setBasicRow(tmpBasicRow);
   };
+
+  const filterSelectedRows = () => {
+    return basicRow.filter((row) => selectList.has(row.id))
+  };
+
+  const moveModifyPage = (filtered) => {
+    Notiflix.Loading.circle();
+    dispatch(setModifyInitData({modifyInfo: filtered, type: "delivery"}));
+    router.push("/mes/delivery/modify").then(() => Notiflix.Loading.remove());
+  }
 
   return (
     <div className={'excelPageContainer'}>
@@ -359,45 +311,22 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
           (e) => {
             switch (e) {
               case 1:
-                Notiflix.Loading.circle();
-                let check = false;
-                basicRow.map((v) => {
-                  if (selectList.has(v.id)) {
-                    check = true;
-                  }
-                });
-                if (check) {
-                  dispatch(
-                    setModifyInitData({
-                      modifyInfo: basicRow
-                        .map((v) => {
-                          if (selectList.has(v.id)) {
-                            return v;
-                          }
-                        })
-                        .filter((v) => v)
-                        .map((v) => {
-                          return { ...v, amount: 0 };
-                        }),
-                      type: "delivery",
-                    })
-                  );
-                  Notiflix.Loading.remove(300);
-                  router.push("/mes/delivery/modify");
-                } else {
-                  Notiflix.Loading.remove(300);
-                  Notiflix.Report.warning("데이터를 선택해주세요.", "", "확인");
+                try {
+                  if(selectList?.size === 0) throw(alertMsg.noSelectedData)
+                  if(selectList.size > 1) throw(alertMsg.onlyOne)
+                  const filtered = filterSelectedRows()
+                  moveModifyPage(filtered)
+                } catch(errMsg){
+                  Notiflix.Report.warning('경고',errMsg,"확인")
                 }
-                break;
+                break
               case 2:
-                Notiflix.Confirm.show(
-                  "경고",
-                  "삭제하시겠습니까?",
-                  "확인",
-                  "취소",
-                  () => DeleteBasic(),
-                  () => {}
-                );
+                selectList?.size > 0 ?
+                  Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
+                    () => {
+                      const filtered = filterSelectedRows()
+                      deleteApi(filtered)})
+                  : Notiflix.Report.warning('선택 경고','선택된 정보가 없습니다.','확인')
                 break;
             }
           }

@@ -9,6 +9,7 @@ import { useDispatch,  } from "react-redux";
 import { setExcelTableHeight } from 'shared/src/common/Util'
 import {useRouter} from "next/router";
 import moment from "moment";
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 const MesOutsourcingImportRegister = () => {
     const dispatch = useDispatch()
@@ -18,30 +19,24 @@ const MesOutsourcingImportRegister = () => {
     const [radioValue, setRadioValue] = useState<number>(0)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
+    useEffect(()=>{
+        setBasicRow([{isFirst:true}])
+    },[radioValue])
+
+
+    useEffect(() => {
+        dispatch(setMenuSelectState({ main: "외주 관리", sub: router.pathname }))
+        return () => {dispatch(deleteMenuSelectState())}
+    }, [])
+
     const filterSelectedRows = () => basicRow.filter((row) => selectList.has(row.id))
-    const DateValidation = () => filterSelectedRows().some((row) => row.order_date > row.import_date)
-    const AmountValidation = () => filterSelectedRows().some((row) => row.warehousing > row.current)
 
-    const validation = () => {
-        return [DateValidation(),AmountValidation()]
-    }
-
-    const saveAPi = async () => {
-
-        const result = await RequestMethod("post", "outsourcingImportSave",
-            filterSelectedRows().map((row)=>{
-                return {...row ,
-                    current : row.warehousing ,
-                    osi_id : null,
-                    version : null,
-                    outsourcing_export : radioValue ? null : row,
-                    import_date : moment().format('YYYY-MM-DD')
-                }
-            }))
+    const save = async (postBody: any) => {
+        const result = await RequestMethod("post", "outsourcingImportSave",postBody)
         if(result){
             Notiflix.Report.success(
                 '성공',
-                '저장 되었습니다.',
+                '저장되었습니다.',
                 '확인',
                 () => router.push('/mes/outsourcing/import/list')
             )
@@ -49,25 +44,45 @@ const MesOutsourcingImportRegister = () => {
         setSelectList(new Set())
     }
 
-    const saveRows = async () => {
-        const [dateValidation , amountValidation] = validation()
+    const validate = (row:any) => {
+        if(radioValue){
+            if(!!!row.product_id) throw(alertMsg.noProduct)
+            if(!!!row.worker) throw(alertMsg.noImporter)
+        } else {
+            if(!!!row.ose_id) throw(alertMsg.noOutOrder)
+        }
+        if(!!!Number(row.warehousing)) throw(alertMsg.noImportAmount)
+        if(row.warehousing > row.current) throw(alertMsg.overImport)
+        if(!!!row.lot_number) throw(alertMsg.noLotNumber)
+    }
 
-        if(!dateValidation){
-            if(!amountValidation) {
-                await saveAPi()
-            }else{
-                Notiflix.Report.warning("경고", "입고량이 발주량 보다 클 수 없습니다.", "확인", )
-            }
-        }else{
-            Notiflix.Report.warning("경고", "발주날짜가 입고날짜보다 클 수 없습니다.", "확인", )
+    const saveRows = async () => {
+        try {
+            const postBody = filterSelectedRows().map(row => {
+                validate(row)
+                return { ...row,
+                    osi_id : undefined,
+                    version: undefined,
+                    current : row.warehousing ,
+                    outsourcing_export : radioValue ? null : row,
+                    import_date : row.import_date ?? moment().format('YYYY-MM-DD')
+                }
+            })
+            save(postBody)
+        } catch (errMsg){
+            Notiflix.Report.warning('경고',errMsg,'확인')
         }
     }
 
     const deleteRow = () => {
-        let filteredRows = basicRow.filter((row, index) => !selectList.has(row.id))
-        setBasicRow(filteredRows.length !== 0 ? filteredRows : [{isFirst:true}])
+        let filteredRows = filterSelectedRows()
+        if(filteredRows.length > 0){
+            filteredRows[0] = {...filteredRows[0], isFirst: true}
+        } else {
+            filteredRows.push({isFirst:true})
+        }
+        setBasicRow(filteredRows)
         setSelectList(new Set())
-
     }
 
     const buttonEventHandler = (buttonIndex:number) => {
@@ -87,16 +102,6 @@ const MesOutsourcingImportRegister = () => {
                 break
         }
     }
-
-    useEffect(()=>{
-        setBasicRow([{isFirst:true}])
-    },[radioValue])
-
-
-    useEffect(() => {
-        dispatch(setMenuSelectState({ main: "외주 관리", sub: router.pathname }))
-        return () => {dispatch(deleteMenuSelectState())}
-    }, [])
 
     return (
         <div>
@@ -121,7 +126,7 @@ const MesOutsourcingImportRegister = () => {
                 selectList={selectList}
                 headerList={[
                     SelectColumn,
-                    ...columnlist["outsourcingImport"](basicRow, setBasicRow, radioValue)
+                    ...columnlist["outsourcingImport"](basicRow, setBasicRow, !!radioValue)
                 ]}
                 row={basicRow}
                 setRow={(rows) => {
