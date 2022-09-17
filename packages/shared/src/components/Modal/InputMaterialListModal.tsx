@@ -322,6 +322,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         if(isOutsourcing){
           newRow['order_quantity'] = quantity
           newRow['bomChecked'] = true
+          newRow['isChange'] = true
         }else{
           newRow['quantity'] = quantity,
           newRow['good_quantity'] = quantity,

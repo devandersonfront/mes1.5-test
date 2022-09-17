@@ -6,6 +6,7 @@ import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menu
 import { useDispatch, useSelector } from 'react-redux'
 import {useRouter} from "next/router";
 import Notiflix from 'notiflix'
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 const MesOutsourcingOrderModify = () => {
   const dispatch = useDispatch()
@@ -42,6 +43,7 @@ const MesOutsourcingOrderModify = () => {
   const buttonEvent = (buttonIndex:number) => {
     switch (buttonIndex) {
       case 0:
+        if(selectList.size === 0) return Notiflix.Report.warning('경고', alertMsg.noSelectedData, '확인')
         save()
         break
       default:

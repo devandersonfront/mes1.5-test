@@ -43,6 +43,7 @@ const MesOutsourcingDeliveryModify = () => {
     const buttonEvent = (buttonIndex:number) => {
         switch (buttonIndex) {
             case 0:
+                if(selectList.size === 0) return Notiflix.Report.warning('경고', alertMsg.noSelectedData, '확인')
                 save()
                 break
             default:
