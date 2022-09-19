@@ -1600,7 +1600,7 @@ export const columnlist: any = {
   ],
 
   outsourcingDelivery: [
-    {key: 'product_name', name: '품명', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'product_name', name: '품명', formatter:PlaceholderBox, placeholder: '자동 입력'},
     {key: 'code', name: 'CODE', formatter:SearchModalTest, type: 'outsourceProduct', noSelect:true,  placeholder: '-'},
     // {key: "customer_id", name: "거래처", formatter: PlaceholderBox, placeholder: '자동 입력' },
     {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-'},

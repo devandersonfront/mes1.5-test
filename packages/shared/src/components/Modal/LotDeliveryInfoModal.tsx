@@ -44,7 +44,7 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
           SearchBasic()
         } else {
           setIsOpen(false)
-          Notiflix.Report.warning('수주 또는 품목을 선택해 주세요.', '', '확인',)
+          Notiflix.Report.warning('경고','수주 또는 제품을 선택해 주세요.', '확인',)
         }
       }
     }

@@ -157,6 +157,7 @@ const MesOutsourcingDeliveryList = () => {
                 product_name: row.product.name,
                 amount:amount,
                 type: TransferCodeToValue(row.product.type, "product"),
+                product_type: TransferCodeToValue(row.product.type, "productType"),
                 unit: row.product.unit,
                 processArray: row.process,
                 shipment_id: row.shipment_amount,
