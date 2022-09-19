@@ -61,7 +61,11 @@ const MesOutsourcingDeliveryRegister = () => {
                 validate(row)
                 return { ...row,
                     // identification: row.identification,
-                    product: row.product,
+                    product: {
+                        ...row.product,
+                        customer : row?.customerArray?.customer_id ? row.customerArray : null,
+                        model : row?.modelArray?.cm_id ? row.modelArray : null,
+                    },
                     date: row.date ?? moment().format("YYYY_MM_DD"),
                     lots: row.lots,
                     version: row.version,

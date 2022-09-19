@@ -52,7 +52,19 @@ const MesOutsourcingDeliveryModify = () => {
     }
 
     const save = async () => {
-        const postBody = basicRow.filter((row) => selectList.has(row.id))
+        const postBody = basicRow.filter(row => selectList.has(row.id)).map(row => {
+            return { ...row,
+                // identification: row.identification,
+                product: {
+                    ...row.product,
+                    customer : row?.customerArray?.customer_id ? row.customerArray : null,
+                    model : row?.modelArray?.cm_id ? row.modelArray : null,
+                },
+                date: row.date ?? moment().format("YYYY_MM_DD"),
+                lots: row.lots,
+                version: row.version,
+            }
+        })
         const result = await RequestMethod("post", "outsourcingShipmentSave", postBody)
         if(result){
             Notiflix.Report.success(

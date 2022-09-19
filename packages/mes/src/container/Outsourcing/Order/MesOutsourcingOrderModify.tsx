@@ -50,11 +50,14 @@ const MesOutsourcingOrderModify = () => {
         break
     }
   }
-
   const save = async () => {
     const postBody = basicRow.filter((row) => selectList.has(row.id)).map(row => {
       return {
         ...row,
+        product: {...row.product,
+          customer : row?.customerArray?.customer_id ? row.customerArray : null,
+          model : row?.modelArray?.cm_id ? row.modelArray : null,
+        },
         worker: row.worker_object,
         current: row.order_quantity,
       }

@@ -36,7 +36,11 @@ const MesOutsourcingOrderRegister = () => {
                       if(!!!row.order_quantity) throw(alertMsg.noOrderAmount)
                       return {
                         worker: row.worker,
-                        product: row.product,
+                        product: {
+                            ...row.product,
+                            customer : row?.customerArray?.customer_id ? row.customerArray : null,
+                            model : row?.modelArray?.cm_id ? row.modelArray : null
+                        },
                         order_quantity: row.order_quantity,
                         current: row.order_quantity,
                         order_date: row.order_date ?? moment().format("YYYY-MM-DD"),
