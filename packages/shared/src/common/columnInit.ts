@@ -909,7 +909,7 @@ export const columnlist: any = {
   // ],
   operationCodeRegisterV2: [
     { key: "contract_id", name: "수주 번호", type: 'order', formatter: PlaceholderBox, placeholder: '-', disableType: "true", width: 118 },
-    { key: "date", name: "지시 날짜", formatter: CalendarBox, width: 118, type: 'date' },
+    { key: "date", name: "지시 날짜", formatter: CalendarBox, width: 118, type: 'date' , dependency : 'deadline'},
     { key: "deadline", name: "작업 기한", formatter: CalendarBox, width: 118, type: 'deadline' },
     { key: "customer_id", name: "거래처", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "cm_id", name: "모델", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
@@ -923,7 +923,7 @@ export const columnlist: any = {
   ],
   operationIdentificationRegisterV2: [
     { key: "contract_id", name: "수주 번호", formatter: SearchModalTest, type: 'order', placeholder: '검색', disableType: "true", width: 118, noSelect: true },
-    { key: "date", name: "지시 날짜", formatter: CalendarBox, width: 118 },
+    { key: "date", name: "지시 날짜", formatter: CalendarBox, width: 118 , dependency : 'deadline'},
     { key: "deadline", name: "작업 기한", formatter: CalendarBox, width: 118 },
     { key: "customer_id", name: "거래처", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "cm_id", name: "모델", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
@@ -960,7 +960,7 @@ export const columnlist: any = {
   operationModifyV2: [
     { key: "contract_id", name: "수주 번호", width: 118 },
     { key: "identification", name: "지시 고유 번호", width: 118 },
-    { key: "date", name: "지시 날짜", formatter: CalendarBox, width: 118, type: 'date' },
+    { key: "date", name: "지시 날짜", formatter: CalendarBox, width: 118, type: 'date' , dependency : 'deadline'},
     { key: "deadline", name: "작업 기한", formatter: CalendarBox, width: 118, type: 'deadline' },
     { key: "customer_id", name: "거래처", formatter: PlaceholderBox, placeholder: '자동입력', width: 118, type: 'autoInput' },
     { key: "cm_id", name: "모델", formatter: PlaceholderBox, placeholder: '자동입력', width: 118, type: 'autoInput' },
@@ -975,7 +975,7 @@ export const columnlist: any = {
   recordListV2: [
     { key: "contract_id", name: "수주 번호", width: 118 },
     { key: "identification", name: "지시 고유 번호", width: 118 },
-    { key: "date", name: "지시 날짜", formatter: CalendarBox, width: 118 },
+    { key: "date", name: "지시 날짜", formatter: CalendarBox, width: 118 , dependency : 'deadline'},
     { key: "deadline", name: "작업 기한", formatter: CalendarBox, width: 118 },
     { key: "customer_id", name: "거래처", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "cm_id", name: "모델", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
@@ -1063,8 +1063,8 @@ export const columnlist: any = {
   ],
 
   orderRegister: (basicRow?, setBasicRow?) => ([
-    { key: "date", name: "수주 날짜", formatter: CalendarBox, width: 118, type: "date" },
-    { key: "deadline", name: "납품 기한", formatter: CalendarBox, width: 118, type: "deadline" },
+    { key: "date", name: "수주 날짜", formatter: CalendarBox, width: 118, type: "date", dependency : 'deadline'},
+    { key: "deadline", name: "납품 기한", formatter: CalendarBox, width: 118, type: "deadline"},
     { key: "customer_id", name: "거래처", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     { key: "cm_id", name: "모델", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     { key: "product_id", name: "CODE", width: 118, formatter: MultiSelectModal, type: 'product', basicRow, setBasicRow },
@@ -1092,7 +1092,7 @@ export const columnlist: any = {
   ],
   orderModify: [
     { key: "identification", name: "수주 번호", width: 118 },
-    { key: "date", name: "수주 날짜", formatter: CalendarBox, width: 118, type: "date" },
+    { key: "date", name: "수주 날짜", formatter: CalendarBox, width: 118, type: "date" , dependency : 'deadline'},
     { key: "deadline", name: "납품 기한", formatter: CalendarBox, width: 118, type: "deadline" },
     { key: "customer_id", name: "거래처", width: 118 },
     { key: "cm_id", name: "모델", width: 118 },
@@ -1525,7 +1525,7 @@ export const columnlist: any = {
     {key: 'customer_id', name: '거래처', formatter:PlaceholderBox, placeholder: '자동 입력'},
     {key: 'cm_id', name: '모델', formatter:PlaceholderBox, placeholder: '자동 입력'},
     {key: 'user', name: '발주자', formatter:SearchModalTest, type: 'user', placeholder: '-',  noSelect: true},
-    {key: 'order_date', name: '발주 날짜', formatter:CalendarBox, placeholder: '-'},
+    {key: 'order_date', name: '발주 날짜', formatter:CalendarBox, placeholder: '-', dependency : 'due_date'} ,
     {key: 'due_date', name: '입고 희망일', formatter:CalendarBox, placeholder: '-', type: 'outsourcingOrder'},
     {key: 'input', name: '투입 자재', formatter:InputMaterialListModal, textAlign: 'center', type:'outsourcing', action:'register'},
     {key: 'order_quantity', name: '발주량', formatter:PlaceholderBox, editor: TextEditor, placeholder: '0', disabledCase: [{key:'bomChecked', value: undefined}] },
@@ -1549,7 +1549,7 @@ export const columnlist: any = {
     {key: 'customer_id', name: '거래처', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'cm_id', name: '모델', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'worker', name: '발주자', formatter:PlaceholderBox, type: 'user', placeholder: '-'},
-    {key: 'order_date', name: '발주 날짜', formatter:CalendarBox, placeholder: '-'},
+    {key: 'order_date', name: '발주 날짜', formatter:CalendarBox, placeholder: '-' , dependency : 'due_date'},
     {key: 'due_date', name: '입고 희망일', formatter:CalendarBox, placeholder: '-', type: 'outsourcingOrder'},
     {key: 'input', name: '투입 자재', formatter:InputMaterialListModal, type:'outsourcing', action:'modify', unprintable : true},
     {key: 'order_quantity', name: '발주량', formatter:PlaceholderBox, editor: TextEditor, placeholder: '0'},

@@ -103,12 +103,20 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
               </div>
               <div
                 onClick={() => {
-                  onRowChange({
-                    ...row,
-                    [column.key]: moment(select).format('YYYY-MM-DD'),
-                    isChange: true
-                  })
-                  setIsOpen(false)
+                    const selected = moment(select).format('YYYY-MM-DD')
+                    const newRow = {
+                        ...row,
+                        [column.key]: selected,
+                        isChange: true
+                    }
+                    if(column.dependency){
+                        if(!!!row[column.dependency] || selected > row[column.dependency]) {
+                            newRow[column.dependency] = selected
+                        }
+                    }
+
+                    onRowChange(newRow)
+                    setIsOpen(false)
                 }}
                 style={{flex: 1, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
               >

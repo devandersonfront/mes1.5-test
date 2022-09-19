@@ -68,6 +68,7 @@ export interface IExcelHeaderType {
   overlay?:boolean
   state?:string
   orderRegisterManage?:() => any[]
+  dependency?:string
 
 }
 
