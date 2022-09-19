@@ -3,7 +3,7 @@ export const titles = {
   basicMgmt: '기준정보 관리',
   mes: 'MES',
   pms: 'PMS',
-  cnc: 'PMS',
+  cnc: 'CNC',
   userAuthMgmt: '사용자 권한 관리',
   _authMgmt: '권한 관리',
   _userMgmt: '유저 관리',
@@ -26,8 +26,10 @@ export const titles = {
   documentMgmt: '문서 관리',
   businessMgmt: '영업 관리',
   _orderReg: '수주 정보 등록',
+  _orderReg_dohwa: '수주 관리(등록)',
   _orderList: '수주 현황',
   _deliveryReg: '납품 정보 등록',
+  _delivery_dohwa: '납품 관리(등록)',
   _deliveryList: '납품 현황',
   pmReg: '생산관리 등록',
   _opReg: '작업지시서 등록',
@@ -327,6 +329,12 @@ export const MesTitles = (customTarget?: string) => {
       _midRangeList: toMenu(titles._midRangeList_bk,'/mes/quality/midrange/list'),
       _changeNoti: toMenu(titles._changeNoti_bk,'/mes/quality/product/change/register'),
       _changeList: toMenu(titles._changeList_bk,'/mes/quality/product/change/list'),
+    }
+    case 'dohwa': return {
+      ...mesDefault,
+      _orderReg: toMenu(titles._orderReg_dohwa, '/mes/order/register'),
+      _deliveryReg: toMenu(titles._delivery_dohwa,'/mes/delivery/register'),
+
     }
     default: return mesDefault
   }

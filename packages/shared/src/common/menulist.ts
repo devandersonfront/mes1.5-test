@@ -71,6 +71,7 @@ const BasicOrder = (customTarget?: string): BasicOrderType[] => {
     const defaultOrder: BasicOrderType[] = [ 'userAuthMgmt', 'factoryMgmt', 'customerMgmt', 'processMgmt', 'qualityMgmt', 'deviceMgmt',
         'machineMgmt', 'moldMgmt', 'toolMgmt', 'rawMgmt', 'subMgmt', 'productMgmt', 'documentMgmt' ]
     switch(customTarget){
+        case 'dohwa': defaultOrder.splice(7,1)
         default: return defaultOrder
     }
 }
