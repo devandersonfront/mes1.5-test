@@ -7,6 +7,9 @@ export const alertMsg = {
   noWorker: '작업자를 선택해 주세요.',
   noImporter: '입고자를 선택해 주세요.',
   noProduct: '제품을 선택해 주세요.',
+  noRawMaterial: '원자재를 선택해 주세요.',
+  noSubMaterial: '부자재를 선택해 주세요.',
+  noTool: '공구를 선택해 주세요.',
   noOutOrder: '발주 내역을 선택해 주세요.',
   noProductAmount: '생산 수량을 입력해 주세요.',
   noImportAmount: '입고량을 입력해 주세요.',
@@ -19,5 +22,6 @@ export const alertMsg = {
   overImport: '입고량이 미입고량 보다 클 수 없습니다.',
   onlyOne: '데이터를 하나만 선택해 주세요',
   exportedNotUpdatable: '출고된 정보는 수정할 수 없습니다.',
-  importedNotUpdatable: '입고된 정보는 수정할 수 없습니다.'
+  importedNotUpdatable: '입고된 정보는 수정할 수 없습니다.',
+  duplicateLotNumber:'LOT번호는 중복될 수 없습니다.'
 }

@@ -19,6 +19,7 @@ import moment from 'moment'
 import {useDispatch, useSelector} from 'react-redux'
 import {deleteMenuSelectState, setMenuSelectState} from "../../../../shared/src/reducer/menuSelectState";
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 interface IProps {
   children?: any
@@ -58,149 +59,32 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
     })
   },[])
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    let tmpColumn = column.map(async (v: any) => {
-      if(v.selectList && v.selectList.length === 0) {
-        let tmpKey = v.key
-
-
-        let res: any
-        res = await RequestMethod('get', `${tmpKey}List`,{
-          path: {
-            page: 1,
-            renderItem: MAX_VALUE,
-          }
-        })
-
-
-        let pk = "";
-
-        res.results.info_list && res.results.info_list.length && Object.keys(res.results.info_list[0]).map((v) => {
-          if(v.indexOf('_id') !== -1){
-            pk = v
-          }
-        })
-        return {
-          ...v,
-          selectList: [...res.results.info_list.map((value: any) => {
-            return {
-              ...value,
-              name: tmpKey === 'model' ? value.model : value.name,
-              pk: value[pk]
-            }
-          })]
-        }
-
-      }else{
-        if(v.selectList){
-          return {
-            ...v,
-            pk: v.unit_id
-          }
-        }else{
-          return v
-        }
-      }
-    })
-
-    // if(type !== 'productprocess'){
-    Promise.all(tmpColumn).then(res => {
-      setColumn([...res])
-    })
-    // }
+  const validate = (row) => {
+    if(!!!row.warehousing) throw(alertMsg.noImportAmount)
   }
 
   const SaveBasic = async () => {
-    let res: any
-    res = await RequestMethod('post', `lotRmSave`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
-
-            if(v.type === 'additional') {
-              additional.push(v)
-            }
-          })
-
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
-              }
-            }
-
-            if(v === 'unitWeight') {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(row['unitWeight'])
-              }
-            }
-
-            if(v === 'tmpId') {
-              selectData = {
-                ...selectData,
-                id: row['tmpId']
-              }
-            }
-          })
-
-          return {
-            ...row,
-            ...selectData,
-            current: row.exhaustion === "-" ? row.warehousing : 0,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
-                  }
-                }
-              }).filter((v) => v)
-            ]
-          }
-
+    try {
+      if (selectList.size === 0) throw(alertMsg.noSelectedData)
+      const postBody = basicRow.filter(row => selectList.has(row.id)).map((row, i) => {
+        validate(row)
+        return {
+          ...row,
+          current: row.exhaustion === "-" ? row.warehousing : 0,
         }
-      }).filter((v) => v)).catch((error) => {
+      })
+      const res = await RequestMethod('post', `lotRmSave`, postBody)
 
-      if(error.status === 409){
-        Notiflix.Report.warning("경고", error.data.message, "확인",)
-        return true
-      }else if(error.status === 422){
-        Notiflix.Report.warning("경고", error.data.message, "확인",)
-        return true
+      if (res) {
+        Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
+          setTimeout(() => {
+            router.push("/mes/rawmaterialV1u/stock")
+          }, 300)
+        });
       }
-      return false
-    })
-
-
-    if(res){
-      Notiflix.Report.success('수정되었습니다.','','확인', () => {
-        dispatch(setModifyInitData({
-          modifyInfo: [],
-          type: undefined
-        }))
-        router.back()
-      });
+    } catch (errMsg) {
+      Notiflix.Report.warning("경고", errMsg, "확인",)
     }
-  }
-
-  const downloadExcel = () => {
-    let tmpSelectList: boolean[] = []
-    basicRow.map(row => {
-      tmpSelectList.push(selectList.has(row.id))
-    })
-    excelDownload(column, basicRow, `mold`, "mold", tmpSelectList)
   }
 
   const onClickHeaderButton = (index: number) => {

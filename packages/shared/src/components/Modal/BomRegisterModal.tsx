@@ -13,7 +13,7 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
-import {TransferCodeToValue} from '../../common/TransferFunction'
+import { TransferCodeToValue, TransferValueToCode } from '../../common/TransferFunction'
 import {useDispatch} from 'react-redux'
 import {change_summary_info_index, insert_summary_info, reset_summary_info} from '../../reducer/infoModal'
 import {UploadButton} from "../../styles/styledComponents";
@@ -144,9 +144,10 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
       tmpRows = [{...tmpRow}]
     }
     tmpData = tmpRows.map((v, i) => {
-      const bomDetail:{childData:any, bomType: TransferType} = {
+      const bomDetail:{childData:any, bomType: TransferType, objectKey: string} = {
         childData: {},
         bomType: undefined,
+        objectKey: undefined
       }
       switch(v.type){
         case 0:{
@@ -154,16 +155,19 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
           childData.unit = childData.unit === 1 ? '장' : 'kg'
           bomDetail['childData'] = childData
           bomDetail['bomType'] = 'rawMaterial'
+          bomDetail['objectKey'] = 'raw_material'
           break;
         }
         case 1:{
           bomDetail['childData'] = v.child_sm
           bomDetail['bomType'] = 'subMaterial'
+          bomDetail['objectKey'] = 'sub_material'
           break;
         }
         case 2:{
           bomDetail['childData'] = v.child_product
           bomDetail['bomType'] = 'product'
+          bomDetail['objectKey'] = 'product'
           break;
         }
       }
@@ -202,7 +206,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         process: bomDetail.childData.process ? bomDetail.childData.process.name : '-',
         // spare:'부',
         bom_root_id: bomDetail.childData.bom_root_id,
-        [bomDetail.bomType]: {...bomDetail.childData},
+        [bomDetail.objectKey]: {...bomDetail.childData},
       }
     })
 
@@ -433,7 +437,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                               type: v.tab,
                               parent: v.parent,
                               child_product: v.tab === 2 ? {...v.product} : null,
-                              child_rm: v.tab === 0 ? {...v.raw_material} : null,
+                              child_rm: v.tab === 0 ? {...v.raw_material, unit: TransferValueToCode(v.raw_material.unit, 'rawMaterialUnit')} : null,
                               child_sm: v.tab === 1 ? {...v.sub_material} : null,
                               key: v.parent.bom_root_id,
                               setting: v.setting,

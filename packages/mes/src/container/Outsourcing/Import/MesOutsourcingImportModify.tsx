@@ -26,6 +26,7 @@ const MesOutsourcingImportModify = () => {
     const [basicRow, setBasicRow] = useState<any[]>([{isFirst:true}])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
+    console.log('router',router)
     useEffect(() => {
         if(selector && selector.type && selector.modifyInfo){
             setBasicRow(selector.modifyInfo.map(info => ({
@@ -94,7 +95,7 @@ const MesOutsourcingImportModify = () => {
     }
 
     const buttonEventHandler = (buttonIndex:number) => {
-        selectList.size > 0 ? buttonEvent(buttonIndex) : Notiflix.Report.warning('선택 경고','선택된 정보가 없습니다.','확인')
+        selectList.size > 0 ? buttonEvent(buttonIndex) : Notiflix.Report.warning('경고',alertMsg.noSelectedData,'확인')
     }
 
     const buttonEvent = (buttonIndex:number) => {

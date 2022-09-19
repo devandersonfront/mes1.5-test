@@ -104,13 +104,13 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         return {
           ...v,
           bom: v.bom.map(bom => {
-            const outsourcing = bom.bom.type === 2 && bom.bom.child_product.type > 2
+            const outsourcing = bom.bom?.type === 2 && bom.bom.child_product.type > 2
             return {
               ...bom,
               lot: {
                 ...bom.lot,
                 child_lot_record: outsourcing ? undefined : bom.lot?.child_lot_record,
-                child_lot_outsourcing: outsourcing ? bom.lot?.child_lot_record : undefined,
+                child_lot_outsourcing: outsourcing ? bom.lot?.child_lot_outsourcing : undefined,
                 amount: v.molds?.length > 0 ? new Big(Number(bom.lot.amount)).div(v.cavity).toString() : bom.lot.amount}}
           }),
           operation_sheet: {

@@ -10,61 +10,80 @@ import Notiflix from "notiflix";
 import {useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 const MesToolUpdate = () => {
     const router = useRouter();
     const dispatch = useDispatch()
-    const toolStore = useSelector((router:RootState) => router.toolInfo);
+    const selector = useSelector((state:RootState) => state.modifyInfo);
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [column, setColumn] = useState<any>(columnlist.toolWarehousingUpdate);
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
-    const cleanUpData = () => {
-        const newData = toolStore.map((value) => (
-          {
-              ...value,
-            code: value.tool_id,
-            customer: value.customer_id,
-            customerData: value.tool.customer,
-        }))
-        setBasicRow(newData);
-    }
+    useEffect(() => {
+        if(selector && selector.modifyInfo && selector.type){
+            const newData = selector.modifyInfo.map((value) => (
+              {
+                  ...value,
+                  code: value.tool_id,
+                  customer: value.customer_id,
+                  customerData: value.tool.customer,
+              }))
+            setBasicRow(newData)
+        }else{
+            router.push("/mes/tool/warehousinglist")
+        }
+    }, [selector])
 
-    const SaveCleanUpData = (data:any[]) => {
-       return data.map((rowData, index) => ({
-            tool: {
-                tool_id: rowData?.tool.tool_id,
-                code: rowData.code,
-                name: rowData.name,
-                unit: rowData.unitPK,
-                stock: rowData?.stock,
-                customer: rowData.customerData,
-                additional: rowData?.additional ?? [],
-                version: rowData?.version ?? undefined,
-            },
-            date: rowData.date,
-            warehousing: rowData.warehousing,
-            lot_tool_id: rowData.lot_tool_id,
-            version: rowData.version
-        }))
-    }
+    useEffect(() => {
+      dispatch(setMenuSelectState({main:"공구 관리",sub:"/mes/tool/warehousinglist"}))
+      return(() => {
+        dispatch(deleteMenuSelectState())
+      })
+    },[])
 
-    const SaveBasic = async(data:any) => {
-        await RequestMethod("post", "lotToolSave", data)
-            .then((res) => {
-                Notiflix.Report.success("저장되었습니다.","","확인", () => router.push("/mes/tool/warehousinglist"))
-            })
-            .catch((err) => {
-                Notiflix.Report.failure("에러가 발생했습니다. 관리자에게 문의해주시기 바랍니다.","","확인")
-            })
+
+  const toToolObject = (data:any) => {
+      console.log(data)
+    return {
+      tool: data.tool,
+      lot_tool_id: data.lot_tool_id,
+      warehousing: data.warehousing,
+      version: data.version,
+      date: moment(data.date).format('YYYY-MM-DD'),
     }
+  }
+
+  const validate = (row) => {
+    if(!!!row.warehousing) throw(alertMsg.noImportAmount)
+  }
+
+  const SaveBasic = async () => {
+    try {
+      if(selectList.size === 0) throw(alertMsg.noSelectedData)
+      const selected = basicRow.filter(row => selectList.has(row.id))
+      const postBody = selected.map((row, i) => {
+        validate(row)
+        return toToolObject(row)
+      })
+      const res = await RequestMethod('post', `lotToolSave`, postBody)
+
+      if(res){
+        Notiflix.Report.success('저장되었습니다.','','확인', () => {
+          setTimeout(() => {
+            router.push("/mes/tool/warehousinglist")
+          }, 300)
+        });
+      }
+    } catch(errMsg){
+      Notiflix.Report.warning("경고", errMsg, "확인",)
+    }
+  }
+
     const buttonEvents = (number:number) => {
         switch(number) {
             case 0:
-                const result = basicRow.filter((row) => selectList.has(row.id))
-                //result 값 가지고 save
-                SaveBasic(SaveCleanUpData(result));
-
+                SaveBasic();
                 return
             case 1:
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인", "취소", () => {
@@ -76,18 +95,6 @@ const MesToolUpdate = () => {
                 return
         }
     }
-
-    useEffect(() => {
-        if(toolStore.data === ""){
-            router.push("/mes/tool/list")
-        }else{
-            cleanUpData();
-            dispatch(setMenuSelectState({main:"공구 관리",sub:"/mes/tool/warehousinglist"}))
-        }
-        return(() => {
-            dispatch(deleteMenuSelectState())
-        })
-    },[])
 
     return (
         <div>

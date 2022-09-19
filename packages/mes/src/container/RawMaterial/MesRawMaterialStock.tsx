@@ -25,6 +25,7 @@ import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
 import {CompleteButton} from "shared/src/components/Buttons/CompleteButton";
+import { alertMsg } from 'shared/src/common/AlertMsg';
 
 interface IProps {
   children?: any
@@ -338,9 +339,9 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
 
   const onClickHeaderButton = (index: number) => {
-    const noneSelected = selectList.size <= 0
+    const noneSelected = selectList.size === 0
     if(noneSelected){
-      return Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
+      return Notiflix.Report.warning('경고', alertMsg.noSelectedData,"확인")
     }
     switch(index){
       case 0:
@@ -348,9 +349,9 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         return;
       case 1:
         const selectedRows = basicRow.filter(v => selectList.has(v.id))
-        const completeSelected = selectedRows.some(row => row.is_complete )
-        if(completeSelected){
-          Notiflix.Report.warning("사용 완료된 자재는 수정할 수 없습니다.","","확인")
+        const exported = selectedRows.some(row => row.warehousing !== row.current )
+        if(exported){
+          Notiflix.Report.warning('경고',alertMsg.exportedNotUpdatable,"확인")
         } else {
           dispatch(setModifyInitData({
             modifyInfo: selectedRows,

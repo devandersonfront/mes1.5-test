@@ -20,6 +20,8 @@ import {setToolDataAdd} from "shared/src/reducer/toolInfo";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { setExcelTableHeight } from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
+import { alertMsg } from 'shared/src/common/AlertMsg'
+import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 
 interface IProps {
     children?: any
@@ -211,29 +213,28 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
 
     const DeleteBasic = async() => {
         const res = await RequestMethod("delete", "lotToolDelete", basicRow.filter((row)=>selectList.has(row.id)))
-
         if(res){
             Notiflix.Report.success("삭제되었습니다.","","확인",() => reload())
         }
     }
 
     const ButtonEvents = (index:number) => {
+        const noneSelected = selectList.size === 0
+        if(noneSelected){
+            return Notiflix.Report.warning('경고', alertMsg.noSelectedData,"확인")
+        }
         switch(index) {
             case 0:
-                if(selectList && selectList.size > 0){
-                    // @ts-ignore
-                    dispatch(setToolDataAdd(basicRow.filter((row)=>selectList.has(row.id))));
-                    router.push("/mes/tool/update")
-                }else{
-                    Notiflix.Report.warning("데이터를 선택해주시기 바랍니다.","","확인")
-                }
+                const selectedRows = basicRow.filter(v => selectList.has(v.id))
+                    dispatch(setModifyInitData({
+                        modifyInfo: selectedRows,
+                        type: "toolin"
+                    }))
+                    router.push('/mes/tool/update')
                 return
             case 1:
-                if(selectList.size === 0) {
-                    return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
-                }
                 if(selectList.size > 1) {
-                    return  Notiflix.Report.warning("경고","한개의 데이터를 선택해 주시기 바랍니다.","확인" )
+                    return  Notiflix.Report.warning("경고",alertMsg.onlyOne,"확인" )
                 }
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",()=>DeleteBasic())
 

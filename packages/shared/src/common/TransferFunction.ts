@@ -23,6 +23,11 @@ const RAW_MATERIAL_TYPE_CODE: Array<CodeType> = [
   {code: 2, value: "SHEET"},
 ]
 
+const RAW_MATERIAL_UNIT_CODE: Array<CodeType> = [
+  {code: 0, value: "kg"},
+  {code: 1, value: "장"},
+]
+
 const WORK_STATUS: Array<CodeType> = [
   {code: 0, value: '작업 중'},
   {code: 1, value: '시작 전'},
@@ -87,6 +92,14 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
     }
     case 'rawMaterialType': {
       RAW_MATERIAL_TYPE_CODE.map(v => {
+        if(v.code === code){
+          value = v.value;
+        }
+      })
+      break;
+    }
+    case 'rawMaterialUnit': {
+      RAW_MATERIAL_UNIT_CODE.map(v => {
         if(v.code === code){
           value = v.value;
         }
@@ -187,6 +200,14 @@ export const TransferValueToCode = (value: string, type:TransferType) => {
     }
     case 'rawMaterialType': {
       RAW_MATERIAL_TYPE_CODE.map(v => {
+        if(v.value === value){
+          code = v.code;
+        }
+      })
+      break;
+    }
+    case 'rawMaterialUnit': {
+      RAW_MATERIAL_UNIT_CODE.map(v => {
         if(v.value === value){
           code = v.code;
         }

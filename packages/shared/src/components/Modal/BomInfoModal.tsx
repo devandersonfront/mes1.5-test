@@ -14,7 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
-import {TransferCodeToValue} from '../../common/TransferFunction'
+import { TransferCodeToValue, TransferValueToCode } from '../../common/TransferFunction'
 import {
   add_summary_info,
   change_summary_info_index,
@@ -111,9 +111,10 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
     }
 
     tmpData = row.map((v, i) => {
-      const bomDetail:{childData:any, bomType: TransferType} = {
+      const bomDetail:{childData:any, bomType: TransferType, objectKey:string} = {
         childData: {},
         bomType: undefined,
+        objectKey: undefined
       }
       switch(v.type){
         case 0:{
@@ -121,16 +122,19 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
           childData.unit = childData.unit === 1 ? '장' : 'kg';
           bomDetail['childData'] = childData
           bomDetail['bomType'] = 'rawMaterial'
+          bomDetail['objectKey'] = 'raw_material'
           break;
         }
         case 1:{
           bomDetail['childData'] = v.child_sm
           bomDetail['bomType'] = 'subMaterial'
+          bomDetail['objectKey'] = 'sub_material'
           break;
         }
         case 2:{
           bomDetail['childData'] = v.child_product
           bomDetail['bomType'] = 'product'
+          bomDetail['objectKey'] = 'product'
           break;
         }
       }
@@ -140,6 +144,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
         seq: i+1,
         code: bomDetail.childData.code,
         type: v.type,
+        type_id: bomDetail.childData.type,
         tab: v.type,
         name: bomDetail.childData.name,
         product_type: v.type !== 2 ? '-' : TransferCodeToValue(bomDetail.childData?.type, 'productType'),
@@ -149,7 +154,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
         version: v.version,
         processArray: bomDetail.childData.process ?? null,
         process: bomDetail.childData.process ? bomDetail.childData.process.name : null,
-        [bomDetail.bomType]: {...bomDetail.childData},
+        [bomDetail.objectKey]: {...bomDetail.childData},
         product_id: v.parent?.product_id,
         parent:v.parent,
         setting:v.setting
@@ -199,7 +204,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               additional: row.additional ?? [],
               process: row.processArray,
               model: row.model === '' ? null : row.modelData,
-              type: row.type_id ?? row.type === '완제품' ? 2 : 1,
+              type: row.type_id ?? row.type,
               product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
               code: row.code,
               customer: row.customer === '' || row.customer?.id === null ? null : row.customerData
@@ -211,7 +216,8 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
             child_rm: v.tab === 0 ? {
               ...v.raw_material,
               border:false,
-              type:v.raw_material.type_id
+              type: v.type_id,
+              unit:TransferValueToCode(v.unit, 'rawMaterialUnit'),
             } : null,
             child_sm: v.tab === 1 ? {
               ...v.sub_material,
@@ -227,6 +233,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
 
     }else{
       if(!searchList.some(v => v.isChange)) return []
+      console.log(searchList)
       return searchList.map((v, i) => (
           {
             seq: i+1,
@@ -235,7 +242,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               additional: row.additional ?? [],
               process: row.processArray,
               model: row.model?.id ? row.modal : null,
-              type: row.type_id ?? row.type === '완제품' ? 2 : 1,
+              type: row.type_id,
               product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
               code: row.code,
               work_standard_image: row.work_standard_image?.uuid,
@@ -247,7 +254,8 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
             } : null,
             child_rm: v.tab === 0 ? {
               ...v.raw_material,
-              type:v.raw_material.type_id,
+              type: v.type_id,
+              unit: TransferValueToCode(v.unit, 'rawMaterialUnit'),
               border: false
             } : null,
             child_sm: v.tab === 1 ? {

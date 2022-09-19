@@ -1,7 +1,7 @@
 import {TransferCodeToValue} from '../common/TransferFunction'
 import {LineBorderContainer} from "../components/Formatter/LineBorderContainer";
 import { searchModalList } from '../common/modalInit'
-import { getUsageType } from '../common/Util'
+import { getUsageType, TransferType } from '../common/Util'
 
 export const SearchResultSort = (infoList, type: string) => {
   const noneSelected = '(선택 없음)'
@@ -323,7 +323,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
         type_name:"원자재",
         customer_id: selectData.customerArray?.name,
-        unit: selectData.unit === 1 ? '장' : 'kg',
+        unit: TransferType(selectData.unit),
         raw_material: {
           ...selectData,
           customer: selectData.customerArray

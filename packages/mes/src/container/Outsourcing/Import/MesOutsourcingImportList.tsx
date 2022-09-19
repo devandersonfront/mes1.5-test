@@ -140,7 +140,7 @@ const MesOutsourcingImportList = () => {
     const moveModifyPage = (filtered) => {
         Notiflix.Loading.circle();
         dispatch(setModifyInitData({modifyInfo: filtered, type: "import"}));
-        router.push("/mes/outsourcing/import/modify").then(() => Notiflix.Loading.remove());
+        router.push("/mes/outsourcing/import/modify",).then(() => Notiflix.Loading.remove());
     }
 
     const buttonEvent = (buttonIndex:number) => {

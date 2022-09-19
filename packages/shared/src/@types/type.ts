@@ -217,7 +217,7 @@ export interface MidrangeRecordRegister extends MidrangeRecordType {
   samples?:number
 }
 
-export type TransferType = "productType" | "material" | "rawMaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "subMaterial" | "welding" | "export" | "unit" | null
+export type TransferType = "productType" | "material" | "rawMaterial" | "rawMaterialType" | "rawMaterialUnit" | "workStatus" | 'machine' | "product" |  "subMaterial" | "welding" | "export" | "unit" | null
 
 export interface BomType {
   childProductId: number | null

@@ -10,6 +10,7 @@ import Notiflix from "notiflix";
 import {useRouter} from "next/router";
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
+import { alertMsg } from 'shared/src/common/AlertMsg'
 
 const MesToolRegister = () => {
     const router = useRouter();
@@ -83,42 +84,49 @@ const MesToolRegister = () => {
         }
     }
 
-
-    const SaveCleanUpData = (data:any[]) => {
-        let resultData = [];
-        let amountCheck = true
-        data.map((rowData, index) => {
-            if(rowData.amount <= 0 || rowData.amount === undefined){
-                amountCheck = false
-            }
-            let tmpRow:any = {};
-            let toolObject:any = {};
-            toolObject.tool_id = rowData.code;
-            toolObject.code = rowData?.tool_id;
-            toolObject.name = rowData.name;
-            toolObject.unit = rowData.unitPK ?? rowData.unit;
-            toolObject.stock = rowData?.warehousing;
-            toolObject.customer = rowData.customerArray ?? rowData.customer;
-            toolObject.additional = rowData?.additional ?? [];
-            toolObject.version = rowData?.version ?? undefined;
-
-            tmpRow.tool = toolObject;
-            tmpRow.date = rowData.date;
-            tmpRow.warehousing = rowData.amount;
-            // tmpRow.amount = rowData.amount;
-            resultData.push(tmpRow);
-        })
-        if(amountCheck) return resultData
-        else return Notiflix.Report.warning("경고","입고량을 입력해 주시기 바랍니다.","확인")
+    const toToolObject = (data:any) => {
+        return {
+            tool: {
+                tool_id: data.code,
+                code: data?.tool_id,
+                name: data.name,
+                unit: data.unitPK ?? data.unit,
+                customer: data.customerArray ?? data.customer,
+                sync: data.sync,
+                version: data.version ?? undefined,
+                additional: data.additional,
+                products: data.products,
+                stock: data?.warehousing,
+            },
+            date: moment(data.date).format('YYYY-MM-DD'),
+            warehousing: data.amount
+        }
     }
 
-    const SaveBasic = async(data:any) => {
-        const res = await RequestMethod("post", "lotToolSave", data)
+    const validate = (row) => {
+        if(!!!row.tool_id) throw(alertMsg.noTool)
+        if(!!!row.amount) throw(alertMsg.noImportAmount)
+    }
 
-        if(res){
-            Notiflix.Report.success("저장되었습니다.","","확인", () => router.push("/mes/tool/warehousinglist"))
-        }else{
-            Notiflix.Report.failure("에러가 발생했습니다. 관리자에게 문의해주시기 바랍니다.","","확인")
+    const SaveBasic = async () => {
+        try {
+            if(selectList.size === 0) throw(alertMsg.noSelectedData)
+            const selected = basicRow.filter(row => selectList.has(row.id))
+            const postBody = selected.map((row, i) => {
+                validate(row)
+                return toToolObject(row)
+            })
+            const res = await RequestMethod('post', `lotToolSave`, postBody)
+
+            if(res){
+                Notiflix.Report.success('저장되었습니다.','','확인', () => {
+                    setTimeout(() => {
+                        router.push("/mes/tool/warehousinglist")
+                    }, 300)
+                });
+            }
+        } catch(errMsg){
+            Notiflix.Report.warning("경고", errMsg, "확인",)
         }
     }
 
@@ -133,16 +141,12 @@ const MesToolRegister = () => {
                 }])
                 return
             case 1:
-                const result = basicRow.filter((row) => {
-                    if (selectList.has(row.id)) return row
-                })
-                if(selectList.size < 0 ) return Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
-                //result 값 가지고 save
-                SaveBasic(SaveCleanUpData(result));
-
+                SaveBasic();
                 return
             case 2:
-                if(selectList.size < 0 ) return Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
+                if(selectList.size === 0) {
+                    return  Notiflix.Report.warning("경고",alertMsg.noSelectedData,"확인" )
+                }
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인", "취소", () => {
                     const tmpRow = basicRow.filter(({id}, index) => !selectList.has(id))
                     setBasicRow(tmpRow);
