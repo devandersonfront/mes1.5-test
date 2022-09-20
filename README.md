@@ -7,6 +7,7 @@
     NEXT_PUBLIC_SF_ADDRESS= 백엔드 api 주소
     NEXT_PUBLIC_SF_ENDPOINT_S3= s3 api 주소
     NEXT_PUBLIC_SF_ENDPOINT_PMS= pms api 주소
+    NEXT_PUBLIC_SF_ENDPOINT_PMS_PORT= pms api 포트 주소
     NEXT_PUBLIC_SF_ENDPOINT_EXCEL= excel api 주소
     NEXT_PUBLIC_CUSTOM_TARGET= 커스텀 대상 회사 키 ('bk')
     NEXT_PUBLIC_MENUS= 메인 메뉴 커스텀 (ex: HOME,BASIC,MES,PMS,CNC)
