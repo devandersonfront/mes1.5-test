@@ -18,7 +18,8 @@ import {Select} from '@material-ui/core'
 import {SearchInit} from './SearchModalInit'
 import {SearchIcon} from "../../../styles/styledComponents";
 import { SearchResultSort } from '../../../Functions/SearchResultSort'
-
+//@ts-ignore
+import ModalSearch_icon from '../../../../public/images/list_search_icon.png'
 
 interface IProps {
     column: IExcelHeaderType
@@ -163,7 +164,7 @@ const subFactorySearchModal = ({column, row, onRowChange}: IProps) => {
                 onClick={() => {
                 setIsOpen(true)
             }}>
-                <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
+                <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 30, height: 30}} src={ModalSearch_icon}/>
             </SearchIcon>
             <Modal isOpen={isOpen} style={{
                 content: {

@@ -21,7 +21,8 @@ import {SearchIcon} from "../../../styles/styledComponents";
 import {useDispatch, useSelector} from "react-redux";
 import { RootState } from '../../../reducer'
 import modifyInfo from '../../../reducer/modifyInfo'
-
+//@ts-ignore
+import ModalSearch_icon from '../../../../public/images/list_search_icon.png'
 
 interface IProps {
   column: IExcelHeaderType
@@ -256,7 +257,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         onClick={() => {
       setIsOpen(true)
     }} modalType={column.modalType}>
-      <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
+      <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 30, height: 30}} src={ModalSearch_icon}/>
     </SearchIcon>
   }
 
