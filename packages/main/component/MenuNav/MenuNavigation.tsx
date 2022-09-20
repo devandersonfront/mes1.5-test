@@ -177,8 +177,11 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
                           selector.sub[i].map((sub =>
                                   <SideMenuItem onClick={() => {
                                     if(sub.url){
-
                                       router.push(sub.url)
+                                      dispatch(setMenuState({
+                                        main: [],
+                                        sub: [],
+                                      }))
                                     }
                                   }} selectSub={sub.url == selectMenu.sub}>
                                     <p style={{fontSize: 13, paddingLeft: 12}}>· {sub.title}</p>
