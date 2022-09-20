@@ -190,8 +190,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     })
   }
 
-  console.log('row',row)
-
   const getBomKey = (type:0 | 1 | 2, lot:any) => {
     switch(type){
       case 0: return lot.lot_rm_id
@@ -277,7 +275,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         if (Number(lot.amount)) {
           totalAmount += Number(lot.amount)
           const lotObjectKey = bom.tab === 0 ? 'child_lot_rm' : bom.tab === 1 ? 'child_lot_sm' : bom.type < 3 ? 'child_lot_record' : 'child_lot_outsourcing'
-          console.log(lotObjectKey)
           bomToSave.push({
             ...inputBomIdMap.get(bom.bomKey),
             record_id: undefined,
@@ -332,7 +329,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           newRow['good_quantity'] = quantity,
           newRow['originalSum'] = row.originalSum ?? row.sum
         }
-        console.log('ew',newRow)
         onRowChange(newRow)
         setIsOpen(false)
         setLotList([])

@@ -5,22 +5,12 @@ import { CellButtonComponent } from '../components/Buttons/CellButton'
 import { UnitContainer } from '../components/Unit/UnitContainer'
 import { MoveButtons } from "../components/MoveButtons";
 import { FileEditer } from '../components/FileUpload/ExcelBasicFileUpload'
-import { MemberSearchModal } from '../components/Modal/MemeberSearchModal'
 import { ProductSearchModal } from '../components/Modal/ProductSearchModal'
 import { CustomerSearchModal } from '../components/Modal/CustomerSearchModal'
 import { ModelSearchModal } from '../components/Modal/ModelSearchModal'
-import { MachineSearchModal } from '../components/Modal/MachineSearchModal'
-import { RawMaterialSearchModal } from '../components/Modal/RawMaterialSearchModal'
-import { OperationSearchModal } from '../components/Modal/OperationSearchModal'
-import { PoorQuantityModal } from '../components/Modal/PoorQuantityModal'
-import { DatetimePickerBox } from '../components/CalendarBox/DatetimePickerBox'
 import { ProcessSearchModal } from '../components/Modal/ProcessSearchModal'
-import { ProcessSeqModal } from '../components/Modal/ProcessSeqModal'
 import { HeaderFilter } from "../components/HeaderFilter/HeaderFilter";
-import { PauseModal } from '../components/Modal/PauseModal'
 import { AuthoritySearchModal } from '../components/Modal/AuthoritySearchModal'
-import { RecordDetailFormatter } from '../components/Formatter/RecordDetailFormatter'
-import { OperationMachineSearchModal } from "../components/Modal/OperationMachineSearchModal";
 // @ts-ignore
 import {StatusComponent} from '../components/Formatter/StatusComponent'
 import {FactoryInfoModal} from '../components/Modal/FactoryInfoModal'
@@ -610,174 +600,6 @@ export const columnlist: any = {
   stockDate: [
     { key: 'title', name: "생산/납품" },
   ],
-  operationRegister: [
-    { key: 'date', editor: CalendarBox, name: '지시 날짜' },
-    { key: 'customer_id', name: '거래처명' },
-    { key: 'cm_id', name: '모델' },
-    { key: 'code', formatter: ProductSearchModal, searchType: 'operation', name: 'CODE' },
-    { key: 'name', name: '품명' },
-    { key: 'texture', name: '재질' },
-    { key: 'seq', name: '공정 순서' },
-    { key: 'process_id', name: '공정 종류' },
-    { key: 'mold', name: '금형명' },
-    {
-      key: 'machine_id', name: '기계 선택',
-      formatter: /*MachineSearchModal*/ OperationMachineSearchModal
-      // formatter: MachineSearchModal
-    },
-    { key: 'goal', name: '목표 생산량', editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'ln_id', name: '원자재 Lot 번호', formatter: RawMaterialSearchModal, searchType: 'operation', disableType: 'record' },
-  ],
-  operationList: [
-    {
-      key: 'status', formatter: StatusComponent, headerRenderer: HeaderFilter,
-      options: [{ status: -1, name: "상태" }, { status: 0, name: "시작 전" }, { status: 1, name: "작업중" }, { status: 2, name: "일시정지" }, { status: 3, name: "작업종료" }, { status: 4, name: "미완료" }]
-    },
-    { key: 'identification' },
-    { key: 'date', editor: CalendarBox },
-    { key: 'customer_id' },
-    { key: 'cm_id' },
-    { key: 'code' },
-    { key: 'name' },
-    { key: 'texture' },
-    { key: 'seq' },
-    { key: 'process_id' },
-    { key: 'mold_id' },
-    { key: 'machine_id', formatter: MachineSearchModal },
-    { key: 'goal', editor: TextEditor },
-    { key: 'ln_id', formatter: RawMaterialSearchModal, disableType: 'record' },
-  ],
-  recordRegister: [
-    { key: 'osd_id', name: '지시 고유 번호', formatter: OperationSearchModal, width: 118 },
-    { key: 'date', name: '지시 날짜', editor: CalendarBox, width: 118, disableType: 'record' },
-    { key: 'customer_id', name: '거래처명', width: 200, disableType: 'record' },
-    { key: 'cm_id', name: '모델', width: 200, disableType: 'record' },
-    { key: 'code', name: 'CODE', formatter: ProductSearchModal, width: 118, disableType: 'record' },
-    { key: 'name', name: '품명', width: 118 },
-    { key: 'texture', name: '재질', width: 118 },
-    { key: 'seq', name: '공정 순서', width: 118, formatter: ProcessSeqModal, disableType: 'record' },
-    { key: 'process_id', name: '공정 종류', width: 118, disableType: 'record' },
-    { key: 'mold_id', name: '금형명', width: 118, disableType: 'record' },
-    { key: 'machine_id', name: '기계 선택', width: 118, formatter: MachineSearchModal, disableType: 'record' },
-    { key: 'goal', name: '목표 생산량', width: 118, editor: TextEditor, formatter: UnitContainer, unitData: 'EA', searchType: 'record' },
-    { key: 'ln_id', name: '원자재 Lot 번호', width: 118, formatter: RawMaterialSearchModal, disableType: 'record' },
-    { key: 'good_quantity', name: '양품 수량', width: 118, editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'poor_quantities', name: '불량 유형', width: 118, formatter: PoorQuantityModal, unitData: 'EA' },
-    { key: 'poor_quantity', name: '불량 수량', width: 118, editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
-    // {key: 'poor_quantity', name: '불량 수량', width:118, formatter: PoorQuantityModal, unitData: 'EA'},
-    { key: 'start', name: '작업 시작 일시', width: 250, formatter: DatetimePickerBox },
-    { key: 'end', name: '작업 종료 일시', width: 250, formatter: DatetimePickerBox },
-    { key: 'paused_time', name: '일시 정지 시간', width: 118, formatter: PauseModal },
-    { key: 'user_id', name: '작업자', width: 118, formatter: MemberSearchModal },
-  ],
-  workerRecordReigster: [
-    { key: 'osd_id', name: '지시 고유 번호', formatter: OperationSearchModal, width: 118 },
-    { key: 'date', name: '지시 날짜', editor: CalendarBox, width: 118, disableType: 'record' },
-    { key: 'customer_id', name: '거래처명', formatter: CustomerSearchModal, width: 200, disableType: 'record' },
-    { key: 'cm_id', name: '모델', formatter: ModelSearchModal, width: 200, disableType: 'record' },
-    { key: 'code', name: 'CODE', formatter: ProductSearchModal, width: 118, disableType: 'record' },
-    { key: 'name', name: '품명', width: 118 },
-    { key: 'texture', name: '재질', width: 118 },
-    { key: 'seq', name: '공정 순서', width: 118, formatter: ProcessSeqModal, disableType: 'record' },
-    { key: 'process_id', name: '공정 종류', width: 118, disableType: 'record' },
-    { key: 'mold_id', name: '금형명', width: 118, disableType: 'record' },
-    { key: 'machine_id', name: '기계 선택', width: 118, formatter: MachineSearchModal, disableType: 'record' },
-    { key: 'goal', name: '목표 생산량', width: 118, editor: TextEditor, formatter: UnitContainer, unitData: 'EA', searchType: 'record' },
-    { key: 'ln_id', name: '원자재 Lot 번호', width: 118, formatter: RawMaterialSearchModal, disableType: 'record' },
-    { key: 'good_quantity', name: '양품 수량', width: 118, editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'poor_quantity', name: '불량 수량', width: 118, editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'start', name: '작업 시작 일시', width: 250, formatter: DatetimePickerBox },
-    { key: 'end', name: '작업 종료 일시', width: 250, formatter: DatetimePickerBox },
-    { key: 'paused_time', name: '일시 정지 시간', width: 118, formatter: PauseModal },
-    { key: 'user_id', name: '작업자', width: 118, formatter: MemberSearchModal },
-  ],
-  recordList: [
-    { key: 'identification', name: '지시 고유 번호', width: 118 },
-    { key: 'date', name: '지시 날짜', width: 118 },
-    { key: 'customer_id', name: '거래처명', width: 118 },
-    { key: 'cm_id', name: '모델', width: 118 },
-    { key: 'code', name: 'CODE', width: 118 },
-    { key: 'name', name: '품명', width: 118 },
-    { key: 'texture', name: '재질', width: 118 },
-    { key: 'seq', name: '공정 순서', width: 118 },
-    { key: 'process_id', name: '공정 종류', width: 118 },
-    { key: 'mold_id', name: '금형명', width: 118 },
-    { key: 'machine_id', name: '기계 선택', width: 118 },
-    { key: 'goal', name: '목표 생산량', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'ln_id', name: '원자재 lot번호', width: 118, formatter: RawMaterialSearchModal },
-    { key: 'good_quantity', name: '양품 수량', width: 118, editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'poor_quantity', name: '불량 수량', width: 118, editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'poor_quantities', name: '불량 유형', width: 118, formatter: PoorQuantityModal, unitData: 'EA', searchType: 'list' },
-    // {key: 'poor_quantity', name: '불량 수량', width:118, formatter: PoorQuantityModal, unitData: 'EA', searchType: 'list'},
-    { key: 'achievement', width: 118, formatter: UnitContainer, unitData: '%' },
-    { key: 'start', name: '작업 시작 일시', width: 250, formatter: DatetimePickerBox },
-    { key: 'end', name: '작업 종료 일시', width: 250, formatter: DatetimePickerBox },
-    { key: 'paused_time', name: '일시 정지 시간', width: 118, formatter: PauseModal, searchType: 'list' },
-    { key: 'uph', name: 'UPH', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'worker', name: '작업자', width: 118, formatter: MemberSearchModal, searchType: 'list' },
-  ],
-  workerRecordList: [
-    { key: 'identification', name: '지시 고유 번호', width: 118 },
-    { key: 'date', name: '지시 날짜', width: 118 },
-    { key: 'customer_id', name: '거래처명', width: 118 },
-    { key: 'cm_id', name: '모델', width: 118 },
-    { key: 'code', name: 'CODE', width: 118 },
-    { key: 'name', name: '품명', width: 118 },
-    { key: 'texture', name: '재질', width: 118 },
-    { key: 'seq', name: '공정 순서', width: 118 },
-    { key: 'process_id', name: '공정 종류', width: 118 },
-    { key: 'mold_id', name: '금형명', width: 118 },
-    { key: 'machine_id', name: '기계 선택', width: 118 },
-    { key: 'goal', name: '목표 생산량', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'ln_id', name: '원자재 lot번호', width: 118, formatter: RawMaterialSearchModal },
-    { key: 'good_quantity', name: '양품 수량', width: 118, editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'poor_quantity', name: '불량 수량', width: 118, editor: TextEditor, formatter: UnitContainer, unitData: 'EA' },
-    // {key: 'poor_quantities', name: '불량 유형', width:118, formatter: PoorQuantityModal, unitData: 'EA', searchType: 'list'},
-    // {key: 'poor_quantity', name: '불량 수량', width:118, formatter: PoorQuantityModal, unitData: 'EA', searchType: 'list'},
-    { key: 'achievement', width: 118, formatter: UnitContainer, unitData: '%' },
-    { key: 'start', name: '작업 시작 일시', width: 250, formatter: DatetimePickerBox },
-    { key: 'end', name: '작업 종료 일시', width: 250, formatter: DatetimePickerBox },
-    { key: 'paused_time', name: '일시 정지 시간', width: 118, formatter: PauseModal, searchType: 'list' },
-    { key: 'uph', name: 'UPH', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'worker', name: '작업자', width: 118, formatter: MemberSearchModal, searchType: 'list' },
-  ],
-  recordSumList: [
-    { key: 'identification', name: '지시 고유 번호', width: 118 },
-    { key: 'latest_date', name: '지시 날짜', width: 118 },
-    { key: 'customer_id', name: '거래처명', width: 118 },
-    { key: 'cm_id', name: '모델', width: 118 },
-    { key: 'code', name: 'CODE', width: 118 },
-    { key: 'name', name: '품명', width: 118 },
-    { key: 'texture', name: '재질', width: 118 },
-    { key: 'used_sequences', name: '공정 순서', width: 118 },
-    { key: 'used_processes', name: '공정 종류', width: 118 },
-    { key: 'used_molds', name: '금형명', width: 118 },
-    { key: 'used_machines', name: '기계 선택', width: 118 },
-    { key: 'avg_goal', name: '목표 생산량', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'used_lot_numbers', name: '원자재 lot번호', width: 118 },
-    { key: 'avg_good_quantity', name: '양품 수량', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'avg_poor_quantity', name: '불량 수량', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'avg_confirm_quantities', name: '불량 유형', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    // {key: 'poor_quantity', name: '불량 수량', width:118, formatter: PoorQuantityModal, unitData: 'EA', searchType: 'list'},
-    { key: 'avg_achievement', name: '목표 달성률', width: 118, formatter: UnitContainer, unitData: '%' },
-    { key: 'oldest_start', name: '작업 시작 일시', width: 250, },
-    { key: 'latest_end', name: '작업 종료 일시', width: 250, },
-    { key: 'avg_paused_time', name: '일시 정지 시간', width: 118, },
-    { key: 'avg_uph', name: 'UPH', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'workers', name: '작업자', width: 118, formatter: RecordDetailFormatter, searchType: 'list' },
-  ],
-  recordSumDetailList: [
-    { key: 'ln_id', name: '원자재 lot번호', width: 118 },
-    { key: 'good_quantity', name: '양품 수량', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'poor_quantity', name: '불량 수량', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'poor_quantities', name: '불량 유형', width: 150, formatter: PoorQuantityModal, unitData: 'EA', searchType: 'disable' },
-    { key: 'achievement', name: '목표 달성률', width: 118, formatter: UnitContainer, unitData: '%' },
-    { key: 'start', name: '작업 시작 일시', width: 250, },
-    { key: 'end', name: '작업 종료 일시', width: 250, },
-    { key: 'paused_time', name: '일시 정지 시간', width: 118, formatter: PauseModal, searchType: 'disable' },
-    { key: 'uph', name: 'UPH', width: 118, formatter: UnitContainer, unitData: 'EA' },
-    { key: 'worker', name: '작업자', width: 118, },
-  ],
   workStandardList: [
     { key: 'customer', name: '거래처', width: 120 },
     { key: 'model', name: '모델', width: 240 },
@@ -1059,7 +881,6 @@ export const columnlist: any = {
     { key: 'lot_number', name: 'LOT별 재고', formatter: LotInfoModal, width: 118, type: 'readonly' ,unprintable : true},
     { key: "stock", name: "재고량", width: 118 },
     { key: "basic_stock", name: "기존재고", width: 118, editor: TextEditor, inputType: 'number' },
-    { key: "sum_stock", name: "합계", width: 118, }
   ],
 
   orderRegister: (basicRow?, setBasicRow?) => ([

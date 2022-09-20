@@ -16,7 +16,6 @@ import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/me
 import { useDispatch,  } from "react-redux";
 import { setExcelTableHeight } from 'shared/src/common/Util'
 import {useRouter} from "next/router";
-import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
 import {CalendarBox} from "shared/src/components/CalendarBox/CalendarBox";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import {setModifyInitData} from "shared/src/reducer/modifyInfo";

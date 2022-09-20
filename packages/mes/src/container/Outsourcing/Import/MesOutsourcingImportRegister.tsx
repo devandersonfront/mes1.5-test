@@ -19,7 +19,6 @@ const MesOutsourcingImportRegister = () => {
     const [radioValue, setRadioValue] = useState<number>(0)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
-    console.log(router)
     useEffect(()=>{
         setBasicRow([{isFirst:true}])
     },[radioValue])

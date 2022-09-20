@@ -14,6 +14,7 @@ interface IProps {
     onDateChange: (date? : Moment) => void
     value: Moment
     readOnly?:boolean
+    minDate?:string
 }
 
 const darkTheme = createTheme({
@@ -26,8 +27,7 @@ const darkTheme = createTheme({
 });
 
 
-const MidrangeDatetimePickerBox = ({ onDateChange, value, readOnly }: IProps) => {
-
+const MidrangeDatetimePickerBox = ({ onDateChange, value, readOnly, minDate }: IProps) => {
     const useStyles = makeStyles((theme: Theme) =>
         createStyles({
             container: {
@@ -63,7 +63,7 @@ const MidrangeDatetimePickerBox = ({ onDateChange, value, readOnly }: IProps) =>
                         format={'YYYY.MM.DD HH:mm'}
                         InputProps={{ className: classes.input, disableUnderline: true}}
                         readOnly={readOnly}
-
+                        minDate={minDate}
                     />
                 </MuiPickersUtilsProvider>
             </ThemeProvider>

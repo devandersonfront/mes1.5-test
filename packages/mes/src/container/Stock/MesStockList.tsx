@@ -107,7 +107,6 @@ const MesStockList = ({ page, search, option }: IProps) => {
             : "-",
         unit: row.unit ?? "-",
         id: `stock${random_id}`,
-        sum_stock: row.stock_sum
       };
     }))
 

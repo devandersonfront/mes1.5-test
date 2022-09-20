@@ -233,7 +233,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
 
     }else{
       if(!searchList.some(v => v.isChange)) return []
-      console.log(searchList)
       return searchList.map((v, i) => (
           {
             seq: i+1,

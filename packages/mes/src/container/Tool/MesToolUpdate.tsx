@@ -44,7 +44,6 @@ const MesToolUpdate = () => {
 
 
   const toToolObject = (data:any) => {
-      console.log(data)
     return {
       tool: data.tool,
       lot_tool_id: data.lot_tool_id,

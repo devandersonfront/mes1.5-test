@@ -71,7 +71,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         start: row.date + " 00:00:00",
         end: row.date + " 00:00:00",
         standardStartDate : row.date,
-        standardEndDate : moment('2999-12-31').subtract(1, 'days').toDate(),
         ...row,
         sum: 0,
         defect_reasons: [],

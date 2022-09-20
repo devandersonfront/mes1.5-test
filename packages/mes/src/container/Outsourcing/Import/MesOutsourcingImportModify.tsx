@@ -26,7 +26,6 @@ const MesOutsourcingImportModify = () => {
     const [basicRow, setBasicRow] = useState<any[]>([{isFirst:true}])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
-    console.log('router',router)
     useEffect(() => {
         if(selector && selector.type && selector.modifyInfo){
             setBasicRow(selector.modifyInfo.map(info => ({
