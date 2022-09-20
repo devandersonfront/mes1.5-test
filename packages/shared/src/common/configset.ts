@@ -45,9 +45,11 @@ export const SF_ENDPOINT_RESOURCE = `http://${isLocalhost()}:8285`
 export const SF_ENDPOINT_S3 = process.env.NEXT_PUBLIC_SF_ENDPOINT_S3
 export const SF_PORT = ``
 
-export const SF_ENDPOINT_PMS = process.env.NEXT_PUBLIC_CUSTOM_TARGET === 'dohwa'
-    ? `http://${process.env.NEXT_PUBLIC_SF_ENDPOINT_PMS}:18999`
-    : `http://${process.env.NEXT_PUBLIC_SF_ENDPOINT_PMS}:8999`
+// export const SF_ENDPOINT_BARCODE = `http://${isLocalhost()}:18080`
+
+export const SF_ENDPOINT_PMS = `http://${process.env.NEXT_PUBLIC_SF_ENDPOINT_PMS}:${process.env.NEXT_PUBLIC_SF_ENDPOINT_PMS_PORT}`
+//  export const SF_ENDPOINT_PMS = `http://3.36.78.194:8999`
+// export const SF_ENDPOINT_PMS = `http://125.138.147.11:8444`
 
 const MACHINE_CODE = [
   {code: 1, name: '프레스'},
