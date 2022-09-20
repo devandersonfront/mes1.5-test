@@ -22,8 +22,6 @@ import {ToolListModal} from "../components/Modal/ToolListModal";
 import {LotInputInfoModal} from "../components/Modal/LotInputInfoModal";
 import { BomInfoModal } from '../components/Modal/BomInfoModal'
 import { MultiSelectModal } from '../components/Modal/SearchModalTest/MultiSelectModal'
-import {PlaceholderBox} from "../components/Formatter/PlaceholderBox";
-import {CalendarBox} from "../components/CalendarBox/CalendarBox";
 
 export const searchModalList: any  = {
   member: [
@@ -296,29 +294,6 @@ export const searchModalList: any  = {
     {key: 'reason', name: '불량 사유'},
     {key: 'amount', width: 194, name: '불량 개수', formatter: UnitContainer, unitData: 'EA', textType: 'Modal'},
   ],
-  pause: [
-    {key: 'reason', name: '일시 정지 유형'},
-    {key: 'start', width: 150, name: '시작', formatter: DatetimePickerBox, theme: 'white'},
-    {key: 'end', width: 150, name: '끝', formatter: DatetimePickerBox, theme: 'white'},
-    {key: 'add', width: 100, name: '', formatter: AddlButton},
-  ],
-  pauseExist: [
-    {key: 'reason', name: '일시 정지 유형'},
-    {key: 'amount', width: 194, name: '일시 정지 시간(단위: 분)', editor: TextEditor, textType: 'Modal', searchType: 'pause'},
-  ],
-  pauseDisable: [
-    {key: 'reason', name: '일시 정지 유형'},
-    {key: 'start', width: 170, name: '시작'},
-    {key: 'end', width: 170, name: '끝'},
-  ],
-  pauseDisableExist: [
-    {key: 'reason', name: '일시 정지 유형'},
-    {key: 'paused_time', width: 194, name: '일시 정지 시간', textType: 'Modal', searchType: 'pause'},
-  ],
-  defect: [
-    {key: 'name', name: '공정명'},
-    {key: 'reason', name: '불량 유형'},
-  ],
   productprocess: [
     {key: 'seq', name: '공정 순서'},
     {key: 'process_id', name: '공정명'},
@@ -413,8 +388,8 @@ export const searchModalList: any  = {
     {key: 'sequence', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'lot_number', name: 'LOT 번호', formatter: LotNumberRegister, editor: TextEditor, textType: 'Modal', textAlign: 'center', width: 300},
     {key: 'worker_name', name: '작업자', formatter: SearchModalTest, type: 'user', width: 118, modalType: true, placeholder: '작업자 선택',noSelect:true},
-    {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "standardStartDate"},
-    {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "standardEndDate"},
+    {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "start"},
+    {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "end"},
     {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true, width: 120},
     {key: 'good_quantity', name: '양품 수량', textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 140, modalType: true},
@@ -428,8 +403,8 @@ export const searchModalList: any  = {
     {key: 'sequence', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'lot_number', name: 'LOT 번호', formatter: LotNumberRegister, editor: TextEditor, textType: 'Modal', textAlign: 'center', width: 300},
     {key: 'worker_name', name: '작업자', formatter: SearchModalTest, type: 'user', width: 118, modalType: true, placeholder: '작업자 선택'},
-    {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "standardStartDate"},
-    {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type : "standardEndDate"},
+    {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type:'start'},
+    {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'white', width: 200, type:'end'},
     {key: 'pause', name: '일시 정지 시간', formatter: PauseInfoModal, textAlign: 'center', modalType: true, width: 120, type: 'modify'},
     {key: 'good_quantity', name: '양품 수량', textType: 'Modal', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'poor_quantity', name: '불량 수량 (자주검사)', formatter: DefectInfoModal, textAlign: 'center', width: 140, modalType: true},

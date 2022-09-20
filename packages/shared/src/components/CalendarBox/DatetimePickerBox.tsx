@@ -68,13 +68,23 @@ const DatetimePickerBox = ({ row, column, onRowChange, onClose }: IProps) => {
   const classes = useStyles()
 
   const onDateChange = (date?: Moment) => {
-
     setDate(date);
-    onRowChange({
+    const newRow = {
       ...row,
       [column.key]: date ? `${date.format("YYYY-MM-DD HH:mm")}:00` : null,
       isChange: true
-    })
+    }
+    if(column.type === 'start'){
+      if(newRow.start > newRow.end){
+        newRow['end'] = newRow.start
+      }
+    }else if(column.type === 'end'){
+      if(newRow.start > newRow.end){
+        newRow['start'] = newRow.end
+      }
+    }
+
+    onRowChange(newRow)
   };
 
 
@@ -89,8 +99,8 @@ const DatetimePickerBox = ({ row, column, onRowChange, onClose }: IProps) => {
           onChange={onDateChange}
           format={'yyyy-MM-DD HH:mm:ss'}
           InputProps={{ className: classes.input, disableUnderline: true}}
-          maxDate={column.type === "standardEndDate" ? row.standardEndDate : row.end}
-          minDate={column.type === "standardStartDate" ? row.standardStartDate : row.start}
+          minDate={column.type === "start" ? row.standardStartDate : row.start}
+          minDateMessage={null}
         />
       </MuiPickersUtilsProvider>
       </ThemeProvider>
