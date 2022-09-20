@@ -24,17 +24,20 @@ interface IProps {
     buttonEvent?: (buttonIdx:number) => void
     multiRegister?: boolean
     columnKey: string
+    checkDuplicate?: (rows: any[]) => void
+    duplicateKey?: string
 }
 
 const defaultInitData = {isFirst:true}
 
-const RegisterContainer = ({radioButtons , useRadio, title, data, setData, validate, setPostBody, apiType, afterSavePath, initData, buttons, buttonEvent, multiRegister, columnKey }:IProps) => {
+const RegisterContainer = ({radioButtons , useRadio, title, data, setData, validate, setPostBody, apiType, afterSavePath, initData, buttons, buttonEvent, multiRegister, columnKey, checkDuplicate, duplicateKey }:IProps) => {
     const [radioValue, setRadioValue] = useState<number>(0)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const router = useRouter()
 
+
     useEffect(()=>{
-        setData([initData ?? defaultInitData])
+        setData([{...initData, ...defaultInitData}])
     },[radioValue])
 
     const filterSelectedRows = () => data.filter((row) => selectList.has(row.id))
@@ -54,7 +57,9 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
 
     const saveRows = async () => {
         try {
-            const postBody = filterSelectedRows().map(row => {
+            const selected = filterSelectedRows()
+            checkDuplicate && checkDuplicate(selected.map(row => row[duplicateKey]))
+            const postBody = selected.map(row => {
                 validate(row)
                 return setPostBody(row)
             })
@@ -63,13 +68,12 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
             Notiflix.Report.warning('경고',errMsg,'확인')
         }
     }
-
     const deleteRow = () => {
-        let filteredRows = filterSelectedRows()
+        let filteredRows = data.filter((row) => !selectList.has(row.id))
         if(filteredRows.length > 0){
             filteredRows[0] = {...filteredRows[0], ...defaultInitData}
         } else {
-            filteredRows.push(defaultInitData)
+            filteredRows.push({...initData, ...defaultInitData})
         }
         setData(filteredRows)
         setSelectList(new Set())
@@ -98,7 +102,7 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
             <PageHeader
                 title={title}
                 buttons={
-                    buttons ?? multiRegister ? ['행 추가','저장하기', '삭제'] : ['저장하기', '삭제']
+                    buttons ?? multiRegister ? ['저장하기', '삭제'] : ['행 추가','저장하기', '삭제']
                 }
                 buttonsOnclick={buttonEventHandler}
                 isRadio={useRadio}
@@ -116,8 +120,7 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
                 selectList={selectList}
                 headerList={[
                     SelectColumn,
-                    ...columnlist[columnKey](data, setData, radioValue)
-                ]}
+                ].concat(useRadio || multiRegister ? columnlist[columnKey](data, setData, radioValue) : columnlist[columnKey])}
                 row={data}
                 setRow={(rows) => {
                     rows.map((row) => {

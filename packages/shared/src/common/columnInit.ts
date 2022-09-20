@@ -440,8 +440,8 @@ export const columnlist: any = {
     },
   ],
 
-  rawinV1u: [
-    { key: 'rm_id', name: '원자재 CODE', formatter: SearchModalTest, type: 'rawMaterial', frozen: true, placeholder: '원자재 CODE', noSelect: true },
+  rawinV1u: (basicRow, setBasicRow) => ([
+    { key: 'rm_id', name: '원자재 CODE', formatter: MultiSelectModal, type: 'rawMaterialImport', searchType: 'rawMaterial', frozen: true, placeholder: '원자재 CODE', noSelect: true,basicRow, setBasicRow },
     { key: 'name', name: '원자재 품명', frozen: true, formatter: PlaceholderBox, placeholder: '자동 입력' },
     { key: 'texture', name: '재질', formatter: PlaceholderBox, placeholder: '자동 입력' },
     { key: 'depth', name: '두께', formatter: UnitContainer, unitData: 'T', placeholder: '0' },
@@ -450,10 +450,10 @@ export const columnlist: any = {
     { key: 'type', name: '재질 종류', formatter: PlaceholderBox, placeholder: '자동 입력' },
     { key: 'customer_id', name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력' },
     { key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', placeholder: '자동 입력' },
-    { key: 'amount', name: '입고량', editor: TextEditor, formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', placeholder: '0', inputType: 'number' },
-    { key: 'date', name: '입고일', formatter: CalendarBox },
-    { key: 'lot_number', name: '원자재 LOT 번호', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'LOT 입력' },
-  ],
+    { key: 'amount', name: '입고량(필수)', editor: TextEditor, formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', placeholder: '0', inputType: 'number' },
+    { key: 'date', name: '입고일(필수)', formatter: CalendarBox },
+    { key: 'lot_number', name: '원자재 LOT 번호(필수)', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'LOT 입력' },
+  ]),
 
   rawstockV1u: [
     {key: 'elapsed', name: '경과일', formatter: UseDateCell, width: 118},
@@ -513,15 +513,15 @@ export const columnlist: any = {
     {key: 'export', name: '수정', formatter: ExportButton, width: 118, type: 'rawMaterial', action: 'modify'}
   ],
 
-  subinV1u: [
-    { key: 'wip_id', name: '부자재 CODE', formatter: SearchModalTest, type: 'subMaterial', frozen: true, placeholder: '부자재 CODE', noSelect: true },
+  subinV1u: (basicRow, setBasicRow) => ([
+    { key: 'wip_id', name: '부자재 CODE', formatter: MultiSelectModal, type: 'subMaterialImport', searchType: 'subMaterial', frozen: true, placeholder: '부자재 CODE', noSelect: true, basicRow, setBasicRow },
     { key: 'name', name: '부자재 품명', frozen: true, formatter: PlaceholderBox, placeholder: '자동 입력' },
     { key: 'unit', name: '단위', formatter: PlaceholderBox, placeholder: '자동 입력' },
     { key: 'customer_id', name: '거래처', formatter: PlaceholderBox, placeholder: '자동 입력' },
-    { key: 'warehousing', name: '입고량', editor: TextEditor, formatter: UnitContainer, unitData: '', placeholder: '0', inputType: 'number' },
-    { key: 'date', name: '입고일', formatter: CalendarBox },
-    { key: 'lot_number', name: '부자재 LOT 번호', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'LOT 입력' },
-  ],
+    { key: 'warehousing', name: '입고량(필수)', editor: TextEditor, formatter: UnitContainer, unitData: '', placeholder: '0', inputType: 'number' },
+    { key: 'date', name: '입고일(필수)', formatter: CalendarBox },
+    { key: 'lot_number', name: '부자재 LOT 번호(필수)', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'LOT 입력' },
+  ]),
 
   substockV1u: [
     {key: 'wip_id',name:'부자재 CODE', formatter: PlaceholderBox, placeholder: '부자재 CODE', width: 118},
@@ -888,7 +888,7 @@ export const columnlist: any = {
     { key: "deadline", name: "납품 기한", formatter: CalendarBox, width: 118, type: "deadline"},
     { key: "customer_id", name: "거래처", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     { key: "cm_id", name: "모델", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
-    { key: "product_id", name: "CODE", width: 118, formatter: MultiSelectModal, type: 'product', basicRow, setBasicRow },
+    { key: "product_id", name: "CODE", width: 118, formatter: MultiSelectModal, type: 'orderRegister', searchType: 'product', basicRow, setBasicRow },
     { key: "name", name: "품명", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     { key: "type", name: "품목 종류", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     { key: "unit", name: "단위", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
@@ -1341,7 +1341,6 @@ export const columnlist: any = {
   ],
   outsourcingOrder:[
     {key: 'product_name', name: '품명', formatter:SearchModalTest, type: 'outsourceProduct', placeholder: '-', noSelect: true },
-    // {key: 'product_name', name: '품명', formatter:MultiSelectModal, type: 'product', state:"outsourcing", basicRow, setBasicRow,},
     {key: 'code', name: 'CODE', formatter:PlaceholderBox, placeholder: '자동 입력',},
     {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-'},
     // {key: 'cm_id', name: '모델', formatter:PlaceholderBox, placeholder: '자동 입력'},
@@ -1379,10 +1378,10 @@ export const columnlist: any = {
   outsourcingImport:(basicRow?, setBasicRow?, importByProduct?: boolean) =>(
     [
       {key: 'name', name: '품명', formatter: PlaceholderBox, placeholder: '자동 입력'},
-      {key: 'product_id', name: 'CODE', formatter:importByProduct ? MultiSelectModal : PlaceholderBox, type: 'outsourceProduct', basicRow, setBasicRow, placeholder: '자동 입력'},
+      {key: 'product_id', name: 'CODE', formatter:importByProduct ? MultiSelectModal : PlaceholderBox, searchType: 'outsourceProduct', type: 'outsourcingImport', basicRow, setBasicRow, placeholder: '자동 입력'},
       {key: 'customer_id', name: '거래처', formatter:PlaceholderBox, placeholder: '자동 입력'},
       {key: 'cm_id', name: '모델', formatter:PlaceholderBox, placeholder: '자동 입력'},
-      {key: 'identification', name: '발주내역', formatter: importByProduct ? PlaceholderBox : MultiSelectModal, type: 'outsourcingOrder', basicRow, setBasicRow, placeholder: '-'},
+      {key: 'identification', name: '발주내역', formatter: importByProduct ? PlaceholderBox : MultiSelectModal, searchType: 'outsourcingOrder', type: 'outsourcingImport', basicRow, setBasicRow, placeholder: '-'},
       {key: 'order_date', name: '발주 날짜', formatter:PlaceholderBox, placeholder: importByProduct ? '-' : '자동 입력' },
       {key: 'user', name: importByProduct ? '입고자' : '발주자', formatter:importByProduct ? SearchModalTest : PlaceholderBox, type: 'user', placeholder: '자동 입력'},
       {key: 'import_date', name: '입고 날짜', formatter:CalendarBox, placeholder: '-', type: 'outsourcingImport'},

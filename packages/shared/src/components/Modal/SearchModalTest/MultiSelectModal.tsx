@@ -28,7 +28,7 @@ interface IProps {
   onRowChange: (e: any) => void
 }
 
-const setSavedKey = (type: string, map: Map<number, any>, row: any) => {
+const setMapWithSaved = (type: string, map: Map<number, any>, row: any) => {
   switch(type){
     case 'allProduct':
     case 'outsourceProduct':
@@ -47,48 +47,49 @@ const setSavedKey = (type: string, map: Map<number, any>, row: any) => {
     case 'outsourcingOrder':
       row.ose_id && map.set(row.ose_id, row)
       break
+    case 'rawMaterial':
+      row.raw_material?.rm_id && map.set(row.raw_material?.rm_id, row)
+      break
+    case 'subMaterial':
+      row.sub_material?.sm_id && map.set(row.sub_material?.sm_id, row)
+      break
     default: break
   }
 }
 
-const addData = (type: string, loaded: any, saved: any) => {
-  switch(type){
-    case 'product': return loaded
-    case 'machine':
-    case 'mold':
-    case 'tool':
-      loaded.setting = saved?.setting ?? 0
-      // loaded.name = loaded?.name ?? '-'
-      return loaded
-    default: return loaded
-  }
-}
-
-const syncWithSaved = (type:string, mapValue: any, row) => {
+const syncWithSaved = (type:string, mapValue: any) => {
   switch (type) {
-    case 'product': return {
-      id: mapValue.id ?? row.id,
+    case 'orderRegister': return {
       date: mapValue.date,
       deadline: mapValue.deadline,
       amount: mapValue.amount,
     }
-    case 'machine':
-    case 'mold':
-    case 'tool':
+    case 'productMachine':
+    case 'productMold':
+    case 'productTool':
       return {
-      id: mapValue.id ?? row.id,
       setting: mapValue.setting ?? 0,
     }
-    default: return {}
-  }
-}
-
-const initRowByType = (type:string) => {
-  switch(type){
-    case 'product': return {
-      date:  moment().format('YYYY-MM-DD'),
-      deadline:  moment().format('YYYY-MM-DD')
-    }
+    case 'outsourcingImport':
+      return {
+        import_date: mapValue.import_date,
+        warehousing: mapValue.warehousing,
+        lot_number: mapValue.lot_number,
+        worker: mapValue.worker,
+        user: mapValue.user
+      }
+    case 'subMaterialImport':
+      return {
+        date: mapValue.date,
+        warehousing: mapValue.warehousing,
+        lot_number: mapValue.lot_number
+      }
+    case 'rawMaterialImport':
+      return {
+        date: mapValue.date,
+        amount: mapValue.amount,
+        lot_number: mapValue.lot_number
+      }
     default: return {}
   }
 }
@@ -100,24 +101,51 @@ const getModalTextKey = (type: string) => {
       return 'code'
     case 'outsourcingOrder':
       return 'identification'
+    case 'rawMaterial':
+      return 'code'
+    case 'subMaterial':
+      return 'code'
     default:
       return 'name'
   }
 }
 
-const emptyRowByType = (type:string) => {
-  const emptyRow = {isFirst: true}
+const emptyRow = (type: string) => {
+  let emptyRow = {isFirst:true}
   switch(type){
-    case 'product':
-      emptyRow['date'] = moment().format('YYYY-MM-DD')
-      emptyRow['deadline'] = moment().format('YYYY-MM-DD')
-      break
-    case 'machine':
-    case 'mold':
-    case 'tool':
+    case 'productMachine':
+    case 'productMold':
+    case 'productTool':
       emptyRow['seq'] = 1
-      emptyRow['setting'] = 0
+    default: emptyRow = {...emptyRow, ...defaultRow(type)}
+  }
+  return emptyRow
+}
+
+
+const defaultRow = (type:string) => {
+  switch(type){
+    case 'orderRegister':
+      return {
+        date: moment().format('YYYY-MM-DD'),
+        deadline: moment().format('YYYY-MM-DD')
+      }
+    case 'productMachine':
+    case 'productMold':
+    case 'productTool':
+      return {
+        setting: 0
+      }
       break
+    case 'outsourcingImport':
+      return {
+        import_date: moment().format('YYYY-MM-DD'),
+      }
+    case 'subMaterialImport':
+    case 'rawMaterialImport':
+      return {
+        date: moment().format('YYYY-MM-DD'),
+      }
     default: break
   }
   return emptyRow
@@ -131,6 +159,8 @@ const getMapKey = (type:string) => {
     case 'mold': return 'mold_id'
     case 'tool': return 'tool_id'
     case 'outsourcingOrder' : return 'ose_id'
+    case 'rawMaterial' : return 'rm_id'
+    case 'subMaterial' : return 'sm_id'
     default: return ''
   }
 }
@@ -142,15 +172,14 @@ const getIndexKey = (type:string) => {
   }
 }
 
-const getModule = (type: string) => ({
-      key: getMapKey(type),
-      textKey: getModalTextKey(type),
-      indexKey: getIndexKey(type),
-      setSavedKey,
+const getModule = (searchType: string) => ({
+      key: getMapKey(searchType),
+      textKey: getModalTextKey(searchType),
+      indexKey: getIndexKey(searchType),
+      setMapWithSaved,
       syncWithSaved,
-      initRow: initRowByType(type),
-      emptyRow: emptyRowByType(type),
-      addData
+      defaultRow,
+      emptyRow,
     })
 
 const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
@@ -167,23 +196,23 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
 
   const [ basicRowMap, setBasicRowMap ] = useState<Map<number, any>>(new Map())
   const [ initMap, setInitMap ] = useState<Map<number, any>>(new Map())
-  const module = getModule(column.type)
+  const module = getModule(column.searchType)
 
   useEffect(() => {
       const newMap = new Map()
-      column.basicRow?.map(row => module.setSavedKey(column.type, newMap, row))
+      column.basicRow?.map(row => module.setMapWithSaved(column.searchType, newMap, row))
       setBasicRowMap(newMap)
       setInitMap(new Map(newMap))
   }, [column.basicRow])
 
   useEffect(() => {
-    setSearchModalInit(SearchInit[column.type])
+    setSearchModalInit(SearchInit[column.searchType])
     setSearchModalColumn(
-      [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((col, index) => {
+      [...searchModalList[`${SearchInit[column.searchType].excelColumnType}Search`].map((col, index) => {
         if (index === 0) return ({
           ...col, colSpan(args) {
             if (args.row?.isFirst) {
-              return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
+              return searchModalList[`${SearchInit[column.searchType].excelColumnType}Search`].length
             } else {
               return undefined
             }
@@ -191,7 +220,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
         })
         else return ({ ...col })
       })])
-  }, [column.type])
+  }, [column.searchType])
 
   useEffect(() => {
     if (isOpen) {
@@ -205,7 +234,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       if (basicRowMap.has(row[module.key])) {
         const newRows = {
           ...row,
-          ...module.syncWithSaved(column.type, basicRowMap.get(row[module.key]), row),
           border: true
         }
         return newRows
@@ -223,7 +251,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
         keyword,
         opt: optionIndex
       } : {}
-      switch (column.type) {
+      switch (column.searchType) {
         case 'outsourceProduct': defaultParams['outsourcing'] = 2
           break
         case 'allProduct': defaultParams['outsourcing'] = 0
@@ -235,7 +263,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
 
     const getPath = (row: any) => {
       const defaultPathVar =  { page, renderItem: 22,}
-      switch (column.type) {
+      switch (column.searchType) {
         default:
       }
       return defaultPathVar
@@ -246,15 +274,9 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     })
 
     if (res) {
-      const idAddedRows = res.info_list.map(info => ({
-        ...info,
-        id: Math.random() * 1000,
-        ...module.initRow
-      }))
-
       setPageInfo({ page: res.page, total: res.totalPages })
 
-      const newSearchList = SearchResultSort(idAddedRows, searchModalInit.excelColumnType)
+      const newSearchList = SearchResultSort(res.info_list, searchModalInit.excelColumnType)
       const borderedRows = markSelectedRows(newSearchList)
       setSearchList(page === 1 ? borderedRows : prev => [...prev, ...borderedRows])
     }
@@ -266,7 +288,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     return <>
         <div style={{ paddingLeft: 8, opacity: row[column.key] || row[module.key] ? 1 : .3, width: row.isFirst ? column.modalType ?  'calc(100% - 30px)' : 'calc(100% - 38px)' : '100%', textAlign:'left', backgroundColor: column.modalType && row.border ? '#19B9DF80' : undefined}}>
           {
-            row[module.key] ? row[column.type] ? row[column.type][module.textKey] ?? '-' : row[module.textKey] ?? '-'
+            row[module.key] ? row[column.searchType] ? row[column.searchType][module.textKey] ?? '-' : row[module.textKey] ?? '-'
               : searchModalInit?.placeholder ?? column?.placeholder
           }
       </div>
@@ -302,9 +324,9 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
 
   const SearchBox = () => {
     const getDefaultSearchOptionIndex = (index: number) => {
-      if (column.type === 'product' && index === 0) {
+      if (column.searchType === 'product' && index === 0) {
         return 2
-      } else if (column.type === 'product' && index === 2) {
+      } else if (column.searchType === 'product' && index === 2) {
         return 0
       } else {
         return index
@@ -377,17 +399,24 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   const onConfirm = () => {
     let newBasicRow = basicRowMap.size > 0 ? Array.from(basicRowMap.values()) : []
     newBasicRow = newBasicRow.length === 0
-      ? [module.emptyRow]
-      : newBasicRow.map((row, rowIdx) => ({...row, id:row[module.key], isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1, border:false }))
+      ? [module.emptyRow(column.type)]
+      : newBasicRow.map((row, rowIdx) => {
+        let defaultRes = {...row, id:row[module.key], isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1, border:false }
+        if(initMap.has(row[module.key])){
+          defaultRes = {...defaultRes, ...syncWithSaved(column.type, initMap.get(row[module.key]))}
+        } else {
+          defaultRes = {...defaultRes, ...defaultRow(column.type)}
+        }
+        return defaultRes
+      })
     column.setBasicRow(newBasicRow)
   }
 
   const setAllSelected = (rows: any) => {
     setSearchList(rows.map(row => {
       if(!basicRowMap.has(row[module.key])){
-        const newRow = module.addData(column.type, row, null)
         setBasicRowMap(prev => {
-            prev.set(newRow[module.key], SearchModalResult(newRow, searchModalInit.excelColumnType, column.staticCalendar))
+            prev.set(rows[module.key], SearchModalResult(rows, searchModalInit.excelColumnType, column.staticCalendar))
             return prev
           })
       }
@@ -461,7 +490,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
                   const tmpSearchList = searchList.slice()
                   const borderInverted = !tmpSearchList[clickedIdx].border
                   tmpSearchList[clickedIdx].border = borderInverted
-                  module.addData(column.type, tmpSearchList[clickedIdx], basicRowMap.get(clicked[module.key]))
 
                   setBasicRowMap(prev => {
                     if(borderInverted) {

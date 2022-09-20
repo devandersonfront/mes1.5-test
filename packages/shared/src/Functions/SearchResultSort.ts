@@ -218,6 +218,7 @@ export const SearchResultSort = (infoList, type: string) => {
           current : v.current,
           order_quantity : v.order_quantity,
           order_date : v.order_date,
+          import_date : v.order_date,
           bom: v.bom,
           customer_id : v.product.customer?.name,
           user: v.worker?.name
@@ -323,7 +324,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
         type_name:"원자재",
         customer_id: selectData.customerArray?.name,
-        unit: TransferType(selectData.unit),
+        unit: selectData.unit,
         raw_material: {
           ...selectData,
           customer: selectData.customerArray
