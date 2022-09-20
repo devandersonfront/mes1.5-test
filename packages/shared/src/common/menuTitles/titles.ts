@@ -123,6 +123,8 @@ export const dohwaTitles = {
     cncMon: '설비 모니터링 시스템',
     _cncMon: '설비 모니터링',
     _repCompListAdmin: '설비 수리 완료 리스트(관리자)',
+    _defectList: '불량 통계',
+    _midRangeList: '자주 검사 리스트(초ㆍ중ㆍ종 검사 리스트)',
 }
 
 export const bkTitles = {

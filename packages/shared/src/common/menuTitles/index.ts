@@ -130,9 +130,8 @@ export const MesTitles = (customTarget?: string) => {
       _stdList: toMenu(dohwaTitles._stdList,'/mes/quality/work/standardlist'),
       _changeNoti: toMenu(dohwaTitles._changeNoti,'/mes/quality/product/change/register'),
       _changeList: toMenu(dohwaTitles._changeList,'/mes/quality/product/change/list'),
-
-      //kpi
-      kpi: toMenu(titles.kpi,'',['_pLeadTime','_manHour','_defect','_oLeadTime','_uph','_operation']),
+      _defectList: toMenu(dohwaTitles._defectList,'/mes/quality/defect'),
+      _midRangeList: toMenu(dohwaTitles._midRangeList,'/mes/quality/midrange/list'),
 
     }
     default: return mesDefault
