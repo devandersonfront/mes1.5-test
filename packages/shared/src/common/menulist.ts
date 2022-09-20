@@ -4,13 +4,13 @@ import {
     MesTitles,
     CncTitles,
     PmsTitles,
-    titles,
     toAuth,
     HomeAuth,
     BasicAuth,
     MesAuth, PmsAuth, CncAuth
 } from './menuTitles'
 import { BasicOrderType, CncOrderType, MesOrderType, PmsOrderType } from './menuTitles/types'
+import {titles} from "./menuTitles/titles";
 
 export type IMenu = 'HOME' | 'BASIC' | 'MES' | 'PMS' | 'WMS' | 'UMS' | 'SETTING' | "CNC" | ""
 

@@ -19,6 +19,8 @@ import { SearchIcon } from "../../../styles/styledComponents";
 import { SelectColumn } from 'react-data-grid'
 import moment from 'moment'
 import { IExcelHeaderType } from '../../../@types/type'
+//@ts-ignore
+import ModalSearch_icon from '../../../../public/images/list_search_icon.png'
 
 interface IProps {
   column: IExcelHeaderType
@@ -274,7 +276,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     </>
   }
 
-  const addSearchButton = () => (<SearchIcon  className={'unprintable'} modalType={column.modalType}><img style={{width: "20px", height:"20px"}} src={IcSearchButton} /></SearchIcon>)
+  const addSearchButton = () => (<SearchIcon  className={'unprintable'} modalType={column.modalType}><img style={{width: "30px", height:"30px"}} src={ModalSearch_icon} /></SearchIcon>)
 
   const ContentHeader = () => {
     return <div id={'content-header'} style={{
