@@ -18,7 +18,7 @@ import {TransferCodeToValue} from "shared/src/common/TransferFunction";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import moment from "moment";
 import {setModifyInitData} from "shared/src/reducer/modifyInfo";
-import { titles } from 'shared/src/common/menuTitles'
+import { titles } from 'shared/src/common/menuTitles/titles'
 import { alertMsg } from 'shared/src/common/AlertMsg'
 
 const optionList = ["고유번호", "CODE", "품명"]
