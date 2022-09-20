@@ -102,7 +102,7 @@ const MesOutsourcingDeliveryRegister = () => {
     return (
         <div>
             <PageHeader
-                title={"외주 출고"}
+                title={"외주 출고 등록"}
                 buttons={
                     ['저장하기']
                 }

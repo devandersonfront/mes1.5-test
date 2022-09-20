@@ -189,7 +189,7 @@ export const PmsTitles = (customTarget?: string) => {
     _problemReg: toMenu(titles._problemReg, '/pms/v2/press/maintenance/problem'),
     _pressDailyInspReg: toMenu(titles._pressDailyInspReg, '/pms/v2/press/maintenance/PressDailyRegister'),
     _pressDailyInspSts: toMenu(titles._pressDailyInspSts, '/pms/v2/press/maintenance/PressDailyStatus'),
-    moldMnt: toMenu(titles.moldMnt, '', [ '_moldMgmt', '_moldMgmt','_moldRepReqReg','_moldRepReqList','_moldRepCompList','_moldRepCompListAdmin','_moldProblemReg','_moldDailyInspReg','_moldDailyInspSts']),
+    moldMnt: toMenu(titles.moldMnt, '', [ '_moldMgmt','_moldRepReqReg','_moldRepReqList','_moldRepCompList','_moldRepCompListAdmin','_moldProblemReg','_moldDailyInspReg','_moldDailyInspSts']),
     _moldMgmt: toMenu(titles._moldMgmt, '/pms/v2/mold/maintenance'),
     _moldRepReqReg: toMenu(titles._moldRepReqReg, '/pms/v2/mold/maintenance/repairs'),
     _moldRepReqList: toMenu(titles._moldRepReqList, '/pms/v2/mold/maintenance/list'),

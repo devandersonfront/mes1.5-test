@@ -106,7 +106,7 @@ const MesOutsourcingImportRegister = () => {
     return (
         <div>
             <PageHeader
-                title={"외주 입고"}
+                title={"외주 입고 등록"}
                 buttons={
                     ['저장하기', '삭제']
                 }
