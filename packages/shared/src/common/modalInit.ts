@@ -134,7 +134,7 @@ export const searchModalList: any  = {
   moldInfo: (basicRow? , setBasicRow?) => ([
     {key: 'sequence', name: '번호', textAlign: 'center', width: 80, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력' },
-    {key: 'name', name: '금형명', width: 472, formatter: MultiSelectModal, type:'productMold', SearchType: 'mold', modalType: true, placeholder: '-', basicRow, setBasicRow},
+    {key: 'name', name: '금형명', width: 472, formatter: MultiSelectModal, type:'productMold', searchType: 'mold', modalType: true, placeholder: '-', basicRow, setBasicRow},
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 'basic', name: '기본'},
         {pk: 'spare', name: '스페어'},
@@ -146,7 +146,7 @@ export const searchModalList: any  = {
   toolInfo: (basicRow? , setBasicRow?) => ([
     {key: 'seq', name: '번호', textAlign: 'center', width: 80, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 160, formatter: LineBorderContainer, placeholder: '자동 입력' },
-    {key: 'name', name: '공구명', width: 472, formatter: MultiSelectModal, type:'productTool', SearchType: 'tool', modalType: true, placeholder: '-', basicRow, setBasicRow},
+    {key: 'name', name: '공구명', width: 472, formatter: MultiSelectModal, type:'productTool', searchType: 'tool', modalType: true, placeholder: '-', basicRow, setBasicRow},
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: '1', name: '기본'},
         {pk: '0', name: '스페어'},
@@ -170,7 +170,7 @@ export const searchModalList: any  = {
   ],
   machineInfo: (basicRow? , setBasicRow?) => ([
     {key: 'seq', name: '번호', width: 80, formatter: LineBorderContainer, textAlign: 'center'},
-    {key: 'name', name: '기계 이름', width: 560, formatter: MultiSelectModal, type:'productMachine', SearchType: 'machine', modalType: true, placeholder:'-', basicRow, setBasicRow},
+    {key: 'name', name: '기계 이름', width: 560, formatter: MultiSelectModal, type:'productMachine', searchType: 'machine', modalType: true, placeholder:'-', basicRow, setBasicRow},
     {key: 'mfrCode', name: '제조 번호', width: 160, formatter: LineBorderContainer, placeholder: '-', type: 'Modal', textAlign: 'center' },
     {key: 'type', name: '기계 종류', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
