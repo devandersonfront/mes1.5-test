@@ -13,7 +13,8 @@ export interface IProps {
 }
 
 export interface IExcelHeaderType {
-  unit: any
+  formatter?: any
+  unit?: any
   setBasicRow?: any
   headerType?:any[]
   basicRow?: any
@@ -57,7 +58,7 @@ export interface IExcelHeaderType {
   callback?: (data : any) => void
   idx?:number
   headerRenderer?: ({row, column, setRow, onChangeOption}:IProps) => any
-  headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][]
+  headerItems?:{title: string, infoWidth: number, key: string, unit?: string}[][]
   action?:string
   doubleClick?:() => void
   mi_id?:number

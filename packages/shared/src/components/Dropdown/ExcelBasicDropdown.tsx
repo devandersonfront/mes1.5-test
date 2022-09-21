@@ -72,7 +72,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
   return (
     <>
     {
-      ((column.tab !== 'ROLE_BASE_04' && column.key !== 'weldingType') || row.type ==='용접기') ? <select
+      (!(column.tab === 'ROLE_BASE_04' && column.key === 'weldingType') || row.type ==='용접기') ? <select
       className={'editDropdown'}
       style={{
         appearance: 'none',

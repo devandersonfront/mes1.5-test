@@ -22,8 +22,9 @@ import {ToolListModal} from "../components/Modal/ToolListModal";
 import {LotInputInfoModal} from "../components/Modal/LotInputInfoModal";
 import { BomInfoModal } from '../components/Modal/BomInfoModal'
 import { MultiSelectModal } from '../components/Modal/SearchModalTest/MultiSelectModal'
+import { IExcelHeaderType } from '../@types/type'
 
-export const searchModalList: any  = {
+export const searchModalList: any = {
   member: [
     {key: 'name', name: '성명', formatter: LineBorderContainer, placeholder:"-"},
     {key: 'appointment', name: '직책', formatter: LineBorderContainer, placeholder:"-"},
