@@ -82,8 +82,9 @@ export const MesTitles = (customTarget?: string) => {
     _changeNoti: toMenu(titles._changeNoti,'/mes/quality/product/change/register'),
     _changeList: toMenu(titles._changeList,'/mes/quality/product/change/list'),
 
-    stockMgmt: toMenu(titles.stockMgmt,'',['_stockList','_productList','_productListAdmin']),
+    stockMgmt: toMenu(titles.stockMgmt,'',['_stockList', '_stockAdjust', '_productList','_productListAdmin']),
     _stockList: toMenu(titles._stockList,'/mes/stock/list'),
+    _stockAdjust: toMenu(titles._stockAdjust,'/mes/stock/adjust'),
     _productList: toMenu(titles._productList,'/mes/stock/productlist'),
     _productListAdmin: toMenu(titles._productListAdmin,'/mes/stock/admin'),
 
@@ -273,6 +274,7 @@ export const MesAuth = (customTarget?: string) => {
     _changeList: toAuth(titles._changeList, false, true, false, [], auth._changeList),
     stockMgmt: toAuth(titles.stockMgmt, false, true, false, ['_stockList','_productList','_productListAdmin']),
     _stockList: toAuth(titles._stockList, false, true, false, [], auth._stockList),
+    _stockModify: toAuth(titles._stockAdjust, false, true, false, [], auth._stockList),
     _productList: toAuth(titles._productList, false, true, false, [], auth._productList),
     _productListAdmin: toAuth(titles._productListAdmin, false, true, false, [], auth._productListAdmin),
    outsourceMgmt: toAuth(titles.outsourceMgmt, false, true, false,['_outsourcingOrder', '_outsourcingOrderList', '_outsourcingImport', '_outsourcingImportList','_outsourcingExport','_outsourcingExportList']),
