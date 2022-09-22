@@ -200,28 +200,24 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
     if(res){
       if(searchModalInit.excelColumnType === "toolProduct"){
-        if(row.isModify){
           const savedTools = originalInfo.modifyInfo?.length ? originalInfo.modifyInfo[0]?.tools?.map(tool => ({...tool.tool.tool})) : []
           const numOfSavedTools = savedTools.reduce((acc, cur) => {
             acc.set(cur.tool_id, (acc.get(cur.tool_id) || 0) + 1)
             return acc
           }, new Map())
           const numOftools = column.basicRow.reduce((acc, cur) => {
-            acc.set(cur.tool_id, (acc.get(cur.tool_id) || 0) + 1)
+            const key = cur.tool?.tool_id
+            acc.set(key, (acc.get(key) || 0) + 1)
             return acc
           }, new Map())
           const newRes = res.map(tool => {
-            const numOfSavedTool = numOfSavedTools.get(tool.tool_id) ?? 0
-            const numOfTool = numOftools.get(tool.tool_id) ?? 0
-            let fakeStock = tool.stock + numOfSavedTool - numOfTool
-            fakeStock = row.tool_id && row.tool_id === tool.tool_id ? fakeStock + 1 : fakeStock
-            return { ...tool, stock: fakeStock, originalStock: tool.stock }
+            const numOfSavedTool = numOfSavedTools.get(tool.tool?.tool_id) ?? 0
+            const numOfTool = numOftools.get(tool.tool?.tool_id) ?? 0
+            let fakeStock = tool.tool?.stock + numOfSavedTool - numOfTool
+            fakeStock = row.tool?.tool_id && row.tool?.tool_id === tool.tool?.tool_id ? fakeStock + 1 : fakeStock
+            return { ...tool, stock: fakeStock, originalStock: tool.tool?.stock, record_tool_id: row.record_tool_id, record_tool_version: row.record_tool_version }
           })
           setSearchList(SearchResultSort(newRes, searchModalInit.excelColumnType))
-        }else {
-          setSearchList(SearchResultSort(res, searchModalInit.excelColumnType))
-        }
-
       }else{
         if(res.page !== 1){
           setSearchList([ ...searchList,...SearchResultSort( res.info_list, searchModalInit.excelColumnType)])
@@ -437,6 +433,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }else if(column.type === "toolProduct"){
         const res = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType)
         delete res.doubleClick
+        console.log(res)
         onRowChange(res)
       }else if(column.type === 'customer'){
         onRowChange(

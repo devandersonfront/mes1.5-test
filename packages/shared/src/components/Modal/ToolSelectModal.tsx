@@ -16,6 +16,9 @@ import {TransferCodeToValue} from "../../common/TransferFunction";
 import {UploadButton} from "../../styles/styledComponents";
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
+import { alertMsg } from '../../common/AlertMsg'
+import { RequestMethod } from '../../common/RequestFunctions'
+import { useRouter } from 'next/router'
 
 interface IProps {
     column: IExcelHeaderType
@@ -46,6 +49,7 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
 ]
 
 const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [selectRow, setSelectRow] = useState<number>()
     const [searchList, setSearchList] = useState<any[]>([])
@@ -71,14 +75,19 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                 poor_quantity: row.poor_quantity ?? 0,
             })
             if(!!row?.tools?.length){
+                console.log(row)
                 const tools = row.tools.map((tool, idx) => {
                     return{
                         ...tool.tool.tool,
+                        tool: tool.tool.tool,
+                        record_tool_id: tool.record_tool_id,
+                        record_tool_version: tool.version,
                         customer: tool.tool.tool.customer?.name,
                         border: false,
                         product_id: row.productId,
                         used: tool.tool.used ?? undefined,
-                        sequence: idx + 1,
+                        sequence: tool.tool.sequence,
+                        setting: tool.tool.setting,
                         isModify,
                     }})
                 setSearchList(tools)
@@ -97,29 +106,35 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
         </UploadButton>
     )
 
+    console.log('sear',searchList)
     const getSummaryInfo = (info) => {
         return summaryData[info.key] ?? '-'
     }
     const confirmFunction = () => {
         try{
-            searchList.map(row => {
-                if(!!!row.tool_id) {
+            const tools = searchList.map((tool,toolIdx) => {
+                if(!!!tool.tool?.tool_id) {
                     throw ('데이터를 선택해 주세요.')
-                }else if(!!!row.used) {throw ('생산량을 입력해 주세요.')}
-                })
+                }else if(!!!tool.used)
+                {
+                    throw ('생산량을 입력해 주세요.')
+                }
+                console.log(tool)
+                return {
+                    record_id: row.record_id,
+                    record_tool_id: tool.record_tool_id,
+                    tool: {
+                        ...tool,
+                        tool: tool.tool,
+                        used: tool.used
+                    },
+                    version: tool.record_tool_version
+                }
+            })
+            console.log(tools)
             onRowChange({
                 ...row,
-                tools: searchList.map((v, i) => {
-                    return {
-                        record_id: row.record_id,
-                        record_tool_id: row.tools?.[i]?.record_tool_id,
-                        tool: {
-                            tool: {...v},
-                            used: v.used
-                        },
-                        version: row.tools?.[i]?.version
-                    }
-                }),
+                tools,
                 name: row.name,
                 isChange: true
             })
@@ -133,6 +148,34 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
         setIsOpen(false)
         setSelectRow(undefined)
         setSearchList([{sequence: 1, product_id:row.productId}])
+    }
+
+    const filterDeleted = () => {
+        let tmp = searchList.slice()
+        tmp.splice(selectRow, 1)
+        tmp = tmp.map((row, idx) => ({...row, sequence: idx + 1}))
+        setSearchList(tmp)
+        setSelectRow(undefined)
+    }
+
+    const onDelete = async (selectedRow) => {
+        const toolToDelete = {
+            record_id: row.record_id,
+            record_tool_id: selectedRow.record_tool_id,
+            tool: {
+                sequence: selectedRow.sequence,
+                setting: selectedRow.setting,
+                used: selectedRow.used,
+                tool: selectedRow.tool
+            },
+            version: selectedRow.record_tool_version
+        }
+        const res = await RequestMethod('delete','cncRecordToolDelete', toolToDelete)
+        if(res){
+            Notiflix.Report.success('삭제되었습니다.','','확인', () => {
+                router.reload()
+            })
+        }
     }
 
     return (
@@ -224,12 +267,19 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                                 <p>행 추가</p>
                             </Button>
                             <Button onClick={() => {
-                                if(selectRow !== undefined){
-                                    let tmp = searchList.slice()
-                                    tmp.splice(selectRow, 1)
-                                    tmp = tmp.map((row, idx) => ({...row, sequence: idx + 1}))
-                                    setSearchList(tmp)
+                                try {
+                                    if(selectRow === undefined) throw(alertMsg.noSelectedData)
+                                    if(searchList?.[selectRow]?.record_tool_id)
+                                    {
+                                        Notiflix.Confirm.show("경고","삭제하시겠습니까?(기존 데이터를 삭제할 경우 새로고침하여 페이지가 갱신됩니다.)","확인","취소",
+                                          () => onDelete(searchList?.[selectRow]))
+                                    }else {
+                                        filterDeleted()
+                                    }
+                                } catch(errMsg){
+                                    Notiflix.Report.warning('경고', errMsg, '확인')
                                 }
+
                             }}>
                                 <p>행 삭제</p>
                             </Button>
@@ -330,7 +380,8 @@ const HeaderTableText = styled.p`
   margin: 0;
   font-size: 15px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow:ellipsis;
+  white-space: nowrap;
 `
 
 const HeaderTableTitle = styled.div`

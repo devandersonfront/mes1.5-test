@@ -45,6 +45,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
     warehousing: row.amount,
     type: row.type_id,
     raw_material: {...row.raw_material, type:row.raw_material?.type_id},
+    version: undefined,
   })
 
   return (

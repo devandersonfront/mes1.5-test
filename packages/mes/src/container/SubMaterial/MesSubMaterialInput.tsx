@@ -97,6 +97,7 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
     current: row.warehousing,
     warehousing: row.warehousing,
     customer: row.customerArray,
+    version: undefined,
   })
 
   return (
