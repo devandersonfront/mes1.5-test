@@ -123,7 +123,7 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
                             fontSize: 22,
                             fontWeight: 'bold',
                             margin: 0,
-                        }}>공구 정보 (해당 제품을 만드는 데 사용인 공구는 아래와 같습니다.)</p>
+                        }}>공구 정보 (해당 제품을 만드는 데 사용한 공구는 아래와 같습니다.)</p>
                         <div style={{display: 'flex'}}>
                             <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                                 setIsOpen(false)
@@ -256,6 +256,7 @@ const HeaderTableText = styled.p`
   font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const HeaderTableTitle = styled.div`

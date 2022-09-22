@@ -104,12 +104,12 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
           ...v,
           bom: v.bom.map(bom => {
             const outsourcing = bom.bom?.type === 2 && bom.bom.child_product.type > 2
+            const lotKey = outsourcing ? 'child_lot_outsourcing' :'child_lot_record'
             return {
               ...bom,
               lot: {
                 ...bom.lot,
-                child_lot_record: outsourcing ? undefined : bom.lot?.child_lot_record,
-                child_lot_outsourcing: outsourcing ? bom.lot?.child_lot_outsourcing : undefined,
+                [lotKey]: bom.lot?.[lotKey],
                 amount: v.molds?.length > 0 ? new Big(Number(bom.lot.amount)).div(v.cavity).toString() : bom.lot.amount}}
           }),
           operation_sheet: {
@@ -120,12 +120,12 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
             return{
               ...tool,
               tool:{
-                ...tool.tool,
-                setting: 0,
-                used: Number(tool.tool.tool.used),
+                sequence: tool.tool?.sequence,
+                setting: 1,
+                used: Number(tool.tool.used),
                 tool: {
                   ...tool.tool.tool,
-                  customer: tool.tool.tool.customerArray
+                  customer: tool.tool.customerArray
                 }
               }}
           }).filter(v=>v.tool.tool.code),

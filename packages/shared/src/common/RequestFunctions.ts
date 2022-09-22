@@ -349,6 +349,7 @@ const ApiList = {
   cncRecordeDelete: `/cnc/api/v1/record/delete`,
   toolDelete: `/cnc/api/v1/tool/delete`,
   lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
+  cncRecordToolDelete: '/cnc/api/v1/tool/record/delete',
   documentDelete: `/cnc/api/v1/document/delete`,
   productChangeDelete: `/cnc/api/v1/product-changes/remove`,
   exportDelete: `/api/v1/shipment/export/delete`,

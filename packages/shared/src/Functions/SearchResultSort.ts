@@ -195,8 +195,8 @@ export const SearchResultSort = (infoList, type: string) => {
         let obj = {}
         columnKeys.map(column => obj[column] = tool[column] === undefined ? noneSelected : tool[column])
         return {
-          ...tool,
           ...obj,
+          ...v,
           customer: tool.customer?.name,
           customerArray: tool.customer,
           isDefault: getUsageType(v.setting)
@@ -405,6 +405,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
       }
     }
     default : {
+      console.log(selectData)
       return {
         ...selectData,
         border: usedInModal
