@@ -141,24 +141,24 @@ export const MesTitles = (customTarget?: string) => {
 export const CncTitles = (customTarget?: string) => {
   const cncDefault = {
     cncMon: toMenu(titles.cncMon, '', [ '_cncMon' ]),
-    _cncMon: toMenu(titles._cncMon, '/cnc/v2/factoryMonitoring'),
+    _cncMon: toMenu(titles._cncMon, '/pms/v2/factoryMonitoring'),
     cncStats: toMenu(titles.cncStats, '',['_prodStats', '_errorStats', '_idleStats']),
-    _prodStats: toMenu(titles._prodStats, '/cnc/v2/analysis/output'),
-    _errorStats: toMenu(titles._errorStats, '/cnc/v2/analysis/error'),
-    _idleStats: toMenu(titles._idleStats, '/cnc/v2/analysis/idleTime'),
+    _prodStats: toMenu(titles._prodStats, '/pms/v2/analysis/output'),
+    _errorStats: toMenu(titles._errorStats, '/pms/v2/analysis/error'),
+    _idleStats: toMenu(titles._idleStats, '/pms/v2/analysis/idleTime'),
     cncMnt: toMenu(titles.cncMnt, '', ['_repReqReg', '_repReqList', '_repCompList','_repCompListAdmin', '_problemReg']),
-    _repReqReg: toMenu(titles._repReqReg, '/cnc/v2/press/maintenance/facilities'),
-    _repReqList: toMenu(titles._repReqList, '/cnc/v2/press/maintenance/list'),
-    _repCompList: toMenu(titles._repCompList, '/cnc/v2/press/maintenance/complete'),
-    _repCompListAdmin: toMenu(titles._repCompListAdmin, '/cnc/v2/press/maintenance/complete/admin'),
-    _problemReg: toMenu(titles._problemReg, '/cnc/v2/press/maintenance/problem'),
+    _repReqReg: toMenu(titles._repReqReg, '/pms/v2/press/maintenance/facilities'),
+    _repReqList: toMenu(titles._repReqList, '/pms/v2/press/maintenance/list'),
+    _repCompList: toMenu(titles._repCompList, '/pms/v2/press/maintenance/complete'),
+    _repCompListAdmin: toMenu(titles._repCompListAdmin, '/pms/v2/press/maintenance/complete/admin'),
+    _problemReg: toMenu(titles._problemReg, '/pms/v2/press/maintenance/problem'),
   }
   switch(customTarget){
     case 'dohwa': return {
       ...cncDefault,
       cncMon: toMenu(dohwaTitles.cncMon, '', [ '_cncMon' ]),
-      _cncMon: toMenu(dohwaTitles._cncMon, '/cnc/v2/factoryMonitoring'),
-      _repCompListAdmin: toMenu(dohwaTitles._repCompListAdmin, '/cnc/v2/press/maintenance/complete/admin'),
+      _cncMon: toMenu(dohwaTitles._cncMon, '/pms/v2/factoryMonitoring'),
+      _repCompListAdmin: toMenu(dohwaTitles._repCompListAdmin, '/pms/v2/press/maintenance/complete/admin'),
     }
     default: return cncDefault
   }
