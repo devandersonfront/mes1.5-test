@@ -16,6 +16,7 @@ import { PaginationComponent } from '../components/Pagination/PaginationComponen
 import { useDispatch } from 'react-redux'
 
 interface IProps {
+    buttons?: string[],
     title: string
     deleteValidate?: (row: any) => void
     apiKey: string
@@ -23,9 +24,11 @@ interface IProps {
     convertToList: (row: any) => any
     modifyPath: string,
     searchOptions: string[]
+    noSearch?: boolean
+    noPeriod?: boolean
 }
 
-const ListContainer = ({ title, deleteValidate, apiKey, columnKey, convertToList, modifyPath, searchOptions}:IProps) => {
+const ListContainer = ({ buttons = ['수정하기', '삭제'], title, deleteValidate, apiKey, columnKey, convertToList, modifyPath, searchOptions, noSearch = false, noPeriod = false}:IProps) => {
     const dispatch = useDispatch()
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<any[]>([{}])
@@ -73,8 +76,10 @@ const ListContainer = ({ title, deleteValidate, apiKey, columnKey, convertToList
             params['keyword'] = keyword
             params['opt'] = optionIndex
         }
-        params['from'] = date ? date.from : selectDate.from
-        params['to'] = date ? date.to : selectDate.to
+        if(!noPeriod){
+            params['from'] = date ? date.from : selectDate.from
+            params['to'] = date ? date.to : selectDate.to
+        }
         params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
         params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
         return params
@@ -145,7 +150,7 @@ const ListContainer = ({ title, deleteValidate, apiKey, columnKey, convertToList
     return (
       <div>
           <PageHeader
-            isCalendar
+            isCalendar={!noPeriod}
             calendarType={'period'}
             selectDate={selectDate}
             searchKeyword={keyword}
@@ -153,21 +158,19 @@ const ListContainer = ({ title, deleteValidate, apiKey, columnKey, convertToList
             onChangeSearchOption={setOptionIndex}
             setSelectDate={onSelectDate}
             title={title}
-            isSearch
+            isSearch={!noSearch}
             optionIndex={optionIndex}
             searchOptionList={searchOptions}
-            buttons={
-                ['수정하기', '삭제']
-            }
+            buttons={buttons}
             buttonsOnclick={buttonEvent}
           />
           <ExcelTable
             editable
             resizable
-            headerList={[
+            headerList={buttons?.length ? [
                 SelectColumn,
                 ...column
-            ]}
+            ] : column}
             row={basicRow}
             //@ts-ignore
             setSelectList={setSelectList}

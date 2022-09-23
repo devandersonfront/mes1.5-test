@@ -38,7 +38,7 @@ const MesStockAdjustList = ({ page, search, option }: IProps) => {
     }
 
   return (
-    <ListContainer title={titles._stockAdjust} apiKey={'outsourcingImport'} columnKey={'outsourcingImport'} convertToList={convertData} modifyPath={'/mes/outsourcing/import/modify'} searchOptions={optionList}></ListContainer>
+    <ListContainer noSearch noPeriod buttons={[]} title={titles._stockAdjust} apiKey={'outsourcingImport'} columnKey={'outsourcingImport'} convertToList={convertData} modifyPath={'/mes/outsourcing/import/modify'} searchOptions={optionList}></ListContainer>
   )
 }
 

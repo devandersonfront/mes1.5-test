@@ -110,9 +110,9 @@ const MesStockList = ({ page, search, option }: IProps) => {
       };
     }))
 
-  const convertColumn = (column) => {
-    const colNames = column.map(menu => menu.colName)
-    return columnlist["stockV2"].filter((data)=> colNames.includes(data.key))
+  const convertColumn = (menus) => {
+    const colNames = menus.map(menu => menu.colName)
+    return column.filter((data)=> colNames.includes(data.key))
   }
 
   const cleanUpData = (res: any) => {

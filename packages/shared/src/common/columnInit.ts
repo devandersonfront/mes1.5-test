@@ -58,6 +58,7 @@ import CommonProgressBar from '../../../main/component/InputBox/CommonProgressBa
 import {ExportButton} from "../components/Buttons/ExportButton";
 import { PasswordBox } from '../components/Formatter/PasswordBox'
 import {InputMaterialListModal} from "../components/Modal/InputMaterialListModal";
+import { AdjustQuantityModal } from '../components/Modal/AdjustQuantityModal'
 
 export const columnlist: any = {
   member: [
@@ -881,7 +882,8 @@ export const columnlist: any = {
     { key: 'bom', name: 'BOM', formatter: BomInfoModal, width: 118, type: 'readonly' ,unprintable : true},
     { key: 'lot_number', name: 'LOT별 재고', formatter: LotInfoModal, width: 118, type: 'readonly' ,unprintable : true},
     { key: "stock", name: "재고량", width: 118 },
-    { key: "basic_stock", name: "기존재고", width: 118, editor: TextEditor, inputType: 'number' },
+    { key: "basic_stock", name: "기존 재고", width: 118, editor: TextEditor, inputType: 'number' },
+    { key: "stock_adjust", name: "재고 조정", width: 118, formatter: AdjustQuantityModal, modalTitle: '재고 조정' },
   ],
 
   orderRegister: (basicRow?, setBasicRow?) => ([

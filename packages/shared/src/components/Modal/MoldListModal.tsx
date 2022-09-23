@@ -177,7 +177,7 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>금형 정보 (해당 제품을 만드는 데 사용인 금형은 아래와 같습니다.)</p>
+            }}>금형 정보 (해당 제품을 만드는 데 사용한 금형은 아래와 같습니다.)</p>
             <div style={{display: 'flex'}}>
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
