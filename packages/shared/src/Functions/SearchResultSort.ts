@@ -405,7 +405,6 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
       }
     }
     default : {
-      console.log(selectData)
       return {
         ...selectData,
         border: usedInModal

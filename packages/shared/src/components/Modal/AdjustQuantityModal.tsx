@@ -10,31 +10,54 @@ import { IExcelHeaderType } from '../../@types/type'
 import CloseIcon from '../../../public/images/xmark-solid.svg'
 import PlusIcon from '../../../public/images/plus-solid.svg'
 import MinusIcon from '../../../public/images/minus-solid.svg'
+import { checkInteger } from '../../common/Util'
+import { RequestMethod } from '../../common/RequestFunctions'
 interface IProps {
   column: IExcelHeaderType
   row: any
   onRowChange: (e: any) => void
 }
 const AdjustQuantityModal = ({column, row, onRowChange}:IProps) => {
-
-    const [ quantity , setQuantity ] = useState<number | undefined>()
+  const [ quantity , setQuantity ] = useState<string | undefined>('0')
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const maxLength = column.maxLength ?? 6
+    const min = Number('-'.padEnd(maxLength + 1, '9'))
+    const max = Number(''.padEnd(maxLength, '9'))
 
   const onChange = (event) => {
-        setQuantity(event.target.value.replace(/[^0-9]/g, ""))
+      const res = checkInteger(event.target.value)
+      setQuantity(res)
     }
 
-    const onClose = () => {
-      setQuantity(undefined)
-      setIsOpen(false)
-    }
+  const onClose = () => {
+    setQuantity('0')
+    setIsOpen(false)
+  }
 
-    const onConfirm = () => {
-        if(quantity > 0){
-            setQuantity(undefined)
-        }else{
-            Notiflix.Report.warning('주의','수량을 입력해주세요','확인')
+  const onPlus = () => {
+      setQuantity(Math.min(max, Number(quantity) + 1).toString())
+  }
+
+  const onMinus = () => {
+    setQuantity(Math.max(min, Number(quantity) -1).toString())
+  }
+
+  const onConfirm = async () => {
+      if(quantity === '0'){
+        onClose()
+      }else {
+        const postBody = {
+          product: row.product,
+          adjust_stock: Number(quantity).toFixed(1)
         }
+        Notiflix.Loading.circle()
+        const res = await RequestMethod('post', 'stockAdjustSave', [postBody])
+        if(res){
+          onClose()
+          Notiflix.Report.success('저장되었습니다.','','확인',()=> {
+            row.reload()});
+        }
+      }
     }
 
 
@@ -47,7 +70,7 @@ const AdjustQuantityModal = ({column, row, onRowChange}:IProps) => {
           <ModalContent>
                 <ModalHeader>
                   <div>
-                    <p style={{fontWeight:'bold',fontSize: 25, margin:0}}>재고 조정</p>
+                    <p style={{fontWeight:'bold',fontSize: 25, margin:0}}>재고 조정({min.toLocaleString()} ~ {max.toLocaleString()})</p>
                     <p style={{fontSize : 18, opacity: .5, margin:0, width:300, whiteSpace:'nowrap',textOverflow: 'ellipsis', overflow:'hidden'}}>CODE : {row.code}</p>
                   </div>
                   <div>
@@ -57,16 +80,15 @@ const AdjustQuantityModal = ({column, row, onRowChange}:IProps) => {
                 <Divider/>
                 <ModalBody>
                   <CounterBox>
-                    <Img src={MinusIcon}></Img>
+                    <Img src={MinusIcon} onClick={onMinus}></Img>
                     <input
                       style={{height: '2.5em', width: '3.3em',textAlign:'center', fontSize: '1.5em', margin: '0 1.3em', borderRadius: '0.5em', border: 'solid 0.1em #E1E1E1'}}
-                      type={'number'}
-                      placeholder={'0'}
+                      type={'text'}
                       onChange={onChange}
                       value={quantity}
-                      maxLength={6}
+                      maxLength={quantity.startsWith('-') ? maxLength + 1 : maxLength}
                     />
-                    <Img src={PlusIcon}></Img>
+                    <Img src={PlusIcon} onClick={onPlus}></Img>
                   </CounterBox>
                   <ButtonBox>
                     <Button color={'#19B9DF'} onClick={onConfirm}>확인</Button>

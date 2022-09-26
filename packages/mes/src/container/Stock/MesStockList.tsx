@@ -107,6 +107,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
             : "-",
         unit: row.unit ?? "-",
         id: `stock${random_id}`,
+        reload,
       };
     }))
 

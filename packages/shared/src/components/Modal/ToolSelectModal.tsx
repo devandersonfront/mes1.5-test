@@ -75,7 +75,6 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                 poor_quantity: row.poor_quantity ?? 0,
             })
             if(!!row?.tools?.length){
-                console.log(row)
                 const tools = row.tools.map((tool, idx) => {
                     return{
                         ...tool.tool.tool,
@@ -106,7 +105,6 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
         </UploadButton>
     )
 
-    console.log('sear',searchList)
     const getSummaryInfo = (info) => {
         return summaryData[info.key] ?? '-'
     }
@@ -119,7 +117,6 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                 {
                     throw ('생산량을 입력해 주세요.')
                 }
-                console.log(tool)
                 return {
                     record_id: row.record_id,
                     record_tool_id: tool.record_tool_id,
@@ -131,7 +128,6 @@ const ToolSelectModal = ({column, row, onRowChange}: IProps) => {
                     version: tool.record_tool_version
                 }
             })
-            console.log(tools)
             onRowChange({
                 ...row,
                 tools,
