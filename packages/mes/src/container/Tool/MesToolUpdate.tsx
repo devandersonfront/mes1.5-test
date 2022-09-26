@@ -45,7 +45,10 @@ const MesToolUpdate = () => {
 
   const toToolObject = (data:any) => {
     return {
-      tool: data.tool,
+      tool: {
+          ...data.tool,
+          customer : data?.customerArray?.customer_id ? data.customerArray : null,
+      },
       lot_tool_id: data.lot_tool_id,
       warehousing: data.warehousing,
       version: data.version,

@@ -98,6 +98,10 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
     warehousing: row.warehousing,
     customer: row.customerArray,
     version: undefined,
+    sub_material : {
+      ...row.sub_material,
+      customer : row?.customerArray?.customer_id ? row.customerArray : null,
+    }
   })
 
   return (
@@ -111,7 +115,9 @@ const MesSubMaterialInput = ({page, keyword, option}: IProps) => {
                        columnKey={'subinV1u'}
                        checkDuplicate={checkDuplicateLotNumber}
                        initData={{ id: "", date: moment().format('YYYY-MM-DD')}}
-                       multiRegister={true}/>
+                       multiRegister={true}
+                       duplicateKey={'lot_number'}
+    />
   );
 }
 

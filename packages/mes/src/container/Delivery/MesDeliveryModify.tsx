@@ -52,7 +52,13 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
   },[])
 
   const SaveBasic = async () => {
-    const postBody = basicRow.filter(row => selectList.has(row.id))
+    const filterRow = basicRow.filter(row => selectList.has(row.id))
+    const postBody = filterRow.map((row)=>({...row ,
+        product: {
+            ...row.product,
+            customer : row?.customerArray?.customer_id ? row.customerArray : null,
+            model : row?.modelArray?.cm_id ? row.modelArray : null
+        }}))
     const res = await RequestMethod('post', `shipmentSave`, postBody)
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
