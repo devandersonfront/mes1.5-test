@@ -70,6 +70,10 @@ const MesSubMaterialStockModify = ({page, keyword, option}: IProps) => {
         validate(row)
         return {
           ...row,
+          sub_material : {
+            ...row.sub_material,
+            customer : row?.customerArray?.customer_id ? row.customerArray : null,
+          },
           current: row.warehousing,
         }
       })

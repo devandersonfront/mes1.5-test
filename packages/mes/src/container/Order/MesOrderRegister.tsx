@@ -83,6 +83,11 @@ const MesOrderRegister = ({ }: IProps) => {
       const postBody = basicRow.filter(row => selectList.has(row.id)).map(row => (
         {
           ...row,
+          product: {
+            ...row.product,
+            customer : row?.customerArray?.customer_id ? row.customerArray : null,
+            model : row?.modelArray?.cm_id ? row.modelArray : null
+          },
           customer: row.customerArray,
           amount: row.amount ?? 0,
         }))

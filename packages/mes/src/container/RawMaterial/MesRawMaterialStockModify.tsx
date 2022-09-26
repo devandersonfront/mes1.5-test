@@ -70,6 +70,11 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
         validate(row)
         return {
           ...row,
+          raw_material: {
+            ...row.raw_material,
+            type:row.raw_material?.type_id,
+            customer : row?.customerArray?.customer_id ? row.customerArray : null,
+          },
           current: row.exhaustion === "-" ? row.warehousing : 0,
         }
       })

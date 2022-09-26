@@ -44,7 +44,11 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
     ...row,
     warehousing: row.amount,
     type: row.type_id,
-    raw_material: {...row.raw_material, type:row.raw_material?.type_id},
+    raw_material: {
+      ...row.raw_material,
+      type:row.raw_material?.type_id,
+      customer : row?.customerArray?.customer_id ? row.customerArray : null,
+    },
     version: undefined,
   })
 
@@ -59,7 +63,9 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
                        columnKey={'rawinV1u'}
                        checkDuplicate={checkDuplicateLotNumber}
                        initData={{ id: "", date: moment().format('YYYY-MM-DD')}}
-                       multiRegister={true}/>
+                       multiRegister={true}
+                       duplicateKey={'lot_number'}
+                      />
   );
 }
 

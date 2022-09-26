@@ -172,6 +172,11 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         })
         return {
           ...row,
+          product: {
+            ...row.product,
+            customer : row?.customerArray?.customer_id ? row.customerArray : row.product.customer,
+            model : row?.modelArray?.cm_id ? row.modelArray : row.product.model
+          },
           lots: row.lots,
           additional: [
             ...additional.map(v => {
