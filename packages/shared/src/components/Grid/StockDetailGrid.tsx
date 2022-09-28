@@ -8,6 +8,7 @@ import cookie from "react-cookies";
 import {columnlist} from "../../common/columnInit";
 import Notiflix from "notiflix";
 import ErrorList from "../../common/ErrorList";
+import {TransferCodeToValue} from "../../common/TransferFunction";
 
 export interface DataGridHandle {
     element: HTMLDivElement | null;
@@ -18,6 +19,7 @@ export interface DataGridHandle {
 
 type MaterialType = {
     type : '원자재' | '부자재' | '제품'
+    productType ?: string | number
     customer_name : string
     customer_model ?: string
     code : string
@@ -59,6 +61,7 @@ const StockDetailGrid = ({product}) => {
                 return {
                     type : '원자재',
                     customer_name : data.rawMaterial.customer?.name ?? '-',
+                    productType : '-',
                     customer_model : '-',
                     code : data.rawMaterial.code,
                     stock : data.rawMaterial.stock,
@@ -68,6 +71,7 @@ const StockDetailGrid = ({product}) => {
                 return {
                     type : '부자재',
                     customer_name : data.subMaterial.customer?.name ?? '-',
+                    productType : '-',
                     customer_model : '-',
                     code : data.subMaterial.code,
                     stock : data.subMaterial.stock,
@@ -77,6 +81,7 @@ const StockDetailGrid = ({product}) => {
                 return {
                     type : '제품',
                     customer_name : data.product.customer?.name ?? '-',
+                    productType : !Number.isNaN(data.product.type) ? TransferCodeToValue(data.product.type, "product") : "-",
                     customer_model : data.product.model?.name ?? '-',
                     code : data.product.code,
                     stock : data.product.stock,

@@ -196,6 +196,19 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
       onScroll={(e:ScrollState) => {
         scrollEnd && scrollEnd(isAtBottom(e))
       }}
+        //@ts-ignore
+      rowClass={(row : any) => {
+        switch (row.type) {
+          case '원자재' :
+            return 'rawMaterial_Line'
+          case '부자재' :
+            return 'subMaterial_Line'
+          case '제품' :
+            return 'product_Line'
+          default :
+            return
+        }
+      }}
     />
   }
 
@@ -244,7 +257,16 @@ const DataGridTable = styled(DataGrid)`
   .detail {
     padding : 15px !important;
     background : #2d2d31 !important;
-    
+  }
+  
+  .detail .rawMaterial_Line .rdg-cell{
+     background : #525555 !important;
+  }
+  .detail .subMaterial_Line .rdg-cell{
+     background : #7d7d7f !important;
+  }
+  .detail .product_Line .rdg-cell{
+     background : #282b2c !important;
   }
 
   ${(props:any) => props.state === "searchModal" ? `

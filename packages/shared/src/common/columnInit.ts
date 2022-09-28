@@ -871,21 +871,7 @@ export const columnlist: any = {
     { key: 'total_poor_quantity', name: '총 불량 수량', width: 118, formatter: DefectInfoModal, type: 'readonly', load: 'sheet' },
     { key: "avg_uph", name: "총 UPH", width: 118 },
   ],
-  //재고 관리 > 재고 현황
-  stockV2: [
-    { key: "customer_name", name: "거래처", width: 118 },
-    { key: "customer_model", name: "모델", width: 118 },
-    { key: "code", name: "CODE", width: 250 },
-    { key: "name", name: "품명", width: 450 },
-    { key: "type", name: "품목 종류", width: 118 },
-    { key: "unit", name: "단위", width: 118 },
-    { key: 'bom', name: 'BOM', formatter: BomInfoModal, width: 118, type: 'readonly' ,unprintable : true},
-    { key: 'lot_number', name: 'LOT별 재고', formatter: LotInfoModal, width: 118, type: 'readonly' ,unprintable : true},
-    { key: "stock", name: "재고량", width: 118 },
-    { key: "basic_stock", name: "기존재고", width: 118, editor: TextEditor, inputType: 'number' },
-  ],
-
-  stockV2Test : [
+  stockV2 : [
     { key: 'expanded' , name : '' , minWidth : 30 , width : 30 ,
       colSpan(args) {
         return args.row?.detailType === 'DETAIL' ? 11 : undefined;
@@ -909,6 +895,7 @@ export const columnlist: any = {
 
   stockV2Detail : [
     { key : 'type' , name : '구분' },
+    { key : 'productType' , name : '품목 종류'},
     { key : 'customer_name' , name : '거래처' },
     { key : 'customer_model' , name : '모델'},
     { key : 'code' , name : '코드'},

@@ -34,7 +34,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["stockV2Test"]);
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["stockV2"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
