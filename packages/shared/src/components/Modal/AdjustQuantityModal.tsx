@@ -7,8 +7,11 @@ import Notiflix from "notiflix";
 import { BaseModal } from './BaseModal'
 import { UploadButton } from '../../styles/styledComponents'
 import { IExcelHeaderType } from '../../@types/type'
+//@ts-ignore
 import CloseIcon from '../../../public/images/xmark-solid.svg'
+//@ts-ignore
 import PlusIcon from '../../../public/images/plus-solid.svg'
+//@ts-ignore
 import MinusIcon from '../../../public/images/minus-solid.svg'
 import { checkInteger } from '../../common/Util'
 import { RequestMethod } from '../../common/RequestFunctions'
