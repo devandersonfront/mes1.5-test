@@ -23,9 +23,10 @@ const RAW_MATERIAL_TYPE_CODE: Array<CodeType> = [
   {code: 2, value: "SHEET"},
 ]
 
-const RAW_MATERIAL_UNIT_CODE: Array<CodeType> = [
-  {code: 0, value: "kg"},
-  {code: 1, value: "장"},
+export const RAW_MATERIAL_UNIT_CODE: Array<CodeType> = [
+  {code: 0, value: 'kg'},
+  {code: 1, value: '장'},
+  {code: 2, value: 'mm'},
 ]
 
 const WORK_STATUS: Array<CodeType> = [

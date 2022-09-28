@@ -71,7 +71,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       switch(v.bom.type){
         case 0:{
           const childData = {...v.bom.child_rm}
-          childData.unit = childData.unit === 1 ? "장" : 'kg';
+          childData.unit = TransferCodeToValue(childData.unit, 'rawMaterialUnit')
           bomDetail['childData'] = childData
           bomDetail['bomType'] = 'rawMaterial'
           bomDetail['bomId'] = v.bom.childRmId

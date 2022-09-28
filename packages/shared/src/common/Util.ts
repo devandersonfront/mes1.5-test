@@ -1,4 +1,5 @@
 import {BomObjectType, BomType, TableSortingOptionType} from '../@types/type'
+import { TransferCodeToValue } from './TransferFunction'
 
 export const ParseResponse = (res: any | string | any[]) : any[] => {
   if (typeof res === 'string') {
@@ -31,10 +32,6 @@ export const RemoveSecondMinus = (value: number | string | null) => {
     return lastIndexOfMinus > 0 ? toString.substring(0,lastIndexOfMinus) : toString
 }
 
-export const getRawMaterialUnit = (type: string) => {
-  return type == "1" ? "kg" : type == "2" ? "장" : "-";
-}
-
 export const getMaterialType = (type: number) => {
   return type === 0 ? "rawMaterial" : type === 1 ? "subMaterial" : "product"
 }
@@ -51,7 +48,7 @@ export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) 
       typeName: 'rawMaterial',
       bomKey: `rm${bom.childRmId}`,
       id: bom.childRmId,
-      detail: {...bom.child_rm, unit: bom.child_rm?.unit === 1 ? '장' : 'kg' ?? getRawMaterialUnit(bom.child_rm.type)},
+      detail: {...bom.child_rm, unit: TransferCodeToValue(bom.child_rm?.unit, 'rawMaterialUnit')},
       }
     case 1: return {
       ...bom,
