@@ -260,10 +260,10 @@ const DataGridTable = styled(DataGrid)`
   }
   
   .detail .rawMaterial_Line .rdg-cell{
-     background : #525555 !important;
+     background : #7d7d7f !important;
   }
   .detail .subMaterial_Line .rdg-cell{
-     background : #7d7d7f !important;
+     background : #525555 !important;
   }
   .detail .product_Line .rdg-cell{
      background : #282b2c !important;
