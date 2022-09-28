@@ -137,6 +137,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                 name: row.name,
                 isChange: true
             })
+            onClose()
         }
     }
 
@@ -269,7 +270,6 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                         <div
                             onClick={() => {
                                 onConfirm()
-                                onClose()
                             }}
                             style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >

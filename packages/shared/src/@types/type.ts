@@ -13,6 +13,8 @@ export interface IProps {
 }
 
 export interface IExcelHeaderType {
+  maxLength?: number | undefined
+  modalTitle?: string
   formatter?: any
   unit?: any
   setBasicRow?: any

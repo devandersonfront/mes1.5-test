@@ -39,6 +39,7 @@ export const auth = {
     _changeNoti: 'ROLE_QA_04',
     _changeList: 'ROLE_QA_05',
     _stockList: 'ROLE_STK_01',
+    _stockAdjust: 'ROLE_STK_04',
     _productList: 'ROLE_STK_02',
     _productListAdmin: 'ROLE_STK_02',
     _outsourcingOrder: 'ROLE_OUTS_01',

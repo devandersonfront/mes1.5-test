@@ -18,7 +18,7 @@ export const alertMsg = {
   updateProductAmount: '생산 수량을 다시 입력해 주세요.',
   overStock: '재고가 부족합니다.',
   onlyInteger: '정수로 입력해 주세요.',
-  wrongLotNumber: 'LOT번호를 다시 입력해 주세요.(\'basicstock-(숫자)\'는 불가합니다.)',
+  wrongLotNumber: 'LOT번호를 다시 입력해 주세요.(\'basicstock-(숫자)\' 또는 \'adjuststock-(숫자)\'는 불가합니다.)',
   overImport: '입고량이 미입고량 보다 클 수 없습니다.',
   onlyOne: '데이터를 하나만 선택해 주세요',
   exportedNotUpdatable: '출고된 정보는 수정할 수 없습니다.',

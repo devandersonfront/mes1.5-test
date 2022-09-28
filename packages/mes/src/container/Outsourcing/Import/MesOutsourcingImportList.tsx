@@ -27,7 +27,7 @@ const MesOutsourcingImportList = () => {
     const dispatch = useDispatch()
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<any[]>([{}])
-    const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:4})
+    const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:1})
     const [keyword , setKeyword] = useState<string>('')
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [selectList, setSelectList] = useState<Set<any>>(new Set());
