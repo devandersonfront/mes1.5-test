@@ -58,6 +58,7 @@ import CommonProgressBar from '../../../main/component/InputBox/CommonProgressBa
 import {ExportButton} from "../components/Buttons/ExportButton";
 import { PasswordBox } from '../components/Formatter/PasswordBox'
 import {InputMaterialListModal} from "../components/Modal/InputMaterialListModal";
+import DetailFormatter from "../components/Formatter/DetailFormatter";
 
 export const columnlist: any = {
   member: [
@@ -883,6 +884,38 @@ export const columnlist: any = {
     { key: "stock", name: "재고량", width: 118 },
     { key: "basic_stock", name: "기존재고", width: 118, editor: TextEditor, inputType: 'number' },
   ],
+
+  stockV2Test : [
+    { key: 'expanded' , name : '' , minWidth : 30 , width : 30 ,
+      colSpan(args) {
+        return args.row?.detailType === 'DETAIL' ? 11 : undefined;
+      },
+      cellClass(args){
+        return args.detailType === 'DETAIL' ? 'detail': undefined;
+      },
+      formatter : DetailFormatter
+    },
+    { key: "customer_name", name: "거래처", width: 118 },
+    { key: "customer_model", name: "모델", width: 118 },
+    { key: "code", name: "CODE", width: 250 },
+    { key: "name", name: "품명", width: 450 },
+    { key: "type", name: "품목 종류", width: 118 },
+    { key: "unit", name: "단위", width: 118 },
+    { key: 'bom', name: 'BOM', formatter: BomInfoModal, width: 118, type: 'readonly' ,unprintable : true},
+    { key: 'lot_number', name: 'LOT별 재고', formatter: LotInfoModal, width: 118, type: 'readonly' ,unprintable : true},
+    { key: "stock", name: "재고량", width: 118 },
+    { key: "basic_stock", name: "기존재고", width: 118, editor: TextEditor, inputType: 'number' },
+  ],
+
+  stockV2Detail : [
+    { key : 'type' , name : '구분' },
+    { key : 'customer_name' , name : '거래처' },
+    { key : 'customer_model' , name : '모델'},
+    { key : 'code' , name : '코드'},
+    { key : 'stock' , name : '재고' },
+    { key : 'totalWeight' , name : '총중량'},
+  ],
+
 
   orderRegister: (basicRow?, setBasicRow?) => ([
     { key: "date", name: "수주 날짜", formatter: CalendarBox, width: 118, type: "date", dependency : 'deadline'},

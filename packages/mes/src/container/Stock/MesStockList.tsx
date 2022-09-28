@@ -30,13 +30,11 @@ interface IProps {
   option?: number;
 }
 
-const optionList = ["거래처", "모델", "CODE", "품명"]
-
 const MesStockList = ({ page, search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["stockV2"]);
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["stockV2Test"]);
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
@@ -87,39 +85,41 @@ const MesStockList = ({ page, search, option }: IProps) => {
   };
 
   const convertData = (infoList) => (infoList.map((row: any) => {
-      let random_id = Math.random() * 1000;
-      return {
-        ...row,
-        product: row,
-        customer_name: row.customer?.name ?? "-",
-        customer_model: row.model?.model ?? "-",
-        customer_id: row.customer?.name ?? "-",
-        cm_id: row.model?.model ?? "-",
-        product_id: row.code ?? "-",
-        productId: row.product_id ?? "-",
-        process_id: row.processId ?? "-",
-        modelArray: { model: row.model?.model ?? "-" },
-        processArray: { name: row.process?.name ?? "-" },
-        customerArray: { name: row.customer?.name ?? "-" },
-        name: row.name ?? "-",
-        type: !Number.isNaN(row.type)
-            ? TransferCodeToValue(row.type, "product")
-            : "-",
-        unit: row.unit ?? "-",
-        id: `stock${random_id}`,
-      };
-    }))
+    let random_id = Math.random() * 1000;
+    return {
+      ...row,
+      product: row,
+      customer_name: row.customer?.name ?? "-",
+      customer_model: row.model?.model ?? "-",
+      customer_id: row.customer?.name ?? "-",
+      cm_id: row.model?.model ?? "-",
+      product_id: row.code ?? "-",
+      productId: row.product_id ?? "-",
+      process_id: row.processId ?? "-",
+      modelArray: { model: row.model?.model ?? "-" },
+      processArray: { name: row.process?.name ?? "-" },
+      customerArray: { name: row.customer?.name ?? "-" },
+      name: row.name ?? "-",
+      type: !Number.isNaN(row.type)
+          ? TransferCodeToValue(row.type, "product")
+          : "-",
+      unit: row.unit ?? "-",
+      id: `stock${random_id}`,
+      expanded : false,
+      detailType : 'MASTER'
+    };
+  }))
 
-  const convertColumn = (column) => {
-    const colNames = column.map(menu => menu.colName)
-    return columnlist["stockV2"].filter((data)=> colNames.includes(data.key))
-  }
+  // const convertColumn = (column) => {
+  //     const colNames = column.map(menu => menu.colName)
+  //     return columnlist["stockV2Test"].filter((data)=> colNames.includes(data.key))
+  // }
 
   const cleanUpData = (res: any) => {
     const newData = convertData(res.info_list)
-    const newColumn = convertColumn(res.menus)
+    // const newColumn = convertColumn(res.menus)
     setBasicRow(newData)
-    setColumn(newColumn)
+    // setColumn(column)
   };
 
   const stockSave = async(data) => {
@@ -138,7 +138,6 @@ const MesStockList = ({ page, search, option }: IProps) => {
     }
   }
 
-
   return (
       <div className={'excelPageContainer'}>
         <PageHeader
@@ -156,10 +155,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
             editable
             resizable
             selectable
-            headerList={[
-              SelectColumn,
-              ...addColumnClass(column)
-            ]}
+            headerList={[SelectColumn, ...addColumnClass(column)]}
             row={basicRow}
             setRow={(e) => {
               let tmp: Set<any> = selectList
@@ -172,11 +168,14 @@ const MesStockList = ({ page, search, option }: IProps) => {
               setSelectList(tmp)
               setBasicRow(e)
             }}
+            //@ts-ignore
+            rowHeight={(args) => (args.row.detailType === 'DETAIL' ? 300 : 45)}
             selectList={selectList}
             //@ts-ignore
             setSelectList={setSelectList}
             width={1576}
             height={setExcelTableHeight(basicRow.length)}
+            type={'expandable'}
         />
         <PaginationComponent
             currentPage={pageInfo.page}

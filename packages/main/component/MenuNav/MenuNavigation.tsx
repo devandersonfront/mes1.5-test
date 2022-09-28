@@ -150,7 +150,7 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
               {/*</MenuNavItem>*/}
               </div>
           </div>
-          <div style={{width: 198, paddingTop: 30, paddingLeft: 24 , background : selector.main.length > 0 && '#2b3c5c'}}>
+          <div style={{width: 198, paddingTop: 30, paddingLeft: 24 ,background : selector.main.length > 0 ? '#2b3c5c' : undefined}}>
             {
               selector.main && selector.main.map((v, i) => <>
                     <SideMenuItem onClick={() => {
