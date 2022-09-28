@@ -14,7 +14,6 @@ const optionList = ["거래처", "모델", "CODE", "품명"]
 const MesStockAdjustList = ({ page, search, option }: IProps) => {
 
   const convertData = (row) => {
-      console.log(row)
       return {
         customer_name: row.adjustment_stock.product?.customer?.name ?? "-",
         customer_model: row.adjustment_stock.product?.model?.model ?? "-",

@@ -29,7 +29,6 @@ const AdjustLotInfo = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      console.log('rw',row)
       const newLotList = row.involvedRecord?.map((record, recordIdx) => changeRow(record, recordIdx))
       setLotList(newLotList)
     }
