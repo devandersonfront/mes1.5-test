@@ -54,6 +54,7 @@ export const titles = {
     _changeList: '변경점 정보 리스트',
     stockMgmt: '재고 관리',
     _stockList: '재고 현황',
+    _stockAdjust: '재고 조정 현황',
     _productList: '생산/납품 현황',
     _productListAdmin: '생산/납품 현황(관리자용)',
     outsourceMgmt: '외주 관리',

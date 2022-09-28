@@ -14,13 +14,21 @@ export const ParseResponse = (res: any | string | any[]) : any[] => {
   }
 }
 
+export const checkInteger = (value :string) => {
+  let toDigit =value.replace(/[^\d|^-]/g, '')
+  toDigit = RemoveFirstZero(toDigit)
+  return RemoveSecondMinus(toDigit)
+}
+
 export const RemoveFirstZero = (value: number | string | null) => {
-  if(typeof value === 'number'){
     const toString = String(value)
-    return toString.replace(/(^0\d+)/,toString.substr(1,1))
-  } else if(typeof value === 'string'){
-  return value.replace(/(^0\d+)/, value.substr(1,1))
-  }
+    return toString.startsWith('0') ? toString.substring(1) : toString.startsWith('-0') ? toString.substring(0,1) : toString
+}
+
+export const RemoveSecondMinus = (value: number | string | null) => {
+    const toString = String(value)
+    const lastIndexOfMinus = toString.lastIndexOf('-')
+    return lastIndexOfMinus > 0 ? toString.substring(0,lastIndexOfMinus) : toString
 }
 
 export const getRawMaterialUnit = (type: string) => {
@@ -93,8 +101,9 @@ export const decideKoreanSuffix = (word: string, existCoda: string, notExistCoda
 }
 
 export const CheckRecordLotNumber = (lotNumber:string) : boolean => {
-  const regex = new RegExp(/^basicstock-\d+$/)
-  return regex.test(lotNumber)
+  const basicStockRegex = new RegExp(/^basicstock-\d+$/)
+  const stockAdjustRegex = new RegExp(/^adjuststock-\d{3}-\d{13}$/)
+  return basicStockRegex.test(lotNumber) || stockAdjustRegex.test(lotNumber)
 }
 
 export const TransferType = (type:"COIL" | "SHEET" | string) => {

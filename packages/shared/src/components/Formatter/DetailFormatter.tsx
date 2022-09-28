@@ -25,4 +25,4 @@ const DetailFormatter = ({row , onRowChange}) => {
     return detailLayout()
 }
 
-export default DetailFormatter
+export {DetailFormatter}

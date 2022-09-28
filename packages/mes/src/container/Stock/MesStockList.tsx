@@ -85,34 +85,35 @@ const MesStockList = ({ page, search, option }: IProps) => {
   };
 
   const convertData = (infoList) => (infoList.map((row: any) => {
-    let random_id = Math.random() * 1000;
-    return {
-      ...row,
-      product: row,
-      customer_name: row.customer?.name ?? "-",
-      customer_model: row.model?.model ?? "-",
-      customer_id: row.customer?.name ?? "-",
-      cm_id: row.model?.model ?? "-",
-      product_id: row.code ?? "-",
-      productId: row.product_id ?? "-",
-      process_id: row.processId ?? "-",
-      modelArray: { model: row.model?.model ?? "-" },
-      processArray: { name: row.process?.name ?? "-" },
-      customerArray: { name: row.customer?.name ?? "-" },
-      name: row.name ?? "-",
-      type: !Number.isNaN(row.type)
-          ? TransferCodeToValue(row.type, "product")
-          : "-",
-      unit: row.unit ?? "-",
-      id: `stock${random_id}`,
-      expanded : false,
-      detailType : 'MASTER'
-    };
-  }))
+      let random_id = Math.random() * 1000;
+      return {
+        ...row,
+        product: row,
+        customer_name: row.customer?.name ?? "-",
+        customer_model: row.model?.model ?? "-",
+        customer_id: row.customer?.name ?? "-",
+        cm_id: row.model?.model ?? "-",
+        product_id: row.code ?? "-",
+        productId: row.product_id ?? "-",
+        process_id: row.processId ?? "-",
+        modelArray: { model: row.model?.model ?? "-" },
+        processArray: { name: row.process?.name ?? "-" },
+        customerArray: { name: row.customer?.name ?? "-" },
+        name: row.name ?? "-",
+        type: !Number.isNaN(row.type)
+            ? TransferCodeToValue(row.type, "product")
+            : "-",
+        unit: row.unit ?? "-",
+        id: `stock${random_id}`,
+        expanded : false,
+        detailType : 'MASTER',
+        reload,
+      };
+    }))
 
-  // const convertColumn = (column) => {
-  //     const colNames = column.map(menu => menu.colName)
-  //     return columnlist["stockV2Test"].filter((data)=> colNames.includes(data.key))
+  // const convertColumn = (menus) => {
+  //   const colNames = menus.map(menu => menu.colName)
+  //   return column.filter((data)=> colNames.includes(data.key))
   // }
 
   const cleanUpData = (res: any) => {

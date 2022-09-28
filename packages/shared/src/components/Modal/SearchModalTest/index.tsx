@@ -433,7 +433,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }else if(column.type === "toolProduct"){
         const res = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType)
         delete res.doubleClick
-        console.log(res)
         onRowChange(res)
       }else if(column.type === 'customer'){
         onRowChange(
