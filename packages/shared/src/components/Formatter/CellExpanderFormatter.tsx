@@ -1,4 +1,3 @@
-import {useFocusRef} from "../../hook/useFocusRef";
 import styled from "styled-components";
 
 interface CellExpanderFormatterProps {
