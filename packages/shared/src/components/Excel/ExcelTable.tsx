@@ -259,6 +259,10 @@ const DataGridTable = styled(DataGrid)`
     background : #2d2d31 !important;
   }
   
+  .detail + .rdg-cell > div {
+    display : none !important;
+  }
+  
   .detail .rawMaterial_Line .rdg-cell{
      background : #7d7d7f !important;
   }
