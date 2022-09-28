@@ -30,8 +30,6 @@ interface IProps {
   option?: number;
 }
 
-const optionList = ["거래처", "모델", "CODE", "품명"]
-
 const MesStockList = ({ page, search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -107,20 +105,22 @@ const MesStockList = ({ page, search, option }: IProps) => {
             : "-",
         unit: row.unit ?? "-",
         id: `stock${random_id}`,
+        expanded : false,
+        detailType : 'MASTER',
         reload,
       };
     }))
 
-  const convertColumn = (menus) => {
-    const colNames = menus.map(menu => menu.colName)
-    return column.filter((data)=> colNames.includes(data.key))
-  }
+  // const convertColumn = (menus) => {
+  //   const colNames = menus.map(menu => menu.colName)
+  //   return column.filter((data)=> colNames.includes(data.key))
+  // }
 
   const cleanUpData = (res: any) => {
     const newData = convertData(res.info_list)
-    const newColumn = convertColumn(res.menus)
+    // const newColumn = convertColumn(res.menus)
     setBasicRow(newData)
-    setColumn(newColumn)
+    // setColumn(column)
   };
 
   const stockSave = async(data) => {
@@ -139,7 +139,6 @@ const MesStockList = ({ page, search, option }: IProps) => {
     }
   }
 
-
   return (
       <div className={'excelPageContainer'}>
         <PageHeader
@@ -157,10 +156,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
             editable
             resizable
             selectable
-            headerList={[
-              SelectColumn,
-              ...addColumnClass(column)
-            ]}
+            headerList={[SelectColumn, ...addColumnClass(column)]}
             row={basicRow}
             setRow={(e) => {
               let tmp: Set<any> = selectList
@@ -173,11 +169,14 @@ const MesStockList = ({ page, search, option }: IProps) => {
               setSelectList(tmp)
               setBasicRow(e)
             }}
+            //@ts-ignore
+            rowHeight={(args) => (args.row.detailType === 'DETAIL' ? 300 : 45)}
             selectList={selectList}
             //@ts-ignore
             setSelectList={setSelectList}
             width={1576}
             height={setExcelTableHeight(basicRow.length)}
+            type={'expandable'}
         />
         <PaginationComponent
             currentPage={pageInfo.page}

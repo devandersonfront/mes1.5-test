@@ -58,6 +58,7 @@ import CommonProgressBar from '../../../main/component/InputBox/CommonProgressBa
 import {ExportButton} from "../components/Buttons/ExportButton";
 import { PasswordBox } from '../components/Formatter/PasswordBox'
 import {InputMaterialListModal} from "../components/Modal/InputMaterialListModal";
+import {DetailFormatter} from "../components/Formatter/DetailFormatter";
 import { AdjustQuantityModal } from '../components/Modal/AdjustQuantityModal'
 import { AdjustLotInfo } from '../components/Modal/AdjustLotInfo'
 
@@ -872,8 +873,16 @@ export const columnlist: any = {
     { key: 'total_poor_quantity', name: '총 불량 수량', width: 118, formatter: DefectInfoModal, type: 'readonly', load: 'sheet' },
     { key: "avg_uph", name: "총 UPH", width: 118 },
   ],
-  //재고 관리 > 재고 현황
-  stockV2: [
+  stockV2 : [
+    { key: 'expanded' , name : '' , minWidth : 30 , width : 30 ,
+      colSpan(args) {
+        return args.row?.detailType === 'DETAIL' ? 11 : undefined;
+      },
+      cellClass(args){
+        return args.detailType === 'DETAIL' ? 'detail': undefined;
+      },
+      formatter : DetailFormatter
+    },
     { key: "customer_name", name: "거래처", width: 118 },
     { key: "customer_model", name: "모델", width: 118 },
     { key: "code", name: "CODE", width: 250 },
@@ -897,6 +906,17 @@ export const columnlist: any = {
     { key: "adjust_stock", name: "조정 수량"},
     { key: 'lot_number', name: 'LOT 보기', formatter: AdjustLotInfo, width: 118,unprintable : true},
   ],
+
+  stockV2Detail : [
+    { key : 'type' , name : '구분' },
+    { key : 'productType' , name : '품목 종류'},
+    { key : 'customer_name' , name : '거래처' },
+    { key : 'customer_model' , name : '모델'},
+    { key : 'code' , name : '코드'},
+    { key : 'stock' , name : '재고' },
+    { key : 'totalWeight' , name : '총중량'},
+  ],
+
 
   orderRegister: (basicRow?, setBasicRow?) => ([
     { key: "date", name: "수주 날짜", formatter: CalendarBox, width: 118, type: "date", dependency : 'deadline'},
