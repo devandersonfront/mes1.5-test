@@ -5,13 +5,15 @@ import BasicModal from "./BasicModal"
 import Barcode from 'react-barcode';
 import Notiflix from "notiflix";
 import { BaseModal } from './BaseModal'
-import { CellButton } from '../../styles/styledComponents'
+import { UploadButton } from '../../styles/styledComponents'
 import { IExcelHeaderType } from '../../@types/type'
 import CloseIcon from '../../../public/images/xmark-solid.svg'
 import PlusIcon from '../../../public/images/plus-solid.svg'
 import MinusIcon from '../../../public/images/minus-solid.svg'
 import { checkInteger } from '../../common/Util'
 import { RequestMethod } from '../../common/RequestFunctions'
+import { POINT_COLOR } from '../../common/configset'
+import { ModalWrapper } from '@material-ui/pickers/wrappers/ModalWrapper'
 interface IProps {
   column: IExcelHeaderType
   row: any
@@ -62,10 +64,10 @@ const AdjustQuantityModal = ({column, row, onRowChange}:IProps) => {
 
 
     return(
-      <>
-        <CellButton onClick={() => {setIsOpen(true)}}>
-          {column.modalTitle}
-        </CellButton>
+      <Wrapper>
+        <UploadButton hoverColor={POINT_COLOR} onClick={() => {setIsOpen(true)}}>
+          <p>{column.modalTitle}</p>
+        </UploadButton>
         <BaseModal isOpen={isOpen} style={{ content: {height: 300, width: 450}}}>
           <ModalContent>
                 <ModalHeader>
@@ -96,12 +98,19 @@ const AdjustQuantityModal = ({column, row, onRowChange}:IProps) => {
                 </ModalBody>
           </ModalContent>
         </BaseModal>
-      </>
+      </Wrapper>
     )
 }
 
 
 export {AdjustQuantityModal}
+const Wrapper = Styled.div`
+  width: 100%;
+  height:100%;
+  display: flex;
+  justify-content:center;
+  align-items:center;
+`
 const ModalContent = Styled.div`
     flex:1;
     display : flex;

@@ -417,6 +417,7 @@ const ApiList = {
   outsourcingLotList: `/api/v1/outsourcing/import/groups`,
   outsourcingOrderList: `/api/v1/outsourcing/export/list`,
   outsourcingImportList : `/api/v1/outsourcing/import/list`,
+  stockAdjustList: '/api/v1/stock/adjustment/list',
 
   //search
   memberSearch: `/api/v1/member/search`,

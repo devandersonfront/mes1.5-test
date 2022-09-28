@@ -22,13 +22,13 @@ interface IProps {
     apiKey: string
     columnKey: string
     convertToList: (row: any) => any
-    modifyPath: string,
-    searchOptions: string[]
+    modifyPath?: string,
+    searchOptions?: string[]
     noSearch?: boolean
     noPeriod?: boolean
 }
 
-const ListContainer = ({ buttons = ['수정하기', '삭제'], title, deleteValidate, apiKey, columnKey, convertToList, modifyPath, searchOptions, noSearch = false, noPeriod = false}:IProps) => {
+const ListContainer = ({ buttons = ['수정하기', '삭제'], title, deleteValidate, apiKey, columnKey, convertToList, modifyPath='/', searchOptions, noSearch = false, noPeriod = false}:IProps) => {
     const dispatch = useDispatch()
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<any[]>([{}])

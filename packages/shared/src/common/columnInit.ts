@@ -59,6 +59,7 @@ import {ExportButton} from "../components/Buttons/ExportButton";
 import { PasswordBox } from '../components/Formatter/PasswordBox'
 import {InputMaterialListModal} from "../components/Modal/InputMaterialListModal";
 import { AdjustQuantityModal } from '../components/Modal/AdjustQuantityModal'
+import { AdjustLotInfo } from '../components/Modal/AdjustLotInfo'
 
 export const columnlist: any = {
   member: [
@@ -884,6 +885,17 @@ export const columnlist: any = {
     { key: "stock", name: "재고량", width: 118 },
     { key: "basic_stock", name: "기존 재고", width: 118, editor: TextEditor, inputType: 'number' },
     { key: "stock_adjust", name: "재고 조정", width: 118, formatter: AdjustQuantityModal, modalTitle: '재고 조정' },
+  ],
+
+  stockAdjustList: [
+    { key: "customer_name", name: "거래처" },
+    { key: "customer_model", name: "모델" },
+    { key: "product_id", name: "CODE"},
+    { key: "name", name: "품명"},
+    { key: "worker", name: "작업자"},
+    { key: "date", name: "조정 날짜"},
+    { key: "adjust_stock", name: "조정 수량"},
+    { key: 'lot_number', name: 'LOT 보기', formatter: AdjustLotInfo, width: 118,unprintable : true},
   ],
 
   orderRegister: (basicRow?, setBasicRow?) => ([
