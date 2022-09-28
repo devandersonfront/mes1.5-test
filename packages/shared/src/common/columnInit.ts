@@ -61,6 +61,7 @@ import {InputMaterialListModal} from "../components/Modal/InputMaterialListModal
 import {DetailFormatter} from "../components/Formatter/DetailFormatter";
 import { AdjustQuantityModal } from '../components/Modal/AdjustQuantityModal'
 import { AdjustLotInfo } from '../components/Modal/AdjustLotInfo'
+import { RAW_MATERIAL_UNIT_CODE } from './TransferFunction'
 
 export const columnlist: any = {
   member: [
@@ -301,10 +302,7 @@ export const columnlist: any = {
       ]
     },
     {
-      key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: [
-        { pk: 0, name: 'kg' },
-        { pk: 1, name: '장' },
-      ]
+      key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value}))
     },
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
