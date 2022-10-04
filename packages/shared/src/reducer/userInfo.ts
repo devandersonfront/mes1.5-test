@@ -3,7 +3,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 export type UserInfoState = {
   name: string
   profile: string
-  authority? : string 
+  authority? : string
+  userId?:string
+  companyCode?:string
 }
 const initialState: UserInfoState = {name: '', profile: '' , authority :''}
 
@@ -15,6 +17,8 @@ export const userSlice = createSlice({
       state.name = action.payload.name
       state.profile = action.payload.profile
       state.authority = action.payload.authority
+      state.userId = action.payload.userId
+      state.companyCode = action.payload.companyCode
     }
   }
 })

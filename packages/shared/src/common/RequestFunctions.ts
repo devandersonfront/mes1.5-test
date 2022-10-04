@@ -501,8 +501,7 @@ const ApiList = {
   statisticsPressElectricPower: `/api/v2/statistics/press/electric-power`,
   recordEnd: `/cnc/api/v1/record/complete`,
 
-
-
-
+  //log
+  logOut: '/anonymous/logout'
 
 }
