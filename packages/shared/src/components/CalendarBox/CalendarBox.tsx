@@ -32,16 +32,23 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
   }, [isOpen])
 
   const minDate = () => {
+    let minDate = moment('1900-01-01').subtract(1, 'days').toDate()
     switch(column.type)
     {
-      case 'deadline': return moment(row.date).toDate()
-      case 'delivery': if(!!row.contract?.date) return moment(row.contract.date).toDate()
+      case 'deadline': minDate = moment(row.date).toDate()
+        break
+      case 'delivery':
+        if(!!row.contract?.date) {
+        minDate = moment(row.contract.date).toDate()
+        }
+        break
       case 'outsourcingOrder':
-      case 'outsourcingImport': return moment(row.order_date).toDate()
-      default: return moment('1900-01-01').subtract(1, 'days').toDate()
+      case 'outsourcingImport': minDate = moment(row.order_date).toDate()
+        break
+      default:
     }
+    return minDate
   }
-
 
   return (
     <div>
