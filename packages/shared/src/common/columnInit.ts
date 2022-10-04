@@ -874,10 +874,10 @@ export const columnlist: any = {
   stockV2 : [
     { key: 'expanded' , name : '' , minWidth : 30 , width : 30 ,
       colSpan(args) {
-        return args.row?.detailType === 'DETAIL' ? 11 : undefined;
+        return args.row?.rowType === 'DETAIL' ? 11 : undefined;
       },
       cellClass(args){
-        return args.detailType === 'DETAIL' ? 'detail': undefined;
+        return args.rowType === 'DETAIL' ? 'detail': undefined;
       },
       formatter : DetailFormatter
     },
@@ -905,7 +905,7 @@ export const columnlist: any = {
     { key: 'lot_number', name: 'LOT 보기', formatter: AdjustLotInfo, width: 118,unprintable : true},
   ],
 
-  stockV2Detail : [
+  stockDetail : [
     { key : 'type' , name : '구분' },
     { key : 'productType' , name : '품목 종류'},
     { key : 'customer_name' , name : '거래처' },
@@ -914,7 +914,6 @@ export const columnlist: any = {
     { key : 'stock' , name : '재고' },
     { key : 'totalWeight' , name : '총중량'},
   ],
-
 
   orderRegister: (basicRow?, setBasicRow?) => ([
     { key: "date", name: "수주 날짜", formatter: CalendarBox, width: 118, type: "date", dependency : 'deadline'},

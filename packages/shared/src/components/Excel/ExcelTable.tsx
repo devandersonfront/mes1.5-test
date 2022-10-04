@@ -96,19 +96,17 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
 
   const expandRowsChange = (rows, {indexes}) => {
     const row = rows[indexes[0]];
-    if (row?.detailType === 'MASTER') {
-      if (!row.expanded) {
-        rows.splice(indexes[0] + 1, 1);
-      } else {
-        rows.splice(indexes[0] + 1, 0, {
-          ...row,
-          detailType: 'DETAIL',
-          id: row.id + 100,
-          parentId: row.id
-        });
-      }
-      setRow(rows,indexes)
+    if (!row.expanded) {
+      rows.splice(indexes[0] + 1, 1);
+    } else {
+      rows.splice(indexes[0] + 1, 0, {
+        detail: row.detail,
+        rowType: 'DETAIL',
+        id: 'detail' + row.id,
+      });
     }
+    setSelectRow && setSelectRow(indexes)
+    setRow(rows,indexes)
   }
   
   const showDataGrid = () => {

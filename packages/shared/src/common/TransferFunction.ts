@@ -105,6 +105,7 @@ export const TransferCodeToValue = (code: number, type:TransferType) => {
           value = v.value;
         }
       })
+      if(value === '') value = 'kg'
       break;
     }
     case "subMaterial" :{

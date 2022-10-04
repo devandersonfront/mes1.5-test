@@ -318,6 +318,7 @@ const ApiList = {
   productToMachine: '/api/v1/machine/prd-related/load',
   productToMold: '/api/v1/mold/prd-related/load',
   productToTool: '/cnc/api/v1/tool/prd-related/load',
+  stockBomLoad: '/api/v1/stock/bom/load',
 
   //recent
   operationRecent:`/api/v1/operation/recent`,

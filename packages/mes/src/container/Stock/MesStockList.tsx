@@ -84,6 +84,11 @@ const MesStockList = ({ page, search, option }: IProps) => {
     Notiflix.Loading.remove()
   };
 
+  const getDetail = async (row) => {
+    const postBody = [row.product]
+    return await RequestMethod('post', 'stockBomLoad', postBody)
+  }
+
   const convertData = (infoList) => (infoList.map((row: any) => {
       let random_id = Math.random() * 1000;
       return {
@@ -106,7 +111,8 @@ const MesStockList = ({ page, search, option }: IProps) => {
         unit: row.unit ?? "-",
         id: `stock${random_id}`,
         expanded : false,
-        detailType : 'MASTER',
+        // detailType : 'MASTER',
+        getDetail,
         reload,
       };
     }))
@@ -158,7 +164,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
             selectable
             headerList={[SelectColumn, ...addColumnClass(column)]}
             row={basicRow}
-            setRow={(e) => {
+            setRow={(e, index) => {
               let tmp: Set<any> = selectList
               e.map(v => {
                 if(v.isChange) {
@@ -170,7 +176,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
               setBasicRow(e)
             }}
             //@ts-ignore
-            rowHeight={(args) => (args.row.detailType === 'DETAIL' ? 300 : 45)}
+            rowHeight={(args) => (args.row.rowType === 'DETAIL' ? 300 : 45)}
             selectList={selectList}
             //@ts-ignore
             setSelectList={setSelectList}

@@ -1,22 +1,20 @@
-import React from "react";
+import React  from 'react'
 import CellExpanderFormatter from "./CellExpanderFormatter";
 import StockDetailGrid from "../Grid/StockDetailGrid";
 
 const DetailFormatter = ({row , onRowChange}) => {
-
     const detailLayout = () => {
-        if (row?.detailType === 'DETAIL') {
+        if (row?.rowType === 'DETAIL') {
             return (
-                <StockDetailGrid
-                    product={row.product}
+                <StockDetailGrid data={row.detail}
                 />
             )
         }
         return (
             <CellExpanderFormatter
                 expanded={row?.expanded}
-                onCellExpand={() => {
-                    onRowChange({ ...row, expanded: !row.expanded });
+                onCellExpand={async () => {
+                    onRowChange({ ...row, expanded: !row.expanded, detail: !row.expanded ? await row.getDetail(row) : undefined});
                 }}
             />
         );

@@ -1,24 +1,10 @@
 import React, {useEffect, useState} from 'react'
-import {useRef} from "react";
 import {ExcelTable} from "../Excel/ExcelTable";
-import {RequestMethod} from "../../common/RequestFunctions";
-import axios from "axios";
-import {SF_ENDPOINT} from "../../common/configset";
-import cookie from "react-cookies";
 import {columnlist} from "../../common/columnInit";
-import Notiflix from "notiflix";
-import ErrorList from "../../common/ErrorList";
 import {TransferCodeToValue} from "../../common/TransferFunction";
 
-export interface DataGridHandle {
-    element: HTMLDivElement | null;
-    scrollToColumn: (colIdx: number) => void;
-    scrollToRow: (rowIdx: number) => void;
-    selectCell: (position: any, enableEditor?: boolean) => void;
-}
-
 type MaterialType = {
-    type : '원자재' | '부자재' | '제품'
+    type : '원자재' | '부자재' | string | number
     productType ?: string | number
     customer_name : string
     customer_model ?: string
@@ -27,33 +13,11 @@ type MaterialType = {
     totalWeight ?: string
 }
 
-const StockDetailGrid = ({product}) => {
-
-    const userInfo = cookie.load('userInfo')
-    const tokenData = userInfo?.token;
+const StockDetailGrid = ({data}) => {
     const [material , setMaterial] = useState<MaterialType[]>([])
-
-    const getStockDetailApi = async () => {
-        Notiflix.Loading.circle()
-        try {
-            const res = await axios.post(`${SF_ENDPOINT}/api/v1/stock/bom/load`,
-                [product], {headers: {'Authorization': tokenData}}
-            )
-            if(res){
-                const {data} = res
-                const newData = convertData(data[0]?.bom_stock)
-                setMaterial(newData)
-                Notiflix.Loading.remove()
-            }
-
-        }catch (error) {
-            const errorNum : number = error?.response?.status
-            const message : string = error?.response?.data?.message
-            const [errorHeader,errorMessage] = ErrorList({errorNum , message})
-            Notiflix.Report.failure(errorHeader, errorMessage ,'확인')
-            Notiflix.Loading.remove()
-        }
-    }
+    useEffect(()=>{
+        getStockDetailApi()
+    },[])
 
     const classifyData = (data) : MaterialType => {
         switch (data.type){
@@ -65,7 +29,7 @@ const StockDetailGrid = ({product}) => {
                     customer_model : '-',
                     code : data.rawMaterial.code,
                     stock : data.rawMaterial.stock,
-                    totalWeight :`${data.totalWeight}${data.rawMaterial.unit ? '장' : 'kg'}`
+                    totalWeight :`${data.totalWeight}${TransferCodeToValue(data.rawMaterial.unit, 'rawMaterialUnit')}`
                 }
             case 1 :
                 return {
@@ -79,9 +43,9 @@ const StockDetailGrid = ({product}) => {
                 }
             case 2 :
                 return {
-                    type : '제품',
+                    type : TransferCodeToValue(data.product.type, "product"),
                     customer_name : data.product.customer?.name ?? '-',
-                    productType : !Number.isNaN(data.product.type) ? TransferCodeToValue(data.product.type, "product") : "-",
+                    productType : TransferCodeToValue(data.product.type, "productType"),
                     customer_model : data.product.model?.name ?? '-',
                     code : data.product.code,
                     stock : data.product.stock,
@@ -96,21 +60,18 @@ const StockDetailGrid = ({product}) => {
         return bomStock.map((data)=> classifyData(data))
     }
 
-    useEffect(()=>{
-        getStockDetailApi()
-    },[])
-
-    function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-        if (event.isDefaultPrevented()) {
-            event.stopPropagation();
+    const getStockDetailApi = () => {
+        if(data){
+            const newData = convertData(data?.[0]?.bom_stock)
+            setMaterial(newData)
         }
     }
 
     return (
-        <div onKeyDown={onKeyDown} style={{height : '100%'}}>
+        <div style={{height : '100%'}}>
             <ExcelTable
                 row={material}
-                headerList={columnlist['stockV2Detail']}
+                headerList={columnlist['stockDetail']}
                 height={'100%'}
             />
         </div>
