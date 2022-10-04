@@ -119,6 +119,9 @@ const LotDeliveryInfoModal = ({column, row, onRowChange}: IProps) => {
         page: 1,
         renderItem: 18,
       },
+      params: {
+        limit: row.date
+      }
     })
     if(res && res.info_list?.length === 0){
       return Notiflix.Report.warning("경고","해당 품목의 재고가 없습니다.","확인", () => setIsOpen(false))
