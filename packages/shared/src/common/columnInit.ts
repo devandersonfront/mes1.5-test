@@ -62,6 +62,7 @@ import {DetailFormatter} from "../components/Formatter/DetailFormatter";
 import { AdjustQuantityModal } from '../components/Modal/AdjustQuantityModal'
 import { AdjustLotInfo } from '../components/Modal/AdjustLotInfo'
 import { RAW_MATERIAL_UNIT_CODE } from './TransferFunction'
+import { AddRowButton } from '../components/Buttons/AddRowButton'
 
 export const columnlist: any = {
   member: [
@@ -455,6 +456,7 @@ export const columnlist: any = {
     { key: 'amount', name: '입고량(필수)', editor: TextEditor, formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', placeholder: '0', inputType: 'number' },
     { key: 'date', name: '입고일(필수)', formatter: CalendarBox },
     { key: 'lot_number', name: '원자재 LOT 번호(필수)', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'LOT 입력' },
+    { key: 'addRow', name: '행 추가', formatter: AddRowButton, basicRow, setBasicRow  },
   ]),
 
   rawstockV1u: [
