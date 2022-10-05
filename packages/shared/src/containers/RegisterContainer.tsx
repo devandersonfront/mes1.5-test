@@ -21,7 +21,7 @@ interface IProps {
     afterSavePath: string,
     initData?: any,
     buttons?: string[],
-    buttonEvent?: (buttonIdx:number) => void
+    buttonEvent?: {}
     multiRegister?: boolean
     columnKey: string
     checkDuplicate?: (rows: any[]) => void
@@ -34,13 +34,18 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
     const [radioValue, setRadioValue] = useState<number>(0)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const router = useRouter()
-
+    const headerButtons = buttons ?? (multiRegister ? ['저장하기', '삭제'] : ['행 추가','저장하기', '삭제'])
 
     useEffect(()=>{
-        setData([{...initData, ...defaultInitData}])
+        setData(addInitData([]))
     },[radioValue])
 
-    const filterSelectedRows = () => data.filter((row) => selectList.has(row.id))
+    const filterSelectedRows = (data) => data.filter((row) => selectList.has(row.id))
+
+    const addInitData = (data: any[]) => {
+        data.push({...initData, ...defaultInitData})
+        return data
+    }
 
     const save = async (postBody: any) => {
         const result = await RequestMethod("post", apiType,postBody)
@@ -55,9 +60,9 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
         setSelectList(new Set())
     }
 
-    const saveRows = async () => {
+    const saveRows = async (data) => {
         try {
-            const selected = filterSelectedRows()
+            const selected = filterSelectedRows(data)
             checkDuplicate && checkDuplicate(selected.map(row => row[duplicateKey]))
             const postBody = selected.map(row => {
                 validate(row)
@@ -68,42 +73,56 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
             Notiflix.Report.warning('경고',errMsg,'확인')
         }
     }
-    const deleteRow = () => {
+
+    const deleteRow = (data) => {
         let filteredRows = data.filter((row) => !selectList.has(row.id))
         if(filteredRows.length > 0){
             filteredRows[0] = {...filteredRows[0], ...defaultInitData}
         } else {
-            filteredRows.push({...initData, ...defaultInitData})
+            filteredRows = addInitData(filteredRows)
         }
         setData(filteredRows)
         setSelectList(new Set())
     }
 
-    const buttonEventHandler = (buttonIndex:number) => {
-        selectList.size > 0 ? buttonEvent ? buttonEvent(buttonIndex) : defaultBuuttonEvent(buttonIndex) : Notiflix.Report.warning('경고',alertMsg.noSelectedData,'확인')
+    const addRow = (data) => {
+        const added = addInitData(data)
+        setData(added)
     }
 
-    const defaultBuuttonEvent = (buttonIndex:number) => {
-        switch (buttonIndex) {
-            case 0:
-                saveRows()
-                break
-            case 1:
-                Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
-                    () => deleteRow())
-                break
-            default:
-                break
+    const buttonEventHandler = (buttonIndex:number) => {
+        try {
+            const button = headerButtons[buttonIndex]
+            const buttonKey = getButtonKey(button)
+            if(selectList.size === 0 && buttonKey !== 'add') throw(alertMsg.noSelectedData)
+            const event = buttonEvent && buttonEvent[buttonKey] !== undefined ? buttonEvent[buttonKey] : defaultButtonEvent[buttonKey]
+            event && event(data)
+        }catch(errMsg) {
+            Notiflix.Report.warning('경고',errMsg,'확인')
         }
+    }
+
+    const getButtonKey = (button: string) => {
+        switch(button){
+            case '저장하기': return 'save'
+            case '삭제': return 'delete'
+            case '행 추가': return 'add'
+            default: return button
+        }
+    }
+
+    const defaultButtonEvent = {
+        'save' : saveRows,
+        'delete': (data) =>  Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
+          () => deleteRow(data)),
+        'add': addRow
     }
 
     return (
         <div>
             <PageHeader
                 title={title}
-                buttons={
-                    buttons ?? multiRegister ? ['저장하기', '삭제'] : ['행 추가','저장하기', '삭제']
-                }
+                buttons={headerButtons}
                 buttonsOnclick={buttonEventHandler}
                 isRadio={useRadio}
                 radioTexts={radioButtons}
