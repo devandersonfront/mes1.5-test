@@ -53,6 +53,9 @@ const setMapWithSaved = (type: string, map: Map<number, any>, row: any) => {
     case 'subMaterial':
       row.sub_material?.sm_id && map.set(row.sub_material?.sm_id, row)
       break
+    case 'order' :
+      row.contract?.contract_id && map.set(row.contract?.contract_id,row)
+      break
     default: break
   }
 }
@@ -87,6 +90,12 @@ const syncWithSaved = (type:string, mapValue: any) => {
     case 'rawMaterialImport':
       return {
         date: mapValue.date,
+        amount: mapValue.amount,
+        lot_number: mapValue.lot_number
+      }
+    case 'contractRegister' :
+      return {
+        data : mapValue.date,
         amount: mapValue.amount,
         lot_number: mapValue.lot_number
       }
@@ -161,6 +170,7 @@ const getMapKey = (type:string) => {
     case 'outsourcingOrder' : return 'ose_id'
     case 'rawMaterial' : return 'rm_id'
     case 'subMaterial' : return 'sm_id'
+    case 'order' : return 'contract_id'
     default: return ''
   }
 }
@@ -196,6 +206,9 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
 
   const [ basicRowMap, setBasicRowMap ] = useState<Map<number, any>>(new Map())
   const [ initMap, setInitMap ] = useState<Map<number, any>>(new Map())
+
+  console.log(initMap,'initMapinitMap')
+
   const module = getModule(column.searchType)
 
   useEffect(() => {
@@ -415,10 +428,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   const setAllSelected = (rows: any) => {
     setSearchList(rows.map(row => {
       if(!basicRowMap.has(row[module.key])){
-        setBasicRowMap(prev => {
-            prev.set(rows[module.key], SearchModalResult(rows, searchModalInit.excelColumnType, column.staticCalendar))
-            return prev
-          })
+        setBasicRowMap(prev => new Map(prev).set(row[module.key], SearchModalResult(row, searchModalInit.excelColumnType, column.staticCalendar)))
       }
       return {...row, border:true}
     }))
