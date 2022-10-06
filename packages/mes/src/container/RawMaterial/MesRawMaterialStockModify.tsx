@@ -72,7 +72,7 @@ const MesRawMaterialStockModify = ({page, keyword, option}: IProps) => {
           ...row,
           raw_material: {
             ...row.raw_material,
-            type:row.raw_material?.type_id,
+            type: row.raw_material?.type,
             customer : row?.customerArray?.customer_id ? row.customerArray : null,
           },
           current: row.exhaustion === "-" ? row.warehousing : 0,
