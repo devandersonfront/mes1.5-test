@@ -27,9 +27,13 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
 
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     date: moment().format('YYYY-MM-DD'),
+    isFirst: true
     // limit_date: moment().format('YYYY-MM-DD')
   }])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["deliveryIdentificationRegister"])
+
+  console.log(basicRow,'basicRowbasicRow')
+
+  const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["deliveryIdentificationRegister"]())
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [codeCheck, setCodeCheck] = useState<boolean>(false)
 
@@ -61,7 +65,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
                 product_id: res.info_list[0].product.code,
                 type: TransferCodeToValue(res.info_list[0].product.type, "product"),
                 unit: res.info_list[0].product.unit,
-                version: res.info_list[0].product.version
+                version: res.info_list[0].product.version,
               }])
             })
       }
@@ -86,9 +90,11 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         tab: 'ROLE_SALES_03'
       }
     })
-
     if(res){
-      let tmpColumn = codeCheck ? columnlist["deliveryCodeRegister"] : columnlist['deliveryIdentificationRegister']
+      let tmpColumn = codeCheck ? columnlist["deliveryCodeRegister"]() : columnlist['deliveryIdentificationRegister']()
+
+      console.log(tmpColumn,'tmpColumntmpColumn')
+
       tmpColumn = tmpColumn.map((column: any) => {
         let menuData: object | undefined;
         res.bases && res.bases.map((menu: any) => {
@@ -218,7 +224,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
         setBasicRow([
           {
             name: "", id: `delivery_${random_id}`, date: moment().format('YYYY-MM-DD'),
-            deadline: moment().format('YYYY-MM-DD')
+            deadline: moment().format('YYYY-MM-DD'),
+            isFirst: true
           },
           ...basicRow
         ])
@@ -258,9 +265,10 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
               setCodeCheck(value)
               setBasicRow([{
                 date: moment().format('YYYY-MM-DD'),
+                isFirst: true
               }])
               setSelectList(new Set())
-              setColumn(value ? columnlist.deliveryCodeRegister : columnlist.deliveryIdentificationRegister)
+              setColumn(value ? columnlist.deliveryCodeRegister() : columnlist.deliveryIdentificationRegister())
             }}
             title={"납품 정보 등록"}
             buttons={
@@ -275,7 +283,7 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
             selectable
             headerList={[
               SelectColumn,
-              ...column
+              ...column.map(col => ({ ...col, basicRow, setBasicRow }))
             ]}
             row={basicRow}
             // setRow={setBasicRow}
