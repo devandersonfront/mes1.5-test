@@ -961,9 +961,9 @@ export const columnlist: any = {
   ],
   deliveryCodeRegister: (basicRow,setBasicRow) => ([
     {key:"contract_id", name:"수주 번호", width: 118, formatter: PlaceholderBox, type: 'order', placeholder:"-"},
-    {key:"customer_id", name:"거래처", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
-    {key:"cm_id", name:"모델", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     {key:"product_id", name:"CODE", width: 118, formatter: MultiSelectModal, searchType: 'product', basicRow, setBasicRow},
+    {key:'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-',width: 118},
+    {key:'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-',width: 118},
     {key:"name", name:"품명", width: 118 , formatter: PlaceholderBox, placeholder: '자동입력'  },
     {key:"type", name:"품목 종류", width: 118, formatter: PlaceholderBox, placeholder: '자동입력'   },
     {key:"unit", name:"단위", width: 118 , formatter: PlaceholderBox, placeholder: '자동입력'  },
