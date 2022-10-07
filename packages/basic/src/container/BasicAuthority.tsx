@@ -250,8 +250,6 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
     <div>
       <PageHeader
         title={title}
-        buttonsOnclick={saveAppointmentAuthorityDetails}
-        leftButtonOnClick={leftButtonOnClick}
         pageHelper={"권한 등록, 삭제는 하나씩 가능"}
       />
       <div className={'unprintable'} style={{display: 'flex', justifyContent: 'space-between', paddingRight: 40, marginBottom: 16}}>

@@ -19,6 +19,7 @@ import {change_summary_info_index, insert_summary_info, reset_summary_info} from
 import {UploadButton} from "../../styles/styledComponents";
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
+import { ParseResponse } from '../../common/Util'
 
 interface IProps {
   column: IExcelHeaderType
@@ -129,21 +130,8 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const changeRow = (tmpRow: any, key?: string) => {
-    let tmpData = []
-    let tmpRows = [];
-    if(typeof tmpRow === 'string'){
-      let tmpRowArray = tmpRow.split('\n')
-
-      tmpRows = tmpRowArray.map(v => {
-        if(v !== ""){
-          let tmp = JSON.parse(v)
-          return tmp
-        }
-      }).filter(v=>v)
-    }else{
-      tmpRows = [{...tmpRow}]
-    }
-    tmpData = tmpRows.map((v, i) => {
+    const parsedRes = ParseResponse(tmpRow)
+    return parsedRes.map((v, i) => {
       const bomDetail:{childData:any, bomType: TransferType, objectKey: string} = {
         childData: {},
         bomType: undefined,
@@ -209,8 +197,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
         [bomDetail.objectKey]: {...bomDetail.childData},
       }
     })
-
-    return tmpData
   }
 
   const SearchBasic = async (selectKey?:string) => {

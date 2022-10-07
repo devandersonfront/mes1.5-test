@@ -88,10 +88,10 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
             <div style={{background : '#2b3c5c' , height : '100%'}}>
               <div style={{height : '100vh'}}>
               {
-                MENUS().map(menu => {
+                MENUS().map((menu, menuIdx) => {
                   switch(menu){
                     case 'HOME':
-                      return <MenuNavItem style={{backgroundColor: menuType === "HOME" ? POINT_COLOR : undefined}} onClick={() => {
+                      return <MenuNavItem key={menuIdx} style={{backgroundColor: menuType === "HOME" ? POINT_COLOR : undefined}} onClick={() => {
                       router.push('/mes/dashboard')
                       changeMenuType("HOME")
                     }}>
@@ -99,28 +99,28 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
                       <MenuText>HOME</MenuText>
                     </MenuNavItem>
                     case 'BASIC':
-                      return <MenuNavItem style={{backgroundColor: menuType === "BASIC" ? POINT_COLOR : undefined}} onClick={() => {
+                      return <MenuNavItem key={menuIdx} style={{backgroundColor: menuType === "BASIC" ? POINT_COLOR : undefined}} onClick={() => {
                         changeMenuType("BASIC")
                       }}>
                         <img src={ic_info} style={{width: 30, height: 30, marginBottom: 5}}/>
                         <MenuText>기준정보관리</MenuText>
                       </MenuNavItem>
                     case 'MES':
-                      return <MenuNavItem style={{backgroundColor: menuType === "MES" ? POINT_COLOR : undefined}} onClick={() => {
+                      return <MenuNavItem key={menuIdx} style={{backgroundColor: menuType === "MES" ? POINT_COLOR : undefined}} onClick={() => {
                         changeMenuType("MES")
                       }}>
                         <img src={ic_mes} style={{width: 30, height: 30, marginBottom: 5}}/>
                         <MenuText>MES</MenuText>
                       </MenuNavItem>
                     case 'PMS':
-                      return <MenuNavItem style={{backgroundColor: menuType === "PMS" ? POINT_COLOR : undefined}} onClick={() => {
+                      return <MenuNavItem key={menuIdx} style={{backgroundColor: menuType === "PMS" ? POINT_COLOR : undefined}} onClick={() => {
                         changeMenuType("PMS")
                       }}>
                         <img src={ic_pms} style={{width: 30, height: 30, marginBottom: 5}}/>
                         <MenuText>PMS</MenuText>
                       </MenuNavItem>
                     case 'CNC':
-                      return <MenuNavItem style={{backgroundColor: menuType === "CNC" ? POINT_COLOR : undefined}} onClick={() => {
+                      return <MenuNavItem key={menuIdx} style={{backgroundColor: menuType === "CNC" ? POINT_COLOR : undefined}} onClick={() => {
                         changeMenuType("CNC")
                       }}>
                         <img src={ic_cnc} style={{width: 30, height: 30, marginBottom: 5}}/>

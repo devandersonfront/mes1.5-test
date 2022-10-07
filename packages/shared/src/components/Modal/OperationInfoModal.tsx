@@ -104,10 +104,9 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
               if(row?.productId){
                 // dispatch(change_operation_searchKey(row?.identification))
                 // router.push('/mes/operationV1u/register')
-
                 router.push({
                   pathname: `/mes/operationV1u/register`,
-                  query: {key : row?.identification}
+                  query: {contractId : row?.contract_id}
                 });
 
               }else{
