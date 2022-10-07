@@ -33,39 +33,63 @@ const setMapWithSaved = (type: string, map: Map<number, any>, row: any) => {
     case 'allProduct':
     case 'outsourceProduct':
     case 'product':
-      row.product?.product_id && map.set(row.product.product_id, row)
+      row.product?.product_id ? map.set(row.product.product_id, row) : map.set(undefined, row )
       break
     case 'machine':
-      row.machine_id && map.set(row.machine_id, row)
+      row.machine_id ? map.set(row.machine_id, row) : map.set(undefined, row )
       break
     case 'mold':
-      row.mold_id && map.set(row.mold_id, row)
+      row.mold_id ? map.set(row.mold_id, row) : map.set(undefined, row )
       break
     case 'tool':
-      row.tool_id  && map.set(row.tool_id, row)
+      row.tool_id ? map.set(row.tool_id, row) : map.set(undefined, row )
       break
     case 'outsourcingOrder':
-      row.ose_id && map.set(row.ose_id, row)
+      row.ose_id ? map.set(row.ose_id, row) : map.set(undefined, row )
       break
     case 'rawMaterial':
-      row.raw_material?.rm_id && map.set(row.raw_material?.rm_id, row)
+      row.raw_material?.rm_id ? map.set(row.raw_material?.rm_id, row) : map.set(undefined, row )
       break
     case 'subMaterial':
-      row.sub_material?.sm_id && map.set(row.sub_material?.sm_id, row)
+      row.sub_material?.sm_id ? map.set(row.sub_material?.sm_id, row) : map.set(undefined, row)
       break
     case 'order' :
-      row.contract?.contract_id && map.set(row.contract?.contract_id,row)
+      row.contract?.contract_id ? map.set(row.contract?.contract_id,row) : map.set(undefined, row )
       break
     default: break
   }
 }
 
+const getSyncKey = (searchType: string, type: string, key: string | number, row: any) => {
+  if(typeof key === 'string') {
+    switch (type) {
+      case 'orderRegister':
+        return row.product?.product_id
+      case 'deliveryRegister':
+        return searchType === 'product' ? row.product?.product_id : row.contract?.contract_id
+      case 'subMaterialImport':
+        return row.sub_material?.sm_id
+      case 'rawMaterialImport':
+        return row.raw_material?.rm_id
+      default:
+        return key
+    }
+  } else {
+    return key
+  }
+}
+
 const syncWithSaved = (type:string, mapValue: any) => {
   switch (type) {
-    case 'orderRegister': return {
+    case 'orderRegister':
+      return {
       date: mapValue.date,
       deadline: mapValue.deadline,
       amount: mapValue.amount,
+      customerArray: mapValue.customerArray,
+      customer_id: mapValue.customer_id,
+      modelArray: mapValue.modelArray,
+      cm_id: mapValue.cm_id
     }
     case 'productMachine':
     case 'productMold':
@@ -85,19 +109,27 @@ const syncWithSaved = (type:string, mapValue: any) => {
       return {
         date: mapValue.date,
         warehousing: mapValue.warehousing,
-        lot_number: mapValue.lot_number
+        lot_number: mapValue.lot_number,
+        customerArray: mapValue.customerArray,
+        customer_id: mapValue.customer_id,
       }
     case 'rawMaterialImport':
       return {
         date: mapValue.date,
         amount: mapValue.amount,
-        lot_number: mapValue.lot_number
+        lot_number: mapValue.lot_number,
+        customerArray: mapValue.customerArray,
+        customer_id: mapValue.customer_id,
       }
-    case 'contractRegister' :
+    case 'deliveryRegister' :
       return {
-        data : mapValue.date,
+        date : mapValue.date,
         amount: mapValue.amount,
-        lot_number: mapValue.lot_number
+        lots: mapValue.lots,
+        customerArray: mapValue.customerArray,
+        customer_id: mapValue.customer_id,
+        modelArray: mapValue.modelArray,
+        cm_id: mapValue.cm_id
       }
     default: return {}
   }
@@ -114,6 +146,8 @@ const getModalTextKey = (type: string) => {
       return 'code'
     case 'subMaterial':
       return 'code'
+    case 'order':
+      return 'contract_id'
     default:
       return 'name'
   }
@@ -138,6 +172,10 @@ const defaultRow = (type:string) => {
       return {
         date: moment().format('YYYY-MM-DD'),
         deadline: moment().format('YYYY-MM-DD')
+      }
+    case 'deliveryRegister':
+      return {
+        date: moment().format('YYYY-MM-DD'),
       }
     case 'productMachine':
     case 'productMold':
@@ -186,10 +224,12 @@ const getModule = (searchType: string) => ({
       key: getMapKey(searchType),
       textKey: getModalTextKey(searchType),
       indexKey: getIndexKey(searchType),
+      getSyncKey,
       setMapWithSaved,
       syncWithSaved,
       defaultRow,
       emptyRow,
+
     })
 
 const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
@@ -203,17 +243,18 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     page: 1,
     total: 1
   })
-
   const [ basicRowMap, setBasicRowMap ] = useState<Map<number, any>>(new Map())
   const [ initMap, setInitMap ] = useState<Map<number, any>>(new Map())
 
   const module = getModule(column.searchType)
 
   useEffect(() => {
-      const newMap = new Map()
-      column.basicRow?.map(row => module.setMapWithSaved(column.searchType, newMap, row))
-      setBasicRowMap(newMap)
-      setInitMap(new Map(newMap))
+      const initMap = new Map()
+      column.basicRow?.map(row => module.setMapWithSaved(column.searchType, initMap, row))
+      setInitMap(initMap)
+      const basicRowMap = new Map(initMap)
+      basicRowMap.delete(undefined)
+      setBasicRowMap(new Map(basicRowMap))
   }, [column.basicRow])
 
   useEffect(() => {
@@ -413,8 +454,11 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
       ? [module.emptyRow(column.type)]
       : newBasicRow.map((row, rowIdx) => {
         let defaultRes = {...row, id:row[module.key], isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1, border:false }
-        if(initMap.has(row[module.key])){
-          defaultRes = {...defaultRes, ...syncWithSaved(column.type, initMap.get(row[module.key]))}
+        const syncKey = module.getSyncKey(column.searchType, column.type, row[module.key], row)
+        if(initMap.has(syncKey)){
+          defaultRes = {...defaultRes, ...syncWithSaved(column.type, initMap.get(syncKey))}
+        } else if(initMap.has(undefined)) {
+          defaultRes = {...defaultRes, ...defaultRow(column.type), ...syncWithSaved(column.type, initMap.get(undefined))}
         } else {
           defaultRes = {...defaultRes, ...defaultRow(column.type)}
         }

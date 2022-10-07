@@ -961,7 +961,7 @@ export const columnlist: any = {
   ],
   deliveryCodeRegister: (basicRow,setBasicRow) => ([
     {key:"contract_id", name:"수주 번호", width: 118, formatter: PlaceholderBox, type: 'order', placeholder:"-"},
-    {key:"product_id", name:"CODE", width: 118, formatter: MultiSelectModal, searchType: 'product', basicRow, setBasicRow},
+    {key:"product_id", name:"CODE", width: 118, formatter: MultiSelectModal, searchType: 'product', type : 'deliveryRegister',basicRow, setBasicRow},
     {key:'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-',width: 118},
     {key:'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-',width: 118},
     {key:"name", name:"품명", width: 118 , formatter: PlaceholderBox, placeholder: '자동입력'  },
@@ -972,7 +972,7 @@ export const columnlist: any = {
     {key:"amount", name:"총 납품 수량", width: 118, formatter: PlaceholderBox, placeholder: '0', type:"placeholder" },
   ]),
   deliveryIdentificationRegister: (basicRow,setBasicRow) => ([
-    { key: "contract_id", name: "수주 번호", width: 118, formatter: MultiSelectModal, searchType: 'order', type : 'contractRegister',basicRow, setBasicRow},
+    { key: "contract_id", name: "수주 번호", width: 118, formatter: MultiSelectModal, searchType: 'order', type : 'deliveryRegister',basicRow, setBasicRow},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-',width: 118},
     { key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-',width: 118},
     // { key: "customer_id", name: "거래처", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },

@@ -91,8 +91,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     if(res){
       let tmpColumn = codeCheck ? columnlist["deliveryCodeRegister"]() : columnlist['deliveryIdentificationRegister']()
 
-      console.log(tmpColumn,'tmpColumntmpColumn')
-
       tmpColumn = tmpColumn.map((column: any) => {
         let menuData: object | undefined;
         res.bases && res.bases.map((menu: any) => {
@@ -148,6 +146,8 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
       return false
     }
   }
+  console.log(column)
+  console.log('rw',basicRow)
 
   const SaveBasic = async () => {
     let data = basicRow.map((row, i) => {
