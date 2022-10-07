@@ -207,8 +207,6 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
   const [ basicRowMap, setBasicRowMap ] = useState<Map<number, any>>(new Map())
   const [ initMap, setInitMap ] = useState<Map<number, any>>(new Map())
 
-  console.log(initMap,'initMapinitMap')
-
   const module = getModule(column.searchType)
 
   useEffect(() => {
