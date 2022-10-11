@@ -58,7 +58,7 @@ const MidrangeRegisterModal = ({ data, isOpen, setIsOpen, modify, reload}: IProp
         await RequestMethod('post', `recordInspectSave`,{
             sic_id: midrangeData.sic_id,
             record_id: midrangeData.record_id,
-            writer: midrangeData.writer,
+            writer: {...midrangeData.writer, additional: []},
             inspection_time: midrangeData.inspection_time,
             inspection_result: midrangeData.inspection_result,
             legendary_list: midrangeData.legendary_list,
