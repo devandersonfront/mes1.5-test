@@ -218,6 +218,7 @@ export interface MidrangeRecordRegister extends MidrangeRecordType {
   record_id?: string
   version?: number
   samples?:number
+  operation_inspection_id?: string
 }
 
 export type TransferType = "productType" | "material" | "rawMaterial" | "rawMaterialType" | "rawMaterialUnit" | "workStatus" | 'machine' | "product" |  "subMaterial" | "welding" | "export" | "unit" | null

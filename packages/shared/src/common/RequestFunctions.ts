@@ -348,7 +348,7 @@ const ApiList = {
   subFactoryDelete: `/api/v1/subFactory/delete`,
   contractDelete: `/api/v1/contract/delete`,
   sheetDelete: `/api/v1/sheet/delete`,
-  recodeDelete: `/api/v1/record/delete`,
+  recordDelete: `/api/v1/record/delete`,
   cncRecordeDelete: `/cnc/api/v1/record/delete`,
   toolDelete: `/cnc/api/v1/tool/delete`,
   lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
@@ -359,6 +359,7 @@ const ApiList = {
   outsourcingShipmentDelete: `/api/v1/outsourcing/shipment/delete`,
   outsourcingOrderDelete: `/api/v1/outsourcing/export/delete`,
   outsourcingImportDelete : `/api/v1/outsourcing/import/delete`,
+  recordInspectDelete: `/cnc/api/v1/record/inspect/delete`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,
