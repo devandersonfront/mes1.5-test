@@ -54,9 +54,10 @@ export const MesTitles = (customTarget?: string) => {
     _deliveryReg: toMenu(titles._deliveryReg,'/mes/delivery/register'),
     _deliveryList: toMenu(titles._deliveryList,'/mes/delivery/list'),
 
-    pmReg: toMenu(titles.pmReg,'',['_opReg','_opList','_opReList','_opComList']),
+    pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opComList']),
     _opReg: toMenu(titles._opReg,'/mes/operationV1u/register'),
     _opList: toMenu(titles._opList,'/mes/operationV1u/list'),
+    _todayOpList: toMenu(titles._todayOpList,'/mes/operationV1u/list/today'),
     _opReList: toMenu(titles._opReList,'/mes/recordV2/list'),
     _opComList: toMenu(titles._opComList,'/mes/finishV2/list'),
 
@@ -249,9 +250,10 @@ export const MesAuth = (customTarget?: string) => {
     _orderList: toAuth(titles._orderList, false, true, false, [], auth._orderList),
     _deliveryReg: toAuth(titles._deliveryReg, false, true, false, [], auth._deliveryReg),
     _deliveryList: toAuth(titles._deliveryList, false, true, false, [], auth._deliveryList),
-    pmReg: toAuth(titles.pmReg, false, true, false, ['_opReg','_opList','_opReList','_opComList'] ),
+    pmReg: toAuth(titles.pmReg, false, true, false, ['_opReg','_opList','_todayOpList','_opReList','_opComList'] ),
     _opReg: toAuth(titles._opReg, false, true, false, [], auth._opReg),
     _opList: toAuth(titles._opList, false, true, false, [], auth._opList),
+    _todayOpList: toAuth(titles._todayOpList, false, true, false, [], auth._opList),
     _opReList: toAuth(titles._opReList, false, true, false, [], auth._opReList),
     _opComList: toAuth(titles._opComList, false, true, false, [], auth._opComList),
     rawMgmt: toAuth(titles.mesRawMgmt, false, true, false, ['_rawReg','_rawStock','_rawExportList']),
