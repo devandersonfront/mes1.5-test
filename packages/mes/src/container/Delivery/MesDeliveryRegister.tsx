@@ -146,8 +146,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
       return false
     }
   }
-  console.log(column)
-  console.log('rw',basicRow)
 
   const SaveBasic = async () => {
     let data = basicRow.map((row, i) => {

@@ -42,9 +42,7 @@ const MidrangeRegisterModal = ({ data, isOpen, setIsOpen, modify, reload}: IProp
         operation_inspection_id: undefined
     })
 
-    console.log('mid', midrangeData)
     useEffect(() => {
-        console.log('use',data)
         const newData = {
             ...data,
             inspection_result: modify ? data.inspection_result : midrangeData.inspection_result,
