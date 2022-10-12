@@ -26,19 +26,19 @@ const LoginPage = ({children, data, setData } : IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
-
   const onClickLogin = async () => {
     if(data.id && data.password){
       Notiflix.Loading.dots('MES System 접속 중...')
       const res = await requestApi('post', '/anonymous/login', data)
 
       if(res) {
-
         setToken( res )
         dispatch(setUserInfo({
           name: res.name,
           profile: res.profile,
-          authority : res.ca_id.name
+          authority : res.ca_id.name,
+          userId : res.user_id,
+          companyCode : res.company
         }))
         router.push('/mes/dashboard').then()
       }
