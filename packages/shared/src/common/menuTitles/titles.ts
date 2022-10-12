@@ -32,6 +32,7 @@ export const titles = {
     pmReg: '생산관리 등록',
     _opReg: '작업지시서 등록',
     _opList: '작업지시서 리스트',
+    _todayOpList: '금일 작업지시서 리스트',
     _opReList: '작업 일보 리스트',
     _opComList: '작업 완료 리스트',
     mesRawMgmt: '원자재 관리',

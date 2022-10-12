@@ -54,9 +54,10 @@ export const MesTitles = (customTarget?: string) => {
     _deliveryReg: toMenu(titles._deliveryReg,'/mes/delivery/register'),
     _deliveryList: toMenu(titles._deliveryList,'/mes/delivery/list'),
 
-    pmReg: toMenu(titles.pmReg,'',['_opReg','_opList','_opReList','_opComList']),
+    pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opComList']),
     _opReg: toMenu(titles._opReg,'/mes/operationV1u/register'),
     _opList: toMenu(titles._opList,'/mes/operationV1u/list'),
+    _todayOpList: toMenu(titles._todayOpList,'/mes/operationV1u/list/today'),
     _opReList: toMenu(titles._opReList,'/mes/recordV2/list'),
     _opComList: toMenu(titles._opComList,'/mes/finishV2/list'),
 
@@ -142,24 +143,24 @@ export const MesTitles = (customTarget?: string) => {
 export const CncTitles = (customTarget?: string) => {
   const cncDefault = {
     cncMon: toMenu(titles.cncMon, '', [ '_cncMon' ]),
-    _cncMon: toMenu(titles._cncMon, '/pms/v2/factoryMonitoring'),
+    _cncMon: toMenu(titles._cncMon, '/cnc/v2/factoryMonitoring'),
     cncStats: toMenu(titles.cncStats, '',['_prodStats', '_errorStats', '_idleStats']),
-    _prodStats: toMenu(titles._prodStats, '/pms/v2/analysis/output'),
-    _errorStats: toMenu(titles._errorStats, '/pms/v2/analysis/error'),
-    _idleStats: toMenu(titles._idleStats, '/pms/v2/analysis/idleTime'),
+    _prodStats: toMenu(titles._prodStats, '/cnc/v2/analysis/output'),
+    _errorStats: toMenu(titles._errorStats, '/cnc/v2/analysis/error'),
+    _idleStats: toMenu(titles._idleStats, '/cnc/v2/analysis/idleTime'),
     cncMnt: toMenu(titles.cncMnt, '', ['_repReqReg', '_repReqList', '_repCompList','_repCompListAdmin', '_problemReg']),
-    _repReqReg: toMenu(titles._repReqReg, '/pms/v2/press/maintenance/facilities'),
-    _repReqList: toMenu(titles._repReqList, '/pms/v2/press/maintenance/list'),
-    _repCompList: toMenu(titles._repCompList, '/pms/v2/press/maintenance/complete'),
-    _repCompListAdmin: toMenu(titles._repCompListAdmin, '/pms/v2/press/maintenance/complete/admin'),
-    _problemReg: toMenu(titles._problemReg, '/pms/v2/press/maintenance/problem'),
+    _repReqReg: toMenu(titles._repReqReg, '/cnc/v2/press/maintenance/facilities'),
+    _repReqList: toMenu(titles._repReqList, '/cnc/v2/press/maintenance/list'),
+    _repCompList: toMenu(titles._repCompList, '/cnc/v2/press/maintenance/complete'),
+    _repCompListAdmin: toMenu(titles._repCompListAdmin, '/cnc/v2/press/maintenance/complete/admin'),
+    _problemReg: toMenu(titles._problemReg, '/cnc/v2/press/maintenance/problem'),
   }
   switch(customTarget){
     case 'dohwa': return {
       ...cncDefault,
       cncMon: toMenu(dohwaTitles.cncMon, '', [ '_cncMon' ]),
-      _cncMon: toMenu(dohwaTitles._cncMon, '/pms/v2/factoryMonitoring'),
-      _repCompListAdmin: toMenu(dohwaTitles._repCompListAdmin, '/pms/v2/press/maintenance/complete/admin'),
+      _cncMon: toMenu(dohwaTitles._cncMon, '/cnc/v2/factoryMonitoring'),
+      _repCompListAdmin: toMenu(dohwaTitles._repCompListAdmin, '/cnc/v2/press/maintenance/complete/admin'),
     }
     default: return cncDefault
   }
@@ -249,9 +250,10 @@ export const MesAuth = (customTarget?: string) => {
     _orderList: toAuth(titles._orderList, false, true, false, [], auth._orderList),
     _deliveryReg: toAuth(titles._deliveryReg, false, true, false, [], auth._deliveryReg),
     _deliveryList: toAuth(titles._deliveryList, false, true, false, [], auth._deliveryList),
-    pmReg: toAuth(titles.pmReg, false, true, false, ['_opReg','_opList','_opReList','_opComList'] ),
+    pmReg: toAuth(titles.pmReg, false, true, false, ['_opReg','_opList','_todayOpList','_opReList','_opComList'] ),
     _opReg: toAuth(titles._opReg, false, true, false, [], auth._opReg),
     _opList: toAuth(titles._opList, false, true, false, [], auth._opList),
+    _todayOpList: toAuth(titles._todayOpList, false, true, false, [], auth._opList),
     _opReList: toAuth(titles._opReList, false, true, false, [], auth._opReList),
     _opComList: toAuth(titles._opComList, false, true, false, [], auth._opComList),
     rawMgmt: toAuth(titles.mesRawMgmt, false, true, false, ['_rawReg','_rawStock','_rawExportList']),

@@ -31,8 +31,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     // limit_date: moment().format('YYYY-MM-DD')
   }])
 
-  console.log(basicRow,'basicRowbasicRow')
-
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["deliveryIdentificationRegister"]())
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [codeCheck, setCodeCheck] = useState<boolean>(false)
@@ -92,8 +90,6 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
     })
     if(res){
       let tmpColumn = codeCheck ? columnlist["deliveryCodeRegister"]() : columnlist['deliveryIdentificationRegister']()
-
-      console.log(tmpColumn,'tmpColumntmpColumn')
 
       tmpColumn = tmpColumn.map((column: any) => {
         let menuData: object | undefined;

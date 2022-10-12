@@ -38,7 +38,8 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
             inspection_info: hasResult ? modalData.inspection_info : initializeInspectionInfo(modalData.inspection_info),
             inspection_result: hasResult ? modalData.inspection_result : initializeInspectionResult(modalData.samples),
             inspection_time: modalData.inspection_time,
-            samples: modalData.samples
+            samples: modalData.samples,
+            operation_inspection_id: modalData?.operation_inspection_id
         }
         setModalData(newData)
     },[])

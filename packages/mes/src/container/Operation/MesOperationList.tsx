@@ -26,11 +26,12 @@ interface IProps {
   page?: number
   search?: string
   option?: number
+  todayOnly?: boolean
 }
 
 const optionList = ['지시 고유 번호', '거래처명', '모델', 'CODE', '품명']
 
-const MesOperationList = ({page, search, option}: IProps) => {
+const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -40,7 +41,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
   const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-    from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+    from: todayOnly ?  moment().format('YYYY-MM-DD') : moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
   })
   const [keyword, setKeyword] = useState<string>("");
@@ -50,8 +51,9 @@ const MesOperationList = ({page, search, option}: IProps) => {
   })
 
   const onSelectDate = (date: {from:string, to:string}) => {
-    setSelectDate(date)
-    reload(null, date)
+    const _date = todayOnly ? {from: moment().format('YYYY-MM-DD'), to:moment().format('YYYY-MM-DD')} : date
+    setSelectDate(_date)
+    reload(null, _date)
   }
 
   const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType) => {
@@ -329,7 +331,7 @@ const MesOperationList = ({page, search, option}: IProps) => {
         //@ts-ignore
         setSelectDate={onSelectDate}
         //실제사용
-        title={"작업지시서 리스트"}
+        title={`${todayOnly ? '금일 ' : ''}작업지시서 리스트`}
         buttons={
           ['', '수정하기', '삭제']
         }

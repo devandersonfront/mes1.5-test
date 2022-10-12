@@ -16,7 +16,8 @@ function setToken(userInfo:any,) {
     id: userInfo.id,
     name: userInfo.name,
     user_id: userInfo.user_id,
-    profile: userInfo.profile
+    profile: userInfo.profile,
+    additional: []
   }
   cookie.save(
     'userInfo'
