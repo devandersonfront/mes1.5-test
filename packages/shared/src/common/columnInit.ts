@@ -322,7 +322,7 @@ export const columnlist: any = {
         {pk: 'L', name: 'L'},
       ], tab: 'ROLE_BASE_15'},
     {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister", searchType: 'bomBatch', unprintable: true},
-    {key: 'usage', name: '단위 중량', formatter: PlaceholderBox, editor: TextEditor, placeholder:'0'},
+    {key: 'usage', name: '단위 중량', formatter: PlaceholderBox, editor: TextEditor, placeholder:'-', inputType:'number', disabledCase: [{key: 'isFirst', value: true}]},
     {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process", placeholder: "-", noSelect:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'mold_id', name: '금형', formatter: MoldInfoModal, unprintable: true},
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal, unprintable: true},
