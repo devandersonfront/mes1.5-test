@@ -179,9 +179,9 @@ export const searchModalList: any = {
         {pk: 'spare', name: '스페어'},
       ], type: 'Modal'},
   ]),
-  bomInfo: (searchList, tabIndex) => ([
+  bomInfo: (searchList, tabIndex, searchType) => ([
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
-    {key: 'code', name: 'CODE', width: 265, formatter: tabIndex === 0 ? SearchModalTest : LineBorderContainer, placeholder: '-', type: 'bom', modalType: true, noSelect:true},
+    {key: 'code', name: 'CODE', width: 265, formatter: tabIndex === 0 ? SearchModalTest : LineBorderContainer, placeholder: '-', type: 'bom', searchType: searchType, modalType: true, noSelect:true},
     {key: 'name', name: '품명', width: 280, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
         {pk: 0, name: '기본'},
@@ -493,6 +493,7 @@ export const searchModalList: any = {
     {key: 'width', formatter: LineBorderContainer , name: '가로(COIL 폭)' ,placeholder:"-",},
     {key: 'height', formatter: LineBorderContainer , name: '세로(Feeder)' ,placeholder:"-",},
     {key: 'type', formatter: LineBorderContainer , name: '재질 종류' ,placeholder:"-",},
+    {key: 'unit', formatter: LineBorderContainer , name: '단위' ,placeholder:"-",},
     {key: 'customer', formatter: LineBorderContainer , name: '거래처' ,placeholder:"-",},
   ],
   subMaterialSearch: [

@@ -195,7 +195,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const filterList = () => {
-    if(row.id?.includes('operation')){
+    if(typeof row.id === 'string' && row.id?.includes('operation')){
       return searchList.map((v, i) => (
           {
             seq: i+1,
@@ -230,9 +230,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
             version: v.version
           }
       ))
-
     }else{
-      if(!searchList.some(v => v.isChange)) return []
       return searchList.map((v, i) => (
           {
             seq: i+1,
@@ -561,7 +559,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
-                  headerList={column.type === "readonly" ?  searchModalList.readOnlyBomInfo : searchModalList.bomInfo(searchList, tabStore?.index)}
+                  headerList={column.type === "readonly" ?  searchModalList.readOnlyBomInfo : searchModalList.bomInfo(searchList, tabStore?.index, column.searchType)}
                   row={searchList ?? [{}]}
                   setRow={(e) => {
                     competeBom([...e])
