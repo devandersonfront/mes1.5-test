@@ -134,13 +134,8 @@ const BasicUser = ({}: IProps) => {
       if(!!!row.authorityPK) throw('권한은 필수입니다.')
       if(!!!row.tmpId) throw('아이디는 필수입니다.')
       if(!!row.tmpId && checkValid(row.tmpId, 'id')) throw('아이디에 한글이 들어갈 수 없습니다.')
-      if(!!!row.user_id){
-        if(!!!row.password) throw('비밀번호는 필수입니다.')
-        if(!!!row['password-confirm']) throw('비밀번호 확인은 필수입니다.')
-      } else {
-        if(!!row.password &&!!!row['password-confirm']) throw('비밀번호 확인은 필수입니다.')
-        if(!!row['password-confirm'] && !!!row.password) throw('비밀번호는 필수입니다.')
-      }
+      if(!!!row.password) throw('비밀번호는 필수입니다.')
+      if(!!!row['password-confirm']) throw('비밀번호 확인은 필수입니다.')
       if(!!row.password && !!row['password-confirm'] && row.password !== row['password-confirm']) throw('비밀번호와 비밀번호 확인이 서로 일치하지 않습니다.')
       if(!!row.password && !checkValid(row.password, 'password')) throw('비밀번호는 8자 이상 16자 이하이어야 하며, 숫자/영문/특수문자(#?!@$%^&*-)를 모두 포함해야 합니다.')
   }
