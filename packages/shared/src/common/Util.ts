@@ -23,7 +23,7 @@ export const checkInteger = (value :string) => {
 
 export const RemoveFirstZero = (value: number | string | null) => {
     const toString = String(value)
-    return toString.startsWith('0') ? toString.substring(1) : toString.startsWith('-0') ? toString.substring(0,1) : toString
+    return toString.startsWith('0') && toString.length > 1 ? toString.charAt(1) === '.' ? toString : toString.substring(1) : toString.startsWith('-0') ? toString.substring(0,1) : toString
 }
 
 export const RemoveSecondMinus = (value: number | string | null) => {
