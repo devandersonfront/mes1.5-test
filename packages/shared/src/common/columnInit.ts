@@ -259,7 +259,14 @@ export const columnlist: any = {
         {pk: '0', name: '생산품'},
         {pk: '1', name: '외주품'},
       ]},
-    {key: 'type', name: '품목 종류',  formatter: DropDownEditor, selectList: [
+    {key: 'type', name: '품목 종류',  formatter: DropDownEditor, headerRenderer: HeaderFilter,
+      options: [
+        {status: undefined, name: '품목 종류'},
+          {status: '0,3', name: '반제품'},
+          {status: '1', name: '재공품'},
+          {status: '2,4', name: '완제품'}
+      ]
+      , selectList: [
         [{pk: '0', name: '반제품'},
         {pk: '1', name: '재공품'},
         {pk: '2', name: '완제품'}],
@@ -887,7 +894,13 @@ export const columnlist: any = {
     { key: "customer_model", name: "모델", width: 118 },
     { key: "code", name: "CODE", width: 250 },
     { key: "name", name: "품명", width: 450 },
-    { key: "type", name: "품목 종류", width: 118 },
+    { key: "type", name: "품목 종류", width: 118, headerRenderer: HeaderFilter,
+      options: [
+        {status: undefined, name: '품목 종류'},
+        {status: '0', name: '반제품'},
+        {status: '1', name: '재공품'},
+        {status: '2', name: '완제품'}
+      ]},
     { key: "unit", name: "단위", width: 118 },
     { key: 'bom', name: 'BOM', formatter: BomInfoModal, width: 118, type: 'readonly' ,unprintable : true},
     { key: 'lot_number', name: 'LOT별 재고', formatter: LotInfoModal, width: 118, type: 'readonly' ,unprintable : true},
