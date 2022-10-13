@@ -176,6 +176,7 @@ const ProductBatchRegister = (props: IProps) => {
           title={'제품 BOM 일괄 등록'}
           buttons={['행추가', '저장하기', '삭제']}
           buttonsOnclick={onClickButton}
+          pageHelper={"각 제품의 바로 밑의 제품은 기본적으로 BOM으로 추가됩니다."}
         />
         <ExcelTable
             headerList={[SelectColumn, ...columns]}

@@ -283,10 +283,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               }}>
                 <option key={'0'} value={0}>원자재</option>
                 <option key={'1'} value={1}>부자재</option>
-                {
-                  column.searchType !== 'bomBatch' && <option key={'2'} value={2}>제품</option>
-                }
-
+                <option key={'2'} value={2}>제품</option>
               </Select>
             </div>
         }

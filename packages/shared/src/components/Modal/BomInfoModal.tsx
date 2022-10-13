@@ -559,7 +559,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
-                  headerList={column.type === "readonly" ?  searchModalList.readOnlyBomInfo : searchModalList.bomInfo(searchList, tabStore?.index, column.searchType)}
+                  headerList={column.type === "readonly" ?  searchModalList.readOnlyBomInfo : searchModalList.bomInfo(searchList, tabStore?.index)}
                   row={searchList ?? [{}]}
                   setRow={(e) => {
                     competeBom([...e])
