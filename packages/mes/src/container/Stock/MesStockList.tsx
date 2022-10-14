@@ -23,7 +23,6 @@ import {
 } from "../../../../shared/src/reducer/menuSelectState";
 import { setExcelTableHeight } from 'shared/src/common/Util'
 import addColumnClass from '../../../../main/common/unprintableKey'
-import { TableSortingOptionType } from 'shared/src/@types/type'
 interface IProps {
   children?: any;
   page?: number;
@@ -45,7 +44,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
   const onColumnFilter = (value:string, key:string) => {
     switch(key){
       case 'type':
-        setTypes(value)
+        setTypes(value ?? undefined)
         break;
     }
     setPageInfo({page:1, total:1})
