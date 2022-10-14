@@ -399,7 +399,7 @@ const EmptyRows = styled.div<{type:string}>`
   background: ${(props:{type:string})=> props.type == "searchModal" ? "white" : "#353B48"};
   // width:1776px;
   // grid-column: '1/-1';
-  color: ${(props: { type:string })=> props.type ? "black" : "none"};
-  border:${(props: {type:string}) => props.type ? "1px solid #B3B3B3" : "none"}
+  color: ${(props: { type:string })=> props.type == "searchModal" ? "black" : "none"};
+  border:${(props: {type:string}) => props.type == "searchModal" ? "1px solid #B3B3B3" : "none"}
 `;
 export {ExcelTable};
