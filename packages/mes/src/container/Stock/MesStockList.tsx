@@ -23,6 +23,7 @@ import {
 } from "../../../../shared/src/reducer/menuSelectState";
 import { setExcelTableHeight } from 'shared/src/common/Util'
 import addColumnClass from '../../../../main/common/unprintableKey'
+import { TableSortingOptionType } from 'shared/src/@types/type'
 interface IProps {
   children?: any;
   page?: number;
@@ -38,8 +39,17 @@ const MesStockList = ({ page, search, option }: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
+  const [types, setTypes] = useState<string>(undefined);
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({page: 1, total: 1,});
 
+  const onColumnFilter = (value:string, key:string) => {
+    switch(key){
+      case 'type':
+        setTypes(value)
+        break;
+    }
+    setPageInfo({page:1, total:1})
+  }
   const reload = (keyword?:string ) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
@@ -51,7 +61,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
 
   useEffect(() => {
     getData(pageInfo.page, keyword)
-  }, [pageInfo.page]);
+  }, [pageInfo.page, types]);
 
   useEffect(() => {
     dispatch(
@@ -62,11 +72,21 @@ const MesStockList = ({ page, search, option }: IProps) => {
     };
   }, []);
 
+  const getRequestParams = (keyword?: string) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    if(types !== undefined) params['types'] = types
+    return params
+  }
+
   const getData = async (page: number = 1, keyword?: string ) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", keyword ? 'stockSearch' : 'stockList', {
-      path: {page: page, renderItem: 18},
-      params: keyword ? { keyword, opt: optionIndex} : null,
+      path: {page: page, renderItem: 12},
+      params: getRequestParams(keyword)
     });
 
     if(res){
@@ -117,14 +137,17 @@ const MesStockList = ({ page, search, option }: IProps) => {
       };
     }))
 
-  // const convertColumn = (menus) => {
-  //   const colNames = menus.map(menu => menu.colName)
-  //   return column.filter((data)=> colNames.includes(data.key))
-  // }
+  const setNewColumn = () => {
+    const newColumn = column.map(col => ({
+      ...col,
+      result: col.options ? onColumnFilter : null,
+    }))
+    setColumn(newColumn)
+  }
 
   const cleanUpData = (res: any) => {
     const newData = convertData(res.info_list)
-    // const newColumn = convertColumn(res.menus)
+    setNewColumn()
     setBasicRow(newData)
     // setColumn(column)
   };
@@ -176,12 +199,12 @@ const MesStockList = ({ page, search, option }: IProps) => {
               setBasicRow(e)
             }}
             //@ts-ignore
-            rowHeight={(args) => (args.row.rowType === 'DETAIL' ? 300 : 45)}
+            rowHeight={(args) => (args.row.rowType === 'DETAIL' ? 300 : 40)}
             selectList={selectList}
             //@ts-ignore
             setSelectList={setSelectList}
             width={1576}
-            height={setExcelTableHeight(basicRow.length)}
+            height={setExcelTableHeight(Math.min(basicRow.length, 18)) + (basicRow.length && basicRow.length < 12 && basicRow.filter(row => row.expanded).length > 0 ? 260 : 0)}
             type={'expandable'}
         />
         <PaginationComponent

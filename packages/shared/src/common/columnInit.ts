@@ -259,7 +259,14 @@ export const columnlist: any = {
         {pk: '0', name: '생산품'},
         {pk: '1', name: '외주품'},
       ]},
-    {key: 'type', name: '품목 종류',  formatter: DropDownEditor, selectList: [
+    {key: 'type', name: '품목 종류',  formatter: DropDownEditor, headerRenderer: HeaderFilter,
+      options: [
+        {status: undefined, name: '품목 종류'},
+          {status: '0,3', name: '반제품'},
+          {status: '1', name: '재공품'},
+          {status: '2,4', name: '완제품'}
+      ]
+      , selectList: [
         [{pk: '0', name: '반제품'},
         {pk: '1', name: '재공품'},
         {pk: '2', name: '완제품'}],
@@ -876,7 +883,7 @@ export const columnlist: any = {
   stockV2 : [
     { key: 'expanded' , name : '' , minWidth : 30 , width : 30 ,
       colSpan(args) {
-        return args.row?.rowType === 'DETAIL' ? 11 : undefined;
+        return args.row?.rowType === 'DETAIL' ? 12 : undefined;
       },
       cellClass(args){
         return args.rowType === 'DETAIL' ? 'detail': undefined;
@@ -887,7 +894,13 @@ export const columnlist: any = {
     { key: "customer_model", name: "모델", width: 118 },
     { key: "code", name: "CODE", width: 250 },
     { key: "name", name: "품명", width: 450 },
-    { key: "type", name: "품목 종류", width: 118 },
+    { key: "type", name: "품목 종류", width: 118, headerRenderer: HeaderFilter,
+      options: [
+        {status: undefined, name: '품목 종류'},
+        {status: '0', name: '반제품'},
+        {status: '1', name: '재공품'},
+        {status: '2', name: '완제품'}
+      ]},
     { key: "unit", name: "단위", width: 118 },
     { key: 'bom', name: 'BOM', formatter: BomInfoModal, width: 118, type: 'readonly' ,unprintable : true},
     { key: 'lot_number', name: 'LOT별 재고', formatter: LotInfoModal, width: 118, type: 'readonly' ,unprintable : true},
@@ -908,13 +921,13 @@ export const columnlist: any = {
   ],
 
   stockDetail : [
-    { key : 'type' , name : '구분' },
-    { key : 'productType' , name : '품목 종류'},
-    { key : 'customer_name' , name : '거래처' },
-    { key : 'customer_model' , name : '모델'},
-    { key : 'code' , name : '코드'},
-    { key : 'stock' , name : '재고' },
-    { key : 'totalWeight' , name : '총중량'},
+    { key : 'type' , name : '구분', width: 15 },
+    { key : 'productType' , name : '품목 종류', width: 15},
+    { key : 'customer_name' , name : '거래처', width: 118 },
+    { key : 'customer_model' , name : '모델', width: 118},
+    { key : 'code' , name : 'CODE', width: 118},
+    { key : 'stock' , name : '재고',width: 118 },
+    { key : 'totalWeight' , name : '총중량',width: 118},
   ],
 
   orderRegister: (basicRow?, setBasicRow?) => ([

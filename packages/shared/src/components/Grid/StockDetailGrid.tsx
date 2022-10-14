@@ -68,11 +68,12 @@ const StockDetailGrid = ({data}) => {
     }
 
     return (
-        <div style={{height : '100%'}}>
+        <div style={{height : '100%', width: '100%'}}>
             <ExcelTable
                 row={material}
                 headerList={columnlist['stockDetail']}
                 height={'100%'}
+                width={'100%'}
             />
         </div>
     );

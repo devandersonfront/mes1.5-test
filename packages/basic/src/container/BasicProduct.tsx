@@ -39,7 +39,6 @@ type ModalType = {
   isVisible : boolean
 }
 
-
 const BasicProduct = ({}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
@@ -52,7 +51,8 @@ const BasicProduct = ({}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectRow , setSelectRow ] = useState<any>(0)
   const [keyword, setKeyword] = useState<string>();
-  const [productType, setProductType] = useState<number>(0);
+  const [productType, setProductType] = useState<string>('0');
+  const [typeIndex, setTypeIndex] = useState<number>(0);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -62,10 +62,31 @@ const BasicProduct = ({}: IProps) => {
     isVisible : false
   })
   const [barcodeData , setBarcodeData] = useState<BarcodeDataType[]>([])
+  const typeOptions = [
+    [ {status: undefined, name: '품목 종류'},
+      {status: '0,3', name: '반제품'},
+      {status: '1', name: '재공품'},
+      {status: '2,4', name: '완제품'}],
+    [ {status: undefined, name: '품목 종류'},
+      {status: '0', name: '반제품'},
+      {status: '1', name: '재공품'},
+      {status: '2', name: '완제품'}],
+    [ {status: undefined, name: '품목 종류'},
+      {status: '3', name: '반제품'},
+      {status: '4', name: '완제품'}],
+    ]
 
-  const changeProductType = (value:number) => {
+  const onColumnFilter = (value:number | string, key:string, index:number) => {
+    switch(key){
+      case 'product_type':
+        if(typeof value === 'string') {
+          setProductType(value);}
+        break;
+      case 'type':
+        setTypeIndex(index)
+        break;
+    }
     setPageInfo({page:1, total:1})
-    setProductType(value);
   }
 
   const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
@@ -79,7 +100,7 @@ const BasicProduct = ({}: IProps) => {
 
   useEffect(() => {
     getData(pageInfo.page, keyword)
-  }, [pageInfo.page, productType]);
+  }, [pageInfo.page, productType, typeIndex]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"제품 등록 관리",sub:""}))
@@ -247,8 +268,8 @@ const BasicProduct = ({}: IProps) => {
         hide: menu.hide,
         sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : col.sortOption ?? null,
         sorts: col.sorts ? sortingOptions : null,
-        result: col.sortOption ? changeOrder : col.selectList ? changeProductType : null,
-
+        result: col.sortOption ? changeOrder : col.options ? onColumnFilter : null,
+        options: col.options ? col.key === 'type' ? typeOptions[productType] as {status:number | string, name:string}[] : col.options : undefined
       }
     })
     setColumn(newCols.concat(addedCols))
@@ -294,6 +315,7 @@ const BasicProduct = ({}: IProps) => {
       params['sorts'] = params['sorts']?.map(sort => sort === 'process_id' ? 'pc.name' : sort)
     }
     if(productType !== undefined) params['outsourcing'] = productType
+    if(typeIndex !== 0 && typeOptions[productType][typeIndex] !== undefined) params['types'] = typeOptions[productType][typeIndex]?.status.split(',') ?? undefined
     return params
   }
 
