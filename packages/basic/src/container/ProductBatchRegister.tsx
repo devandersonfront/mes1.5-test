@@ -33,15 +33,16 @@ const ProductBatchRegister = (props: IProps) => {
   const [columns, setColumns] = useState<Array<IExcelHeaderType>>( columnlist["productBatchRegister"])
   const [selectedList, setSelectedList] = useState<Set<number>>(new Set())
 
-  const validate = (row) => {
+  const validate = (row, rowIdx) => {
     if(!!!row.code) throw('CODE는 필수입니다.')
     if(!!!row.process_id) throw('생산 공정은 필수입니다.')
+    if(rowIdx === rows.length - 1 && !!!row.bom) throw('첫 번째 공정의 BOM은 필수입니다.')
   }
 
   const onSave = async () => {
     try {
       const postBody = rows.map((row, rowIdx) => {
-        validate(row)
+        validate(row,rowIdx)
         return {
           ...row,
           sequence: rows.length - rowIdx - 1,
