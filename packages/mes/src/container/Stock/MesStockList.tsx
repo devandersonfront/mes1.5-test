@@ -39,14 +39,13 @@ const MesStockList = ({ page, search, option }: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
-  const [types, setTypes] = useState<string[]>(undefined);
+  const [types, setTypes] = useState<string>(undefined);
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({page: 1, total: 1,});
 
   const onColumnFilter = (value:string, key:string) => {
     switch(key){
       case 'type':
-        const types = value === null || typeof value !== 'string' ? undefined : value.split(',')
-        setTypes(types)
+        setTypes(value)
         break;
     }
     setPageInfo({page:1, total:1})
@@ -86,7 +85,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
   const getData = async (page: number = 1, keyword?: string ) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", keyword ? 'stockSearch' : 'stockList', {
-      path: {page: page, renderItem: 18},
+      path: {page: page, renderItem: 12},
       params: getRequestParams(keyword)
     });
 
@@ -200,12 +199,12 @@ const MesStockList = ({ page, search, option }: IProps) => {
               setBasicRow(e)
             }}
             //@ts-ignore
-            rowHeight={(args) => (args.row.rowType === 'DETAIL' ? 300 : 45)}
+            rowHeight={(args) => (args.row.rowType === 'DETAIL' ? 300 : 40)}
             selectList={selectList}
             //@ts-ignore
             setSelectList={setSelectList}
             width={1576}
-            height={setExcelTableHeight(basicRow.length)}
+            height={setExcelTableHeight(Math.min(basicRow.length, 18)) + (basicRow.length && basicRow.length < 12 && basicRow.filter(row => row.expanded).length > 0 ? 260 : 0)}
             type={'expandable'}
         />
         <PaginationComponent

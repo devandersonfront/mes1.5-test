@@ -52,7 +52,7 @@ const BasicProduct = ({}: IProps) => {
   const [selectRow , setSelectRow ] = useState<any>(0)
   const [keyword, setKeyword] = useState<string>();
   const [productType, setProductType] = useState<string>('0');
-  const [types, setTypes] = useState<string[]>(undefined);
+  const [typeIndex, setTypeIndex] = useState<number>(0);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -76,15 +76,14 @@ const BasicProduct = ({}: IProps) => {
       {status: '4', name: '완제품'}],
     ]
 
-  const onColumnFilter = (value:number | string, key:string) => {
+  const onColumnFilter = (value:number | string, key:string, index:number) => {
     switch(key){
       case 'product_type':
         if(typeof value === 'string') {
           setProductType(value);}
         break;
       case 'type':
-        const types = value === null || typeof value !== 'string' ? undefined : value.split(',')
-        setTypes(types)
+        setTypeIndex(index)
         break;
     }
     setPageInfo({page:1, total:1})
@@ -101,7 +100,7 @@ const BasicProduct = ({}: IProps) => {
 
   useEffect(() => {
     getData(pageInfo.page, keyword)
-  }, [pageInfo.page, productType, types]);
+  }, [pageInfo.page, productType, typeIndex]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"제품 등록 관리",sub:""}))
@@ -316,7 +315,7 @@ const BasicProduct = ({}: IProps) => {
       params['sorts'] = params['sorts']?.map(sort => sort === 'process_id' ? 'pc.name' : sort)
     }
     if(productType !== undefined) params['outsourcing'] = productType
-    if(types !== undefined) params['types'] = types
+    if(typeIndex !== 0 && typeOptions[productType][typeIndex] !== undefined) params['types'] = typeOptions[productType][typeIndex]?.status.split(',') ?? undefined
     return params
   }
 

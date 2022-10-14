@@ -327,7 +327,6 @@ const DataGridTable = styled(DataGrid)`
             background:none;
             background-color:none;
         }
-        
     }
    
     .rdg-row > .rdg-cell{

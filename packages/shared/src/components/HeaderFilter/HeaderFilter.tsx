@@ -10,7 +10,7 @@ interface IProps {
 }
 
 const HeaderFilter = ({row, column, setRow, onChangeOption}: IProps) => {
-  const getDefaultValue = Array.isArray(column.options[0]) ? column.options[0][0].name : column.options[0].name
+  const getDefaultValue = column.options[0].name
 
   return (
     <Select
@@ -20,7 +20,7 @@ const HeaderFilter = ({row, column, setRow, onChangeOption}: IProps) => {
       }else if(e.target.value === getDefaultValue){
         column.result(null, column.key);
       }else{
-        column.result(e.target.value, column.key);
+        column.result(e.target.value, column.key, e.target.selectedIndex);
       }
     }}>
       {column.options.map((v,i)=>{
