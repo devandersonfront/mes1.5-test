@@ -182,7 +182,7 @@ const ProductBatchRegister = (props: IProps) => {
                     ...newRow,
                     isChange: false,
                     sequence,
-                    isFirst:false
+                    isFirst: newRowIdx === 0
                   }
                 }
               })
