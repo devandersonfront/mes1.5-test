@@ -76,22 +76,22 @@ const MultiSelectModal: React.FunctionComponent<Props> = ({
       )
 
   const Headers = () => (
-    headers.map(header =>
-      <HeaderTable>
+    headers.map((header, headerIdx) =>
+      <HeaderTable key={headerIdx}>
         {
-          header.map(headerItem =>
+          header.map((headerItem, headerItemIdx) =>
             <>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>{headerItem.key}</HeaderTableText>
+              <HeaderTableTitle key={'title' + headerIdx + headerItemIdx}>
+                <HeaderTableText key={'titleText' + headerIdx + headerItemIdx} style={{fontWeight: 'bold'}}>{headerItem.key}</HeaderTableText>
               </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: headerItem.width ?? 144}}>
-                <Tooltip placement={'rightTop'}
+              <HeaderTableTextInput key={'input' + headerIdx + headerItemIdx} style={{width: headerItem.width ?? 144}}>
+                <Tooltip key={'tooltip' + headerIdx + headerItemIdx} placement={'rightTop'}
                          overlay={
-                           <div style={{fontWeight : 'bold'}}>
+                           <div key={'overlay' + headerIdx + headerItemIdx} style={{fontWeight : 'bold'}}>
                              {headerItem.value ?? '-'}
                            </div>
-                         } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
-                  <HeaderTableText>{headerItem.value ?? '-'}</HeaderTableText>
+                         } arrowContent={<div key={'arrow' + headerIdx + headerItemIdx} className="rc-tooltip-arrow-inner"></div>}>
+                  <HeaderTableText key={'inputText' + headerIdx + headerItemIdx}>{headerItem.value ?? '-'}</HeaderTableText>
                 </Tooltip>
               </HeaderTableTextInput>
             </>

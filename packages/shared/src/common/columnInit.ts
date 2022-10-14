@@ -296,6 +296,37 @@ export const columnlist: any = {
     {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer , unprintable: true},
     {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' , unprintable: true}
   ],
+  productBatchRegister: (rows) => ([
+    {key: 'sequence', name: '순서'},
+    {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-'},
+    {key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-'},
+    {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력'},
+    {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
+    {key: 'product_type', name: '구분',  formatter: DropDownEditor, selectList: [
+        {pk: '0', name: '생산품'},
+        {pk: '1', name: '외주품'},
+      ], tab: 'ROLE_BASE_15'},
+    {key: 'type', name: '품목 종류',  formatter: DropDownEditor, selectList: [
+        [{pk: '0', name: '반제품'},
+          {pk: '1', name: '재공품'},
+          {pk: '2', name: '완제품'}],
+        [{pk: '3', name: '반제품'},
+          {pk: '4', name: '완제품'}],
+      ], tab: 'ROLE_BASE_15'},
+    {key: 'unit', name: '단위', formatter: DropDownEditor, selectList: [
+        {pk: 'EA', name: 'EA'},
+        {pk: 'g', name: 'g'},
+        {pk: 'kg', name: 'kg'},
+        {pk: 'Ton', name: 'Ton'},
+        {pk: 'ml', name: 'ml'},
+        {pk: 'L', name: 'L'},
+      ], tab: 'ROLE_BASE_15'},
+    {key: 'bom_root', name: 'BOM', formatter: BomInfoModal, type:"bomRegister", searchType: 'bomBatch', unprintable: true},
+    {key: 'usage', name: '단위 중량', formatter: PlaceholderBox, editor: TextEditor, placeholder:'-', inputType:'number', disabledCase: [{key: 'isFirst', value: true}]},
+    {key: 'process_id', name: '생산 공정', formatter: /*ProcessSearchModal*/ SearchModalTest, type:"process", placeholder: "-", noSelect:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
+    {key: 'mold_id', name: '금형', formatter: MoldInfoModal, unprintable: true},
+    {key: 'machine_id', name: '기계', formatter: MachineInfoModal, unprintable: true},
+  ]),
   rawMaterial: [
     { key: 'code', name: '원자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: "CODE 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
     { key: 'name', name: '원자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: "품명 입력" },

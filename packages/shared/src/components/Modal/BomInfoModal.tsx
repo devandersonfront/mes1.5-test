@@ -195,7 +195,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const filterList = () => {
-    if(row.id?.includes('operation')){
+    if(typeof row.id === 'string' && row.id?.includes('operation')){
       return searchList.map((v, i) => (
           {
             seq: i+1,
@@ -230,9 +230,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
             version: v.version
           }
       ))
-
     }else{
-      if(!searchList.some(v => v.isChange)) return []
       return searchList.map((v, i) => (
           {
             seq: i+1,

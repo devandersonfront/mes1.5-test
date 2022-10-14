@@ -494,6 +494,15 @@ const BasicProduct = ({}: IProps) => {
     }]
   }
 
+  const routeToProductBatchRegister = () => {
+    router.push('/mes/basic/product/batch')
+  }
+
+  const onClickMoreButton = (buttonIdx: number) => {
+    switch(buttonIdx){
+      case 0: routeToProductBatchRegister()
+    }
+  }
 
   const getCheckItems= () => {
     const tempList = []
@@ -526,8 +535,11 @@ const BasicProduct = ({}: IProps) => {
             optionIndex={optionIndex}
             title={"제품 등록 관리"}
             pageHelper={"제품 등록, 삭제는 하나씩 가능"}
-            buttons={[ (selectList.size === 1 && "바코드 미리보기"), "항목관리", "행추가", "저장하기", "삭제", ]}
+            buttons={[ (selectList.size === 1 && "바코드 미리보기"),"항목관리", "행추가", "저장하기", "삭제", ]}
             buttonsOnclick={onClickHeaderButton}
+            moreButtons={['제품 BOM 일괄 등록']}
+            onClickMoreButton={onClickMoreButton}
+
         />
         <ExcelTable
             editable

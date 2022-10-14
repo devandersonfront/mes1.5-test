@@ -78,6 +78,8 @@ export const SearchResultSort = (infoList, type: string) => {
           type: v.type === 2 ? "SHEET" : "COIL",
           type_id:v.type,
           type_name : v.type === 2 ? "SHEET" : "COIL",
+          unit: TransferCodeToValue(v.unit, 'rawMaterialUnit'),
+          unit_id: v.unit
         }
       })
     }
