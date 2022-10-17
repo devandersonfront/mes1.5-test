@@ -365,9 +365,12 @@ const BasicProduct = ({}: IProps) => {
         setModal({type : 'quantity' , isVisible : true})
         break;
       case 1:
-        router.push(`/mes/item/manage/product`)
+        setExcelOpen(true)
         break;
       case 2:
+        router.push(`/mes/item/manage/product`)
+        break;
+      case 3:
         let items = {}
 
         column.map((col) => {
@@ -397,14 +400,14 @@ const BasicProduct = ({}: IProps) => {
         ])
         break;
 
-      case 3:
+      case 4:
         if(selectList.size > 1){
           return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
         }
         SaveBasic()
 
         break;
-      case 4:
+      case 5:
         if(selectList.size === 0){
           return Notiflix.Report.warning(
               '경고',
@@ -535,7 +538,7 @@ const BasicProduct = ({}: IProps) => {
             optionIndex={optionIndex}
             title={"제품 등록 관리"}
             pageHelper={"제품 등록, 삭제는 하나씩 가능"}
-            buttons={[ (selectList.size === 1 && "바코드 미리보기"),"항목관리", "행추가", "저장하기", "삭제", ]}
+            buttons={[ (selectList.size === 1 && "바코드 미리보기"),"엑셀","항목관리", "행추가", "저장하기", "삭제", ]}
             buttonsOnclick={onClickHeaderButton}
             moreButtons={['제품 BOM 일괄 등록']}
             onClickMoreButton={onClickMoreButton}
@@ -596,16 +599,13 @@ const BasicProduct = ({}: IProps) => {
             isVisible={modal.type === 'quantity' && modal.isVisible}
         />
 
-        {/* <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`금형기준정보`}
-        sheetname={`금형기준정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
-      /> */}
+        <ExcelDownloadModal
+            isOpen={excelOpen}
+            category={"product"}
+            title={"제품 등록 관리"}
+            setIsOpen={setExcelOpen}
+            resetFunction={() => reload()}
+        />
       </div>
   );
 }
