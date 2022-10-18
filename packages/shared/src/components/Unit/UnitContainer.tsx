@@ -43,7 +43,7 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
       <UnitBox className={'layoutCenter'}>
         {
           column.searchType === 'rawin'
-            ? <span>{TransferCodeToValue(row.unit,'rawMaterialUnit')}</span>
+            ? <span>{TransferCodeToValue(row.unit_id,'rawMaterialUnit')}</span>
             : column.type === 'selectUnit'
               ? <span>{row.unit}</span>
               : column.selectList ?
