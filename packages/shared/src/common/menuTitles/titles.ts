@@ -48,7 +48,7 @@ export const titles = {
     _toolList: '공구 입고 리스트',
     _toolStock: '공구 재고 현황',
     mesQualityMgmt: '품질 관리',
-    _defectList: '불량 통계 (자주검사 관리)',
+    _defectList: '불량 통계',
     _midRangeList: '초ㆍ중ㆍ종 검사 리스트',
     _stdList: '작업 표준서 관리',
     _changeNoti: '변경점 정보 등록',
@@ -139,6 +139,23 @@ export const bkTitles = {
     _midRangeList: '자주 검사 관리(초ㆍ중ㆍ종 검사 리스트)',
     _changeNoti: '제품 변경점 관리(변경점 정보 등록)',
     _changeList: '제품 변경점 관리(변경점 정보 리스트)',
+}
+
+export const customTitles = {
+    customerMgmt: '고객사 관리(거래처 관리)',
+    _customerMgmt: '고객사 정보 관리(거래처 정보 관리)',
+    _modelMgmt: '고객사 모델 관리(모델 관리)',
+    documentMgmt: '표준 문서 관리(문서 관리)',
+    _orderList: '수주 관리(수주 현황)',
+    _deliveryList: '납품 관리(납품 현황)',
+    _midRangeList: '자주 검사 리스트(초ㆍ중ㆍ종 검사 리스트)',
+    _stdList: '작업 표준서 리스트(작업 표준서 관리)',
+    _changeList: '제품 변경점 리스트(변경점 정보 리스트)',
+    _manHour: '원가지수(작업공수)(C)',
+    _defect: '품질지수(품질 불량률)(Q)',
+    _oLeadTime: '납기지수(수주/납품 리드타임)(D)',
+    _powerUsage: '에너지지수(전력사용량)(E)',
+    _uph: '생산지수(UPH)(P)',
 }
 
 
