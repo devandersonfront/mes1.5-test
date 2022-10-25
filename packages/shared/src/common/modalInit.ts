@@ -23,6 +23,12 @@ import {LotInputInfoModal} from "../components/Modal/LotInputInfoModal";
 import { BomInfoModal } from '../components/Modal/BomInfoModal'
 import { MultiSelectModal } from '../components/Modal/SearchModalTest/MultiSelectModal'
 import { IExcelHeaderType } from '../@types/type'
+import {HeaderSort} from "../components/HeaderSort/HeaderSort";
+import {InputMaterialInfoModal} from "../components/Modal/InputMaterialInfoModal";
+import {WorkRegisterModal} from "../components/Modal/WorkRegisterModal";
+import {WorkListModal} from "../components/Modal/WorkListModal";
+import {BomRegisterInit} from "../components/Modal/InfoModal/InfoModalInit";
+import {FinishButton} from "../components/Buttons/FinishButton";
 
 export const searchModalList: any = {
   member: [
@@ -357,7 +363,7 @@ export const searchModalList: any = {
     {key: 'date', name: '입고일', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'warehousing', name: '입고량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
     {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, textAlign: 'center', placeholder: "0", textType:"Modal", type: 'selectUnit'},
-    {key: 'amount', name: '생산량', formatter: UnitContainer, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"},
+    {key: 'amount', name: '생산량', formatter: UnitContainer, editor: TextEditor, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"},
   ],
   OutsourcingInputListReadonly: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
@@ -641,5 +647,13 @@ export const searchModalList: any = {
     {key: 'order_quantity', name: '총 발주량', formatter:LineBorderContainer, readonly:true, placeholder: '-'},
     {key: 'order_date', name: '발주일', formatter:LineBorderContainer, readonly:true, placeholder: '-'},
     {key: 'due_date', name: '입고 희망일', formatter:LineBorderContainer, readonly:true, type:'basic', action:'register'},
+  ],
+  sheetSearch : [
+    { key: "contract_id", name: "작업지시서", noSelect:true,formatter:LineBorderContainer},
+    { key: "identification", name: "지시 고유 번호" ,formatter:LineBorderContainer},
+    { key: "deadline", name: "작업 기한",formatter:LineBorderContainer},
+    { key: "product_id", name: "CODE" ,formatter:LineBorderContainer},
+    { key: "name", name: "품명" ,formatter:LineBorderContainer},
+    { key: "goal", name: "목표 생산량" ,formatter:LineBorderContainer},
   ]
 }

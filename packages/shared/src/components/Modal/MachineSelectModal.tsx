@@ -54,7 +54,18 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
 
     useEffect(() => {
         if(isOpen){
-            LoadBasic(row.productId)
+            if(column.type != "ai") {
+                LoadBasic(row.productId ?? row.product.product_id)
+            }else{
+                let aiData:any = {}
+                aiData.sequence = row.machine.sequence
+                aiData.name = row.machine.machine.name
+                aiData.mfrCode = row.machine.machine.mfrCode
+                aiData.machineType = row.machine.machine.type
+                aiData.isDefault = true
+                aiData.setting = true
+                setSearchList([aiData])
+            }
             setSummaryData({
                 identification: row.identification,
                 lot_number: row.lot_number ?? '-',

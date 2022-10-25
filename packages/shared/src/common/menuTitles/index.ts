@@ -42,6 +42,10 @@ export const BasicTitles = (customTarget?: string) => {
       ...basicDefault,
       _modelMgmt: toMenu(dohwaTitles._modelMgmt, '/mes/basic/customer/model'),
     }
+    case 'ai' : return {
+      ...basicDefault,
+      _modelMgmt: toMenu(dohwaTitles._modelMgmt, '/mes/basic/customer/model'),
+    }
     default: return basicDefault
   }
 }
@@ -135,6 +139,17 @@ export const MesTitles = (customTarget?: string) => {
       _defectList: toMenu(dohwaTitles._defectList,'/mes/quality/defect'),
       _midRangeList: toMenu(dohwaTitles._midRangeList,'/mes/quality/midrange/list'),
 
+    }
+    case 'ai': return {
+
+      ...mesDefault,
+      pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList']),
+      // _opReg: toMenu(titles._opReg,'/mes/operationV1u/register'),
+      // _opList: toMenu(titles._opList,'/mes/operationV1u/list'),
+      // _todayOpList: toMenu(titles._todayOpList,'/mes/operationV1u/list/today'),
+      // _opReList: toMenu(titles._opReList,'/mes/recordV2/list'),
+      _opAiReList: toMenu(titles._opAiReList,'/mes/ai/recordV2/list'),
+      // _opComList: toMenu(titles._opComList,'/mes/finishV2/list'),
     }
     default: return mesDefault
   }

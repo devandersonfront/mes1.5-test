@@ -4,6 +4,7 @@ import { searchModalList } from '../common/modalInit'
 import { getUsageType, TransferType } from '../common/Util'
 
 export const SearchResultSort = (infoList, type: string) => {
+  console.log(infoList, type)
   const noneSelected = '(선택 없음)'
   switch(type) {
     case 'user': {
@@ -226,7 +227,29 @@ export const SearchResultSort = (infoList, type: string) => {
       })
 
     }
+    case 'sheet' : {
+      const columnKeys = searchModalList.sheetSearch.map(columns => columns.key)
+      console.log("columnKeys : ", columnKeys)
+      return infoList.map((v) => {
+        console.log("v : ", v)
+        const tool = v.tool
+        let obj = {}
+        // columnKeys.map(column => obj[column] = tool[column] === undefined ? noneSelected : tool[column])
+        return {
+          ...obj,
+          ...v,
+          name:v.product.name ?? "-",
+          product_id:v.product.code ?? "-",
+          // cm_id:v.product.model,
 
+          contract_id:v?.contract?.contract_id ?? "-",
+          // customer: tool.customer?.name,
+          // customerArray: tool.customer,
+          // isDefault: getUsageType(v.setting),
+          // goal:
+        }
+      })
+    }
     default :
       return infoList
 
@@ -234,6 +257,7 @@ export const SearchResultSort = (infoList, type: string) => {
 }
 
 export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean, usedInModal?: boolean, columnType?: string) => {
+  console.log("selectData : ", selectData, type)
   switch(type) {
     case 'user': {
       return {
@@ -402,6 +426,15 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         code: selectData.tool_id,
         tool_id: selectData.code,
         border: usedInModal
+      }
+    }
+    case 'sheet' :{
+      return {
+        ...selectData,
+        border: usedInModal,
+        os_id: selectData.os_id,
+        osId: selectData.os_id,
+        operation_sheet:selectData
       }
     }
     default : {
