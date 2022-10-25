@@ -115,14 +115,8 @@ const AiMesRecord = ({}: IProps) => {
             params['opt'] = optionIndex
         }
         params['from'] = date ? date.from: selectDate.from
-        // params['from'] = new Date("2022-01-01").toISOString()
         params['to'] = date ? date.to : selectDate.to
-        // params['to'] = new Date("2022-10-31").toISOString()
-        // params['order'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
-        // params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
-        // params['fin'] = !isNaN(radioIdx) ? !radioIdx : !recordState
-        // params['rangeNeeded'] = true
-        params['status'] = [0,1]
+        params['status'] = [0]
         return params
     }
 
@@ -152,8 +146,8 @@ const AiMesRecord = ({}: IProps) => {
     };
 
     const DeleteBasic = async (save?:boolean) => {
-        const result = {...deleteBasic[0]}
-        result.status = save ? 2: 1
+        const result = deleteBasic.filter((v) => selectList.has(v.id))[0]
+        result.status = save ? 2 : 1
         let res = await RequestMethod('post', `aiRecordSave`, result);
 
         if (res && !save) {

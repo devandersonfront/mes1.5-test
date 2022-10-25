@@ -13,6 +13,7 @@ import {PeriodSelectCalendar} from "./PeriodSelectCalendar";
 //@ts-ignore
 import IcSearchButton from '../../../public/images/btn_radio_check.png'
 import {CurrentDate} from "./CurrentDate";
+import DropDown from '../Dropdown/DropDown';
 
 interface SelectParameter {
   from:string
@@ -57,6 +58,8 @@ interface IProps {
   onSearch?:(keyword:string) => void
   searchKeyword?: string
   noCode?: boolean
+  moreButtons?: string[]
+  onClickMoreButton?: (index:number) => void
 }
 
 
@@ -102,7 +105,7 @@ const useStyles2 = makeStyles(_ => {
 });
 
 const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsOnclick, isSearch, style,
-                  searchOptionList, onChangeSearchOption, isCalendar, onChangeSelectDate,
+                  searchOptionList, onChangeSearchOption, isCalendar, onChangeSelectDate, moreButtons, onClickMoreButton,
                   calendarType, setState, optionIndex, dataLimit, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code,
                   isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch, searchKeyword, noCode, radioButtons, onChangeRadioIndex, radioIndex}: IProps) => {
 
@@ -243,6 +246,12 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                     })
                 }
                 </ButtonWrapper>
+                {
+                  moreButtons && <DropDown items={moreButtons} onClick={onClickMoreButton}>
+                    <span style={{marginLeft: 10,fontSize: '30px', color: 'white', fontWeight: 'bold'}} className="material-symbols-outlined">more_vert
+                    </span>
+                  </DropDown>
+                }
               </ButtonWrapper>
             </div>
           </div>

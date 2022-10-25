@@ -37,10 +37,10 @@ export interface IExcelHeaderType {
   disableType?: string
   disabledCase?: {key: any, value: any}[]
   textType?: string
-  options?:{status:number, name:string}[]
+  options?:{status:number | string, name:string}[]
   sortOption?: string
   sorts?: {orders:string[], sorts:string[]}
-  result?:(value:number | string | boolean, key?:string) => void
+  result?:(value:number | string | boolean, key?:string, index?:number) => void
   staticCalendar?: boolean
   clearContract?: boolean
   maxDate?:boolean

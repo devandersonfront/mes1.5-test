@@ -499,6 +499,7 @@ export const searchModalList: any = {
     {key: 'width', formatter: LineBorderContainer , name: '가로(COIL 폭)' ,placeholder:"-",},
     {key: 'height', formatter: LineBorderContainer , name: '세로(Feeder)' ,placeholder:"-",},
     {key: 'type', formatter: LineBorderContainer , name: '재질 종류' ,placeholder:"-",},
+    {key: 'unit', formatter: LineBorderContainer , name: '단위' ,placeholder:"-",},
     {key: 'customer', formatter: LineBorderContainer , name: '거래처' ,placeholder:"-",},
   ],
   subMaterialSearch: [

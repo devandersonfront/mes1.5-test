@@ -10,15 +10,17 @@ interface IProps {
 }
 
 const HeaderFilter = ({row, column, setRow, onChangeOption}: IProps) => {
+  const getDefaultValue = column.options[0].name
+
   return (
     <Select
-        defaultValue={column.options[0].name} onChange={(e)=>{
+        defaultValue={getDefaultValue} onChange={(e)=>{
       if(Number(e.target.value) === -1){
         column.result("0,1,2,3,4/");
-      }else if(e.target.value === column.options[0].name){
-        column.result(null);
+      }else if(e.target.value === getDefaultValue){
+        column.result(null, column.key);
       }else{
-        column.result(e.target.value, column.key);
+        column.result(e.target.value, column.key, e.target.selectedIndex);
       }
     }}>
       {column.options.map((v,i)=>{

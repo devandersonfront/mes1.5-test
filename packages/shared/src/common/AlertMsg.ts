@@ -1,6 +1,7 @@
 export const alertMsg = {
   noData: "데이터를 입력해주세요.",
   noSelectedData: '선택된 정보가 없습니다.',
+  noFirstDelete: '첫번째 행은 삭제할 수 없습니다.',
   noBom: 'BOM 정보가 없습니다.',
   needsBom: '투입자재를 선택해 주세요.',
   noLotNumber: 'LOT번호를 입력해 주세요.',
@@ -24,5 +25,6 @@ export const alertMsg = {
   exportedNotUpdatable: '출고된 정보는 수정할 수 없습니다.',
   importedNotUpdatable: '입고된 정보는 수정할 수 없습니다.',
   duplicateLotNumber:'LOT번호는 중복될 수 없습니다.',
-  noOperation:'작업지시서를 선택해주세요.'
+  noOperation:'작업지시서를 선택해주세요.',
+  duplicateCode:'중복된 CODE 입니다.'
 }

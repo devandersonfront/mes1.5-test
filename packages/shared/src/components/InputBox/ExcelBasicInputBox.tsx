@@ -27,12 +27,12 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   const checkIfNegative = (value: string) : boolean => {
     return value.startsWith("-")
   }
+
   const isDisabled: boolean = column.readonly || (column.disabledCase && column.disabledCase.length > 0 && column.disabledCase.some((dcase) => row[dcase.key] === dcase.value))
   const autoFocus = (input: HTMLInputElement | null) => {
     input?.focus()
   }
   const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|\\|<|>*]/;
-
   const validInput = (input: string) => {
     const escapes = ["\\", "<", ">", "*"]
     if(escapes.includes(input)){

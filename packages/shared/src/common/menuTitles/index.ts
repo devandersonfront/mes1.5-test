@@ -1,4 +1,4 @@
-import {titles, dohwaTitles, bkTitles} from './titles'
+import {titles, dohwaTitles, bkTitles,customTitles} from './titles'
 import {auth} from './auth'
 
 function toMenu(title: string, url: string, subMenu ?: string[]) {
@@ -45,6 +45,13 @@ export const BasicTitles = (customTarget?: string) => {
     case 'ai' : return {
       ...basicDefault,
       _modelMgmt: toMenu(dohwaTitles._modelMgmt, '/mes/basic/customer/model'),
+    }
+    case 'custom' : return {
+      ...basicDefault,
+      customerMgmt: toMenu(customTitles.customerMgmt, '/mes/basic/factory', ['_customerMgmt', '_modelMgmt']),
+      _customerMgmt: toMenu(customTitles._customerMgmt, '/mes/basic/customer'),
+      _modelMgmt: toMenu(customTitles._modelMgmt, '/mes/basic/customer/model'),
+      documentMgmt: toMenu(customTitles.documentMgmt, '/mes/basic/document'),
     }
     default: return basicDefault
   }
@@ -131,7 +138,6 @@ export const MesTitles = (customTarget?: string) => {
       _orderList: toMenu(dohwaTitles._orderList,'/mes/order/list'),
       _deliveryReg: toMenu(dohwaTitles._deliveryReg,'/mes/delivery/register'),
       _deliveryList: toMenu(dohwaTitles._deliveryList,'/mes/delivery/list'),
-
       //품질관리;
       _stdList: toMenu(dohwaTitles._stdList,'/mes/quality/work/standardlist'),
       _changeNoti: toMenu(dohwaTitles._changeNoti,'/mes/quality/product/change/register'),
@@ -141,15 +147,22 @@ export const MesTitles = (customTarget?: string) => {
 
     }
     case 'ai': return {
-
       ...mesDefault,
       pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList']),
-      // _opReg: toMenu(titles._opReg,'/mes/operationV1u/register'),
-      // _opList: toMenu(titles._opList,'/mes/operationV1u/list'),
-      // _todayOpList: toMenu(titles._todayOpList,'/mes/operationV1u/list/today'),
-      // _opReList: toMenu(titles._opReList,'/mes/recordV2/list'),
       _opAiReList: toMenu(titles._opAiReList,'/mes/ai/recordV2/list'),
-      // _opComList: toMenu(titles._opComList,'/mes/finishV2/list'),
+    }
+    case 'custom' : return {
+      ...mesDefault,
+      _orderList: toMenu(customTitles._orderList,'/mes/order/list'),
+      _deliveryList: toMenu(customTitles._deliveryList,'/mes/delivery/list'),
+      _midRangeList: toMenu(customTitles._midRangeList,'/mes/quality/midrange/list'),
+      _stdList: toMenu(customTitles._stdList,'/mes/quality/work/standardlist'),
+      _changeList: toMenu(customTitles._changeList,'/mes/quality/product/change/list'),
+      _manHour: toMenu(customTitles._manHour,'/mes/kpi/manhour'),
+      _defect: toMenu(customTitles._defect,'/mes/kpi/defect'),
+      _oLeadTime: toMenu(customTitles._oLeadTime,'/mes/kpi/leadtime/order'),
+      _powerUsage: toMenu(customTitles._powerUsage,'/mes/kpi/powerusage'),
+      _uph: toMenu(customTitles._uph,'/mes/kpi/uph'),
     }
     default: return mesDefault
   }

@@ -160,14 +160,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
             })
 
           }else if(column.tab === 'ROLE_BASE_15'){
-            if(column.key === 'type'){
-              onRowChange({
-                ...row,
-                [column.key]:filterValue(event.target.value),
-                [column.key+"_id"]: pkValue ?? undefined,
-                isChange: true,
-              })
-            } else if(column.key === 'product_type'){
+            if(column.key === 'product_type'){
               onRowChange({
                 ...row,
                 [column.key]:filterValue(event.target.value),
@@ -177,6 +170,13 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
                 isChange: true,
                 readonly: pkValue !== '0'
               })
+            } else {
+                onRowChange({
+                  ...row,
+                  [column.key]:filterValue(event.target.value),
+                  [column.key+"_id"]: pkValue ?? undefined,
+                  isChange: true,
+                })
             }
           }else {
             return onRowChange({

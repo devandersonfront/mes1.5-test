@@ -47,6 +47,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
     raw_material: {
       ...row.raw_material,
       type:row.raw_material?.type_id,
+      unit:row.raw_material?.unit_id,
       customer : row?.customerArray?.customer_id ? row.customerArray : null,
     },
     version: undefined,

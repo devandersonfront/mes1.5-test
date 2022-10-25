@@ -342,6 +342,7 @@ const BasicMachineV1u = ({option}: IProps) => {
         weldingType: row.weldingType ? weldingType[row.weldingType].name : "선택없음",
         factory_id: row.factory?.name,
         affiliated_id: row.subFactory?.name,
+        interworkPK : String(row.interwork),
         id: `machine_${random_id}`,
       }
     })
