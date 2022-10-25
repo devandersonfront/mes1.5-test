@@ -16,13 +16,15 @@ import { SelectColumn } from "react-data-grid";
 import Notiflix from "notiflix";
 import { useRouter } from "next/router";
 import { NextPageContext } from "next";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState,} from "shared/src/reducer/menuSelectState";
 import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import {BarcodeDataType} from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
+import {selectUserInfo} from "shared/src/reducer/userInfo";
+import {unUsedCompanyCode} from "shared/src/common/companyCode";
 
 export interface IProps {
   children?: any;
@@ -40,6 +42,7 @@ const optionList = ["원자재 CODE", "원자재 품명", "재질", "거래처",
 const BasicRawMaterial = ({}: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const userInfo = useSelector(selectUserInfo)
   const [excelOpen, setExcelOpen] = useState<boolean>(false);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
@@ -612,6 +615,9 @@ const BasicRawMaterial = ({}: IProps) => {
       material_code: quantityData.code,
       material_customer: quantityData.customer?.name ?? "-",
       material_model: quantityData.model?.model ?? "-",
+      material_machine_name : null,
+      material_size :String((quantityData.width * quantityData.height).toFixed(1)),
+      material_texture : quantityData?.type
     }]
   }
 
@@ -646,7 +652,7 @@ const BasicRawMaterial = ({}: IProps) => {
           }}
           optionIndex={optionIndex}
           title={"원자재 기준정보"}
-          buttons={[ (selectList.size === 1 && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]}
+          buttons={[ (selectList.size === 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]}
           buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
@@ -685,15 +691,15 @@ const BasicRawMaterial = ({}: IProps) => {
             setPageInfo({...pageInfo, page:page})
           }}
         />
-      <BarcodeModal
-          title={'바코드 미리보기'}
-          handleBarcode={handleBarcode}
-          handleModal={handleModal}
-          type={'rawMaterial'}
-          data={barcodeData}
-          isVisible={modal.type === 'barcode' && modal.isVisible}
-      />
 
+        <BarcodeModal
+            title={'바코드 미리보기'}
+            handleBarcode={handleBarcode}
+            handleModal={handleModal}
+            type={'rawMaterial'}
+            data={barcodeData}
+            isVisible={modal.type === 'barcode' && modal.isVisible}
+        />
       <QuantityModal
           onClick={onClickQuantity}
           onClose={onCloseQuantity}
