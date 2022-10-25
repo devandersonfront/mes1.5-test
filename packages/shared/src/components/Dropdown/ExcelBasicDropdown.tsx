@@ -18,7 +18,15 @@ interface IProps {
 // 스페어 0
 // 기본 1
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
-
+  const getSelectList = () => {
+    if(column.key === 'type' && column.tab === 'ROLE_BASE_15'){
+      const selectListIdx = row.product_type ==='생산품' ? 0 : 1
+      return column.selectList?.[selectListIdx] ?? []
+    }else {
+      return column.selectList ?? []
+    }
+  }
+  const selectList: any[] = getSelectList()
   const cleanValue = (type?:string) => {
     switch(type){
       case "spare":
@@ -61,11 +69,10 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
   }
 
   //
-
   return (
     <>
     {
-      (column.name !== '용접 종류' || row.type ==='용접기') ? <select
+      (!(column.tab === 'ROLE_BASE_04' && column.key === 'weldingType') || row.type ==='용접기') ? <select
       className={'editDropdown'}
       style={{
         appearance: 'none',
@@ -89,7 +96,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         })
 
         let pkValue = ""
-        column.selectList?.map((v) => {
+        selectList?.map((v) => {
           if(v.name === event.target.value){
             if(v[pk]){
               pkValue = v[pk]
@@ -108,7 +115,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
 
           // if(column.key === 'customer' || column.key === "Modal") {
             let tmpCrn = ''
-            column.selectList.map(v => {
+          selectList.map(v => {
               if(v.name === event.target.value) {
                 tmpCrn = v.crn
               }
@@ -138,7 +145,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
           }
 
 
-          if(column.name === '기계 종류' && event.target.value !=='용접기'){
+          if((column.tab === 'ROLE_BASE_04' && column.key === 'type') && event.target.value !=='용접기'){
 
             return onRowChange({
               //@ts-ignore
@@ -152,7 +159,26 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
               weldingType_id: null
             })
 
-          }else{
+          }else if(column.tab === 'ROLE_BASE_15'){
+            if(column.key === 'product_type'){
+              onRowChange({
+                ...row,
+                [column.key]:filterValue(event.target.value),
+                [column.key+"_id"]: pkValue ?? undefined,
+                type: '반제품',
+                type_id: pkValue === '0' ? 0 : 3,
+                isChange: true,
+                readonly: pkValue !== '0'
+              })
+            } else {
+                onRowChange({
+                  ...row,
+                  [column.key]:filterValue(event.target.value),
+                  [column.key+"_id"]: pkValue ?? undefined,
+                  isChange: true,
+                })
+            }
+          }else {
             return onRowChange({
               //@ts-ignore
               ...row,
@@ -169,11 +195,13 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         }
       }}
     >
-      {column.selectList && column.selectList.map((title) => {
+      {
+        selectList.map((title) => {
         return (<option style={{background:column.type === "Modal" ? "white" : "#353b48"}} key={title.pk} value={title.name}>
           {title.name}
         </option>)
-      })}
+      })
+      }
 
     </select>
           :

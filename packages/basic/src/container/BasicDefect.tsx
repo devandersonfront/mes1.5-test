@@ -132,15 +132,15 @@ const BasicDefect = ({}: IProps) => {
   const DeleteBasic = async () => {
     const rowsToDelete = defectBasicRow.filter((row)=> selectIds.has(row.id))
     const rowsToRemain = defectBasicRow.filter((row)=> !selectIds.has(row.id)).map((row, idx) => ({...row, seq: idx + 1}))
-    const rowsToRequest = rowsToDelete.filter((row) => row.ppr_id)
+    const rowsToRequest = rowsToDelete.filter((row) => row.pdr_id)
 
     try{
       if(rowsToRequest.length > 0){
-        await RequestMethod('delete','pauseDelete', rowsToRequest)
+        await RequestMethod('delete','defectDelete', rowsToRequest)
       }
-      Notiflix.Report.success('삭제되었습니다.','','확인');
+      Notiflix.Report.success('삭제되었습니다.','','확인', () => {
       setDefectBasicRow(rowsToRemain)
-      setSelectIds(new Set())
+      setSelectIds(new Set())})
     } catch (e) {
 
     }

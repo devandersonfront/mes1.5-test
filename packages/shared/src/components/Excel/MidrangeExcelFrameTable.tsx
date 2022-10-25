@@ -38,7 +38,8 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
             inspection_info: hasResult ? modalData.inspection_info : initializeInspectionInfo(modalData.inspection_info),
             inspection_result: hasResult ? modalData.inspection_result : initializeInspectionResult(modalData.samples),
             inspection_time: modalData.inspection_time,
-            samples: modalData.samples
+            samples: modalData.samples,
+            operation_inspection_id: modalData?.operation_inspection_id
         }
         setModalData(newData)
     },[])
@@ -94,15 +95,49 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
     }
 
 
+    const minDate = (type:inspectionType) => {
+        switch(type){
+            case 'beginning': return undefined
+            case 'middle': return modalData.inspection_time.beginning
+            case 'end': return modalData.inspection_time.middle
+        }
+    }
+
     const getCriteria = (type: inspectionType) => {
         return (
           <div style={{display:'flex'}}>
               <div style={{flex: 1.5}}>
                   <BottomLeftBorder style={{backgroundColor: 'white', height: '100%'}}>
-                      <MidrangeDatetimePickerBox readOnly={readOnly} value={modalData.inspection_time[type]} onDateChange={(date)=>
+                      <MidrangeDatetimePickerBox minDate={minDate(type)} readOnly={readOnly} value={modalData.inspection_time[type]} onDateChange={(date)=>
                       {
+                          const dateStr = date.format("YYYY-MM-DD[T]HH:mm:00")
                           const newData = {...modalData}
-                          newData.inspection_time[type] = date.format("YYYY-MM-DD[T]HH:mm:ss")
+                          newData.inspection_time[type] = dateStr
+                          switch(type){
+                              case 'beginning':
+                                  if(dateStr > newData.inspection_time['middle'] || dateStr > newData.inspection_time['end']){
+                                    newData.inspection_time['middle'] = dateStr
+                                    newData.inspection_time['end'] = dateStr
+                                  }
+                                  break;
+                              case 'middle':
+                                  if(dateStr < newData.inspection_time['beginning']){
+                                     newData.inspection_time['beginning'] = dateStr
+                                  }
+                                  if (dateStr > newData.inspection_time['end']){
+                                     newData.inspection_time['end'] = dateStr
+                                  }
+                                  break;
+                              case 'end':
+                                  if(dateStr < newData.inspection_time['beginning']){
+                                      newData.inspection_time['beginning'] = dateStr
+                                  }
+                                  if (dateStr > newData.inspection_time['middle']){
+                                      newData.inspection_time['middle'] = dateStr
+                                  }
+                                  break;
+                              default:
+                          }
                           setModalData(newData)
                       }}/>
                   </BottomLeftBorder>

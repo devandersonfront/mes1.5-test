@@ -71,7 +71,6 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
         start: row.date + " 00:00:00",
         end: row.date + " 00:00:00",
         standardStartDate : row.date,
-        standardEndDate : moment('2999-12-31').subtract(1, 'days').toDate(),
         ...row,
         sum: 0,
         defect_reasons: [],
@@ -101,10 +100,18 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
             //   lotTotalAmountMap.set(bom.osb_id, currentAmount + Number(bom.lot.amount))
           })
         }
-
         return {
           ...v,
-          bom: v.molds?.length > 0 ? v.bom.map(bom => ({...bom, lot: {...bom.lot, amount: new Big(Number(bom.lot.amount)).div(v.cavity).toString()}})) : v.bom,
+          bom: v.bom.map(bom => {
+            const outsourcing = bom.bom?.type === 2 && bom.bom.child_product.type > 2
+            const lotKey = outsourcing ? 'child_lot_outsourcing' :'child_lot_record'
+            return {
+              ...bom,
+              lot: {
+                ...bom.lot,
+                [lotKey]: bom.lot?.[lotKey],
+                amount: v.molds?.length > 0 ? new Big(Number(bom.lot.amount)).div(v.cavity).toString() : bom.lot.amount}}
+          }),
           operation_sheet: {
             ...row,
             status: typeof row.status_no === "string" ? transferStringToCode('workStatus', row.status_no) : row.status_no
@@ -113,12 +120,12 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
             return{
               ...tool,
               tool:{
-                ...tool.tool,
-                setting: 0,
-                used: Number(tool.tool.tool.used),
+                sequence: tool.tool?.sequence,
+                setting: 1,
+                used: Number(tool.tool.used),
                 tool: {
                   ...tool.tool.tool,
-                  customer: tool.tool.tool.customerArray
+                  customer: tool.tool.customerArray
                 }
               }}
           }).filter(v=>v.tool.tool.code),

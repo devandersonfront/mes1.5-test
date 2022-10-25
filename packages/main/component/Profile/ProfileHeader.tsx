@@ -6,13 +6,15 @@ import Notiflix from 'notiflix'
 //@ts-ignore
 import ic_profile from '../../public/images/ic_profile.png'
 import {useDispatch, useSelector} from 'react-redux'
-import { selectUserInfo, setUserInfo } from 'shared/src/reducer/userInfo'
+import {selectUserInfo, setUserInfo} from 'shared/src/reducer/userInfo'
+import {RequestMethod} from "shared";
 
 //웰컴, 로그인 페이지 네비게이션 컴포넌트
 const ProfileHeader = () => {
   const router = useRouter()
   const userInfo = useSelector(selectUserInfo)
   const dispatch = useDispatch()
+
   useEffect(() => {
     let userInfo = cookie.load('userInfo')
     if(userInfo === undefined){
@@ -22,7 +24,9 @@ const ProfileHeader = () => {
       dispatch(setUserInfo({
         name: userInfo ? userInfo.name : "",
         profile: userInfo ? userInfo.profile: "",
-        authority : userInfo ? userInfo.ca_id.name : ""
+        authority : userInfo ? userInfo.ca_id.name : "",
+        userId : userInfo.user_id,
+        companyCode : userInfo.company
       }))
     } catch (e){
       Notiflix.Report.failure("경고","잘못된 접근입니다.","확인", () => {
@@ -31,6 +35,17 @@ const ProfileHeader = () => {
       })
     }
   }, [])
+
+  const sendLogApi = async () => {
+    await RequestMethod(
+        'post',
+        'logOut',
+        null,
+        null,
+        null,
+        {userId : userInfo.userId , companyCode : userInfo.companyCode}
+    )
+  }
 
 
   return (
@@ -56,9 +71,11 @@ const ProfileHeader = () => {
           cursor: 'pointer',
         }} onClick={() => {
           Notiflix.Loading.dots('MES System 로그아웃...')
-          cookie.remove("userInfo",{path:"/"})
+          sendLogApi().then(()=>{
+            cookie.remove("userInfo",{path:"/"})
+            router.push('/').then(() => Notiflix.Loading.remove(500))
+          })
           // removeLocalstorage(['userToken', 'userInfo'])
-          router.push('/').then(() => Notiflix.Loading.remove(500))
         }}>
           Log out
         </a>

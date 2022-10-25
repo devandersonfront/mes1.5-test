@@ -24,6 +24,7 @@ import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/U
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
+import { alertMsg } from 'shared/src/common/AlertMsg'
 interface IProps {
   children?: any;
   page?: number;
@@ -269,102 +270,34 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     const res = await RequestMethod(
       "delete",
       `subinDelete`,
-      basicRow
-        .map((row, i) => {
-          if (selectList.has(row.id)) {
-            let selectKey: string[] = [];
-            let additional: any[] = [];
-            column.map((v) => {
-              if (v.selectList) {
-                selectKey.push(v.key);
-              }
-
-              if (v.type === "additional") {
-                additional.push(v);
-              }
-            });
-
-            return {
-              ...row,
-              additional: [
-                ...additional
-                  .map((v) => {
-                    if (row[v.name]) {
-                      return {
-                        id: v.id,
-                        title: v.name,
-                        value: row[v.name],
-                        unit: v.unit,
-                      };
-                    }
-                  })
-                  .filter((v) => v),
-              ],
-            };
-          }
-        })
-        .filter((v) => v)
-    );
+      basicRow.filter(row => selectList.has(row.id)))
 
     if (res) {
-      Notiflix.Loading.remove(200);
       Notiflix.Report.success("삭제되었습니다.", "", "확인", () => reload())
     }
   };
 
-  const downloadExcel = () => {
-    let tmpSelectList: boolean[] = [];
-    basicRow.map((row) => {
-      tmpSelectList.push(selectList.has(row.id));
-    });
-    excelDownload(column, basicRow, `mold`, "mold", tmpSelectList);
-  };
-
   const onClickHeaderButton = (index: number) => {
+    const noneSelected = selectList.size === 0
+    if(noneSelected){
+      return Notiflix.Report.warning('경고', alertMsg.noSelectedData,"확인")
+    }
     switch (index) {
       case 0:
-        if (selectList.size <= 0) {
-          Notiflix.Report.warning("데이터를 선택해주세요.", "", "확인");
-          return;
+        const selectedRows = basicRow.filter(v => selectList.has(v.id))
+        const exported = selectedRows.some(row => row.warehousing !== row.current )
+        if(exported){
+          Notiflix.Report.warning('경고',alertMsg.exportedNotUpdatable,"확인")
+        } else {
+          dispatch(setModifyInitData({
+            modifyInfo: selectedRows,
+            type: "subin"
+          }))
+          router.push('/mes/submaterialV1u/modify')
         }
-        dispatch(
-          setModifyInitData({
-            modifyInfo: [
-              ...basicRow
-                .map((v) => {
-                  if (selectList.has(v.id)) {
-                    return v;
-                  }
-                  return false;
-                })
-                .filter((v) => v),
-            ],
-            type: "subin",
-          })
-        );
-        router.push("/mes/submaterialV1u/modify");
-        break;
-      case 2:
-        router.push(`/mes/item/manage/mold`);
         break;
       case 1:
-        if (selectList.size === 0) {
-          return Notiflix.Report.warning(
-            "경고",
-            "데이터를 선택해 주시기 바랍니다.",
-            "확인"
-          );
-        }
-        Notiflix.Confirm.show(
-          "경고",
-          "삭제하시겠습니까?",
-          "확인",
-          "취소",
-          () => {
-            DeleteBasic();
-          },
-          () => { }
-        );
+        Notiflix.Confirm.show("경고","데이터를 삭제하시겠습니까?", "확인", "취소", () => DeleteBasic())
         break;
     }
   };

@@ -66,7 +66,7 @@ const WorkModifyModal = ({row, isOpen, setIsOpen}: IProps) => {
         name: row.operation_sheet?.product?.name,
         type: row.operation_sheet?.product?.type
         || row.operation_sheet?.product?.type === 0
-            ? TransferCodeToValue(row.operation_sheet?.product?.type, 'productType')
+            ? TransferCodeToValue(row.operation_sheet?.product?.type, 'product')
             : null,
         process: row.product?.process?.name,
         unit: row.operation_sheet?.product?.unit,

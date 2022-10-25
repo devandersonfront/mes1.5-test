@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {IExcelHeaderType} from '../../@types/type'
+import { IExcelHeaderType, TransferType } from '../../@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'
@@ -14,7 +14,7 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {UploadButton} from '../../styles/styledComponents'
-import {TransferCodeToValue} from '../../common/TransferFunction'
+import { TransferCodeToValue, TransferValueToCode } from '../../common/TransferFunction'
 import {
   add_summary_info,
   change_summary_info_index,
@@ -111,49 +111,51 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
     }
 
     tmpData = row.map((v, i) => {
-      let childData: any = {}
-      let type = "";
+      const bomDetail:{childData:any, bomType: TransferType, objectKey:string} = {
+        childData: {},
+        bomType: undefined,
+        objectKey: undefined
+      }
       switch(v.type){
         case 0:{
-          childData = v.child_rm
-          type = v.child_rm.type == "1" ? "Kg" : v.child_rm.type == "2" ? "장" : "-";
+          const childData = {...v.child_rm}
+          childData.unit = TransferCodeToValue(childData.unit, 'rawMaterialUnit')
+          bomDetail['childData'] = childData
+          bomDetail['bomType'] = 'rawMaterial'
+          bomDetail['objectKey'] = 'raw_material'
           break;
         }
         case 1:{
-          childData = v.child_sm
-          type = "1";
+          bomDetail['childData'] = v.child_sm
+          bomDetail['bomType'] = 'subMaterial'
+          bomDetail['objectKey'] = 'sub_material'
           break;
         }
         case 2:{
-          childData = v.child_product
-          type = "2";
+          bomDetail['childData'] = v.child_product
+          bomDetail['bomType'] = 'product'
+          bomDetail['objectKey'] = 'product'
           break;
         }
       }
+
       return {
-        ...childData,
+        ...bomDetail.childData,
         seq: i+1,
-        code: childData.code,
+        code: bomDetail.childData.code,
         type: v.type,
+        type_id: bomDetail.childData.type,
         tab: v.type,
-        name: childData.name,
-        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterial" : v.type === 1 ? "subMaterial" : "product"),
-        unit: childData.unit ?? type,
+        name: bomDetail.childData.name,
+        product_type: v.type !== 2 ? '-' : TransferCodeToValue(bomDetail.childData?.type, 'productType'),
+        type_name: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
+        unit: bomDetail.childData.unit,
         usage: v.usage,
         version: v.version,
-        processArray: childData.process ?? null,
-        process: childData.process ? childData.process.name : null,
-        // bom_root_id: childData.bom_root_id,
-        product: v.type === 2 ?{
-          ...childData,
-        }: null,
+        processArray: bomDetail.childData.process ?? null,
+        process: bomDetail.childData.process ? bomDetail.childData.process.name : null,
+        [bomDetail.objectKey]: {...bomDetail.childData},
         product_id: v.parent?.product_id,
-        raw_material: v.type === 0 ?{
-          ...childData,
-        }: null,
-        sub_material: v.type === 1 ?{
-          ...childData,
-        }: null,
         parent:v.parent,
         setting:v.setting
       }
@@ -193,7 +195,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const filterList = () => {
-    if(row.id?.includes('operation')){
+    if(typeof row.id === 'string' && row.id?.includes('operation')){
       return searchList.map((v, i) => (
           {
             seq: i+1,
@@ -202,7 +204,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               additional: row.additional ?? [],
               process: row.processArray,
               model: row.model === '' ? null : row.modelData,
-              type: row.type_id ?? row.type === '완제품' ? 2 : 1,
+              type: row.type_id ?? row.type,
               product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
               code: row.code,
               customer: row.customer === '' || row.customer?.id === null ? null : row.customerData
@@ -214,7 +216,8 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
             child_rm: v.tab === 0 ? {
               ...v.raw_material,
               border:false,
-              type:v.raw_material.type_id
+              type: v.type_id,
+              unit:TransferValueToCode(v.unit, 'rawMaterialUnit'),
             } : null,
             child_sm: v.tab === 1 ? {
               ...v.sub_material,
@@ -227,9 +230,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
             version: v.version
           }
       ))
-
     }else{
-      if(!searchList.some(v => v.isChange)) return []
       return searchList.map((v, i) => (
           {
             seq: i+1,
@@ -238,7 +239,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
               additional: row.additional ?? [],
               process: row.processArray,
               model: row.model?.id ? row.modal : null,
-              type: row.type_id ?? row.type === '완제품' ? 2 : 1,
+              type: row.type_id,
               product_id: typeof row.product_id === 'string' ? row.product.product_id : row.product_id ?? row.productId,
               code: row.code,
               work_standard_image: row.work_standard_image?.uuid,
@@ -250,7 +251,8 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
             } : null,
             child_rm: v.tab === 0 ? {
               ...v.raw_material,
-              type:v.raw_material.type_id,
+              type: v.type_id,
+              unit: TransferValueToCode(v.unit, 'rawMaterialUnit'),
               border: false
             } : null,
             child_sm: v.tab === 1 ? {
@@ -268,8 +270,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const executeValidation = () => {
-
-    const hasNoData = searchList.length === 0
+    const hasNoData = Number(row.type_id) < 3 && searchList.length === 0
     const hasInvalidData = searchList.some(v => !v.rm_id && !v.sm_id && !v.product?.product_id)
     const hasDefaultSetting = checkDefaultSetting()
 
@@ -281,7 +282,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
       throw("품목별 기본설정은 최소 한개 이상 필요합니다.")
     }
   }
-
 
   const SaveBasic = async () => {
       const body = filterList()
@@ -467,7 +467,8 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
     [
       {key:'CODE', value: headerData?.code ?? row?.code ?? "-"},
       {key:'품명', value: headerData?.name ?? row?.name ?? "-"},
-      {key:'품목 종류', value: headerData?.type ? TransferCodeToValue(headerData.type, 'productType') : row?.type || row?.type === 0 ? TransferCodeToValue(row.type, 'productType') : "-"},
+      {key:'구분', value: headerData?.type_id ? TransferCodeToValue(headerData.type_id, 'productType') : row?.type_id || row?.type_id === 0 ? TransferCodeToValue(row.type_id, 'productType') : "-"},
+      {key:'품목 종류', value: headerData?.type ? TransferCodeToValue(headerData.type, 'product') : row?.type || row?.type === 0 ? TransferCodeToValue(row.type, 'product') : "-"},
       {key:'생산 공정', value: headerData?.process?.name ?? row?.processArray?.name ?? "-"}
     ],
     [

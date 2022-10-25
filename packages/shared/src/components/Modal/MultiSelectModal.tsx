@@ -37,6 +37,7 @@ interface Props {
   indexKey?: string
   changeRow?: (e: any) => any
   validateConfirm?: () => void
+  disabled?: boolean
 }
 
 
@@ -59,6 +60,7 @@ const MultiSelectModal: React.FunctionComponent<Props> = ({
                                                       indexKey = 'seq',
                                                       changeRow,
                                                       validateConfirm,
+                                                      disabled
                                                     }) => {
 
   const ModalButton = () =>
@@ -67,29 +69,29 @@ const MultiSelectModal: React.FunctionComponent<Props> = ({
           padding: '3.5px 0px 0px 3.5px',
           width: '100%'
         }}>
-          <UploadButton style={hasData ? {width: '100%', backgroundColor: '#ffffff00'} : undefined} onClick={onModalButtonClick}>
+          <UploadButton style={hasData ? {width: '100%', backgroundColor: '#ffffff00'} : { opacity: disabled ? .3 : 1}} onClick={() => disabled ? undefined : onModalButtonClick()}>
             <p style={hasData ? {color: 'white', textDecoration: 'underline'} : undefined}>{buttonTitle} {hasData ? '보기' : '등록'}</p>
           </UploadButton>
         </div>
       )
 
   const Headers = () => (
-    headers.map(header =>
-      <HeaderTable>
+    headers.map((header, headerIdx) =>
+      <HeaderTable key={headerIdx}>
         {
-          header.map(headerItem =>
+          header.map((headerItem, headerItemIdx) =>
             <>
-              <HeaderTableTitle>
-                <HeaderTableText style={{fontWeight: 'bold'}}>{headerItem.key}</HeaderTableText>
+              <HeaderTableTitle key={'title' + headerIdx + headerItemIdx}>
+                <HeaderTableText key={'titleText' + headerIdx + headerItemIdx} style={{fontWeight: 'bold'}}>{headerItem.key}</HeaderTableText>
               </HeaderTableTitle>
-              <HeaderTableTextInput style={{width: headerItem.width ?? 144}}>
-                <Tooltip placement={'rightTop'}
+              <HeaderTableTextInput key={'input' + headerIdx + headerItemIdx} style={{width: headerItem.width ?? 144}}>
+                <Tooltip key={'tooltip' + headerIdx + headerItemIdx} placement={'rightTop'}
                          overlay={
-                           <div style={{fontWeight : 'bold'}}>
+                           <div key={'overlay' + headerIdx + headerItemIdx} style={{fontWeight : 'bold'}}>
                              {headerItem.value ?? '-'}
                            </div>
-                         } arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
-                  <HeaderTableText>{headerItem.value ?? '-'}</HeaderTableText>
+                         } arrowContent={<div key={'arrow' + headerIdx + headerItemIdx} className="rc-tooltip-arrow-inner"></div>}>
+                  <HeaderTableText key={'inputText' + headerIdx + headerItemIdx}>{headerItem.value ?? '-'}</HeaderTableText>
                 </Tooltip>
               </HeaderTableTextInput>
             </>
@@ -238,6 +240,7 @@ const HeaderTableText = styled.p`
   font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const HeaderTableTitle = styled.div`

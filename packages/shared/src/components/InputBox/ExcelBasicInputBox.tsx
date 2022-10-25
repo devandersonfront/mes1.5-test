@@ -27,12 +27,12 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   const checkIfNegative = (value: string) : boolean => {
     return value.startsWith("-")
   }
+
   const isDisabled: boolean = column.readonly || (column.disabledCase && column.disabledCase.length > 0 && column.disabledCase.some((dcase) => row[dcase.key] === dcase.value))
   const autoFocus = (input: HTMLInputElement | null) => {
     input?.focus()
   }
   const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|\\|<|>*]/;
-
   const validInput = (input: string) => {
     const escapes = ["\\", "<", ">", "*"]
     if(escapes.includes(input)){
@@ -65,18 +65,19 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onClose(true)
           Notiflix.Report.warning('수정할 수 없습니다.', '작업지시 고유 번호가 있으면 수정할 수 없습니다.', '확인')
         }else if(column.key === 'tmpId' && row[column.key]){
-          if(!row.isChange || row.user_id){
+          if(!row.isChange && row.user_id){
             onClose(true)
             return Notiflix.Report.warning('수정할 수 없습니다.', '아이디는 수정할 수 없습니다.', '확인')
           }
         }else if(column.key === 'amount' && row.setting){
           onClose(true)
           Notiflix.Report.warning('수정할 수 없습니다.', '사용여부가 부 입니다.', '확인')
-        }else if(column.readonly && row.mold_id){
+        }else if(column.readonly && row.mold_id) {
           onClose(true)
           return Notiflix.Report.warning('수정할 수 없습니다.', '', '확인')
-        }
-        if(column.type === "stockAdmin"){
+        }else if(column.key === 'order_quantity' && !!row.bom){
+          return Notiflix.Report.warning('경고', '발주량을 수정할 수 없습니다.', '확인')
+        }if(column.type === "stockAdmin"){
           if(row?.changeRows && !row.changeRows?.includes(column.key)){
             onRowChange({...row, changeRows:[...row.changeRows, column.key]})
           }else if(row?.changeRows){

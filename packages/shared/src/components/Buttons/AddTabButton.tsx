@@ -58,32 +58,95 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         })
         break;
       case 2:
-        res = await RequestMethod('get', `cncRecordSearch`, {
-          path:{
-            page:initPage? initPage: inputMaterial.page,
-            renderItem:15
-          },
-          params: {
-            from: "2000-01-01",
-            to:moment().format("YYYY-MM-DD"),
-            productIds: inputMaterial.product_id,
-            nz: action === 'register',
-            rangeNeeded:true,
-            sorts:['end', 'recordId'],
-            order:['asc', 'asc']
-          }
-        })
+        if(inputMaterial.type < 3)
+        {
+          res = await RequestMethod('get', `cncRecordSearch`, {
+            path:{
+              page:initPage? initPage: inputMaterial.page,
+              renderItem:15
+            },
+            params: {
+              from: "2000-01-01",
+              to:moment().format("YYYY-MM-DD"),
+              productIds: inputMaterial.product_id,
+              nz: action === 'register',
+              rangeNeeded:true,
+              sorts:['end', 'recordId'],
+              order:['asc', 'asc']
+            }
+          })
+        } else {
+          res = await RequestMethod('get', 'outsourcingImportSearch', {
+            path:{
+              page:initPage? initPage: inputMaterial.page,
+              renderItem:15
+            },
+            params: {
+              from: "2000-01-01",
+              to:moment().format("YYYY-MM-DD"),
+              productIds: inputMaterial.product_id,
+              nz: action === 'register',
+              sorts:['importDate', 'osiId'],
+              order:['asc', 'asc']
+            }
+          })
+        }
         break;
     }
     if(res){
+      // const lots = Array.isArray(row.bom) ? row.bom.map((bom) => bom.lot) : [row.bom].map((bom) => bom.lot)
       const parsedRes = ParseResponse(res)
+      // const lots2 = Array.isArray(row.bom) ? row.bom.map((bom) => bom.lot) : [row.bom].map((bom) => bom.lot)
+      // const lotList = lots2.map((v, i) => {
+      //         let type, date, warehousing, elapsed
+      //         switch(v?.type){
+      //           case 0:
+      //             type = 'child_lot_rm'
+      //             date = v.date
+      //             warehousing = v.warehousing
+      //             elapsed = v.elapsed
+      //             break
+      //           case 1 :
+      //             type = 'child_lot_sm'
+      //             date = v.date
+      //             warehousing = v.warehousing
+      //             elapsed = null
+      //             break
+      //           case 2:
+      //             if(row.product_type === '외주품'){
+      //               type = 'child_lot_outsourcing'
+      //               date = moment(v[type].import_date).format("YYYY-MM-DD")
+      //               warehousing = v[type].warehousing
+      //               elapsed = null
+      //             } else {
+      //               type = 'child_lot_record'
+      //               date = moment(v[type].end).format("YYYY-MM-DD")
+      //               warehousing = v[type].good_quantity
+      //               elapsed = null
+      //             }
+      //             break
+      //         }
+      //         return {
+      //           ...v,
+      //           ...v[type],
+      //           date,
+      //           elapsed,
+      //           warehousing,
+      //           current: v.current,
+      //           amount: v.amount,
+      //           seq: i+1,
+      //         }
+      //       })
       const lots =  {
+        ...row,
         ...inputMaterial,
         page: res.page,
         total: res.totalPages,
         clicked: true,
-        lotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.rowLotList,...parsedRes],
-        rowLotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.rowLotList,...parsedRes],
+        lotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.lotList,...parsedRes],
+        // lotList: lotList,
+        // lotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.lotList,...parsedRes],
+        // rowLotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.rowLotList,...parsedRes],
         loadMaterialLot
       }
       if(setInput){
@@ -99,13 +162,12 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
   }
 
   const updateLotList = () => {
-    let lots = []
-    lots = row.bom?.map((bom) => bom.lot)
+    const lots = Array.isArray(row.bom) ? row.bom.map((bom) => bom.lot) : [row.bom].map((bom) => bom.lot)
     onRowChange({
       ...row,
-      lotList: [...lots.map((v, i) => {
-        let type, date, warehousing, elapsed, current
-        switch(v.type){
+      lotList: lots.map((v, i) => {
+        let type, date, warehousing, elapsed
+        switch(v?.type){
           case 0:
             type = 'child_lot_rm'
             date = v.date
@@ -119,10 +181,17 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
             elapsed = null
             break
           case 2:
-            type = 'child_lot_record'
-            date = moment(v[type].end).format("YYYY-MM-DD")
-            warehousing = v[type].good_quantity
-            elapsed = null
+            if(row.product_type === '외주품'){
+              type = 'child_lot_outsourcing'
+              date = moment(v[type].import_date).format("YYYY-MM-DD")
+              warehousing = v[type].warehousing
+              elapsed = null
+            } else {
+              type = 'child_lot_record'
+              date = moment(v[type].end).format("YYYY-MM-DD")
+              warehousing = v[type].good_quantity
+              elapsed = null
+            }
             break
         }
         return {
@@ -135,19 +204,20 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           amount: v.amount,
           seq: i+1,
         }
-      })]
+      })
     })
   }
 
   const lotNotReadOnlyEvent = () => {
+    // updateLotList()
     if(row.action === 'modifyAndNoStock') {
       loadMaterialLot(row.tab, 1, row.action)
-    } else if(row.originalStock === 0){
-      return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
+    // } else if(row.originalStock === 0){
+    //   return  Notiflix.Report.warning("경고", "재고가 없습니다.", "확인", )
     }
     // if(row.bom_info !== null){
     else {
-      loadMaterialLot(row.tab, 1, row.action)
+      loadMaterialLot(row.tab, 1, row.action, row.bom && {rm_id:row.bom[0].bom.childRmId})
     }
   }
 
@@ -180,9 +250,10 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
           cursor: 'pointer',
         }} onClick={() => {
           if(column.key === 'lot'){
-            if(column.type === 'readonly'){
+            if(column.readonly){
               lotReadOnlyEvent()
             }else{
+              // lotReadOnlyEvent()
               lotNotReadOnlyEvent()
             }
           }else {

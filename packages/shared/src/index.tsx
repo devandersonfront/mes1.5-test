@@ -56,7 +56,6 @@ export {
   SF_ENDPOINT_FILE,
   SF_ENDPOINT_RESOURCE,
   //권한관리
-  AUTHORITY_LIST
 } from "./common/configset"
 
 export {excelDownload} from "./common/excelDownloadFunction"
@@ -133,7 +132,7 @@ export {MemberSearchModal} from './components/Modal/MemeberSearchModal'
 export {ModelSearchModal} from './components/Modal/ModelSearchModal'
 export {OperationMachineSearchModal} from './components/Modal/OperationMachineSearchModal'
 export {OperationSearchModal} from './components/Modal/OperationSearchModal'
-export {PauseModal} from './components/Modal/PauseModal'
+// export {PauseModal} from './components/Modal/PauseModal'
 export {PoorQuantityModal} from './components/Modal/PoorQuantityModal'
 export {ProcessSearchModal} from './components/Modal/ProcessSearchModal'
 export {ProcessSeqModal} from './components/Modal/ProcessSeqModal'

@@ -110,9 +110,9 @@ const ExportButton = ({row, column}: IProps) => {
                                     <HeaderTableText>{selectDate}</HeaderTableText>
                                 </HeaderTableTextInput>
                                     <img className={'unprintable'} src={Calendar_icon} style={{width:32,height:32,fill:"black"}} onClick={() => setCalendarOpen(!calendarOpen)}/>
-
                                 {
                                   calendarOpen &&  <div style={{position:"absolute",top:39, zIndex:1}} >
+
                                    <Calendar defaultView={"month"} minDate={column.action === 'register' ? new Date(row.date) : column.type === 'rawMaterial' ? new Date(row.lot_raw_material.date) : new Date(row.lot_sub_material.date)} onClickDay={(e)=>{
                                        const selectDate = moment(e).format('YYYY-MM-DD')
                                        setSelectDate(selectDate)
@@ -160,6 +160,9 @@ const ExportButton = ({row, column}: IProps) => {
                                     rowData.export_type = 1
                                 }else if(isNaN(Number(rowData.export_type))){
                                     rowData.export_type = TransferValueToCode(rowData.export_type, "export")
+                                }
+                                if(!!!rowData.date){
+                                    rowData['date'] = selectDate
                                 }
                                 row.onClickReturnEvent(rowData, setIsOpen)
                             }} style={{background:POINT_COLOR}}>

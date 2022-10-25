@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { IExcelHeaderType } from '../../@types/type'
 import { UnitBox, UnitValue, UnitWrapper } from '../../styles/styledComponents'
-import Big from 'big.js'
-import { isInteger } from 'lodash'
-import styled from 'styled-components'
+import { TransferCodeToValue, TransferValueToCode } from '../../common/TransferFunction'
 
 
 
@@ -31,14 +29,6 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
     setTitle(fixNumber !== undefined ? fixNumber : "")
   }, [row[column.key]])
 
-  const unitToInt = (unit : string) : 0 | 1 | undefined  => {
-    switch(unit){
-      case 'kg': return 0
-      case '장': return 1
-      default: return undefined
-    }
-  }
-
   return (
     <UnitWrapper style={{ backgroundColor: row.border ? '#19B9DF80': undefined}}>
       <UnitValue>
@@ -53,14 +43,14 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
       <UnitBox className={'layoutCenter'}>
         {
           column.searchType === 'rawin'
-            ? <span>{row.type ? row.type === 'COIL' ? 'kg' : '장' : ''}</span>
+            ? <span>{TransferCodeToValue(row.unit_id,'rawMaterialUnit')}</span>
             : column.type === 'selectUnit'
               ? <span>{row.unit}</span>
               : column.selectList ?
                   <select
                     style={{background : 'inherit' , border : 'none' , marginRight : 5, color : '#fff'}}
                     onChange={e => {
-                      onRowChange({...row, unit : unitToInt(e.target.value) , isChange: true})
+                      onRowChange({...row, unit : TransferValueToCode(e.target.value, 'rawMaterialUnit') , isChange: true})
                     }}
                     defaultValue={column.selectList?.filter(select => select.pk === row.unit)?.[0].name}
                   >

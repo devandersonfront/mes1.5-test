@@ -18,7 +18,7 @@ interface IProps {
   width?: number | string
   maxWidth?:number
   rowHeight?: number
-  height?:number
+  height?:number | string
   maxHeight?:number
   editable?: boolean
   resizable?: boolean
@@ -28,7 +28,7 @@ interface IProps {
   setSelectRow?: (index: number) => void
   setSelectList?: (selectedRows: ReadonlySet<number>) => void
   selectList?: ReadonlySet<number>
-  type?: 'searchModal'
+  type?: 'searchModal'| 'expandable'
   disableVirtualization?: boolean
   selectPage?:number
   setSelectPage?:(value:number)=>void
@@ -93,6 +93,21 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
         (previousValue, currentValue) => previousValue + currentValue,
     )
   }
+
+  const expandRowsChange = (rows, {indexes}) => {
+    const row = rows[indexes[0]];
+    if (!row.expanded) {
+      rows.splice(indexes[0] + 1, 1);
+    } else {
+      rows.splice(indexes[0] + 1, 0, {
+        detail: row.detail,
+        rowType: 'DETAIL',
+        id: 'detail' + row.id,
+      });
+    }
+    setSelectRow && setSelectRow(indexes)
+    setRow(rows,indexes)
+  }
   
   const showDataGrid = () => {
 
@@ -147,6 +162,9 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
         editable: editable,
       }}
       onRowsChange={(data, idx) => {
+        if(type === 'expandable'){
+          return expandRowsChange(data,idx)
+        }
         setSelectRow && setSelectRow(idx.indexes[0])
         setRow(data, idx.indexes[0])}}
       onSelectedRowsChange={(row) =>{
@@ -175,6 +193,19 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
       //@ts-ignore
       onScroll={(e:ScrollState) => {
         scrollEnd && scrollEnd(isAtBottom(e))
+      }}
+        //@ts-ignore
+      rowClass={(row : any) => {
+        switch (row.type) {
+          case '원자재' :
+            return 'rawMaterial_Line'
+          case '부자재' :
+            return 'subMaterial_Line'
+          case '제품' :
+            return 'product_Line'
+          default :
+            return
+        }
       }}
     />
   }
@@ -217,6 +248,29 @@ const DataGridTable = styled(DataGrid)`
     padding: 0 8px;
   }
   
+  .rdg-cell:has(+ .detail) .rdg-checkbox-label {
+    display : none;
+  }
+  
+  .detail {
+    padding : 15px !important;
+    background : #2d2d31 !important;
+  }
+  
+  .detail + .rdg-cell > div {
+    display : none !important;
+  }
+  
+  .detail .rawMaterial_Line .rdg-cell{
+     background : #7d7d7f !important;
+  }
+  .detail .subMaterial_Line .rdg-cell{
+     background : #525555 !important;
+  }
+  .detail .product_Line .rdg-cell{
+     background : #282b2c !important;
+  }
+
   ${(props:any) => props.state === "searchModal" ? `
     .rdg-checkbox-input:not(checked) + div{
         width:20px;
@@ -273,7 +327,6 @@ const DataGridTable = styled(DataGrid)`
             background:none;
             background-color:none;
         }
-        
     }
    
     .rdg-row > .rdg-cell{
@@ -346,7 +399,7 @@ const EmptyRows = styled.div<{type:string}>`
   background: ${(props:{type:string})=> props.type == "searchModal" ? "white" : "#353B48"};
   // width:1776px;
   // grid-column: '1/-1';
-  color: ${(props: { type:string })=> props.type ? "black" : "none"};
-  border:${(props: {type:string}) => props.type ? "1px solid #B3B3B3" : "none"}
+  color: ${(props: { type:string })=> props.type == "searchModal" ? "black" : "none"};
+  border:${(props: {type:string}) => props.type == "searchModal" ? "1px solid #B3B3B3" : "none"}
 `;
 export {ExcelTable};

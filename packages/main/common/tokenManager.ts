@@ -8,14 +8,16 @@ function setToken(userInfo:any,) {
   expires.setDate(Date.now() + 1000 * 60 * 60 * 24)
   const cookieInfo = {
     ca_id: {
-      authorities: userInfo.ca_id.authorities
+      authorities: userInfo.ca_id.authorities,
+      name: userInfo.ca_id.name
     },
     token: userInfo.token,
     company: userInfo.company,
     id: userInfo.id,
     name: userInfo.name,
     user_id: userInfo.user_id,
-    profile: userInfo.profile
+    profile: userInfo.profile,
+    additional: []
   }
   cookie.save(
     'userInfo'

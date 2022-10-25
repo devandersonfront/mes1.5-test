@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {IExcelHeaderType} from '../../@types/type'
+import { IExcelHeaderType, TransferType } from '../../@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'
@@ -13,20 +13,19 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
-import {TransferCodeToValue} from '../../common/TransferFunction'
+import { TransferCodeToValue, TransferValueToCode } from '../../common/TransferFunction'
 import {useDispatch} from 'react-redux'
 import {change_summary_info_index, insert_summary_info, reset_summary_info} from '../../reducer/infoModal'
 import {UploadButton} from "../../styles/styledComponents";
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
+import { ParseResponse } from '../../common/Util'
 
 interface IProps {
   column: IExcelHeaderType
   row: any
   onRowChange: (e: any) => void
 }
-
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [{title: '거래처', infoWidth: 144, key: 'customer'}, {title: '모델', infoWidth: 144, key: 'model'},],
@@ -39,17 +38,11 @@ const headerItems:{title: string, infoWidth: number, key: string, unit?: string}
   [{title: '단위', infoWidth: 144, key: 'unit'},{title: '목표 생산량', infoWidth: 144, key: 'goal'},],
 ]
 
-const summaryDummy = {customer: '-', model: '-', code: 'SU-20210701-3', name:'SU900-1', type: 'type', unit: 'EA', goal: 50}
-
-
 const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
   const dispatch = useDispatch()
 
-
-
   const [bomDummy, setBomDummy] = useState<any[]>([
-    // {customer: '-', model: '-', code: 'SU-20210701-3', name:'SU900-1', type: 'type', unit: 'EA'},
   ])
   const [summaryData, setSummaryData] = useState<any>({})
 
@@ -137,35 +130,32 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const changeRow = (tmpRow: any, key?: string) => {
-    let tmpData = []
-    let tmpRows = [];
-    if(typeof tmpRow === 'string'){
-      let tmpRowArray = tmpRow.split('\n')
-
-      tmpRows = tmpRowArray.map(v => {
-        if(v !== ""){
-          let tmp = JSON.parse(v)
-          return tmp
-        }
-      }).filter(v=>v)
-    }else{
-      tmpRows = [{...tmpRow}]
-    }
-    tmpData = tmpRows.map((v, i) => {
-      let childData: any = {}
-      let rmType
+    const parsedRes = ParseResponse(tmpRow)
+    return parsedRes.map((v, i) => {
+      const bomDetail:{childData:any, bomType: TransferType, objectKey: string} = {
+        childData: {},
+        bomType: undefined,
+        objectKey: undefined
+      }
       switch(v.type){
         case 0:{
-          childData = v.child_rm
-          rmType = childData.type === 1 ? 'kg' : '장'
+          const childData = {...v.child_rm}
+          childData.unit = TransferCodeToValue(childData.unit, 'rawMaterialUnit')
+          bomDetail['childData'] = childData
+          bomDetail['bomType'] = 'rawMaterial'
+          bomDetail['objectKey'] = 'raw_material'
           break;
         }
         case 1:{
-          childData = v.child_sm
+          bomDetail['childData'] = v.child_sm
+          bomDetail['bomType'] = 'subMaterial'
+          bomDetail['objectKey'] = 'sub_material'
           break;
         }
         case 2:{
-          childData = v.child_product
+          bomDetail['childData'] = v.child_product
+          bomDetail['bomType'] = 'product'
+          bomDetail['objectKey'] = 'product'
           break;
         }
       }
@@ -178,44 +168,35 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
           code: v.parent?.code,
           name: v.parent?.name,
           process: v.parent?.process?.name,
-          type: TransferCodeToValue(v.parent.type, 'productType'),
+          type: TransferCodeToValue(v.parent.type, 'product'),
           unit: v.parent?.unit,
           goal: row.goal,
         })
       }
 
       return {
-        ...childData,
+        ...bomDetail.childData,
         seq: i+1,
-        code: childData.code,
-        type: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterial" : v.type === 1 ? "subMaterial" : "product"),
+        code: bomDetail.childData.code,
+        type: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
         tab: v.type,
-        type_name: TransferCodeToValue(childData?.type, v.type === 0 ? "rawMaterial" : v.type === 1 ? "subMaterial" : "product"),
-        unit: v.type === 0 ? rmType : childData.unit ?? "-",
+        product_type: v.type !== 2 ? '-' : TransferCodeToValue(bomDetail.childData?.type, 'productType'),
+        type_name: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
+        unit: bomDetail.childData.unit,
         parent: v.parent,
         usage: v.usage,
         version: v.version,
         setting: v.setting,
         isDefault: v.setting == 1 ? '기본' : '스페어',
-        stock: childData.stock,
+        stock: bomDetail.childData.stock,
         disturbance: Number(row.goal) * Number(v.usage),
-        processArray: childData.process ?? null,
-        process: childData.process ? childData.process.name : '-',
+        processArray: bomDetail.childData.process ?? null,
+        process: bomDetail.childData.process ? bomDetail.childData.process.name : '-',
         // spare:'부',
-        bom_root_id: childData.bom_root_id,
-        product: v.type === 2 ?{
-          ...childData,
-        }: null,
-        raw_material: v.type === 0 ?{
-          ...childData,
-        }: null,
-        sub_material: v.type === 1 ?{
-          ...childData,
-        }: null,
+        bom_root_id: bomDetail.childData.bom_root_id,
+        [bomDetail.objectKey]: {...bomDetail.childData},
       }
     })
-
-    return tmpData
   }
 
   const SearchBasic = async (selectKey?:string) => {
@@ -442,7 +423,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                               type: v.tab,
                               parent: v.parent,
                               child_product: v.tab === 2 ? {...v.product} : null,
-                              child_rm: v.tab === 0 ? {...v.raw_material} : null,
+                              child_rm: v.tab === 0 ? {...v.raw_material, unit: TransferValueToCode(v.raw_material.unit, 'rawMaterialUnit')} : null,
                               child_sm: v.tab === 1 ? {...v.sub_material} : null,
                               key: v.parent.bom_root_id,
                               setting: v.setting,

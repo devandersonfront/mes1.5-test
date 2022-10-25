@@ -14,9 +14,6 @@ interface IProps {
   option?: number
 }
 
-const title = '유저 관리'
-const optList = ['사용자명', '이메일', '직책명', '전화번호', '권한명']
-
 const BasicContainer = ({page, keyword, option}: IProps) => {
 
 

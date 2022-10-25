@@ -83,7 +83,7 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
         code: row.product?.code,
         name: row.product?.name,
         process: row.product?.process?.name,
-        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'product') : "-",
         unit: row.product?.unit,
         goal: row.goal,
         worker_name: row.worker.name ?? row.worker ?? '-',
@@ -177,7 +177,7 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
               fontSize: 22,
               fontWeight: 'bold',
               margin: 0,
-            }}>금형 정보 (해당 제품을 만드는 데 사용인 금형은 아래와 같습니다.)</p>
+            }}>금형 정보 (해당 제품을 만드는 데 사용한 금형은 아래와 같습니다.)</p>
             <div style={{display: 'flex'}}>
               <div style={{cursor: 'pointer', marginLeft: 20}} onClick={() => {
                 setIsOpen(false)
@@ -312,6 +312,7 @@ const HeaderTableText = styled.p`
   font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const HeaderTableTitle = styled.div`

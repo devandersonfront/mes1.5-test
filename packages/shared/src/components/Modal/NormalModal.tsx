@@ -338,7 +338,7 @@ const HeaderTableText = styled.p`
   font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
-
+  white-space: nowrap;
 `
 
 const HeaderTableTitle = styled.div`

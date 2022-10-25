@@ -21,6 +21,7 @@ import {delete_operation_searchKey} from "shared/src/reducer/operationRegisterSt
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import {NoneSelectedValidation, RequiredValidation, NoAmountValidation} from "shared/src/validations/Validation";
 import addColumnClass from '../../../../main/common/unprintableKey'
+import { ParseResponse } from 'shared/src/common/Util'
 
 interface IProps {
   page?: number
@@ -28,6 +29,7 @@ interface IProps {
   option?: number
 }
 
+const initRow ={ id: undefined, date: moment().format('YYYY-MM-DD'), deadline: moment().format('YYYY-MM-DD'), first:true }
 const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch();
@@ -35,14 +37,36 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   //처음인지 확인하는 state 하나 필요
   const [firstCheck, setFirstCheck] = useState<boolean>(true)
   const [codeCheck, setCodeCheck] = useState<boolean>(true)
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    id: `operation_${Math.random()*1000}`, date: moment().format('YYYY-MM-DD'),
-    deadline: moment().format('YYYY-MM-DD'),first:true
-  }])
-
+  const [parentProduct, setParentProduct] = useState<any>(undefined)
+  const [basicRow, setBasicRow] = useState<Array<any>>([initRow])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationCodeRegisterV2"])
-  const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const getMenus = async () => {
+  const [selectList, setSelectList] = useState<Set<any>>(new Set())
+
+
+  useEffect(() => {
+    if(router.query.contractId !== undefined && firstCheck){
+      setCodeCheck(false)
+      // setColumn(columnlist["operationIdentificationRegisterV2"])
+      makeSheetFromOrder()
+    }else{
+      getColumns()
+    }
+    setFirstCheck(false)
+  }, [codeCheck])
+
+  useEffect(() => {
+    dispatch(setMenuSelectState({main:"생산관리 등록",sub:router.pathname}))
+    return(() => {
+      dispatch(delete_operation_searchKey())
+      dispatch(deleteMenuSelectState())
+    })
+  },[])
+
+  useEffect(() => {
+    if(parentProduct) loadGraphSheet(parentProduct)
+  }, [parentProduct])
+
+  const getColumns = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
       path: {
         tab: 'ROLE_PROD_01'
@@ -105,6 +129,17 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const makeSheetFromOrder = async () => {
+    const res = await RequestMethod("get", "contractLoad", {
+      path:{
+        contract_id:router.query.contractId,
+      }
+    })
+    if(res) {
+      setParentProduct(SearchModalResult(SearchResultSort([res], "contract")[0], "receiveContract"))
+    }
+  }
+
   const validateSaveRequest = (selectedData: any[]) => {
     return NoneSelectedValidation(selectedData) ||
     RequiredValidation('product_id', selectedData,"CODE OR 수주번호를 선택해주세요.") ||
@@ -154,144 +189,145 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     }
   }
 
-  const loadLatestSheet = async (product_id: string, object?: any) => {
+  // const loadLatestSheet = async (product_id: string, object?: any) => {
+  //   Notiflix.Loading.circle()
+  //   const res = await RequestMethod('get', `sheetLatestList`,{
+  //     path: { product_id }
+  //   })
+  //   let resultData = [];
+  //   if(res){
+  //     setSelectList(new Set())
+  //     Notiflix.Report.success("알림","최근 작업지시서를 불러왔습니다.","확인")
+  //     let row:any = [];
+  //     if(typeof res === 'string'){
+  //       let tmpRowArray = res.split('\n')
+  //
+  //       row = tmpRowArray.map(v => {
+  //         if(v !== ""){
+  //           let tmp = JSON.parse(v)
+  //           return tmp
+  //         }
+  //       }).filter(v=>v)
+  //       resultData = [...row.map((data, index) => {
+  //         let random_id = Math.random()*1000;
+  //         return index === 0 ?
+  //             {
+  //               ...object,
+  //               contract_id:"-",
+  //               bom_root_id: data.product?.bom_root_id,
+  //               id: "operation_"+random_id,
+  //               date: data?.date ?? moment().format("YYYY-MM-DD"),
+  //               deadline: data?.deadline ?? moment().format("YYYY-MM-DD"),
+  //               name:data.product?.name,
+  //               model:data.product?.model,
+  //               cm_id: data.product?.model.model,
+  //               code:data.product?.code,
+  //               product_id:data.product?.code,
+  //               process_id:data.product?.process?.name ?? "-",
+  //             }
+  //             :
+  //             {
+  //               contract_id:"-",
+  //               date: data?.data === undefined ? moment().format("YYYY-MM-DD") : data.date,
+  //               deadline: data?.deadline === undefined ? moment().format("YYYY-MM-DD") : data.deadline,
+  //               customer:data.product?.customer ?? "-",
+  //               customer_id: data.product?.customer.name ?? "-",
+  //               model:data.product?.model,
+  //               cm_id: data.product?.model.model,
+  //               product_id: data.product?.code,
+  //               type:data.product?.type === 0 ? "반제품" : data.product.type === 1 ? "재공품" :"완제품" ,
+  //               type_id:data.product?.type,
+  //               unit: data.product?.unit,
+  //               bom_root_id: data.product?.bom_root_id,
+  //               id: "operation_"+random_id,
+  //               name:data.product?.name,
+  //               process_id:data.product?.process?.name ?? "-",
+  //               goal: 0,
+  //             }
+  //       })]
+  //     } else{
+  //       let random_id = Math.random()*1000;
+  //       resultData = [
+  //         {
+  //           ...res,
+  //           first:true,
+  //           contract_id: "-",
+  //           code: res.product.code,
+  //           date: res?.data === undefined ? moment().format("YYYY-MM-DD") : res.date,
+  //           deadline: res?.deadline === undefined ? moment().format("YYYY-MM-DD") : res.deadline,
+  //           customer:res.product.customer,
+  //           customer_id: res.product.customer?.name,
+  //           model:res.product.model,
+  //           cm_id: res.product.model?.model ?? '-',
+  //           product_id: res.product.code,
+  //           type:res.product.type === 0 ? "반제품" : res.product.type === 1 ? "재공품" :"완제품" ,
+  //           type_id:res.product.type,
+  //           unit: res.product.unit,
+  //           bom_root_id: res.product?.bom_root_id,
+  //           id: "operation_"+random_id,
+  //           name:res.product?.name,
+  //           process_id:res.product?.process?.name ?? "-",
+  //         }
+  //       ]
+  //     }
+  //
+  //     return resultData;
+  //   }else{
+  //     return loadGraphSheet(product_id, object)
+  //   }
+  // }
+
+  const loadGraphSheet = async (object?: any) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', `sheetLatestList`,{
-      path: { product_id }
-    })
-    let resultData = [];
-    if(res){
-      setSelectList(new Set())
-      Notiflix.Report.success("알림","최근 작업지시서를 불러왔습니다.","확인")
-      let row:any = [];
-      if(typeof res === 'string'){
-        let tmpRowArray = res.split('\n')
-
-        row = tmpRowArray.map(v => {
-          if(v !== ""){
-            let tmp = JSON.parse(v)
-            return tmp
-          }
-        }).filter(v=>v)
-        resultData = [...row.map((data, index) => {
-          let random_id = Math.random()*1000;
-          return index === 0 ?
-              {
-                ...object,
-                contract_id:"-",
-                bom_root_id: data.product?.bom_root_id,
-                id: "operation_"+random_id,
-                date: data?.date ?? moment().format("YYYY-MM-DD"),
-                deadline: data?.deadline ?? moment().format("YYYY-MM-DD"),
-                name:data.product?.name,
-                model:data.product?.model,
-                cm_id: data.product?.model.model,
-                code:data.product?.code,
-                product_id:data.product?.code,
-                process_id:data.product?.process?.name ?? "-",
-              }
-              :
-              {
-                contract_id:"-",
-                date: data?.data === undefined ? moment().format("YYYY-MM-DD") : data.date,
-                deadline: data?.deadline === undefined ? moment().format("YYYY-MM-DD") : data.deadline,
-                customer:data.product?.customer ?? "-",
-                customer_id: data.product?.customer.name ?? "-",
-                model:data.product?.model,
-                cm_id: data.product?.model.model,
-                product_id: data.product?.code,
-                type:data.product?.type === 0 ? "반제품" : data.product.type === 1 ? "재공품" :"완제품" ,
-                type_id:data.product?.type,
-                unit: data.product?.unit,
-                bom_root_id: data.product?.bom_root_id,
-                id: "operation_"+random_id,
-                name:data.product?.name,
-                process_id:data.product?.process?.name ?? "-",
-                goal: 0,
-              }
-        })]
-      } else{
-        let random_id = Math.random()*1000;
-        resultData = [
-          {
-            ...res,
-            first:true,
-            contract_id: "-",
-            code: res.product.code,
-            date: res?.data === undefined ? moment().format("YYYY-MM-DD") : res.date,
-            deadline: res?.deadline === undefined ? moment().format("YYYY-MM-DD") : res.deadline,
-            customer:res.product.customer,
-            customer_id: res.product.customer?.name,
-            model:res.product.model,
-            cm_id: res.product.model?.model ?? '-',
-            product_id: res.product.code,
-            type:res.product.type === 0 ? "반제품" : res.product.type === 1 ? "재공품" :"완제품" ,
-            type_id:res.product.type,
-            unit: res.product.unit,
-            bom_root_id: res.product?.bom_root_id,
-            id: "operation_"+random_id,
-            name:res.product?.name,
-            process_id:res.product?.process?.name ?? "-",
-          }
-        ]
-      }
-
-      return resultData;
-    }else{
-      return loadGraphSheet(product_id, object)
-    }
-  }
-
-  const loadGraphSheet = async (product_id: string, object?: any) => {
-    Notiflix.Loading.circle()
+    let newSelectList = new Set()
+    let parentProduct = [{
+      ...object,
+      id: object.product?.product_id,
+      contract_id: object.contract_id ?? '-',
+      goal: object.contract?.amount ?? 0,
+      cm_id: object.cm_id ?? '-',
+      process_id: object.product?.process?.name ?? '-',
+      name: object.product_name ?? '-',
+      date: object?.date ?? moment().format('YYYY-MM-DD'),
+      deadline: object?.deadline ?? moment().format('YYYY-MM-DD'),
+      first:true,
+    }]
+    newSelectList.add(object.product?.product_id)
     const res=  await RequestMethod('get', `sheetGraphList`,{
-      path: { product_id }
+      path: { product_id: object.product?.product_id }, params:{product_only: 1}
     })
-    if(res){
-      let tmp: Set<any> = selectList
-      setSelectList(new Set())
-      // if(codeCheck) {
-      //   Notiflix.Report.warning("알림", "최근 작업지시서가 없어 BOM기준으로 불러왔습니다.", "확인")
-      // }
-      return [{
-        ...object,
-        contract_id: codeCheck ? "-" : object.contract_id,
-        goal: codeCheck ? 0 : object.contract.amount,
-        cm_id: object.cm_id ?? '-',
-        process_id: object.product?.process?.name ?? '-',
-        name: object.product_name ?? '-',
-        date: object?.date ?? moment().format('YYYY-MM-DD'),
-        deadline: object?.deadline ?? moment().format('YYYY-MM-DD'),
-        first:true,
-      }, ...res.map(v => {
-        if(v.type === 2){
-          let random_id = Math.random()*1000;
-          tmp.add("operation_"+random_id)
 
-          return {
-            ...v,
-            contract_id: codeCheck ? "-" : object.contract_id,
-            id: "operation_"+random_id,
-            bom_root_id: v.child_product.bom_root_id,
-            product: v.child_product,
-            date: object?.date ?? moment().format('YYYY-MM-DD'),
-            deadline: object?.deadline ?? moment().format('YYYY-MM-DD'),
-            customer_id: v.child_product.customer?.name,
-            cm_id: v.child_product.model?.model,
-            name: v.child_product.name ?? v.product_name,
-            product_id: v.child_product.code,
-            code: v.child_product.code,
-            type: TransferCodeToValue(v.child_product.type, 'product'),
-            unit: v.child_product.unit,
-            goal:  codeCheck ? 0 : object.contract.amount,
-            process_id: v.child_product.process?.name ?? '-',
-            readonly: true,
-          }
+    if(res) {
+      const parsedRes = ParseResponse(res)
+      const childProducts = parsedRes.filter(row => row.type === 2 && row.child_product?.type < 3).map(row => {
+        let random_id = Math.random() * 1000;
+        const id= row.child_product?.product_id ?? 'operation' + random_id
+        newSelectList.add(id)
+        return {
+          ...row,
+          contract_id: object.contract_id ?? '-',
+          id,
+          bom_root_id: row.child_product.bom_root_id,
+          product: row.child_product,
+          date: object?.date ?? moment().format('YYYY-MM-DD'),
+          deadline: object?.deadline ?? moment().format('YYYY-MM-DD'),
+          customer_id: row.child_product.customer?.name,
+          cm_id: row.child_product.model?.model,
+          name: row.child_product.name ?? row.product_name,
+          product_id: row.child_product.code,
+          code: row.child_product.code,
+          type: TransferCodeToValue(row.child_product.type, 'product'),
+          unit: row.child_product.unit,
+          goal: object.contract?.amount ?? 0,
+          process_id: row.child_product.process?.name ?? '-',
+          readonly: true,
         }
-      }).filter(v => v)
-
-      ]
+      })
+      parentProduct = parentProduct.concat(childProducts)
     }
+    setSelectList(newSelectList)
+    setBasicRow(parentProduct)
+    return parentProduct
   }
 
   const onClickHeaderButton = async(index: number) => {
@@ -302,79 +338,42 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         SaveBasic(basicRow.filter(row => selectList.has(row.id)))
         break;
       case 3:
-        if(selectList.size > 0) {
-          Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
-              () => {
-                  const resultBasic = [...basicRow];
-                  const result = resultBasic.filter((row, index) => {
-                    if (!selectList.has(row.id)) {
-                      return row
-                    }
-                  })
-                  result[0].first = true
-                  setBasicRow([...result])
-
-                Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
-                })
-              },
-          )
-        }else{
-          Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인");
-        }
+        // if(selectList.size > 0) {
+        //   Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
+        //       () => {
+        //           const resultBasic = [...basicRow];
+        //           const result = resultBasic.filter((row, index) => !selectList.has(row.id))
+        //           if(result.length === 0){
+        //             result.push(initRow)
+        //           } else {
+        //             result[0] = {...result[0], first:true}
+        //           }
+        //           setBasicRow(result)
+        //         Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
+        //         })
+        //       },
+        //   )
+        // }else{
+        //   Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인");
+        // }
         break;
     }
   }
 
-  useEffect(() => {
-    if(router.query.key !== undefined && firstCheck){
-      setColumn(columnlist["operationIdentificationRegisterV2"])
-      RequestMethod("get", "contractSearch", {
-        params:{
-          keyword:router.query.key,
-          opt:0
-        }
-      })
-          .then(async(res) => {
-            const identification = res.info_list[0].identification
-            const goal = res.info_list[0].amount
-            await loadGraphSheet(res.info_list[0]?.productId,  SearchModalResult(SearchResultSort(res.info_list, "contract")[0], "receiveContract"))
-                .then((res) => {
-                  setBasicRow(res.map((row, index) => {
-                      return {...row, contract_id:identification, goal}
-                  }))
-                  setCodeCheck(false)
-                  setFirstCheck(false)
-                })
-
-          })
-    }else{
-      getMenus()
-      setFirstCheck(false)
-    }
-  }, [codeCheck])
-
-  useEffect(() => {
-    dispatch(setMenuSelectState({main:"생산관리 등록",sub:router.pathname}))
-    return(() => {
-      dispatch(delete_operation_searchKey())
-      dispatch(deleteMenuSelectState())
-    })
-  },[])
-
   return (
       <div className={'excelPageContainer'}>
         <PageHeader
-            isCode
-            onChangeCode={(value)=> {
-              setCodeCheck(value),
+            radioButtons={['CODE로 등록', '수주번호로 등록']}
+            onChangeRadioIndex={(index) => {
+              setCodeCheck(!!!index)
               setBasicRow([{
-                id: `operation_${Math.random()*1000}`, date: basicRow[0].date?? moment().format('YYYY-MM-DD'),
+                id: undefined, date: basicRow[0].date?? moment().format('YYYY-MM-DD'),
                 deadline: basicRow[0].deadline?? moment().format('YYYY-MM-DD'), first:true
               }])
             }}
-            code={codeCheck}
+            radioIndex={Number(!!!codeCheck)}
             title={"작업지시서 등록"}
-            buttons={['', '', '저장하기', '삭제']}
+            buttons={['', '', '저장하기', '']}
             buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
@@ -386,41 +385,26 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
               ...addColumnClass(column)
             ]}
             row={basicRow}
-            setRow={async(e) => {
-             const eData = e.filter((eValue) => {
-                let equal = false;
-                basicRow.map((bValue)=>{
-                  if(eValue.product?.product_id === bValue.product?.product_id){
-                    equal = true
-                  }
-                })
-                if(basicRow[0].product == undefined) return "first"
-                if(!equal) return eValue
-              })
-              if(eData.length <= 0){
-                setBasicRow([...e])
-              }else{
-                // if(codeCheck) {
-                //   const resultData = await loadLatestSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
-                //   setBasicRow([...resultData])
-                // }else{
-                const resultData = await loadGraphSheet(e[0]?.product?.product_id, e[0]).then((value) => value)
-                if(resultData === undefined) setBasicRow([{
-                  id: `operation_${Math.random()*1000}`, date: e[0].date ?? moment().format('YYYY-MM-DD'),
-                  deadline: e[0].deadline ?? moment().format('YYYY-MM-DD'),first:true
-                }])
-                else setBasicRow([...resultData])
-                // }
-              }
-              let tmp: Set<any> = selectList;
-              e.map(v => {
-                if(v.isChange) {
-                  tmp.add(v.id)
-                  v.isChange = false
+            setRow={async (row) => {
+              if(row.length > 0)
+              {
+                if(parentProduct ? codeCheck ? row?.[0].product?.product_id !== parentProduct?.product?.product_id : row?.[0].contract_id !== parentProduct.contract_id : true) {
+                  setParentProduct(row?.[0])
+                } else {
+                  const newSelectList = new Set()
+                  const newRow = row.map(row => {
+                    const id = row.product?.product_id
+                    newSelectList.add(id)
+                    return {
+                      ...row,
+                      id,
+                      isChange: false
+                    }
+                  })
+                  setSelectList(newSelectList)
+                  setBasicRow(newRow)
                 }
-              })
-              // setSelectList(tmp)
-              setSelectList(tmp)
+              }
             }}
             selectList={selectList}
             //@ts-ignore

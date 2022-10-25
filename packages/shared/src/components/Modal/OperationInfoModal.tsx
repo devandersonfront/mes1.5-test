@@ -66,7 +66,7 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
       cm_id: row.product?.model?.model ?? "-",
       code: row.product?.code ?? "-",
       name: row.product?.name ?? "-",
-      type: (row.product?.type || row.product?.type === 0) ? TransferCodeToValue(Number(row.product?.type), 'productType') : '-',
+      type: (row.product?.type || row.product?.type === 0) ? TransferCodeToValue(Number(row.product?.type), 'product') : '-',
       process_id: row.product.process?.name ?? "-",
     }
 
@@ -104,10 +104,9 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
               if(row?.productId){
                 // dispatch(change_operation_searchKey(row?.identification))
                 // router.push('/mes/operationV1u/register')
-
                 router.push({
                   pathname: `/mes/operationV1u/register`,
-                  query: {key : row?.identification}
+                  query: {contractId : row?.contract_id}
                 });
 
               }else{
@@ -349,6 +348,7 @@ const HeaderTableText = styled.p`
   font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const HeaderTableTitle = styled.div`

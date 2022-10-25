@@ -90,6 +90,11 @@ const MesOrderModify = ({page, keyword, option}: IProps) => {
           return {
             ...row,
             ...selectData,
+            product: {
+              ...row.product,
+              customer : row?.customerArray?.customer_id ? row.customerArray : null,
+              model : row?.modelArray?.cm_id ? row.modelArray : null
+            },
             customer: row.customerArray,
             additional: [
               ...additional.map(v => {

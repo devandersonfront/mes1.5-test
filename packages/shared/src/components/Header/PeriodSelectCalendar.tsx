@@ -50,8 +50,8 @@ const PeriodSelectCalendar = ({selectDate, onChangeSelectDate, dataLimit}:Props)
             {
                 onCalendarStart &&
                 <div style={{position:"absolute", top:50, zIndex:10}} ref={ref}>
-                    <Calendar maxDate={new Date(new Date(selectDate.to))} value={new Date(selectDate.from)} onClickDay={(e)=>{ //value={new Date(new Date(selectDate).getMonth())}
-                        onChangeSelectDate({...selectDate,from: moment(e).format("YYYY-MM-DD")});
+                    <Calendar value={new Date(selectDate.from)} onClickDay={(e)=>{ //value={new Date(new Date(selectDate).getMonth())}
+                        onChangeSelectDate({...selectDate,from: moment(e).format("YYYY-MM-DD"), to: new Date(selectDate.to).getTime() - e.getTime() < 0 ? moment(e.setDate(e.getDate() + 7)).format('YYYY-MM-DD') : selectDate.to});
                         setOnCalendarStart(false);
                     }}
                     />
