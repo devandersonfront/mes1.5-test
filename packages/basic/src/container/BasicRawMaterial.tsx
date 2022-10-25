@@ -617,7 +617,7 @@ const BasicRawMaterial = ({}: IProps) => {
       material_model: quantityData.model?.model ?? "-",
       material_machine_name : null,
       material_size :String((quantityData.width * quantityData.height).toFixed(1)),
-      material_texture : quantityData?.type
+      material_texture : quantityData?.texture
     }]
   }
 
