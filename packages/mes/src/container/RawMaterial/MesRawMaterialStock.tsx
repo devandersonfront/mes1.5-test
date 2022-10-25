@@ -420,7 +420,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       material_model: quantityData.model?.model ?? "-",
       material_machine_name : null,
       material_size : String((quantityData.width * quantityData.height).toFixed(1)),
-      material_texture : quantityData?.texture
+      material_texture : quantityData?.texture,
+      material_unit : TransferCodeToValue(quantityData?.raw_material.unit,'rawMaterialUnit') as string
     }]
   }
 

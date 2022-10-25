@@ -25,5 +25,6 @@ export type BarcodeDataType = {
     material_machine_name : string | undefined
     material_size : string | undefined
     material_texture: string | undefined
+    material_unit : string | undefined
 
 }

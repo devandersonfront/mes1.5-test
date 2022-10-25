@@ -226,7 +226,8 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           material_model: item.model?.model ?? "-",
           material_machine_name : mainMachine?.length > 0 ? mainMachine[0]?.machine.name : null,
           material_size : null,
-          material_texture : null
+          material_texture : null,
+          material_unit : null
         }
     ))
   }
