@@ -18,7 +18,7 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import axios from 'axios';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util';
 import { BarcodeDataType } from "shared/src/common/barcodeType";
@@ -26,6 +26,7 @@ import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import renewalColumn from '../../../main/common/unprintableKey'
 import { alertMsg } from 'shared/src/common/AlertMsg'
+import {selectUserInfo} from "shared/src/reducer/userInfo";
 
 export interface IProps {
   children?: any
@@ -40,6 +41,7 @@ type ModalType = {
 }
 
 const BasicProduct = ({}: IProps) => {
+  const userInfo = useSelector(selectUserInfo)
   const router = useRouter()
   const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -482,11 +484,25 @@ const BasicProduct = ({}: IProps) => {
     setModal({type , isVisible})
   }
 
+  const materialTypeOfCompany = (data) => {
+    switch (data.type) {
+      case '완제품' :
+        return 6
+      case '반제품':
+      case '재공품':
+        return 7
+      default :
+        return 2
+    }
+  }
+
   const convertBarcodeData = (quantityData) => {
+
+    const mainMachine = quantityData.machines?.filter((machine)=>(machine.machine.type === 1))
 
     return [{
       material_id: quantityData.product_id,
-      material_type: 2,
+      material_type: userInfo.companyCode === '2SZ57L' ? materialTypeOfCompany(quantityData) : 2,
       material_lot_id : 0,
       material_lot_number: '0',
       material_quantity : quantityData.quantity,
@@ -494,6 +510,10 @@ const BasicProduct = ({}: IProps) => {
       material_code: quantityData.code,
       material_customer: quantityData.customer?.name ?? "-",
       material_model: quantityData.model?.model ?? "-",
+      material_machine_name : mainMachine.length > 0 ? mainMachine[0]?.machine.name : null,
+      material_size : null,
+      material_texture : null,
+      material_unit : null
     }]
   }
 
