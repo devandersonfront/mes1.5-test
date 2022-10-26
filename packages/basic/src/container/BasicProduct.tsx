@@ -503,9 +503,13 @@ const BasicProduct = ({}: IProps) => {
   }
 
   const onClickMoreButton = (buttonIdx: number) => {
-    dispatch(insert_productList(basicRow[selectRow]))
-    switch(buttonIdx){
-      case 0: routeToProductBatchRegister()
+    if(selectList.size <= 1){
+      dispatch(insert_productList(basicRow[selectRow]))
+      switch(buttonIdx){
+        case 0: routeToProductBatchRegister()
+      }
+    }else{
+      Notiflix.Report.warning("경고","하나의 데이터만 선택해주세요.","확인")
     }
   }
 
