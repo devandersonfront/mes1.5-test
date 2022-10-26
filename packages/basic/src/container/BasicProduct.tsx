@@ -26,6 +26,7 @@ import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import renewalColumn from '../../../main/common/unprintableKey'
 import { alertMsg } from 'shared/src/common/AlertMsg'
+import {insert_productList} from "shared/src/reducer/ProductSelect";
 
 export interface IProps {
   children?: any
@@ -502,6 +503,7 @@ const BasicProduct = ({}: IProps) => {
   }
 
   const onClickMoreButton = (buttonIdx: number) => {
+    dispatch(insert_productList(basicRow[selectRow]))
     switch(buttonIdx){
       case 0: routeToProductBatchRegister()
     }
