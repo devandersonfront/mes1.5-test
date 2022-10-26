@@ -9,6 +9,11 @@ import Notiflix from "notiflix";
 import {BarcodeDataType} from '../../common/barcodeType'
 import {RequestMethod} from "../../Functions/RequestFunctions";
 import {result} from "lodash";
+import cookie from "react-cookies";
+import {useSelector} from "react-redux";
+import {selectUserInfo} from "../../reducer/userInfo";
+import {customBarcodeCompanyCode} from "../../common/companyCode";
+import {SF_ENDPOINT_BARCODE} from "../../common/configset";
 
 
 
@@ -25,6 +30,11 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Pr
 
     const [selectIndex, setSelectIndex] = React.useState<number>(0)
     const [imageSrc, setImageSrc] = React.useState<any>()
+    const userInfo = useSelector(selectUserInfo)
+
+    //성화 , 가나공업 , DS 만 CompanyCode 를 보내면 됨
+    //없는건 null
+    //가로 * 세로로 보냄
 
     const getLocalAddress = async () => {
 
@@ -63,12 +73,16 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Pr
     });
 
     const getBarcodeImage = async (data : BarcodeDataType) => {
+        const tokenData = userInfo?.token;
         let blobData :Blob
         Notiflix.Loading.circle()
-        await axios.post('http://3.37.196.98:9408/api/v1/barcode/generate', {
+        await axios.post(`${SF_ENDPOINT_BARCODE}/api/v1/barcode/generate`, {
                 ...data,
             },
-            {responseType:'blob'})
+            {
+                responseType:'blob',
+                params : {company : customBarcodeCompanyCode(userInfo.companyCode)},
+            })
             .then((res) => {
                 Notiflix.Loading.remove()
                 blobData = res.data
