@@ -30,7 +30,8 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
   }, [row[column.key]])
 
   return (
-    <UnitWrapper style={{ backgroundColor: row.border ? '#19B9DF80': undefined}}>
+    // <UnitWrapper style={{ backgroundColor: row.border ? '#19B9DF80': undefined}}>
+    <UnitWrapper style={{ backgroundColor:row?.warning ? "red" : undefined}}>
       <UnitValue>
         {
           !title && column.placeholder

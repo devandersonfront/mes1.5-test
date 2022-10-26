@@ -342,9 +342,8 @@ export const columnlist: any = {
         { pk: 2, name: 'SHEET' }
       ]
     },
-    {
-      key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value}))
-    },
+    { key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})) },
+    { key: 'save_stock', name: '안전재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, headerRenderer: HeaderSort, sortOption: "none", sorts: {}},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
   ],
