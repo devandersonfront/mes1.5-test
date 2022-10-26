@@ -152,6 +152,7 @@ const BasicProduct = ({}: IProps) => {
           ],
           work_standard_image:row.work_standard_image?.uuid,
           type: row.type_id,
+          safety_stock : row.safety_stock,
           additional: addedColumn.map((col, colIdx)=> ({
                 mi_id: col.id,
                 title: col.name,
@@ -297,6 +298,7 @@ const BasicProduct = ({}: IProps) => {
         product_type: column.filter(col => col.key === 'product_type')?.[0]?.selectList[row.type < 3 ? 0 : 1].name,
         id: `product_${random_id}`,
         readonly: row.type > 2,
+        safety_stock : row.safety_stock,
         reload
       }
     })
