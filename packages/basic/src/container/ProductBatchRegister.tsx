@@ -8,7 +8,7 @@ import {
   Header as PageHeader,
   IExcelHeaderType,
   MAX_VALUE,
-  PaginationComponent,
+  PaginationComponent, ProductListType,
   RequestMethod,
   TextEditor
 } from 'shared'
@@ -19,6 +19,7 @@ import {NextPageContext} from 'next'
 import {setExcelTableHeight} from 'shared/src/common/Util';
 import { alertMsg } from 'shared/src/common/AlertMsg'
 import { useRouter } from 'next/router'
+import {useSelector} from "react-redux";
 
 export interface IProps {
   children?: any
@@ -29,7 +30,8 @@ const initRow = () => (
 )
 const ProductBatchRegister = (props: IProps) => {
   const router = useRouter()
-  const [rows, setRows] = useState<Array<any>>([initRow()])
+  const selectData = useSelector((state:any) => state.productSelect.products)
+  const [rows, setRows] = useState<Array<any>>([selectData.product_id ? selectData : initRow()])
   const [columns, setColumns] = useState<Array<IExcelHeaderType>>( columnlist["productBatchRegister"])
   const [selectedList, setSelectedList] = useState<Set<number>>(new Set())
 
@@ -100,6 +102,7 @@ const ProductBatchRegister = (props: IProps) => {
       unit: self.unit,
       unit_id: self.unit_id,
       bom: self.bom,
+      product_id: self.product_id,
       process_id: self.process_id,
       process: self.process,
       molds: self.molds,
@@ -107,6 +110,8 @@ const ProductBatchRegister = (props: IProps) => {
       usage: self.usage,
       id: self.id,
       isFirst: false,
+      bom_root_id:undefined,
+
     }
   }
 

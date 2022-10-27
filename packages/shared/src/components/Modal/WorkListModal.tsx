@@ -210,6 +210,9 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const convertBarcodeData = (items) => {
+
+    const mainMachine = items.machines?.filter((machine)=>(machine.machine.type === 1))
+
     return items.map((item)=>(
         {
           material_id: item.productId,
@@ -221,6 +224,10 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           material_code: item.code,
           material_customer: item.worker?.name ?? "-",
           material_model: item.model?.model ?? "-",
+          material_machine_name : mainMachine?.length > 0 ? mainMachine[0]?.machine.name : null,
+          material_size : null,
+          material_texture : null,
+          material_unit : null
         }
     ))
   }

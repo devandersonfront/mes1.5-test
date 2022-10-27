@@ -17,7 +17,7 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
 import {BarcodeDataType} from "shared/src/common/barcodeType";
@@ -26,6 +26,7 @@ import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
 import {CompleteButton} from "shared/src/components/Buttons/CompleteButton";
 import { alertMsg } from 'shared/src/common/AlertMsg';
+import {selectUserInfo} from "shared/src/reducer/userInfo";
 
 interface IProps {
   children?: any
@@ -42,6 +43,7 @@ type ModalType = {
 const optionList = ['원자재 CODE', '원자재 품명', '재질', '원자재 LOT 번호', '거래처']
 
 const MesRawMaterialStock = ({page, search, option}: IProps) => {
+  const userInfo = useSelector(selectUserInfo)
   const router = useRouter()
   const dispatch = useDispatch()
   const [basicRow, setBasicRow] = useState<Array<any>>([])
@@ -408,7 +410,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
     return [{
       material_id: quantityData.code ?? 0,
-      material_type: 3,
+      material_type: userInfo.companyCode === '2SZ57L' ? 8 : 3,
       material_lot_id : quantityData.lot_rm_id,
       material_lot_number: quantityData.lot_number,
       material_quantity : quantityData?.realCurrent ?? 0,
@@ -416,6 +418,10 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       material_code: quantityData.rm_id,
       material_customer: quantityData.customer_id ?? "-",
       material_model: quantityData.model?.model ?? "-",
+      material_machine_name : null,
+      material_size : String((quantityData.width * quantityData.height).toFixed(1)),
+      material_texture : quantityData?.texture,
+      material_unit : TransferCodeToValue(quantityData?.raw_material.unit,'rawMaterialUnit') as string
     }]
   }
 
