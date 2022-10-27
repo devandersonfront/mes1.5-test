@@ -52,7 +52,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const cavity = row.molds?.filter(mold => mold?.mold?.setting === 1)?.[0]?.mold?.mold?.cavity ?? 1
   useEffect(() => {
     if(isOpen){
-      console.log(row)
       getInputMaterialList(row.product.bom_root_id, row.osId)
       setHeaderItemsValue(getHeaderItems(row, column.type))
     }
@@ -70,16 +69,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   }, [ inputMaterial ])
 
   const getInputMaterialList = async (key: string, os_id?: number | string) => {
-    console.log(key, os_id, column)
     if(key && column.type !== "ai"){
-      console.log("key : ", key)
       const pathVar = isOutsourcing ? [key] : { os_id: os_id, bom: 'bom', key: key, }
       const res = await RequestMethod('get', isOutsourcing ? "bomLoad" : `sheetBomLoad`,{
         path: pathVar
       })
 
       if(res){
-        console.log("here : ", res)
         const inputMaterialList = toInputMaterialList(res)
         setInputMaterialList(inputMaterialList)
       } else {
@@ -128,7 +124,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               type:bom.bom.type
             }
           case 2:
-            console.log("checkMap : ", checkMap, " , bom : ", bom)
             let product_ids = checkMap.get("product_id")
             if(checkMap.get("product_id").filter(id => id == bom.bom.childProductId).length <= 0){
               product_ids.push(bom.bom.childProductId)
@@ -149,22 +144,26 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             return "none"
         }
       }).filter(v=>v)
-
       let noOverap = settingData.reduce(function(acc, current) {
         if (acc.findIndex(({ rm_id }) => rm_id === current.rm_id) === -1) {
           acc.push(current)
         }
+        if (acc.findIndex(({ sm_id }) => sm_id === current.sm_id) === -1) {
+          acc.push(current)
+        }
+        if (acc.findIndex(({ product_id }) => product_id === current.product_id) === -1) {
+          acc.push(current)
+        }
+
         return acc;
       }, []);
       const inputMaterialList = toInputMaterialList(noOverap)
       setInputMaterialList(inputMaterialList)
     } else if(!row.bom && column.type == "ai"){
-      console.log("fuck")
       const res = await RequestMethod('get',   "bomLoad",{
         path: { os_id: os_id, key: key, }
       })
       if(res){
-        console.log("here : ", res)
         const inputMaterialList = toInputMaterialList(res)
         setInputMaterialList(inputMaterialList)
       } else {
