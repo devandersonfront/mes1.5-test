@@ -117,6 +117,7 @@ const AiMesRecord = ({}: IProps) => {
         params['from'] = date ? date.from: selectDate.from
         params['to'] = date ? date.to : selectDate.to
         params['status'] = [0]
+        // params['status'] = [0,1,2]
         return params
     }
 
@@ -146,17 +147,26 @@ const AiMesRecord = ({}: IProps) => {
     };
 
     const DeleteBasic = async (save?:boolean) => {
-        const result = deleteBasic.filter((v) => selectList.has(v.id))[0]
-        result.status = save ? 2 : 1
-        let res = await RequestMethod('post', `aiRecordSave`, result);
+        const result = deleteBasic.map((v) => {
+            if (selectList.has(v.id)){
+                return {...v, status: save ? 2 : 1}
+                // return {...v, status:0}
+            }
+        }).filter(v=>v)
 
-        if (res && !save) {
-            Notiflix.Report.success("삭제 성공!", "", "확인", () => reload())
-        }else if(res){
-            reload()
-        }else{
-            Notiflix.Report.failure("에러가 발생했습니다!", "", "확인", () => reload())
-        }
+
+        setTimeout(async() => {
+            let res = await RequestMethod('post', `aiRecordSave`, result);
+            if (res && !save) {
+                Notiflix.Report.success("삭제 성공!", "", "확인", () => reload(null, null))
+            }else if(res){
+                reload(null, null)
+            }else{
+                Notiflix.Report.failure("에러가 발생했습니다!", "", "확인", () => reload())
+            }
+        },1500)
+
+
     };
 
 
@@ -281,6 +291,8 @@ const AiMesRecord = ({}: IProps) => {
                         throw(alertMsg.noProductAmount)
                     }else if(!v.operation_sheet) {
                         throw(alertMsg.noOperation)
+                    }else if(v.bom == null){
+                        throw(alertMsg.needsBom)
                     }
                     if(v.molds) {
                         v.bom.map(bom => {
@@ -320,8 +332,7 @@ const AiMesRecord = ({}: IProps) => {
                                     }
                                 }}
                         }).filter(v=>v.tool.tool.code) ?? [],
-                        // molds:[],
-                        machines: v?.machines ? v?.machines.filter((machine) => machine.machine.setting == 1) : [],
+                        machines: [],
                         version: undefined,
                         uph:0,
                         // inspection_category:0,
@@ -330,17 +341,18 @@ const AiMesRecord = ({}: IProps) => {
                     }
                 }
                 }).filter((v) => v)
-            const res = await RequestMethod('post', `recordSave`,postBody)
-            if (res?.length > 0) {
-                    DeleteBasic(true)
-                Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
-                    // row.reload()
-                });
-            } else {
-                Notiflix.Report.failure('이미 삭제된 작업일보 입니다.', '', '확인', () => {
-                    reload()
-                });
-            }
+            console.log("postBody : ", postBody)
+            // const res = await RequestMethod('post', `recordSave`,postBody)
+            // if (res?.length > 0) {
+            //
+            //     Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
+            //         DeleteBasic(true)
+            //     });
+            // } else {
+            //     Notiflix.Report.failure('이미 삭제된 작업일보 입니다.', '', '확인', () => {
+            //         reload()
+            //     });
+            // }
         } catch (errMsg){
             console.log(errMsg)
             Notiflix.Report.warning('경고', errMsg, '확인')
