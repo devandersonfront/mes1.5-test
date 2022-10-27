@@ -21,6 +21,8 @@ import lodash from 'lodash'
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
 import { getHeaderItems, InputListHeaders, InputModalHeaderItems } from '../../common/inputMaterialInfo'
+import {UnitContainer} from "../Unit/UnitContainer";
+import {TextEditor} from "../InputBox/ExcelBasicInputBox";
 interface IProps {
   column: IExcelHeaderType
   row: any
@@ -145,7 +147,8 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         <UploadButton onClick={() => {
           setIsOpen(true)
         }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"} >
-          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
+          {/*<p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>*/}
+          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>{row?.good_quantity}</p>
         </UploadButton>
     )
 
@@ -173,7 +176,28 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const modalButtons = () => {
-    return <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
+    if(column.tab == "ROLE_PROD_04"){
+      return <div style={{ height: 56, display: 'flex', alignItems: 'space-between'}}>
+        <div
+            onClick={() =>{
+              setIsOpen(false)
+            }}
+            style={{width: '100%', height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+        >
+          <p>{'취소'}</p>
+        </div>
+        <div
+            onClick={() =>{
+              onRowChange({...row, lotList:searchList})
+              setIsOpen(false)
+            }}
+            style={{width: '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+        >
+          <p>{'저장'}</p>
+        </div>
+      </div>
+    }
+    else return <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
       <div
         onClick={() =>{
             setIsOpen(false)
@@ -187,9 +211,16 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const isProduct = ['반제품', '재공품', '완제품'].includes(selected.type)
   const isOutsource = selected.productType === '외주품'
+  //AI 작업일보 리스트에서 바꿔줘야할 부분
   const LotListColumns = () => {
+    if(column.tab == "ROLE_PROD_04"){
+      searchModalList.InputLotReadonlyInfo[searchModalList.InputLotReadonlyInfo.length - 1] =
+          {key: 'amount', name: '생산량', formatter: UnitContainer, editor: TextEditor, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"}
+      return searchModalList.InputLotReadonlyInfo
+    }
     return isProduct ? isOutsource? searchModalList.OutsourceLotReadonlyInfo : searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
   }
+  //
 
   return (
       <SearchModalWrapper >
@@ -263,15 +294,17 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                     setSelectRow(e)
                   }}
                   setRow={(e) => {
+                    console.log(e)
                     let tmp = e.map((v, index) => {
                       if(v.bom){
                         if(v.lotList){
                           const newLots = v.lotList.map(lot => ({
                             ...lot,
-                            amount: new Big(lot.amount).times(cavity),
+                            amount: lot?.amount ? new Big(Number(lot?.amount)).times(cavity) : 0,
                             unit: v.unit,
-                            current: new Big(lot.current).minus(new Big(lot.amount).times(v.usage)).toNumber()
+                            current: lot?.amount ? new Big(Number(lot?.current)).minus(new Big(Number(lot?.amount)).times(v?.usage)).toNumber() : 0
                           }))
+                          console.log("newLots : ", newLots, v)
                           setLotList(newLots)
                         }
                         setSelected({...selected, type:v.type_name, product: v.code, productType: v.product_type})

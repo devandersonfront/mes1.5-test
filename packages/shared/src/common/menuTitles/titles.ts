@@ -34,6 +34,7 @@ export const titles = {
     _opList: '작업지시서 리스트',
     _todayOpList: '금일 작업지시서 리스트',
     _opReList: '작업 일보 리스트',
+    _opAiReList: 'AI 작업 일보 리스트',
     _opComList: '작업 완료 리스트',
     mesRawMgmt: '원자재 관리',
     _rawReg: '원자재 입고 등록',

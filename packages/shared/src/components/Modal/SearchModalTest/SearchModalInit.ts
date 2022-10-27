@@ -135,5 +135,10 @@ export const SearchInit: Record<string, SearchInitType> = {
     searchFilter: ['발주 고유번호', 'CODE', '품명'],
     excelColumnType: 'outsourcingOrder',
     placeholder: '발주내역입력'
+  },
+  operation: {
+    title: '작업지시서 검색',
+    searchFilter: [],
+    excelColumnType: 'sheet',
   }
 }

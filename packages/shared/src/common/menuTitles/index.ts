@@ -42,9 +42,13 @@ export const BasicTitles = (customTarget?: string) => {
       ...basicDefault,
       _modelMgmt: toMenu(dohwaTitles._modelMgmt, '/mes/basic/customer/model'),
     }
+    case 'ai' : return {
+      ...basicDefault,
+      _modelMgmt: toMenu(dohwaTitles._modelMgmt, '/mes/basic/customer/model'),
+    }
     case 'custom' : return {
       ...basicDefault,
-      customerMgmt: toMenu(customTitles.customerMgmt, '/mes/basic/factory', [ '_customerMgmt', '_modelMgmt' ]),
+      customerMgmt: toMenu(customTitles.customerMgmt, '/mes/basic/factory', ['_customerMgmt', '_modelMgmt']),
       _customerMgmt: toMenu(customTitles._customerMgmt, '/mes/basic/customer'),
       _modelMgmt: toMenu(customTitles._modelMgmt, '/mes/basic/customer/model'),
       documentMgmt: toMenu(customTitles.documentMgmt, '/mes/basic/document'),
@@ -142,6 +146,11 @@ export const MesTitles = (customTarget?: string) => {
       _midRangeList: toMenu(dohwaTitles._midRangeList,'/mes/quality/midrange/list'),
 
     }
+    case 'ai': return {
+      ...mesDefault,
+      pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList']),
+      _opAiReList: toMenu(titles._opAiReList,'/mes/ai/recordV2/list'),
+    }
     case 'custom' : return {
       ...mesDefault,
       _orderList: toMenu(customTitles._orderList,'/mes/order/list'),
@@ -155,7 +164,6 @@ export const MesTitles = (customTarget?: string) => {
       _powerUsage: toMenu(customTitles._powerUsage,'/mes/kpi/powerusage'),
       _uph: toMenu(customTitles._uph,'/mes/kpi/uph'),
     }
-
     default: return mesDefault
   }
 }

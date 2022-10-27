@@ -49,13 +49,14 @@ export const getBomObject : (bom: BomType) => (BomObjectType)  = (bom: BomType) 
       bomKey: `rm${bom.childRmId}`,
       id: bom.childRmId,
       detail: {...bom.child_rm, unit: TransferCodeToValue(bom.child_rm?.unit, 'rawMaterialUnit')},
+      // detail: bom.child_rm,
       }
     case 1: return {
       ...bom,
       typeName: 'subMaterial',
       bomKey: `sm${bom.childSmId}`,
       id: bom.childSmId,
-      detail: bom.child_sm
+      detail: {...bom.child_sm}
     }
     case 2:
       return {
@@ -113,4 +114,16 @@ export const TransferType = (type:"COIL" | "SHEET" | string) => {
       return type
   }
 
+// export const TypeCheck = (type:0 | 1 | 2 | "") => {
+//   switch(type){
+//     case 0 :
+//       return ""
+//     case 1 :
+//       return "장"
+//     case 2 :
+//       return "장"
+//     default:
+//       return type
+//   }
+// }
 }

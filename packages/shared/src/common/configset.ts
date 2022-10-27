@@ -22,7 +22,6 @@ export const BG_COLOR_SUB3: string = '#353b48' as const
 export const POINT_COLOR_3: string = '#e7e9eb' as const
 
 export const SF_ADDRESS = process.env.NEXT_PUBLIC_SF_ADDRESS
-
 let hostname
 if (typeof window !== 'undefined') {
     hostname = window.location.hostname;
@@ -44,6 +43,7 @@ export const SF_ENDPOINT_FILE = `http://${isLocalhost()}:8099`
 export const SF_ENDPOINT_RESOURCE = `http://${isLocalhost()}:8285`
 export const SF_ENDPOINT_S3 = process.env.NEXT_PUBLIC_SF_ENDPOINT_S3
 export const SF_PORT = ``
+export const SF_ENDPOINT_BARCODE = `http://${isLocalhost()}:9408`
 
 // export const SF_ENDPOINT_BARCODE = `http://${isLocalhost()}:18080`
 
