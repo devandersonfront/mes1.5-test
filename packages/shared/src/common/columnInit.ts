@@ -63,6 +63,8 @@ import { AdjustQuantityModal } from '../components/Modal/AdjustQuantityModal'
 import { AdjustLotInfo } from '../components/Modal/AdjustLotInfo'
 import { RAW_MATERIAL_UNIT_CODE } from './TransferFunction'
 import { AddRowButton } from '../components/Buttons/AddRowButton'
+import {DatetimePickerBox} from "../components/CalendarBox/DatetimePickerBox";
+import {MachineSelectModal} from "../components/Modal/MachineSelectModal";
 
 export const columnlist: any = {
   member: [
@@ -801,7 +803,7 @@ export const columnlist: any = {
   ],
   operationListV2: [
     { key: "status", name: "상태", width: 118 },
-    { key: "contract_id", name: "수주 번호", width: 118 },
+    { key: "contract_id", name: "수주 번호", width: 118, },
     { key: "identification", name: "지시 고유 번호", width: 118 },
     { key: "date", name: "지시 날짜", width: 118, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
     { key: "deadline", name: "작업 기한", width: 118, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
@@ -889,6 +891,24 @@ export const columnlist: any = {
     { key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
     { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
     { key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
+  ],
+  aiRecordListV2: [
+    {key:"identification", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, },
+    { key: "product_id", name: "CODE", width: 118 },
+    { key: "name", name: "품명", width: 118 },
+    { key: "type", name: "품목 종류", width: 118 },
+    { key: "unit", name: "단위", width: 118 },
+    { key: "process_id", name: "생산 공정", width: 118 },
+    { key: "lot_number", name: "LOT 번호", editor: TextEditor, width: 118 },
+    { key: "worker", name: "작업자",  formatter: SearchModalTest, type: 'user', width: 118 },
+    {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'black', width: 200, type : "start"},
+    {key: 'end', name: '작업 종료 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'black', width: 200, type:'end'},
+    { key: "paused_time", name: "일시 정지 시간", formatter: PauseInfoModal, /*type: 'readonly',*/ modalType: false, width: 118 },
+    { key: "good_quantity", name: "양품 수량", formatter: InputMaterialListModal,width: 118, /*readonly:true */ type:"ai", action:"modify"},
+    { key: "poor_quantity", name: "불량 수량", formatter: DefectInfoModal, width: 118, textAlign: 'center'},
+    { key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
+    { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
+    { key: 'machine_id', name: '기계', formatter: MachineSelectModal, textAlign: 'center', type:"ai"},
   ],
   finishListV2: [
     { key: "status", name: "상태", formatter: FinishCancelButton, width: 118 ,unprintable : true},

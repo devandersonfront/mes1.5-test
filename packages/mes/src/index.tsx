@@ -12,6 +12,7 @@ export {MesDefectModify} from './container/Defect/MesDefectModify'
 
 //작업 일보
 export {MesRecordList} from './container/Record/MesRecordList'
+export {AiMesRecord} from './container/Record/AiMesRecord'
 //재고 현황
 export {MesStockList} from './container/Stock/MesStockList'
 export {MesStockAdjustList} from './container/Stock/MesStockAdjustList'

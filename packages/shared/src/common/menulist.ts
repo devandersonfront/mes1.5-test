@@ -79,6 +79,7 @@ const BasicOrder = (customTarget?: string): BasicOrderType[] => {
 const MesOrder = (customTarget?: string): MesOrderType[] => {
     const defaultOrder : MesOrderType[] = ['businessMgmt','pmReg','rawMgmt','subMgmt','toolMgmt','qualityMgmt','stockMgmt','outsourceMgmt', 'kpi']
     switch(customTarget){
+        case 'dohwa': defaultOrder.splice(7,1)
         default: return defaultOrder
     }
 }

@@ -23,6 +23,7 @@ import { RootState } from '../../../reducer'
 import modifyInfo from '../../../reducer/modifyInfo'
 //@ts-ignore
 import ModalSearch_icon from '../../../../public/images/list_search_icon.png'
+import moment from "moment";
 
 interface IProps {
   column: IExcelHeaderType
@@ -166,6 +167,16 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           }
         case "toolProduct":
           return {}
+        //현재 AI 작업일보리스트에서만 사용하여 productIds를 고정으로 박아놓음
+        //다른곳에 사용할때 다시 수정할 것
+        case "operation":
+          return {
+            from:"2000-01-01",
+            // to: moment(new Date()).format("YYYY-MM-DD")
+            to: "2022-12-31",
+            productIds:row.product.product_id,
+            status:[0,1]
+          }
         default:
           return {
             keyword:keyword,
@@ -404,12 +415,11 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       const selectNameFunction = (type:string) => {
         switch(type){
           case "bom":
-            return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, null, column.modalType).name;
           case "rawMaterial" :
             return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, null, column.modalType).name;
           case "machine" :
-            return searchList[selectRow].name;
           case "mold":
+          case "operation":
             return searchList[selectRow].name;
           default:
             return row.name;
@@ -520,6 +530,25 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             }
           )
         }
+      }else if(column.type === "operation"){
+        const modalRes = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType, column.type)
+        onRowChange({
+          ...row,
+          ...modalRes,
+          // identification:selectNameFunction(column.type),
+          manager: modalRes.manager,
+          // name: selectNameFunction(column.type),
+          id:row.id,
+          tab: tab,
+          // type_name: undefined,
+          version: row.version,
+          isChange: true,
+          //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
+          returnType:column.key,
+          date:row?.date,
+          deadline:row?.deadline,
+          goal:row?.goal,
+        })
       }else{
         const modalRes = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType, column.type)
         onRowChange({
