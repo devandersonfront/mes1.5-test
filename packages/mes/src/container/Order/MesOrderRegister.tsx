@@ -93,7 +93,7 @@ const MesOrderRegister = ({ }: IProps) => {
         }))
 
       Notiflix.Loading.circle()
-      
+
       const res = await RequestMethod('post', `contractSave`, postBody)
 
       if (res) {
@@ -156,12 +156,17 @@ const MesOrderRegister = ({ }: IProps) => {
         ]}
         row={basicRow}
         setRow={(row) => {
-          let tmp: Set<any> = selectList
-          row.map(v => {
+          let tmp: Set<any> = new Set(selectList)
+          const newRow = row.map(v => {
             if (v.isChange) tmp.add(v.id)
+            return {
+              ...v,
+              id:v.id,
+              isChange: false
+            }
           })
           setSelectList(tmp)
-          setBasicRow(row)
+          setBasicRow(newRow)
         }}
         selectList={selectList}
         //@ts-ignore

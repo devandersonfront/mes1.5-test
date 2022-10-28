@@ -462,7 +462,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
         } else {
           defaultRes = {...defaultRes, ...defaultRow(column.type)}
         }
-        return defaultRes
+        return {...defaultRes, isChange:false}
       })
     column.setBasicRow(newBasicRow)
   }
