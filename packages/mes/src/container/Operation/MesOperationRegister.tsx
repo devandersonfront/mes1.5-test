@@ -391,10 +391,10 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                 if(parentProduct ? codeCheck ? row?.[0].product?.product_id !== parentProduct?.product?.product_id : row?.[0].contract_id !== parentProduct.contract_id : true) {
                   setParentProduct(row?.[0])
                 } else {
-                  const newSelectList = new Set()
+                  const newSelectList = new Set(selectList)
                   const newRow = row.map(row => {
                     const id = row.product?.product_id
-                    newSelectList.add(id)
+                    if(row.isChange) newSelectList.add(id)
                     return {
                       ...row,
                       id,

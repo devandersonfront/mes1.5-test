@@ -326,6 +326,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         uph : selectData.uph,
         identification : selectData.identification,
         border: usedInModal,
+        isChange: true,
       }
       if(columnType === 'outsourceProduct'){
         result['order_quantity'] = undefined
