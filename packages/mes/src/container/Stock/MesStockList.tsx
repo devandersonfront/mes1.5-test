@@ -104,7 +104,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
   };
 
   const getDetail = async (row) => {
-    const postBody = [row.product]
+    const postBody = [row.product.product_id]
     return await RequestMethod('post', 'stockBomLoad', postBody)
   }
 
