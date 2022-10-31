@@ -653,7 +653,7 @@ const BasicRawMaterial = ({}: IProps) => {
           }}
           optionIndex={optionIndex}
           title={"원자재 기준정보"}
-          buttons={[ (selectList.size === 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]}
+          buttons={[ (selectList.size <= 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]}
           buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
