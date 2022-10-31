@@ -265,6 +265,7 @@ const AiMesRecord = ({}: IProps) => {
         setSelectList(new Set)
     }
     const SaveBasic = async () => {
+        if(selectList.size >= 0) return Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
         try{
             const postBody = basicRow.map((v) => {
                 const cavity = v.molds?.length > 0 ? v.molds[0].mold?.mold?.cavity : 1
@@ -331,9 +332,9 @@ const AiMesRecord = ({}: IProps) => {
                 }).filter((v) => v)
             const res = await RequestMethod('post', `recordSave`,postBody)
             if (res?.length > 0) {
+                    DeleteBasic(true)
                 Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
                     // row.reload()
-                    DeleteBasic(true)
                 });
             } else {
                 Notiflix.Report.failure('이미 삭제된 작업일보 입니다.', '', '확인', () => {

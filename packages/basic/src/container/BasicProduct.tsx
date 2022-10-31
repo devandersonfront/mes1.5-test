@@ -26,6 +26,7 @@ import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import renewalColumn from '../../../main/common/unprintableKey'
 import { alertMsg } from 'shared/src/common/AlertMsg'
+import {insert_productList} from "shared/src/reducer/ProductSelect";
 import {selectUserInfo} from "shared/src/reducer/userInfo";
 
 export interface IProps {
@@ -154,6 +155,8 @@ const BasicProduct = ({}: IProps) => {
           ],
           work_standard_image:row.work_standard_image?.uuid,
           type: row.type_id,
+          safety_stock : Number(row.safety_stock),
+          safety_stock_id : Number(row.safety_stock_id),
           additional: addedColumn.map((col, colIdx)=> ({
                 mi_id: col.id,
                 title: col.name,
@@ -299,6 +302,8 @@ const BasicProduct = ({}: IProps) => {
         product_type: column.filter(col => col.key === 'product_type')?.[0]?.selectList[row.type < 3 ? 0 : 1].name,
         id: `product_${random_id}`,
         readonly: row.type > 2,
+        safety_stock : Number(row.safety_stock),
+        safety_stock_id : Number(row.safety_stock_id),
         reload
       }
     })
@@ -522,8 +527,13 @@ const BasicProduct = ({}: IProps) => {
   }
 
   const onClickMoreButton = (buttonIdx: number) => {
-    switch(buttonIdx){
-      case 0: routeToProductBatchRegister()
+    if(selectList.size <= 1){
+      dispatch(insert_productList(basicRow[selectRow]))
+      switch(buttonIdx){
+        case 0: routeToProductBatchRegister()
+      }
+    }else{
+      Notiflix.Report.warning("경고","하나의 데이터만 선택해주세요.","확인")
     }
   }
 

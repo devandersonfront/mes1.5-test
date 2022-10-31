@@ -282,6 +282,7 @@ const ApiList = {
   lotSmSave: `/api/v1/lot-sm/save`,
   subFactorySave: `/api/v1/subFactory/save`,
   contractSave: `/api/v1/contract/save`,
+  aiContractSave: `/api/v1/ai/contract/save`,
   sheetSave: `/api/v1/sheet/save`,
   shipmentSave: `/api/v1/shipment/save`,
   shipmentExportSave: `/api/v1/shipment/export/save`,
