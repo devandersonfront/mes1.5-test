@@ -25,6 +25,6 @@ export const alertMsg = {
   exportedNotUpdatable: '출고된 정보는 수정할 수 없습니다.',
   importedNotUpdatable: '입고된 정보는 수정할 수 없습니다.',
   duplicateLotNumber:'LOT번호는 중복될 수 없습니다.',
-  noOperation:'작업지시서를 선택해주세요.',
+  noOperation:'지시 고유 번호를 선택해주세요.',
   duplicateCode:'중복된 CODE 입니다.'
 }
