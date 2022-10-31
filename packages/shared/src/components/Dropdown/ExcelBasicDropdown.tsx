@@ -82,7 +82,7 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
         color: column.type === 'Modal' ? 'black': 'white',
         background: `url(${column.type === 'Modal' ? filterOpenB : filterOpenW}) no-repeat right 9px center`,
         backgroundSize: '24px',
-        backgroundColor: column.type === 'Modal' ? row.border ? '#19B9DF80' : 'white' : '#00000000'
+        backgroundColor: column.type === 'Modal' ? row.border ? '#19B9DF80' : 'white' : row?.warning ? "red" : '#00000000'
       }}
       value={cleanValue(column.key)}
       disabled={column.readonly}
