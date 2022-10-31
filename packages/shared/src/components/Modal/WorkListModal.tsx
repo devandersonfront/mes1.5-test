@@ -20,6 +20,8 @@ import {BarcodeDataType} from "../../common/barcodeType";
 import {BarcodeModal} from "./BarcodeModal";
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
+import {useSelector} from "react-redux";
+import {selectUserInfo} from "../../reducer/userInfo";
 
 interface IProps {
   column: IExcelHeaderType
@@ -58,6 +60,7 @@ type ModalType = {
 
 const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
+  const userInfo = useSelector(selectUserInfo)
 
   const [bomDummy, setBomDummy] = useState<any[]>([
     // {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
@@ -209,6 +212,20 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     return tempList
   }
 
+  const materialTypeOfCompany = (data) => {
+    switch (data.type) {
+      //완제품
+      case 2:
+        return 6
+      //반제품,제공품
+      case 1:
+      case 0:
+        return 7
+      default :
+        return 5
+    }
+  }
+
   const convertBarcodeData = (items) => {
 
     const mainMachine = items.machines?.filter((machine)=>(machine.machine.type === 1))
@@ -216,7 +233,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     return items.map((item)=>(
         {
           material_id: item.productId,
-          material_type: 5,
+          material_type: userInfo.companyCode === '2SZ57L' ? materialTypeOfCompany(item.product) : 5,
           material_lot_id : item.record_id,
           material_lot_number: item.lot_number,
           material_quantity : item.good_quantity,
