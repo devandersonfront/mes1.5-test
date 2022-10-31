@@ -61,7 +61,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                 aiData.sequence = row.machine.sequence
                 aiData.name = row.machine.machine.name
                 aiData.mfrCode = row.machine.machine.mfrCode
-                aiData.machineType = row.machine.machine.type
+                aiData.machineType = TransferCodeToValue(row.machine.machine.type, 'machine'),
                 aiData.isDefault = true
                 aiData.setting = true
                 setSearchList([aiData])
