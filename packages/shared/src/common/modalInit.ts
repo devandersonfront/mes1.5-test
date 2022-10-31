@@ -548,7 +548,9 @@ export const searchModalList: any = {
     {key: 'model_name', name: '모델', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'code', name: 'CODE', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'name', name: '품명', formatter: LineBorderContainer ,placeholder:"-",},
-    {key: 'product_type', name: '구분', formatter: LineBorderContainer ,placeholder:"-",},
+    // {key: 'product_type', name: '구분', formatter: LineBorderContainer ,placeholder:"-",},
+
+
     {key: 'type_name', name: '품목 종류', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'stock', name: '품목 재고', formatter: LineBorderContainer ,placeholder: 0,},
   ],
