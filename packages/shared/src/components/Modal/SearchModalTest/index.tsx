@@ -550,6 +550,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           goal:row?.goal,
         })
       }else{
+        console.log("come here ")
         const modalRes = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType, column.type)
         onRowChange({
           ...row,

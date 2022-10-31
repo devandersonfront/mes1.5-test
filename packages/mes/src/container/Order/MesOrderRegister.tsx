@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { columnlist, ExcelDownloadModal, ExcelTable, Header as PageHeader, IExcelHeaderType, RequestMethod, } from 'shared'
+import {
+  columnlist,
+  ExcelTable,
+  Header as PageHeader,
+  RequestMethod,
+} from 'shared'
 // @ts-ignore
 import { SelectColumn } from 'react-data-grid'
 import Notiflix from "notiflix";
@@ -9,6 +14,7 @@ import moment from 'moment'
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
 import { useDispatch, } from "react-redux";
 import { setExcelTableHeight } from 'shared/src/common/Util'
+import Checkbox from "shared/src/components/InputBox/Checkbox";
 
 
 
@@ -61,7 +67,9 @@ const MesOrderRegister = ({ }: IProps) => {
       }
     })
     if (res) {
-      setColumn(setMenu(res.bases))
+     if (process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai"){
+      setColumn([...setMenu(res.bases), process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai" && { key: "ai_check", name: "작업지시서 등록", width: 118, formatter: Checkbox, columnType:"checkbox" }])
+     } else setColumn(setMenu(res.bases))
     }
   }
 
@@ -80,7 +88,7 @@ const MesOrderRegister = ({ }: IProps) => {
       })
 
 
-      const postBody = basicRow.filter(row => selectList.has(row.id)).map(row => (
+      let postBody = basicRow.filter(row => selectList.has(row.id)).map(row => (
         {
           ...row,
           product: {
@@ -92,9 +100,18 @@ const MesOrderRegister = ({ }: IProps) => {
           amount: row.amount ?? 0,
         }))
 
+      if(process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai"){
+        postBody = postBody.map((row) => {
+          if(row.ai_check) {
+            return {contract:row, make_sheet:true}
+          }else{
+            return {contract:row, make_sheet:false}
+          }
+        })
+      }
       Notiflix.Loading.circle()
-      
-      const res = await RequestMethod('post', `contractSave`, postBody)
+
+      const res = await RequestMethod('post', process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai" ? `aiContractSave` : `contractSave`, postBody)
 
       if (res) {
         Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
@@ -156,12 +173,17 @@ const MesOrderRegister = ({ }: IProps) => {
         ]}
         row={basicRow}
         setRow={(row) => {
-          let tmp: Set<any> = selectList
-          row.map(v => {
+          let tmp: Set<any> = new Set(selectList)
+          const newRow = row.map(v => {
             if (v.isChange) tmp.add(v.id)
+            return {
+              ...v,
+              id:v.id,
+              isChange: false
+            }
           })
           setSelectList(tmp)
-          setBasicRow(row)
+          setBasicRow(newRow)
         }}
         selectList={selectList}
         //@ts-ignore
