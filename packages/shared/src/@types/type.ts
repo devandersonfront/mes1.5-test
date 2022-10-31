@@ -72,6 +72,7 @@ export interface IExcelHeaderType {
   state?:string
   orderRegisterManage?:() => any[]
   dependency?:string
+  textMultiInput ?: (index, value) => void
 
 }
 

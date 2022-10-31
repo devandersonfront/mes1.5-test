@@ -111,6 +111,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           const newMachineList = {...selector}
           onRowChange({ ...row, [column.key]: eventValue, isChange: true })
           newMachineList[newMachineList.selectRow] = { ...newMachineList[newMachineList.selectRow], goal:Number(eventValue)};
+          column.textMultiInput(row.index,eventValue)
           dispatch(insert_machine_list(newMachineList))
         }else{
           onRowChange({ ...row, [column.key]: eventValue, isChange: true })

@@ -74,7 +74,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     })
 
     if(res){
-      let tmpColumn = codeCheck ?  columnlist["operationCodeRegisterV2"] : columnlist['operationIdentificationRegisterV2']
+      let tmpColumn = codeCheck ?  columnlist["operationCodeRegisterV2"]() : columnlist['operationIdentificationRegisterV2']
 
       tmpColumn = tmpColumn.map((column: any) => {
         let menuData: object | undefined;
@@ -282,6 +282,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     let newSelectList = new Set()
     let parentProduct = [{
       ...object,
+      index : 0,
       id: object.product?.product_id,
       contract_id: object.contract_id ?? '-',
       goal: object.contract?.amount ?? 0,
@@ -299,12 +300,13 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
     if(res) {
       const parsedRes = ParseResponse(res)
-      const childProducts = parsedRes.filter(row => row.type === 2 && row.child_product?.type < 3).map(row => {
+      const childProducts = parsedRes.filter(row => row.type === 2 && row.child_product?.type < 3).map((row,index) => {
         let random_id = Math.random() * 1000;
         const id= row.child_product?.product_id ?? 'operation' + random_id
         newSelectList.add(id)
         return {
           ...row,
+          index : index + 1,
           contract_id: object.contract_id ?? '-',
           id,
           bom_root_id: row.child_product.bom_root_id,
@@ -360,6 +362,10 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     }
   }
 
+  const textMultiInput = (index : number , value : number) => {
+    setBasicRow(basicRow.map(row => (row.index >= index ? {...row, goal: value} : {...row})))
+  }
+
   return (
       <div className={'excelPageContainer'}>
         <PageHeader
@@ -382,7 +388,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             selectable
             headerList={[
               SelectColumn,
-              ...addColumnClass(column)
+              ...addColumnClass([...columnlist["operationCodeRegisterV2"](textMultiInput)])
             ]}
             row={basicRow}
             setRow={async (row) => {
