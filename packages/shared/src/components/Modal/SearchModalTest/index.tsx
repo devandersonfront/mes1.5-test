@@ -114,14 +114,14 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       setSearchList([{}])
       switch(tab) {
         case 0: {
-          setSearchModalInit(SearchInit.semiProduct)
+          setSearchModalInit(SearchInit.finishedProduct)
           // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
           setSearchModalColumn(
-              [...searchModalList[`${SearchInit.semiProduct.excelColumnType}Search`].map((column, index) => {
+              [...searchModalList[`${SearchInit.finishedProduct.excelColumnType}Search`].map((column, index) => {
                 if (index === 0) return ({
                   ...column, colSpan(args) {
                     if (args.row?.first) {
-                      return searchModalList[`${SearchInit.semiProduct.excelColumnType}Search`].length
+                      return searchModalList[`${SearchInit.finishedProduct.excelColumnType}Search`].length
                     } else {
                       return undefined
                     }
@@ -150,13 +150,13 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           break;
         }
         case 2: {
-          setSearchModalInit(SearchInit.finishedProduct)
+          setSearchModalInit(SearchInit.semiProduct)
           setSearchModalColumn(
-              [...searchModalList[`${SearchInit.finishedProduct.excelColumnType}Search`].map((column, index) => {
+              [...searchModalList[`${SearchInit.semiProduct.excelColumnType}Search`].map((column, index) => {
                 if (index === 0) return ({
                   ...column, colSpan(args) {
                     if (args.row?.first) {
-                      return searchModalList[`${SearchInit.finishedProduct.excelColumnType}Search`].length
+                      return searchModalList[`${SearchInit.semiProduct.excelColumnType}Search`].length
                     } else {
                       return undefined
                     }
@@ -239,7 +239,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         case "product" :
           return {
             outsourcing: 0,
-            types : tab === 0 ? '0,3' : tab === 1 ? '1' : '2,4',
+            types : tab === 0 ? '2,4' : tab === 1 ? '1' : '0,3',
             keyword:keyword,
             opt:optionIndex,
           }
@@ -373,9 +373,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 setKeyword('')
                 setPageInfo({page:1, total:1})
               }}>
-                <option key={'0'} value={0}>반제품</option>
+                <option key={'0'} value={0}>완제품</option>
                 <option key={'1'} value={1}>재공품</option>
-                <option key={'2'} value={2}>완제품</option>
+                <option key={'2'} value={2}>반제품</option>
               </Select>
             </div>
         }
