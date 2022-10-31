@@ -154,19 +154,14 @@ const AiMesRecord = ({}: IProps) => {
             }
         }).filter(v=>v)
 
-
-        setTimeout(async() => {
-            let res = await RequestMethod('post', `aiRecordSave`, result);
-            if (res && !save) {
-                Notiflix.Report.success("삭제 성공!", "", "확인", () => reload(null, null))
-            }else if(res){
-                reload(null, null)
-            }else{
-                Notiflix.Report.failure("에러가 발생했습니다!", "", "확인", () => reload())
-            }
-        },1500)
-
-
+        let res = await RequestMethod('post', `aiRecordSave`, result);
+        if (res && !save) {
+            Notiflix.Report.success("삭제 성공!", "", "확인", () => reload(null, null))
+        }else if(res){
+            router.push("/mes/recordV2/list")
+        }else{
+            Notiflix.Report.failure("에러가 발생했습니다!", "", "확인", () => reload())
+        }
     };
 
 
@@ -341,18 +336,17 @@ const AiMesRecord = ({}: IProps) => {
                     }
                 }
                 }).filter((v) => v)
-            console.log("postBody : ", postBody)
-            // const res = await RequestMethod('post', `recordSave`,postBody)
-            // if (res?.length > 0) {
-            //
-            //     Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
-            //         DeleteBasic(true)
-            //     });
-            // } else {
-            //     Notiflix.Report.failure('이미 삭제된 작업일보 입니다.', '', '확인', () => {
-            //         reload()
-            //     });
-            // }
+            const res = await RequestMethod('post', `recordSave`,postBody)
+            if (res?.length > 0) {
+
+                Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
+                    DeleteBasic(true)
+                });
+            } else {
+                Notiflix.Report.failure('이미 삭제된 작업일보 입니다.', '', '확인', () => {
+                    reload()
+                });
+            }
         } catch (errMsg){
             console.log(errMsg)
             Notiflix.Report.warning('경고', errMsg, '확인')
