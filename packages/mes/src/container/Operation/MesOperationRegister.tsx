@@ -373,7 +373,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             onChangeRadioIndex={(index) => {
               setCodeCheck(!!!index)
               setBasicRow([{
-                id: undefined, date: basicRow[0].date?? moment().format('YYYY-MM-DD'),
+                id: undefined,
+                date: basicRow[0].date?? moment().format('YYYY-MM-DD'),
                 deadline: basicRow[0].deadline?? moment().format('YYYY-MM-DD'), first:true
               }])
             }}
@@ -388,7 +389,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             selectable
             headerList={[
               SelectColumn,
-              ...addColumnClass([...columnlist["operationCodeRegisterV2"](textMultiInput)])
+              ...addColumnClass(codeCheck ? [...columnlist["operationCodeRegisterV2"](textMultiInput)] : columnlist['operationIdentificationRegisterV2'])
             ]}
             row={basicRow}
             setRow={async (row) => {
