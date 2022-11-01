@@ -57,6 +57,8 @@ const BasicRawMaterial = ({}: IProps) => {
     type : 'barcode',
     isVisible : false
   })
+  // 안전재고량 filter 해주기 위한 상태값
+  // const [safety_status, setSafety_status] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
     page: 1,
@@ -228,6 +230,7 @@ const BasicRawMaterial = ({}: IProps) => {
       params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
       params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
     }
+      // params['safety_status'] = !!safety_status
     return params
   }
 
@@ -374,7 +377,6 @@ const BasicRawMaterial = ({}: IProps) => {
         id: `rawmaterial_${random_id}`,
       };
     });
-
     setBasicRow([...tmpBasicRow]);
   };
 
@@ -659,6 +661,11 @@ const BasicRawMaterial = ({}: IProps) => {
           title={"원자재 기준정보"}
           buttons={[ (selectList.size <= 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]}
           buttonsOnclick={onClickHeaderButton}
+          // 안전재고 filter를 위한 옵션
+          // isRadio
+          // radioValue={safety_status}
+          // onChangeRadioValues={setSafety_status}
+          // radioTexts={["전체", "안전재고 부족"]}
         />
         <ExcelTable
           editable

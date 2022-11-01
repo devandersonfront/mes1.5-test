@@ -31,7 +31,7 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
 
   return (
     // <UnitWrapper style={{ backgroundColor: row.border ? '#19B9DF80': undefined}}>
-    <UnitWrapper style={{ backgroundColor:row?.warning ? "red" : undefined}}>
+    <UnitWrapper style={{ backgroundColor:row?.insufficient && column.key == "safety_stock" ? "red" : undefined}}>
       <UnitValue>
         {
           !title && column.placeholder
@@ -53,7 +53,9 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
                     onChange={e => {
                       onRowChange({...row, unit : TransferValueToCode(e.target.value, 'rawMaterialUnit') , isChange: true})
                     }}
-                    defaultValue={column.selectList?.filter(select => select.pk === row.unit)?.[0].name}
+                    // defaultValue={column.selectList?.filter(select => select.pk === row.unit)?.[0].name}
+                    value={column.selectList?.filter(select => select.pk === row.unit)?.[0].name}
+                    disabled={column?.readonly}
                   >
                     {
                       column.selectList?.map((list : SelectListType)=>(

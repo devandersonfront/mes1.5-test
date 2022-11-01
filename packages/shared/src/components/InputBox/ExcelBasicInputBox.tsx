@@ -52,6 +52,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
       value={isNumberInput? RemoveFirstZero(row[column.key]) : row[column.key] ?? ""}
       disabled={isDisabled}
       type={isNumberInput ? "number" : "text"}
+      maxLength={column.key == "telephone" && 13}
       onKeyDown={(e) => {
         if(validInput(e.key)){
           setFocus(true)
@@ -88,7 +89,8 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
         }
       }}
       onChange={(event) => {
-        let eventValue = event.target.value
+        let eventValue = column.key === "telephone" ? event.target.value.replace(/[^0-9]/g, '')
+            .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "") : event.target.value
         const lastChar = eventValue.slice(-1)
         const deleteEvent = eventValue.length < row[column.key]?.length
         if(!validInput(lastChar) || (!deleteEvent && korean.test(lastChar) && !focus)) return
@@ -117,7 +119,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onRowChange({ ...row, [column.key]: eventValue, isChange: true })
         }
       }}
-      onBlur={() => {
+      onBlur={(e) => {
         setFocus(false)
         onClose && onClose(true)}}
     />

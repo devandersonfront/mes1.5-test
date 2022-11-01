@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   columnlist,
   excelDownload,
-  ExcelTable,
+  ExcelTable, FileEditer,
   Header as PageHeader,
   IExcelHeaderType,
   PaginationComponent,
@@ -22,6 +22,7 @@ import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Uti
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
 import { alertMsg } from 'shared/src/common/AlertMsg'
+import Checkbox from "shared/src/components/InputBox/Checkbox";
 
 export interface IProps {
   children?: any;
@@ -32,7 +33,7 @@ export interface IProps {
 
 const title = "유저 관리";
 const optList = ["성명", "이메일", "직책명", "전화번호"];
-
+const email_reg = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
 const BasicUser = ({}: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -112,7 +113,7 @@ const BasicUser = ({}: IProps) => {
     });
   };
 
-  const checkValid = (input: string, type:'password' | 'id') => {
+  const checkValid = (input: string, type:'password' | 'id' | 'telephone') => {
     let regex = undefined
     if(input.length > 0){
       switch (type){
@@ -121,6 +122,9 @@ const BasicUser = ({}: IProps) => {
           break;
         case 'password':
           regex = /^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,16}$/;
+          break;
+        case 'telephone':
+          regex = /^010-?([0-9]{4})-?([0-9]{4})$/
           break;
       }
       return regex.test(input)
@@ -138,6 +142,8 @@ const BasicUser = ({}: IProps) => {
       if(!!!row['password-confirm']) throw('비밀번호 확인은 필수입니다.')
       if(!!row.password && !!row['password-confirm'] && row.password !== row['password-confirm']) throw('비밀번호와 비밀번호 확인이 서로 일치하지 않습니다.')
       if(!!row.password && !checkValid(row.password, 'password')) throw('비밀번호는 8자 이상 16자 이하이어야 하며, 숫자/영문/특수문자(#?!@$%^&*-)를 모두 포함해야 합니다.')
+      if(row.alarm && !row.email) throw('이메일을 입력해주세요.')
+      if(row.telephone && !checkValid(row.telephone, "telephone")) throw('전화번호 양식을 맞추주세요.')
   }
 
   const SaveBasic = async () => {
@@ -145,6 +151,7 @@ const BasicUser = ({}: IProps) => {
       if(selectList.size === 0){
         throw(alertMsg.noSelectedData)
       }
+
       const addedColumn = column.filter(col => col.type === 'additional')
       const postBody = basicRow.filter(row => selectList.has(row.id)).map(row => {
         validate(row)
@@ -297,7 +304,7 @@ const BasicUser = ({}: IProps) => {
     }
     setSelectList(new Set());
     Notiflix.Loading.remove()
-    
+
   };
 
   const changeRow = (row: any) => {
@@ -330,7 +337,7 @@ const BasicUser = ({}: IProps) => {
     let tmpColumn = columnlist.member;
     let tmpRow = [];
     tmpColumn = tmpColumn
-      .map((column: any) => {
+      .map((column: any, index) => {
         let menuData: object | undefined;
         res.menus &&
           res.menus.map((menu: any) => {
@@ -402,6 +409,7 @@ const BasicUser = ({}: IProps) => {
     // })
 
     tmpRow = res.info_list;
+    tmpColumn.push({ key: 'alarm', name:"이메일 알람", formatter: Checkbox, width:118},)
     loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
@@ -578,16 +586,24 @@ const BasicUser = ({}: IProps) => {
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {
-          let newSelectList: Set<any> = selectList;
+          try{
+            let newSelectList: Set<any> = selectList;
+            e.map((v, i) => {
 
-          e.map((v, i) => {
-            if (v.isChange) {
-              newSelectList.add(v.id)
-              v.isChange = false
-            }
-          });
-          setSelectList(newSelectList);
-          competeId(e);
+              if (v.isChange) {
+                newSelectList.add(v.id)
+                v.isChange = false
+              }
+              if(v.email?.length > 0 && !email_reg.test(v.email)){
+                throw("이메일 형식을 지켜주세요.")
+              }
+            });
+            setSelectList(newSelectList);
+            competeId(e);
+          }catch(err){
+            console.log("err : ", err)
+            Notiflix.Report.warning("경고",err,"확인")
+          }
         }}
         onRowClick={(clicked) => {
           const e = basicRow.indexOf(clicked)

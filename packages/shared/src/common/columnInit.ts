@@ -73,11 +73,11 @@ export const columnlist: any = {
     { key: 'telephone', formatter: PlaceholderBox, placeholder: "전화번호 입력", editor: TextEditor },
     { key: 'email', formatter: PlaceholderBox, placeholder: "이메일 입력", editor: TextEditor },
     { key: 'authority', formatter: AuthoritySearchModal },
-    // {key: 'authority', formatter: DropDownEditor, selectList: []},
     { key: 'tmpId', formatter: PlaceholderBox, placeholder: "아이디 입력", editor: TextEditor, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
     { key: 'password',formatter: PasswordBox, placeholder: "비밀번호 입력", editor: TextEditor },
     { key: 'password-confirm', formatter: PasswordBox, placeholder: "비밀번호 확인", editor: TextEditor },
     { key: 'profile', formatter: FileEditer, type: "image" , unprintable : true},
+    { key: 'alarm', formatter: FileEditer, type: "image" , unprintable : true},
   ],
   factory: [
     { key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력', headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
@@ -344,8 +344,7 @@ export const columnlist: any = {
       ]
     },
     { key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})) },
-    { key: 'safety_stock', name: '안전재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, headerRenderer: HeaderSort, sortOption: "none", sorts: {}},
-    { key: 'safety_stock_status', name: '안전재고 사용', formatter: UnitContainer, placeholder: "0", toFix: 2, headerRenderer: HeaderSort, sortOption: "none", sorts: {}},
+    { key: 'safety_stock', name: '안전재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), readonly:true},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
   ],
