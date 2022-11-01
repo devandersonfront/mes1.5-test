@@ -10,9 +10,8 @@ interface IProps {
 
 const Checkbox = ({row, column, onRowChange, onClose}: IProps) => {
     return (
-        <input type={"checkbox"} value={row[column.key]} onChange={(e) => {
-            console.log("row : ", row, e.target.checked)
-            onRowChange({...row, ai_check:e.target.checked})
+        <input type={"checkbox"} checked={row[column.key]} onChange={(e) => {
+            onRowChange({...row, [column.key]:e.target.checked})
         }} />
     )
 }
