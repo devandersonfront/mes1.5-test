@@ -73,11 +73,11 @@ export const columnlist: any = {
     { key: 'telephone', formatter: PlaceholderBox, placeholder: "전화번호 입력", editor: TextEditor },
     { key: 'email', formatter: PlaceholderBox, placeholder: "이메일 입력", editor: TextEditor },
     { key: 'authority', formatter: AuthoritySearchModal },
-    // {key: 'authority', formatter: DropDownEditor, selectList: []},
     { key: 'tmpId', formatter: PlaceholderBox, placeholder: "아이디 입력", editor: TextEditor, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
     { key: 'password',formatter: PasswordBox, placeholder: "비밀번호 입력", editor: TextEditor },
     { key: 'password-confirm', formatter: PasswordBox, placeholder: "비밀번호 확인", editor: TextEditor },
     { key: 'profile', formatter: FileEditer, type: "image" , unprintable : true},
+    { key: 'alarm', formatter: FileEditer, type: "image" , unprintable : true},
   ],
   factory: [
     { key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력', headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
