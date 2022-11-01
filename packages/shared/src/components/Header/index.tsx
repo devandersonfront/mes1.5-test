@@ -274,7 +274,9 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                     <>
                       <input id={`radio_${index}`} name={`radio`}  type={'radio'} style={{display: 'none'}} onClick={() => {
                         onChangeRadioValues && onChangeRadioValues(index)
-                      }}/>
+                      }} checked={Boolean(radioValue)}
+
+                      />
                       <label htmlFor={`radio_${index}`}>
                         <div style={{display:"flex", alignItems:"center",}}>
                           {
