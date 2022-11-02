@@ -72,7 +72,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
               nz: action === 'register',
               rangeNeeded:true,
               sorts:['end', 'recordId'],
-              order:['asc', 'asc']
+              order:['asc', 'asc'],
+              basicStock: true
             }
           })
         } else {
@@ -149,6 +150,7 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         // rowLotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.rowLotList,...parsedRes],
         loadMaterialLot
       }
+      console.log('lots',lots)
       if(setInput){
         setInput(lots)
       } else {

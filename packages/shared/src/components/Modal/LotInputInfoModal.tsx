@@ -147,8 +147,8 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
         <UploadButton onClick={() => {
           setIsOpen(true)
         }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"} >
-          {/*<p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>*/}
-          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>{row?.good_quantity}</p>
+          <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
+          {/*<p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>{row?.good_quantity}</p>*/}
         </UploadButton>
     )
 
