@@ -125,6 +125,15 @@ export const isNull = (value) => {
     return value === null
 }
 
+export const getBomKey = (bom:any) => {
+  switch(bom.type) {
+    case 0: return 'rm' + bom.childRmId
+    case 1: return 'sm' + bom.childSmId
+    case 2: return 'p' + bom.childProductId
+    default: return undefined
+  }
+}
+
 // export const TypeCheck = (type:0 | 1 | 2 | "") => {
 //   switch(type){
 //     case 0 :

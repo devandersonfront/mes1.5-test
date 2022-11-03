@@ -147,10 +147,10 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
 
   const radioButtonStyle = (button:string, index:number) => (
     <>
-      <input id={`radio_${index}`} name={`radio`}  type={'radio'} style={{display: 'none'}} onClick={() => {
+      <input id={`radio_${index}`} key={index} name={`radio`}  type={'radio'} style={{display: 'none'}} onClick={() => {
         onChangeRadioIndex && onChangeRadioIndex(index)
       }}/>
-      <label htmlFor={`radio_${index}`}>
+      <label htmlFor={`radio_${index}`} key={index}>
         <div style={{display:"flex", alignItems:"center",}}>
           {
             radioIndex === index
@@ -272,20 +272,20 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                 isRadio &&
                 radioTexts.map((text, index) =>
                     <>
-                      <input id={`radio_${index}`} name={`radio`}  type={'radio'} style={{display: 'none'}} onClick={() => {
+                      <input id={`radio_${index}`} name={`radio`} key={`radioInput${index}`} type={'radio'} style={{display: 'none'}} onClick={() => {
                         onChangeRadioValues && onChangeRadioValues(index)
                       }} checked={Boolean(radioValue)}
 
                       />
-                      <label htmlFor={`radio_${index}`}>
-                        <div style={{display:"flex", alignItems:"center",}}>
+                      <label key={`radioLabel${index}`} htmlFor={`radio_${index}`}>
+                        <div key={`radioWrapper${index}`} style={{display:"flex", alignItems:"center",}}>
                           {
                             radioValue === index
-                                ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
-                                : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
+                                ? <div key={`radioButton${index}`} style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
+                                : <div key={`radioButton${index}`} style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
                           }
 
-                          <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>{radioTexts[index]}</p>
+                          <p key={`radioText${index}`} style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>{radioTexts[index]}</p>
                         </div>
                       </label>
                     </>

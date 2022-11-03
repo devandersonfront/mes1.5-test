@@ -23,6 +23,7 @@ import 'rc-tooltip/assets/bootstrap_white.css';
 import { getHeaderItems, InputListHeaders, InputModalHeaderItems } from '../../common/inputMaterialInfo'
 import {UnitContainer} from "../Unit/UnitContainer";
 import {TextEditor} from "../InputBox/ExcelBasicInputBox";
+import { getBomKey } from '../../common/Util'
 interface IProps {
   column: IExcelHeaderType
   row: any
@@ -56,12 +57,23 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       }else if(row.input_bom?.length > 0){
         changeRow(row.input_bom)
       }else if(row.bom?.length > 0){
-        changeRow(row.bom)
+        const inputBom = aggregateOutsourcingBom(row.bom)
+        changeRow(inputBom)
       }else{
         Notiflix.Report.warning("경고","투입 자재가 없습니다.","확인", () => setIsOpen(false))
       }
     }
   }, [isOpen])
+
+  const aggregateOutsourcingBom = (bom) => {
+    const aggregate = {}
+    bom.map(bom => {
+      const bomKey = getBomKey(bom.bom)
+      aggregate[bomKey] = bom.bom
+    })
+
+    return Object.values(aggregate).map(bom => ({bom}))
+  }
 
   const changeRow = (tmpRow: any, key?: string) => {
     const newRows = tmpRow?.map((v, i) => {
@@ -294,7 +306,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                     setSelectRow(e)
                   }}
                   setRow={(e) => {
-                    console.log(e)
                     let tmp = e.map((v, index) => {
                       if(v.bom){
                         if(v.lotList){
@@ -304,7 +315,6 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
                             unit: v.unit,
                             current: lot?.amount ? new Big(Number(lot?.current)).minus(new Big(Number(lot?.amount)).times(v?.usage)).toNumber() : 0
                           }))
-                          console.log("newLots : ", newLots, v)
                           setLotList(newLots)
                         }
                         setSelected({...selected, type:v.type_name, product: v.code, productType: v.product_type})

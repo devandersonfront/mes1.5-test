@@ -4,7 +4,6 @@ import { searchModalList } from '../common/modalInit'
 import { getUsageType, TransferType } from '../common/Util'
 
 export const SearchResultSort = (infoList, type: string) => {
-  console.log(infoList, type)
   const noneSelected = '(선택 없음)'
   switch(type) {
     case 'user': {
@@ -231,9 +230,7 @@ export const SearchResultSort = (infoList, type: string) => {
     }
     case 'sheet' : {
       const columnKeys = searchModalList.sheetSearch.map(columns => columns.key)
-      console.log("columnKeys : ", columnKeys)
       return infoList.map((v) => {
-        console.log("v : ", v)
         const tool = v.tool
         let obj = {}
         // columnKeys.map(column => obj[column] = tool[column] === undefined ? noneSelected : tool[column])
@@ -259,7 +256,6 @@ export const SearchResultSort = (infoList, type: string) => {
 }
 
 export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean, usedInModal?: boolean, columnType?: string) => {
-  console.log("selectData : ", selectData, type)
   switch(type) {
     case 'user': {
       return {
