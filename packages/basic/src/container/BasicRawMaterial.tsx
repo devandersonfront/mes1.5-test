@@ -610,7 +610,6 @@ const BasicRawMaterial = ({}: IProps) => {
   }
 
   const convertBarcodeData = (quantityData) => {
-
     return [{
       material_id: quantityData.rm_id,
       material_type: 0,
@@ -625,6 +624,10 @@ const BasicRawMaterial = ({}: IProps) => {
       material_size :String((quantityData.width * quantityData.height).toFixed(1)),
       material_texture : quantityData?.texture,
       material_unit : null,
+
+      material_texture_type : quantityData?.type,
+      material_import_date: null,
+      material_bom_lot: null
     }]
   }
 

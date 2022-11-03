@@ -408,6 +408,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   const convertBarcodeData = (quantityData) => {
 
+    console.log(quantityData,'quantityData')
+
     return [{
       material_id: quantityData.code ?? 0,
       material_type: userInfo.companyCode === '2SZ57L' ? 8 : 3,
@@ -421,7 +423,10 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       material_machine_name : null,
       material_size : String((quantityData.width * quantityData.height).toFixed(1)),
       material_texture : quantityData?.texture,
-      material_unit : TransferCodeToValue(quantityData?.raw_material.unit,'rawMaterialUnit') as string
+      material_unit : TransferCodeToValue(quantityData?.raw_material.unit,'rawMaterialUnit') as string,
+      material_texture_type : quantityData?.type,
+      material_import_date : quantityData?.date,
+      material_bom_lot: null,
     }]
   }
 

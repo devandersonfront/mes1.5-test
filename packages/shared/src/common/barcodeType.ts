@@ -26,5 +26,8 @@ export type BarcodeDataType = {
     material_size : string | undefined
     material_texture: string | undefined
     material_unit : string | undefined
+    material_texture_type : string | undefined
+    material_import_date : string | undefined
+    material_bom_lot: string | undefined
 
 }
