@@ -518,7 +518,11 @@ const BasicProduct = ({}: IProps) => {
       material_machine_name : mainMachine.length > 0 ? mainMachine[0]?.machine.name : null,
       material_size : null,
       material_texture : null,
-      material_unit : null
+      material_unit : null,
+
+      material_texture_type : null,
+      material_import_date : null,
+      material_bom_lot: null,
     }]
   }
 
