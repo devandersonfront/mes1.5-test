@@ -408,8 +408,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   const convertBarcodeData = (quantityData) => {
 
-    console.log(quantityData,'quantityData')
-
     return [{
       material_id: quantityData.code ?? 0,
       material_type: userInfo.companyCode === '2SZ57L' ? 8 : 3,
