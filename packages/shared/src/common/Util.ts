@@ -105,7 +105,7 @@ export const CheckRecordLotNumber = (lotNumber:string) : boolean => {
 }
 
 export const TransferType = (type:"COIL" | "SHEET" | string) => {
-  switch(type){
+  switch (type) {
     case "COIL" :
       return "KG"
     case "SHEET" :
@@ -113,6 +113,26 @@ export const TransferType = (type:"COIL" | "SHEET" | string) => {
     default:
       return type
   }
+}
+
+export const isNil = (value) => {
+    return isUndefined(value) && isNull(value)
+}
+export const isUndefined = (value) => {
+    return value === undefined
+}
+export const isNull = (value) => {
+    return value === null
+}
+
+export const getBomKey = (bom:any) => {
+  switch(bom.type) {
+    case 0: return 'rm' + bom.childRmId
+    case 1: return 'sm' + bom.childSmId
+    case 2: return 'p' + bom.childProductId
+    default: return undefined
+  }
+}
 
 // export const TypeCheck = (type:0 | 1 | 2 | "") => {
 //   switch(type){
@@ -126,4 +146,4 @@ export const TransferType = (type:"COIL" | "SHEET" | string) => {
 //       return type
 //   }
 // }
-}
+

@@ -1457,6 +1457,7 @@ export const columnlist: any = {
     {key: 'product_id', name: 'CODE', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'customer_id', name: '거래처', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'cm_id', name: '모델', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'worker', name: '발주자', formatter:PlaceholderBox, type: 'user', placeholder: '-'},
     {key: 'current', name: '미입고량', formatter:PlaceholderBox, placeholder: '0'},
     {key: 'order_quantity', name: '총 발주량', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'order_date', name: '발주 날짜', formatter: PlaceholderBox},

@@ -17,7 +17,7 @@ import { TransferCodeToValue } from '../../common/TransferFunction'
 import moment from 'moment'
 import lodash from 'lodash'
 import Big from 'big.js'
-import { getBomObject, ParseResponse } from '../../common/Util'
+import { getBomObject, isNil, ParseResponse } from '../../common/Util'
 import { UploadButton } from '../../styles/styledComponents'
 import { LineBorderContainer } from '../Formatter/LineBorderContainer'
 import { TextEditor } from '../InputBox/ExcelBasicInputBox'
@@ -284,7 +284,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     switch(type){
       case 0: return lot.lot_rm_id
       case 1: return lot.lot_sm_id
-      case 2: return lot.osId ? lot.record_id : lot.osi_id
+      case 2: return !isNil(lot.osId) ? lot.record_id : lot.osi_id
       default: return
     }
   }
@@ -339,7 +339,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           }
           setIsOpen(true)
         }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
-          <p>자재 보기</p>
+          <p>{column.type === 'ai' ? row.good_quantity : '자재 보기'}</p>
         </UploadButton>
     )
 
