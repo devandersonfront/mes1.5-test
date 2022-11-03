@@ -457,8 +457,8 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
         const syncKey = module.getSyncKey(column.searchType, column.type, row[module.key], row)
         if(initMap.has(syncKey)){
           defaultRes = {...defaultRes, ...syncWithSaved(column.type, initMap.get(syncKey))}
-        } else if(initMap.has(undefined)) {
-          defaultRes = {...defaultRes, ...defaultRow(column.type), ...syncWithSaved(column.type, initMap.get(undefined))}
+        // } else if(initMap.has(undefined)) {
+        //   defaultRes = {...defaultRes, ...defaultRow(column.type)}
         } else {
           defaultRes = {...defaultRes, ...defaultRow(column.type)}
         }
@@ -484,7 +484,7 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     setPageInfo({ page: 1, total: 1 })
     setIsOpen(false)
     setKeyword('')
-    setBasicRowMap(new Map(initMap))
+    setBasicRowMap(new Map(initMap.size === 1 && initMap.has(undefined) ? undefined : initMap))
   }
 
 
