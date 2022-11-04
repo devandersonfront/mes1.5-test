@@ -23,14 +23,13 @@ const MesOutsourcingImportRegister = () => {
         setBasicRow([{isFirst:true}])
     },[radioValue])
 
-
     useEffect(() => {
         dispatch(setMenuSelectState({ main: "외주 관리", sub: router.pathname }))
         return () => {dispatch(deleteMenuSelectState())}
     }, [])
 
     const filterSelectedRows = () => basicRow.filter((row) => selectList.has(row.id))
-
+    const filterUnSelectedRows = () => basicRow.filter((row) => !selectList.has(row.id))
     const save = async (postBody: any) => {
         const result = await RequestMethod("post", "outsourcingImportSave",postBody)
         if(result){
@@ -75,7 +74,7 @@ const MesOutsourcingImportRegister = () => {
     }
 
     const deleteRow = () => {
-        let filteredRows = filterSelectedRows()
+        let filteredRows = filterUnSelectedRows()
         if(filteredRows.length > 0){
             filteredRows[0] = {...filteredRows[0], isFirst: true}
         } else {

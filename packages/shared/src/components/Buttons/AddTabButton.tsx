@@ -72,7 +72,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
               nz: action === 'register',
               rangeNeeded:true,
               sorts:['end', 'recordId'],
-              order:['asc', 'asc']
+              order:['asc', 'asc'],
+              basicStock: true
             }
           })
         } else {
@@ -217,7 +218,8 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
     }
     // if(row.bom_info !== null){
     else {
-      loadMaterialLot(row.tab, 1, row.action, row.bom && {rm_id:row.bom[0].bom.childRmId})
+      // loadMaterialLot(row.tab, 1, row.action, row.bom && {rm_id:row.bom[0].bom.childRmId})
+      loadMaterialLot(row.tab, 1, row.action, row.bom && {...row , rm_id:row.bom.childRmId})
     }
   }
 

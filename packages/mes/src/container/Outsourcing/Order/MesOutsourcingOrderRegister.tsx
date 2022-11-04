@@ -3,7 +3,6 @@ import { columnlist, ExcelTable, Header as PageHeader, RequestMethod, } from 'sh
 // @ts-ignore
 import { SelectColumn } from 'react-data-grid'
 import Notiflix from "notiflix";
-import { NextPageContext } from 'next'
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
 import { useDispatch,  } from "react-redux";
 import {useRouter} from "next/router";
