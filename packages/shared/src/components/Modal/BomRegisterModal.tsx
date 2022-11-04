@@ -55,11 +55,16 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      if(row.bom_root_id){
+      if(column.type == 'noload'){
+        let searchList = changeRow(row.input)
+        dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
+        setSearchList([...searchList])
+      }else if(row.bom_root_id){
         SearchBasic().then(() => {
           // Notiflix.Loading.remove()
         })
-      } else {
+      }
+     else {
         setIsOpen(false)
         Notiflix.Report.warning("제품을 선택해 주세요.", "", "확인",)
       }

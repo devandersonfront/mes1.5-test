@@ -20,40 +20,38 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
     const [basicRow, setBasicRow] = useState<any[]>([])
     const [column, setColumn] = useState(searchModalList.operationRegister)
 
-    const getBomData = async (root_id:string) => {
-       const res =  await RequestMethod('get', `bomLoad`,{path: { key: root_id }})
-       const parsedRes = ParseResponse(res)
-        console.log(parsedRes)
-       return parsedRes
+    const getBomData = async(root_id:string) => {
+        const res = await RequestMethod('get', `bomLoad`, {path: {key: root_id}})
+        const parsedRes = ParseResponse(res)
+        return parsedRes
     }
 
+    const totalData = async() => {
+        setBasicRow(await Promise.all(row.map(async(v) =>{
+
+            const getData = await getBomData(v.bom_root_id)
+
+            return {
+                bom_root_id:v.bom_root_id,
+                date: v?.date,
+                deadline: v?.deadline,
+                product_id: v?.product_id ?? v?.code,
+                customer_id: v?.customer_id,
+                cm_id: v?.cm_id,
+                name: v?.name,
+                type: v?.type,
+                unit: v?.unit,
+                amount: v?.amount,
+                process_id: v?.process_id ?? v?.process,
+                goal: v?.goal ?? v?.amount,
+                input: getData,
+            }
+        })))
+    }
 
     useEffect(() => {
         if(isOpen){
-
-            setBasicRow(row.map(async(v) => {
-
-                const getData = await getBomData(v.bom_root_id)
-
-                console.log("getData : ", getData)
-
-               return {
-                   date: v?.date,
-                   deadline: v?.deadline,
-                   product_id: v?.product_id ?? v?.code,
-                   customer_id: v?.customer_id,
-                   cm_id: v?.cm_id,
-                   name: v?.name,
-                   type: v?.type,
-                   unit: v?.unit,
-                   amount: v?.amount,
-                   process_id: v?.process_id ?? v?.process,
-                   goal: v?.goal ?? v?.amount,
-                   input: getData,
-               }
-            }))
-
-            // const res = RequestMethod('get', `bomLoad`,{path: { key: selectKey }})
+            totalData()
         }
     },[])
 
@@ -80,22 +78,39 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
                     height: 816,
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'space-between',
+                    // justifyContent: 'space-between',
                 }}>
-                    <h2>작업지시서 확인</h2>
+                    <div id={'content-header'} style={{
+                        marginTop: 24,
+                        marginLeft: 16,
+                        marginRight: 16,
+                        marginBottom: 12,
+                        display: 'flex',
+                        justifyContent: 'space-between'
+                    }}>
+                        <h2>작업지시서 확인</h2>
+                    </div>
                     <ExcelTable
                         resizable
                         headerList={column}
                         row={basicRow}
                         setRow={(e) => {
-                            console.log(e)
+                            const tmp = e.map((row) => {
+                                const input = row.input.map((input, index) => {
+                                    if(row?.input_bom) {
+                                        let tmpInput = {...input}
+                                        tmpInput.setting = row.input_bom[index].bom.setting
+                                        return tmpInput
+                                    }
+                                    return input
+                                })
+                                return {...row, input:input}
+                            })
+                            setBasicRow(tmp)
                         }}
                         width={1744}
                         rowHeight={32}
                         height={640}
-                        onRowClick={(clicked) => {
-
-                        }}
                         type={'searchModal'}
                     />
                     </div>
@@ -110,7 +125,8 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
                         </FooterButton>
                         <FooterButton
                             onClick={() => {
-
+                                setBasicRow(basicRow)
+                                setIsOpen(false)
                             }}
                             style={{backgroundColor: POINT_COLOR}}
                         >

@@ -672,7 +672,7 @@ export const searchModalList: any = {
     { key: "unit", name: "단위", width: 118, formatter: LineBorderContainer, placeholder: '자동입력' },
     { key: "amount", name: "수주량", width: 118, editor: TextEditor, formatter: LineBorderContainer, placeholder: 0, inputType: 'number' },
     { key: "process_id", name: "생산공정", width: 118, editor: TextEditor, formatter: LineBorderContainer, placeholder: 0, inputType: 'number' },
-    { key: "goal", name: "목표 생산량", width: 118, editor: TextEditor, formatter: LineBorderContainer, placeholder: 0, inputType: 'number' },
-    { key: "input", name: "자재 선택", width: 118, formatter: BomRegisterModal, modalType:true},
+    { key: "goal", name: "목표 생산량", width: 118, editor: TextEditor, formatter: LineBorderContainer, placeholder: 0, inputType: 'number', textType:'modal' },
+    { key: "input", name: "자재 선택", width: 118, formatter: BomRegisterModal, modalType:true, type:"noload"},
   ]
 }

@@ -71,7 +71,8 @@ const MesOrderRegister = ({ }: IProps) => {
     })
     if (res) {
      if (process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai"){
-      setColumn([...setMenu(res.bases), process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai" && { key: "ai_check", name: "작업지시서 등록", width: 118, formatter: Checkbox, columnType:"checkbox" }])
+      setColumn([...setMenu(res.bases),
+        process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai" && { key: "ai_check", name: "작업지시서 등록", width: 118, formatter: Checkbox, columnType:"checkbox" }])
      } else setColumn(setMenu(res.bases))
     }
   }
