@@ -246,8 +246,8 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const ModalContents = () => (
         <UploadButton onClick={() => {
           setIsOpen(true)
-        }} hoverColor={POINT_COLOR} haveId>
-          <p>자재 보기</p>
+        }} hoverColor={POINT_COLOR} haveId >
+          <p style={{color:column.modalType && "#0D0D0D"}}>자재 보기</p>
         </UploadButton>
   )
 
