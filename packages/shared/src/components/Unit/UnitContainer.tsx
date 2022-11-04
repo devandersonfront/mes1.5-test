@@ -55,7 +55,7 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
                     }}
                     // defaultValue={column.selectList?.filter(select => select.pk === row.unit)?.[0].name}
                     value={column.selectList?.filter(select => select.pk === row.unit)?.[0].name}
-                    disabled={column?.readonly}
+                    disabled={column?.fixed}
                   >
                     {
                       column.selectList?.map((list : SelectListType)=>(
