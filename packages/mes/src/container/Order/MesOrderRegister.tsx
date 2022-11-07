@@ -15,6 +15,7 @@ import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/me
 import { useDispatch, } from "react-redux";
 import { setExcelTableHeight } from 'shared/src/common/Util'
 import Checkbox from "shared/src/components/InputBox/Checkbox";
+import OperationRegisterModal from "../../../../shared/src/components/Modal/Operation/OperationRegisterModal";
 
 
 
@@ -36,6 +37,8 @@ const MesOrderRegister = ({ }: IProps) => {
     isFirst: true
   }])
   const [column, setColumn] = useState<any>(columnlist["orderRegister"]())
+  const [operationModal, setOperationModal] = useState<boolean>(false)
+
 
   useEffect(() => {
     getMenus()
@@ -68,7 +71,8 @@ const MesOrderRegister = ({ }: IProps) => {
     })
     if (res) {
      if (process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai"){
-      setColumn([...setMenu(res.bases), process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai" && { key: "ai_check", name: "작업지시서 등록", width: 118, formatter: Checkbox, columnType:"checkbox" }])
+      setColumn([...setMenu(res.bases),
+        process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai" && { key: "ai_check", name: "작업지시서 등록", width: 118, formatter: Checkbox, columnType:"checkbox" }])
      } else setColumn(setMenu(res.bases))
     }
   }
@@ -113,11 +117,31 @@ const MesOrderRegister = ({ }: IProps) => {
 
       const res = await RequestMethod('post', process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai" ? `aiContractSave` : `contractSave`, postBody)
 
-      if (res) {
-        Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
-          router.push('/mes/order/list')
-        });
+      if(res && basicRow.find((v) => v.ai_check)){
+        // setBasicRow(res)
+        const resultData = basicRow.map((row, index) => {
+          let tmpRow = {...row}
+          if(row.ai_check){
+
+            console.log("ai_row : ", row,res)
+            res.map((v) => {
+              if(v.product.product_id == row.product.product_id) tmpRow.operationData = v
+            })
+
+          }
+          return tmpRow
+        })
+        setBasicRow(resultData)
+        setTimeout(() => {
+          setOperationModal(true)
+        },1000)
       }
+      if (res) {
+
+          Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
+          // router.push('/mes/order/list')
+          });
+        }
     } catch (errMsg) {
       Notiflix.Report.warning("경고", errMsg, "확인")
     }
@@ -191,6 +215,7 @@ const MesOrderRegister = ({ }: IProps) => {
         width={1576}
         height={setExcelTableHeight(basicRow.length)}
       />
+      {operationModal && <OperationRegisterModal row={basicRow.filter((v) => v.ai_check)} isOpen={operationModal} setIsOpen={setOperationModal}/>}
     </div>
   );
 }
