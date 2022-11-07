@@ -32,7 +32,6 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
 
     const totalData = async() => {
         setBasicRow(await Promise.all(row.map(async(v) =>{
-            console.log(v)
             return {
                 identification:v?.operationData?.contract.identification,
                 bom_root_id:v.bom_root_id,
@@ -172,7 +171,13 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
                                 SaveBasic(basicRow.map(v=> {
                                     return {...v.input,
                                             product_id:v.input?.product?.product_id,
-                                            goal:v.goal
+                                            goal:v.goal,
+                                            date:v.date,
+                                            deadline:v.deadline,
+                                            input_bom: v?.input_bom?.map((bom) => {
+                                                delete bom.parent
+                                                return bom
+                                            }) ?? v?.input?.input_bom
                                     }
                                 }))
                             }}

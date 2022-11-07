@@ -56,17 +56,15 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       if(column.type == 'noload'){
-        console.log("row : ", row)
-        const rowData = row.input.input_bom.map((bom) => {
+        const rowData = row.input.input_bom.map((bom, index) => {
           bom.parent = row.input
           return {
             ...bom.bom,
+            setting: row.input_bom ? row?.input_bom[index]?.bom?.setting : bom?.bom.setting,
             parent: row.input.product
           }
         })
-        console.log("rowData : ", rowData)
         let searchList = changeRow(rowData)
-        console.log(searchList)
         // dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
         setSearchList([...searchList])
       }else if(row.bom_root_id){
@@ -146,7 +144,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   const changeRow = (tmpRow: any, key?: string) => {
     const parsedRes = ParseResponse(tmpRow)
-    console.log("parsedRes : ", parsedRes)
 
     return parsedRes.map((v, i) => {
       const bomDetail:{childData:any, bomType: TransferType, objectKey: string} = {
@@ -199,7 +196,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
           goal: row.goal,
         })
       }
-      console.log("bomDetail : ", bomDetail)
       return {
         ...bomDetail.childData,
         seq: i+1,
@@ -398,7 +394,6 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
               headerList={searchModalList.bomRegister}
               row={searchList ?? [{}]}
               setRow={(e) => {
-                console.log("여부 변경 e : ", e)
                 let tmp = e.map((v, index) => {
 
                   if(v.newTab === true){

@@ -40,7 +40,6 @@ const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
                 row.setting
         // return row.spare
       case "setting" :
-        console.log("??? 여긴데?? : ", row, column )
         return (row[column.key] === 1 || row[column.key] === "여")
             ? "여" : "부"
       case "interwork":
