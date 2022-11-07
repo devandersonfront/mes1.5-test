@@ -156,7 +156,7 @@ const BasicProduct = ({}: IProps) => {
           work_standard_image:row.work_standard_image?.uuid,
           type: row.type_id,
           safety_stock : Number(row.safety_stock),
-          safety_stock_id : Number(row.safety_stock_id),
+          safety_stock_id : Number(row.safety_stock_id) == 0 ? null : Number(row.safety_stock_id),
           additional: addedColumn.map((col, colIdx)=> ({
                 mi_id: col.id,
                 title: col.name,
