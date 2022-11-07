@@ -408,11 +408,16 @@ const BasicProduct = ({}: IProps) => {
         break;
 
       case 4:
-        if(selectList.size > 1){
-          return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
+        const hasIds = getCheckItems().every((item)=>item.product_id)
+        if(!hasIds){
+          if(selectList.size > 1){
+            return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
+          }else{
+            SaveBasic()
+          }
+        }else{
+          SaveBasic()
         }
-        SaveBasic()
-
         break;
       case 5:
         if(selectList.size === 0){
