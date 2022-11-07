@@ -327,7 +327,7 @@ export const searchModalList: any = {
     {key: 'usage', name: '1회 사용량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center',placeholder: '-'},
     {key: 'stock', name: '재고량', formatter: UnitContainer, textAlign: 'center',placeholder: "0", textType:"Modal", type: 'selectUnit'},
-    {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' ,modalType: true , type : 'readonly' },
+    // {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' ,modalType: true , type : 'readonly' },
   ],
   InputInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},

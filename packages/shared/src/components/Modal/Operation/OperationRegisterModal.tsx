@@ -32,7 +32,7 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
 
     const totalData = async() => {
         setBasicRow(await Promise.all(row.map(async(v) =>{
-            // const getData = await getBomData(v.bom_root_id)
+            console.log(v)
             return {
                 identification:v?.operationData?.contract.identification,
                 bom_root_id:v.bom_root_id,

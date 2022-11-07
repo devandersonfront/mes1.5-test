@@ -56,8 +56,18 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   useEffect(() => {
     if(isOpen) {
       if(column.type == 'noload'){
-        let searchList = changeRow(row.input)
-        dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
+        console.log("row : ", row)
+        const rowData = row.input.input_bom.map((bom) => {
+          bom.parent = row.input
+          return {
+            ...bom.bom,
+            parent: row.input.product
+          }
+        })
+        console.log("rowData : ", rowData)
+        let searchList = changeRow(rowData)
+        console.log(searchList)
+        // dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
         setSearchList([...searchList])
       }else if(row.bom_root_id){
         SearchBasic().then(() => {
@@ -137,6 +147,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const changeRow = (tmpRow: any, key?: string) => {
     const parsedRes = ParseResponse(tmpRow)
     console.log("parsedRes : ", parsedRes)
+
     return parsedRes.map((v, i) => {
       const bomDetail:{childData:any, bomType: TransferType, objectKey: string} = {
         childData: {},
@@ -150,37 +161,45 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
           bomDetail['childData'] = childData
           bomDetail['bomType'] = 'rawMaterial'
           bomDetail['objectKey'] = 'raw_material'
+          // if(v.bom.setting) bomDetail['setting'] = v.bom.setting
           break;
         }
         case 1:{
           bomDetail['childData'] = v.child_sm
           bomDetail['bomType'] = 'subMaterial'
           bomDetail['objectKey'] = 'sub_material'
+          // if(v.bom.setting) bomDetail['setting'] = v.bom.setting
           break;
         }
         case 2:{
           bomDetail['childData'] = v.child_product
           bomDetail['bomType'] = 'product'
           bomDetail['objectKey'] = 'product'
+          // if(v.bom.setting) bomDetail['setting'] = v.bom.setting
           break;
         }
       }
 
       if(i === 0) {
-        console.log("v : ", v)
         setSummaryData({
-          // ...res.parent
+        // ...res.parent
           customer: v.parent?.customer?.name,
           model: v.parent?.model?.model,
           code: v.parent?.code,
           name: v.parent?.name,
           process: v.parent?.process?.name,
-          type: TransferCodeToValue(v.parent.type, 'product'),
+          type: TransferCodeToValue(v?.parent?.type, 'product'),
+          // customer: v.input?.product?.customer?.customer_id,
+          // model: v.input?.product?.model?.model,
+          // code: v.input?.product?.code,
+          // name: v?.name,
+          // process: v?.process_id,
+          // type: v?.type,
           unit: v.parent?.unit,
           goal: row.goal,
         })
       }
-
+      console.log("bomDetail : ", bomDetail)
       return {
         ...bomDetail.childData,
         seq: i+1,
@@ -379,7 +398,9 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
               headerList={searchModalList.bomRegister}
               row={searchList ?? [{}]}
               setRow={(e) => {
+                console.log("여부 변경 e : ", e)
                 let tmp = e.map((v, index) => {
+
                   if(v.newTab === true){
                     const newTabIndex = bomDummy.length+1
                     addNewTab(newTabIndex)
