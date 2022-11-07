@@ -156,7 +156,7 @@ const BasicProduct = ({}: IProps) => {
           work_standard_image:row.work_standard_image?.uuid,
           type: row.type_id,
           safety_stock : Number(row.safety_stock),
-          safety_stock_id : Number(row.safety_stock_id),
+          safety_stock_id : Number(row.safety_stock_id) == 0 ? null : Number(row.safety_stock_id),
           additional: addedColumn.map((col, colIdx)=> ({
                 mi_id: col.id,
                 title: col.name,
@@ -408,11 +408,16 @@ const BasicProduct = ({}: IProps) => {
         break;
 
       case 4:
-        if(selectList.size > 1){
-          return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
+        const hasIds = getCheckItems().every((item)=>item.product_id)
+        if(!hasIds){
+          if(selectList.size > 1){
+            return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
+          }else{
+            SaveBasic()
+          }
+        }else{
+          SaveBasic()
         }
-        SaveBasic()
-
         break;
       case 5:
         if(selectList.size === 0){

@@ -297,7 +297,7 @@ export const columnlist: any = {
     {key: 'price', name: '단가', editor: TextEditor, inputType:'number', formatter: UnitContainer, placeholder: '0', toFix:1, unitData:'원'},
     {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer , unprintable: true},
     {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' , unprintable: true},
-    {key: 'safety_stock' , name : '안전 재고', placeholder: '0' ,editor: TextEditor, formatter: PlaceholderBox }
+    {key: 'safety_stock' , name : '안전 재고', placeholder: '0' ,editor: TextEditor, formatter: PlaceholderBox , inputType: 'number'}
   ],
   productBatchRegister: (rows) => ([
     {key: 'sequence', name: '순서'},
@@ -344,7 +344,7 @@ export const columnlist: any = {
       ]
     },
     { key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})) },
-    { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
+    { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
   ],
