@@ -2,9 +2,6 @@ import React, {useEffect, useState} from "react"
 import {ExcelTable} from "../../Excel/ExcelTable";
 import {POINT_COLOR} from "../../../common/configset";
 import Modal from "react-modal";
-import {Select} from "@material-ui/core";
-import {MoldRegisterModal} from "../MoldRegisterModal";
-import IcX from "../../../../public/images/ic_x.png";
 import styled from "styled-components";
 import {searchModalList} from "../../../common/modalInit";
 import {RequestMethod} from "../../../common/RequestFunctions";
