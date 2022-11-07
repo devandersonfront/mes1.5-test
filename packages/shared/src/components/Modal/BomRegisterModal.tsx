@@ -136,6 +136,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   const changeRow = (tmpRow: any, key?: string) => {
     const parsedRes = ParseResponse(tmpRow)
+    console.log("parsedRes : ", parsedRes)
     return parsedRes.map((v, i) => {
       const bomDetail:{childData:any, bomType: TransferType, objectKey: string} = {
         childData: {},
@@ -166,6 +167,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
       }
 
       if(i === 0) {
+        console.log("v : ", v)
         setSummaryData({
           // ...res.parent
           customer: v.parent?.customer?.name,

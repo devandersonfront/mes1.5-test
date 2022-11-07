@@ -9,6 +9,9 @@ import styled from "styled-components";
 import {searchModalList} from "../../../common/modalInit";
 import {RequestMethod} from "../../../common/RequestFunctions";
 import {ParseResponse} from "../../../common/Util";
+import { useRouter } from "next/router";
+import Notiflix from "notiflix";
+import {NoAmountValidation, NoneSelectedValidation, RequiredValidation} from "../../../validations/Validation";
 
 interface IProps {
     row: any
@@ -17,6 +20,7 @@ interface IProps {
 }
 
 const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
+    const router = useRouter()
     const [basicRow, setBasicRow] = useState<any[]>([])
     const [column, setColumn] = useState(searchModalList.operationRegister)
 
@@ -28,13 +32,12 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
 
     const totalData = async() => {
         setBasicRow(await Promise.all(row.map(async(v) =>{
-
-            const getData = await getBomData(v.bom_root_id)
-
+            // const getData = await getBomData(v.bom_root_id)
             return {
+                identification:v?.operationData?.contract.identification,
                 bom_root_id:v.bom_root_id,
-                date: v?.date,
-                deadline: v?.deadline,
+                date: v?.operationData?.date,
+                deadline: v?.operationData?.deadline,
                 product_id: v?.product_id ?? v?.code,
                 customer_id: v?.customer_id,
                 cm_id: v?.cm_id,
@@ -43,12 +46,62 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
                 unit: v?.unit,
                 amount: v?.amount,
                 process_id: v?.process_id ?? v?.process,
-                goal: v?.goal ?? v?.amount,
-                input: getData,
+                goal: v?.operationData?.goal ?? 0,
+                input: v?.operationData,
             }
         })))
+        // setBasicRow(row.map((data) => {
+        //     return data.operationData
+        // }))
+    }
+    const validateSaveRequest = (selectedData: any[]) => {
+        return NoneSelectedValidation(selectedData) ||
+            RequiredValidation('product_id', selectedData,"CODE OR 수주번호를 선택해주세요.") ||
+            // RequiredValidation('input_bom', selectedData,"자재 보기를 눌러 BOM 등록을 해주세요.") ||
+            NoAmountValidation('goal', selectedData, "목표 생산량을 입력해 주세요.")
     }
 
+    const SaveBasic = async (selectedData: any[]) => {
+        if(validateSaveRequest(selectedData)) return
+        let res: any
+        res = await RequestMethod('post', `sheetSave`,
+            selectedData.map((row, i) => {
+                let selectKey: string[] = []
+                column.map((v) => {
+                    if (v.selectList) {
+                        selectKey.push(v.key)
+                    }
+                })
+                let selectData: any = {}
+
+                Object.keys(row).map(v => {
+                    if (v.indexOf('PK') !== -1) {
+                        selectData = {
+                            ...selectData,
+                            [v.split('PK')[0]]: row[v]
+                        }
+                    }
+
+                })
+                return {
+                    ...row,
+                    ...selectData,
+                    contract: selectedData[0].contract,
+                    os_id: undefined,
+                    version: undefined,
+                    input_bom: [ ...row?.input_bom?.map((bom) => {
+                        bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
+                        return { ...bom }
+                    }) ] ?? [],
+                    status: 1,
+                }
+            }))
+        if (res) {
+            Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
+                router.push('/mes/operationV1u/list')
+            });
+        }
+    }
     useEffect(() => {
         if(isOpen){
             totalData()
@@ -95,18 +148,7 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
                         headerList={column}
                         row={basicRow}
                         setRow={(e) => {
-                            const tmp = e.map((row) => {
-                                const input = row.input.map((input, index) => {
-                                    if(row?.input_bom) {
-                                        let tmpInput = {...input}
-                                        tmpInput.setting = row.input_bom[index].bom.setting
-                                        return tmpInput
-                                    }
-                                    return input
-                                })
-                                return {...row, input:input}
-                            })
-                            setBasicRow(tmp)
+                            setBasicRow(e)
                         }}
                         width={1744}
                         rowHeight={32}
@@ -118,6 +160,7 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
                         <FooterButton
                             onClick={() => {
                                 setIsOpen(false)
+                                router.push("/mes/order/list")
                             }}
                             style={{backgroundColor: '#E7E9EB'}}
                         >
@@ -125,8 +168,13 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
                         </FooterButton>
                         <FooterButton
                             onClick={() => {
-                                setBasicRow(basicRow)
-                                setIsOpen(false)
+                                //setBasicRow(basicRow)
+                                SaveBasic(basicRow.map(v=> {
+                                    return {...v.input,
+                                            product_id:v.input?.product?.product_id,
+                                            goal:v.goal
+                                    }
+                                }))
                             }}
                             style={{backgroundColor: POINT_COLOR}}
                         >
