@@ -121,7 +121,6 @@ const MesOrderRegister = ({ }: IProps) => {
         const resultData = basicRow.map((row, index) => {
           let tmpRow = {...row}
           if(row.ai_check){
-
             res.map((v) => {
               if(v.product.product_id == row.product.product_id) tmpRow.operationData = v
             })
@@ -130,12 +129,11 @@ const MesOrderRegister = ({ }: IProps) => {
           return tmpRow
         })
         setBasicRow(resultData)
-        setTimeout(() => {
-          setOperationModal(true)
-        },1000)
+          Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
+            setOperationModal(true)
+          });
       }
-      if (res) {
-
+      else if (res) {
           Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
           router.push('/mes/order/list')
           });
