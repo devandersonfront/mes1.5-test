@@ -30,8 +30,6 @@ interface IProps {
   option?: number;
 }
 
-const optionList = ["거래처", "모델", "CODE", "품명"]
-
 const MesStockList = ({ page, search, option }: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -40,8 +38,17 @@ const MesStockList = ({ page, search, option }: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set());
   const [optionIndex, setOptionIndex] = useState<number>(0);
   const [keyword, setKeyword] = useState<string>();
+  const [types, setTypes] = useState<string>(undefined);
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({page: 1, total: 1,});
 
+  const onColumnFilter = (value:string, key:string) => {
+    switch(key){
+      case 'type':
+        setTypes(value ?? undefined)
+        break;
+    }
+    setPageInfo({page:1, total:1})
+  }
   const reload = (keyword?:string ) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
@@ -53,7 +60,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
 
   useEffect(() => {
     getData(pageInfo.page, keyword)
-  }, [pageInfo.page]);
+  }, [pageInfo.page, types]);
 
   useEffect(() => {
     dispatch(
@@ -64,11 +71,21 @@ const MesStockList = ({ page, search, option }: IProps) => {
     };
   }, []);
 
+  const getRequestParams = (keyword?: string) => {
+    let params = {}
+    if(keyword) {
+      params['keyword'] = keyword
+      params['opt'] = optionIndex
+    }
+    if(types !== undefined) params['types'] = types
+    return params
+  }
+
   const getData = async (page: number = 1, keyword?: string ) => {
     Notiflix.Loading.circle();
     const res = await RequestMethod("get", keyword ? 'stockSearch' : 'stockList', {
-      path: {page: page, renderItem: 18},
-      params: keyword ? { keyword, opt: optionIndex} : null,
+      path: {page: page, renderItem: 12},
+      params: getRequestParams(keyword)
     });
 
     if(res){
@@ -85,6 +102,11 @@ const MesStockList = ({ page, search, option }: IProps) => {
     setSelectList(new Set())
     Notiflix.Loading.remove()
   };
+
+  const getDetail = async (row) => {
+    const postBody = [row.product.product_id]
+    return await RequestMethod('post', 'stockBomLoad', postBody)
+  }
 
   const convertData = (infoList) => (infoList.map((row: any) => {
       let random_id = Math.random() * 1000;
@@ -103,24 +125,30 @@ const MesStockList = ({ page, search, option }: IProps) => {
         customerArray: { name: row.customer?.name ?? "-" },
         name: row.name ?? "-",
         type: !Number.isNaN(row.type)
-            ? TransferCodeToValue(row.type, "productType")
+            ? TransferCodeToValue(row.type, "product")
             : "-",
         unit: row.unit ?? "-",
         id: `stock${random_id}`,
-        sum_stock: row.stock_sum
+        expanded : false,
+        // detailType : 'MASTER',
+        getDetail,
+        reload,
       };
     }))
 
-  const convertColumn = (column) => {
-    const colNames = column.map(menu => menu.colName)
-    return columnlist["stockV2"].filter((data)=> colNames.includes(data.key))
+  const setNewColumn = () => {
+    const newColumn = column.map(col => ({
+      ...col,
+      result: col.options ? onColumnFilter : null,
+    }))
+    setColumn(newColumn)
   }
 
   const cleanUpData = (res: any) => {
     const newData = convertData(res.info_list)
-    const newColumn = convertColumn(res.menus)
+    setNewColumn()
     setBasicRow(newData)
-    setColumn(newColumn)
+    // setColumn(column)
   };
 
   const stockSave = async(data) => {
@@ -139,7 +167,6 @@ const MesStockList = ({ page, search, option }: IProps) => {
     }
   }
 
-
   return (
       <div className={'excelPageContainer'}>
         <PageHeader
@@ -157,12 +184,9 @@ const MesStockList = ({ page, search, option }: IProps) => {
             editable
             resizable
             selectable
-            headerList={[
-              SelectColumn,
-              ...addColumnClass(column)
-            ]}
+            headerList={[SelectColumn, ...addColumnClass(column)]}
             row={basicRow}
-            setRow={(e) => {
+            setRow={(e, index) => {
               let tmp: Set<any> = selectList
               e.map(v => {
                 if(v.isChange) {
@@ -173,11 +197,14 @@ const MesStockList = ({ page, search, option }: IProps) => {
               setSelectList(tmp)
               setBasicRow(e)
             }}
+            //@ts-ignore
+            rowHeight={(args) => (args.row.rowType === 'DETAIL' ? 300 : 40)}
             selectList={selectList}
             //@ts-ignore
             setSelectList={setSelectList}
             width={1576}
-            height={setExcelTableHeight(basicRow.length)}
+            height={setExcelTableHeight(Math.min(basicRow.length, 18)) + (basicRow.length && basicRow.length < 12 && basicRow.filter(row => row.expanded).length > 0 ? 260 : 0)}
+            type={'expandable'}
         />
         <PaginationComponent
             currentPage={pageInfo.page}

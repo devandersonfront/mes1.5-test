@@ -36,6 +36,7 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
                 version: inspection_category.version ?? undefined,
                 sic_id: inspection_category.sic_id ?? undefined,
                 record_id: row.record_id ?? undefined,
+                operation_inspection_id: inspection_category.operation_inspection_id ?? undefined,
                 basic: [ {
                     osd_id: row.identification,
                     lot_number: row.lot_number,
@@ -52,7 +53,7 @@ const MidrangeFrameButton = ({row, column }: IProps) => {
                 ],
                 inspection_info: inspection_category?.inspection_info ?? null,
                 inspection_time: inspection_category?.inspection_time ?? null,
-                inspection_result: inspection_category?.inspection_result ?? null
+                inspection_result: inspection_category?.inspection_result ?? null,
             }
             setExcelInfo(excelInfo)
             setModalOpen(true)

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { IExcelHeaderType } from 'shared/src/@types/type'
 import {UnitBox, UnitValue, UnitWrapper} from '../../styles/styledComponents'
+import { TransferCodeToValue } from 'shared/src/common/TransferFunction'
 
 interface IProps {
   row: any
@@ -48,7 +49,7 @@ const UnitContainer = ({ row, column, setRow}: IProps) => {
       <UnitBox>
         {
           column.searchType === 'rawin'
-            ? <span>{row.type === 'COIL' ? 'kg' : '장'}</span>
+            ? <span>{TransferCodeToValue(row.unit, 'rawMaterialUnit')}</span>
             : <span>{column.key === 'carryforward' ? (row[column.key] || row[column.key] === 0) ? column.unitData : '' : column.unitData}</span>
         }
       </UnitBox>

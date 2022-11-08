@@ -8,6 +8,8 @@ import {NextPageContext} from 'next'
 import moment from 'moment'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
+import { alertMsg } from 'shared/src/common/AlertMsg'
+import { RegisterContainer } from 'shared/src/containers/RegisterContainer'
 
 interface IProps {
   children?: any
@@ -19,266 +21,52 @@ interface IProps {
 const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
-  const [excelOpen, setExcelOpen] = useState<boolean>(false)
-
-  const [basicRow, setBasicRow] = useState<Array<any>>([{
-    id: "", date: moment().format('YYYY-MM-DD')
-  }])
-  const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["rawinV1u"])
-  const [selectList, setSelectList] = useState<Set<number>>(new Set())
+  const [basicRow, setBasicRow] = useState<Array<any>>([])
 
   useEffect(() => {
-    getMenus()
     dispatch(setMenuSelectState({main:"원자재 관리",sub:router.pathname}))
     return(() => {
       dispatch(deleteMenuSelectState())
     })
   },[])
 
-  const getMenus = async () => {
-    let res = await RequestMethod('get', `loadMenu`, {
-      path: {
-        tab: 'ROLE_RMAT_01'
-      }
-    })
-
-    if(res){
-      let tmpColumn = columnlist["rawinV1u"]
-
-      tmpColumn = tmpColumn.map((column: any) => {
-        let menuData: object | undefined;
-        res.bases && res.bases.map((menu: any) => {
-          if(menu.colName === column.key){
-            menuData = {
-              id: menu.id,
-              name: menu.title,
-              width: menu.width,
-              tab:menu.tab,
-              unit:menu.unit,
-              moddable: menu.moddable
-            }
-          } else if(menu.colName === 'id' && column.key === 'tmpId'){
-            menuData = {
-              id: menu.id,
-              name: menu.title,
-              width: menu.width,
-              tab:menu.tab,
-              unit:menu.unit,
-              moddable: menu.moddable
-            }
-          }
-        })
-
-        if(menuData){
-          return {
-            ...column,
-            ...menuData,
-          }
-        }
-
-      }).filter((v:any) => v)
-
-      setColumn([...tmpColumn.map(v=> {
-        return {
-          ...v,
-          name: !v.moddable ? v.name+'(필수)' : v.name
-        }
-      })])
-    }
+  const validate = (row) => {
+    if(!!!row.rm_id) throw(alertMsg.noRawMaterial)
+    if(!!!row.amount) throw(alertMsg.noImportAmount)
+    if(!!!row.lot_number) throw(alertMsg.noLotNumber)
   }
 
-  const SaveBasic = async () => {
-    if(selectList.size <= 0) {
-      return Notiflix.Report.warning("경고", "데이터를 선택해 주시기 바랍니다.", "확인",)
-    }
-
-    const error = basicRow.map((v)=> {
-      if(selectList.has(v.id)) {
-        if (v.rm_id === undefined) {
-          return 1
-        }
-        if (v.lot_number === undefined || v.lot_number === "") {
-          return 2
-        }
-        if (v.amount <= 0 || v.amount === undefined) {
-          return 3
-        }
-      }
-    })
-
-    if(error.includes(1)){
-      return Notiflix.Report.warning("경고", "원자재 CODE를 선택해 주시기 바랍니다.", "확인",)
-    }
-    if(error.includes(2)){
-      return Notiflix.Report.warning("경고", "원자재 LOT 번호를 입력해 주시기 바랍니다.", "확인",)
-    }
-    if(error.includes(3)){
-      return Notiflix.Report.warning("경고", "입고량을 입력해 주시기 바랍니다.", "확인",)
-    }
-
-    const arrLot = basicRow.map(v=> {return v.lot_number})
-    const overlapCheckLot = new Set(arrLot)
-
-
-    if(overlapCheckLot.size < arrLot.length){
-      return Notiflix.Report.warning("경고", "원자재 LOT 번호는 중복이 불가능 합니다.", "확인",)
-    }
-
-    let res: any
-    res = await RequestMethod('post', `lotRmSave`,
-      basicRow.map((row, i) => {
-          if(selectList.has(row.id)){
-            let selectKey: string[] = []
-            let additional:any[] = []
-            column.map((v) => {
-              if(v.selectList){
-                selectKey.push(v.key)
-              }
-
-              if(v.type === 'additional'){
-                additional.push(v)
-              }
-            })
-
-            let selectData: any = {}
-
-            Object.keys(row).map(v => {
-              if(v.indexOf('PK') !== -1) {
-                selectData = {
-                  ...selectData,
-                  [v.split('PK')[0]]: row[v]
-                }
-              }
-
-              if(v === 'unitWeight') {
-                selectData = {
-                  ...selectData,
-                  unitWeight: Number(row['unitWeight'])
-                }
-              }
-
-              if(v === 'tmpId') {
-                selectData = {
-                  ...selectData,
-                  id: row['tmpId']
-                }
-              }
-            })
-            return {
-              ...row,
-              ...selectData,
-              warehousing: row.amount,
-              type: row.type_id,
-              raw_material: {...row.raw_material, type:row.raw_material?.type_id},
-              additional: [
-                ...additional.map(v => {
-                  if(row[v.name]) {
-                    return {
-                      id: v.id,
-                      title: v.name,
-                      value: row[v.name],
-                      unit: v.unit
-                    }
-                  }
-                }).filter((v) => v)
-              ]
-            }
-
-          }
-        }).filter((v) => v))
-      .catch((error) => {
-        if(error.status === 409){
-         Notiflix.Report.warning('경고',error.data.message,'확인')
-          return false
-        }
-        return false
-      })
-
-
-    if(res){
-      Notiflix.Report.success('저장되었습니다.','','확인', () => {
-        setTimeout(() => {
-          router.push("/mes/rawmaterialV1u/stock")
-        }, 300)
-      });
-    }
+  const checkDuplicateLotNumber = (lotNumbers: string[]) => {
+    if(lotNumbers.length !== new Set(lotNumbers).size) throw (alertMsg.duplicateLotNumber)
   }
 
-
-  const onClickHeaderButton = (index: number) => {
-    const randomID = Math.random()*100;
-    switch(index){
-      case 0:
-        setBasicRow([
-          {id:`rm${randomID}`, date: moment().format('YYYY-MM-DD')},
-          ...basicRow
-        ])
-        break;
-      case 1:
-        SaveBasic()
-        break;
-      case 2:
-        if(selectList.size === 0) {
-          return  Notiflix.Report.warning("경고","삭제할 행을 선택해주세요.","확인" )
-        }
-        Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인", "취소", () => {
-          const tmpRow = basicRow.filter(({id}, index) => !selectList.has(id))
-          setBasicRow(tmpRow);
-        })
-        break;
-    }
-  }
+  const setPostBody = (row) => ({
+    ...row,
+    warehousing: row.amount,
+    type: row.type_id,
+    raw_material: {
+      ...row.raw_material,
+      type:row.raw_material?.type_id,
+      unit:row.raw_material?.unit_id,
+      customer : row?.customerArray?.customer_id ? row.customerArray : null,
+    },
+    version: undefined,
+  })
 
   return (
-    <div>
-      <PageHeader
-        title={"원자재 입고 등록"}
-        buttons={
-          ['행추가', '저장하기', '삭제']
-        }
-        buttonsOnclick={
-          // () => {}
-          onClickHeaderButton
-        }
-      />
-      <ExcelTable
-        editable
-        resizable
-        selectable
-        headerList={[
-          SelectColumn,
-          ...column
-        ]}
-        row={basicRow}
-        // setRow={setBasicRow}
-        setRow={(e) => {
-          let tmp: Set<any> = selectList
-          e.map(v => {
-            if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
-          })
-          setSelectList(tmp)
-          setBasicRow(e)
-        }}
-        selectList={selectList}
-        //@ts-ignore
-        setSelectList={setSelectList}
-        width={1576}
-        height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
-      />
-      {/*<ExcelDownloadModal*/}
-      {/*  isOpen={excelOpen}*/}
-      {/*  column={column}*/}
-      {/*  basicRow={basicRow}*/}
-      {/*  filename={`금형기준정보`}*/}
-      {/*  sheetname={`금형기준정보`}*/}
-      {/*  selectList={selectList}*/}
-      {/*  tab={'ROLE_BASE_07'}*/}
-      {/*  setIsOpen={setExcelOpen}*/}
-      {/*/>*/}
-    </div>
+    <RegisterContainer title={'원자재 입고 등록'}
+                       data={basicRow}
+                       setData={setBasicRow}
+                       validate={validate}
+                       setPostBody={setPostBody}
+                       apiType={'lotRmSave'}
+                       afterSavePath={'/mes/rawmaterialV1u/stock'}
+                       columnKey={'rawinV1u'}
+                       checkDuplicate={checkDuplicateLotNumber}
+                       initData={{ id: "", date: moment().format('YYYY-MM-DD')}}
+                       multiRegister={true}
+                       duplicateKey={'lot_number'}
+                      />
   );
 }
 

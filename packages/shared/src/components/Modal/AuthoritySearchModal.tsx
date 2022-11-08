@@ -14,6 +14,8 @@ import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
 import {SearchIcon} from "../../styles/styledComponents";
+//@ts-ignore
+import ModalSearch_icon from '../../../public/images/list_search_icon.png'
 
 interface IProps {
   column: IExcelHeaderType
@@ -105,7 +107,7 @@ const AuthoritySearchModal = ({column, row, onRowChange}: IProps) => {
             setIsOpen(true)
         }
       }}>
-        <img style={{width: 20, height: 20 , opacity : column.key === 'authority' && row[column.key] !== 'MASTER' ? 1 : .3}} src={IcSearchButton}/>
+        <img style={{width: 30, height: 30 , opacity : column.key === 'authority' && row[column.key] !== 'MASTER' ? 1 : .3}} src={ModalSearch_icon}/>
       </SearchIcon>
     </>
   }

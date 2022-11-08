@@ -38,7 +38,7 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
 
   useEffect(() => {
     if(selector && selector.type && selector.modifyInfo){
-      setBasicRow(selector.modifyInfo.map(info => ({...info, originalLots: info.lots})))
+      setBasicRow(selector.modifyInfo.map(info => ({...info, originalLots: info.lots,})))
     }else{
       router.push('/mes/delivery/list')
     }
@@ -52,54 +52,14 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
   },[])
 
   const SaveBasic = async () => {
-    let res: any
-    res = await RequestMethod('post', `shipmentSave`,
-      basicRow.map((row, i) => {
-        if(selectList.has(row.id)){
-          let selectKey: string[] = []
-          let additional:any[] = []
-          column.map((v) => {
-            if(v.selectList){
-              selectKey.push(v.key)
-            }
-
-            if(v.type === 'additional'){
-              additional.push(v)
-            }
-          })
-
-          let selectData: any = {}
-
-          Object.keys(row).map(v => {
-            if(v.indexOf('PK') !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split('PK')[0]]: row[v]
-              }
-            }
-          })
-
-          return {
-            ...row,
-            ...selectData,
-            additional: [
-              ...additional.map(v => {
-                if(row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit
-                  }
-                }
-              }).filter((v) => v)
-            ]
-          }
-
-        }
-      }).filter((v) => v))
-
-
+    const filterRow = basicRow.filter(row => selectList.has(row.id))
+    const postBody = filterRow.map((row)=>({...row ,
+        product: {
+            ...row.product,
+            customer : row?.customerArray?.customer_id ? row.customerArray : null,
+            model : row?.modelArray?.cm_id ? row.modelArray : null
+        }}))
+    const res = await RequestMethod('post', `shipmentSave`, postBody)
     if(res){
       Notiflix.Report.success('저장되었습니다.','','확인', () => {
         router.push('/mes/delivery/list')
@@ -130,7 +90,9 @@ const MesDeliveryModify = ({page, keyword, option}: IProps) => {
         editable
         resizable
         selectable
-        headerList={column}
+        headerList={[
+          SelectColumn,
+          ...column]}
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {

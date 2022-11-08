@@ -7,7 +7,7 @@ export const Body = styled.div`
     font-family: NotoSansCJKkr;
     color: white;  
   }
-  background: linear-gradient(90deg, #202E4A, #0F1722);
+  background: linear-gradient(90deg, #202E4A, #202E4A);
   width: 100vw;
   height: 100vh;
   padding: 0;
@@ -26,7 +26,7 @@ export const Profile = styled.img`
 `
 
 export const MainWrapper = styled.div`
-  background: linear-gradient(90deg, #202E4A, #0F1722);
+  background: linear-gradient(90deg, #202E4A, #202E4A);
   width: 100vw;
   height: 100vh;
   padding: 0;

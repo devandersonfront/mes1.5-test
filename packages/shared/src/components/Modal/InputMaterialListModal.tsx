@@ -1,30 +1,32 @@
-import React, {useEffect, useRef, useState} from 'react'
-import {IExcelHeaderType} from '../../@types/type'
+import React, { useEffect, useState } from 'react'
+import { IExcelHeaderType } from '../../@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
-import {POINT_COLOR} from '../../common/configset'
+import { POINT_COLOR } from '../../common/configset'
 //@ts-ignore
 import IcSearchButton from '../../../public/images/ic_search.png'
 //@ts-ignore
 import IcX from '../../../public/images/ic_x.png'
-import {ExcelTable} from '../Excel/ExcelTable'
-import {searchModalList} from '../../common/modalInit'
+import { ExcelTable } from '../Excel/ExcelTable'
+import { searchModalList } from '../../common/modalInit'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
-import {RequestMethod} from '../../common/RequestFunctions'
+import { RequestMethod } from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
-import {TransferCodeToValue} from '../../common/TransferFunction'
-import moment from "moment"
+import { TransferCodeToValue } from '../../common/TransferFunction'
+import moment from 'moment'
 import lodash from 'lodash'
 import Big from 'big.js'
-import { getBomObject, ParseResponse } from '../../common/Util'
-import {UploadButton} from "../../styles/styledComponents";
+import { getBomObject, isNil, ParseResponse } from '../../common/Util'
+import { UploadButton } from '../../styles/styledComponents'
 import { LineBorderContainer } from '../Formatter/LineBorderContainer'
 import { TextEditor } from '../InputBox/ExcelBasicInputBox'
 import { UnitContainer } from '../Unit/UnitContainer'
 import { alertMsg } from '../../common/AlertMsg'
 import Tooltip from 'rc-tooltip'
-import 'rc-tooltip/assets/bootstrap_white.css';
+import 'rc-tooltip/assets/bootstrap_white.css'
+import { getHeaderItems, InputListHeaders, InputModalHeaderItems } from '../../common/inputMaterialInfo'
+
 interface IProps {
   column: IExcelHeaderType
   row: any
@@ -32,62 +34,26 @@ interface IProps {
 }
 
 //작업일보 등록/수정 투입 자재 모달
-const headerItems: {title: string, infoWidth: number, key: string, unit?: string}[][] = [
-  [
-    {title: '지시 고유번호', infoWidth: 144, key: 'identification'},
-    {title: 'LOT 번호', infoWidth: 144, key: 'lot_number'},
-    {title: '거래처', infoWidth: 144, key: 'customer'},
-    {title: '모델', infoWidth: 144, key: 'model'},
-  ],
-  [
-    {title: 'CODE', infoWidth: 144, key: 'code'},
-    {title: '품명', infoWidth: 144, key: 'name'},
-    {title: '품목 종류', infoWidth: 144, key: 'type'},
-    {title: '생산 공정', infoWidth: 144, key: 'process'},
-  ],
-  [
-    {title: '단위', infoWidth: 144, key: 'unit'},
-    {title: '목표 생산량', infoWidth: 144, key: 'goal'},
-    {title: '작업자', infoWidth: 144, key: 'worker_name'},
-    {title: '양품 수량', infoWidth: 144, key: 'good_quantity'},
-    {title: '불량 수량', infoWidth: 144, key: 'poor_quantity'},
-  ],
-]
-
-
 
 const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [headerItemsValue, setHeaderItemsValue] = useState<any>({})
-  const [selected, setSelected] = useState<{index: number | null, product:string, type:string}>({
+  const [selected, setSelected] = useState<{index: number | null, product:string, type:string, productType:string}>({
     index: null,
     product: '',
-    type: ''
+    type: '',
+    productType:''
   })
   const [inputMaterialList, setInputMaterialList] = useState<any[]>([])
   const [lotList, setLotList] = useState<any[]>([])
   const [inputMaterial, setInputMaterial] = useState<any>()
   const isModify = column.action === 'modify'
+  const isOutsourcing = column.type === 'outsourcing'
   const cavity = row.molds?.filter(mold => mold?.mold?.setting === 1)?.[0]?.mold?.mold?.cavity ?? 1
-
   useEffect(() => {
     if(isOpen){
-      getInputMaterialList(row.osId, row.bom_root_id)
-      setHeaderItemsValue({
-        identification: row.identification,
-        lot_number: row.lot_number ?? '-',
-        customer: row.product?.customer?.name,
-        model: row.product?.model?.model,
-        code: row.product?.code,
-        name: row.product?.name,
-        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
-        process: row.product?.process?.name,
-        unit: row.product?.unit,
-        goal: row.goal,
-        worker_name: row?.worker?.name ?? row?.worker ?? '-',
-        good_quantity: row.good_quantity ?? 0,
-        poor_quantity: row.poor_quantity ?? 0,
-      })
+      getInputMaterialList(row.product.bom_root_id, row.osId)
+      setHeaderItemsValue(getHeaderItems(row, column.type))
     }
   },[isOpen])
 
@@ -102,25 +68,121 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     }
   }, [ inputMaterial ])
 
-  const getInputMaterialList = async (os_id: number | string, key: string) => {
-    const res = await RequestMethod('get', `sheetBomLoad`,{
-      path: {
-        os_id: os_id,
-        bom: 'bom',
-        key: key,
-      },
-    })
+  const getInputMaterialList = async (key: string, os_id?: number | string) => {
+    if(key && column.type !== "ai"){
+      const pathVar = isOutsourcing ? [key] : { os_id: os_id, bom: 'bom', key: key, }
+      const res = await RequestMethod('get', isOutsourcing ? "bomLoad" : `sheetBomLoad`,{
+        path: pathVar
+      })
 
-    if(res){
-      const inputMaterialList = toInputMaterialList(res)
+      if(res){
+        const inputMaterialList = toInputMaterialList(res)
+        setInputMaterialList(inputMaterialList)
+      } else {
+        Notiflix.Report.warning("경고",alertMsg.noBom,"확인",() => {
+          isOutsourcing && onRowChange({...row, bomChecked: true})
+          setIsOpen(false)
+        }
+      )}
+    }else if(row.bom){
+      const checkMap = new Map([["rm_id",[]], ["sm_id",[]], ["product_id",[]]])
+      const settingData = row.bom.map((bom, index) => {
+        switch (bom.bom.type){
+          case 0 :
+            let rm_ids = checkMap.get("rm_id")
+            if(checkMap.get("rm_id").filter(id => id == bom.bom.childRmId).length <= 0){
+              rm_ids.push(bom.bom.childRmId)
+              checkMap.set("rm_id", rm_ids)
+            }
+              return {...bom.lot.child_lot_rm.raw_material,
+                amount:bom.lot.amount,
+                current:bom.lot.child_lot_rm.current,
+                lot_number:bom.lot.child_lot_rm.lot_number,
+                lot_rm_id:bom.lot.child_lot_rm.lot_rm_id,
+                child_rm: {...bom.lot.child_lot_rm, stock:bom.lot.child_lot_rm.raw_material.stock, amount:bom.lot.amount},
+                childRmId:bom.bom.childRmId,
+                usage:bom.bom.usage,
+                type:bom.bom.type,
+                index:index
+              }
+            break;
+          case 1:
+            let sm_ids = checkMap.get("sm_id")
+            if(checkMap.get("sm_id").filter(id => id == bom.bom.childSmId).length <= 0){
+              sm_ids.push(bom.bom.childSmId)
+              checkMap.set("sm_id", sm_ids)
+            }
+
+            return {...bom.lot.child_lot_sm.sub_material,
+              amount:bom.lot.amount,
+              current:bom.lot.child_lot_sm.current,
+              lot_number:bom.lot.child_lot_sm.lot_number,
+              lot_sm_id:bom.lot.child_lot_sm.lot_sm_id,
+              child_sm: {...bom.lot.child_lot_sm, stock:bom.lot.child_lot_sm.sub_material.stock},
+              childSmId: bom.bom.childSmId,
+              usage:bom.bom.usage,
+              type:bom.bom.type
+            }
+          case 2:
+            let product_ids = checkMap.get("product_id")
+            if(checkMap.get("product_id").filter(id => id == bom.bom.childProductId).length <= 0){
+              product_ids.push(bom.bom.childProductId)
+              checkMap.set("product_id", product_ids)
+            }
+            return {...bom.lot.child_lot_record.operation_sheet.product,
+              amount:bom.lot.amount,
+              // current:bom.lot.current,
+              current:bom.lot.child_lot_record.operation_sheet.product.stock,
+              lot_number:bom.lot.child_lot_record.lot_number,
+            //   lot_sm_id:bom.lot.child_lot_sm.lot_sm_id,
+              child_product:bom.lot.child_lot_record.operation_sheet.product,
+              childProductId: bom.bom.childProductId,
+              usage:bom.bom.usage,
+              type:bom.bom.type
+            }
+          default:
+            return "none"
+        }
+      }).filter(v=>v)
+      let noOverap = settingData.reduce(function(acc, current) {
+        if (acc.findIndex(({ rm_id }) => rm_id === current.rm_id) === -1) {
+          acc.push(current)
+        }
+        if (acc.findIndex(({ sm_id }) => sm_id === current.sm_id) === -1) {
+          acc.push(current)
+        }
+        if (acc.findIndex(({ product_id }) => product_id === current.product_id) === -1) {
+          acc.push(current)
+        }
+
+        return acc;
+      }, []);
+      const inputMaterialList = toInputMaterialList(noOverap)
       setInputMaterialList(inputMaterialList)
-    }
+    } else if(!row.bom && column.type == "ai"){
+      const res = await RequestMethod('get',   "bomLoad",{
+        path: { os_id: os_id, key: key, }
+      })
+      if(res){
+        const inputMaterialList = toInputMaterialList(res)
+        setInputMaterialList(inputMaterialList)
+      } else {
+        Notiflix.Report.warning("경고",alertMsg.noBom,"확인",() => {
+              isOutsourcing && onRowChange({...row, bomChecked: true})
+              setIsOpen(false)
+            }
+        )}
+      // const inputMaterialList = toInputMaterialList(res)
+      // setInputMaterialList(inputMaterialList)
+      // console.log("inputMaterialList : ", inputMaterialList)
+
+    }else Notiflix.Report.warning("경고",alertMsg.noBom,"확인",() => setIsOpen(false))
   }
 
   const getBomLotMap = () => {
     const bomIdMap = new Map<string, any[]>()
     row.bom?.map((bom) => {
-      const restoredLot = {...bom.lot, amount: new Big(bom.lot.amount).times(row.originalCavity).toNumber() }
+      const restoredLot = {...bom.lot, amount: new Big(bom.lot.amount).times(row?.originalCavity ?? 1).toNumber() }
       const bomObject = getBomObject(bom.bom)
       if(bomIdMap.has(bomObject.bomKey)){
         bomIdMap.get(bomObject.bomKey).push(restoredLot)
@@ -133,13 +195,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const toInputMaterialList = (sheetBom: any) => {
+    //array
     const inputMaterialList = ParseResponse(sheetBom)
     const firstModify = !!!row.bom_info && isModify
     const bomIdAndLotMap = firstModify && getBomLotMap()
-    const sumQuantity = row.sum ?? 0
-
+    const sumQuantity = isOutsourcing ? row.order_quantity ?? 0 : row.sum ?? 0
     return inputMaterialList.map((inputMaterial, index) => {
-      const bom = getBomObject(inputMaterial)
+      const bom = getBomObject( inputMaterial)
       let bom_info, originalBom
       switch(bom.typeName){
         case 'rawMaterial':{
@@ -163,47 +225,55 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
         case 'product':{
+          const outsource = bom.detail.type > 2
           if(!!row.bom_info) {
-            bom_info = row.bom_info.filter(bom => bom[0].operation_sheet?.productId === inputMaterial.childProductId)?.[0]
+            bom_info = row.bom_info.filter(bom => {
+              const productId = outsource ? bom[0].product?.product_id : bom[0].operation_sheet?.productId
+              return productId === inputMaterial.childProductId
+            })?.[0]
           } else if (firstModify)
           {
-            bom_info = bomIdAndLotMap.get(`p${inputMaterial.childProductId}`)?.map((lots) => ({...lots.child_lot_record, amount: lots.amount}))
+            bom_info = bomIdAndLotMap.get(`p${inputMaterial.childProductId}`)?.map((lots) => (outsource ? {...lots.child_lot_outsourcing, amount: lots.amount} :{...lots.child_lot_record, amount: lots.amount}))
           }
-          originalBom = row.originalBom ? row.originalBom.filter(bom => bom?.[0]?.operation_sheet?.productId === inputMaterial.childProductId)?.[0] ?? bom_info : bom_info
+          originalBom = row.originalBom ? row.originalBom.filter(bom => {
+            const productId = outsource ? bom?.[0]?.product?.product_id : bom?.[0]?.operation_sheet?.productId
+            return productId === inputMaterial.childProductId
+          })?.[0] ?? bom_info : bom_info
           break;
         }
       }
-      const totalAmount = sumQuantity === '0' ? new Big(0) : new Big(sumQuantity).div(cavity)
+      const totalAmount = sumQuantity == '0' ? new Big(0) : new Big(sumQuantity).div(cavity)
       const totalUsage = totalAmount.times(bom.usage)
-      let stock = new Big(bom.detail.stock)
+      let stock = bom.detail?.stock ? new Big(bom.detail.stock) : new Big(0)
       const modifyAndNoStock = isModify && bom.detail.stock === 0
       const action = isModify && bom.detail.stock === 0 ? 'modifyAndNoStock' : column.action
       if(isModify)
       {
-        const originalAmount = new Big(row.originalSum ?? row.sum).div(row.originalCavity).times(bom.usage)
+        const originalAmount = new Big(row.originalSum ?? row.sum).div(row?.originalCavity ?? 1).times(bom.usage)
         stock = stock.plus(originalAmount)
       }
-
       return {
         ...bom,
         ...bom.detail,
-        seq: index+1,
+        seq: index + 1,
         type_name: TransferCodeToValue(bom.detail?.type, bom.typeName),
+        product_type: bom.typeName === 'product' ? TransferCodeToValue(bom.detail?.type, 'productType') : '-',
         cavity,
         real_disturbance: totalUsage.toNumber(),
         disturbance: sumQuantity ?? 0,
-        stock : stock.minus(totalUsage).toNumber(),
-        process: bom.detail.process?.name ?? null,
+        stock: stock.minus(totalUsage).toNumber(),
+        // stock: bom.stock,
+        process: bom?.detail?.process?.name ?? null,
         bom_info: bom_info ?? null,
         tab: bom.type,
-        product: bom.typeName === 'product' ?{
+        product: bom.typeName === 'product' ? {
           ...bom.detail,
-        }: null,
-        originalBom : originalBom ?? null,
+        } : null,
+        originalBom: originalBom ?? null,
         // originalStock : isModify ? row.originalQty ? new Big(row.originalQty).times(bom.usage).plus(bom.detail.stock).toNumber() : bom.detail.stock : bom.detail.stock,
         originalStock: stock.toNumber(),
         action,
-        bom: modifyAndNoStock ? row.bom : null,
+        bom: modifyAndNoStock ? row.bom : isOutsourcing ? inputMaterial : null,
         page: 1,
         total: 1
       }
@@ -214,7 +284,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     switch(type){
       case 0: return lot.lot_rm_id
       case 1: return lot.lot_sm_id
-      case 2: return lot.record_id
+      case 2: return !isNil(lot.osId) ? lot.record_id : lot.osi_id
       default: return
     }
   }
@@ -225,7 +295,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     const bomSavedAndUnChanged: boolean = bomSaved && !lotAmountChanged
     const lotNumAndLotMap = new Map()
     const originalLotNumAndLotMap = new Map()
-    input.originalBom && input.originalBom.map((lot) => originalLotNumAndLotMap.set(getBomKey(input.tab, lot), lot))
+    input.originalBom && Array.isArray(input.originalBom) && input.originalBom.map((lot) => originalLotNumAndLotMap.set(getBomKey(input.tab, lot), lot))
     if(lotAmountChanged){
       input.lots.map((lot) => lotNumAndLotMap.set(getBomKey(input.tab, lot), lot))
     }
@@ -236,14 +306,14 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       const lotAmount = lotNumAndLotMap.get(getBomKey(input.tab, lot))?.amount ?? "0"
       const originalAmount = originalLotNumAndLotMap.get(getBomKey(input.tab, lot))?.originalAmount ?? originalLotNumAndLotMap.get(getBomKey(input.tab, lot))?.amount ?? "0"
       const totalUsage = lotAmount === '0' ? new Big(0) : new Big(Number(lotAmount)).div(cavity).times(input.usage)
-      const originalTotalUsage = originalAmount === '0' ? new Big(0) : new Big(Number(originalAmount)).div(row.originalCavity).times(input.usage)
+      const originalTotalUsage = originalAmount === '0' ? new Big(0) : new Big(originalAmount).div(row?.originalCavity ?? 1).times(input.usage)
       const actualCurrent = isModify ? new Big(lot.current).plus(originalTotalUsage) : new Big(lot.current)
       const maxAmount = Math.floor(new Big(actualCurrent).div(input.usage).times(cavity).toNumber())
       return {
           ...lot,
           seq: lotIdx + 1,
           usage: input.usage,
-          date: lot.date ?? moment(lot.end).format("YYYY-MM-DD"),
+          date: lot.date ?? moment(lot.osId ? lot.end : lot.import_date).format("YYYY-MM-DD"),
           warehousing: lot.warehousing ?? lot.good_quantity,
           amount: lotAmount,
           unit: input.unit,
@@ -264,9 +334,12 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
   const ModalContents = () => (
         <UploadButton onClick={() => {
+          if(isOutsourcing && !!!row.product?.product_id){
+            return Notiflix.Report.warning('경고', alertMsg.noProduct, '확인')
+          }
           setIsOpen(true)
         }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
-          <p>자재 보기</p>
+          <p>{column.type === 'ai' ? row.good_quantity : '자재 보기'}</p>
         </UploadButton>
     )
 
@@ -279,61 +352,35 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     const originalBom = row.originalBom ?? inputMaterialList.map((v) => {
       return v.bom_info
     }).filter(v => v)
-    row.input_bom?.map((bom) => {
-      let bomObject = getBomObject(bom.bom)
+    const bomList = isOutsourcing ? inputMaterialList.map(input => ({bom: input.bom})) :  column.type == "ai" ? row.bom : row.input_bom
+    bomList?.map((bom) => {
+      const bomObject = getBomObject(bom.bom)
       inputBomIdMap.set(bomObject.bomKey, bom)
     })
     inputMaterialList.map((bom, index) => {
       let totalAmount = 0
-      if(bom.lots !== undefined) {
-        bom.lots?.map(lot => {
-          if (Number(lot.amount)) {
-            totalAmount += Number(lot.amount)
-            bomToSave.push({
-              ...inputBomIdMap.get(bom.bomKey),
-              record_id: undefined,
-              lot: {
-                elapsed: lot.elapsed,
-                type: bom.tab,
-                child_lot_rm: bom.tab === 0 ? {...lot, current: lot.originalCurrent ?? lot.current,} : null,
-                child_lot_sm: bom.tab === 1 ? {...lot, current: lot.originalCurrent ?? lot.current} : null,
-                child_lot_record: bom.tab === 2 ? {...lot, current: lot.originalCurrent ?? lot.current} : null,
-                warehousing: lot.warehousing,
-                date: lot.date,
-                current: lot.originalCurrent ?? lot.current,
-                amount: lot.amount,
-                version: lot?.version ?? undefined,
-                actualCurrent: lot.actualCurrent ?? lot.current
-              }
-            })
-          }
-        })
-      }
-      else {
-        bom.bom_info?.map(lot => {
-          if (Number(lot.amount)) {
-            totalAmount += Number(lot.amount)
-
-            bomToSave.push({
-              ...inputBomIdMap.get(bom.bomKey),
-              record_id: undefined,
-              lot: {
-                elapsed: lot.elapsed,
-                type: bom.tab,
-                child_lot_rm: bom.tab === 0 ? {...lot, current: lot.originalCurrent ?? lot.current} : null,
-                child_lot_sm: bom.tab === 1 ? {...lot, current: lot.originalCurrent ?? lot.current} : null,
-                child_lot_record: bom.tab === 2 ? {...lot, current: lot.originalCurrent ?? lot.current} : null,
-                warehousing: lot.warehousing,
-                date: lot.date,
-                current: lot.originalCurrent ?? lot.current,
-                amount: lot.amount,
-                version: lot?.version ?? undefined,
-                actualCurrent: lot.actualCurrent ?? lot.current
-              }
-            })
-          }
-        })
-      }
+      const bomInfo = bom.lots !== undefined ? bom.lots : bom.bom_info
+      bomInfo?.map(lot => {
+        if (Number(lot.amount)) {
+          totalAmount += Number(lot.amount)
+          const lotObjectKey = bom.tab === 0 ? 'child_lot_rm' : bom.tab === 1 ? 'child_lot_sm' : bom.type < 3 ? 'child_lot_record' : 'child_lot_outsourcing'
+          bomToSave.push({
+            ...inputBomIdMap.get(bom.bomKey),
+            record_id: undefined,
+            bom: {...bom, type:bom.tab},
+            lot: {
+              elapsed: lot.elapsed,
+              type: bom.tab,
+              [lotObjectKey]:{...lot, current: lot.originalCurrent ?? lot.current},
+              warehousing: lot.warehousing,
+              date: lot.date,
+              current: lot.originalCurrent ?? lot.current,
+              amount: lot.amount,
+              version: lot?.version ?? undefined,
+              actualCurrent: lot.actualCurrent ?? lot.current
+            }
+          })
+        }})
       const defectTotal = lodash.sum(row.defect_reasons?.filter((reason) => !!reason.amount).map((reason)=> Number(reason.amount)))
       if(totalAmount < defectTotal) {
         Notiflix.Report.warning("생산량은 불량 수량보다 작을 수 없습니다.", "", "확인")
@@ -356,15 +403,23 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         bomLotInfo = inputMaterialList.map((v) => {
           return v.lots ?? v.bom_info
         })
-        onRowChange({
+        const newRow = {
           ...row,
           bom: bomToSave,
           bom_info: bomLotInfo,
-          quantity: quantity,
-          good_quantity: quantity,
-          originalSum : row.originalSum ?? row.sum,
           originalBom: originalBom,
-        })
+        }
+        if(isOutsourcing){
+          newRow['order_quantity'] = quantity
+          newRow['bomChecked'] = true
+          newRow['isChange'] = true
+          newRow['originalSum'] = row.originalSum ?? row.order_quantity
+        }else{
+          newRow['quantity'] = quantity,
+          newRow['good_quantity'] = quantity,
+          newRow['originalSum'] = row.originalSum ?? row.sum
+        }
+        onRowChange(newRow)
         setIsOpen(false)
         setLotList([])
       }else {
@@ -397,21 +452,23 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     setSelected({
       index: null,
       product: '',
-      type: ''
+      type: '',
+      productType: '',
     })
     setInputMaterialList([])
     setIsOpen(false)
   }
 
-  const isProduct = selected.type === '반제품' || selected.type === '재공품' || selected.type === '완제품'
+  const isProduct = ['반제품', '재공품', '완제품'].includes(selected.type)
+  const isOutsource = selected.productType === '외주품'
 
   const LotListColumns = () => {
-    const defaultColumns = isProduct ? searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
+    const defaultColumns = isProduct ? isOutsource ? searchModalList.OutsourceLotReadonlyInfo : searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
     const extraCols:any[] = [{key: 'maxAmount', name: '최대 생산가능수량', formatter: UnitContainer, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"}]
     isModify && extraCols.push({ key: 'isComplete', name: '사용완료 상태', formatter: LineBorderContainer, textAlign: 'center'})
     return defaultColumns?.map(column =>
       column.key === 'amount' ?
-        {...column, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', inputType:'number', disabledCase: isModify ? [{key:'is_complete', value: true}] : []}
+        {...column, name: isOutsourcing ? '발주량' : column.name, editor: TextEditor, textType: 'Modal', placeholder: '생산량 입력', inputType:'number', disabledCase: isModify ? [{key:'is_complete', value: true}] : []}
        : column).concat(extraCols)
   }
 
@@ -456,7 +513,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
               </div>
             </div>
             {
-              headerItems && headerItems.map((infos, index) => {
+              InputModalHeaderItems(column.type).map((infos, index) => {
                 return (
                     <HeaderTable>
                       {
@@ -497,12 +554,12 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
-                  headerList={searchModalList.InputList}
+                  headerList={InputListHeaders(isOutsourcing, false)}
                   row={inputMaterialList ?? [{}]}
                   setRow={(inputMaterials, idx) => {
                     let tmp = inputMaterials.map((input, inputIdx) => {
                       if(input.lotList && idx === inputIdx ){
-                        setSelected({index: idx, type: input.type_name, product: input.code})
+                        setSelected({index: idx, type: input.type_name, product: input.code, productType: input.product_type})
                         const rowLotList = toLotList(input)
                         setLotList(rowLotList)
                       }
@@ -556,6 +613,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                         // const originalTotalUsage = new Big(lot.originalAmount).div(row.originalCavity).times(lot.usage)
                         if(!!lot.amount)
                         {
+                          if(!Number.isInteger(Number(lot.amount))) throw(alertMsg.onlyInteger)
                           const totalUsage = new Big(lot.amount).div(cavity).times(lot.usage)
                           if(actualCurrent.lt(totalUsage)) throw(alertMsg.overStock)
                           sumOfTotalUsage += totalUsage.toNumber()
@@ -568,9 +626,9 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                           actualCurrent: actualCurrent.toNumber()
                         }
                       })
-                      // const originalAllAmount = isModify ? lodash.sum(inputMaterialList[selected.index]?.originalBom?.map(lot => Number(lot.amount))) : null
-                      // const originalTotalUsage = isModify ? new Big(originalAllAmount).div(cavity).times(inputMaterialList[selected.index].usage) : null
-                      // const totalUsage = new Big(sumOfAmount).div(cavity).times(inputMaterialList[selected.index].usage)
+                      const originalAllAmount = isModify ? lodash.sum(inputMaterialList[selected.index]?.originalBom?.map(lot => Number(lot.amount))) : null
+                      const originalTotalUsage = isModify ? new Big(originalAllAmount).div(cavity).times(inputMaterialList[selected.index].usage) : null
+                      const totalUsage = new Big(sumOfAmount).div(cavity).times(inputMaterialList[selected.index].usage)
                       newInputMaterialList[selected.index] = {
                         ...newInputMaterialList[selected.index],
                         disturbance: sumOfAmount,

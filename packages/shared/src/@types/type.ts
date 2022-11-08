@@ -13,6 +13,10 @@ export interface IProps {
 }
 
 export interface IExcelHeaderType {
+  maxLength?: number | undefined
+  modalTitle?: string
+  formatter?: any
+  unit?: any
   setBasicRow?: any
   headerType?:any[]
   basicRow?: any
@@ -33,15 +37,16 @@ export interface IExcelHeaderType {
   disableType?: string
   disabledCase?: {key: any, value: any}[]
   textType?: string
-  options?:{status:number, name:string}[]
+  options?:{status:number | string, name:string}[]
   sortOption?: string
   sorts?: {orders:string[], sorts:string[]}
-  result?:(value:number | string | boolean, key?:string) => void
+  result?:(value:number | string | boolean, key?:string, index?:number) => void
   staticCalendar?: boolean
   clearContract?: boolean
   maxDate?:boolean
   theme?: string
   toFix?: number
+  fixed?:boolean
   placeholder?: string
   textAlign?: 'left' | 'center' | 'right'
   modalInitData?: any
@@ -56,7 +61,7 @@ export interface IExcelHeaderType {
   callback?: (data : any) => void
   idx?:number
   headerRenderer?: ({row, column, setRow, onChangeOption}:IProps) => any
-  headerItems:{title: string, infoWidth: number, key: string, unit?: string}[][]
+  headerItems?:{title: string, infoWidth: number, key: string, unit?: string}[][]
   action?:string
   doubleClick?:() => void
   mi_id?:number
@@ -67,6 +72,7 @@ export interface IExcelHeaderType {
   overlay?:boolean
   state?:string
   orderRegisterManage?:() => any[]
+  dependency?:string
 
 }
 
@@ -82,7 +88,7 @@ export interface IMenu {
   checkable: boolean //체크박스 표시 여부
   check?: boolean //체크 여부
   value?: string //체크시 넘길 값
-  child: IMenu[] // 하위 트리뷰 리스트
+  child: IMenu[] | any[] // 하위 트리뷰 리스트
 }
 
 export interface IItemMenuType {
@@ -213,9 +219,10 @@ export interface MidrangeRecordRegister extends MidrangeRecordType {
   record_id?: string
   version?: number
   samples?:number
+  operation_inspection_id?: string
 }
 
-export type TransferType = "productType" | "material" | "rawMaterial" | "rawMaterialType" | "workStatus" | 'machine' | "product" |  "subMaterial" | "welding" | "export" | "unit" | null
+export type TransferType = "productType" | "material" | "rawMaterial" | "rawMaterialType" | "rawMaterialUnit" | "workStatus" | 'machine' | "product" |  "subMaterial" | "welding" | "export" | "unit" | null
 
 export interface BomType {
   childProductId: number | null

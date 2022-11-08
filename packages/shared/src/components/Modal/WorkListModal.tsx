@@ -20,6 +20,8 @@ import {BarcodeDataType} from "../../common/barcodeType";
 import {BarcodeModal} from "./BarcodeModal";
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
+import {useSelector} from "react-redux";
+import {selectUserInfo} from "../../reducer/userInfo";
 
 interface IProps {
   column: IExcelHeaderType
@@ -58,6 +60,7 @@ type ModalType = {
 
 const WorkListModal = ({column, row, onRowChange}: IProps) => {
   const tabRef = useRef(null)
+  const userInfo = useSelector(selectUserInfo)
 
   const [bomDummy, setBomDummy] = useState<any[]>([
     // {code: 'SU-20210701-1', name: 'SU900-1', material_type: '반제품', process:'프레스', cavity: '1', unit: 'EA'},
@@ -178,6 +181,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const requestPrintApi = async (clientIP,data) => {
+    Notiflix.Loading.circle()
     await fetch(`http://${clientIP}:18080/WebPrintSDK/Printer1`,{
       method : 'POST',
       headers : {
@@ -209,11 +213,41 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     return tempList
   }
 
+  const materialTypeOfCompany = (data) => {
+    switch (data.type) {
+      //완제품
+      case 2:
+        return 6
+      //반제품,제공품
+      case 1:
+      case 0:
+        return 7
+      default :
+        return 5
+    }
+  }
+
   const convertBarcodeData = (items) => {
-    return items.map((item)=>(
-        {
+    const mainMachine = items.machines?.filter((machine)=>(machine.machine.type === 1))
+    const data = []
+
+    return items.map((item)=>{
+
+        let lotList = item.bom.map((v)=>{
+          if(v.lot.child_lot_rm){
+            return v.lot.child_lot_rm.lot_number
+          }else if(v.lot.child_lot_sm){
+            return v.lot.child_lot_sm.lot_number
+          }else if(v.lot.child_lot_record){
+            return v.lot.child_lot_record.lot_number
+          }else if(v.lot.child_lot_outsourcing){
+            return v.lot.child_lot_outsourcing.lot_number
+          }
+        })
+
+        return {
           material_id: item.productId,
-          material_type: 5,
+          material_type: userInfo.companyCode === '2SZ57L' ? materialTypeOfCompany(item.product) : 5,
           material_lot_id : item.record_id,
           material_lot_number: item.lot_number,
           material_quantity : item.good_quantity,
@@ -221,8 +255,15 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           material_code: item.code,
           material_customer: item.worker?.name ?? "-",
           material_model: item.model?.model ?? "-",
+          material_machine_name : mainMachine?.length > 0 ? mainMachine[0]?.machine.name : null,
+          material_size : null,
+          material_texture : null,
+          material_unit : 'EA',
+          material_texture_type : null,
+          material_import_date: null,
+          material_bom_lot: userInfo.companyCode === '4MN60H' ? lotList.join(',') : null
         }
-    ))
+    })
   }
 
   const openBarcodeModal = () => {

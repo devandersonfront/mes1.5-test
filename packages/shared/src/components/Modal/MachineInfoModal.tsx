@@ -152,7 +152,7 @@ const MachineInfoModal = ({column, row, onRowChange}: IProps) => {
   return (
     <MultiSelectModal buttonTitle={'기계'} title={'기계 정보 (제품 생산되는 데 사용되는 모든 기계를 입력해주세요)'} hasData={row.machines?.length > 0} isOpen={isOpen}
                  onModalButtonClick={() => setIsOpen(true)} onClose={onCloseEvent}
-                 onConfirm={onConfirm}
+                 onConfirm={onConfirm} disabled={row.readonly}
                  validateConfirm={executeValidation} headers={[
       [ { key: '거래처명', value: row.customerArray?.name ?? "-" }, { key: '모델', value: row.modelArray?.model ?? "-" }, ],
       [ { key: 'CODE', value: row.code ?? "-" }, { key: '품명', value: row.name ?? "-" }, {

@@ -31,6 +31,25 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
     }
   }, [isOpen])
 
+  const minDate = () => {
+    let minDate = moment('1900-01-01').subtract(1, 'days').toDate()
+    switch(column.type)
+    {
+      case 'deadline': minDate = moment(row.date).toDate()
+        break
+      case 'delivery':
+        if(!!row.contract?.date) {
+        minDate = moment(row.contract.date).toDate()
+        }
+        break
+      case 'outsourcingOrder':
+      case 'outsourcingImport': minDate = moment(row.order_date).toDate()
+        break
+      default:
+    }
+    return minDate
+  }
+
   return (
     <div>
       <Background
@@ -71,7 +90,7 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
             <div  style={{display: 'inline-block', float: 'left', flex: 1, marginRight: 20}}>
               <Calendar
                   maxDate={new Date(8640000000000000)}
-                  minDate={column.type === "deadline" ? moment(row.date).toDate() : column.type === 'delivery' && !!row.contract?.date ? moment(row.contract.date).toDate() : moment('1900-01-01').subtract(1, 'days').toDate()}
+                  minDate={minDate()}
                 onChange={(date) => {
                   setSelect(date)
                 }}
@@ -91,12 +110,20 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
               </div>
               <div
                 onClick={() => {
-                  onRowChange({
-                    ...row,
-                    [column.key]: moment(select).format('YYYY-MM-DD'),
-                    isChange: true
-                  })
-                  setIsOpen(false)
+                    const selected = moment(select).format('YYYY-MM-DD')
+                    const newRow = {
+                        ...row,
+                        [column.key]: selected,
+                        isChange: true
+                    }
+                    if(column.dependency){
+                        if(!!!row[column.dependency] || selected > row[column.dependency]) {
+                            newRow[column.dependency] = selected
+                        }
+                    }
+
+                    onRowChange(newRow)
+                    setIsOpen(false)
                 }}
                 style={{flex: 1, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
               >

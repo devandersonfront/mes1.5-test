@@ -273,6 +273,7 @@ const ApiList = {
   stockSummarySave: `/api/v1/stock/admin/summary`,
   operationSave: `/api/v1/sheet/save`,
   recordSave: `/cnc/api/v1/record/save`,
+  aiRecordSave: `/api/v1/ai/record/save`,
   factorySave: `/api/v1/factory/save`,
   deviceSave: `/api/v1/device/save`,
   rawMaterialSave: `/api/v1/raw-material/save`,
@@ -281,6 +282,7 @@ const ApiList = {
   lotSmSave: `/api/v1/lot-sm/save`,
   subFactorySave: `/api/v1/subFactory/save`,
   contractSave: `/api/v1/contract/save`,
+  aiContractSave: `/api/v1/ai/contract/save`,
   sheetSave: `/api/v1/sheet/save`,
   shipmentSave: `/api/v1/shipment/save`,
   shipmentExportSave: `/api/v1/shipment/export/save`,
@@ -294,6 +296,12 @@ const ApiList = {
   inspecMoldSave: `/api/v1/inspec/daily/mold/save`,
   lotRmComplete: `/api/v1/lot-rm/complete`,
   stockSave: `/api/v1/stock/basic/save`,
+  outsourcingShipmentSave: `/api/v1/outsourcing/shipment/save`,
+  outsourcingOrderSave: `/api/v1/outsourcing/export/save`,
+  outsourcingImportSave : `/api/v1/outsourcing/import/save`,
+  stockAdjustSave: '/api/v1/stock/adjustment/save',
+  productBatchSave: '/cnc/api/v1/product/pop/save',
+
   //modify
   operationModify: `/api/v1/operation/modify`,
 
@@ -313,6 +321,8 @@ const ApiList = {
   productToMachine: '/api/v1/machine/prd-related/load',
   productToMold: '/api/v1/mold/prd-related/load',
   productToTool: '/cnc/api/v1/tool/prd-related/load',
+  stockBomLoad: '/api/v1/stock/bom/load',
+  contractLoad: '/api/v1/contract/load',
 
   //recent
   operationRecent:`/api/v1/operation/recent`,
@@ -341,13 +351,18 @@ const ApiList = {
   subFactoryDelete: `/api/v1/subFactory/delete`,
   contractDelete: `/api/v1/contract/delete`,
   sheetDelete: `/api/v1/sheet/delete`,
-  recodeDelete: `/api/v1/record/delete`,
+  recordDelete: `/api/v1/record/delete`,
   cncRecordeDelete: `/cnc/api/v1/record/delete`,
   toolDelete: `/cnc/api/v1/tool/delete`,
   lotToolDelete: `/cnc/api/v1/lot-tool/delete`,
+  cncRecordToolDelete: '/cnc/api/v1/tool/record/delete',
   documentDelete: `/cnc/api/v1/document/delete`,
   productChangeDelete: `/cnc/api/v1/product-changes/remove`,
   exportDelete: `/api/v1/shipment/export/delete`,
+  outsourcingShipmentDelete: `/api/v1/outsourcing/shipment/delete`,
+  outsourcingOrderDelete: `/api/v1/outsourcing/export/delete`,
+  outsourcingImportDelete : `/api/v1/outsourcing/import/delete`,
+  recordInspectDelete: `/cnc/api/v1/record/inspect/delete`,
 
   //list
   authorityList: `/api/v1/member/auth/list`,
@@ -372,6 +387,7 @@ const ApiList = {
   productChangeList: `/cnc/api/v1/product-changes/list`,
   recordList: `/cnc/api/v1/record/list`,
   cncRecordList: `/cnc/api/v1/record/list`,
+  aiRecordList: `/api/v1/ai/record/list`,
   recordSumList: `/api/v1/record/summation/list`,
   factoryList: `/api/v1/factory/list`,
   deviceList: `/api/v1/device/list`,
@@ -404,6 +420,11 @@ const ApiList = {
   productCapacityUtilizationList :`/cnc/api/v1/kpi/product/capacity-utilization/list`,
   sheetDefectList: `/api/v1/sheet/defect`,
   exportList: `/api/v1/shipment/export/list`,
+  outsourcingShipmentList: `/api/v1/outsourcing/shipment/list`,
+  outsourcingLotList: `/api/v1/outsourcing/import/groups`,
+  outsourcingOrderList: `/api/v1/outsourcing/export/list`,
+  outsourcingImportList : `/api/v1/outsourcing/import/list`,
+  stockAdjustList: '/api/v1/stock/adjustment/list',
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -447,6 +468,9 @@ const ApiList = {
   qualityRecordInspectSearch: '/cnc/api/v1/quality/record/inspect/search',
   productChangeSearch: `/cnc/api/v1/product-changes/search`,
   exportSearch: `/api/v1/shipment/export/search`,
+  outsourcingOrderSearch: `/api/v1/outsourcing/export/search`,
+  outsourcingImportSearch: `/api/v1/outsourcing/import/search`,
+  outsourcingShipmentSearch: `/api/v1/outsourcing/shipment/search`,
 
   //all
   authorityAll: `/api/v1/auth/all`,
@@ -481,6 +505,9 @@ const ApiList = {
 
   //전력사용량 list
   statisticsPressElectricPower: `/api/v2/statistics/press/electric-power`,
-
   recordEnd: `/cnc/api/v1/record/complete`,
+
+  //log
+  logOut: '/anonymous/logout'
+
 }

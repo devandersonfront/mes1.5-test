@@ -18,13 +18,16 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import axios from 'axios';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util';
 import { BarcodeDataType } from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import renewalColumn from '../../../main/common/unprintableKey'
+import { alertMsg } from 'shared/src/common/AlertMsg'
+import {insert_productList} from "shared/src/reducer/ProductSelect";
+import {selectUserInfo} from "shared/src/reducer/userInfo";
 
 export interface IProps {
   children?: any
@@ -38,8 +41,8 @@ type ModalType = {
   isVisible : boolean
 }
 
-
 const BasicProduct = ({}: IProps) => {
+  const userInfo = useSelector(selectUserInfo)
   const router = useRouter()
   const dispatch = useDispatch()
   const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -51,6 +54,8 @@ const BasicProduct = ({}: IProps) => {
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [selectRow , setSelectRow ] = useState<any>(0)
   const [keyword, setKeyword] = useState<string>();
+  const [productType, setProductType] = useState<string>('0');
+  const [typeIndex, setTypeIndex] = useState<number>(0);
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -60,6 +65,32 @@ const BasicProduct = ({}: IProps) => {
     isVisible : false
   })
   const [barcodeData , setBarcodeData] = useState<BarcodeDataType[]>([])
+  const typeOptions = [
+    [ {status: undefined, name: '품목 종류'},
+      {status: '0,3', name: '반제품'},
+      {status: '1', name: '재공품'},
+      {status: '2,4', name: '완제품'}],
+    [ {status: undefined, name: '품목 종류'},
+      {status: '0', name: '반제품'},
+      {status: '1', name: '재공품'},
+      {status: '2', name: '완제품'}],
+    [ {status: undefined, name: '품목 종류'},
+      {status: '3', name: '반제품'},
+      {status: '4', name: '완제품'}],
+    ]
+
+  const onColumnFilter = (value:number | string, key:string, index:number) => {
+    switch(key){
+      case 'product_type':
+        if(typeof value === 'string') {
+          setProductType(value);}
+        break;
+      case 'type':
+        setTypeIndex(index)
+        break;
+    }
+    setPageInfo({page:1, total:1})
+  }
 
   const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
@@ -72,7 +103,7 @@ const BasicProduct = ({}: IProps) => {
 
   useEffect(() => {
     getData(pageInfo.page, keyword)
-  }, [pageInfo.page]);
+  }, [pageInfo.page, productType, typeIndex]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"제품 등록 관리",sub:""}))
@@ -81,98 +112,23 @@ const BasicProduct = ({}: IProps) => {
     })
   },[])
 
-
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    const changeOrder = (sort:string, order:string) => {
-      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-      setSortingOptions(_sortingOptions)
-      reload(null, _sortingOptions)
-    }
-    let tmpColumn = column.map((v: any) => {
-      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-      return {
-        ...v,
-        pk: v.unit_id,
-        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-        sorts: v.sorts ? sortingOptions : null,
-        result: v.sortOption ? changeOrder : null,
-      }
-    });
-
-    Promise.all(tmpColumn).then(res => {
-      setColumn([...res.map(v=> {
-        return {
-          ...v,
-          name: v.moddable ? v.name+'(필수)' : v.name
-        }
-      })])
-    })
+  const validate = (row) => {
+    if(!!!row.code) throw('CODE는 필수입니다.')
+    if(!!!row.product_id && !!!row.bom && Number(row.type_id) < 3 ) throw('BOM은 필수입니다.')
+    if(!!!row.process_id) throw('생산 공정은 필수입니다.')
   }
 
   const SaveBasic = async () => {
-    let selectCheck = false
-    let codeCheck = true
-    let processCheck = true
-    let bom = true
-    const searchAiID = (rowAdditional:any[], index:number) => {
-      let result:number = undefined;
-      rowAdditional.map((addi, i)=>{
-        if(index === i){
-          result = addi.ai_id;
-        }
-      })
-      return result;
-    }
-
-    Notiflix.Loading.standard();
-    let result = basicRow.map((row, i) => {
-
-      if(selectList.has(row.id)){
-        selectCheck = true;
-        if(!row.code) codeCheck = false
-        if(!row.bom) bom = false
-        if(!row.process_id) processCheck = false
-        let additional:any[] = []
-        column.map((v) => {
-          if(v.type === 'additional'){
-            additional.push(v)
-          }
-        })
-
-        let selectData: any = {}
-
-        Object.keys(row).map(v => {
-          if(v.indexOf('PK') !== -1) {
-            selectData = {
-              ...selectData,
-              [v.split('PK')[0]]: row[v]
-            }
-          }
-
-          if(v === 'unitWeight') {
-            selectData = {
-              ...selectData,
-              unitWeight: Number(row['unitWeight'])
-            }
-          }
-
-          if(v === 'tmpId') {
-            selectData = {
-              ...selectData,
-              id: row['tmpId']
-            }
-          }
-        })
-
+    try {
+      if(!!!selectList.size) throw(alertMsg.noSelectedData)
+      const addedColumn = column.filter(col => col.type === 'additional')
+      const postBody = basicRow.filter(row => selectList.has(row.id)).map(row => {
+        validate(row)
         return {
           ...row,
-          ...selectData,
-          // setting: row?.typePK ?? row.setting,
           customer: row?.customerArray?.customer_id ? row.customerArray : null,
-          // customer_id: row.customerArray.customer_id,
           customer_id: undefined,
           model: row?.modelArray?.cm_id ? row.modelArray : null,
-          // standard_uph: row.uph,
           molds:row?.molds?.map((mold)=>{
             return { setting:mold.setting , mold : {...mold.mold } , sequence : mold.sequence }
           }).filter((mold) => mold.mold.mold_id) ?? [],
@@ -198,52 +154,28 @@ const BasicProduct = ({}: IProps) => {
             }).filter((machine) => machine.machine.machine_id)?? []
           ],
           work_standard_image:row.work_standard_image?.uuid,
-          type:row.type_id ?? row.typeId ?? row.typePK,
-          additional: [
-            ...additional.map((v, index)=>{
-              //if(!row[v.colName]) return undefined;
-              return {
-                mi_id: v.id,
-                title: v.name,
-                value: row[v.colName] ?? "",
-                unit: v.unit,
-                ai_id: searchAiID(row.additional, index) ?? undefined,
-                version:row.additional[index]?.version ?? undefined
-              }
-            }).filter((v) => v)
-          ]
+          type: row.type_id,
+          safety_stock : Number(row.safety_stock),
+          safety_stock_id : Number(row.safety_stock_id) == 0 ? null : Number(row.safety_stock_id),
+          additional: addedColumn.map((col, colIdx)=> ({
+                mi_id: col.id,
+                title: col.name,
+                value: row[col.key] ?? "",
+                unit: col.unit,
+                ai_id: row.additional[colIdx]?.ai_id ?? undefined,
+                version:row.additional[colIdx]?.version ?? undefined
+              }))
         }
-
-      }
-    }).filter((v) => v)
-
-    if(selectCheck && codeCheck && processCheck && (bom || basicRow[selectRow].bom_root_id)){
-      let res = await RequestMethod('post', `productSave`,result).catch((error)=>{
-        return error.data && Notiflix.Report.warning("경고",`${error.data.message}`,"확인");
       })
-
+      Notiflix.Loading.circle();
+      const res = await RequestMethod('post', `productSave`,postBody)
       if(res){
         Notiflix.Report.success('저장되었습니다.','','확인', () => reload());
       }
-    }else if(!selectCheck){
       Notiflix.Loading.remove()
-      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
-    }else if(!codeCheck){
-      Notiflix.Loading.remove()
-      Notiflix.Report.warning("경고","CODE를 입력해주시기 바랍니다.","확인");
-    }else if(!bom){
-      Notiflix.Loading.remove()
-      Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
+    } catch(errMsg) {
+      Notiflix.Report.warning('경고', errMsg, '확인')
     }
-    else if(!processCheck){
-      Notiflix.Loading.remove()
-      Notiflix.Report.warning("경고","생산공정을 입력해주시기 바랍니다.","확인");
-    }
-    // else if(!bomCheck){
-    //   Notiflix.Loading.remove()
-    //   Notiflix.Report.warning("경고","BOM을 등록해주시기 바랍니다.","확인");
-    // }
-
   }
 
   const convertDataToMap = () => {
@@ -297,6 +229,87 @@ const BasicProduct = ({}: IProps) => {
 
   }
 
+  const setNewColumn = (menus:any[]) => {
+    const changeOrder = (sort:string, order:string) => {
+      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+      setSortingOptions(_sortingOptions)
+      reload(null, _sortingOptions)
+    }
+    let addedCols = []
+    const menuMap = menus?.reduce((map, menu) => {
+      if(false === menu.hide){
+        if(menu.colName){
+          map.set(menu.colName, menu)
+        }else {
+          addedCols.push({
+            id: menu.mi_id,
+            name: menu.title,
+            width: menu.width,
+            key: menu.mi_id,
+            editor: TextEditor,
+            type: 'additional',
+            unit: menu.unit,
+            tab: menu.tab,
+            version: menu.version,
+            colName: menu.mi_id,
+          })
+        }
+      }
+      return map
+    }, new Map())
+    let newCols =column.filter(col => menuMap.has(col.key)).map(col => {
+      const menu = menuMap.get(col.key)
+      const sortIndex = sortingOptions.sorts.findIndex(sort => sort ===col.key)
+      return {
+        ...col,
+        id: menu.mi_id,
+        name: !menu.moddable ? `${menu.title}(필수)`: menu.title,
+        width: menu.width,
+        tab:menu.tab,
+        unit:menu.unit,
+        moddable: !menu.moddable,
+        version: menu.version,
+        sequence: menu.sequence,
+        hide: menu.hide,
+        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : col.sortOption ?? null,
+        sorts: col.sorts ? sortingOptions : null,
+        result: col.sortOption ? changeOrder : col.options ? onColumnFilter : null,
+        options: col.options ? col.key === 'type' ? typeOptions[productType] as {status:number | string, name:string}[] : col.options : undefined
+      }
+    })
+    setColumn(newCols.concat(addedCols))
+  }
+
+  const cleanUpData = (res: any) => {
+    res.menus?.length && setNewColumn(res.menus)
+    const newRows = res.info_list.map((row: any) => {
+      let additionalData = {}
+      row.additional.map(add => {
+        additionalData[add.mi_id] = add.value
+      })
+      let random_id = Math.random()*1000;
+      return {
+        ...row,
+        ...additionalData,
+        customer_id: row.customer?.name,
+        customerArray: row.customer,
+        cm_id: row.model?.model,
+        modelArray: row.model,
+        process_id: row.process?.name,
+        processArray: row.process,
+        type_id: row.type,
+        type: column.filter(col => col.key === 'type')?.[0]?.selectList[row.type < 3 ? 0 : 1][row.type > 2 ? row.type - 3 : row.type].name,
+        product_type: column.filter(col => col.key === 'product_type')?.[0]?.selectList[row.type < 3 ? 0 : 1].name,
+        id: `product_${random_id}`,
+        readonly: row.type > 2,
+        safety_stock : Number(row.safety_stock),
+        safety_stock_id : Number(row.safety_stock_id),
+        reload
+      }
+    })
+    setBasicRow(newRows)
+  }
+
   const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     let params = {}
     if(keyword) {
@@ -307,8 +320,9 @@ const BasicProduct = ({}: IProps) => {
       params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
       params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
       params['sorts'] = params['sorts']?.map(sort => sort === 'process_id' ? 'pc.name' : sort)
-
     }
+    if(productType !== undefined) params['outsourcing'] = productType
+    if(typeIndex !== 0 && typeOptions[productType][typeIndex] !== undefined) params['types'] = typeOptions[productType][typeIndex]?.status.split(',') ?? undefined
     return params
   }
 
@@ -338,139 +352,6 @@ const BasicProduct = ({}: IProps) => {
     Notiflix.Loading.remove()
   }
 
-
-  const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["productV1u"];
-    let tmpRow = []
-    tmpColumn = tmpColumn.map((column: any) => {
-      let menuData: object | undefined;
-      res.menus && res.menus.map((menu: any) => {
-        if(!menu.hide){
-          if(column.key === "product_type"){
-            menuData = {
-              id: column.key,
-              name: column.name,
-              width: menu.width,
-              // tab:menu.tab,
-              // unit:menu.unit,
-              // moddable: !menu.moddable,
-              // version: menu.version,
-              // sequence: menu.sequence,
-              hide: menu.hide
-            }
-          }
-          if(menu.colName === column.key){
-            menuData = {
-              id: menu.mi_id,
-              name: menu.title,
-              width: menu.width,
-              tab:menu.tab,
-              unit:menu.unit,
-              moddable: !menu.moddable,
-              version: menu.version,
-              sequence: menu.sequence,
-              hide: menu.hide
-            }
-          } else if(menu.colName === 'id' && column.key === 'tmpId'){
-            menuData = {
-              id: menu.mi_id,
-              name: menu.title,
-              width: menu.width,
-              tab:menu.tab,
-              unit:menu.unit,
-              moddable: !menu.moddable,
-              version: menu.version,
-              sequence: menu.sequence,
-              hide: menu.hide
-            }
-          }
-        }
-      })
-
-      if(menuData){
-        return {
-          ...column,
-          ...menuData
-        }
-      }
-    }).filter((v:any) => v)
-
-    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-      if(menu.colName === null && !menu.hide){
-        return {
-          id: menu.mi_id,
-          name: menu.title,
-          width: menu.width,
-          // key: menu.title,
-          key: menu.mi_id,
-          editor: TextEditor,
-          type: 'additional',
-          unit: menu.unit,
-          tab: menu.tab,
-          version: menu.version,
-          colName: menu.mi_id,
-        }
-      }
-    }).filter((v: any) => v) : []
-
-
-    tmpRow = res.info_list
-
-
-    loadAllSelectItems( [...tmpColumn, ...additionalMenus])
-
-
-    let selectKey = ""
-    let additionalData: any[] = []
-    tmpColumn.map((v: any) => {
-      if(v.selectList){
-        selectKey = v.key
-      }
-    })
-
-    additionalMenus.map((v: any) => {
-      if(v.type === 'additional'){
-        additionalData.push(v.key)
-      }
-    })
-
-    let pk = "";
-    Object.keys(tmpRow).map((v) => {
-      if(v.indexOf('_id') !== -1){
-        pk = v
-      }
-    })
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
-      let appendAdditional: any = {}
-
-      row.additional && row.additional.map((v: any) => {
-        appendAdditional = {
-          ...appendAdditional,
-          [v.mi_id]: v.value
-        }
-      })
-
-      let random_id = Math.random()*1000;
-      return {
-        ...row,
-        ...appendAdditional,
-        customer_id: row.customer?.name,
-        customerArray: row.customer,
-        cm_id: row.model?.model,
-        modelArray: row.model,
-        process_id: row.process?.name,
-        processArray: row.process,
-        type_id: row.type,
-        type: column[column.findIndex((col) => col.key == "type")]?.selectList[row.type].name,
-        id: `product_${random_id}`,
-        reload
-      }
-    })
-
-    setBasicRow([...tmpBasicRow])
-  }
-
   const downloadExcel = () => {
     let tmpSelectList: boolean[] = []
     basicRow.map(row => {
@@ -491,17 +372,20 @@ const BasicProduct = ({}: IProps) => {
         setModal({type : 'quantity' , isVisible : true})
         break;
       case 1:
-        router.push(`/mes/item/manage/product`)
+        setExcelOpen(true)
         break;
       case 2:
+        router.push(`/mes/item/manage/product`)
+        break;
+      case 3:
         let items = {}
 
-        column.map((value) => {
-          if(value.selectList && value.selectList.length){
+        column.map((col) => {
+          if(col.selectList && col.selectList.length){
+            const selectList = col.key === 'type' ? col.selectList[0][0] : col.selectList[0]
             items = {
-              ...value.selectList[0],
-              [value.key] : value.selectList[0].name,
-              [value.key+'PK'] : value.selectList[0].pk, //여기 봐야됨!
+              ...selectList,
+              [col.key] : selectList.name,
               type_id : '0',
               ...items,
             }
@@ -523,14 +407,19 @@ const BasicProduct = ({}: IProps) => {
         ])
         break;
 
-      case 3:
-        if(selectList.size > 1){
-          return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
-        }
-        SaveBasic()
-
-        break;
       case 4:
+        const hasIds = getCheckItems().every((item)=>item.product_id)
+        if(!hasIds){
+          if(selectList.size > 1){
+            return Notiflix.Report.warning('경고','저장은 한 개만 하실수 있습니다.','확인')
+          }else{
+            SaveBasic()
+          }
+        }else{
+          SaveBasic()
+        }
+        break;
+      case 5:
         if(selectList.size === 0){
           return Notiflix.Report.warning(
               '경고',
@@ -605,11 +494,25 @@ const BasicProduct = ({}: IProps) => {
     setModal({type , isVisible})
   }
 
+  const materialTypeOfCompany = (data) => {
+    switch (data.type) {
+      case '완제품' :
+        return 6
+      case '반제품':
+      case '재공품':
+        return 7
+      default :
+        return 2
+    }
+  }
+
   const convertBarcodeData = (quantityData) => {
+
+    const mainMachine = quantityData.machines?.filter((machine)=>(machine.machine.type === 1))
 
     return [{
       material_id: quantityData.product_id,
-      material_type: 2,
+      material_type: userInfo.companyCode === '2SZ57L' ? materialTypeOfCompany(quantityData) : 2,
       material_lot_id : 0,
       material_lot_number: '0',
       material_quantity : quantityData.quantity,
@@ -617,9 +520,31 @@ const BasicProduct = ({}: IProps) => {
       material_code: quantityData.code,
       material_customer: quantityData.customer?.name ?? "-",
       material_model: quantityData.model?.model ?? "-",
+      material_machine_name : mainMachine.length > 0 ? mainMachine[0]?.machine.name : null,
+      material_size : null,
+      material_texture : null,
+      material_unit : null,
+
+      material_texture_type : null,
+      material_import_date : null,
+      material_bom_lot: null,
     }]
   }
 
+  const routeToProductBatchRegister = () => {
+    router.push('/mes/basic/product/batch')
+  }
+
+  const onClickMoreButton = (buttonIdx: number) => {
+    if(selectList.size <= 1){
+      dispatch(insert_productList(basicRow[selectRow]))
+      switch(buttonIdx){
+        case 0: routeToProductBatchRegister()
+      }
+    }else{
+      Notiflix.Report.warning("경고","하나의 데이터만 선택해주세요.","확인")
+    }
+  }
 
   const getCheckItems= () => {
     const tempList = []
@@ -652,8 +577,11 @@ const BasicProduct = ({}: IProps) => {
             optionIndex={optionIndex}
             title={"제품 등록 관리"}
             pageHelper={"제품 등록, 삭제는 하나씩 가능"}
-            buttons={[ (selectList.size === 1 && "바코드 미리보기"), "항목관리", "행추가", "저장하기", "삭제", ]}
+            buttons={[ (selectList.size <= 1 && "바코드 미리보기"),"엑셀","항목관리", "행추가", "저장하기", "삭제", ]}
             buttonsOnclick={onClickHeaderButton}
+            moreButtons={['제품 BOM 일괄 등록']}
+            onClickMoreButton={onClickMoreButton}
+
         />
         <ExcelTable
             editable
@@ -710,16 +638,13 @@ const BasicProduct = ({}: IProps) => {
             isVisible={modal.type === 'quantity' && modal.isVisible}
         />
 
-        {/* <ExcelDownloadModal
-        isOpen={excelOpen}
-        column={column}
-        basicRow={basicRow}
-        filename={`금형기준정보`}
-        sheetname={`금형기준정보`}
-        selectList={selectList}
-        tab={'ROLE_BASE_07'}
-        setIsOpen={setExcelOpen}
-      /> */}
+        <ExcelDownloadModal
+            isOpen={excelOpen}
+            category={"product"}
+            title={"제품 등록 관리"}
+            setIsOpen={setExcelOpen}
+            resetFunction={() => reload()}
+        />
       </div>
   );
 }

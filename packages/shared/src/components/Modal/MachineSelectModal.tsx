@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import Modal from 'react-modal'
 import {POINT_COLOR} from '../../common/configset'
 //@ts-ignore
-import IcSearchButton from '../../../public/images/ic_search.png'
+import IcMSearchButton from '../../../public/images/ic_search.png'
 //@ts-ignore
 import IcX from '../../../public/images/ic_x.png'
 import {ExcelTable} from '../Excel/ExcelTable'
@@ -54,7 +54,18 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
 
     useEffect(() => {
         if(isOpen){
-            LoadBasic(row.productId)
+            if(column.type != "ai") {
+                LoadBasic(row.productId ?? row.product.product_id)
+            }else{
+                let aiData:any = {}
+                aiData.sequence = row.machine.sequence
+                aiData.name = row.machine.machine.name
+                aiData.mfrCode = row.machine.machine.mfrCode
+                aiData.machineType = TransferCodeToValue(row.machine.machine.type, 'machine'),
+                aiData.isDefault = true
+                aiData.setting = true
+                setSearchList([aiData])
+            }
             setSummaryData({
                 identification: row.identification,
                 lot_number: row.lot_number ?? '-',
@@ -63,7 +74,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                 code: row.product?.code,
                 name: row.product?.name,
                 process: row.product?.process?.name,
-                type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+                type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'product') : "-",
                 unit: row.product?.unit,
                 goal: row.goal,
                 worker_name: row?.worker?.name ?? row?.worker ?? '-',
@@ -137,6 +148,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                 name: row.name,
                 isChange: true
             })
+            onClose()
         }
     }
 
@@ -269,7 +281,6 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                         <div
                             onClick={() => {
                                 onConfirm()
-                                onClose()
                             }}
                             style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >
@@ -315,6 +326,7 @@ const HeaderTableText = styled.p`
   font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const HeaderTableTitle = styled.div`

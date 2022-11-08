@@ -13,6 +13,7 @@ import {PeriodSelectCalendar} from "./PeriodSelectCalendar";
 //@ts-ignore
 import IcSearchButton from '../../../public/images/btn_radio_check.png'
 import {CurrentDate} from "./CurrentDate";
+import DropDown from '../Dropdown/DropDown';
 
 interface SelectParameter {
   from:string
@@ -26,29 +27,17 @@ interface IProps {
   selectDate?:string | SelectParameter
   setSelectDate?:(value:SelectParameter | string) => void
   buttons?: string[]
-  leftButton?: string[]
   buttonsOnclick?: (buttonIndex: number) => void
   isSearch?: boolean
   style?: any
-  onClickMenu?: (index: number) => void
-  menuIndex?: number
   searchOptionList?: string[]
   onChangeSearchOption?: (option: number) => void
-  filterList?: { value: string, title: string }[]
-  onChangeFilter?: (filter: unknown) => void
-  serviceFilterButton?: string[]
-  onClickServiceButton?: (service: string) => void
-  leftButtonOnClick?:(buttonIndex: number) => void
-  basicMachineType?: string
   isCalendar?:boolean
   calendarType?:"day" | "month" | "period" | 'current'
   onChangeSelectDate?:(from:string, to:string) => void
   setState?:(value:"local" | "select") => void
   optionIndex?: number
   dataLimit?:boolean
-  rmat?:boolean
-  isMachine?: boolean
-  setTab?: (tab: string) => void
   calendarTitle?: string
   isNz?: boolean
   onChangeNz?: (nz:boolean) => void
@@ -62,10 +51,15 @@ interface IProps {
   isRadio?:boolean
   radioTexts?:string[]
   radioValue?:number
+  radioButtons?: string[],
+  onChangeRadioIndex?: (index:number) => void
+  radioIndex?: number
   onChangeRadioValues?:(radioValues:number) => void
   onSearch?:(keyword:string) => void
   searchKeyword?: string
   noCode?: boolean
+  moreButtons?: string[]
+  onClickMoreButton?: (index:number) => void
 }
 
 
@@ -110,21 +104,10 @@ const useStyles2 = makeStyles(_ => {
   }
 });
 
-const lightTheme = createTheme({
-  palette: {
-    primary: { main: 'rgba(0,0,0,0)', contrastText: "#000" },
-  }
-})
-
 const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsOnclick, isSearch, style,
-                  searchOptionList, onChangeSearchOption, filterList, onChangeFilter, basicMachineType, isCalendar, onChangeSelectDate,
-                  calendarType, setState, optionIndex, dataLimit, isMachine, setTab, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code,
-                  isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch, searchKeyword, noCode}: IProps) => {
-
-  const [machineCheck, setMachineCheck] = React.useState<any>({
-    all: true,
-    pms: false
-  })
+                  searchOptionList, onChangeSearchOption, isCalendar, onChangeSelectDate, moreButtons, onClickMoreButton,
+                  calendarType, setState, optionIndex, dataLimit, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code,
+                  isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch, searchKeyword, noCode, radioButtons, onChangeRadioIndex, radioIndex}: IProps) => {
 
   const [keyword, setKeyword] = React.useState<string>()
 
@@ -134,10 +117,9 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
 
   const classes2 = useStyles2();
 
- const onSearchEvent = () => {
-   onSearch && onSearch(keyword)
- }
-
+ // const onSearchEvent = () => {
+ //   onSearch && onSearch(keyword)
+ // }
 
   const selectCalendarType = (value:string) => {
     switch (value){
@@ -162,6 +144,26 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
     }
   }
 
+
+  const radioButtonStyle = (button:string, index:number) => (
+    <>
+      <input id={`radio_${index}`} key={index} name={`radio`}  type={'radio'} style={{display: 'none'}} onClick={() => {
+        onChangeRadioIndex && onChangeRadioIndex(index)
+      }}/>
+      <label htmlFor={`radio_${index}`} key={index}>
+        <div style={{display:"flex", alignItems:"center",}}>
+          {
+            radioIndex === index
+              ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
+              : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
+          }
+
+          <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>{button}</p>
+        </div>
+      </label>
+    </>
+  )
+
   return (
       <div>
         <div style={{position: 'relative', textAlign: 'left',}}>
@@ -181,59 +183,6 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                     selectCalendarType(calendarType)
                 }
                 <ButtonWrapper className={'buttonWrapper unprintable'}>
-                {/*{*/}
-                {/*    typeList && typeList.map((buttonTitle, buttonIndex) => {*/}
-                {/*      return <HeaderButton*/}
-                {/*          style={{backgroundColor: basicMachineType === buttonTitle ? POINT_COLOR : '#717C90'}}*/}
-                {/*          onClick={() => typeListOnClick && typeListOnClick(buttonTitle)}*/}
-                {/*          key={`btn${buttonIndex}`}>*/}
-                {/*        {buttonTitle}*/}
-                {/*      </HeaderButton>*/}
-                {/*    })*/}
-                {/*}*/}
-                {
-                    isMachine &&
-                    <div style={{display:"flex", alignItems:"center", borderRadius: 6, }}>
-                      <input id='mes' name={'machineType'} type={'radio'} style={{display: 'none'}} onClick={() => {
-                        setMachineCheck({
-                          ...machineCheck,
-                          all: true,
-                          pms: false
-                        })
-                        setTab('ROLE_BASE_04')
-                      }}/>
-                      <label htmlFor="mes">
-                        <div style={{display:"flex", alignItems:"center",}}>
-                          {
-                            machineCheck.all
-                                ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
-                                : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
-                          }
-
-                          <p style={{margin: 0, padding: 0, color: 'white'}}>MES</p>
-                        </div>
-                      </label>
-                      <input id='pms' name={'machineType'} type={'radio'} style={{display: 'none'}} onClick={() => {
-                        setMachineCheck({
-                          ...machineCheck,
-                          pms: true,
-                          all: false
-                        })
-                        setTab('ROLE_BASE_04-1')
-                      }}/>
-                      <label htmlFor="pms">
-                        <div style={{display:"flex", alignItems:"center",}}>
-                          {
-                            machineCheck.pms
-                                ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}></div>
-                                : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}></div>
-                          }
-
-                          <p style={{margin: 0, padding: 0, color: 'white'}}>PMS</p>
-                        </div>
-                      </label>
-                    </div>
-                }
                 {
                     isSearch &&
                     <div style={{display:"flex",width:searchOptionList? "448px" : "280px", alignItems:"center", borderRadius: 6, backgroundColor: 'white', marginLeft: 16}}>
@@ -290,34 +239,6 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                     </div>
                 }
                 {
-                    filterList && <MuiThemeProvider theme={lightTheme}>
-                      <FormControl variant="outlined" style={{
-                        borderRadius:"6px", width:112, marginLeft: 16
-                      }} classes={{
-                        root: classes2.quantityRoot,
-                      }}>
-                        <div>
-                          <Select
-                              classes={{
-                                icon: classes2.icon
-                              }}
-                              native
-                              defaultValue={filterList[0]}
-                              onChange={(e) => onChangeFilter && onChangeFilter(e.target.value)}
-                              style={{color: 'black'}}
-                          >
-                            {
-                              filterList.map((v, i) => {
-                                return <option value={v.value}>{v.title}</option>
-                              })
-                            }
-                          </Select>
-                        </div>
-                      </FormControl>
-                    </MuiThemeProvider>
-                }
-
-                {
                     buttons && buttons.map((buttonTitle, buttonIndex) => {
                       if(buttonTitle){
                         return <HeaderButton onClick={() => buttonsOnclick && buttonsOnclick(buttonIndex)} key={`btn${buttonIndex}`}>{buttonTitle}</HeaderButton>
@@ -325,27 +246,46 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                     })
                 }
                 </ButtonWrapper>
+                {
+                  moreButtons && <DropDown items={moreButtons} onClick={onClickMoreButton}>
+                    <span style={{marginLeft: 10,fontSize: '30px', color: 'white', fontWeight: 'bold'}} className="material-symbols-outlined">more_vert
+                    </span>
+                  </DropDown>
+                }
               </ButtonWrapper>
-
             </div>
           </div>
           <div className={'unprintable'} style={{display:"flex", justifyContent:"right", marginBottom:"10px"}}>
+              {
+                radioButtons && radioButtons.map((btn, btnIdx) => {
+                    if(Array.isArray(btn)){
+                      btn.map((arrBtn, arrBtnIdx) => {
+                        return (radioButtonStyle(arrBtn, arrBtnIdx + (btnIdx * btn.length) ))
+                      })
+                    } else {
+                      return (radioButtonStyle(btn, btnIdx))
+                    }
+
+                  })
+              }
             {
                 isRadio &&
                 radioTexts.map((text, index) =>
                     <>
-                      <input id={`radio_${index}`} name={`radio`}  type={'radio'} style={{display: 'none'}} onClick={() => {
+                      <input id={`radio_${index}`} name={`radio`} key={`radioInput${index}`} type={'radio'} style={{display: 'none'}} onClick={() => {
                         onChangeRadioValues && onChangeRadioValues(index)
-                      }}/>
-                      <label htmlFor={`radio_${index}`}>
-                        <div style={{display:"flex", alignItems:"center",}}>
+                      }} checked={Boolean(radioValue)}
+
+                      />
+                      <label key={`radioLabel${index}`} htmlFor={`radio_${index}`}>
+                        <div key={`radioWrapper${index}`} style={{display:"flex", alignItems:"center",}}>
                           {
                             radioValue === index
-                                ? <div style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
-                                : <div style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
+                                ? <div key={`radioButton${index}`} style={{width: 16, height: 16, background:`url(${IcSearchButton})`, backgroundSize: 'cover', margin: '0 8px'}}/>
+                                : <div key={`radioButton${index}`} style={{width: 16, height: 16, borderRadius: 8, backgroundColor: 'white', margin: '0 8px'}}/>
                           }
 
-                          <p style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>{radioTexts[index]}</p>
+                          <p key={`radioText${index}`} style={{margin: 0, padding: 0, color: 'white', fontSize: 12}}>{radioTexts[index]}</p>
                         </div>
                       </label>
                     </>

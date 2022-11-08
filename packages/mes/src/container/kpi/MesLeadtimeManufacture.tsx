@@ -4,7 +4,7 @@ import {
     ExcelTable,
     Header as PageHeader,
     IExcelHeaderType, MemberSearchModal,
-    OperationSearchModal, PauseModal, ProductSearchModal,
+    OperationSearchModal, ProductSearchModal,
     RequestMethod, TextEditor, UnitContainer
 } from "shared";
 // @ts-ignore

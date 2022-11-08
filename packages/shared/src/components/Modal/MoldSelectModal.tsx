@@ -66,7 +66,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
         code: row.product?.code,
         name: row.product?.name,
         process: row.product?.process?.name,
-        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
+        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'product') : "-",
         unit: row.product?.unit,
         goal: row.goal,
         worker_name: row?.worker?.name ?? row?.worker ?? '-',
@@ -339,6 +339,7 @@ const HeaderTableText = styled.p`
   font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const HeaderTableTitle = styled.div`

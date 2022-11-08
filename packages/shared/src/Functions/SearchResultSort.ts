@@ -1,7 +1,7 @@
 import {TransferCodeToValue} from '../common/TransferFunction'
 import {LineBorderContainer} from "../components/Formatter/LineBorderContainer";
 import { searchModalList } from '../common/modalInit'
-import { getUsageType } from '../common/Util'
+import { getUsageType, TransferType } from '../common/Util'
 
 export const SearchResultSort = (infoList, type: string) => {
   const noneSelected = '(선택 없음)'
@@ -56,9 +56,10 @@ export const SearchResultSort = (infoList, type: string) => {
         return {
           ...v,
           ...obj,
+          product_type: TransferCodeToValue(v.type, 'productType'),
           customer_name: v.customer ? v.customer.name : "",
           model_name: v.model ? v.model.model : "",
-          type_name: TransferCodeToValue(v.type, 'productType'),
+          type_name: TransferCodeToValue(v.type, 'product'),
           type_id:v.type
         }
       })
@@ -77,6 +78,8 @@ export const SearchResultSort = (infoList, type: string) => {
           type: v.type === 2 ? "SHEET" : "COIL",
           type_id:v.type,
           type_name : v.type === 2 ? "SHEET" : "COIL",
+          unit: TransferCodeToValue(v.unit, 'rawMaterialUnit'),
+          unit_id: v.unit
         }
       })
     }
@@ -194,11 +197,55 @@ export const SearchResultSort = (infoList, type: string) => {
         let obj = {}
         columnKeys.map(column => obj[column] = tool[column] === undefined ? noneSelected : tool[column])
         return {
-          ...tool,
           ...obj,
+          ...v,
           customer: tool.customer?.name,
           customerArray: tool.customer,
           isDefault: getUsageType(v.setting)
+        }
+      })
+    }
+    case 'outsourcingOrder' : {
+      const columnKeys = searchModalList.outsourcingOrderSearch.map(columns => columns.key)
+      return infoList.map((v) => {
+        let obj = {}
+        //데이터와 내가 지정한 키가 같을경우에는 바인딩 시켜주고 없을경우에는 선택없음으로 나오게
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
+        return {
+          ...v,
+          ...obj,
+          identification: v.identification,
+          name: v.product?.name,
+          product_id: v.product?.code,
+          current : v.current,
+          order_quantity : v.order_quantity,
+          order_date : v.order_date,
+          import_date : v.order_date,
+          bom: v.bom,
+          customer_id : v.product.customer?.name,
+          user: v.worker?.name
+        }
+      })
+
+    }
+    case 'sheet' : {
+      const columnKeys = searchModalList.sheetSearch.map(columns => columns.key)
+      return infoList.map((v) => {
+        const tool = v.tool
+        let obj = {}
+        // columnKeys.map(column => obj[column] = tool[column] === undefined ? noneSelected : tool[column])
+        return {
+          ...obj,
+          ...v,
+          name:v.product.name ?? "-",
+          product_id:v.product.code ?? "-",
+          // cm_id:v.product.model,
+
+          contract_id:v?.contract?.contract_id ?? "-",
+          // customer: tool.customer?.name,
+          // customerArray: tool.customer,
+          // isDefault: getUsageType(v.setting),
+          // goal:
         }
       })
     }
@@ -208,7 +255,7 @@ export const SearchResultSort = (infoList, type: string) => {
   }
 }
 
-export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean, usedInModal?: boolean) => {
+export const SearchModalResult = (selectData:any, type: string , staticCalendar?: boolean, usedInModal?: boolean, columnType?: string) => {
   switch(type) {
     case 'user': {
       return {
@@ -241,7 +288,7 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
       }
     }
     case 'product': {
-      return {
+      const result = {
         ...selectData,
         code: selectData.code,
         name: selectData.name,
@@ -256,12 +303,14 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         usage: selectData.usage,
         process: selectData.process?.name ?? "-",
         product_name: selectData.name,
-        product_type: TransferCodeToValue(selectData.type, 'product'),
+        product_type: TransferCodeToValue(selectData.type, 'productType'),
         product_unit: selectData.unit,
         product: {...selectData},
         bom_root_id: selectData.bom_root_id,
         customerData: selectData.customer,
+        customerArray : selectData.customer,
         modelData: selectData.model,
+        modelArray : selectData.model,
         standard_uph : selectData.standard_uph,
         os_id : selectData.os_id,
         date: selectData.date,
@@ -272,8 +321,16 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         lead_time : selectData.lead_time,
         uph : selectData.uph,
         identification : selectData.identification,
-        border: usedInModal
+        border: usedInModal,
+        isChange: true,
       }
+      if(columnType === 'outsourceProduct'){
+        result['order_quantity'] = undefined
+        result['bomChecked'] = undefined
+        result['bom_info'] = undefined
+        result['lots'] = undefined
+      }
+      return result
     }
     case "process": {
       return {
@@ -284,30 +341,13 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
       }
     }
     case 'rawMaterial': {
-      const unitResult = () => {
-        let result = "-";
-        switch (selectData.type){
-          // case "반제품" :
-          //   result = "EA";
-          //   break;
-          case "COIL" :
-            result = "kg";
-            break;
-          case "SHEET" :
-            result = "장";
-            break;
-          default :
-            break;
-        }
-        return result;
-      }
       return {
         ...selectData,
         rm_id: selectData.code,
         type: TransferCodeToValue(selectData.type, 'rawMaterialType'),
         type_name:"원자재",
         customer_id: selectData.customerArray?.name,
-        unit:unitResult(),
+        unit: selectData.unit,
         raw_material: {
           ...selectData,
           customer: selectData.customerArray
@@ -385,6 +425,15 @@ export const SearchModalResult = (selectData:any, type: string , staticCalendar?
         code: selectData.tool_id,
         tool_id: selectData.code,
         border: usedInModal
+      }
+    }
+    case 'sheet' :{
+      return {
+        ...selectData,
+        border: usedInModal,
+        os_id: selectData.os_id,
+        osId: selectData.os_id,
+        operation_sheet:selectData
       }
     }
     default : {

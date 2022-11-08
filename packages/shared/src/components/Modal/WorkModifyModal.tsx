@@ -16,7 +16,7 @@ import {TransferCodeToValue} from '../../common/TransferFunction'
 import moment from "moment";
 import Big from 'big.js'
 import { alertMsg } from '../../common/AlertMsg'
-import { CheckRecordLotNumber } from '../../common/Util'
+import { CheckRecordLotNumber, getBomKey } from '../../common/Util'
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
 interface IProps {
@@ -66,7 +66,7 @@ const WorkModifyModal = ({row, isOpen, setIsOpen}: IProps) => {
         name: row.operation_sheet?.product?.name,
         type: row.operation_sheet?.product?.type
         || row.operation_sheet?.product?.type === 0
-            ? TransferCodeToValue(row.operation_sheet?.product?.type, 'productType')
+            ? TransferCodeToValue(row.operation_sheet?.product?.type, 'product')
             : null,
         process: row.product?.process?.name,
         unit: row.operation_sheet?.product?.unit,
@@ -89,16 +89,6 @@ const WorkModifyModal = ({row, isOpen, setIsOpen}: IProps) => {
       setSearchList([newList])
     }
   }, [isOpen])
-
-
-  const getBomKey = (bom:any) => {
-    switch(bom.type) {
-      case 0: return 'rm' + bom.childRmId
-      case 1: return 'sm' + bom.childSmId
-      case 2: return 'p' + bom.childProductId
-      default: return undefined
-    }
-  }
 
   const SaveBasic = async () => {
     try{

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   columnlist,
   excelDownload,
-  ExcelTable,
+  ExcelTable, FileEditer,
   Header as PageHeader,
   IExcelHeaderType,
   PaginationComponent,
@@ -21,6 +21,8 @@ import {
 import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
+import { alertMsg } from 'shared/src/common/AlertMsg'
+import Checkbox from "shared/src/components/InputBox/Checkbox";
 
 export interface IProps {
   children?: any;
@@ -31,7 +33,7 @@ export interface IProps {
 
 const title = "유저 관리";
 const optList = ["성명", "이메일", "직책명", "전화번호"];
-
+const email_reg = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
 const BasicUser = ({}: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -56,8 +58,6 @@ const BasicUser = ({}: IProps) => {
     page: 1,
     total: 1,
   });
-
-
 
   const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
@@ -113,169 +113,72 @@ const BasicUser = ({}: IProps) => {
     });
   };
 
-  // 내가 선택한 Row의 성명, 권한 , 아이디 ,비밀번호 , 비밀번호 확인등 값이 존재하지 않을경우 해당 Row의 컬럼명을 리턴해준다.
-  // Map으로 변환하는 함수
-  const covertDataToMap = (data: Array<any>) => {
-    const rowMap = new Map();
-    data.map((row) => {
-      rowMap.set(row.id, row);
-    });
-    return rowMap;
-  };
-
-  // 내가 선택한 Row
-  const selectRowList = () => {
-    let temp = [];
-
-    const convertMap = covertDataToMap(basicRow);
-    selectList.forEach((list) => {
-      if (convertMap.has(list)) {
-        return temp.push(convertMap.get(list));
+  const checkValid = (input: string, type:'password' | 'id' | 'telephone') => {
+    let regex = undefined
+    if(input.length > 0){
+      switch (type){
+        case 'id':
+          regex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+          break;
+        case 'password':
+          regex = /^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,16}$/;
+          break;
+        case 'telephone':
+          regex = /^010-?([0-9]{4})-?([0-9]{4})$/
+          break;
       }
-    });
-    return temp;
-  };
-
-  // 선택을 했는데, isChange가 바뀌지 않은 것들만 예외 처리
-
-  const valueExistence = () => {
-    const selectedRows = selectRowList();
-    const newRows = selectedRows.filter((row) => row.user_id === undefined);
-
-    // 내가 선택을 했는데 새롭게 추가된것만 로직이 적용되어야함
-    if (newRows.length > 0) {
-      const nameCheck = newRows.every((data) => data.name);
-      const idCheck = newRows.every((data) => data.tmpId);
-      const authorityCheck = newRows.every((data) => data.authority);
-      const passwordCheck = newRows.every((data) => data.password);
-      const passwordConfirmCheck = newRows.every(
-        (data) => data["password-confirm"]
-      );
-
-      if (!nameCheck) {
-        return "성명";
-      } else if (!authorityCheck) {
-        return "권한";
-      } else if (!idCheck) {
-        return "아이디";
-      } else if (!passwordCheck) {
-        return "비밀번호";
-      } else if (!passwordConfirmCheck) {
-        return "비밀번호 확인";
-      }
+      return regex.test(input)
     } else {
-      const nameCheck = selectedRows.every((data) => data.name);
-      const authorityCheck = selectedRows.every((data) => data.authority);
-
-      if (!nameCheck) {
-        return "성명";
-      } else if (!authorityCheck) {
-        return "권한";
-      }
+      return true
     }
+  }
 
-    return false;
-  };
-
-  const passwordCompete = () => {
-    const selectedRows = selectRowList();
-
-    return selectedRows.every((row) => {
-      const passwordConfirm = row["password-confirm"] ?? null;
-      return row.password === passwordConfirm;
-    });
-  };
+  const validate = (row) =>{
+      if(!!!row.name) throw('이름은 필수입니다.')
+      if(!!!row.authorityPK) throw('권한은 필수입니다.')
+      if(!!!row.tmpId) throw('아이디는 필수입니다.')
+      if(!!row.tmpId && checkValid(row.tmpId, 'id')) throw('아이디에 한글이 들어갈 수 없습니다.')
+      if(!!!row.password) throw('비밀번호는 필수입니다.')
+      if(!!!row['password-confirm']) throw('비밀번호 확인은 필수입니다.')
+      if(!!row.password && !!row['password-confirm'] && row.password !== row['password-confirm']) throw('비밀번호와 비밀번호 확인이 서로 일치하지 않습니다.')
+      if(!!row.password && !checkValid(row.password, 'password')) throw('비밀번호는 8자 이상 16자 이하이어야 하며, 숫자/영문/특수문자(#?!@$%^&*-)를 모두 포함해야 합니다.')
+      if(row.alarm && !row.email) throw('이메일을 입력해주세요.')
+      if(row.telephone && !checkValid(row.telephone, "telephone")) throw('전화번호 양식을 맞추주세요.')
+  }
 
   const SaveBasic = async () => {
-    const existence = valueExistence();
-
-    if (selectList.size === 0) {
-      return Notiflix.Report.warning(
-        "선택 경고",
-        `선택된 정보가 없습니다.`,
-        "확인"
-      );
-    }
-
-    if (!existence) {
-      const passwordCheck = passwordCompete();
-
-      if (passwordCheck) {
-        const searchAiID = (rowAdditional: any[], index: number) => {
-          let result: number = undefined;
-          rowAdditional.map((addi, i) => {
-            if (index === i) {
-              result = addi.ai_id;
-            }
-          });
-          return result;
-        };
-
-        basicRow.map((row) => {
-        });
-
-        let res = await RequestMethod(
-          "post",
-          `memberSave`,
-          basicRow
-            .map((row, i) => {
-              if (selectList.has(row.id)) {
-                let additional: any[] = [];
-                column.map((v) => {
-                  if (v.type === "additional") {
-                    additional.push(v);
-                  }
-                });
-
-                return {
-                  ...row,
-                  id: row.tmpId,
-                  authority: row.authorityPK,
-                  // user_id: row.tmpId,
-                  profile: row.profile?.uuid,
-                  version: row.version ?? null,
-                  additional: [
-                    ...additional
-                      .map((v, index) => {
-                        //if(!row[v.colName]) return undefined;
-                        return {
-                          mi_id: v.id,
-                          title: v.name,
-                          value: row[v.colName] ?? "",
-                          unit: v.unit,
-                          ai_id: searchAiID(row.additional, index) ?? undefined,
-                          version: row.additional[index]?.version ?? undefined,
-                        };
-                      })
-                      .filter((v) => v),
-                  ],
-                };
-              }
-            })
-            .filter((v) => v)
-        ).catch((error) => {
-          return (
-            error.data &&
-            Notiflix.Report.warning("경고", `${error.data.message}`, "확인")
-          );
-        });
-
-        if (res) {
-          Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
-        }
-      } else {
-        Notiflix.Report.warning(
-          "비밀번호 경고",
-          `비밀번호와 비밀번호 확인이 서로 일치하지 않습니다.`,
-          "확인"
-        );
+    try{
+      if(selectList.size === 0){
+        throw(alertMsg.noSelectedData)
       }
-    } else {
-      return Notiflix.Report.warning(
-        "필수값 경고",
-        `"${existence}"은 필수적으로 들어가야하는 값 입니다.`,
-        "확인"
-      );
+
+      const addedColumn = column.filter(col => col.type === 'additional')
+      const postBody = basicRow.filter(row => selectList.has(row.id)).map(row => {
+        validate(row)
+        return {
+          ...row,
+          id: row.tmpId,
+          authority: row.authorityPK,
+          profile: row.profile?.uuid,
+          version: row.version ?? undefined,
+          additional: addedColumn.map((col,colIdx) => ({
+            mi_id: col.id,
+            title: col.name,
+            value: row[col.key] ?? "",
+            unit: col.unit,
+            ai_id: row.additional[colIdx]?.ai_id ?? undefined,
+            version: row.additional[colIdx]?.version ?? undefined,
+          }))
+        }
+      })
+      Notiflix.Loading.circle()
+      const res = await RequestMethod('post', 'memberSave',postBody)
+      if (res) {
+              Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
+      }
+    } catch(errMsg){
+      Notiflix.Report.warning('경고', errMsg, '확인')
+      Notiflix.Loading.remove()
     }
   };
 
@@ -401,7 +304,7 @@ const BasicUser = ({}: IProps) => {
     }
     setSelectList(new Set());
     Notiflix.Loading.remove()
-    
+
   };
 
   const changeRow = (row: any) => {
@@ -434,7 +337,7 @@ const BasicUser = ({}: IProps) => {
     let tmpColumn = columnlist.member;
     let tmpRow = [];
     tmpColumn = tmpColumn
-      .map((column: any) => {
+      .map((column: any, index) => {
         let menuData: object | undefined;
         res.menus &&
           res.menus.map((menu: any) => {
@@ -506,6 +409,7 @@ const BasicUser = ({}: IProps) => {
     // })
 
     tmpRow = res.info_list;
+    // tmpColumn.push({ key: 'alarm', name:"이메일 알람", formatter: Checkbox, width:118},)
     loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
@@ -682,16 +586,24 @@ const BasicUser = ({}: IProps) => {
         row={basicRow}
         // setRow={setBasicRow}
         setRow={(e) => {
-          let tmp: Set<any> = selectList;
+          try{
+            let newSelectList: Set<any> = selectList;
+            e.map((v, i) => {
 
-          e.map((v, i) => {
-            if (v.isChange) {
-              tmp.add(v.id)
-              v.isChange = false
-            }
-          });
-          setSelectList(tmp);
-          competeId(e);
+              if (v.isChange) {
+                newSelectList.add(v.id)
+                v.isChange = false
+              }
+              if(v.email?.length > 0 && !email_reg.test(v.email)){
+                throw("이메일 형식을 지켜주세요.")
+              }
+            });
+            setSelectList(newSelectList);
+            competeId(e);
+          }catch(err){
+            console.log("err : ", err)
+            Notiflix.Report.warning("경고",err,"확인")
+          }
         }}
         onRowClick={(clicked) => {
           const e = basicRow.indexOf(clicked)

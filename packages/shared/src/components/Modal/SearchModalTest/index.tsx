@@ -21,7 +21,9 @@ import {SearchIcon} from "../../../styles/styledComponents";
 import {useDispatch, useSelector} from "react-redux";
 import { RootState } from '../../../reducer'
 import modifyInfo from '../../../reducer/modifyInfo'
-
+//@ts-ignore
+import ModalSearch_icon from '../../../../public/images/list_search_icon.png'
+import moment from "moment";
 
 interface IProps {
   column: IExcelHeaderType
@@ -43,7 +45,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
-
   useEffect(() => {
     if(column.type === "bom" ){
       setSearchList([{}])
@@ -81,12 +82,12 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           break;
         }
         case 2:{
-          setSearchModalInit(SearchInit.product)
+          setSearchModalInit(SearchInit.allProduct)
           setSearchModalColumn(
-            [...searchModalList[`${SearchInit.product.excelColumnType}Search`].map((column, index) => {
+            [...searchModalList[`${SearchInit.allProduct.excelColumnType}Search`].map((column, index) => {
               if(index === 0) return ({...column, colSpan(args) {
                   if(args.row?.first){
-                    return searchModalList[`${SearchInit.product.excelColumnType}Search`].length
+                    return searchModalList[`${SearchInit.allProduct.excelColumnType}Search`].length
                   }else{
                     return undefined
                   }
@@ -146,8 +147,36 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             opt:optionIndex,
             customer_id: row.product?.customerId ?? null
           }
+        case "allProduct":
+          return {
+            keyword:keyword,
+            opt:optionIndex,
+            outsourcing: 0
+          }
+        case "outsourceProduct":
+          return {
+            keyword:keyword,
+            opt:optionIndex,
+            outsourcing: 2
+          }
+        case "bom":
+          return {
+            keyword:keyword,
+            opt:optionIndex,
+            outsourcing: 0
+          }
         case "toolProduct":
           return {}
+        //현재 AI 작업일보리스트에서만 사용하여 productIds를 고정으로 박아놓음
+        //다른곳에 사용할때 다시 수정할 것
+        case "operation":
+          return {
+            from:"2000-01-01",
+            // to: moment(new Date()).format("YYYY-MM-DD")
+            to: "2022-12-31",
+            productIds:row.product.product_id,
+            status:[0,1]
+          }
         default:
           return {
             keyword:keyword,
@@ -182,28 +211,24 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
     if(res){
       if(searchModalInit.excelColumnType === "toolProduct"){
-        if(row.isModify){
           const savedTools = originalInfo.modifyInfo?.length ? originalInfo.modifyInfo[0]?.tools?.map(tool => ({...tool.tool.tool})) : []
           const numOfSavedTools = savedTools.reduce((acc, cur) => {
             acc.set(cur.tool_id, (acc.get(cur.tool_id) || 0) + 1)
             return acc
           }, new Map())
           const numOftools = column.basicRow.reduce((acc, cur) => {
-            acc.set(cur.tool_id, (acc.get(cur.tool_id) || 0) + 1)
+            const key = cur.tool?.tool_id
+            acc.set(key, (acc.get(key) || 0) + 1)
             return acc
           }, new Map())
           const newRes = res.map(tool => {
-            const numOfSavedTool = numOfSavedTools.get(tool.tool_id) ?? 0
-            const numOfTool = numOftools.get(tool.tool_id) ?? 0
-            let fakeStock = tool.stock + numOfSavedTool - numOfTool
-            fakeStock = row.tool_id && row.tool_id === tool.tool_id ? fakeStock + 1 : fakeStock
-            return { ...tool, stock: fakeStock, originalStock: tool.stock }
+            const numOfSavedTool = numOfSavedTools.get(tool.tool?.tool_id) ?? 0
+            const numOfTool = numOftools.get(tool.tool?.tool_id) ?? 0
+            let fakeStock = tool.tool?.stock + numOfSavedTool - numOfTool
+            fakeStock = row.tool?.tool_id && row.tool?.tool_id === tool.tool?.tool_id ? fakeStock + 1 : fakeStock
+            return { ...tool, stock: fakeStock, originalStock: tool.tool?.stock, record_tool_id: row.record_tool_id, record_tool_version: row.record_tool_version }
           })
           setSearchList(SearchResultSort(newRes, searchModalInit.excelColumnType))
-        }else {
-          setSearchList(SearchResultSort(res, searchModalInit.excelColumnType))
-        }
-
       }else{
         if(res.page !== 1){
           setSearchList([ ...searchList,...SearchResultSort( res.info_list, searchModalInit.excelColumnType)])
@@ -239,7 +264,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         onClick={() => {
       setIsOpen(true)
     }} modalType={column.modalType}>
-      <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 20, height: 20}} src={IcSearchButton}/>
+      <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 30, height: 30}} src={ModalSearch_icon}/>
     </SearchIcon>
   }
 
@@ -302,9 +327,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   }
 
   const getDefaultSearchOptionIndex = (index:number) => {
-    if(column.type === 'product' && index === 0){
+    if(['product','allProduct','outsourceProduct'].includes(column.type) && index === 0){
       return 2
-    }else if(column.type === 'product' && index === 2){
+    }else if(['product','allProduct','outsourceProduct'].includes(column.type) && index === 2){
       return 0
     }else{
       return index
@@ -390,12 +415,11 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       const selectNameFunction = (type:string) => {
         switch(type){
           case "bom":
-            return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, null, column.modalType).name;
           case "rawMaterial" :
             return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, null, column.modalType).name;
           case "machine" :
-            return searchList[selectRow].name;
           case "mold":
+          case "operation":
             return searchList[selectRow].name;
           default:
             return row.name;
@@ -506,8 +530,27 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             }
           )
         }
+      }else if(column.type === "operation"){
+        const modalRes = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType, column.type)
+        onRowChange({
+          ...row,
+          ...modalRes,
+          // identification:selectNameFunction(column.type),
+          manager: modalRes.manager,
+          // name: selectNameFunction(column.type),
+          id:row.id,
+          tab: tab,
+          // type_name: undefined,
+          version: row.version,
+          isChange: true,
+          //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
+          returnType:column.key,
+          date:row?.date,
+          deadline:row?.deadline,
+          goal:row?.goal,
+        })
       }else{
-        const modalRes = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType)
+        const modalRes = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType, column.type)
         onRowChange({
           ...row,
           ...modalRes,
@@ -532,7 +575,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   return (
     <SearchModalWrapper>
       <div style={{width: column.modalType ? 'calc(100% - 32px)' : 'calc(100% - 40px)', height: column.modalType ? 32 : 40,
-        paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3,  background: row.border ? '#19B9DF80' : undefined}
+        paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3,  background: row.border ? '#19B9DF80' : row?.warning ? "red" : undefined}
       } onClick={() => {
         if(row.first || !column.disableType){
           setIsOpen(true)

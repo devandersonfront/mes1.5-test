@@ -38,7 +38,8 @@ const MidrangeRegisterModal = ({ data, isOpen, setIsOpen, modify, reload}: IProp
         sic_id:'',
         record_id:undefined,
         version:undefined,
-        samples: undefined
+        samples: undefined,
+        operation_inspection_id: undefined
     })
 
     useEffect(() => {
@@ -73,6 +74,17 @@ const MidrangeRegisterModal = ({ data, isOpen, setIsOpen, modify, reload}: IProp
         setIsOpen(false)
     }
 
+    const onDelete = async () => {
+        Notiflix.Loading.circle()
+        await RequestMethod('delete', 'recordInspectDelete',{path: [midrangeData?.operation_inspection_id]})
+
+        Notiflix.Loading.remove()
+    }
+
+    const onFinish = () => {
+        onClose()
+        reload && reload()
+    }
 
     return (
         <SearchModalWrapper >
@@ -101,11 +113,21 @@ const MidrangeRegisterModal = ({ data, isOpen, setIsOpen, modify, reload}: IProp
                                 fontWeight: 'bold',
                                 margin: 0,
                             }}> {modify ? "초ㆍ중ㆍ종 검사 결과보기" : "초ㆍ중ㆍ종 검사 등록"}</p>
-                            <div style={{display: 'flex', flex: modify && !editPage ? .1 : 0, justifyContent:'space-between'}}>
+                            <div style={{display: 'flex', flex: modify && !editPage ? .2 : 0, justifyContent:'space-between'}}>
                                 {modify && !editPage &&
+                                  <>
                                     <Button onClick={()=> setEditPage(true)}>
                                         <p>수정 하기</p>
                                     </Button>
+                                    <Button onClick={()=> Notiflix.Confirm.show("경고", "삭제하시겠습니까?(기존 데이터를 삭제할 경우 저장하지 않은 데이터는 모두 사라집니다.)", "확인", "취소",
+                                      () => {
+                                        onDelete().then(() => {
+                                            onFinish()
+                                        })
+                                    })}>
+                                        <p>삭제</p>
+                                    </Button>
+                                  </>
                                 }
                                 <div style={{cursor: 'pointer', display:'flex', alignItems:'center'}} onClick={onClose}>
                                     <img style={{width: 20, height: 20}} src={IcX}/>
@@ -143,8 +165,7 @@ const MidrangeRegisterModal = ({ data, isOpen, setIsOpen, modify, reload}: IProp
                               <div
                                 onClick={() => {
                                     saveResult()
-                                    Notiflix.Report.success("저장되었습니다.","","확인", () => {onClose()
-                                    reload && reload()})
+                                    Notiflix.Report.success("저장되었습니다.","","확인", () => onFinish())
                                 }}
                                 style={{flex:.5, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                               >

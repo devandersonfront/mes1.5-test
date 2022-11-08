@@ -20,6 +20,10 @@ import Big from 'big.js'
 import lodash from 'lodash'
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
+import { getHeaderItems, InputListHeaders, InputModalHeaderItems } from '../../common/inputMaterialInfo'
+import {UnitContainer} from "../Unit/UnitContainer";
+import {TextEditor} from "../InputBox/ExcelBasicInputBox";
+import { getBomKey } from '../../common/Util'
 interface IProps {
   column: IExcelHeaderType
   row: any
@@ -27,27 +31,6 @@ interface IProps {
 }
 
 //작업일보 투입 자재 모달
-const headerWorkItems: {title: string, infoWidth: number, key: string, unit?: string}[][] = [
-  [
-    {title: '지시 고유번호', infoWidth: 144, key: 'identification'},
-    {title: 'LOT 번호', infoWidth: 144, key: 'lot_number'},
-    {title: '거래처', infoWidth: 144, key: 'customer'},
-    {title: '모델', infoWidth: 144, key: 'model'},
-  ],
-  [
-    {title: 'CODE', infoWidth: 144, key: 'code'},
-    {title: '품명', infoWidth: 144, key: 'name'},
-    {title: '품목 종류', infoWidth: 144, key: 'type'},
-    {title: '생산 공정', infoWidth: 144, key: 'process'},
-  ],
-  [
-    {title: '단위', infoWidth: 144, key: 'unit'},
-    {title: '목표 생산량', infoWidth: 144, key: 'goal'},
-    {title: '작업자', infoWidth: 144, key: 'worker_name'},
-    {title: '양품 수량', infoWidth: 144, key: 'good_quantity'},
-    {title: '불량 수량', infoWidth: 144, key: 'poor_quantity'},
-  ],
-]
 
 const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
 
@@ -56,100 +39,97 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
   const [lotList, setLotList] = useState<any[]>([])
-  const [selectProduct, setSelectProduct] = useState<string>('')
-  const [selectType, setSelectType] = useState<string>('')
+  const [selected, setSelected] = useState<{index: number | null, product:string, type:string, productType:string}>({
+    index: null,
+    product: '',
+    type: '',
+    productType:''
+  })
+  const isOutsourcing = column.type === 'outsourcing'
   const cavity = row.molds?.filter(mold => mold.mold.setting === 1)?.[0]?.mold?.mold?.cavity ?? 1
 
   useEffect(() => {
     if(isOpen) {
-      setSummaryData({
-        // ...res.parent
-        identification: row.identification,
-        lot_number: row.lot_number ?? '-',
-        customer: row.product?.customer?.name,
-        model: row.product?.model?.model,
-        code: row.product?.code,
-        name: row.product?.name,
-        process: row.product?.process?.name,
-        type: Number(row.product?.type) >= 0 ? TransferCodeToValue(row.product.type, 'productType') : "-",
-        unit: row.product?.unit,
-        goal: row.goal,
-        worker_name: row.worker.name ?? row.worker ?? '-',
-        good_quantity: row.good_quantity ?? 0,
-        poor_quantity: row.poor_quantity ?? 0,
-      })
+      setSummaryData(getHeaderItems(row, column.type))
       if(row.operation_sheet && row.operation_sheet?.input_bom?.length > 0){
         const filter_input_bom = row.operation_sheet.input_bom.filter((bom) => bom.bom.setting === 1)
         changeRow(filter_input_bom)
       }else if(row.input_bom?.length > 0){
         changeRow(row.input_bom)
+      }else if(row.bom?.length > 0){
+        const inputBom = aggregateOutsourcingBom(row.bom)
+        changeRow(inputBom)
       }else{
         Notiflix.Report.warning("경고","투입 자재가 없습니다.","확인", () => setIsOpen(false))
       }
     }
   }, [isOpen])
 
+  const aggregateOutsourcingBom = (bom) => {
+    const aggregate = {}
+    bom.map(bom => {
+      const bomKey = getBomKey(bom.bom)
+      aggregate[bomKey] = bom.bom
+    })
+
+    return Object.values(aggregate).map(bom => ({bom}))
+  }
+
   const changeRow = (tmpRow: any, key?: string) => {
     const newRows = tmpRow?.map((v, i) => {
-      let childData: any = {}
-      let childDataType: TransferType = null
-      let product = null
-      let raw_material = null
-      let sub_material = null
-      let bomId = null
+      const bomDetail:{childData:any, bomType: TransferType, bomId:number, productType?: string} = {
+        childData: {},
+        bomType: undefined,
+        bomId: undefined,
+      }
       switch(v.bom.type){
         case 0:{
-          childData = v.bom.child_rm
-          childData.unit = v.bom.child_rm.type == "1" ? "kg" : v.bom.child_rm.type == "2" ? "장" : "-";
-          childDataType = 'rawMaterial'
-          raw_material = childData
-          bomId = v.bom.childRmId
+          const childData = {...v.bom.child_rm}
+          childData.unit = TransferCodeToValue(childData.unit, 'rawMaterialUnit')
+          bomDetail['childData'] = childData
+          bomDetail['bomType'] = 'rawMaterial'
+          bomDetail['bomId'] = v.bom.childRmId
           break;
         }
         case 1:{
-          childData = v.bom.child_sm
-          childDataType = 'subMaterial'
-          sub_material = childData
-          bomId = v.bom.childSmId
+          bomDetail['childData'] = v.bom.child_sm
+          bomDetail['bomType'] = 'subMaterial'
+          bomDetail['bomId'] = v.bom.childSmId
           break;
         }
         case 2:{
-          childData = v.bom.child_product
-          childDataType = 'product'
-          product = childData
-          bomId = v.bom.childProductId
+          bomDetail['childData'] = v.bom.child_product
+          bomDetail['bomType'] = 'product'
+          bomDetail['bomId'] = v.bom.childProductId
           break;
         }
       }
-      const bomLots = getBomLots(bomId, childDataType)
+      const bomLots = getBomLots(bomDetail.bomId, bomDetail.bomType)
       const stock = getTotalStock(bomLots)
       const sumOfUsage = bomLots?.length > 0 ? lodash.sum(bomLots.map(bom => new Big(bom.lot.amount).times(bom.bom.usage).toNumber())) : new Big(row.good_quantity).div(cavity)
-
       return {
-        ...childData,
+        ...bomDetail.childData,
         seq: i+1,
-        code: childData.code,
-        type: TransferCodeToValue(childData?.type, childDataType),
+        code: bomDetail.childData.code,
+        type: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
         tab: v.bom.type,
-        type_name: TransferCodeToValue(childData?.type, childDataType),
+        product_type: v.bom.type !== 2 ? '-' : TransferCodeToValue(bomDetail.childData?.type, 'productType'),
+        type_name: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
         cavity,
-        unit: childData.unit,
+        unit: bomDetail.childData.unit,
         parent: v.bom.parent,
         usage: v.bom.usage,
         version: v.bom.version,
         setting: v.bom.setting,
         stock,
         bom_lot_list: tmpRow,
-        disturbance: sumOfUsage,
-        processArray: childData.process ?? null,
-        process: childData.process ? childData.process.name : '-',
+        real_disturbance: sumOfUsage,
+        processArray: bomDetail.childData.process ?? null,
+        process: bomDetail.childData.process ? bomDetail.childData.process.name : '-',
         bom: bomLots,
-        product,
-        raw_material,
-        sub_material,
+        [bomDetail.bomType]: bomDetail.childData,
       }
     })
-
     setSearchList(newRows)
   }
 
@@ -164,7 +144,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
       case 'subMaterial':
         return row.bom?.filter((bom) => bom?.lot?.child_lot_sm?.smId === id)
       case 'product':
-        return row.bom?.filter((bom) => bom?.lot?.child_lot_record?.operation_sheet?.productId === id)
+          return row.bom?.filter((bom) => bom.bom?.child_product?.type > 2 ? bom?.lot?.child_lot_outsourcing?.product?.product_id === id : bom?.lot?.child_lot_record?.operation_sheet?.productId === id)
       default:
         return null
     }
@@ -180,6 +160,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
           setIsOpen(true)
         }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"} >
           <p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>자재 보기</p>
+          {/*<p style={{ textDecoration: 'underline', margin: 0, padding: 0}}>{row?.good_quantity}</p>*/}
         </UploadButton>
     )
 
@@ -207,7 +188,28 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const modalButtons = () => {
-    return <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
+    if(column.tab == "ROLE_PROD_04"){
+      return <div style={{ height: 56, display: 'flex', alignItems: 'space-between'}}>
+        <div
+            onClick={() =>{
+              setIsOpen(false)
+            }}
+            style={{width: '100%', height: 40, backgroundColor: '#E7E9EB', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+        >
+          <p>{'취소'}</p>
+        </div>
+        <div
+            onClick={() =>{
+              onRowChange({...row, lotList:searchList})
+              setIsOpen(false)
+            }}
+            style={{width: '100%', height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+        >
+          <p>{'저장'}</p>
+        </div>
+      </div>
+    }
+    else return <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
       <div
         onClick={() =>{
             setIsOpen(false)
@@ -219,11 +221,18 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
     </div>
   }
 
-  const isProduct = selectType === '반제품' || selectType === '재공품' || selectType === '완제품'
-
+  const isProduct = ['반제품', '재공품', '완제품'].includes(selected.type)
+  const isOutsource = selected.productType === '외주품'
+  //AI 작업일보 리스트에서 바꿔줘야할 부분
   const LotListColumns = () => {
-    return isProduct ? searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
+    if(column.tab == "ROLE_PROD_04"){
+      searchModalList.InputLotReadonlyInfo[searchModalList.InputLotReadonlyInfo.length - 1] =
+          {key: 'amount', name: '생산량', formatter: UnitContainer, editor: TextEditor, textAlign: 'center', unitData:'EA', placeholder: "0", textType:"Modal"}
+      return searchModalList.InputLotReadonlyInfo
+    }
+    return isProduct ? isOutsource? searchModalList.OutsourceLotReadonlyInfo : searchModalList.ProductLotReadonlyInfo : searchModalList.InputLotReadonlyInfo
   }
+  //
 
   return (
       <SearchModalWrapper >
@@ -251,7 +260,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
               modalTitle()
             }
             {
-              headerWorkItems && headerWorkItems.map((infos, index) => {
+              InputModalHeaderItems(column.type).map((infos, index) => {
                 return (
                     <HeaderTable>
                       {
@@ -291,25 +300,24 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
             </div>
             <div id='body-root' style={{padding: '0 16px', width: 1776}}>
               <ExcelTable
-                  headerList={searchModalList.InputListReadonly}
+                  headerList={InputListHeaders(isOutsourcing, column.readonly)}
                   row={searchList ?? [{}]}
-                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked) 
+                  onRowClick={(clicked) => {const e = searchList.indexOf(clicked)
                     setSelectRow(e)
                   }}
                   setRow={(e) => {
                     let tmp = e.map((v, index) => {
                       if(v.bom){
-                        setSelectProduct(v.code)
                         if(v.lotList){
                           const newLots = v.lotList.map(lot => ({
                             ...lot,
-                            amount: new Big(lot.amount).times(cavity),
+                            amount: lot?.amount ? new Big(Number(lot?.amount)).times(cavity) : 0,
                             unit: v.unit,
-                            current: new Big(lot.current).minus(new Big(lot.amount).times(v.usage)).toNumber()
+                            current: lot?.amount ? new Big(Number(lot?.current)).minus(new Big(Number(lot?.amount)).times(v?.usage)).toNumber() : 0
                           }))
-                          setSelectType(v.type_name)
                           setLotList(newLots)
                         }
+                        setSelected({...selected, type:v.type_name, product: v.code, productType: v.product_type})
                       }
                       delete v.lotList
                       return {
@@ -328,7 +336,7 @@ const LotInputInfoModal = ({column, row, onRowChange}: IProps) => {
             <div id='body-2-title' style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
               <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
                 <div style={{ display: 'flex', width: 1200}}>
-                  <p style={{fontSize: 22, padding: 0, margin: 0}}>{selectType} LOT 리스트 ({selectProduct})</p>
+                  <p style={{fontSize: 22, padding: 0, margin: 0}}>{selected.type} LOT 리스트 ({selected.product})</p>
                 </div>
               </div>
               <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>

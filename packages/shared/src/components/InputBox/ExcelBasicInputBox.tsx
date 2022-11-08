@@ -27,12 +27,12 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
   const checkIfNegative = (value: string) : boolean => {
     return value.startsWith("-")
   }
+
   const isDisabled: boolean = column.readonly || (column.disabledCase && column.disabledCase.length > 0 && column.disabledCase.some((dcase) => row[dcase.key] === dcase.value))
   const autoFocus = (input: HTMLInputElement | null) => {
     input?.focus()
   }
   const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|\\|<|>*]/;
-
   const validInput = (input: string) => {
     const escapes = ["\\", "<", ">", "*"]
     if(escapes.includes(input)){
@@ -45,13 +45,14 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
 
   return (
     <input
-      style={{textAlign: 'center', color: column.textType ? 'black' : 'white', border:"none" }}
+      style={{textAlign: 'center', color: column.textType ? 'black' : 'white', border:"none"}}
       className={'editCell'}
       ref={autoFocus}
       onPaste={() => setFocus(true)}
       value={isNumberInput? RemoveFirstZero(row[column.key]) : row[column.key] ?? ""}
       disabled={isDisabled}
       type={isNumberInput ? "number" : "text"}
+      maxLength={column.key == "telephone" && 13}
       onKeyDown={(e) => {
         if(validInput(e.key)){
           setFocus(true)
@@ -65,18 +66,19 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onClose(true)
           Notiflix.Report.warning('수정할 수 없습니다.', '작업지시 고유 번호가 있으면 수정할 수 없습니다.', '확인')
         }else if(column.key === 'tmpId' && row[column.key]){
-          if(!row.isChange || row.user_id){
+          if(!row.isChange && row.user_id){
             onClose(true)
             return Notiflix.Report.warning('수정할 수 없습니다.', '아이디는 수정할 수 없습니다.', '확인')
           }
         }else if(column.key === 'amount' && row.setting){
           onClose(true)
           Notiflix.Report.warning('수정할 수 없습니다.', '사용여부가 부 입니다.', '확인')
-        }else if(column.readonly && row.mold_id){
+        }else if(column.readonly && row.mold_id) {
           onClose(true)
           return Notiflix.Report.warning('수정할 수 없습니다.', '', '확인')
-        }
-        if(column.type === "stockAdmin"){
+        }else if(column.key === 'order_quantity' && !!row.bom){
+          return Notiflix.Report.warning('경고', '발주량을 수정할 수 없습니다.', '확인')
+        }if(column.type === "stockAdmin"){
           if(row?.changeRows && !row.changeRows?.includes(column.key)){
             onRowChange({...row, changeRows:[...row.changeRows, column.key]})
           }else if(row?.changeRows){
@@ -87,7 +89,8 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
         }
       }}
       onChange={(event) => {
-        let eventValue = event.target.value
+        let eventValue = column.key === "telephone" ? event.target.value.replace(/[^0-9]/g, '')
+            .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "") : event.target.value
         const lastChar = eventValue.slice(-1)
         const deleteEvent = eventValue.length < row[column.key]?.length
         if(!validInput(lastChar) || (!deleteEvent && korean.test(lastChar) && !focus)) return
@@ -115,7 +118,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
           onRowChange({ ...row, [column.key]: eventValue, isChange: true })
         }
       }}
-      onBlur={() => {
+      onBlur={(e) => {
         setFocus(false)
         onClose && onClose(true)}}
     />

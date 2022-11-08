@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {menuSelect} from 'shared/src/common/menulist'
+import {MENUS, menuSelect} from 'shared/src/common/menulist'
 import {MenuNavComponent, MenuNavItem, MenuText, SideMenuItem} from '../../styles/styledComponents'
 import {POINT_COLOR} from 'shared/src/common/configset'
 //@ts-ignore
@@ -82,78 +82,75 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
     }
   }
 
-  const MENUS = () => {
-    const configMenus = process.env.NEXT_PUBLIC_MENUS
-    return configMenus === undefined ? ['HOME', 'BASIC', 'MES', 'PMS'] : configMenus.split(',')
-  }
-
   return (
-      <div className={'nav unprintable'} style={{display: 'flex'}}>
+      <div className={'nav unprintable'} style={{display: 'flex' , height : '100%'}}>
         <MenuNavComponent>
-          <div>
-            {
-              MENUS().map(menu => {
-                switch(menu){
-                  case 'HOME':
-                    return <MenuNavItem style={{backgroundColor: menuType === "HOME" ? POINT_COLOR : undefined}} onClick={() => {
-                    router.push('/mes/dashboard')
-                    changeMenuType("HOME")
-                  }}>
-                    <img src={ic_home} style={{width: 30, height: 30, marginBottom: 5}}/>
-                    <MenuText>HOME</MenuText>
-                  </MenuNavItem>
-                  case 'BASIC':
-                    return <MenuNavItem style={{backgroundColor: menuType === "BASIC" ? POINT_COLOR : undefined}} onClick={() => {
-                      changeMenuType("BASIC")
+            <div style={{background : '#2b3c5c' , height : '100%'}}>
+              <div style={{height : '100vh'}}>
+              {
+                MENUS().map((menu, menuIdx) => {
+                  switch(menu){
+                    case 'HOME':
+                      return <MenuNavItem key={menuIdx} style={{backgroundColor: menuType === "HOME" ? POINT_COLOR : undefined}} onClick={() => {
+                      router.push('/mes/dashboard')
+                      changeMenuType("HOME")
                     }}>
-                      <img src={ic_info} style={{width: 30, height: 30, marginBottom: 5}}/>
-                      <MenuText>기준정보관리</MenuText>
+                      <img src={ic_home} style={{width: 30, height: 30, marginBottom: 5}}/>
+                      <MenuText>HOME</MenuText>
                     </MenuNavItem>
-                  case 'MES':
-                    return <MenuNavItem style={{backgroundColor: menuType === "MES" ? POINT_COLOR : undefined}} onClick={() => {
-                      changeMenuType("MES")
-                    }}>
-                      <img src={ic_mes} style={{width: 30, height: 30, marginBottom: 5}}/>
-                      <MenuText>MES</MenuText>
-                    </MenuNavItem>
-                  case 'PMS':
-                    return <MenuNavItem style={{backgroundColor: menuType === "PMS" ? POINT_COLOR : undefined}} onClick={() => {
-                      changeMenuType("PMS")
-                    }}>
-                      <img src={ic_pms} style={{width: 30, height: 30, marginBottom: 5}}/>
-                      <MenuText>PMS</MenuText>
-                    </MenuNavItem>
-                  case 'CNC':
-                    return <MenuNavItem style={{backgroundColor: menuType === "CNC" ? POINT_COLOR : undefined}} onClick={() => {
-                      changeMenuType("CNC")
-                    }}>
-                      <img src={ic_cnc} style={{width: 30, height: 30, marginBottom: 5}}/>
-                      <MenuText>CNC</MenuText>
-                    </MenuNavItem>
-                  default: break
-                }
-              })
-            }
-            {/*<MenuNavItem style={{backgroundColor: menuType === "WMS" ? POINT_COLOR : undefined}} onClick={() => {*/}
-            {/*  changeMenuType("WMS")*/}
-            {/*}}>*/}
-            {/*  <img src={ic_wms} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
-            {/*  <MenuText>WMS</MenuText>*/}
-            {/*</MenuNavItem>*/}
-            {/*<MenuNavItem style={{backgroundColor: menuType === "UMS" ? POINT_COLOR : undefined}} onClick={() => {*/}
-            {/*  changeMenuType("UMS")*/}
-            {/*}}>*/}
-            {/*  <img src={ic_ums} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
-            {/*  <MenuText>UMS</MenuText>*/}
-            {/*</MenuNavItem>*/}
-            {/*<MenuNavItem style={{backgroundColor: menuType === "SETTING" ? POINT_COLOR : undefined}} onClick={() => {*/}
-            {/*  changeMenuType("SETTING")*/}
-            {/*}}>*/}
-            {/*  <img src={ic_setting} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
-            {/*  <MenuText>Setting</MenuText>*/}
-            {/*</MenuNavItem>*/}
+                    case 'BASIC':
+                      return <MenuNavItem key={menuIdx} style={{backgroundColor: menuType === "BASIC" ? POINT_COLOR : undefined}} onClick={() => {
+                        changeMenuType("BASIC")
+                      }}>
+                        <img src={ic_info} style={{width: 30, height: 30, marginBottom: 5}}/>
+                        <MenuText>기준정보관리</MenuText>
+                      </MenuNavItem>
+                    case 'MES':
+                      return <MenuNavItem key={menuIdx} style={{backgroundColor: menuType === "MES" ? POINT_COLOR : undefined}} onClick={() => {
+                        changeMenuType("MES")
+                      }}>
+                        <img src={ic_mes} style={{width: 30, height: 30, marginBottom: 5}}/>
+                        <MenuText>MES</MenuText>
+                      </MenuNavItem>
+                    case 'PMS':
+                      return <MenuNavItem key={menuIdx} style={{backgroundColor: menuType === "PMS" ? POINT_COLOR : undefined}} onClick={() => {
+                        changeMenuType("PMS")
+                      }}>
+                        <img src={ic_pms} style={{width: 30, height: 30, marginBottom: 5}}/>
+                        <MenuText>PMS</MenuText>
+                      </MenuNavItem>
+                    case 'CNC':
+                      return <MenuNavItem key={menuIdx} style={{backgroundColor: menuType === "CNC" ? POINT_COLOR : undefined}} onClick={() => {
+                        changeMenuType("CNC")
+                      }}>
+                        <img src={ic_cnc} style={{width: 30, height: 30, marginBottom: 5}}/>
+                        <MenuText>CNC</MenuText>
+                      </MenuNavItem>
+                    default: break
+                  }
+                })
+              }
+              {/*<MenuNavItem style={{backgroundColor: menuType === "WMS" ? POINT_COLOR : undefined}} onClick={() => {*/}
+              {/*  changeMenuType("WMS")*/}
+              {/*}}>*/}
+              {/*  <img src={ic_wms} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
+              {/*  <MenuText>WMS</MenuText>*/}
+              {/*</MenuNavItem>*/}
+              {/*<MenuNavItem style={{backgroundColor: menuType === "UMS" ? POINT_COLOR : undefined}} onClick={() => {*/}
+              {/*  changeMenuType("UMS")*/}
+              {/*}}>*/}
+              {/*  <img src={ic_ums} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
+              {/*  <MenuText>UMS</MenuText>*/}
+              {/*</MenuNavItem>*/}
+              {/*<MenuNavItem style={{backgroundColor: menuType === "SETTING" ? POINT_COLOR : undefined}} onClick={() => {*/}
+              {/*  changeMenuType("SETTING")*/}
+              {/*}}>*/}
+              {/*  <img src={ic_setting} style={{width: 30, height: 30, marginBottom: 5}}/>*/}
+              {/*  <MenuText>Setting</MenuText>*/}
+              {/*</MenuNavItem>*/}
+              </div>
           </div>
-          <div style={{width: 198, paddingTop: 30, paddingLeft: 24}}>
+          <div style={{width: 198, paddingTop: 30, paddingLeft: 24 ,background : selector.main.length > 0 ? '#2b3c5c' : undefined}}>
             {
               selector.main && selector.main.map((v, i) => <>
                     <SideMenuItem onClick={() => {
@@ -180,8 +177,11 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
                           selector.sub[i].map((sub =>
                                   <SideMenuItem onClick={() => {
                                     if(sub.url){
-
                                       router.push(sub.url)
+                                      dispatch(setMenuState({
+                                        main: [],
+                                        sub: [],
+                                      }))
                                     }
                                   }} selectSub={sub.url == selectMenu.sub}>
                                     <p style={{fontSize: 13, paddingLeft: 12}}>· {sub.title}</p>

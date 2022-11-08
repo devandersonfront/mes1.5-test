@@ -38,10 +38,11 @@ const BasicDocument = ({ page, keyword, option, doc_id }: IProps) => {
     const LoadBasic = async () => {
 
         const res = await RequestMethod("get", "documentList", { path: { docId: doc_id ?? null } })
+        const dirs = await RequestMethod("get", "documentAll", { params: { type: 'dir' } })
 
         if (res) {
             const convertData = res.map((v) => ({ ...v, id: v.doc_id, type: v.type === "dir" ? "폴더" : v.type, date: moment(v.created).format("YYYY-MM-DD") }))
-            const classfyData = res.filter(v => v.type === 'dir')
+            const classfyData = dirs
 
             setBasicRow(convertData)
             setFolderList(classfyData)
