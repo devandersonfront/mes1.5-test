@@ -118,12 +118,10 @@ const MesOrderRegister = ({ }: IProps) => {
       const res = await RequestMethod('post', process.env.NEXT_PUBLIC_CUSTOM_TARGET == "ai" ? `aiContractSave` : `contractSave`, postBody)
 
       if(res && basicRow.find((v) => v.ai_check)){
-        // setBasicRow(res)
         const resultData = basicRow.map((row, index) => {
           let tmpRow = {...row}
           if(row.ai_check){
 
-            console.log("ai_row : ", row,res)
             res.map((v) => {
               if(v.product.product_id == row.product.product_id) tmpRow.operationData = v
             })
@@ -139,7 +137,7 @@ const MesOrderRegister = ({ }: IProps) => {
       if (res) {
 
           Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
-          // router.push('/mes/order/list')
+          router.push('/mes/order/list')
           });
         }
     } catch (errMsg) {
