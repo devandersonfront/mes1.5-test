@@ -117,6 +117,7 @@ const AiMesRecord = ({}: IProps) => {
         params['from'] = date ? date.from: selectDate.from
         params['to'] = date ? date.to : selectDate.to
         params['status'] = [0]
+        // params['status'] = [0,1,2]
         return params
     }
 
@@ -146,14 +147,18 @@ const AiMesRecord = ({}: IProps) => {
     };
 
     const DeleteBasic = async (save?:boolean) => {
-        const result = deleteBasic.filter((v) => selectList.has(v.id))[0]
-        result.status = save ? 2 : 1
-        let res = await RequestMethod('post', `aiRecordSave`, result);
+        const result = deleteBasic.map((v) => {
+            if (selectList.has(v.id)){
+                return {...v, status: save ? 2 : 1}
+                // return {...v, status:0}
+            }
+        }).filter(v=>v)
 
+        let res = await RequestMethod('post', `aiRecordSave`, result);
         if (res && !save) {
-            Notiflix.Report.success("삭제 성공!", "", "확인", () => reload())
+            Notiflix.Report.success("삭제 성공!", "", "확인", () => reload(null, null))
         }else if(res){
-            reload()
+            router.push("/mes/recordV2/list")
         }else{
             Notiflix.Report.failure("에러가 발생했습니다!", "", "확인", () => reload())
         }
@@ -265,6 +270,7 @@ const AiMesRecord = ({}: IProps) => {
         setSelectList(new Set)
     }
     const SaveBasic = async () => {
+        if(selectList.size <= 0) return Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
         try{
             const postBody = basicRow.map((v) => {
                 const cavity = v.molds?.length > 0 ? v.molds[0].mold?.mold?.cavity : 1
@@ -280,6 +286,8 @@ const AiMesRecord = ({}: IProps) => {
                         throw(alertMsg.noProductAmount)
                     }else if(!v.operation_sheet) {
                         throw(alertMsg.noOperation)
+                    }else if(v.bom == null){
+                        throw(alertMsg.needsBom)
                     }
                     if(v.molds) {
                         v.bom.map(bom => {
@@ -319,8 +327,7 @@ const AiMesRecord = ({}: IProps) => {
                                     }
                                 }}
                         }).filter(v=>v.tool.tool.code) ?? [],
-                        // molds:[],
-                        machines: v?.machines ? v?.machines.filter((machine) => machine.machine.setting == 1) : [],
+                        machines: [],
                         version: undefined,
                         uph:0,
                         // inspection_category:0,
@@ -331,8 +338,8 @@ const AiMesRecord = ({}: IProps) => {
                 }).filter((v) => v)
             const res = await RequestMethod('post', `recordSave`,postBody)
             if (res?.length > 0) {
+
                 Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
-                    // row.reload()
                     DeleteBasic(true)
                 });
             } else {

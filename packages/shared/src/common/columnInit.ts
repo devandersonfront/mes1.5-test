@@ -73,11 +73,11 @@ export const columnlist: any = {
     { key: 'telephone', formatter: PlaceholderBox, placeholder: "전화번호 입력", editor: TextEditor },
     { key: 'email', formatter: PlaceholderBox, placeholder: "이메일 입력", editor: TextEditor },
     { key: 'authority', formatter: AuthoritySearchModal },
-    // {key: 'authority', formatter: DropDownEditor, selectList: []},
     { key: 'tmpId', formatter: PlaceholderBox, placeholder: "아이디 입력", editor: TextEditor, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
     { key: 'password',formatter: PasswordBox, placeholder: "비밀번호 입력", editor: TextEditor },
     { key: 'password-confirm', formatter: PasswordBox, placeholder: "비밀번호 확인", editor: TextEditor },
     { key: 'profile', formatter: FileEditer, type: "image" , unprintable : true},
+    { key: 'alarm', formatter: FileEditer, type: "image" , unprintable : true},
   ],
   factory: [
     { key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력', headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
@@ -296,7 +296,8 @@ export const columnlist: any = {
     {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, inputType:'number', formatter: UnitContainer, placeholder: '0', toFix:1},
     {key: 'price', name: '단가', editor: TextEditor, inputType:'number', formatter: UnitContainer, placeholder: '0', toFix:1, unitData:'원'},
     {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer , unprintable: true},
-    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' , unprintable: true}
+    {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' , unprintable: true},
+    {key: 'safety_stock' , name : '안전 재고', placeholder: '0' ,editor: TextEditor, formatter: PlaceholderBox , inputType: 'number'}
   ],
   productBatchRegister: (rows) => ([
     {key: 'sequence', name: '순서'},
@@ -342,9 +343,8 @@ export const columnlist: any = {
         { pk: 2, name: 'SHEET' }
       ]
     },
-    {
-      key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value}))
-    },
+    { key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})) },
+    { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
   ],
@@ -1457,6 +1457,7 @@ export const columnlist: any = {
     {key: 'product_id', name: 'CODE', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'customer_id', name: '거래처', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'cm_id', name: '모델', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'worker', name: '발주자', formatter:PlaceholderBox, type: 'user', placeholder: '-'},
     {key: 'current', name: '미입고량', formatter:PlaceholderBox, placeholder: '0'},
     {key: 'order_quantity', name: '총 발주량', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'order_date', name: '발주 날짜', formatter: PlaceholderBox},

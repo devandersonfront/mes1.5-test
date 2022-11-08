@@ -16,13 +16,16 @@ import { SelectColumn } from "react-data-grid";
 import Notiflix from "notiflix";
 import { useRouter } from "next/router";
 import { NextPageContext } from "next";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState,} from "shared/src/reducer/menuSelectState";
 import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import {BarcodeDataType} from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
+import {selectUserInfo} from "shared/src/reducer/userInfo";
+import {unUsedCompanyCode} from "shared/src/common/companyCode";
+import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
 
 export interface IProps {
   children?: any;
@@ -40,6 +43,7 @@ const optionList = ["원자재 CODE", "원자재 품명", "재질", "거래처",
 const BasicRawMaterial = ({}: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const userInfo = useSelector(selectUserInfo)
   const [excelOpen, setExcelOpen] = useState<boolean>(false);
   const [basicRow, setBasicRow] = useState<Array<any>>([]);
   const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
@@ -53,6 +57,8 @@ const BasicRawMaterial = ({}: IProps) => {
     type : 'barcode',
     isVisible : false
   })
+  // 안전재고량 filter 해주기 위한 상태값
+  // const [safety_status, setSafety_status] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
     page: 1,
@@ -224,6 +230,7 @@ const BasicRawMaterial = ({}: IProps) => {
       params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
       params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
     }
+      // params['safety_status'] = !!safety_status
     return params
   }
 
@@ -309,6 +316,7 @@ const BasicRawMaterial = ({}: IProps) => {
                 width: menu.width,
                 // key: menu.title,
                 key: menu.mi_id,
+                formatter: PlaceholderBox,
                 editor: TextEditor,
                 type: "additional",
                 unit: menu.unit,
@@ -363,11 +371,12 @@ const BasicRawMaterial = ({}: IProps) => {
         ...appendAdditional,
         unit: row.unit !== null ? row.unit : row.type === 1 ? 0 : 1,
         type: settingType(row.type),
+        // warning 값에다 데이터를 넣으면 전체 row 색을 바꿀 수 있음(꼭 warning 값이 아니고 바꿔도됨)
+        // warning:index % 2 ? "red" : null,
         customer_id: row.customer && row.customer.name,
         id: `rawmaterial_${random_id}`,
       };
     });
-
     setBasicRow([...tmpBasicRow]);
   };
 
@@ -601,7 +610,6 @@ const BasicRawMaterial = ({}: IProps) => {
   }
 
   const convertBarcodeData = (quantityData) => {
-
     return [{
       material_id: quantityData.rm_id,
       material_type: 0,
@@ -612,6 +620,14 @@ const BasicRawMaterial = ({}: IProps) => {
       material_code: quantityData.code,
       material_customer: quantityData.customer?.name ?? "-",
       material_model: quantityData.model?.model ?? "-",
+      material_machine_name : null,
+      material_size :String((quantityData.width * quantityData.height).toFixed(1)),
+      material_texture : quantityData?.texture,
+      material_unit : null,
+
+      material_texture_type : quantityData?.type,
+      material_import_date: null,
+      material_bom_lot: null
     }]
   }
 
@@ -646,8 +662,13 @@ const BasicRawMaterial = ({}: IProps) => {
           }}
           optionIndex={optionIndex}
           title={"원자재 기준정보"}
-          buttons={[ (selectList.size === 1 && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]}
+          buttons={[ (selectList.size <= 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]}
           buttonsOnclick={onClickHeaderButton}
+          // 안전재고 filter를 위한 옵션
+          // isRadio
+          // radioValue={safety_status}
+          // onChangeRadioValues={setSafety_status}
+          // radioTexts={["전체", "안전재고 부족"]}
         />
         <ExcelTable
           editable
@@ -685,15 +706,15 @@ const BasicRawMaterial = ({}: IProps) => {
             setPageInfo({...pageInfo, page:page})
           }}
         />
-      <BarcodeModal
-          title={'바코드 미리보기'}
-          handleBarcode={handleBarcode}
-          handleModal={handleModal}
-          type={'rawMaterial'}
-          data={barcodeData}
-          isVisible={modal.type === 'barcode' && modal.isVisible}
-      />
 
+        <BarcodeModal
+            title={'바코드 미리보기'}
+            handleBarcode={handleBarcode}
+            handleModal={handleModal}
+            type={'rawMaterial'}
+            data={barcodeData}
+            isVisible={modal.type === 'barcode' && modal.isVisible}
+        />
       <QuantityModal
           onClick={onClickQuantity}
           onClose={onCloseQuantity}
