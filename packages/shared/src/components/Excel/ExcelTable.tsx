@@ -38,7 +38,7 @@ interface IProps {
   scrollEnd?:(value:boolean) => void
   scrollOnOff?:boolean
   customHeaderRowHeight?: number
-  onDoubleClick?: (row: Array<any>) => void
+  onDoubleClick?: (row: Array<any>, col?:any) => void
   onRowClick?: (row: any) => void
 }
 
@@ -108,7 +108,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
     setSelectRow && setSelectRow(indexes)
     setRow(rows,indexes)
   }
-  
+
   const showDataGrid = () => {
 
     return <DataGridTable
@@ -187,7 +187,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
         onRowClick && onRowClick(row)
       }}
       onRowDoubleClick={(row,col) => {
-        onDoubleClick && onDoubleClick(row)
+        onDoubleClick && onDoubleClick(row, col)
       }}
       enableVirtualization={!disableVirtualization}
       //@ts-ignore

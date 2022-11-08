@@ -55,11 +55,24 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
-      if(row.bom_root_id){
+      if(column.type == 'noload'){
+        const rowData = row.input.input_bom.map((bom, index) => {
+          bom.parent = row.input
+          return {
+            ...bom.bom,
+            setting: row.input_bom ? row?.input_bom[index]?.bom?.setting : bom?.bom.setting,
+            parent: row.input.product
+          }
+        })
+        let searchList = changeRow(rowData)
+        // dispatch(insert_summary_info({code: row.bom_root_id, title: row.code, data: searchList, headerData: row}));
+        setSearchList([...searchList])
+      }else if(row.bom_root_id){
         SearchBasic().then(() => {
           // Notiflix.Loading.remove()
         })
-      } else {
+      }
+     else {
         setIsOpen(false)
         Notiflix.Report.warning("제품을 선택해 주세요.", "", "확인",)
       }
@@ -131,6 +144,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
 
   const changeRow = (tmpRow: any, key?: string) => {
     const parsedRes = ParseResponse(tmpRow)
+
     return parsedRes.map((v, i) => {
       const bomDetail:{childData:any, bomType: TransferType, objectKey: string} = {
         childData: {},
@@ -144,36 +158,44 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
           bomDetail['childData'] = childData
           bomDetail['bomType'] = 'rawMaterial'
           bomDetail['objectKey'] = 'raw_material'
+          // if(v.bom.setting) bomDetail['setting'] = v.bom.setting
           break;
         }
         case 1:{
           bomDetail['childData'] = v.child_sm
           bomDetail['bomType'] = 'subMaterial'
           bomDetail['objectKey'] = 'sub_material'
+          // if(v.bom.setting) bomDetail['setting'] = v.bom.setting
           break;
         }
         case 2:{
           bomDetail['childData'] = v.child_product
           bomDetail['bomType'] = 'product'
           bomDetail['objectKey'] = 'product'
+          // if(v.bom.setting) bomDetail['setting'] = v.bom.setting
           break;
         }
       }
 
       if(i === 0) {
         setSummaryData({
-          // ...res.parent
+        // ...res.parent
           customer: v.parent?.customer?.name,
           model: v.parent?.model?.model,
           code: v.parent?.code,
           name: v.parent?.name,
           process: v.parent?.process?.name,
-          type: TransferCodeToValue(v.parent.type, 'product'),
+          type: TransferCodeToValue(v?.parent?.type, 'product'),
+          // customer: v.input?.product?.customer?.customer_id,
+          // model: v.input?.product?.model?.model,
+          // code: v.input?.product?.code,
+          // name: v?.name,
+          // process: v?.process_id,
+          // type: v?.type,
           unit: v.parent?.unit,
           goal: row.goal,
         })
       }
-
       return {
         ...bomDetail.childData,
         seq: i+1,
@@ -246,8 +268,8 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
   const ModalContents = () => (
         <UploadButton onClick={() => {
           setIsOpen(true)
-        }} hoverColor={POINT_COLOR} haveId>
-          <p>자재 보기</p>
+        }} hoverColor={POINT_COLOR} haveId >
+          <p style={{color:column.modalType && "#0D0D0D"}}>자재 보기</p>
         </UploadButton>
   )
 
@@ -373,6 +395,7 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
               row={searchList ?? [{}]}
               setRow={(e) => {
                 let tmp = e.map((v, index) => {
+
                   if(v.newTab === true){
                     const newTabIndex = bomDummy.length+1
                     addNewTab(newTabIndex)
