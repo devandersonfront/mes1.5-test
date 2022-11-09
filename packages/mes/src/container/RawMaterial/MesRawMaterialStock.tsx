@@ -8,7 +8,7 @@ import {
   MAX_VALUE,
   PaginationComponent,
   RequestMethod,
-  TextEditor
+  TextEditor, UnitContainer
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -120,7 +120,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         result: v.sortOption ? changeOrder : null,
       }
     });
-
+    // 단가 테스트를 위한 강제로 주입한 column / 추후에 메뉴로 받아오면 삭제 필요
+    tmpColumn.splice(8,0,{ key: 'price', name: '단가', formatter: UnitContainer,editor: TextEditor,inputType: 'number', width:118, placeholder: "0", unitData:"원", readonly:true})
     setColumn(tmpColumn);
   }
 
@@ -471,7 +472,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         selectDate={selectDate}
         //@ts-ignore
         setSelectDate={onSelectDate}
-        title={"원자재 재고 현황"}
+        title={"원자재 입고 현황"}
         buttons={
           selectList.size > 1
               ?
