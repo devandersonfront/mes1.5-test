@@ -45,7 +45,7 @@ const TextEditor = ({ row, column, onRowChange, onClose }: IProps) => {
 
   return (
     <input
-      style={{textAlign: 'center', color: column.textType ? 'black' : 'white', border:"none" }}
+      style={{textAlign: 'center', color: column.textType ? 'black' : 'white', border:"none"}}
       className={'editCell'}
       ref={autoFocus}
       onPaste={() => setFocus(true)}

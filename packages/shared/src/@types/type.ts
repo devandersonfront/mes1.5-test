@@ -46,6 +46,7 @@ export interface IExcelHeaderType {
   maxDate?:boolean
   theme?: string
   toFix?: number
+  fixed?:boolean
   placeholder?: string
   textAlign?: 'left' | 'center' | 'right'
   modalInitData?: any

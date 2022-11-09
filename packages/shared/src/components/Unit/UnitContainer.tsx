@@ -31,7 +31,7 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
 
   return (
     // <UnitWrapper style={{ backgroundColor: row.border ? '#19B9DF80': undefined}}>
-    <UnitWrapper style={{ backgroundColor:row?.insufficient && column.key == "safety_stock" ? "red" : row.border ? "#19B9DF80" : undefined}}>
+    <UnitWrapper style={{ backgroundColor:row?.insufficient && column.key == "stock" ? "red" : row.border ? "#19B9DF80" : undefined}}>
       <UnitValue>
         {
           !title && column.placeholder
@@ -55,7 +55,7 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
                     }}
                     // defaultValue={column.selectList?.filter(select => select.pk === row.unit)?.[0].name}
                     value={column.selectList?.filter(select => select.pk === row.unit)?.[0].name}
-                    disabled={column?.readonly}
+                    disabled={column?.fixed}
                   >
                     {
                       column.selectList?.map((list : SelectListType)=>(

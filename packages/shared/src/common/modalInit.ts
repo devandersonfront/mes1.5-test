@@ -29,6 +29,9 @@ import {WorkRegisterModal} from "../components/Modal/WorkRegisterModal";
 import {WorkListModal} from "../components/Modal/WorkListModal";
 import {BomRegisterInit} from "../components/Modal/InfoModal/InfoModalInit";
 import {FinishButton} from "../components/Buttons/FinishButton";
+import {CalendarBox} from "../components/CalendarBox/CalendarBox";
+import {PlaceholderBox} from "../components/Formatter/PlaceholderBox";
+import {BomRegisterModal} from "../components/Modal/BomRegisterModal";
 
 export const searchModalList: any = {
   member: [
@@ -324,7 +327,7 @@ export const searchModalList: any = {
     {key: 'usage', name: '1회 사용량', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center',placeholder: '-'},
     {key: 'stock', name: '재고량', formatter: UnitContainer, textAlign: 'center',placeholder: "0", textType:"Modal", type: 'selectUnit'},
-    {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' ,modalType: true , type : 'readonly' },
+    // {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' ,modalType: true , type : 'readonly' },
   ],
   InputInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
@@ -658,5 +661,20 @@ export const searchModalList: any = {
     { key: "product_id", name: "CODE" ,formatter:LineBorderContainer},
     { key: "name", name: "품명" ,formatter:LineBorderContainer},
     { key: "goal", name: "목표 생산량" ,formatter:LineBorderContainer},
+  ],
+  operationRegister: [
+    { key: "identification", name: "수주 번호", formatter: LineBorderContainer, width: 118, type: "Modal",},
+    { key: "date", name: "수주 날짜", formatter: CalendarBox, width: 118, type: "Modal", dependency : 'deadline'},
+    { key: "deadline", name: "납품 기한", formatter: CalendarBox, width: 118, type: "Modal"},
+    { key: "product_id", name: "CODE", width: 118, formatter: LineBorderContainer, type: 'orderRegister', searchType: 'product'},
+    {key: 'customer_id', name: '거래처', formatter: LineBorderContainer, type: 'customer', placeholder: '-',width: 118},
+    {key: 'cm_id', name: '모델', formatter: LineBorderContainer, type: 'customerModel', placeholder: '-',width: 118},
+    { key: "name", name: "품명", width: 118, formatter: LineBorderContainer, placeholder: '자동입력' },
+    { key: "type", name: "품목 종류", width: 118, formatter: LineBorderContainer, placeholder: '자동입력' },
+    { key: "unit", name: "단위", width: 118, formatter: LineBorderContainer, placeholder: '자동입력' },
+    { key: "amount", name: "수주량", width: 118, editor: TextEditor, formatter: LineBorderContainer, placeholder: 0, inputType: 'number' },
+    { key: "process_id", name: "생산공정", width: 118, editor: TextEditor, formatter: LineBorderContainer, placeholder: 0, inputType: 'number' },
+    { key: "goal", name: "목표 생산량", width: 118, editor: TextEditor, formatter: LineBorderContainer, placeholder: 0, inputType: 'number', textType:'modal' },
+    { key: "input", name: "자재 선택", width: 118, formatter: BomRegisterModal, modalType:true, type:"noload"},
   ]
 }

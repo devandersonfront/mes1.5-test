@@ -45,7 +45,7 @@ const HeaderSort = ({row, column, setRow, onChangeOption}: IProps) => {
     <>
     <HeaderTitle onClick={() => {
       if(column.result){
-        const sortOption = changeSortOption(column.sortOption)
+        const sortOption = changeSortOption(option)
         setOption(sortOption)
         column.result(column.key, sortOption)
       }
