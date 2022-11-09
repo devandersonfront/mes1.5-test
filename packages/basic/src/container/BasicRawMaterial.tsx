@@ -9,7 +9,7 @@ import {
   ExcelDownloadModal,
   IExcelHeaderType,
   BarcodeModal,
-  columnlist,
+  columnlist, UnitContainer,
 } from "shared";
 // @ts-ignore
 import { SelectColumn } from "react-data-grid";
@@ -120,10 +120,11 @@ const BasicRawMaterial = ({}: IProps) => {
         result: v.sortOption ? changeOrder : null,
       }
     });
-
+    // 단가 테스트를 위한 강제로 주입한 column / 추후에 메뉴로 받아오면 삭제 필요
+    tmpColumn.splice(8,0,{ key: 'price', name: '단가', formatter: UnitContainer,editor: TextEditor,inputType: 'number', width:118, placeholder: "0", unitData:"원"})
     Promise.all(tmpColumn).then((res) => {
       setColumn([
-        ...res.map((v) => {
+        ...res.map((v,index) => {
           return {
             ...v,
             name: v.moddable ? v.name + "(필수)" : v.name,

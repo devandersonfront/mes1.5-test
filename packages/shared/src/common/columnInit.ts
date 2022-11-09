@@ -346,6 +346,7 @@ export const columnlist: any = {
       ]
     },
     { key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})) },
+    { key: 'price', name: '단가', formatter: UnitContainer, placeholder: "0", unitData:"원"},
     { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
@@ -496,6 +497,7 @@ export const columnlist: any = {
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', placeholder: '자동 입력' },
     { key: 'amount', name: '입고량(필수)', editor: TextEditor, formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', placeholder: '0', inputType: 'number' },
+    { key: 'price', name: '단가', editor: TextEditor, formatter: UnitContainer, unitData: '원', placeholder: '0', inputType: 'number' },
     { key: 'date', name: '입고일(필수)', formatter: CalendarBox },
     { key: 'lot_number', name: '원자재 LOT 번호(필수)', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'LOT 입력' },
     { key: 'addRow', name: '행 추가', formatter: AddRowButton, basicRow, setBasicRow  },
