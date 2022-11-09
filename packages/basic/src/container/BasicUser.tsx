@@ -144,8 +144,18 @@ const BasicUser = ({}: IProps) => {
       if(!!row.password && !checkValid(row.password, 'password')) throw('비밀번호는 8자 이상 16자 이하이어야 하며, 숫자/영문/특수문자(#?!@$%^&*-)를 모두 포함해야 합니다.')
       if(row.alarm && !row.email) throw('이메일을 입력해주세요.')
       if(row.telephone && !checkValid(row.telephone, "telephone")) throw('전화번호 양식을 맞추주세요.')
+      if(alarmValidate("alarm", 1)) throw("SMS 알람은 1개 이상 선택할 수 없습니다.")
+      if(alarmValidate("email_alarm", 1)) throw("Email 알람은 1개 이상 선택할 수 없습니다.")
   }
 
+  const alarmValidate = (key:string, length:number) => {
+    let count = 0
+    basicRow.map((row) => {
+      if(row[key] && row[key] !== undefined) count++
+    })
+    //true가 나오면 length보다 값이 많다는 뜻
+    if(count > length) return true
+  }
   const SaveBasic = async () => {
     try{
       if(selectList.size === 0){
@@ -400,16 +410,10 @@ const BasicUser = ({}: IProps) => {
           })
           .filter((v: any) => v)
       : [];
-    // let additionalData: any[] = []
-
-    // additionalMenus.map((v: any) => {
-    //   if(v.type === 'additional'){
-    //     additionalData.push(v.key)
-    //   }
-    // })
 
     tmpRow = res.info_list;
-    // tmpColumn.push({ key: 'alarm', name:"이메일 알람", formatter: Checkbox, width:118},)
+    tmpColumn.push({ key: 'alarm', name:"SMS 알람", formatter: Checkbox, width:118},)
+    tmpColumn.push({ key: 'email_alarm', name:"Email 알람", formatter: Checkbox, width:118},)
     loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {

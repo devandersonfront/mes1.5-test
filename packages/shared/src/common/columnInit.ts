@@ -65,6 +65,7 @@ import { RAW_MATERIAL_UNIT_CODE } from './TransferFunction'
 import { AddRowButton } from '../components/Buttons/AddRowButton'
 import {DatetimePickerBox} from "../components/CalendarBox/DatetimePickerBox";
 import {MachineSelectModal} from "../components/Modal/MachineSelectModal";
+import Checkbox from "../components/InputBox/Checkbox";
 
 export const columnlist: any = {
   member: [
@@ -77,7 +78,8 @@ export const columnlist: any = {
     { key: 'password',formatter: PasswordBox, placeholder: "비밀번호 입력", editor: TextEditor },
     { key: 'password-confirm', formatter: PasswordBox, placeholder: "비밀번호 확인", editor: TextEditor },
     { key: 'profile', formatter: FileEditer, type: "image" , unprintable : true},
-    { key: 'alarm', formatter: FileEditer, type: "image" , unprintable : true},
+    { key: 'alarm', name:"SMS 알람", formatter: Checkbox, width:118},
+    { key: 'email_alarm', name:"Email 알람", formatter: Checkbox, width:118},
   ],
   factory: [
     { key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력', headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
