@@ -23,6 +23,7 @@ import {BomInfoModal} from '../components/Modal/BomInfoModal'
 import {UseDateCell} from '../components/Cell/UseDateCell'
 import {BomRegisterInit} from '../components/Modal/InfoModal/InfoModalInit'
 import {BomRegisterModal} from '../components/Modal/BomRegisterModal'
+import {BomRegisterModalTest} from '../components/Modal/BomRegisterModalTest'
 import {InputMaterialInfoModal} from '../components/Modal/InputMaterialInfoModal'
 import {WorkRegisterModal} from '../components/Modal/WorkRegisterModal'
 import {WorkListModal} from '../components/Modal/WorkListModal'
@@ -785,7 +786,7 @@ export const columnlist: any = {
     { key: "unit", name: "단위", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "process_id", name: "생산 공정", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "goal", name: "목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118, inputType: 'number' , textMultiInput},
-    { key: 'input', name: '자재 선택', formatter: BomRegisterModal, width: 118 },
+    { key: 'input', name: '자재 선택', formatter: BomRegisterModalTest, width: 118 },
   ]),
   operationIdentificationRegisterV2: [
     { key: "contract_id", name: "수주 번호", formatter: SearchModalTest, type: 'order', placeholder: '검색', disableType: "true", width: 118, noSelect: true },

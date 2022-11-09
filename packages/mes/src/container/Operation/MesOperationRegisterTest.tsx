@@ -14,7 +14,7 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
-import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
+import {TransferCodeToValue, TransferValueToCode} from 'shared/src/common/TransferFunction'
 import {useDispatch, useSelector} from "react-redux";
 import {SearchModalResult, SearchResultSort} from "shared/src/Functions/SearchResultSort";
 import {delete_operation_searchKey} from "shared/src/reducer/operationRegisterState";
@@ -22,6 +22,8 @@ import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menu
 import {NoneSelectedValidation, RequiredValidation, NoAmountValidation} from "shared/src/validations/Validation";
 import addColumnClass from '../../../../main/common/unprintableKey'
 import { ParseResponse } from 'shared/src/common/Util'
+import {insert_summary_info} from "shared/src/reducer/infoModal";
+import {TransferType} from "shared/src/@types/type";
 
 interface IProps {
     page?: number
@@ -46,11 +48,11 @@ const MesOperationRegisterTest = ({page, keyword, option}: IProps) => {
     const [basicRow, setBasicRow] = useState<Array<any>>([initRow])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationCodeRegisterV2"])
     const [selectList, setSelectList] = useState<Set<any>>(new Set())
+    const [inputBom , setInputBom] = useState<boolean>()
     const [modal , setModal] = useState<ModalType>({
         type : 'inputMaterial',
         isVisible : false
     })
-
 
     useEffect(() => {
         if(router.query.contractId !== undefined && firstCheck){
@@ -74,6 +76,174 @@ const MesOperationRegisterTest = ({page, keyword, option}: IProps) => {
     useEffect(() => {
         if(parentProduct) loadGraphSheet(parentProduct)
     }, [parentProduct])
+
+    useEffect(()=> {
+        (async () => {
+            if (basicRow.every((row)=>row.bom_root_id) && !basicRow.some((row)=>row.selectBom) && inputBom) {
+                const result = await Promise.all(basicRow.map(async row => await SearchBasic(row)))
+                setBasicRow(result)
+                setInputBom(false)
+            }
+        })();
+    },[inputBom])
+
+    const haveBasicValidation = (searchList) => {
+
+        let rawMaterialBasic = [] ;
+        let subMaterialBasic = [] ;
+        let productBasic = [];
+
+        let haveRawMaterialBasic;
+        let haveSubMaterialBasic;
+        let haveProductBasic;
+
+        searchList.map((list)=>{
+            if(list.tab === 0){
+                rawMaterialBasic.push({type : list.setting})
+            }else if(list.tab === 1){
+                subMaterialBasic.push({type : list.setting})
+            }else if(list.tab === 2){
+                productBasic.push({type : list.setting})
+            }
+        })
+
+        if(rawMaterialBasic.length !== 0){
+            haveRawMaterialBasic = rawMaterialBasic.some((v) => v.type === 1)
+        }else{
+            haveRawMaterialBasic = true
+        }
+
+        if(subMaterialBasic.length !== 0){
+            haveSubMaterialBasic = subMaterialBasic.some((v) => v.type === 1)
+        }else{
+            haveSubMaterialBasic = true
+        }
+
+        if(productBasic.length !== 0){
+            haveProductBasic = productBasic.some((v) => v.type === 1)
+        }else{
+            haveProductBasic = true
+        }
+        if(haveRawMaterialBasic && haveSubMaterialBasic && haveProductBasic){
+            return true
+        }
+
+        return false
+
+    }
+
+    const executeValidation = (searchList) => {
+
+        let isValidation = false
+        const haveBasic = haveBasicValidation(searchList)
+
+        if(!haveBasic){
+            isValidation = true
+            Notiflix.Report.warning("경고",`자재 보기를 눌러 BOM 등록을 해주세요. 품목 종류별로 최소 한 개 이상은 사용해야 합니다.`,"확인",)
+        }
+
+        return isValidation
+
+    }
+
+    const SearchBasic = async (row) => {
+        Notiflix.Loading.circle()
+        const res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
+        if(res) {
+            let searchList = changeRow(res)
+            const isValidation = executeValidation(searchList)
+            if (!isValidation) {
+                return {
+                    ...row,
+                    input_bom: [
+                        ...searchList.map((v, i) => {
+                            // if(v.spare === '여'){
+                            return {
+                                bom: {
+                                    seq: i + 1,
+                                    type: v.tab,
+                                    parent: v.parent,
+                                    child_product: v.tab === 2 ? {...v.product} : null,
+                                    child_rm: v.tab === 0 ? {
+                                        ...v.raw_material,
+                                        unit: TransferValueToCode(v.raw_material.unit, 'rawMaterialUnit')
+                                    } : null,
+                                    child_sm: v.tab === 1 ? {...v.sub_material} : null,
+                                    key: v.parent?.bom_root_id,
+                                    setting: v.setting,
+                                    usage: v.usage,
+                                }
+                            }
+                            // }
+                        }).filter(v => v)
+                    ],
+                    name: row.name,
+                    isChange: true
+                }
+            }
+        }
+    }
+
+    const changeRow = (tmpRow) => {
+        const parsedRes = ParseResponse(tmpRow)
+        return parsedRes.map((v, i) => {
+            const bomDetail:{childData:any, bomType: TransferType, objectKey: string} = {
+                childData: {},
+                bomType: undefined,
+                objectKey: undefined
+            }
+
+            console.log(basicRow[i])
+
+            switch(v.type){
+                case 0:{
+                    const childData = {...v.child_rm}
+                    childData.unit = TransferCodeToValue(childData.unit, 'rawMaterialUnit')
+                    bomDetail['childData'] = childData
+                    bomDetail['bomType'] = 'rawMaterial'
+                    bomDetail['objectKey'] = 'raw_material'
+                    break;
+                }
+                case 1:{
+                    bomDetail['childData'] = v.child_sm
+                    bomDetail['bomType'] = 'subMaterial'
+                    bomDetail['objectKey'] = 'sub_material'
+                    break;
+                }
+                case 2:{
+                    bomDetail['childData'] = v.child_product
+                    bomDetail['bomType'] = 'product'
+                    bomDetail['objectKey'] = 'product'
+                    break;
+                }
+            }
+
+            return {
+                ...bomDetail.childData,
+                seq: i+1,
+                code: bomDetail.childData.code,
+                type: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
+                tab: v.type,
+                product_type: v.type !== 2 ? '-' : TransferCodeToValue(bomDetail.childData?.type, 'productType'),
+                type_name: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
+                unit: bomDetail.childData.unit,
+                parent: v.parent,
+                usage: v.usage,
+                version: v.version,
+                setting: v.setting,
+                isDefault: v.setting == 1 ? '기본' : '스페어',
+                stock: bomDetail.childData.stock,
+                disturbance: Number(basicRow[i]?.goal) * Number(v.usage),
+                processArray: bomDetail.childData.process ?? null,
+                process: bomDetail.childData.process ? bomDetail.childData.process.name : '-',
+                // spare:'부',
+                bom_root_id: bomDetail.childData.bom_root_id,
+                [bomDetail.objectKey]: {...bomDetail.childData},
+            }
+        })
+    }
+
+
 
     const getColumns = async () => {
         let res = await RequestMethod('get', `loadMenu`, {
@@ -250,6 +420,7 @@ const MesOperationRegisterTest = ({page, keyword, option}: IProps) => {
         }
         setSelectList(newSelectList)
         setBasicRow(parentProduct)
+        setInputBom(true)
         return parentProduct
     }
 
@@ -258,8 +429,8 @@ const MesOperationRegisterTest = ({page, keyword, option}: IProps) => {
             case 0:
                 break;
             case 2:
-                setModal({...modal, isVisible : true})
-                // SaveBasic(basicRow.filter(row => selectList.has(row.id)))
+                // setModal({...modal, isVisible : true})
+                SaveBasic(basicRow.filter(row => selectList.has(row.id)))
                 break;
         }
     }
@@ -310,6 +481,7 @@ const MesOperationRegisterTest = ({page, keyword, option}: IProps) => {
                                     isChange: false
                                 }
                             })
+                            setInputBom(true)
                             setSelectList(newSelectList)
                             setBasicRow(newRow)
                         }
@@ -321,9 +493,9 @@ const MesOperationRegisterTest = ({page, keyword, option}: IProps) => {
                 width={1576}
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
             />
-            <InputMaterialViewModal
-                isVisible={modal.isVisible}
-            />
+            {/*<InputMaterialViewModal*/}
+            {/*    isVisible={modal.isVisible}*/}
+            {/*/>*/}
         </div>
     );
 }
