@@ -4,7 +4,7 @@ import ProfileHeader from '../../../component/Profile/ProfileHeader'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {NextPageContext} from 'next'
-import {MesOperationRegisterTest} from "mes";
+import {MesOperationRegister} from "mes";
 
 
 interface IProps {
@@ -21,7 +21,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
       <MenuNavigation pageType={'MES'}/>
       <div style={{paddingBottom: 40}}>
         <ProfileHeader/>
-        <MesOperationRegisterTest/>
+        <MesOperationRegister/>
       </div>
     </div>
   );

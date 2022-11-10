@@ -5,7 +5,7 @@ import {
   ExcelDownloadModal,
   ExcelTable,
   Header as PageHeader,
-  IExcelHeaderType,
+  IExcelHeaderType, InputMaterialViewModal,
   RequestMethod, RootState,
 } from 'shared'
 // @ts-ignore
@@ -14,7 +14,7 @@ import Notiflix from "notiflix";
 import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import moment from 'moment'
-import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
+import {TransferCodeToValue, TransferValueToCode} from 'shared/src/common/TransferFunction'
 import {useDispatch, useSelector} from "react-redux";
 import {SearchModalResult, SearchResultSort} from "shared/src/Functions/SearchResultSort";
 import {delete_operation_searchKey} from "shared/src/reducer/operationRegisterState";
@@ -22,11 +22,18 @@ import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menu
 import {NoneSelectedValidation, RequiredValidation, NoAmountValidation} from "shared/src/validations/Validation";
 import addColumnClass from '../../../../main/common/unprintableKey'
 import { ParseResponse } from 'shared/src/common/Util'
+import {insert_summary_info} from "shared/src/reducer/infoModal";
+import {TransferType} from "shared/src/@types/type";
 
 interface IProps {
   page?: number
   keyword?: string
   option?: number
+}
+
+type ModalType = {
+  type : string
+  isVisible : boolean
 }
 
 const initRow ={ id: undefined, date: moment().format('YYYY-MM-DD'), deadline: moment().format('YYYY-MM-DD'), first:true }
@@ -41,7 +48,12 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const [basicRow, setBasicRow] = useState<Array<any>>([initRow])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>(columnlist["operationCodeRegisterV2"])
   const [selectList, setSelectList] = useState<Set<any>>(new Set())
+  const [modal , setModal] = useState<ModalType>({
+    type : 'inputMaterial',
+    isVisible : false
+  })
 
+  const [inputBom , setInputBom] = useState<boolean>()
 
   useEffect(() => {
     if(router.query.contractId !== undefined && firstCheck){
@@ -66,6 +78,170 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     if(parentProduct) loadGraphSheet(parentProduct)
   }, [parentProduct])
 
+  useEffect(()=> {
+    (async () => {
+      if (basicRow.every((row)=>row.bom_root_id) && inputBom) {
+        const result = await Promise.all(basicRow.map(async row => await SearchBasic(row)))
+        setBasicRow(result)
+        setInputBom(false)
+      }
+    })();
+  },[inputBom])
+
+  const haveBasicValidation = (searchList) => {
+
+    let rawMaterialBasic = [] ;
+    let subMaterialBasic = [] ;
+    let productBasic = [];
+
+    let haveRawMaterialBasic;
+    let haveSubMaterialBasic;
+    let haveProductBasic;
+
+    searchList.map((list)=>{
+      if(list.tab === 0){
+        rawMaterialBasic.push({type : list.setting})
+      }else if(list.tab === 1){
+        subMaterialBasic.push({type : list.setting})
+      }else if(list.tab === 2){
+        productBasic.push({type : list.setting})
+      }
+    })
+
+    if(rawMaterialBasic.length !== 0){
+      haveRawMaterialBasic = rawMaterialBasic.some((v) => v.type === 1)
+    }else{
+      haveRawMaterialBasic = true
+    }
+
+    if(subMaterialBasic.length !== 0){
+      haveSubMaterialBasic = subMaterialBasic.some((v) => v.type === 1)
+    }else{
+      haveSubMaterialBasic = true
+    }
+
+    if(productBasic.length !== 0){
+      haveProductBasic = productBasic.some((v) => v.type === 1)
+    }else{
+      haveProductBasic = true
+    }
+    if(haveRawMaterialBasic && haveSubMaterialBasic && haveProductBasic){
+      return true
+    }
+
+    return false
+
+  }
+
+  const executeValidation = (searchList) => {
+
+    let isValidation = false
+    const haveBasic = haveBasicValidation(searchList)
+
+    if(!haveBasic){
+      isValidation = true
+      Notiflix.Report.warning("경고",`자재 보기를 눌러 BOM 등록을 해주세요. 품목 종류별로 최소 한 개 이상은 사용해야 합니다.`,"확인",)
+    }
+
+    return isValidation
+
+  }
+
+  const SearchBasic = async (row) => {
+    Notiflix.Loading.circle()
+    const res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
+    if(res) {
+      let searchList = changeRow(res)
+      const isValidation = executeValidation(searchList)
+      if (!isValidation) {
+        return {
+          ...row,
+          input_bom: [
+            ...searchList.map((v, i) => {
+              // if(v.spare === '여'){
+              return {
+                bom: {
+                  seq: i + 1,
+                  type: v.tab,
+                  parent: v.parent,
+                  child_product: v.tab === 2 ? {...v.product} : null,
+                  child_rm: v.tab === 0 ? {
+                    ...v.raw_material,
+                    unit: TransferValueToCode(v.raw_material.unit, 'rawMaterialUnit')
+                  } : null,
+                  child_sm: v.tab === 1 ? {...v.sub_material} : null,
+                  key: v.parent?.bom_root_id,
+                  setting: v.setting,
+                  usage: v.usage,
+                }
+              }
+              // }
+            }).filter(v => v)
+          ],
+          searchList : searchList,
+          name: row.name,
+          isChange: true,
+        }
+      }
+    }
+  }
+
+  const changeRow = (tmpRow) => {
+    const parsedRes = ParseResponse(tmpRow)
+    return parsedRes.map((v, i) => {
+      const bomDetail:{childData:any, bomType: TransferType, objectKey: string} = {
+        childData: {},
+        bomType: undefined,
+        objectKey: undefined
+      }
+      switch(v.type){
+        case 0:{
+          const childData = {...v.child_rm}
+          childData.unit = TransferCodeToValue(childData.unit, 'rawMaterialUnit')
+          bomDetail['childData'] = childData
+          bomDetail['bomType'] = 'rawMaterial'
+          bomDetail['objectKey'] = 'raw_material'
+          break;
+        }
+        case 1:{
+          bomDetail['childData'] = v.child_sm
+          bomDetail['bomType'] = 'subMaterial'
+          bomDetail['objectKey'] = 'sub_material'
+          break;
+        }
+        case 2:{
+          bomDetail['childData'] = v.child_product
+          bomDetail['bomType'] = 'product'
+          bomDetail['objectKey'] = 'product'
+          break;
+        }
+      }
+
+      return {
+        ...bomDetail.childData,
+        seq: i+1,
+        code: bomDetail.childData.code,
+        type: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
+        tab: v.type,
+        product_type: v.type !== 2 ? '-' : TransferCodeToValue(bomDetail.childData?.type, 'productType'),
+        type_name: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
+        unit: bomDetail.childData.unit,
+        parent: v.parent,
+        usage: v.usage,
+        version: v.version,
+        setting: v.setting,
+        isDefault: v.setting == 1 ? '기본' : '스페어',
+        stock: bomDetail.childData.stock,
+        // disturbance: Number(basicRow[i]?.goal) * Number(v.usage),
+        processArray: bomDetail.childData.process ?? null,
+        process: bomDetail.childData.process ? bomDetail.childData.process.name : '-',
+        // spare:'부',
+        bom_root_id: bomDetail.childData.bom_root_id,
+        [bomDetail.objectKey]: {...bomDetail.childData},
+      }
+    })
+  }
+
   const getColumns = async () => {
     let res = await RequestMethod('get', `loadMenu`, {
       path: {
@@ -74,7 +250,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     })
 
     if(res){
-      let tmpColumn = codeCheck ?  columnlist["operationCodeRegisterV2"]() : columnlist['operationIdentificationRegisterV2']
+      let tmpColumn = codeCheck ?  columnlist["operationCodeRegisterV2"]() : columnlist['operationIdentificationRegisterV2']()
 
       tmpColumn = tmpColumn.map((column: any) => {
         let menuData: object | undefined;
@@ -142,140 +318,52 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
   const validateSaveRequest = (selectedData: any[]) => {
     return NoneSelectedValidation(selectedData) ||
-    RequiredValidation('product_id', selectedData,"CODE OR 수주번호를 선택해주세요.") ||
-    RequiredValidation('input_bom', selectedData,"자재 보기를 눌러 BOM 등록을 해주세요.") ||
-    NoAmountValidation('goal', selectedData, "목표 생산량을 입력해 주세요.")
+        RequiredValidation('product_id', selectedData,"CODE OR 수주번호를 선택해주세요.") ||
+        RequiredValidation('input_bom', selectedData,"자재 보기를 눌러 BOM 등록을 해주세요.") ||
+        NoAmountValidation('goal', selectedData, "목표 생산량을 입력해 주세요.")
   }
 
   const SaveBasic = async (selectedData: any[]) => {
     if(validateSaveRequest(selectedData)) return
     let res: any
     res = await RequestMethod('post', `sheetSave`,
-      selectedData.map((row, i) => {
-        let selectKey: string[] = []
-        column.map((v) => {
-          if (v.selectList) {
-            selectKey.push(v.key)
-          }
-        })
-        let selectData: any = {}
-
-        Object.keys(row).map(v => {
-          if (v.indexOf('PK') !== -1) {
-            selectData = {
-              ...selectData,
-              [v.split('PK')[0]]: row[v]
+        selectedData.map((row, i) => {
+          let selectKey: string[] = []
+          column.map((v) => {
+            if (v.selectList) {
+              selectKey.push(v.key)
             }
-          }
+          })
+          let selectData: any = {}
 
-        })
-        return {
-          ...row,
-          ...selectData,
-          contract: selectedData[0].contract,
-          os_id: undefined,
-          version: undefined,
-          input_bom: [ ...row?.input_bom?.map((bom) => {
-            bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
-            return { ...bom }
-          }) ] ?? [],
-          status: 1,
-        }
-      }))
+          Object.keys(row).map(v => {
+            if (v.indexOf('PK') !== -1) {
+              selectData = {
+                ...selectData,
+                [v.split('PK')[0]]: row[v]
+              }
+            }
+
+          })
+          return {
+            ...row,
+            ...selectData,
+            contract: selectedData[0].contract,
+            os_id: undefined,
+            version: undefined,
+            input_bom: [ ...row?.input_bom?.map((bom) => {
+              bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
+              return { ...bom }
+            }) ] ?? [],
+            status: 1,
+          }
+        }))
     if (res) {
       Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
         router.push('/mes/operationV1u/list')
       });
     }
   }
-
-  // const loadLatestSheet = async (product_id: string, object?: any) => {
-  //   Notiflix.Loading.circle()
-  //   const res = await RequestMethod('get', `sheetLatestList`,{
-  //     path: { product_id }
-  //   })
-  //   let resultData = [];
-  //   if(res){
-  //     setSelectList(new Set())
-  //     Notiflix.Report.success("알림","최근 작업지시서를 불러왔습니다.","확인")
-  //     let row:any = [];
-  //     if(typeof res === 'string'){
-  //       let tmpRowArray = res.split('\n')
-  //
-  //       row = tmpRowArray.map(v => {
-  //         if(v !== ""){
-  //           let tmp = JSON.parse(v)
-  //           return tmp
-  //         }
-  //       }).filter(v=>v)
-  //       resultData = [...row.map((data, index) => {
-  //         let random_id = Math.random()*1000;
-  //         return index === 0 ?
-  //             {
-  //               ...object,
-  //               contract_id:"-",
-  //               bom_root_id: data.product?.bom_root_id,
-  //               id: "operation_"+random_id,
-  //               date: data?.date ?? moment().format("YYYY-MM-DD"),
-  //               deadline: data?.deadline ?? moment().format("YYYY-MM-DD"),
-  //               name:data.product?.name,
-  //               model:data.product?.model,
-  //               cm_id: data.product?.model.model,
-  //               code:data.product?.code,
-  //               product_id:data.product?.code,
-  //               process_id:data.product?.process?.name ?? "-",
-  //             }
-  //             :
-  //             {
-  //               contract_id:"-",
-  //               date: data?.data === undefined ? moment().format("YYYY-MM-DD") : data.date,
-  //               deadline: data?.deadline === undefined ? moment().format("YYYY-MM-DD") : data.deadline,
-  //               customer:data.product?.customer ?? "-",
-  //               customer_id: data.product?.customer.name ?? "-",
-  //               model:data.product?.model,
-  //               cm_id: data.product?.model.model,
-  //               product_id: data.product?.code,
-  //               type:data.product?.type === 0 ? "반제품" : data.product.type === 1 ? "재공품" :"완제품" ,
-  //               type_id:data.product?.type,
-  //               unit: data.product?.unit,
-  //               bom_root_id: data.product?.bom_root_id,
-  //               id: "operation_"+random_id,
-  //               name:data.product?.name,
-  //               process_id:data.product?.process?.name ?? "-",
-  //               goal: 0,
-  //             }
-  //       })]
-  //     } else{
-  //       let random_id = Math.random()*1000;
-  //       resultData = [
-  //         {
-  //           ...res,
-  //           first:true,
-  //           contract_id: "-",
-  //           code: res.product.code,
-  //           date: res?.data === undefined ? moment().format("YYYY-MM-DD") : res.date,
-  //           deadline: res?.deadline === undefined ? moment().format("YYYY-MM-DD") : res.deadline,
-  //           customer:res.product.customer,
-  //           customer_id: res.product.customer?.name,
-  //           model:res.product.model,
-  //           cm_id: res.product.model?.model ?? '-',
-  //           product_id: res.product.code,
-  //           type:res.product.type === 0 ? "반제품" : res.product.type === 1 ? "재공품" :"완제품" ,
-  //           type_id:res.product.type,
-  //           unit: res.product.unit,
-  //           bom_root_id: res.product?.bom_root_id,
-  //           id: "operation_"+random_id,
-  //           name:res.product?.name,
-  //           process_id:res.product?.process?.name ?? "-",
-  //         }
-  //       ]
-  //     }
-  //
-  //     return resultData;
-  //   }else{
-  //     return loadGraphSheet(product_id, object)
-  //   }
-  // }
 
   const loadGraphSheet = async (object?: any) => {
     Notiflix.Loading.circle()
@@ -329,6 +417,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     }
     setSelectList(newSelectList)
     setBasicRow(parentProduct)
+    setInputBom(true)
     return parentProduct
   }
 
@@ -337,27 +426,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
       case 0:
         break;
       case 2:
-        SaveBasic(basicRow.filter(row => selectList.has(row.id)))
-        break;
-      case 3:
-        // if(selectList.size > 0) {
-        //   Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
-        //       () => {
-        //           const resultBasic = [...basicRow];
-        //           const result = resultBasic.filter((row, index) => !selectList.has(row.id))
-        //           if(result.length === 0){
-        //             result.push(initRow)
-        //           } else {
-        //             result[0] = {...result[0], first:true}
-        //           }
-        //           setBasicRow(result)
-        //         Notiflix.Report.success("삭제되었습니다.", "", "확인", () => {
-        //         })
-        //       },
-        //   )
-        // }else{
-        //   Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인");
-        // }
+        setModal({...modal, isVisible : true})
         break;
     }
   }
@@ -389,7 +458,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             selectable
             headerList={[
               SelectColumn,
-              ...addColumnClass(codeCheck ? [...columnlist["operationCodeRegisterV2"](textMultiInput)] : columnlist['operationIdentificationRegisterV2'])
+              ...addColumnClass(codeCheck ? [...columnlist["operationCodeRegisterV2"](textMultiInput)] : columnlist['operationIdentificationRegisterV2'](textMultiInput))
             ]}
             row={basicRow}
             setRow={async (row) => {
@@ -419,6 +488,20 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             width={1576}
             height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
         />
+        {
+            modal.isVisible && modal.type === 'inputMaterial' &&
+            <InputMaterialViewModal
+                isOpen={modal.isVisible}
+                isClose={()=>{
+                  setModal({
+                    ...modal,
+                    isVisible : false
+                  })
+                }}
+                onClick={() => SaveBasic(basicRow.filter(row => selectList.has(row.id)))}
+                data={basicRow.filter(row => selectList.has(row.id))}
+            />
+        }
       </div>
   );
 }
