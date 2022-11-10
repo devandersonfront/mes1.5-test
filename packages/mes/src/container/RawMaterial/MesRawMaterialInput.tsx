@@ -60,7 +60,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
                        validate={validate}
                        setPostBody={setPostBody}
                        apiType={'lotRmSave'}
-                       afterSavePath={'/mes/rawmaterialV1u/stock'}
+                       afterSavePath={'/mes/rawmaterialV1u/inputList'}
                        columnKey={'rawinV1u'}
                        checkDuplicate={checkDuplicateLotNumber}
                        initData={{ id: "", date: moment().format('YYYY-MM-DD')}}
