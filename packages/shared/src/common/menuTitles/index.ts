@@ -72,8 +72,9 @@ export const MesTitles = (customTarget?: string) => {
     _opReList: toMenu(titles._opReList,'/mes/recordV2/list'),
     _opComList: toMenu(titles._opComList,'/mes/finishV2/list'),
 
-    rawMgmt: toMenu(titles.mesRawMgmt, '' , ['_rawReg','_rawStock', '_rawExportList']),
+    rawMgmt: toMenu(titles.mesRawMgmt, '' , ['_rawReg','_rawInputList','_rawStock', '_rawExportList']),
     _rawReg: toMenu(titles._rawReg,'/mes/rawmaterialV1u/input'),
+    _rawInputList: toMenu(titles._rawInputList,'/mes/rawmaterialV1u/inputList'),
     _rawStock: toMenu(titles._rawStock,'/mes/rawmaterialV1u/stock'),
     _rawExportList: toMenu(titles._rawExportList,'/mes/rawmaterialV1u/export/list'),
 
