@@ -38,6 +38,7 @@ export const titles = {
     _opComList: '작업 완료 리스트',
     mesRawMgmt: '원자재 관리',
     _rawReg: '원자재 입고 등록',
+    _rawInputList: '원자재 입고 현황',
     _rawStock: '원자재 재고 현황',
     _rawExportList: '원자재 출고 현황',
     mesSubMgmt: '부자재 관리',

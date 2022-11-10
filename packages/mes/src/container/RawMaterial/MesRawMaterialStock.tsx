@@ -8,7 +8,7 @@ import {
   MAX_VALUE,
   PaginationComponent,
   RequestMethod,
-  TextEditor
+  TextEditor, UnitContainer
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -120,7 +120,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         result: v.sortOption ? changeOrder : null,
       }
     });
-
     setColumn(tmpColumn);
   }
 
@@ -471,7 +470,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         selectDate={selectDate}
         //@ts-ignore
         setSelectDate={onSelectDate}
-        title={"원자재 재고 현황"}
+        title={"원자재 입고 현황"}
         buttons={
           selectList.size > 1
               ?
