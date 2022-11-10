@@ -329,6 +329,25 @@ export const searchModalList: any = {
     {key: 'stock', name: '재고량', formatter: UnitContainer, textAlign: 'center',placeholder: "0", textType:"Modal", type: 'selectUnit'},
     // {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' ,modalType: true , type : 'readonly' },
   ],
+
+  bomRegisterModal: [
+    {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'code', name: 'CODE', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'name', name: '품명', formatter: LineBorderContainer, textAlign: 'center',placeholder: '-'},
+    {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor, readonly : true, selectList: [
+        {pk: 1, name: '여'},
+        {pk: 0, name: '부'},
+      ], modalType: true, type:"Modal"
+    },
+    {key: 'isDefault', name: '기본/스페어', width: 160, formatter: LineBorderContainer, textAlign: 'left'},
+    {key: 'product_type', name: '구분', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'type', name: '품목 종류', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'unit', name: '단위', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'usage', name: '1회 사용량', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center',placeholder: '-'},
+    {key: 'stock', name: '재고량', formatter: UnitContainer, textAlign: 'center',placeholder: "0", textType:"Modal", type: 'selectUnit'},
+    // {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' ,modalType: true , type : 'readonly' },
+  ],
   InputInfo: [
     {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'code', name: 'CODE', formatter: LineBorderContainer, textAlign: 'center'},
@@ -551,7 +570,9 @@ export const searchModalList: any = {
     {key: 'model_name', name: '모델', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'code', name: 'CODE', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'name', name: '품명', formatter: LineBorderContainer ,placeholder:"-",},
-    {key: 'product_type', name: '구분', formatter: LineBorderContainer ,placeholder:"-",},
+    // {key: 'product_type', name: '구분', formatter: LineBorderContainer ,placeholder:"-",},
+
+
     {key: 'type_name', name: '품목 종류', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'stock', name: '품목 재고', formatter: LineBorderContainer ,placeholder: 0,},
   ],
