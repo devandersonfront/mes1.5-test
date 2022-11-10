@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react'
 import {
-    columnlist,
-    excelDownload,
-    ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    PaginationComponent,
-    RequestMethod,
-    TextEditor
+  columnlist,
+  excelDownload, ExcelDownloadModal,
+  ExcelTable,
+  Header as PageHeader,
+  IExcelHeaderType,
+  MAX_VALUE,
+  PaginationComponent,
+  RequestMethod,
+  TextEditor
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -536,7 +536,7 @@ const BasicModel = ({}: IProps) => {
         optionIndex={optionIndex}
         title={"모델 관리"}
         buttons={
-          ['','', '항목관리', '행 추가', '저장하기', '삭제']
+          ['','엑셀', '항목관리', '행 추가', '저장하기', '삭제']
         }
         buttonsOnclick={onClickHeaderButton}
       />
@@ -574,6 +574,13 @@ const BasicModel = ({}: IProps) => {
         setPage={(page) => {
           setPageInfo({...pageInfo,page:page})
         }}
+      />
+      <ExcelDownloadModal
+          isOpen={excelOpen}
+          setIsOpen={setExcelOpen}
+          category={"model"}
+          title={"모델 관리"}
+          resetFunction={() => reload()}
       />
     </div>
   );
