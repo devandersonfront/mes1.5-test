@@ -43,6 +43,7 @@ type ModalType = {
 const optionList = ["원자재 CODE", "원자재 품명", "재질", "거래처",]
 
 const BasicRawMaterial = ({readonly}: IProps) => {
+  console.log("readonly : ", readonly)
   const router = useRouter();
   const dispatch = useDispatch();
   const userInfo = useSelector(selectUserInfo)
@@ -128,9 +129,9 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           return {
             ...v,
             name: v.moddable ? v.name + "(필수)" : v.name,
-            readonly:readonly,
+            // readonly:readonly ?? false,
             formatter: v.formatter === SearchModalTest ? undefined : v.formatter,
-            fixed: readonly
+            // fixed: readonly ?? false
           };
         }),
       ]);
