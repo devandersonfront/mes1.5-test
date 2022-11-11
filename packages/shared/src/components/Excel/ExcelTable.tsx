@@ -196,7 +196,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
       }}
         //@ts-ignore
       rowClass={(row : any) => {
-        switch (row.type) {
+        switch (row?.type) {
           case '원자재' :
             return 'rawMaterial_Line'
           case '부자재' :

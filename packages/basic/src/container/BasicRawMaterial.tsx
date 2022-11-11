@@ -9,7 +9,7 @@ import {
   ExcelDownloadModal,
   IExcelHeaderType,
   BarcodeModal,
-  columnlist,
+  columnlist, UnitContainer,
 } from "shared";
 // @ts-ignore
 import { SelectColumn } from "react-data-grid";
@@ -26,12 +26,14 @@ import addColumnClass from '../../../main/common/unprintableKey'
 import {selectUserInfo} from "shared/src/reducer/userInfo";
 import {unUsedCompanyCode} from "shared/src/common/companyCode";
 import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
+import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
 
 export interface IProps {
   children?: any;
   page?: number;
   keyword?: string;
   option?: number;
+  readonly?: boolean
 }
 
 type ModalType = {
@@ -40,7 +42,7 @@ type ModalType = {
 }
 const optionList = ["원자재 CODE", "원자재 품명", "재질", "거래처",]
 
-const BasicRawMaterial = ({}: IProps) => {
+const BasicRawMaterial = ({readonly}: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const userInfo = useSelector(selectUserInfo)
@@ -120,13 +122,15 @@ const BasicRawMaterial = ({}: IProps) => {
         result: v.sortOption ? changeOrder : null,
       }
     });
-
     Promise.all(tmpColumn).then((res) => {
       setColumn([
-        ...res.map((v) => {
+        ...res.map((v,index) => {
           return {
             ...v,
             name: v.moddable ? v.name + "(필수)" : v.name,
+            readonly:readonly ?? false,
+            formatter: v.formatter === SearchModalTest ? undefined : v.formatter,
+            fixed: readonly ?? false
           };
         }),
       ]);
@@ -661,8 +665,13 @@ const BasicRawMaterial = ({}: IProps) => {
             setOptionIndex(option)
           }}
           optionIndex={optionIndex}
-          title={"원자재 기준정보"}
-          buttons={[ (selectList.size <= 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]}
+          title={readonly ? "원자재 재고 현황" : "원자재 기준정보"}
+          buttons={
+            readonly ?
+                [ (selectList.size <= 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"),]
+                :
+                [ (selectList.size <= 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]
+          }
           buttonsOnclick={onClickHeaderButton}
           // 안전재고 filter를 위한 옵션
           // isRadio

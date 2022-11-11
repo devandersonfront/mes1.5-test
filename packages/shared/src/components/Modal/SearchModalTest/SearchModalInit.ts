@@ -140,5 +140,29 @@ export const SearchInit: Record<string, SearchInitType> = {
     title: '작업지시서 검색',
     searchFilter: [],
     excelColumnType: 'sheet',
-  }
+  },
+
+  semiProduct: {
+    title: '반제품 검색',
+    searchFilter: ['CODE', '모델', '거래처', '품명'],
+    excelColumnType: 'product',
+    placeholder: 'CODE 검색'
+  },
+
+  progressProduct: {
+    title: '재공품 검색',
+    searchFilter: ['CODE', '모델', '거래처', '품명'],
+    excelColumnType: 'product',
+    placeholder: 'CODE 검색'
+  },
+
+  finishedProduct: {
+    title: '완제품 검색',
+    searchFilter: ['CODE', '모델', '거래처', '품명'],
+    excelColumnType: 'product',
+    placeholder: 'CODE 검색'
+  },
+
+
+
 }
