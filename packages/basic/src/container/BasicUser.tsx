@@ -162,7 +162,7 @@ const BasicUser = ({}: IProps) => {
         throw(alertMsg.noSelectedData)
       }
       basicRow.map((v,i) => {
-        if(selectList.has(v.id) && !email_reg.test(v.email)) {
+        if(selectList.has(v.id) && v?.email && v?.email.length < 0 && !email_reg.test(v.email)) {
           throw("Email 형식을 맞춰주시기 바랍니다.")
         }
       })
