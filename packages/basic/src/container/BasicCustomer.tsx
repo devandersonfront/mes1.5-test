@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   columnlist,
-  excelDownload,
+  excelDownload, ExcelDownloadModal,
   ExcelTable,
   Header as PageHeader,
   IExcelHeaderType,
@@ -593,8 +593,8 @@ const BasicCustomer = ({}: IProps) => {
             optionIndex={optionIndex}
             title={"거래처 정보 관리"}
             buttons={
-              ["",'', '항목관리', '행 추가', '저장하기', '삭제']
-              // ["",'엑셀로 받기', '항목관리', '행 추가', '저장하기', '삭제']
+              // ["",'', '항목관리', '행 추가', '저장하기', '삭제']
+              ["",'엑셀', '항목관리', '행 추가', '저장하기', '삭제']
             }
             buttonsOnclick={onClickHeaderButton}
         />
@@ -635,6 +635,13 @@ const BasicCustomer = ({}: IProps) => {
             setPage={(page) => {
               setPageInfo({...pageInfo,page:page})
             }}
+        />
+        <ExcelDownloadModal
+            isOpen={excelOpen}
+            setIsOpen={setExcelOpen}
+            category={"customer"}
+            title={"거래처 정보 관리"}
+            resetFunction={() => reload()}
         />
       </div>
   );
