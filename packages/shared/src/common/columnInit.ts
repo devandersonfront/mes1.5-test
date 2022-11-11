@@ -1557,5 +1557,14 @@ export const columnlist: any = {
     {key: 'date', name: '납품 날짜', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'amount', name: '총 납품 수량', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'lots', name: 'LOT별 납품수량', formatter: LotDeliveryInfoModal, type:"outsourcing", readonly:true},
+  ],
+  dataSet:[
+    {key: 'name', name: '제품명', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'code', name: '제품 코드', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'machine_name', name: '기계명', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'start', name: '작업 시작 일시', formatter:CalendarBox, placeholder: '-', readonly:true},
+    {key: 'end', name: '작업 종료 일시', formatter:CalendarBox, placeholder: '-', readonly: true},
+    {key: 'valid_data', name: '유효 데이터수', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'download', name: '데이터 다운로드',  placeholder: '-'},
   ]
 }
