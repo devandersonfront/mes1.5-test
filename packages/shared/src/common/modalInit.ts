@@ -587,7 +587,7 @@ export const searchModalList: any = {
     {key: 'product_type', name: '품목 종류', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'product_unit', name: '단위', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'amount', name: '수주량', formatter: LineBorderContainer ,placeholder:"-",},
-    {key: 'stock', name: '재고량', formatter: LineBorderContainer ,placeholder:"-",},
+    // {key: 'stock', name: '재고량', formatter: LineBorderContainer ,placeholder:"-",},
 
   ],
   lotStock: [
