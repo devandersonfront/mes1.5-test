@@ -78,10 +78,18 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                         <ModalHeader>
                             문서 업로드
                         </ModalHeader>
-                        <FileUploader type={"input"} onChange={(file) => {
-                            const fileData = {...file};
-                            fileData.UUID = file.UUID;
-                            setFileInfo([{file_uuid:file.UUID, type:file.type, name:file.name, parent: parentData.name ==='표준 문서 관리' ? undefined : parentData}] )
+                        <FileUploader
+                            multi={true}
+                            type={"input"}
+                            onChange={(files) => {
+                            setFileInfo(files.map((file)=>(
+                                {
+                                    file_uuid:file.UUID,
+                                    type:file.type,
+                                    name:file.name,
+                                    parent: parentData.name ==='표준 문서 관리' ? undefined : parentData
+                                }
+                            )))
                         }} />
                         <div style={{display:"flex",}}>
                             <Button onClick={() => {
