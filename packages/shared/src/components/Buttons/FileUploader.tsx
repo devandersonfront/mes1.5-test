@@ -31,8 +31,9 @@ const FileUploader = ({type, accept, onChange, value, multi}:Props) => {
                                     const files = await Promise.all(fileList.map(async (file)=>(
                                         await uploadTempFile(file,file.size,true,file.name,file.type)
                                     )))
+
                                     const result = files.map((file,index )=>{
-                                        return {...file , name : e.target.files[index].name , type : e.target.files[0].name.split(".")[fileTypes[index]]}
+                                        return {...file , name : e.target.files[index].name , type : e.target.files[index].name.split(".")[fileTypes[index]]}
                                     })
                                     setFileName(fileNames.join(','))
                                     onChange(result)
