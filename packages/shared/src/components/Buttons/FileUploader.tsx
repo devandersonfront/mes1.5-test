@@ -1,7 +1,7 @@
 import React, {useRef, useState} from "react";
 import styled from "styled-components";
 import {uploadTempFile} from "../../common/fileFuctuons";
-
+import Tooltip from 'rc-tooltip'
 interface Props {
     type:"input" | "disabled" | "folder"
     accept?:string
@@ -43,9 +43,16 @@ const FileUploader = ({type, accept, onChange, value, multi}:Props) => {
                                 name={"file"} id={"file"}
                                 style={{opacity:0, width:0}}
                             />
-                            <FileInfo htmlFor={"file"}>
-                                {fileName ?? <div style={{color:"rgba(0,0,0,0.5)"}}>파일을 선택해주세요</div>}
-                            </FileInfo>
+                            <Tooltip placement={'top'}
+                                     overlay={
+                                         <div style={{fontWeight : 'bold'}}>
+                                             {fileName}
+                                         </div>
+                                     }>
+                                <FileInfo htmlFor={"file"}>
+                                    {fileName ?? <div style={{color:"rgba(0,0,0,0.5)"}}>파일을 선택해주세요</div>}
+                                </FileInfo>
+                            </Tooltip>
                             <FileButton htmlFor={"file"}>
                                 파일선택
                             </FileButton>
