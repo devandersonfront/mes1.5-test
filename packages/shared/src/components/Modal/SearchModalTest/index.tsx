@@ -110,6 +110,63 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             })])
           break;
       }
+    }else if(column.type === "product"){
+      setSearchList([{}])
+      switch(tab) {
+        case 0: {
+          setSearchModalInit(SearchInit.finishedProduct)
+          // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
+          setSearchModalColumn(
+              [...searchModalList[`${SearchInit.finishedProduct.excelColumnType}Search`].map((column, index) => {
+                if (index === 0) return ({
+                  ...column, colSpan(args) {
+                    if (args.row?.first) {
+                      return searchModalList[`${SearchInit.finishedProduct.excelColumnType}Search`].length
+                    } else {
+                      return undefined
+                    }
+                  }
+                })
+                else return ({...column})
+              })])
+          break;
+        }
+        case 1: {
+          setSearchModalInit(SearchInit.progressProduct)
+          // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
+          setSearchModalColumn(
+              [...searchModalList[`${SearchInit.progressProduct.excelColumnType}Search`].map((column, index) => {
+                if (index === 0) return ({
+                  ...column, colSpan(args) {
+                    if (args.row?.first) {
+                      return searchModalList[`${SearchInit.progressProduct.excelColumnType}Search`].length
+                    } else {
+                      return undefined
+                    }
+                  }
+                })
+                else return ({...column})
+              })])
+          break;
+        }
+        case 2: {
+          setSearchModalInit(SearchInit.semiProduct)
+          setSearchModalColumn(
+              [...searchModalList[`${SearchInit.semiProduct.excelColumnType}Search`].map((column, index) => {
+                if (index === 0) return ({
+                  ...column, colSpan(args) {
+                    if (args.row?.first) {
+                      return searchModalList[`${SearchInit.semiProduct.excelColumnType}Search`].length
+                    } else {
+                      return undefined
+                    }
+                  }
+                })
+                else return ({...column})
+              })])
+          break;
+        }
+      }
     }else{
       setSearchModalInit(SearchInit[column.type])
       setSearchModalColumn(
@@ -140,6 +197,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const LoadBasic = async (page:number) => {
     Notiflix.Loading.circle();
     const selectType = () => {
+      console.log(tab,'tab!!')
+      console.log(column.type,'column.type')
       switch(column.type){
         case "customerModel":
           return {
@@ -177,6 +236,13 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             productIds:row.product.product_id,
             status:[0,1]
           }
+        case "product" :
+          return {
+            outsourcing: 0,
+            types : tab === 0 ? '2,4' : tab === 1 ? '1' : '0,3',
+            keyword:keyword,
+            opt:optionIndex,
+          }
         default:
           return {
             keyword:keyword,
@@ -184,6 +250,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           }
       }
     }
+
     const searchToolInProduct = (row:any) => {
       switch(column.type){
         case "toolProduct":
@@ -295,6 +362,20 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                 <option key={'0'} value={0}>원자재</option>
                 <option key={'1'} value={1}>부자재</option>
                 <option key={'2'} value={2}>제품</option>
+              </Select>
+            </div>
+        }
+        {
+          column.type === 'product' && <div style={{marginLeft: 20}}>
+              <Select value={tab ?? 0} onChange={(e) => {
+                setTab(Number(e.target.value))
+                setOptionIndex(0)
+                setKeyword('')
+                setPageInfo({page:1, total:1})
+              }}>
+                <option key={'0'} value={0}>완제품</option>
+                <option key={'1'} value={1}>재공품</option>
+                <option key={'2'} value={2}>반제품</option>
               </Select>
             </div>
         }

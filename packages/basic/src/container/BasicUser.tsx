@@ -161,6 +161,11 @@ const BasicUser = ({}: IProps) => {
       if(selectList.size === 0){
         throw(alertMsg.noSelectedData)
       }
+      basicRow.map((v,i) => {
+        if(selectList.has(v.id) && v?.email && v?.email.length < 0 && !email_reg.test(v.email)) {
+          throw("Email 형식을 맞춰주시기 바랍니다.")
+        }
+      })
 
       const addedColumn = column.filter(col => col.type === 'additional')
       const postBody = basicRow.filter(row => selectList.has(row.id)).map(row => {
@@ -592,14 +597,10 @@ const BasicUser = ({}: IProps) => {
         setRow={(e) => {
           try{
             let newSelectList: Set<any> = selectList;
-            e.map((v, i) => {
-
+            e.map((v) => {
               if (v.isChange) {
                 newSelectList.add(v.id)
                 v.isChange = false
-              }
-              if(v.email?.length > 0 && !email_reg.test(v.email)){
-                throw("이메일 형식을 지켜주세요.")
               }
             });
             setSelectList(newSelectList);

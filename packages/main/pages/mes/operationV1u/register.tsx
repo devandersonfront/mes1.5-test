@@ -4,7 +4,7 @@ import ProfileHeader from '../../../component/Profile/ProfileHeader'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {NextPageContext} from 'next'
-import {MesOperationRegister} from 'mes'
+import {MesOperationRegister} from "mes";
 
 
 interface IProps {

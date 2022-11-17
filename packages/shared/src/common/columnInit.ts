@@ -345,7 +345,7 @@ export const columnlist: any = {
         { pk: 2, name: 'SHEET' }
       ]
     },
-    { key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})) },
+    { key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})) },
     { key: 'price', name: '단가', editor: TextEditor, formatter: UnitContainer, placeholder: "0", unitData:"원", inputType: "number"},
     { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
@@ -779,7 +779,7 @@ export const columnlist: any = {
   //   {key:"date", name:"납품 날짜", editor: CalendarBox, maxDate:true},
   //   {key:"amount", name:"납품 개수", editor: TextEditor, formatter: UnitContainer, unitData: 'EA'},
   // ],
-  operationCodeRegisterV2: [
+  operationCodeRegisterV2: (textMultiInput?) => ([
     { key: "contract_id", name: "수주 번호", type: 'order', formatter: PlaceholderBox, placeholder: '-', disableType: "true", width: 118 },
     { key: "date", name: "지시 날짜", formatter: CalendarBox, width: 118, type: 'date' , dependency : 'deadline'},
     { key: "deadline", name: "작업 기한", formatter: CalendarBox, width: 118, type: 'deadline' },
@@ -790,10 +790,10 @@ export const columnlist: any = {
     { key: "type", name: "품목 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "unit", name: "단위", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "process_id", name: "생산 공정", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
-    { key: "goal", name: "목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118, inputType: 'number' },
+    { key: "goal", name: "목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118, inputType: 'number' , textMultiInput },
     { key: 'input', name: '자재 선택', formatter: BomRegisterModal, width: 118 },
-  ],
-  operationIdentificationRegisterV2: [
+  ]),
+  operationIdentificationRegisterV2: (textMultiInput?) => ([
     { key: "contract_id", name: "수주 번호", formatter: SearchModalTest, type: 'order', placeholder: '검색', disableType: "true", width: 118, noSelect: true },
     { key: "date", name: "지시 날짜", formatter: CalendarBox, width: 118 , dependency : 'deadline'},
     { key: "deadline", name: "작업 기한", formatter: CalendarBox, width: 118 },
@@ -804,9 +804,9 @@ export const columnlist: any = {
     { key: "type", name: "품목 종류", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "unit", name: "단위", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "process_id", name: "생산 공정", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
-    { key: "goal", name: "목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118, inputType: 'number' },
+    { key: "goal", name: "목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118, inputType: 'number' , textMultiInput },
     { key: 'input', name: '자재 선택', formatter: BomRegisterModal, width: 118 },
-  ],
+  ]),
   operationListV2: [
     { key: "status", name: "상태", width: 118 },
     { key: "contract_id", name: "수주 번호", width: 118, },
@@ -1052,7 +1052,7 @@ export const columnlist: any = {
     { key: "type", name: "품목 종류", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     { key: "unit", name: "단위", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     { key: "date", name: "납품 날짜", width: 118, formatter: CalendarBox},
-    { key: "lot_number", name: "LOT 선택", width: 118, formatter: LotDeliveryInfoModal, searchType: 'contract' },
+    { key: "lot_number", name: "LOT 선택", width: 118, formatter: LotDeliveryInfoModal, searchType: 'code' },
     { key: "amount", name: "총 납품 수량", width: 118, formatter: PlaceholderBox, placeholder: '0', type: "placeholder" },
   ]),
   deliveryList: [
