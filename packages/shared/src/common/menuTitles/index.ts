@@ -149,8 +149,9 @@ export const MesTitles = (customTarget?: string) => {
     }
     case 'ai': return {
       ...mesDefault,
-      pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList']),
+      pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList', '_opAiDataset']),
       _opAiReList: toMenu(titles._opAiReList,'/mes/ai/recordV2/list'),
+      _opAiDataset: toMenu(titles._opAiDataset, '/mes/ai/dataset')
     }
     case 'custom' : return {
       ...mesDefault,
