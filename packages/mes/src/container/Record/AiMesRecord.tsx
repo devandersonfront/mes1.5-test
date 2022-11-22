@@ -338,7 +338,6 @@ const AiMesRecord = ({}: IProps) => {
                 }).filter((v) => v)
             const res = await RequestMethod('post', `recordSave`,postBody)
             if (res?.length > 0) {
-
                 Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
                     DeleteBasic(true)
                 });
@@ -347,6 +346,7 @@ const AiMesRecord = ({}: IProps) => {
                     reload()
                 });
             }
+
         } catch (errMsg){
             console.log(errMsg)
             Notiflix.Report.warning('경고', errMsg, '확인')

@@ -366,8 +366,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           const lotObjectKey = bom.tab === 0 ? 'child_lot_rm' : bom.tab === 1 ? 'child_lot_sm' : bom.type < 3 ? 'child_lot_record' : 'child_lot_outsourcing'
           bomToSave.push({
             ...inputBomIdMap.get(bom.bomKey),
-            record_id: undefined,
-            bom: {...bom, type:bom.tab},
+            record_id: bom.record_id,
+            // bom: {...bom, type:bom.tab},
             lot: {
               elapsed: lot.elapsed,
               type: bom.tab,
@@ -394,7 +394,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
 
     const disturbanceArray = inputMaterialList.map((v)=>v.disturbance)
     const allEqual = arr => arr.every( v => v === arr[0] )
-
     if(disturbance === 0){
       if(disturbanceArray.every((value) => value === 0)){
         Notiflix.Report.warning(`BOM의 LOT생산량을 입력해주세요.`, '', '확인')
@@ -417,6 +416,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
         }else{
           newRow['quantity'] = quantity,
           newRow['good_quantity'] = quantity,
+          newRow['count'] = quantity,
           newRow['originalSum'] = row.originalSum ?? row.sum
         }
         onRowChange(newRow)
@@ -571,15 +571,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   width={1746}
                   rowHeight={32}
                   height={288}
-                  onRowClick={(clicked) => {const e = inputMaterialList.indexOf(clicked)
-                    const tmpInputMaterialList = inputMaterialList.slice()
-                    tmpInputMaterialList[e] = {
-                      ...tmpInputMaterialList[e],
-                      page: 1,
-                      total: 1
-                    }
-                    setInputMaterialList(tmpInputMaterialList)
-                  }}
                   type={'searchModal'}
                   headerAlign={'center'}
               />
