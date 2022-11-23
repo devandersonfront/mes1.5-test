@@ -11,18 +11,20 @@ interface Props {
     setIsOpen: (value:boolean) => void
     type:"folderAdd" | "documentUpload" | "fileMove"
     reload?:() => void
-    folderList?:any[]
+    allFolder?:any[]
     selectFile?:any
     parentData?:any
+    rows ?:any
 }
 
-const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, selectFile, parentData}:Props) => {
+const DocumentControlModel = ({isOpen, setIsOpen, type, reload, allFolder, selectFile, parentData,rows}:Props) => {
     const [fileInfo, setFileInfo] = useState<{doc_id?:number, name:string, type:string, parent?:any, file_uuid?:string, version?:string}[]>([])
     const [selectOption, setSelectOption] = useState<any>("");
 
     const changeSetSelectOption = (value:any) => {
         setSelectOption(value)
     }
+
 
     const contentSet = (type:"folderAdd" | "documentUpload" | "fileMove") => {
         switch (type){
@@ -33,7 +35,7 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                             문서 폴더 추가
                         </ModalHeader>
                         <FileUploader type={"folder"} onChange={(value) => {
-                            setFileInfo([{name:value, type:"dir" }])
+                            setFileInfo([{name:value, type:"dir"}])
                         }}/>
                         <div style={{display:"flex",}}>
                             <Button onClick={() => {
@@ -43,7 +45,8 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                                 style={{color:"#111319", background:"#19B9DF"}}
                                 onClick={async()=>{
 
-                                    const isCheck = folderList.some((folder)=> folder.name === fileInfo[0].name)
+                                    const folderList = rows.filter((row)=> row.type === '폴더')
+                                    const isCheck = folderList.some((folder)=> folder.name === fileInfo[0]?.name)
 
                                     if(fileInfo.length === 0){
                                         return Notiflix.Report.warning(
@@ -52,10 +55,11 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                                             'Okay',
                                         );
                                     }
+
                                     if(isCheck){
                                         return Notiflix.Report.warning(
                                                 '경고',
-                                                '중복되는 폴더명이 있습니다.',
+                                                '해당 위치에 중복되는 폴더명이 있습니다.',
                                                 'Okay',
                                         );
                                     }
@@ -124,7 +128,7 @@ const DocumentControlModel = ({isOpen, setIsOpen, type, reload, folderList, sele
                             파일 이동
                         </ModalHeader>
                         <FileUploader type={"disabled"} value={selectFile?.name} />
-                        <DropdownModal options={folderList} value={selectOption} onChange={changeSetSelectOption}/>
+                        <DropdownModal options={allFolder} value={selectOption} onChange={changeSetSelectOption}/>
                         <div style={{display:"flex",}}>
                             <Button onClick={() => {
                                 setIsOpen(false)
