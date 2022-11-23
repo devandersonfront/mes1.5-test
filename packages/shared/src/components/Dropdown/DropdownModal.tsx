@@ -74,9 +74,11 @@ const DropdownModal = ({options, value, onChange}:Props) => {
                 isOpen &&
                 <ItemContainer>
                     {
-                        options.map((folder,index)=>(
-                            <Item onClick={() => onChange(folder)}>{folder.name}</Item>
-                        ))
+                        options.map((folder,index)=> {
+                            const name = folder.names.length > 0 ? folder.names.join(' / ') : folder.name
+                            return <Item
+                                onClick={() => onChange(folder)}>{name}</Item>
+                        })
                     }
                 </ItemContainer>
             }
