@@ -45,6 +45,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
+  const [loadState, setLoadState] = useState<boolean>(false)
+
   useEffect(() => {
     if(column.type === "bom" ){
       setSearchList([{}])
@@ -195,10 +197,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   }, [isOpen, searchModalInit, pageInfo.page])
 
   const LoadBasic = async (page:number) => {
+    setLoadState(false)
     Notiflix.Loading.circle();
     const selectType = () => {
-      console.log(tab,'tab!!')
-      console.log(column.type,'column.type')
       switch(column.type){
         case "customerModel":
           return {
@@ -306,6 +307,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         }
       }
     }
+    setLoadState(true)
     Notiflix.Loading.remove()
   }
   const getContents = () => {
@@ -722,7 +724,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               }}
               type={'searchModal'}
               scrollEnd={(value) => {
-                if(value){
+                if(value && loadState){
                   if(pageInfo.total > pageInfo.page){
                     setPageInfo({...pageInfo, page:pageInfo.page+1})
                   }
