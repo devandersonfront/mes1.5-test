@@ -9,6 +9,20 @@ export const toAuth = (title: string, show: boolean, checkable: boolean, check: 
   return {title,show,checkable,check,child,value}
 }
 
+export const HomeTitles = (customTarget?:string) => {
+  const homeDefault = {
+    home : toMenu(titles.home , '', customTarget === 'ai' ? ['_aiProductLog','_productLog'] : ['_productLog']),
+    _productLog : toMenu(titles._productLog, '/mes/home/productLog'),
+  }
+  switch (customTarget) {
+    case 'ai' : return {
+      ...homeDefault,
+      _aiProductLog: toMenu(titles._aiProductLog, '/mes/ai/productLog')
+    }
+    default: return homeDefault
+  }
+}
+
 export const BasicTitles = (customTarget?: string) => {
   const basicDefault = {
     userAuthMgmt: toMenu(titles.userAuthMgmt, '', [ '_authMgmt', '_userMgmt' ]),

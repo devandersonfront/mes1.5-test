@@ -18,10 +18,9 @@ const DashboardPage = ({children, title, cookies}: IProps) => {
 
   return (
     <div style={{display: 'flex'}}>
-      <MenuNavigation pageType={'HOME'}/>
+      <MenuNavigation/>
       <div style={{width: '100%'}}>
         <ProfileHeader/>
-        <HomeProductionLog/>
       </div>
     </div>
   );

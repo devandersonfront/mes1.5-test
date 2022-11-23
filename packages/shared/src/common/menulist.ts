@@ -1,5 +1,6 @@
 import { IMenu as IAuthType, IMenuType } from '../@types/type'
 import {
+    HomeTitles,
     BasicTitles,
     MesTitles,
     CncTitles,
@@ -9,7 +10,7 @@ import {
     BasicAuth,
     MesAuth, PmsAuth, CncAuth
 } from './menuTitles'
-import { BasicOrderType, CncOrderType, MesOrderType, PmsOrderType } from './menuTitles/types'
+import {BasicOrderType, CncOrderType, HomeOrderType, MesOrderType, PmsOrderType} from './menuTitles/types'
 import {titles} from "./menuTitles/titles";
 
 export type IMenu = 'HOME' | 'BASIC' | 'MES' | 'PMS' | 'WMS' | 'UMS' | 'SETTING' | "CNC" | ""
@@ -22,7 +23,7 @@ export const MENUS = () => {
 export const menuSelect = (type: IMenu) => {
     switch(type){
         case 'HOME'   :
-            return []
+            return HOME_MENUS
         case 'BASIC'  :
             return BASIC_MENUS
         case 'MES'    :
@@ -67,6 +68,16 @@ export const authList = (type: string) => {
 
 const customTarget = process.env.NEXT_PUBLIC_CUSTOM_TARGET
 
+
+const HomeOrder = (customTarget?: string): HomeOrderType[] => {
+    const defaultOrder: HomeOrderType[] = ['home']
+    switch(customTarget){
+        default: return defaultOrder
+    }
+}
+
+
+
 const BasicOrder = (customTarget?: string): BasicOrderType[] => {
     const defaultOrder: BasicOrderType[] = [ 'userAuthMgmt', 'factoryMgmt', 'customerMgmt', 'processMgmt', 'qualityMgmt', 'deviceMgmt',
         'machineMgmt', 'moldMgmt', 'toolMgmt', 'rawMgmt', 'subMgmt', 'productMgmt', 'documentMgmt' ]
@@ -97,6 +108,17 @@ const CncOrder = (customTarget?: string): CncOrderType[] => {
         default: return defaultOrder
     }
 }
+
+const HOME_MENUS: IMenuType[] = HomeOrder(customTarget).map(menu => {
+    return {
+        title:HomeTitles(customTarget)[menu].title,
+        url: HomeTitles(customTarget)[menu].url,
+        subMenu: HomeTitles(customTarget)[menu]?.subMenu?.map(sub => ({
+            title: HomeTitles(customTarget)[sub].title,
+            url: HomeTitles(customTarget)[sub].url
+        }))
+    }
+})
 
 
 const BASIC_MENUS: IMenuType[] = BasicOrder(customTarget).map(menu => {

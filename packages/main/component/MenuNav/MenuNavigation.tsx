@@ -92,7 +92,6 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
                   switch(menu){
                     case 'HOME':
                       return <MenuNavItem key={menuIdx} style={{backgroundColor: menuType === "HOME" ? POINT_COLOR : undefined}} onClick={() => {
-                      router.push('/mes/dashboard')
                       changeMenuType("HOME")
                     }}>
                       <img src={ic_home} style={{width: 30, height: 30, marginBottom: 5}}/>

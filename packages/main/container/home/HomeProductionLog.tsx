@@ -19,6 +19,9 @@ import axios from "axios";
 import cookie from "react-cookies";
 import ErrorList from "shared/src/common/ErrorList";
 import {setExcelTableHeight} from "shared/src/common/Util";
+import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
+import { useDispatch } from "react-redux";
+import {useRouter} from "next/router";
 
 export interface IProps {
     children?: any
@@ -28,6 +31,9 @@ export interface IProps {
 }
 
 const HomeProductionLog = ({}: IProps) => {
+    const dispatch = useDispatch();
+    const router = useRouter();
+
     const [ basicRow, setBasicRow ] = useState<Array<any>>([])
     const [ column, setColumn ] = useState<Array<IExcelHeaderType>>(columnlist["productionLog"])
     const [ page, setPage ] = React.useState<{ current_page: number, totalPages: number }>({
@@ -92,6 +98,15 @@ const HomeProductionLog = ({}: IProps) => {
     const convertData = (data : any) => {
         return data.map((list,index)=>({...list , order : index + 1}))
     }
+
+    useEffect(() => {
+        dispatch(
+            setMenuSelectState({ main: "HOME", sub: router.pathname })
+        );
+        return () => {
+            dispatch(deleteMenuSelectState());
+        };
+    }, []);
 
     return (
         <div>
