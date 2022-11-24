@@ -83,6 +83,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
       await RequestMethod("get", "bomLoad", {path: { key: bomKey }})
           .then((res) => {
             const result = changeRow(res);
+            console.log("result : ", result)
             setSearchList(result)
             result.map((value, i) => {
               if(bomKey === value.parent.bom_root_id){
@@ -138,14 +139,18 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
       }
-
+      console.log("v :", v, bomDetail)
       return {
         ...bomDetail.childData,
         seq: i+1,
         code: bomDetail.childData.code,
+        standard: bomDetail.bomType == "rawMaterial" ?
+            `${bomDetail?.childData.width ?? "-"} * ${bomDetail?.childData.height ?? "-"} * ${bomDetail?.childData.depth ?? "-"}` : "-",
         type: v.type,
         type_id: bomDetail.childData.type,
         tab: v.type,
+        texture: bomDetail.bomType == "rawMaterial" ?
+            `${bomDetail.childData.texture ?? "-"}/${TransferCodeToValue(bomDetail?.childData?.type, 'rawMaterialType')}` : bomDetail.childData.texture,
         name: bomDetail.childData.name,
         product_type: v.type !== 2 ? '-' : TransferCodeToValue(bomDetail.childData?.type, 'productType'),
         type_name: TransferCodeToValue(bomDetail.childData?.type, bomDetail.bomType),
