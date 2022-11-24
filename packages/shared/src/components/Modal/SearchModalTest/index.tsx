@@ -362,6 +362,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               <Select value={tab ?? 0} onChange={(e) => {
                 // setPageInfo({...pageInfo,page:1})
                 setOptionIndex(0)
+                setSelectRow(null)
                 setKeyword('')
                 setTab(Number(e.target.value))
               }}>
@@ -497,6 +498,10 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
 
   const confirmFunction = (e) => {
+    if(selectRow == null){
+      Notiflix.Report.warning("데이터를 선택해주세요.","", "확인")
+      return
+    }
     setIsOpen(false)
     if(selectRow !== undefined){
       const selectNameFunction = (type:string) => {
