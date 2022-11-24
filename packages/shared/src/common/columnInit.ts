@@ -1566,5 +1566,23 @@ export const columnlist: any = {
     {key: 'end', name: '작업 종료 일시', formatter:CalendarBox, placeholder: '-', readonly: true},
     {key: 'valid_data', name: '유효 데이터수', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'download', name: '데이터 다운로드',  placeholder: '-'},
+  ],
+  aiProductLog:[
+    {key: 'state', frozen:true, name: '상태',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'machine_name', frozen:true, name: '기계 이름', formatter:PlaceholderBox, width: 118,},
+    {key: 'machine_type', frozen:true, name: '기계 종류', formatter:PlaceholderBox, width: 118,},
+    {key: 'identification', frozen:true, name: '지시 고유 번호', formatter:PlaceholderBox, width: 118,},
+    {key: 'deadline', frozen:true, name: '작업 기한', headerRenderer: HeaderSort, formatter:PlaceholderBox, width:118},
+    {key: 'customer', frozen:true, name: '거래처', formatter:PlaceholderBox, width: 118,},
+    {key: 'model', frozen:true, name: '모델', formatter:PlaceholderBox, width: 118,},
+    {key: 'code', frozen:true, name: 'CODE',  formatter:PlaceholderBox, width: 118,},
+    {key: 'product_name', frozen:true, name: '품명', formatter:PlaceholderBox, width: 118,},
+    {key: 'process', name: '생산 공정', formatter:PlaceholderBox, width: 118,},
+    {key: 'prediction_model', name: '예측 모델',  type: 'machineInfo', formatter:PlaceholderBox, width: 118,},
+    {key: 'prediction_code', name: '예측 CODE',  type: 'machineInfo', formatter:PlaceholderBox, width: 118,},
+    {key: 'prediction_name', name: '예측 품명',  type: 'machineInfo', formatter:PlaceholderBox, width: 118,},
+    {key: 'goal', name: '목표 생산량', formatter:PlaceholderBox, width: 118},
+    {key: 'total_good_quantity', name : '총 카운터', formatter:PlaceholderBox, width: 118},
+    {key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', width: 300},
   ]
 }

@@ -1,3 +1,5 @@
+export type HomeOrderType = 'home'
+
 export type BasicOrderType =
     'userAuthMgmt' | 'factoryMgmt' | 'customerMgmt' | 'processMgmt' | 'qualityMgmt' |
     'deviceMgmt' | 'machineMgmt' | 'moldMgmt' | 'toolMgmt' | 'rawMgmt' | 'subMgmt' |

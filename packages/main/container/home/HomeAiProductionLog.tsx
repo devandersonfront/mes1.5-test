@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {
     columnlist,
     excelDownload,
+    ExcelDownloadModal,
     ExcelTable,
     Header as PageHeader,
     IExcelHeaderType,
@@ -13,15 +14,17 @@ import {
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import Notiflix from "notiflix";
+import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
-import moment from "moment"
-import axios from "axios";
+import {useDispatch} from "react-redux";
+import {Stomp} from "@stomp/stompjs"
+//@ts-ignore
+import SockJS from "sockjs-client"
 import cookie from "react-cookies";
-import ErrorList from "shared/src/common/ErrorList";
-import {setExcelTableHeight} from "shared/src/common/Util";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { useDispatch } from "react-redux";
-import {useRouter} from "next/router";
+import axios from "axios";
+import moment from "moment";
+import ErrorList from "shared/src/common/ErrorList";
 
 export interface IProps {
     children?: any
@@ -30,19 +33,64 @@ export interface IProps {
     option?: number
 }
 
-const HomeProductionLog = ({}: IProps) => {
-    const dispatch = useDispatch();
-    const router = useRouter();
+const dummyData = [
+    {
+        state:"ready",
+        machine_name:"세척기-1호",
+        machine_type:"코팅기",
+        identification:"20210401-01",
+        deadline:"2022-05-18",
+        customer:'안녕',
+        model:'하이',
+        code : '123',
+        product_name: '이름',
+        process:"코팅",
+        prediction_model:"-",
+        prediction_code:"-",
+        prediction_name:"-",
+        goal:"0",
+        total_good_quantity:"0",
+        achievement:"0",
+        predict : true,
+    },
+    {
+        state:"ready",
+        machine_name:"세척기-1호",
+        machine_type:"코팅기",
+        identification:"20210401-01",
+        deadline:"2022-05-18",
+        customer:'안녕',
+        model:'하이',
+        code : '123',
+        product_name: '이름',
+        process:"코팅",
+        prediction_model:"-",
+        prediction_code:"-",
+        prediction_name:"-",
+        goal:"0",
+        total_good_quantity:"0",
+        achievement:"0",
+        predict : false,
+        color : 'red'
+    }
+]
 
-    const [ basicRow, setBasicRow ] = useState<Array<any>>([])
-    const [ column, setColumn ] = useState<Array<IExcelHeaderType>>(columnlist["productionLog"])
+
+const HomeAiProductionLog = ({}: IProps) => {
+    const router = useRouter()
+    const dispatch = useDispatch()
+    const userInfo = cookie.load('userInfo')
+    const [basicRow, setBasicRow] = useState<Array<any>>([])
+    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiProductLog"])
+    const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [ page, setPage ] = React.useState<{ current_page: number, totalPages: number }>({
         current_page: 1,
         totalPages : 1
     });
-    const userInfo = cookie.load('userInfo')
+
+
     useEffect(() => {
-        if(userInfo?.ca_id?.authorities?.some(auth => ['ROLE_PROD_02', 'ROLE_PROD_06'].includes(auth))){
+        // if(userInfo?.ca_id?.authorities?.some(auth => ['ROLE_PROD_02', 'ROLE_PROD_06'].includes(auth))){
             Notiflix.Loading.circle()
             LoadBasic()
             const dashboard = setInterval(()=>{
@@ -51,23 +99,23 @@ const HomeProductionLog = ({}: IProps) => {
             return () => {
                 clearInterval(dashboard)
             }
-        }
+        // }
     },[])
 
     const LoadBasic = async (pages : number = 1) => {
         try {
             const tokenData = userInfo?.token;
-            const res = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/monitoring/list/${pages}/20`,{
+            const res = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
                 params : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'},
                 headers : { Authorization : tokenData }
             })
             if(res.status === 200){
                 Notiflix.Loading.remove()
                 const {info_list , page, totalPages, menus} = res.data
-                const renewalColumn = convertColumn(menus)
-                const renewalData = convertData(info_list)
-                setBasicRow(renewalData)
-                setColumn(renewalColumn)
+
+
+
+                setBasicRow(info_list)
                 setPage({current_page : page , totalPages : totalPages})
             }
         }catch (error) {
@@ -81,23 +129,6 @@ const HomeProductionLog = ({}: IProps) => {
         }
     }
 
-    const convertColumn = (columns : any) => {
-        let renewalColumn : any = []
-        column.map((v, i) => {
-            columns.map((column) => {
-                if(!column.hide){
-                    if (column.colName === v.key) {
-                        renewalColumn.push({ ...columnlist['productionLog'][i], key: column.colName, name: column.title })
-                    }
-                }
-            })
-        })
-        return renewalColumn
-    }
-
-    const convertData = (data : any) => {
-        return data.map((list,index)=>({...list , order : index + 1}))
-    }
 
     useEffect(() => {
         dispatch(
@@ -108,20 +139,29 @@ const HomeProductionLog = ({}: IProps) => {
         };
     }, []);
 
+
     return (
         <div>
             <PageHeader
-                title={"생산 현황"}
-                isCalendar
-                calendarType={"current"}
+                title={"AI 생산 제품 현황"}
             />
             <ExcelTable
                 editable
                 headerList={column}
-                row={basicRow}
-                setRow={setBasicRow}
+                row={dummyData}
+                setRow={(e) => {
+                    let tmp: Set<any> = selectList
+                    e.map(v => {
+                        if(v.isChange) tmp.add(v.id)
+                    })
+                    setSelectList(tmp)
+                    setBasicRow(e)
+                }}
+                selectList={selectList}
+                //@ts-ignore
+                setSelectList={setSelectList}
                 width={1576}
-                height={setExcelTableHeight(basicRow.length)}
+                height={'100%'}
             />
         </div>
     );
@@ -137,4 +177,4 @@ export const getServerSideProps = (ctx: NextPageContext) => {
     }
 }
 
-export {HomeProductionLog};
+export {HomeAiProductionLog};

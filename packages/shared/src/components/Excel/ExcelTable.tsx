@@ -195,18 +195,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
         scrollEnd && scrollEnd(isAtBottom(e))
       }}
         //@ts-ignore
-      rowClass={(row : any) => {
-        switch (row?.type) {
-          case '원자재' :
-            return 'rawMaterial_Line'
-          case '부자재' :
-            return 'subMaterial_Line'
-          case '제품' :
-            return 'product_Line'
-          default :
-            return
-        }
-      }}
+      rowClass={(row : any) => row.color}
     />
   }
 
@@ -260,14 +249,16 @@ const DataGridTable = styled(DataGrid)`
   .detail + .rdg-cell > div {
     display : none !important;
   }
-  
-  .detail .rawMaterial_Line .rdg-cell{
+  .red .rdg-cell{
+    background : #FF0000 !important;
+  }
+  .gray .rdg-cell{
      background : #7d7d7f !important;
   }
-  .detail .subMaterial_Line .rdg-cell{
+  .lightBlack .rdg-cell{
      background : #525555 !important;
   }
-  .detail .product_Line .rdg-cell{
+  .darkGray .rdg-cell{
      background : #282b2c !important;
   }
 
