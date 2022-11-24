@@ -417,8 +417,6 @@ const BasicUser = ({}: IProps) => {
       : [];
 
     tmpRow = res.info_list;
-    tmpColumn.push({ key: 'alarm', name:"SMS 알람", formatter: Checkbox, width:118},)
-    tmpColumn.push({ key: 'email_alarm', name:"Email 알람", formatter: Checkbox, width:118},)
     loadAllSelectItems([...tmpColumn, ...additionalMenus]);
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {

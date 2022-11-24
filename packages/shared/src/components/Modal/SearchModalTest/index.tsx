@@ -45,69 +45,83 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     page: 1,
     total: 1
   })
+  const [loadState, setLoadState] = useState<boolean>(false)
+
+
+
   useEffect(() => {
-    if(column.type === "bom" ){
+    if(isOpen){
+      if(searchModalInit.excelColumnType === "product") setOptionIndex(2)
+      LoadBasic(pageInfo.page);
+    }else{
+      setPageInfo({page:1, total:1})
       setSearchList([{}])
+    }
+  }, [isOpen, searchModalInit, pageInfo.page])
+
+  useEffect(() => {
+    setSearchList([])
+    if(column.type === "bom" ){
       switch(tab){
         case 0:{
           setSearchModalInit(SearchInit.rawMaterial)
           // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
           setSearchModalColumn(
-            [...searchModalList[`${SearchInit.rawMaterial.excelColumnType}Search`].map((column, index) => {
-              if(index === 0) return ({...column, colSpan(args) {
-                  if(args.row?.first){
-                    return searchModalList[`${SearchInit.rawMaterial.excelColumnType}Search`].length
-                  }else{
-                    return undefined
-                  }
-                }})
-              else return ({...column})
-            })])
+              [...searchModalList[`${SearchInit.rawMaterial.excelColumnType}Search`].map((column, index) => {
+                if(index === 0) return ({...column, colSpan(args) {
+                    if(args.row?.first){
+                      return searchModalList[`${SearchInit.rawMaterial.excelColumnType}Search`].length
+                    }else{
+                      return undefined
+                    }
+                  }})
+                else return ({...column})
+              })])
           break;
         }
         case 1:{
           setSearchModalInit(SearchInit.subMaterial)
           // setSearchModalColumn(searchModalList[`${searchModalInit.excelColumnType}Search`])
           setSearchModalColumn(
-            [...searchModalList[`${SearchInit.subMaterial.excelColumnType}Search`].map((column, index) => {
-              if(index === 0) return ({...column, colSpan(args) {
-                  if(args.row?.first){
-                    return searchModalList[`${SearchInit.subMaterial.excelColumnType}Search`].length
-                  }else{
-                    return undefined
-                  }
-                }})
-              else return ({...column})
-            })])
+              [...searchModalList[`${SearchInit.subMaterial.excelColumnType}Search`].map((column, index) => {
+                if(index === 0) return ({...column, colSpan(args) {
+                    if(args.row?.first){
+                      return searchModalList[`${SearchInit.subMaterial.excelColumnType}Search`].length
+                    }else{
+                      return undefined
+                    }
+                  }})
+                else return ({...column})
+              })])
           break;
         }
         case 2:{
           setSearchModalInit(SearchInit.allProduct)
           setSearchModalColumn(
-            [...searchModalList[`${SearchInit.allProduct.excelColumnType}Search`].map((column, index) => {
-              if(index === 0) return ({...column, colSpan(args) {
-                  if(args.row?.first){
-                    return searchModalList[`${SearchInit.allProduct.excelColumnType}Search`].length
-                  }else{
-                    return undefined
-                  }
-                }})
-              else return ({...column})
-            })])
+              [...searchModalList[`${SearchInit.allProduct.excelColumnType}Search`].map((column, index) => {
+                if(index === 0) return ({...column, colSpan(args) {
+                    if(args.row?.first){
+                      return searchModalList[`${SearchInit.allProduct.excelColumnType}Search`].length
+                    }else{
+                      return undefined
+                    }
+                  }})
+                else return ({...column})
+              })])
           break;
         }
         case null: setSearchModalInit(SearchInit[column.type])
           setSearchModalColumn(
-            [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column, index) => {
-              if(index === 0) return ({...column, colSpan(args) {
-                  if(args.row?.first){
-                    return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
-                  }else{
-                    return undefined
-                  }
-                }})
-              else return ({...column})
-            })])
+              [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((column, index) => {
+                if(index === 0) return ({...column, colSpan(args) {
+                    if(args.row?.first){
+                      return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
+                    }else{
+                      return undefined
+                    }
+                  }})
+                else return ({...column})
+              })])
           break;
       }
     }else if(column.type === "product"){
@@ -170,35 +184,27 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }else{
       setSearchModalInit(SearchInit[column.type])
       setSearchModalColumn(
-        [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((col, index) => {
-          if(index === 0) return ({...col, colSpan(args) {
-              if(args.row?.first){
-                return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
-              }else{
-                return undefined
-              }
-            }})
-          else return ({...col})
-        })])
+          [...searchModalList[`${SearchInit[column.type].excelColumnType}Search`].map((col, index) => {
+            if(index === 0) return ({...col, colSpan(args) {
+                if(args.row?.first){
+                  return searchModalList[`${SearchInit[column.type].excelColumnType}Search`].length
+                }else{
+                  return undefined
+                }
+              }})
+            else return ({...col})
+          })])
     }
+    return (() => {
+      setPageInfo({total:1, page:1})
 
-  }, [column.type, tab])
-
-  useEffect(() => {
-    if(isOpen){
-      if(searchModalInit.excelColumnType === "product") setOptionIndex(2)
-      LoadBasic(pageInfo.page);
-    }else{
-      setPageInfo({page:1, total:1})
-      setSearchList([{}])
-    }
-  }, [isOpen, searchModalInit, pageInfo.page])
+    })
+  }, [tab])
 
   const LoadBasic = async (page:number) => {
+    setLoadState(false)
     Notiflix.Loading.circle();
     const selectType = () => {
-      console.log(tab,'tab!!')
-      console.log(column.type,'column.type')
       switch(column.type){
         case "customerModel":
           return {
@@ -275,7 +281,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       ,
       params: selectType()
     })
-
     if(res){
       if(searchModalInit.excelColumnType === "toolProduct"){
           const savedTools = originalInfo.modifyInfo?.length ? originalInfo.modifyInfo[0]?.tools?.map(tool => ({...tool.tool.tool})) : []
@@ -306,6 +311,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         }
       }
     }
+    setLoadState(true)
     Notiflix.Loading.remove()
   }
   const getContents = () => {
@@ -354,10 +360,11 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         {
           column.type === 'bom' && <div style={{marginLeft: 20}}>
               <Select value={tab ?? 0} onChange={(e) => {
-                setTab(Number(e.target.value))
+                // setPageInfo({...pageInfo,page:1})
                 setOptionIndex(0)
+                setSelectRow(null)
                 setKeyword('')
-                setPageInfo({page:1, total:1})
+                setTab(Number(e.target.value))
               }}>
                 <option key={'0'} value={0}>원자재</option>
                 <option key={'1'} value={1}>부자재</option>
@@ -491,6 +498,10 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
 
   const confirmFunction = (e) => {
+    if(selectRow == null){
+      Notiflix.Report.warning("데이터를 선택해주세요.","", "확인")
+      return
+    }
     setIsOpen(false)
     if(selectRow !== undefined){
       const selectNameFunction = (type:string) => {
@@ -649,7 +660,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           goal:row?.goal
         })
       }
-
     }
   }
 
@@ -722,7 +732,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               }}
               type={'searchModal'}
               scrollEnd={(value) => {
-                if(value){
+                if(value && loadState){
                   if(pageInfo.total > pageInfo.page){
                     setPageInfo({...pageInfo, page:pageInfo.page+1})
                   }

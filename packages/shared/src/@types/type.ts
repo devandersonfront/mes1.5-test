@@ -74,7 +74,6 @@ export interface IExcelHeaderType {
   orderRegisterManage?:() => any[]
   dependency?:string
   textMultiInput ?: (index, value) => void
-
 }
 
 export interface IResponseType {

@@ -1,6 +1,6 @@
 import Axios, {AxiosError} from 'axios'
 import cookie from 'react-cookies'
-import {SF_ENDPOINT, SF_ENDPOINT_EXCEL} from './configset'
+import {AI_ADDRESS, SF_ADDRESS, SF_ENDPOINT, SF_ENDPOINT_EXCEL} from './configset'
 import Notiflix from 'notiflix'
 import Router from 'next/router'
 
@@ -237,7 +237,23 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
           }
           return false
         })
-  } else {
+  } else if(apiType === "datasetList"){
+    const ENDPOINT = /*SF_ADDRESS*/  AI_ADDRESS
+    let tmpUrl = "http://"+ENDPOINT+ApiList[apiType]+`?page=${data.params.page}&pageSize=${data.params.pageSize}&company=${data.params.company_code}`
+
+    return Axios.get(tmpUrl, tokenData && {'headers': {'Authorization': tokenData}, responseType: responseType})
+        .then((result) => {
+          return result.data
+        })
+        .catch((error) => {
+          if(error.response.status === 400) {
+            Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
+          }else if(error.response.status === 500){
+            Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+          }
+          return false
+        })
+  }else {
     const response = await requestApi(MethodType, ApiList[apiType], data, tokenData, responseType, params, path)
     return response
   }
@@ -425,6 +441,7 @@ const ApiList = {
   outsourcingOrderList: `/api/v1/outsourcing/export/list`,
   outsourcingImportList : `/api/v1/outsourcing/import/list`,
   stockAdjustList: '/api/v1/stock/adjustment/list',
+  datasetList:'/api/dataset/list',
 
   //search
   memberSearch: `/api/v1/member/search`,
