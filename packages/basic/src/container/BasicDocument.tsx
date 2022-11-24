@@ -39,11 +39,9 @@ const BasicDocument = ({ page, keyword, option, doc_id }: IProps) => {
 
         const res = await RequestMethod("get", "documentList", { path: { docId: doc_id ?? null } })
         const dirs = await RequestMethod("get", "documentAll", { params: { type: 'dir' } })
-
         if (res) {
             const convertData = res.map((v) => ({ ...v, id: v.doc_id, type: v.type === "dir" ? "폴더" : v.type, date: moment(v.created).format("YYYY-MM-DD") }))
-            const classfyData = dirs
-
+            const classfyData = getNames(dirs)
             setBasicRow(convertData)
             setFolderList(classfyData)
             setSelectList(new Set())
@@ -54,6 +52,7 @@ const BasicDocument = ({ page, keyword, option, doc_id }: IProps) => {
     const LoadDocumentState = async () => {
         if (doc_id) {
             const res = await RequestMethod("get", "documentLoad", { path: { doc_id: doc_id } })
+            console.log(res,'resresres')
             if (res) {
                 return setParentData({ ...res })
             }
@@ -191,6 +190,27 @@ const BasicDocument = ({ page, keyword, option, doc_id }: IProps) => {
         }
     };
 
+    const getNames = (folderList) => (
+        folderList.map((folder)=>(
+            !folder.parent ? {...folder , names : []} :  {...folder , names : recursiveNames(folder)}
+        ))
+    )
+
+    const recursiveNames = (data) => {
+        const initName = [data.name]
+        const doWork = ({name,parentDir}) => {
+            initName.push(name)
+            if (!!parentDir) {
+                doWork(parentDir)
+            }
+        }
+        if (!!data.parent) {
+            doWork(data.parent)
+        }
+
+        return initName.reverse();
+    }
+
     useEffect(() => {
         LoadBasic();
         LoadDocumentState();
@@ -232,7 +252,8 @@ const BasicDocument = ({ page, keyword, option, doc_id }: IProps) => {
                 setIsOpen={setIsOpen}
                 type={modalType}
                 reload={LoadBasic}
-                folderList={folderList}
+                allFolder={folderList}
+                rows={basicRow}
                 selectFile={basicRow.filter((row) => selectList.has(row.id))[0]}
                 parentData={parentData}
             />
