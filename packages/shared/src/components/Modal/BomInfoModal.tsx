@@ -83,7 +83,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
       await RequestMethod("get", "bomLoad", {path: { key: bomKey }})
           .then((res) => {
             const result = changeRow(res);
-            console.log("result : ", result)
             setSearchList(result)
             result.map((value, i) => {
               if(bomKey === value.parent.bom_root_id){
@@ -139,7 +138,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
       }
-      console.log("v :", v, bomDetail)
       return {
         ...bomDetail.childData,
         seq: i+1,
