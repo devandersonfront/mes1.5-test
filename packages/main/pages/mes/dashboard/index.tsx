@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import MenuNavigation from '../../../component/MenuNav/MenuNavigation'
 import ProfileHeader from '../../../component/Profile/ProfileHeader'
-import {HomeProductionLog} from "../../../container/home/HomeProductionLog";
 
 interface IProps {
   children?: any,
