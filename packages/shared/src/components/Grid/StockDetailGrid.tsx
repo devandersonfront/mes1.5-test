@@ -11,6 +11,7 @@ type MaterialType = {
     code : string
     stock : number
     totalWeight ?: string
+    color ?: string
 }
 
 const StockDetailGrid = ({data}) => {
@@ -29,7 +30,8 @@ const StockDetailGrid = ({data}) => {
                     customer_model : '-',
                     code : data.rawMaterial.code,
                     stock : data.rawMaterial.stock,
-                    totalWeight :`${data.totalWeight}${TransferCodeToValue(data.rawMaterial.unit, 'rawMaterialUnit')}`
+                    totalWeight :`${data.totalWeight}${TransferCodeToValue(data.rawMaterial.unit, 'rawMaterialUnit')}`,
+                    color : 'gray'
                 }
             case 1 :
                 return {
@@ -39,7 +41,8 @@ const StockDetailGrid = ({data}) => {
                     customer_model : '-',
                     code : data.subMaterial.code,
                     stock : data.subMaterial.stock,
-                    totalWeight : `${data.totalWeight}${data.subMaterial.unit}`
+                    totalWeight : `${data.totalWeight}${data.subMaterial.unit}`,
+                    color : 'lightBlack'
                 }
             case 2 :
                 return {
@@ -49,7 +52,8 @@ const StockDetailGrid = ({data}) => {
                     customer_model : data.product.model?.name ?? '-',
                     code : data.product.code,
                     stock : data.product.stock,
-                    totalWeight : '-'
+                    totalWeight : '-',
+                    color : 'darkGray'
                     // totalWeight : `${data.totalWeight}${data.product.unit}`
                 }
         }
