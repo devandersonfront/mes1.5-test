@@ -5,6 +5,9 @@ import FileUploader from "../Buttons/FileUploader";
 import {RequestMethod} from "../../common/RequestFunctions";
 import DropdownModal from "../Dropdown/DropdownModal";
 import Notiflix from 'notiflix'
+import {IDoc, IDocWithChild, IMenu} from "../../@types/type";
+import TreeView from "../TreeView/TreeView";
+import {RecursiveTree} from "../Recursive/RecursiveTree";
 
 interface Props {
     isOpen:boolean
@@ -14,18 +17,18 @@ interface Props {
     allFolder?:any[]
     selectFile?:any
     parentData?:any
-    rows ?:any
+    rows ?:IDoc[]
 }
 
-const DocumentControlModal = ({isOpen, setIsOpen, type, reload, allFolder, selectFile, parentData,rows}:Props) => {
+const DocumentControlModalTest = ({isOpen, setIsOpen, type, reload, allFolder, selectFile, parentData,rows}:Props) => {
     const [fileInfo, setFileInfo] = useState<{doc_id?:number, name:string, type:string, parent?:any, file_uuid?:string, version?:string}[]>([])
     const [selectOption, setSelectOption] = useState<any>("");
+    const [menu, setMenu] = React.useState<IDocWithChild[]>([])
 
-    console.log(selectOption,'option!!')
+    React.useEffect(() => {
+        setMenu(allFolder.filter(folder => !folder.parent))
+    }, [rows])
 
-    const changeSetSelectOption = (value:any) => {
-        setSelectOption(value)
-    }
 
 
     const contentSet = (type:"folderAdd" | "documentUpload" | "fileMove") => {
@@ -39,7 +42,7 @@ const DocumentControlModal = ({isOpen, setIsOpen, type, reload, allFolder, selec
                         <FileUploader type={"folder"} onChange={(value) => {
                             setFileInfo([{name:value, type:"dir"}])
                         }}/>
-                        <div style={{display:"flex",}}>
+                        <ButtonWrapper>
                             <Button onClick={() => {
                                 setIsOpen(false)
                             }}>취소</Button>
@@ -60,14 +63,14 @@ const DocumentControlModal = ({isOpen, setIsOpen, type, reload, allFolder, selec
 
                                     if(isCheck){
                                         return Notiflix.Report.warning(
-                                                '경고',
-                                                '해당 위치에 중복되는 폴더명이 있습니다.',
-                                                'Okay',
+                                            '경고',
+                                            '해당 위치에 중복되는 폴더명이 있습니다.',
+                                            'Okay',
                                         );
                                     }
 
                                     await RequestMethod("post", "documentSave",
-                                    [{...fileInfo[0], parent:parentData.name ==="표준 문서 관리" ? undefined : parentData}])
+                                        [{...fileInfo[0], parent:parentData.name ==="표준 문서 관리" ? undefined : parentData}])
                                         .then((res) => {
                                             setIsOpen(false);
                                             setFileInfo([])
@@ -75,7 +78,7 @@ const DocumentControlModal = ({isOpen, setIsOpen, type, reload, allFolder, selec
                                         })
                                 }}
                             >확인</Button>
-                        </div>
+                        </ButtonWrapper>
                     </ModalBody>
                 )
             case "documentUpload":
@@ -88,16 +91,16 @@ const DocumentControlModal = ({isOpen, setIsOpen, type, reload, allFolder, selec
                             multi={true}
                             type={"input"}
                             onChange={(files) => {
-                            setFileInfo(files.map((file)=>(
-                                {
-                                    file_uuid:file.UUID,
-                                    type:file.type,
-                                    name:file.name,
-                                    parent: parentData.name ==='표준 문서 관리' ? undefined : parentData
-                                }
-                            )))
-                        }} />
-                        <div style={{display:"flex",}}>
+                                setFileInfo(files.map((file)=>(
+                                    {
+                                        file_uuid:file.UUID,
+                                        type:file.type,
+                                        name:file.name,
+                                        parent: parentData.name ==='표준 문서 관리' ? undefined : parentData
+                                    }
+                                )))
+                            }} />
+                        <ButtonWrapper>
                             <Button onClick={() => {
                                 setIsOpen(false)
                             }}>취소</Button>
@@ -120,18 +123,24 @@ const DocumentControlModal = ({isOpen, setIsOpen, type, reload, allFolder, selec
 
                                 }}
                             >확인</Button>
-                        </div>
+                        </ButtonWrapper>
                     </ModalBody>
                 )
             case "fileMove":
                 return (
-                    <ModalBody>
+                    <div>
                         <ModalHeader>
                             파일 이동
                         </ModalHeader>
                         <FileUploader type={"disabled"} value={selectFile?.name} />
-                        <DropdownModal options={allFolder} value={selectOption} onChange={changeSetSelectOption}/>
-                        <div style={{display:"flex",}}>
+                        <div style={{background:'rgb(39 49 73)'}}>
+                            {
+                                menu.map((data)=>{
+                                    return  <RecursiveTree data={data} onRadioClick={setSelectOption}/>
+                                })
+                            }
+                        </div>
+                        <ButtonWrapper>
                             <Button onClick={() => {
                                 setIsOpen(false)
                             }}>취소</Button>
@@ -145,8 +154,8 @@ const DocumentControlModal = ({isOpen, setIsOpen, type, reload, allFolder, selec
                                         })
                                 }}
                             >확인</Button>
-                        </div>
-                    </ModalBody>
+                        </ButtonWrapper>
+                    </div>
                 )
             default :
                 return (
@@ -157,10 +166,6 @@ const DocumentControlModal = ({isOpen, setIsOpen, type, reload, allFolder, selec
 
         }
     }
-
-    // useEffect(() => {
-    //     setFileInfo([])
-    // },[isOpen])
 
     return (
         <div>
@@ -187,10 +192,10 @@ const DocumentControlModal = ({isOpen, setIsOpen, type, reload, allFolder, selec
 
 }
 
-const ModalBody = styled.div`
+const ModalBody = styled.div<any>`
     border-radius:6px;
     width:360px;
-    height:192px;
+    height:200px;
     display:flex;
     flex-direction:column;
     justify-content:space-between;
@@ -207,8 +212,13 @@ const ModalHeader = styled.div`
     font-size: 22px;   
 `;
 
+const ButtonWrapper = styled.div`
+    display: flex;
+    width : 100%;
+`
+
 const Button = styled.button`
-    width:180px;
+    width:50%;
     height:48px;
     display:flex;
     border:none;
@@ -220,4 +230,4 @@ const Button = styled.button`
     font-weight:bold;
 `;
 
-export default DocumentControlModal
+export default DocumentControlModalTest

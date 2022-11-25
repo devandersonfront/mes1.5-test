@@ -91,6 +91,24 @@ export interface IMenu {
   child: IMenu[] | any[] // 하위 트리뷰 리스트
 }
 
+export interface IDoc {
+  created : string
+  date : string
+  doc_id : number
+  file_uuid : string
+  id : number
+  member : any
+  name : string
+  parent : any
+  parentId : string
+  type : string
+  version : number
+}
+
+export interface IDocWithChild extends IDoc {
+  child : IDocWithChild[] | any[]
+}
+
 export interface IItemMenuType {
   id?: number | string
   mi_id?: number

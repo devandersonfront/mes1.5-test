@@ -13,7 +13,7 @@ type TreeViewProps = {
   checked: boolean
   checkable: boolean
   hasChildren: boolean
-  onClickCheckBox: () => void
+  onClickCheckBox?: () => void
   onClickArrow: () => void
   title: string
   titleStyles?: React.CSSProperties

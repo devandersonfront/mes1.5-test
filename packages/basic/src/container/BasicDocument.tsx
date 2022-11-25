@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { columnlist, ExcelTable, Header as PageHeader, RequestMethod } from "shared";
 //@ts-ignore
 import { SelectColumn } from "react-data-grid";
-import DocumentControlModal from "../../../shared/src/components/Modal/DocumentControlModal";
+import DocumentControlModalTest from "../../../shared/src/components/Modal/DocumentControlModalTest";
 //@ts-ignore
 import Notiflix from "notiflix";
 import moment from "moment";
@@ -247,7 +247,7 @@ const BasicDocument = ({ page, keyword, option, doc_id }: IProps) => {
                 }}
                 width={1576}
             />
-            <DocumentControlModal
+            <DocumentControlModalTest
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
                 type={modalType}
