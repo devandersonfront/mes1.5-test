@@ -33,48 +33,6 @@ export interface IProps {
     option?: number
 }
 
-const dummyData = [
-    {
-        state:"ready",
-        machine_name:"세척기-1호",
-        machine_type:"코팅기",
-        identification:"20210401-01",
-        deadline:"2022-05-18",
-        customer:'안녕',
-        model:'하이',
-        code : '123',
-        product_name: '이름',
-        process:"코팅",
-        prediction_model:"-",
-        prediction_code:"-",
-        prediction_name:"-",
-        goal:"0",
-        total_good_quantity:"0",
-        achievement:"0",
-        predict : true,
-    },
-    {
-        state:"ready",
-        machine_name:"세척기-1호",
-        machine_type:"코팅기",
-        identification:"20210401-01",
-        deadline:"2022-05-18",
-        customer:'안녕',
-        model:'하이',
-        code : '123',
-        product_name: '이름',
-        process:"코팅",
-        prediction_model:"-",
-        prediction_code:"-",
-        prediction_name:"-",
-        goal:"0",
-        total_good_quantity:"0",
-        achievement:"0",
-        predict : false,
-        color : 'red'
-    }
-]
-
 
 const HomeAiProductionLog = ({}: IProps) => {
     const router = useRouter()
@@ -102,6 +60,20 @@ const HomeAiProductionLog = ({}: IProps) => {
         // }
     },[])
 
+
+    const predictCheckList = (value) => {
+
+        const codeCheck = value.predictionCode === value.code
+        const modelCheck = value.predictionModel === value.model
+        const nameCheck = value.predictionName === value.product_name
+
+        return codeCheck && modelCheck && nameCheck
+    }
+
+    const convertData = (results) => {
+        return results.map((result)=> !predictCheckList(result) ? {...result , color : 'red'} : {...result})
+    }
+
     const LoadBasic = async (pages : number = 1) => {
         try {
             const tokenData = userInfo?.token;
@@ -112,10 +84,8 @@ const HomeAiProductionLog = ({}: IProps) => {
             if(res.status === 200){
                 Notiflix.Loading.remove()
                 const {info_list , page, totalPages, menus} = res.data
-
-
-
-                setBasicRow(info_list)
+                const newData = convertData(info_list)
+                setBasicRow(newData)
                 setPage({current_page : page , totalPages : totalPages})
             }
         }catch (error) {
@@ -148,7 +118,7 @@ const HomeAiProductionLog = ({}: IProps) => {
             <ExcelTable
                 editable
                 headerList={column}
-                row={dummyData}
+                row={basicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
                     e.map(v => {
