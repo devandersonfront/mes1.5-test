@@ -9,6 +9,20 @@ export const toAuth = (title: string, show: boolean, checkable: boolean, check: 
   return {title,show,checkable,check,child,value}
 }
 
+export const HomeTitles = (customTarget?:string) => {
+  const homeDefault = {
+    home : toMenu(titles.home , '', customTarget === 'ai' ? ['_aiProductLog','_productLog'] : ['_productLog']),
+    _productLog : toMenu(titles._productLog, '/mes/home/productLog'),
+  }
+  switch (customTarget) {
+    case 'ai' : return {
+      ...homeDefault,
+      _aiProductLog: toMenu(titles._aiProductLog, '/mes/ai/productLog')
+    }
+    default: return homeDefault
+  }
+}
+
 export const BasicTitles = (customTarget?: string) => {
   const basicDefault = {
     userAuthMgmt: toMenu(titles.userAuthMgmt, '', [ '_authMgmt', '_userMgmt' ]),
@@ -72,8 +86,9 @@ export const MesTitles = (customTarget?: string) => {
     _opReList: toMenu(titles._opReList,'/mes/recordV2/list'),
     _opComList: toMenu(titles._opComList,'/mes/finishV2/list'),
 
-    rawMgmt: toMenu(titles.mesRawMgmt, '' , ['_rawReg','_rawStock', '_rawExportList']),
+    rawMgmt: toMenu(titles.mesRawMgmt, '' , ['_rawReg','_rawInputList','_rawStock', '_rawExportList']),
     _rawReg: toMenu(titles._rawReg,'/mes/rawmaterialV1u/input'),
+    _rawInputList: toMenu(titles._rawInputList,'/mes/rawmaterialV1u/inputList'),
     _rawStock: toMenu(titles._rawStock,'/mes/rawmaterialV1u/stock'),
     _rawExportList: toMenu(titles._rawExportList,'/mes/rawmaterialV1u/export/list'),
 
@@ -148,8 +163,9 @@ export const MesTitles = (customTarget?: string) => {
     }
     case 'ai': return {
       ...mesDefault,
-      pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList']),
+      pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList', '_opAiDataset']),
       _opAiReList: toMenu(titles._opAiReList,'/mes/ai/recordV2/list'),
+      _opAiDataset: toMenu(titles._opAiDataset, '/mes/ai/dataset')
     }
     case 'custom' : return {
       ...mesDefault,

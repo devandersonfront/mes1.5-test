@@ -8,7 +8,7 @@ import {
   MAX_VALUE,
   PaginationComponent,
   RequestMethod,
-  TextEditor
+  TextEditor, UnitContainer
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
@@ -120,7 +120,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         result: v.sortOption ? changeOrder : null,
       }
     });
-
     setColumn(tmpColumn);
   }
 
@@ -408,6 +407,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   const convertBarcodeData = (quantityData) => {
 
+    console.log(quantityData,'quantityDataquantityData')
+
     return [{
       material_id: quantityData.code ?? 0,
       material_type: userInfo.companyCode === '2SZ57L' ? 8 : 3,
@@ -419,7 +420,10 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       material_customer: quantityData.customer_id ?? "-",
       material_model: quantityData.model?.model ?? "-",
       material_machine_name : null,
-      material_size : String((quantityData.width * quantityData.height).toFixed(1)),
+      material_size : userInfo.companyCode === '4MN60H' ?
+          `${quantityData.depth} * ${quantityData.width} * ${quantityData.height}`
+          : `${quantityData.depth} * ${quantityData.width}`
+      ,
       material_texture : quantityData?.texture,
       material_unit : TransferCodeToValue(quantityData?.raw_material.unit,'rawMaterialUnit') as string,
       material_texture_type : quantityData?.type,
@@ -466,7 +470,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         selectDate={selectDate}
         //@ts-ignore
         setSelectDate={onSelectDate}
-        title={"원자재 재고 현황"}
+        title={"원자재 입고 현황"}
         buttons={
           selectList.size > 1
               ?

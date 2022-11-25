@@ -192,27 +192,33 @@ export const searchModalList: any = {
     {key: 'seq', name: '번호', width: 64, formatter: LineBorderContainer},
     {key: 'code', name: 'CODE', width: 265, formatter: tabIndex === 0 ? SearchModalTest : LineBorderContainer, placeholder: '-', type: 'bom', modalType: true, noSelect:true},
     {key: 'name', name: '품명', width: 280, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
+    {key: 'spare', name: '기본/스페어 설정', width: 120, formatter: DropDownEditor,selectList: [
         {pk: 0, name: '기본'},
         {pk: 1, name: '스페어'},
       ], type: 'Modal'},
-    {key: 'product_type', name: '구분', width: 160, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'type_name', name: '품목 종류', width: 160, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'unit', name: '단위', width: 160, formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
-    {key: 'usage', name: '1회 사용량', width: 160, formatter: LineBorderContainer, editor: TextEditor, inputType:'number', textType: 'Modal', placeholder: '1'},
-    {key: 'process', name: '생산 공정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'product_type', name: '구분', width: 100, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'type_name', name: '품목 종류', width: 100, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'standard', name: '가로*세로*두께', width: 160, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'texture', name: '재질/재질종류', width: 160, formatter: LineBorderContainer, placeholder: '-',},
+
+    {key: 'unit', name: '단위', width: 100, formatter: LineBorderContainer /*UnitContainer*/, placeholder: '-'},
+    {key: 'usage', name: '1회 사용량', width: 100, formatter: LineBorderContainer, editor: TextEditor, inputType:'number', textType: 'Modal', placeholder: '1'},
+    {key: 'process', name: '생산 공정', width: 120, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-', searchList},
   ]),
 
   readOnlyBomInfo: [
     {key: 'seq', name: '번호', width: 64,formatter: LineBorderContainer},
-    {key: 'code', name: 'CODE', width: 425, formatter: LineBorderContainer, placeholder: '-', type: 'bom', modalType: true},
+    {key: 'code', name: 'CODE', width: 265, formatter: LineBorderContainer, placeholder: '-', type: 'bom', modalType: true},
     {key: 'name', name: '품명', width: 280, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'product_type', name: '구분', width: 160, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'type_name', name: '품목 종류', width: 160, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'unit', name: '단위', width: 160, formatter: LineBorderContainer, placeholder: '-'},
-    {key: 'usage', name: '1회 사용량', width: 160, formatter: LineBorderContainer, textType: 'Modal', placeholder: '-'},
-    {key: 'process', name: '생산 공정', width: 160, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'product_type', name: '구분', width: 100, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'type_name', name: '품목 종류', width: 100, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'type_name', name: '품목 종류', width: 100, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'standard', name: '가로*세로*두께', width: 160, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'texture', name: '재질/재질종류', width: 160, formatter: LineBorderContainer, placeholder: '-',},
+    {key: 'unit', name: '단위', width: 100, formatter: LineBorderContainer, placeholder: '-'},
+    {key: 'usage', name: '1회 사용량', width: 100, formatter: LineBorderContainer, textType: 'Modal', placeholder: '-'},
+    {key: 'process', name: '생산 공정', width: 120, formatter: LineBorderContainer, placeholder: '-'},
     {key: 'bom', name: 'BOM', width: 160, formatter: AddTabButton, placeholder: '-'},
   ],
 
@@ -316,6 +322,25 @@ export const searchModalList: any = {
     {key: 'code', name: 'CODE', formatter: LineBorderContainer, textAlign: 'center'},
     {key: 'name', name: '품명', formatter: LineBorderContainer, textAlign: 'center',placeholder: '-'},
     {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
+        {pk: 1, name: '여'},
+        {pk: 0, name: '부'},
+      ], modalType: true, type:"Modal"
+    },
+    {key: 'isDefault', name: '기본/스페어', width: 160, formatter: LineBorderContainer, textAlign: 'left'},
+    {key: 'product_type', name: '구분', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'type', name: '품목 종류', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'unit', name: '단위', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'usage', name: '1회 사용량', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'process', name: '생산 공정', formatter: LineBorderContainer, textAlign: 'center',placeholder: '-'},
+    {key: 'stock', name: '재고량', formatter: UnitContainer, textAlign: 'center',placeholder: "0", textType:"Modal", type: 'selectUnit'},
+    // {key: 'bom', name: 'BOM', width: 160, formatter: BomInfoModal, placeholder: '-' ,modalType: true , type : 'readonly' },
+  ],
+
+  bomRegisterModal: [
+    {key: 'seq', name: '번호', width: 64, alignText: 'center', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'code', name: 'CODE', formatter: LineBorderContainer, textAlign: 'center'},
+    {key: 'name', name: '품명', formatter: LineBorderContainer, textAlign: 'center',placeholder: '-'},
+    {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor, readonly : true, selectList: [
         {pk: 1, name: '여'},
         {pk: 0, name: '부'},
       ], modalType: true, type:"Modal"
@@ -551,7 +576,9 @@ export const searchModalList: any = {
     {key: 'model_name', name: '모델', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'code', name: 'CODE', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'name', name: '품명', formatter: LineBorderContainer ,placeholder:"-",},
-    {key: 'product_type', name: '구분', formatter: LineBorderContainer ,placeholder:"-",},
+    // {key: 'product_type', name: '구분', formatter: LineBorderContainer ,placeholder:"-",},
+
+
     {key: 'type_name', name: '품목 종류', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'stock', name: '품목 재고', formatter: LineBorderContainer ,placeholder: 0,},
   ],
@@ -566,7 +593,7 @@ export const searchModalList: any = {
     {key: 'product_type', name: '품목 종류', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'product_unit', name: '단위', formatter: LineBorderContainer ,placeholder:"-",},
     {key: 'amount', name: '수주량', formatter: LineBorderContainer ,placeholder:"-",},
-    {key: 'stock', name: '재고량', formatter: LineBorderContainer ,placeholder:"-",},
+    // {key: 'stock', name: '재고량', formatter: LineBorderContainer ,placeholder:"-",},
 
   ],
   lotStock: [

@@ -8,7 +8,7 @@ import {BasicAuthority} from 'basic'
 const AuthorityContainer = () => {
   return (
     <div style={{display: 'flex'}}>
-      <MenuNavigation pageType={'BASIC'} subType={0}/>
+      <MenuNavigation pageType={'BASIC'}/>
       <ContainerWrapper>
         <ProfileHeader/>
         <BasicAuthority/>

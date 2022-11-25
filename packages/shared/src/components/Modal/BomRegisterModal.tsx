@@ -457,7 +457,8 @@ const BomRegisterModal = ({column, row, onRowChange}: IProps) => {
                       }).filter(v=>v)
                     ],
                     name: row.name,
-                    isChange: true
+                    isChange: true,
+                    searchList : searchList,
                   })
                   setIsOpen(false)
                 }

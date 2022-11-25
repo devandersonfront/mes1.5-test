@@ -5,6 +5,7 @@ import ProfileHeader from '../../../component/Profile/ProfileHeader'
 import {SelectColumn} from 'react-data-grid'
 import {NextPageContext} from 'next'
 import {MesRawMaterialStock} from '../../../../mes'
+import {BasicRawMaterial} from "basic";
 
 interface IProps {
   children?: any
@@ -20,7 +21,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
       <MenuNavigation pageType={'MES'}/>
       <div style={{paddingBottom: 40}}>
         <ProfileHeader/>
-        <MesRawMaterialStock page={page} search={keyword} option={option}/>
+        <BasicRawMaterial readonly/>
       </div>
     </div>
   );
