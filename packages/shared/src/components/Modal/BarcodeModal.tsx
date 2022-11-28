@@ -12,7 +12,7 @@ import {result} from "lodash";
 import cookie from "react-cookies";
 import {useSelector} from "react-redux";
 import {selectUserInfo} from "../../reducer/userInfo";
-import {customBarcodeCompanyCode} from "../../common/companyCode/companyCode";
+import {barcodeOfCompany} from "../../common/companyCode/companyCode";
 import {SF_ENDPOINT_BARCODE} from "../../common/configset";
 
 
@@ -81,7 +81,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Pr
             },
             {
                 responseType:'blob',
-                params : {company : customBarcodeCompanyCode(userInfo.companyCode)},
+                params : {company : barcodeOfCompany(userInfo.companyCode).companyCode},
             })
             .then((res) => {
                 Notiflix.Loading.remove()

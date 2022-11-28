@@ -28,7 +28,7 @@ import renewalColumn from '../../../main/common/unprintableKey'
 import { alertMsg } from 'shared/src/common/AlertMsg'
 import {insert_productList} from "shared/src/reducer/ProductSelect";
 import {selectUserInfo} from "shared/src/reducer/userInfo";
-import {companyCode} from "../../../shared/src/common/companyCode/companyCode";
+import {barcodeOfCompany} from "shared/src/common/companyCode/companyCode";
 
 export interface IProps {
   children?: any
@@ -468,7 +468,7 @@ const BasicProduct = ({}: IProps) => {
       "functions":
           {"func0":{"checkLabelStatus":[]},
             "func1":{"clearBuffer":[]},
-            "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+            "func2":{"drawBitmap":[dataurl,0,0,barcodeOfCompany(userInfo.companyCode).pm_materialType,0]},
             "func3":{"printBuffer":[]}
           }
     }
@@ -502,7 +502,7 @@ const BasicProduct = ({}: IProps) => {
 
     return [{
       material_id: quantityData.product_id,
-      material_type: companyCode(userInfo.companyCode, quantityData).productMgmt_materialType,
+      material_type: barcodeOfCompany(userInfo.companyCode, quantityData).pm_materialType,
       material_lot_id : 0,
       material_lot_number: '0',
       material_quantity : quantityData.quantity,
