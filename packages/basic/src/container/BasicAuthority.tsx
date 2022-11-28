@@ -34,7 +34,6 @@ const BasicAuthority = ({page, keyword, option}: IProps) => {
       [{key: 'name', width: 280, name: '권한명(필수)', editor: TextEditor,}] as Array<IExcelHeaderType>
   )
 
-
   useEffect(() => {
     dispatch(setMenuSelectState({main:"사용자 권한 관리", sub:router.pathname}))
     loadAuthorityList().then(() => Notiflix.Loading.remove())
