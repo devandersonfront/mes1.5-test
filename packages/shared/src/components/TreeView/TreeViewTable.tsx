@@ -74,9 +74,18 @@ const TreeViewTable = ({item, setItem, selectIndex}: IProps) => {
         const UpdatedIndexTree = [...menuIndexTree, mIdx]
         const isChild = depth > 0
         const hasChildren = menu.child?.length > 0
-      return [ <div style={{marginLeft: `${depth * 30}px`}}><TreeView open={menu.show} checked={menu.check} hasChildren={hasChildren} checkable={menu.checkable} style={(isChild ? {height: '40px'} : null)}
-                    onClickCheckBox={() => onClickCheckBox(UpdatedIndexTree, menu.check)} onClickArrow={() => onClickMenu(UpdatedIndexTree)} title={menu.title}
-                              titleStyles={titleStyles}/></div>, menu.show && menu.child && RecursiveTreeView(menu.child, depth + 1, UpdatedIndexTree) ]
+      return [ <div style={{marginLeft: `${depth * 30}px`}}>
+        <TreeView
+            open={menu.show}
+            checked={menu.check}
+            hasChildren={hasChildren}
+            checkable={menu.checkable}
+            style={(isChild ? {height: '40px'} : null)}
+            onClickCheckBox={() => onClickCheckBox(UpdatedIndexTree, menu.check)}
+            onClickArrow={() => onClickMenu(UpdatedIndexTree)} title={menu.title}
+            titleStyles={titleStyles}
+        />
+        </div>, menu.show && menu.child && RecursiveTreeView(menu.child, depth + 1, UpdatedIndexTree) ]
       }
     )
   )

@@ -525,6 +525,8 @@ const ApiList = {
   recordEnd: `/cnc/api/v1/record/complete`,
 
   //log
-  logOut: '/anonymous/logout'
+  logOut: '/anonymous/logout',
+  //doc
+  docChild : '/cnc/api/v1/document/load/child'
 
 }
