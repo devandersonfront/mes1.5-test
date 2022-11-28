@@ -24,7 +24,7 @@ import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
 import {selectUserInfo} from "shared/src/reducer/userInfo";
-import {unUsedCompanyCode} from "shared/src/common/companyCode";
+import {unUsedCompanyCode} from "shared/src/common/companyCode/";
 import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
 import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
 

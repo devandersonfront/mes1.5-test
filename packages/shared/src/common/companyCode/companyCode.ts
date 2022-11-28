@@ -5,3 +5,11 @@ export const customBarcodeCompanyCode = (code : string) => {
     return companyCode.includes(code) ? code : null
 }
 
+//
+// const defaultSetting = {rawMgmtTab : true , productMgmtTab : true , }
+//
+// const companyBarCode = [
+//     {companyCode : '2SZ57L' , rawMgmtTab : false , productMgmtTab : true}
+//
+// ]
+

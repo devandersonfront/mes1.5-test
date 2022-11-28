@@ -12,7 +12,7 @@ import {result} from "lodash";
 import cookie from "react-cookies";
 import {useSelector} from "react-redux";
 import {selectUserInfo} from "../../reducer/userInfo";
-import {customBarcodeCompanyCode} from "../../common/companyCode";
+import {customBarcodeCompanyCode} from "../../common/companyCode/companyCode";
 import {SF_ENDPOINT_BARCODE} from "../../common/configset";
 
 
