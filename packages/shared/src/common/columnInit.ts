@@ -1572,7 +1572,7 @@ export const columnlist: any = {
     {key: 'machine_name', frozen:true, name: '기계 이름', formatter:PlaceholderBox, width: 118,},
     {key: 'machine_type', frozen:true, name: '기계 종류', formatter:PlaceholderBox, width: 118,},
     {key: 'identification', frozen:true, name: '지시 고유 번호', formatter:PlaceholderBox, width: 118,},
-    {key: 'deadline', frozen:true, name: '작업 기한', headerRenderer: HeaderSort, formatter:PlaceholderBox, width:118},
+    {key: 'deadline', frozen:true, name: '작업 기한', formatter:PlaceholderBox, width:118},
     {key: 'customer', frozen:true, name: '거래처', formatter:PlaceholderBox, width: 118,},
     {key: 'model', frozen:true, name: '모델', formatter:PlaceholderBox, width: 118,},
     {key: 'code', frozen:true, name: 'CODE',  formatter:PlaceholderBox, width: 118,},

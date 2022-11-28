@@ -60,7 +60,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
     isVisible : false
   })
   // 안전재고량 filter 해주기 위한 상태값
-  // const [safety_status, setSafety_status] = useState<number>(0)
+  const [safety_status, setSafety_status] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
     page: 1,
@@ -78,7 +78,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
 
   useEffect(() => {
     getData(pageInfo.page, keyword)
-  }, [pageInfo.page]);
+  }, [pageInfo.page, safety_status]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({ main: "원자재 기준정보", sub: "" }));
@@ -240,7 +240,14 @@ const BasicRawMaterial = ({readonly}: IProps) => {
 
   const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod("get", keyword ? 'rawMaterialSearch' : 'rawMaterialList', {
+    const selectApi = () => {
+      if(safety_status === 1){
+        return keyword ? 'rawMaterialInsufficientSearch' : 'rawMaterialInsufficientList'
+      }else{
+        return keyword ? 'rawMaterialSearch' : 'rawMaterialList'
+      }
+    }
+    const res = await RequestMethod("get", selectApi(), {
       path: {
         page: page ?? 1,
         renderItem: 18,
@@ -673,10 +680,13 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           }
           buttonsOnclick={onClickHeaderButton}
           // 안전재고 filter를 위한 옵션
-          // isRadio
-          // radioValue={safety_status}
-          // onChangeRadioValues={setSafety_status}
-          // radioTexts={["전체", "안전재고 부족"]}
+          isRadio
+          radioValue={safety_status}
+          onChangeRadioValues={(e) => {
+            console.log(e)
+            setSafety_status(e)
+          }}
+          radioTexts={["전체", "안전재고 부족"]}
         />
         <ExcelTable
           editable

@@ -408,6 +408,7 @@ const ApiList = {
   factoryList: `/api/v1/factory/list`,
   deviceList: `/api/v1/device/list`,
   rawMaterialList: `/api/v1/raw-material/list`,
+  rawMaterialInsufficientList:'/api/v1/raw-material/insufficient/list',
   subMaterialList: `/api/v1/sub-material/list`,
   rawInList: `/api/v1/lot-rm/list`,
   subInList: `/api/v1/lot-sm/list`,
@@ -468,6 +469,7 @@ const ApiList = {
   factorySearch: `/api/v1/factory/search`,
   subFactorySearch: `/api/v1/subFactory/search`,
   rawInListSearch: `/api/v1/lot-rm/search`,
+  rawMaterialInsufficientSearch:'/api/v1/raw-material/insufficient/search',
   contractSearch: `/api/v1/contract/search`,
   lotRmSearch: `/api/v1/lot-rm/search`,
   lotSmSearch: `/api/v1/lot-sm/search`,
@@ -525,6 +527,8 @@ const ApiList = {
   recordEnd: `/cnc/api/v1/record/complete`,
 
   //log
-  logOut: '/anonymous/logout'
+  logOut: '/anonymous/logout',
+  //doc
+  docChild : '/cnc/api/v1/document/load/child'
 
 }
