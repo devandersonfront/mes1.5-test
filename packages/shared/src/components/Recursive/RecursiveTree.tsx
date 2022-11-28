@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import {IDocWithChild} from "../../@types/type";
 import {RequestMethod} from "../../common/RequestFunctions";
-import checkIcon from "../../../public/images/ic_check.png";
 import styled from "styled-components";
 import Notiflix from "notiflix";
+//@ts-ignore
 import menuClose from "../../../public/images/ic_monitoring_close.png";
+//@ts-ignore
 import menuOpen from "../../../public/images/ic_monitoring_open.png";
 
 interface Props {
