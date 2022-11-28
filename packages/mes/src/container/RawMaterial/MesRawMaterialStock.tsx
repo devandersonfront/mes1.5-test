@@ -27,6 +27,7 @@ import addColumnClass from '../../../../main/common/unprintableKey'
 import {CompleteButton} from "shared/src/components/Buttons/CompleteButton";
 import { alertMsg } from 'shared/src/common/AlertMsg';
 import {selectUserInfo} from "shared/src/reducer/userInfo";
+import {barcodeOfCompany} from "../../../../shared/src/common/companyCode/companyCode";
 
 interface IProps {
   children?: any
@@ -373,7 +374,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       "functions":
           {"func0":{"checkLabelStatus":[]},
             "func1":{"clearBuffer":[]},
-            "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+            "func2":{"drawBitmap":[dataurl,0,0,barcodeOfCompany(userInfo.companyCode).ri_drawBitMap,0]},
             "func3":{"printBuffer":[]}
           }
     }
@@ -407,11 +408,9 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   const convertBarcodeData = (quantityData) => {
 
-    console.log(quantityData,'quantityDataquantityData')
-
     return [{
       material_id: quantityData.code ?? 0,
-      material_type: userInfo.companyCode === '2SZ57L' ? 8 : 3,
+      material_type: barcodeOfCompany(userInfo.companyCode).ri_materialType,
       material_lot_id : quantityData.lot_rm_id,
       material_lot_number: quantityData.lot_number,
       material_quantity : quantityData?.realCurrent ?? 0,
@@ -420,10 +419,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       material_customer: quantityData.customer_id ?? "-",
       material_model: quantityData.model?.model ?? "-",
       material_machine_name : null,
-      material_size : userInfo.companyCode === '4MN60H' ?
-          `${quantityData.depth} * ${quantityData.width} * ${quantityData.height}`
-          : `${quantityData.depth} * ${quantityData.width}`
-      ,
+      material_size : barcodeOfCompany(userInfo.companyCode, quantityData).ri_materialSize,
       material_texture : quantityData?.texture,
       material_unit : TransferCodeToValue(quantityData?.raw_material.unit,'rawMaterialUnit') as string,
       material_texture_type : quantityData?.type,
