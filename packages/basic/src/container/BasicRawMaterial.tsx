@@ -24,7 +24,7 @@ import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
 import {selectUserInfo} from "shared/src/reducer/userInfo";
-import {unUsedCompanyCode} from "shared/src/common/companyCode";
+import {barcodeOfCompany} from "shared/src/common/companyCode/companyCode";
 import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
 import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
 
@@ -60,7 +60,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
     isVisible : false
   })
   // 안전재고량 filter 해주기 위한 상태값
-  // const [safety_status, setSafety_status] = useState<number>(0)
+  const [safety_status, setSafety_status] = useState<number>(0)
 
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
     page: 1,
@@ -78,7 +78,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
 
   useEffect(() => {
     getData(pageInfo.page, keyword)
-  }, [pageInfo.page]);
+  }, [pageInfo.page, safety_status]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({ main: "원자재 기준정보", sub: "" }));
@@ -240,7 +240,14 @@ const BasicRawMaterial = ({readonly}: IProps) => {
 
   const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle();
-    const res = await RequestMethod("get", keyword ? 'rawMaterialSearch' : 'rawMaterialList', {
+    const selectApi = () => {
+      if(safety_status === 1){
+        return keyword ? 'rawMaterialInsufficientSearch' : 'rawMaterialInsufficientList'
+      }else{
+        return keyword ? 'rawMaterialSearch' : 'rawMaterialList'
+      }
+    }
+    const res = await RequestMethod("get", selectApi(), {
       path: {
         page: page ?? 1,
         renderItem: 18,
@@ -586,7 +593,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
       "functions":
           {"func0":{"checkLabelStatus":[]},
             "func1":{"clearBuffer":[]},
-            "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+            "func2":{"drawBitmap":[dataurl,0,0,barcodeOfCompany(userInfo.companyCode).rm_drawBitMap,0]},
             "func3":{"printBuffer":[]}
           }
     }
@@ -625,10 +632,9 @@ const BasicRawMaterial = ({readonly}: IProps) => {
       material_customer: quantityData.customer?.name ?? "-",
       material_model: quantityData.model?.model ?? "-",
       material_machine_name : null,
-      material_size :String((quantityData.width * quantityData.height).toFixed(1)),
+      material_size : String((quantityData.width * quantityData.height).toFixed(1)),
       material_texture : quantityData?.texture,
       material_unit : null,
-
       material_texture_type : quantityData?.type,
       material_import_date: null,
       material_bom_lot: null
@@ -668,16 +674,19 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           title={readonly ? "원자재 재고 현황" : "원자재 기준정보"}
           buttons={
             readonly ?
-                [ (selectList.size <= 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"),]
+                [ (selectList.size <= 1 && barcodeOfCompany(userInfo.companyCode).rm_tab && "바코드 미리보기"),]
                 :
-                [ (selectList.size <= 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]
+                [ (selectList.size <= 1 && barcodeOfCompany(userInfo.companyCode).rm_tab && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]
           }
           buttonsOnclick={onClickHeaderButton}
           // 안전재고 filter를 위한 옵션
-          // isRadio
-          // radioValue={safety_status}
-          // onChangeRadioValues={setSafety_status}
-          // radioTexts={["전체", "안전재고 부족"]}
+          isRadio
+          radioValue={safety_status}
+          onChangeRadioValues={(e) => {
+            console.log(e)
+            setSafety_status(e)
+          }}
+          radioTexts={["전체", "안전재고 부족"]}
         />
         <ExcelTable
           editable
