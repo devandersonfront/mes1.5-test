@@ -92,17 +92,17 @@ export interface IMenu {
 }
 
 export interface IDoc {
-  created : string
-  date : string
-  doc_id : number
-  file_uuid : string
-  id : number
-  member : any
-  name : string
-  parent : any
-  parentId : string
-  type : string
-  version : number
+  created : string | undefined
+  date : string | undefined
+  doc_id : number | undefined
+  file_uuid : string | undefined
+  id : number | undefined
+  member : any | undefined
+  name : string | undefined
+  parent : any | undefined
+  parentId : string | undefined
+  type : string | undefined
+  version : number | undefined
 }
 
 export interface IDocWithChild extends IDoc {

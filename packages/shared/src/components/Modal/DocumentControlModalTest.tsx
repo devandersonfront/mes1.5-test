@@ -26,7 +26,20 @@ const DocumentControlModalTest = ({isOpen, setIsOpen, type, reload, allFolder, s
     const [menu, setMenu] = React.useState<IDocWithChild[]>([])
 
     React.useEffect(() => {
-        setMenu(allFolder.filter(folder => !folder.parent))
+        setMenu([{
+            created : undefined,
+            date : undefined,
+            doc_id : undefined,
+            file_uuid : undefined,
+            id : undefined,
+            member : undefined,
+            name : '표준문서 관리',
+            parent : undefined,
+            parentId : undefined,
+            type : 'dir',
+            version : undefined,
+            child : undefined
+        }])
     }, [rows])
 
 
@@ -136,7 +149,7 @@ const DocumentControlModalTest = ({isOpen, setIsOpen, type, reload, allFolder, s
                         <div style={{background:'rgb(39 49 73)'}}>
                             {
                                 menu.map((data)=>{
-                                    return  <RecursiveTree data={data} onRadioClick={setSelectOption}/>
+                                    return  <RecursiveTree initData={data} onRadioClick={setSelectOption}/>
                                 })
                             }
                         </div>
