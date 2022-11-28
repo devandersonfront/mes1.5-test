@@ -24,7 +24,7 @@ import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
 import {selectUserInfo} from "shared/src/reducer/userInfo";
-import {unUsedCompanyCode} from "shared/src/common/companyCode/";
+import {companyCode} from "shared/src/common/companyCode/companyCode";
 import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
 import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
 
@@ -628,7 +628,6 @@ const BasicRawMaterial = ({readonly}: IProps) => {
       material_size :String((quantityData.width * quantityData.height).toFixed(1)),
       material_texture : quantityData?.texture,
       material_unit : null,
-
       material_texture_type : quantityData?.type,
       material_import_date: null,
       material_bom_lot: null
@@ -668,9 +667,9 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           title={readonly ? "원자재 재고 현황" : "원자재 기준정보"}
           buttons={
             readonly ?
-                [ (selectList.size <= 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"),]
+                [ (selectList.size <= 1 && companyCode(userInfo.companyCode).rawMgmtTab && "바코드 미리보기"),]
                 :
-                [ (selectList.size <= 1 && !unUsedCompanyCode.includes(userInfo.companyCode) && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]
+                [ (selectList.size <= 1 && companyCode(userInfo.companyCode).rawMgmtTab && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]
           }
           buttonsOnclick={onClickHeaderButton}
           // 안전재고 filter를 위한 옵션

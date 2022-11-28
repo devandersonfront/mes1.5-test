@@ -28,6 +28,7 @@ import renewalColumn from '../../../main/common/unprintableKey'
 import { alertMsg } from 'shared/src/common/AlertMsg'
 import {insert_productList} from "shared/src/reducer/ProductSelect";
 import {selectUserInfo} from "shared/src/reducer/userInfo";
+import {companyCode} from "../../../shared/src/common/companyCode/companyCode";
 
 export interface IProps {
   children?: any
@@ -494,17 +495,6 @@ const BasicProduct = ({}: IProps) => {
     setModal({type , isVisible})
   }
 
-  const materialTypeOfCompany = (data) => {
-    switch (data.type) {
-      case '완제품' :
-        return 6
-      case '반제품':
-      case '재공품':
-        return 7
-      default :
-        return 2
-    }
-  }
 
   const convertBarcodeData = (quantityData) => {
 
@@ -512,7 +502,7 @@ const BasicProduct = ({}: IProps) => {
 
     return [{
       material_id: quantityData.product_id,
-      material_type: userInfo.companyCode === '2SZ57L' ? materialTypeOfCompany(quantityData) : 2,
+      material_type: companyCode(userInfo.companyCode, quantityData).productMgmt_materialType,
       material_lot_id : 0,
       material_lot_number: '0',
       material_quantity : quantityData.quantity,
@@ -524,7 +514,6 @@ const BasicProduct = ({}: IProps) => {
       material_size : null,
       material_texture : null,
       material_unit : null,
-
       material_texture_type : null,
       material_import_date : null,
       material_bom_lot: null,
