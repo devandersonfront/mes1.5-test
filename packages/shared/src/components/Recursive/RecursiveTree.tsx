@@ -25,7 +25,7 @@ export const RecursiveTree = ({ initData , onRadioClick } : Props) =>{
     };
 
     return (
-        <div style={{padding : 5}}>
+        <div>
             <div style={{display : 'flex', alignItems : 'center'}}>
                 <input type="radio" name="test" onClick={() => onRadioClick(initData)} style={{marginRight : 10}}/>
                 <div onClick={onClickDoc} style={{display : 'flex' , alignItems:'center'}}>
@@ -35,18 +35,19 @@ export const RecursiveTree = ({ initData , onRadioClick } : Props) =>{
                     </ArrowImageWrapper>
                 </div>
             </div>
+            <div style={{padding: '0px 0px 0px 20px'}}>
             {isVisible ? (
                 child?.map((result) => {
                     return (
-                        <div style={{padding: '10px 0 10px 10px'}}>
+
                             <RecursiveTree initData={result} onRadioClick={onRadioClick}/>
-                        </div>
+
                     );
                 })
             ) : (
                 <></>
             )}
-
+            </div>
         </div>
     );
 }
