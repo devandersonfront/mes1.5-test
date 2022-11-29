@@ -767,7 +767,7 @@ export const columnlist: any = {
     { key: 'process_id', name: '공정명', width: 220 },
     { key: 'reason', name: '불량 유형', width: 550 },
     {
-      key: 'amount', name: '개수', width: 250, headerRenderer: HeaderFilter,
+      key: 'amount', name: '개수', headerRenderer: HeaderFilter,
       options: [{ status: 0, name: "개수" }, { status: 1, name: "개수 많은순" }, { status: 2, name: "개수 적은순" }],
     },
   ],
