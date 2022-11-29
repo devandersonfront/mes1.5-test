@@ -35,17 +35,6 @@ export interface IProps {
 }
 
 
-const machineList = [
-    {pk: 0, name: "선택없음"},
-    {pk: 1, name: "프레스"},
-    {pk: 2, name: "로봇"},
-    {pk: 3, name: "용접기"},
-    {pk: 4, name: "밀링"},
-    {pk: 5, name: "선반"},
-    {pk: 6, name: "탭핑기"},
-]
-
-
 const HomeAiProductionLog = ({}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
@@ -71,13 +60,14 @@ const HomeAiProductionLog = ({}: IProps) => {
         // }
     },[])
 
-
     const predictCheckList = (value) => {
+
         const codeCheck = value.predictionCode === value.code
         const modelCheck = value.predictionModel === value.model
         const nameCheck = value.predictionName === value.product_name
+        const processCheck = value.predictionProcess === value.process
 
-        return codeCheck && modelCheck && nameCheck
+        return codeCheck && modelCheck && nameCheck && processCheck
     }
 
     const convertData = (results) => {
