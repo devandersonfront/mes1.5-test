@@ -1581,7 +1581,7 @@ export const columnlist: any = {
     {key: 'predictionModel', name: '예측 모델',  type: 'machineInfo', formatter:PlaceholderBox, width: 118,},
     {key: 'predictionCode', name: '예측 CODE',  type: 'machineInfo', formatter:PlaceholderBox, width: 118,},
     {key: 'predictionName', name: '예측 품명',  type: 'machineInfo', formatter:PlaceholderBox, width: 118,},
-    {key: 'goal', name: '목표 생산량', formatter:PlaceholderBox, width: 118},
+    {key: 'goal', name: '목표 생산량', formatter: PlaceholderBox, width: 118},
     {key: 'total_good_quantity', name : '총 카운터', formatter:PlaceholderBox, width: 118},
     {key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', width: 300},
   ]
