@@ -49,7 +49,7 @@ const TitleFileUpload = ({title,index,uuid, detail,value,placeholder,fileOnClick
                    onChange={async (e) => {
                        if(e.target.files && e.target.files.length !== 0) {
                            // Buffer.from(e.target.files[0]);
-                           const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true, e.target.files[0].type);
+                           const uploadImg = await uploadTempFile(e.target.files[0] , e.target.files[0].size, true, e.target.files[0].name, e.target.files[0].type);
 
                            if(uploadImg !== undefined){
                                const fileInfo = {
