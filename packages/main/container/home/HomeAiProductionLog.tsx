@@ -62,6 +62,10 @@ const HomeAiProductionLog = ({}: IProps) => {
 
     const predictCheckList = (value) => {
 
+        if(!value.code){
+            return true
+        }
+
         const codeCheck = value.predictionCode === value.code
         const modelCheck = value.predictionModel === value.model
         const nameCheck = value.predictionName === value.product_name
@@ -72,7 +76,7 @@ const HomeAiProductionLog = ({}: IProps) => {
 
     const convertData = (results) => {
         return results.map((result)=>
-            !predictCheckList(result) ?
+            !predictCheckList({...result }) ?
                 {...result , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
                 : {...result , machine_type : TransferCodeToValue(result.machine_type, "machine")}
         )
