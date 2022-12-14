@@ -1585,5 +1585,67 @@ export const columnlist: any = {
     {key: 'goal', name: '목표 생산량', formatter: PlaceholderBox, width: 118},
     {key: 'total_good_quantity', name : '총 카운터', formatter:PlaceholderBox, width: 118},
     {key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', width: 300},
-  ]
-}
+  ],
+  welding:[
+    {key: 'id', name: '기계ID',  type: 'machineInfo', formatter: StatusComponent, headerRenderer: HeaderSort, sortOption: "none", sorts: {}, width: 118,},
+    {key: 'period', name: '시간',  type: 'machineInfo', formatter: StatusComponent, headerRenderer: HeaderSort, sortOption: "none", sorts: {}, width: 140,},
+    {key: 'ch', name: '채널',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'type', name: '계열',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'voltOutput', name: '출력전압',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'voltMax', name: '전압상한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'voltMin', name: '전압하안',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'voltErrorTime', name: '에러시간',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'voltErrorDurationTime', name: '에러지속시간설정',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'currentOutput', name: '출력전류',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'currentMax', name: '전류상한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'currentMin', name: '전류하한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'currentErrorTime', name: '에러시간',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'currentErrorDurationTime', name: '에러지속시간설정',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'gasOutput', name: '출력가스',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'gasMax', name: '가스상한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'gasMin', name: '가스하한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'gasErrorTime', name: '에러시간',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'gasErrorDurationTime', name: '에러지속',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'weldingTime', name: '용접시간',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'timeMax', name: '시간상한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'timeMin', name: '시간하한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'timeErrorOnOff', name: '에러 on/off',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'wireLength', name: '와이어 길이',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'lengthMax', name: '길이상한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'lengthMin', name: '길이하한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'lengthError', name: '에러 on/off',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'quantity', name: '생산량',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+  ]}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
