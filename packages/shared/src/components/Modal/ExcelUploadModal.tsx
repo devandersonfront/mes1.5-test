@@ -39,30 +39,38 @@ const ExcelUploadModal = ({isOpen, setIsOpen, process_id, tab, cleanUpBasicData,
     },[isOpen])
 
     const excelUpload = async() => {
-        if(tempFile !== undefined){
-            const formData = new FormData();
-            formData.append('file', tempFile);
-
-            const res = await axios.post(`${SF_ENDPOINT_EXCEL}/api/v1/format/upload/${tab}`, formData,
-                {
-                    headers:{
-                        Authorization: tokenData
-                    },
-                    params:{
-                        parent:parent
-                    }
-                })
-
-            if(res && res.status === 200 && res.data.status === 200){
-                cleanUpBasicData(res)
-                setIsOpen(false);
-            }else if(res.data.status === 404){
-                Notiflix.Report.warning(res.data.message, "", "확인");
+        try{
+            if(tempFile !== undefined){
+                const formData = new FormData();
+                formData.append('file', tempFile);
+                const res = await axios.post(
+                    cookie.load("userInfo")?.company == "9UZ50Q" ?
+                        `${SF_ENDPOINT_EXCEL}/api/v1/upload/eunhye/welding`
+                        :
+                        `${SF_ENDPOINT_EXCEL}/api/v1/format/upload/${tab}`,
+                    formData,
+                    {
+                        headers:{
+                            "Content-Type": "multipart/form-data",
+                            Authorization: tokenData
+                        },
+                        params:{
+                            parent:parent
+                        }
+                    })
+                if(res && res.status === 200 && res.data.status === 200 || res && res.status === 201){
+                    cleanUpBasicData(res)
+                    setIsOpen(false);
+                }else if(res.data.status === 404){
+                    Notiflix.Report.warning(res.data.message, "", "확인");
+                }else{
+                    Notiflix.Report.warning(res.data.message, "server", "확인");
+                }
             }else{
-                Notiflix.Report.warning(res.data.message, "server", "확인");
+                Notiflix.Report.warning("파일을 등록해주세요.","","확인");
             }
-        }else{
-            Notiflix.Report.warning("파일을 등록해주세요.","","확인");
+        }catch (err){
+            Notiflix.Report.warning("잘못된 양식입니다.","","확인");
         }
     }
 
@@ -99,7 +107,7 @@ const ExcelUploadModal = ({isOpen, setIsOpen, process_id, tab, cleanUpBasicData,
                             </p>
                             <div style={{overflow:"hidden", width:"80px", height:"100%",background:"rgb(25,185,223)", display:"flex", justifyContent:"center", alignItems:"center", cursor:"pointer"}}>
                                 파일선택
-                                <input type={"file"} accept={".xls, .xlsx"} style={{opacity:0, position:"absolute", width:"80px",height:"50px", cursor:"pointer"}} onChange={(e)=>{
+                                <input type={"file"} accept={".xls, .xlsx, .csv, .CSV"} style={{opacity:0, position:"absolute", width:"80px",height:"50px", cursor:"pointer"}} onChange={(e)=>{
                                     setFileName(e.target.files[0].name)
                                     setTempFile(e.target.files[0]);
                                 }}/>
