@@ -166,12 +166,12 @@ const emptyRow = (type: string) => {
 }
 
 
-const defaultRow = (type:string) => {
+const defaultRow = (type:string , row ?: any) => {
   switch(type){
     case 'orderRegister':
       return {
-        date: moment().format('YYYY-MM-DD'),
-        deadline: moment().format('YYYY-MM-DD')
+        date: row?.date ?? moment().format('YYYY-MM-DD'),
+        deadline: row?.deadline ?? moment().format('YYYY-MM-DD'),
       }
     case 'deliveryRegister':
       return {
@@ -452,15 +452,15 @@ const MultiSelectModal = ({ column, row, onRowChange }: IProps) => {
     let newBasicRow = basicRowMap.size > 0 ? Array.from(basicRowMap.values()) : []
     newBasicRow = newBasicRow.length === 0
       ? [module.emptyRow(column.type)]
-      : newBasicRow.map((row, rowIdx) => {
-        let defaultRes = {...row, id:row[module.key], isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1, border:false }
-        const syncKey = module.getSyncKey(column.searchType, column.type, row[module.key], row)
+      : newBasicRow.map((basicRow, rowIdx) => {
+        let defaultRes = {...basicRow, id:basicRow[module.key], isFirst: rowIdx === 0, [module.indexKey]: rowIdx + 1, border:false }
+        const syncKey = module.getSyncKey(column.searchType, column.type, basicRow[module.key], basicRow)
         if(initMap.has(syncKey)){
           defaultRes = {...defaultRes, ...syncWithSaved(column.type, initMap.get(syncKey))}
         // } else if(initMap.has(undefined)) {
         //   defaultRes = {...defaultRes, ...defaultRow(column.type)}
         } else {
-          defaultRes = {...defaultRes, ...defaultRow(column.type)}
+          defaultRes = rowIdx === 0 ? {...defaultRes, ...defaultRow(column.type , row)} : {...defaultRes, ...defaultRow(column.type)}
         }
         return {...defaultRes, isChange:false}
       })
