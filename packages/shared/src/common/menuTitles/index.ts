@@ -50,6 +50,7 @@ export const BasicTitles = (customTarget?: string) => {
     subMgmt: toMenu(titles.subMgmt, '/mes/basic/submaterial'),
     productMgmt: toMenu(titles.productMgmt, '/mes/basic/productV1u'),
     documentMgmt: toMenu(titles.documentMgmt, '/mes/basic/document'),
+    welding: toMenu(titles.welding, '/mes/basic/welding'),
   }
   switch(customTarget){
     case 'dohwa' : return {
@@ -281,6 +282,7 @@ export const HomeAuth = (customTarget?: string) => {
     subMgmt: toAuth(titles.subMgmt, false, true, false, [], auth.subMgmt ),
     productMgmt: toAuth(titles.productMgmt, false, true, false, [], auth.productMgmt ),
     documentMgmt: toAuth(titles.documentMgmt, false, true, false, [], auth.documentMgmt ),
+    welding: toAuth(titles.welding, false, true, false, [], auth.documentMgmt ),
   }
   switch(customTarget){
     default: return basicDefault
