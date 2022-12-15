@@ -1617,37 +1617,21 @@ export const columnlist: any = {
     {key: 'lengthMin', name: '길이하한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'lengthError', name: '에러 on/off',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'quantity', name: '생산량',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
-  ]}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  ],
+  priceLog: [
+    { key: 'code', name: '원자재 CODE', formatter: PlaceholderBox, placeholder: "CODE 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
+    { key: 'name', name: '원자재 품명', formatter: PlaceholderBox, placeholder: "품명 입력" },
+    { key: 'texture', name: '재질', formatter: PlaceholderBox, placeholder: "재질 입력" },
+    { key: 'depth', name: '두께', formatter: UnitContainer, inputType: 'number', unitData: 'T', placeholder: "0", toFix: 2 },
+    { key: 'width', name: '가로(COIL 폭)', formatter: UnitContainer, inputType: 'number', unitData: 'mm', placeholder: "0", toFix: 1 },
+    { key: 'height', name: '세로(Feeder)', formatter: UnitContainer, inputType: 'number', unitData: 'mm', placeholder: "0", toFix: 1 },
+    {
+      key: 'type', name: '재질 종류', formatter: DropDownEditor, selectList: [
+        { pk: 1, name: 'COIL' },
+        { pk: 2, name: 'SHEET' }
+      ], readonly:true
+    },
+    { key: 'log', name: '단가 변동일', formatter: PlaceholderBox, headerRenderer: HeaderSort, sortOption: "none", sorts: {}},
+    { key: 'price', name: '단가', formatter: UnitContainer, headerRenderer: HeaderSort, sortOption: "none", sorts: {}},
+  ],
+}

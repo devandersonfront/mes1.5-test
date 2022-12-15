@@ -1,6 +1,7 @@
 import React from 'react'
 import {IExcelHeaderType} from '../../@types/type'
 import {CellButton} from '../../styles/styledComponents'
+import {useRouter} from "next/router";
 
 interface IProps {
   row: any
@@ -9,14 +10,19 @@ interface IProps {
 }
 
 const AddlButton = ({ row, column, onRowChange}: IProps) => {
+  const router = useRouter()
   return (
     <CellButton onClick={() => {
-      onRowChange({
-        ...row,
-        add: true
-      })
+      if(column?.url) {
+          router.push(column.url)
+      }else{
+          onRowChange({
+            ...row,
+            add: true
+          })
+      }
     }}>
-      추가
+        {column.key == 'log' ? "조회" : "추가"}
     </CellButton>
   );
 }
