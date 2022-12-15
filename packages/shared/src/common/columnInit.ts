@@ -253,7 +253,7 @@ export const columnlist: any = {
     {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-'},
     {key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-'},
     {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', overlay:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
-    {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
+    {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력', headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'product_type', name: '구분',  formatter: DropDownEditor, editorOptions: { editOnClick: true }, headerRenderer: HeaderFilter,
       options: [
         { status: '0', name: "구분" },
@@ -334,7 +334,7 @@ export const columnlist: any = {
   ]),
   rawMaterial: [
     { key: 'code', name: '원자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: "CODE 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'name', name: '원자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: "품명 입력" },
+    { key: 'name', name: '원자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: "품명 입력", headerRenderer:HeaderSort, sortOption: "none",sorts: {} },
     { key: 'texture', name: '재질', editor: TextEditor, formatter: PlaceholderBox, placeholder: "재질 입력" },
     { key: 'depth', name: '두께', editor: TextEditor, formatter: UnitContainer, inputType: 'number', unitData: 'T', placeholder: "0", toFix: 2 },
     { key: 'width', name: '가로(COIL 폭)', editor: TextEditor, formatter: UnitContainer, inputType: 'number', unitData: 'mm', placeholder: "0", toFix: 1 },
