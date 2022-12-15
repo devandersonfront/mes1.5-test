@@ -195,7 +195,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
         scrollEnd && scrollEnd(isAtBottom(e))
       }}
         //@ts-ignore
-      rowClass={(row : any) => row.color}
+      rowClass={(row : any) => row?.color}
     />
   }
 

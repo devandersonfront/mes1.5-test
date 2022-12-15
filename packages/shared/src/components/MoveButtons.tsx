@@ -9,24 +9,30 @@ interface Props {
 
 
 const MoveButtons = ({row, column ,onRowChange }:Props) => {
+    const sequenceKey = row?.seq ? "seq" : "sequence"
+    const index = () => {
+        if(typeof row?.id !== "number" && row?.id?.includes("addi")){
+            return column.rows.indexOf(row)
+        }else{
+          return row[sequenceKey] - (row?.seq ? 1 : 0)
+        }
+    }
     const moveUp = () => {
-        if(row.seq > 1) {
-          const index = row.seq - 1
+        if(index() > (0)) {
           const newRows = [...column.rows]
-          const tmp = {...newRows[index], seq: row.seq - 1}
-          newRows[index] = {...newRows[index - 1], seq: row.seq}
-          newRows[index - 1] = tmp
+          const tmp = {...newRows[index()], [sequenceKey]: row[sequenceKey] - 1}
+          newRows[index()] = {...newRows[index() - 1], [sequenceKey]: row[sequenceKey]}
+          newRows[index() - 1] = tmp
           column.setRows(newRows)
         }
     }
 
     const moveDown = () => {
-      if(row.seq < column.rows?.length) {
-        const index = row.seq - 1
+      if(index() + 1 < column.rows?.length) {
         const newRows = [...column.rows]
-        const tmp = {...newRows[index], seq: row.seq + 1}
-        newRows[index] = {...newRows[index + 1], seq: row.seq}
-        newRows[index + 1] = tmp
+        const tmp = {...newRows[index()], [sequenceKey]: row[sequenceKey] + 1}
+        newRows[index()] = {...newRows[index() + 1], [sequenceKey]: row[sequenceKey]}
+        newRows[index() + 1] = tmp
         column.setRows(newRows)
       }
     }

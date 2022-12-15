@@ -428,21 +428,22 @@ export const columnlist: any = {
     },
     { key: 'wip_name', name: '반제품명', width: 118, editor: TextEditor },
   ],
-  additionalItem: [
-    { key: 'title', editor: TextEditor, name: "추가 항목명", width: 1290 },
+  additionalItem: (rows, setRows) => [
+    { key: 'title', editor: TextEditor, name: "추가 항목명", },
     {
       key: 'moddable', formatter: DropDownEditor, selectList: [
         { unit_id: '0', name: "필요" },
         { unit_id: '1', name: "불필요" }
-      ], name: "단위 필요 유무"
+      ], name: "단위 필요 유무", width:118
     },
     {
       key: 'unit', formatter: DropDownEditor, selectList: [
         { unit_id: '0', name: "개별관리" },
         { unit_id: '1', name: "통일" },
         { unit_id: '2', name: "없음" },
-      ], name: "단위 관리"
+      ], name: "단위 관리", width:118
     },
+    { key: 'moveButtons', width: 200, formatter: MoveButtons, rows, setRows },
   ],
   rawin: [
     { key: 'customer_id', frozen: true },
@@ -610,8 +611,9 @@ export const columnlist: any = {
     {key: 'export', name: '수정', formatter: ExportButton, width: 118, type: 'subMaterial', action: 'modify'}
   ],
 
-  baseItem: [
+  baseItem: (rows, setRows) =>  [
     { key: 'title', editor: TextEditor, name: "기본 항목명" },
+    { key: 'moveButtons', width: 200, formatter: MoveButtons, rows, setRows },
   ],
   pause: [
     { key: 'name', formatter: OnClickContainer }

@@ -251,11 +251,8 @@ const ItemManagePage = ({title, type, code}: IProps) => {
           selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
           setAddiItem(Array.from(map.values()))
           setSelectList(new Set())
-
         }
     )
-
-
   }
 
   useEffect(() => {
@@ -328,7 +325,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
             </div>
             <ItemManageBox title={title} items={baseItem} setItems={setBaseItem} type={'base'}/>
             <ExcelTable
-                headerList={columnlist.baseItem}
+                headerList={[...columnlist.baseItem(baseItem, setBaseItem)]}
                 row={baseItem}
                 height={240}
                 setRow={setBaseItem}
@@ -361,27 +358,20 @@ const ItemManagePage = ({title, type, code}: IProps) => {
                 <HeaderButton onClick={() => {
                   const random_id = Math.random() * 1000;
                   setAddiItem([...addiItem, {
-                    id: `item_${random_id}`,
+                    id: `addi_${random_id}`,
                     width: 118,
                     sequence:baseItem.length,
                     tab:baseItem[0].tab
                   }])
-
                 }} key={`btnCreate`}>행 추가</HeaderButton>
                 <HeaderButton onClick={() => deleteItem(code, addiItem)} key={`btnCreate`}>삭제</HeaderButton>
               </div>
               <ItemManageBox title={title} items={addiItem} setItems={setAddiItem} type={'additional'}/>
               <ExcelTable
                   selectable
-                  headerList={[
-                    SelectColumn,
-                    ...columnlist.additionalItem
-                  ]}
+                  headerList={columnlist.additionalItem(addiItem, setAddiItem)}
                   row={addiItem}
                   height={240}
-                  // setRow={setAddiItem}
-                  selectList={selectList}
-                  setSelectList={setSelectList}
                   setRow={(e) => competeAddtion(e)}
                   setSelectRow={(e) => {
                     setSelectRow(e)}}
