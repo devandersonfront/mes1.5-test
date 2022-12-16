@@ -899,7 +899,7 @@ export const columnlist: any = {
     { key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
   ],
   aiRecordListV2: [
-    {key:"identification", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, },
+    { key:"identification", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, },
     { key: "product_id", name: "CODE", width: 118 },
     { key: "name", name: "품명", width: 118 },
     { key: "type", name: "품목 종류", width: 118 },
@@ -915,6 +915,8 @@ export const columnlist: any = {
     { key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
     { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
     { key: 'machine_id', name: '기계', formatter: MachineSelectModal, textAlign: 'center', type:"ai"},
+    { key: 'prediction', name : '예측', width: 118},
+    { key : 'confidence', name : '신뢰도', width: 118}
   ],
   finishListV2: [
     { key: "status", name: "상태", formatter: FinishCancelButton, width: 118 ,unprintable : true},
@@ -1570,10 +1572,10 @@ export const columnlist: any = {
   aiProductLog:[
     {key: 'state', frozen: true, name: '상태',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'machine_name', frozen:true, name: '기계 이름', formatter:PlaceholderBox, width: 118,},
-    {key: 'machine_type', frozen:true, name: '기계 종류', formatter:PlaceholderBox, width: 118,},
+    // {key: 'machine_type', frozen:true, name: '기계 종류', formatter:PlaceholderBox, width: 118,},
     {key: 'identification', frozen:true, name: '지시 고유 번호', formatter:PlaceholderBox, width: 118,},
     {key: 'deadline', frozen:true, name: '작업 기한', formatter:PlaceholderBox, width:118},
-    {key: 'customer', frozen:true, name: '거래처', formatter:PlaceholderBox, width: 118,},
+    // {key: 'customer', frozen:true, name: '거래처', formatter:PlaceholderBox, width: 118,},
     {key: 'model', frozen:true, name: '모델', formatter:PlaceholderBox, width: 118,},
     {key: 'code', frozen:true, name: 'CODE',  formatter:PlaceholderBox, width: 118,},
     {key: 'product_name', frozen:true, name: '품명', formatter:PlaceholderBox, width: 118,},
@@ -1582,8 +1584,9 @@ export const columnlist: any = {
     {key: 'predictionCode', name: '예측 CODE',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
     {key: 'predictionName', name: '예측 품명',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
     {key: 'predictionProcess', name: '예측 공정',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'goal', name: '목표 생산량', formatter: PlaceholderBox, width: 118},
-    {key: 'total_good_quantity', name : '총 카운터', formatter:PlaceholderBox, width: 118},
+    {key: 'predictionConfidence', name : '예측 신뢰도' , width: 118},
+    {key: 'goal', name: '목표 생산량', width: 118},
+    {key: 'total_good_quantity', name : '총 카운터', width: 118},
     {key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', width: 300},
   ]
 }

@@ -62,7 +62,7 @@ const HomeAiProductionLog = ({}: IProps) => {
 
     const predictCheckList = (value) => {
 
-        if(!value.code){
+        if(!value.code || value.code === '-'){
             return true
         }
 
@@ -76,7 +76,7 @@ const HomeAiProductionLog = ({}: IProps) => {
 
     const convertData = (results) => {
         return results.map((result)=>
-            !predictCheckList({...result }) ?
+            !predictCheckList(result) ?
                 {...result , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
                 : {...result , machine_type : TransferCodeToValue(result.machine_type, "machine")}
         )

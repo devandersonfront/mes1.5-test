@@ -118,7 +118,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
       rowKeyGetter={rowKeyGetter}
       className={className}
       columns={headerList}
-      rows={row.length > 0 ? row : []}
+      rows={row?.length > 0 ? row : []}
       components={{noRowsFallback: <EmptyRowsRenderer />}}
       onColumnResize={(v, i) => {
         tempData.map((time,i)=>{
