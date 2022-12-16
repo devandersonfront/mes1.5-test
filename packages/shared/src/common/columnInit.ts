@@ -1593,7 +1593,7 @@ export const columnlist: any = {
     {key: 'type', name: '계열',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'voltOutput', name: '출력전압',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'voltMax', name: '전압상한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
-    {key: 'voltMin', name: '전압하안',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'voltMin', name: '전압하한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'voltErrorTime', name: '에러시간',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'voltErrorDurationTime', name: '에러지속시간설정',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'currentOutput', name: '출력전류',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
