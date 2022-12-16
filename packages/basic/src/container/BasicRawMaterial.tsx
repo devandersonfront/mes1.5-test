@@ -18,7 +18,7 @@ import { useRouter } from "next/router";
 import { NextPageContext } from "next";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState,} from "shared/src/reducer/menuSelectState";
-import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
+import {columnsSort, getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import {BarcodeDataType} from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
@@ -274,11 +274,14 @@ const BasicRawMaterial = ({readonly}: IProps) => {
   const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["rawMaterial"];
     let tmpRow = [];
+
     tmpColumn = tmpColumn
       .map((column: any) => {
+
         let menuData: object | undefined;
         res.menus &&
           res.menus.map((menu: any) => {
+
             if (!menu.hide) {
               if (menu.colName === column.key) {
                 menuData = {
@@ -315,7 +318,8 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           };
         }
       })
-      .filter((v: any) => v);
+      .filter((v: any) => v)
+
 
     let additionalMenus = res.menus
       ? res.menus
@@ -342,7 +346,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
 
     tmpRow = res.info_list;
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
+    loadAllSelectItems([...columnsSort(tmpColumn), ...additionalMenus]);
 
     let selectKey = "";
     let additionalData: any[] = [];

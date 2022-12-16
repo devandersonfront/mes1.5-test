@@ -443,6 +443,7 @@ const ApiList = {
   outsourcingImportList : `/api/v1/outsourcing/import/list`,
   stockAdjustList: '/api/v1/stock/adjustment/list',
   datasetList:'/api/dataset/list',
+  weldingList: `/api/v1/machine/excel/welding/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,

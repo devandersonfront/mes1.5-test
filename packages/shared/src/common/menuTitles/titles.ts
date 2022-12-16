@@ -113,6 +113,7 @@ export const titles = {
     _moldProblemReg: '금형 문제 유형 등록',
     _moldDailyInspReg: '금형 일상정검 등록',
     _moldDailyInspSts: '금형 일상정검 일일현황',
+    welding:'용접 정보 리스트'
 }
 
 export const dohwaTitles = {

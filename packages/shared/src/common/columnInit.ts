@@ -253,7 +253,7 @@ export const columnlist: any = {
     {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-'},
     {key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-'},
     {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', overlay:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
-    {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
+    {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력', headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'product_type', name: '구분',  formatter: DropDownEditor, editorOptions: { editOnClick: true }, headerRenderer: HeaderFilter,
       options: [
         { status: '0', name: "구분" },
@@ -334,7 +334,7 @@ export const columnlist: any = {
   ]),
   rawMaterial: [
     { key: 'code', name: '원자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: "CODE 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'name', name: '원자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: "품명 입력" },
+    { key: 'name', name: '원자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: "품명 입력", headerRenderer:HeaderSort, sortOption: "none",sorts: {} },
     { key: 'texture', name: '재질', editor: TextEditor, formatter: PlaceholderBox, placeholder: "재질 입력" },
     { key: 'depth', name: '두께', editor: TextEditor, formatter: UnitContainer, inputType: 'number', unitData: 'T', placeholder: "0", toFix: 2 },
     { key: 'width', name: '가로(COIL 폭)', editor: TextEditor, formatter: UnitContainer, inputType: 'number', unitData: 'mm', placeholder: "0", toFix: 1 },
@@ -428,21 +428,22 @@ export const columnlist: any = {
     },
     { key: 'wip_name', name: '반제품명', width: 118, editor: TextEditor },
   ],
-  additionalItem: [
-    { key: 'title', editor: TextEditor, name: "추가 항목명", width: 1290 },
+  additionalItem: (rows, setRows) => [
+    { key: 'title', editor: TextEditor, name: "추가 항목명", },
     {
       key: 'moddable', formatter: DropDownEditor, selectList: [
         { unit_id: '0', name: "필요" },
         { unit_id: '1', name: "불필요" }
-      ], name: "단위 필요 유무"
+      ], name: "단위 필요 유무", width:118
     },
     {
       key: 'unit', formatter: DropDownEditor, selectList: [
         { unit_id: '0', name: "개별관리" },
         { unit_id: '1', name: "통일" },
         { unit_id: '2', name: "없음" },
-      ], name: "단위 관리"
+      ], name: "단위 관리", width:118
     },
+    { key: 'moveButtons', width: 200, formatter: MoveButtons, rows, setRows },
   ],
   rawin: [
     { key: 'customer_id', frozen: true },
@@ -610,8 +611,9 @@ export const columnlist: any = {
     {key: 'export', name: '수정', formatter: ExportButton, width: 118, type: 'subMaterial', action: 'modify'}
   ],
 
-  baseItem: [
+  baseItem: (rows, setRows) =>  [
     { key: 'title', editor: TextEditor, name: "기본 항목명" },
+    { key: 'moveButtons', width: 200, formatter: MoveButtons, rows, setRows },
   ],
   pause: [
     { key: 'name', formatter: OnClickContainer }
@@ -1588,5 +1590,34 @@ export const columnlist: any = {
     {key: 'goal', name: '목표 생산량', width: 118},
     {key: 'total_good_quantity', name : '총 카운터', width: 118},
     {key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', width: 300},
-  ]
-}
+  ],
+  welding:[
+    {key: 'machineId', name: '기계ID',  type: 'machineInfo', formatter: StatusComponent, headerRenderer: HeaderSort, sortOption: "none", sorts: {}, width: 118,},
+    {key: 'period', name: '시간',  type: 'machineInfo', formatter: StatusComponent, headerRenderer: HeaderSort, sortOption: "none", sorts: {}, width: 140,},
+    {key: 'ch', name: '채널',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'type', name: '계열',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'voltOutput', name: '출력전압',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'voltMax', name: '전압상한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'voltMin', name: '전압하안',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'voltErrorTime', name: '에러시간',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'voltErrorDurationTime', name: '에러지속시간설정',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'currentOutput', name: '출력전류',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'currentMax', name: '전류상한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'currentMin', name: '전류하한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'currentErrorTime', name: '에러시간',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'currentErrorDurationTime', name: '에러지속시간설정',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'gasOutput', name: '출력가스',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'gasMax', name: '가스상한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'gasMin', name: '가스하한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'gasErrorTime', name: '에러시간',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'gasErrorDurationTime', name: '에러지속',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'weldingTime', name: '용접시간',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'timeMax', name: '시간상한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'timeMin', name: '시간하한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'timeErrorOnOff', name: '에러 on/off',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'wireLength', name: '와이어 길이',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'lengthMax', name: '길이상한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'lengthMin', name: '길이하한',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'lengthError', name: '에러 on/off',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'quantity', name: '생산량',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+  ]}
