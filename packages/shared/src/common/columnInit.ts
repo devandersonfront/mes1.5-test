@@ -1589,7 +1589,7 @@ export const columnlist: any = {
     {key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', width: 300},
   ],
   welding:[
-    {key: 'id', name: '기계ID',  type: 'machineInfo', formatter: StatusComponent, headerRenderer: HeaderSort, sortOption: "none", sorts: {}, width: 118,},
+    {key: 'machineId', name: '기계ID',  type: 'machineInfo', formatter: StatusComponent, headerRenderer: HeaderSort, sortOption: "none", sorts: {}, width: 118,},
     {key: 'period', name: '시간',  type: 'machineInfo', formatter: StatusComponent, headerRenderer: HeaderSort, sortOption: "none", sorts: {}, width: 140,},
     {key: 'ch', name: '채널',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'type', name: '계열',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
