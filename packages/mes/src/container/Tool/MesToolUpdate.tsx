@@ -53,7 +53,7 @@ const MesToolUpdate = () => {
       warehousing: data.warehousing,
       version: data.version,
       date: moment(data.date).format('YYYY-MM-DD'),
-      set : data.set
+      set : data?.set
 
     }
   }
