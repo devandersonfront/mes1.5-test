@@ -254,8 +254,9 @@ const ExcelWelding = ({}: IProps) => {
         }
 
         return {
-            id:row.id,
-            period:row.year + "." + row.month + "." + row.date + " " + row.hour + ":" + row.min + ":" + row.sec,
+            id: row.id,
+            machineId:row.machineId,
+            period:row.year + "." + (row.month).padStart(2,'0') + "." + (row.date).padStart(2,'0') + " " + (row.hour).padStart(2,'0') + ":" + (row.min).padStart(2,'0') + ":" + (row.sec).padStart(2,'0'),
             ch:row.ch,
             type:row.type,
             voltOutput:row.voltOutput,
@@ -286,7 +287,6 @@ const ExcelWelding = ({}: IProps) => {
     };
 
     const cleanUpData = (res: any) => {
-        console.log(res)
         let tmpColumn = columnlist.welding;
         let tmpRow = [];
 

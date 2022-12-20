@@ -100,7 +100,8 @@ const MesToolRegister = () => {
                 stock: data?.warehousing,
             },
             date: moment(data.date).format('YYYY-MM-DD'),
-            warehousing: data.amount
+            warehousing: data.amount,
+            set : data?.set
         }
     }
 
