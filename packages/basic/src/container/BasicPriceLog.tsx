@@ -24,6 +24,7 @@ import {
 import {getTableSortingOptions, setExcelTableHeight} from "shared/src/common/Util";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
+import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
 
 export interface IProps {
     children?: any;
@@ -41,9 +42,22 @@ const BasicPriceLog = ({}: IProps) => {
         total: 1,
     });
 
+    const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
+
     useEffect(() => {
         getData()
     }, [pageInfo.page]);
+
+    const getRequestParams = (_sortingOptions?: TableSortingOptionType) => {
+        let params = {}
+        //이 부분 해제하면됨
+        if(sortingOptions.orders.length > 0){
+            params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
+            params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
+        }
+        // params['safety_status'] = !!safety_status
+        return params
+    }
 
     const getData = async () => {
         Notiflix.Loading.circle();
@@ -53,7 +67,9 @@ const BasicPriceLog = ({}: IProps) => {
                 renderItem: 18,
             },
             params: {
-                rmId:router.query?.rmId
+                rmId:router.query?.rmId,
+                orders:sortingOptions.orders,
+                sorts:sortingOptions.sorts,
             }
         });
 
@@ -70,36 +86,36 @@ const BasicPriceLog = ({}: IProps) => {
         tmpColumn = tmpColumn
             .map((column: any) => {
                 let menuData: object | undefined;
-                res.menus &&
-                res.menus.map((menu: any) => {
-                    if (!menu.hide) {
-                        if (menu.colName === column.key) {
-                            menuData = {
-                                id: menu.mi_id,
-                                name: menu.title,
-                                width: menu.width,
-                                tab: menu.tab,
-                                unit: menu.unit,
-                                moddable: !menu.moddable,
-                                version: menu.version,
-                                sequence: menu.sequence,
-                                hide: menu.hide,
-                            };
-                        } else if (menu.colName === "id" && column.key === "tmpId") {
-                            menuData = {
-                                id: menu.mi_id,
-                                name: menu.title,
-                                width: menu.width,
-                                tab: menu.tab,
-                                unit: menu.unit,
-                                moddable: !menu.moddable,
-                                version: menu.version,
-                                sequence: menu.sequence,
-                                hide: menu.hide,
-                            };
-                        }
-                    }
-                });
+                // res.menus &&
+                // res.menus.map((menu: any) => {
+                //     if (!menu.hide) {
+                //         if (menu.colName === column.key) {
+                //             menuData = {
+                //                 id: menu.mi_id,
+                //                 name: menu.title,
+                //                 width: menu.width,
+                //                 tab: menu.tab,
+                //                 unit: menu.unit,
+                //                 moddable: !menu.moddable,
+                //                 version: menu.version,
+                //                 sequence: menu.sequence,
+                //                 hide: menu.hide,
+                //             };
+                //         } else if (menu.colName === "id" && column.key === "tmpId") {
+                //             menuData = {
+                //                 id: menu.mi_id,
+                //                 name: menu.title,
+                //                 width: menu.width,
+                //                 tab: menu.tab,
+                //                 unit: menu.unit,
+                //                 moddable: !menu.moddable,
+                //                 version: menu.version,
+                //                 sequence: menu.sequence,
+                //                 hide: menu.hide,
+                //             };
+                //         }
+                //     }
+                // });
 
                 if (menuData) {
                     return {
@@ -110,9 +126,8 @@ const BasicPriceLog = ({}: IProps) => {
             })
             .filter((v: any) => v);
 
-
+        loadAllSelectItems(column)
         tmpRow = res.info_list;
-
 
         let selectKey = "";
         tmpColumn.map((v: any) => {
@@ -154,6 +169,37 @@ const BasicPriceLog = ({}: IProps) => {
         setBasicRow([...tmpBasicRow]);
     };
 
+    const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+        const changeOrder = (sort:string, order:string) => {
+            const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+            setSortingOptions(_sortingOptions)
+            getData()
+        }
+        let tmpColumn = column.map((v: any) => {
+            const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+            return {
+                ...v,
+                pk: v.unit_id,
+                sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+                sorts: v.sorts ? sortingOptions : null,
+                result: v.sortOption ? changeOrder : null,
+            }
+        });
+        Promise.all(tmpColumn).then((res) => {
+            setColumn([
+                ...res.map((v,index) => {
+                    return {
+                        ...v,
+                        name: v.moddable ? v.name + "(필수)" : v.name,
+                        // readonly:readonly ?? false,
+                        formatter: v.formatter === SearchModalTest ? undefined : v.formatter,
+                        // fixed: readonly ?? false
+                    };
+                }),
+            ]);
+        });
+    };
+
     return (
         <div className={'excelPageContainer'}>
             <PageHeader
@@ -161,7 +207,7 @@ const BasicPriceLog = ({}: IProps) => {
             />
             <ExcelTable
                 resizable
-                headerList={columnlist["priceLog"]}
+                headerList={column}
                 row={basicRow}
                 width={1576}
                 height={setExcelTableHeight(basicRow.length)}
