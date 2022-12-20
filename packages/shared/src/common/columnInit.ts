@@ -1564,6 +1564,7 @@ export const columnlist: any = {
     {key: 'name', name: '제품명', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'code', name: '제품 코드', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'machine_name', name: '기계명', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'machine_code', name: '제조번호', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'start', name: '작업 시작 일시', formatter:CalendarBox, placeholder: '-', readonly:true},
     {key: 'end', name: '작업 종료 일시', formatter:CalendarBox, placeholder: '-', readonly: true},
     {key: 'valid_data', name: '유효 데이터수', formatter:PlaceholderBox, placeholder: '-'},
