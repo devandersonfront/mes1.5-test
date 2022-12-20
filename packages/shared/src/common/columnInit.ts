@@ -80,7 +80,7 @@ export const columnlist: any = {
     { key: 'profile', formatter: FileEditer, type: "image" , unprintable : true},
     { key: 'alarm', name:"SMS 알람", formatter: Checkbox, width:118},
     { key: 'email_alarm', name:"Email 알람", formatter: Checkbox, width:118},
-    { key: 'productEmailAlarm' , name:"Email 알람(제품정보)", formatter: Checkbox, width:118 }
+    { key: 'product_email_alarm' , name:"Email 알람(제품정보)", formatter: Checkbox, width:118 }
   ],
   factory: [
     { key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력', headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
