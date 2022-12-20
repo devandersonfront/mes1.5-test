@@ -14,7 +14,7 @@ const AddlButton = ({ row, column, onRowChange}: IProps) => {
   return (
     <CellButton onClick={() => {
       if(column?.url) {
-          router.push(column.url)
+          router.push(column.url+"?rmId="+row.rm_id)
       }else{
           onRowChange({
             ...row,

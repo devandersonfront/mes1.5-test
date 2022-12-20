@@ -444,6 +444,7 @@ const ApiList = {
   stockAdjustList: '/api/v1/stock/adjustment/list',
   datasetList:'/api/dataset/list',
   weldingList: `/api/v1/machine/excel/welding/list`,
+  serialPrice:`/api/v1/raw-material/serial-price-difference/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
