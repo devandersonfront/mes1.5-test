@@ -80,6 +80,7 @@ export const columnlist: any = {
     { key: 'profile', formatter: FileEditer, type: "image" , unprintable : true},
     { key: 'alarm', name:"SMS 알람", formatter: Checkbox, width:118},
     { key: 'email_alarm', name:"Email 알람", formatter: Checkbox, width:118},
+    { key: 'product_email_alarm' , name:"Email 알람(제품정보)", formatter: Checkbox, width:118 }
   ],
   factory: [
     { key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력', headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
@@ -1396,13 +1397,15 @@ export const columnlist: any = {
     {key: "unit", name: '단위', },
     {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '-', type:"customer"},
     {key: "stock", name: '공구 재고량', formatter: UnitContainer, unitData:"EA", },
+    {key: "set" , name : '본개수', formatter: PlaceholderBox},
   ],
   toolWarehousingRegister:[
     {key: "tool_id", name: '공구 CODE', formatter: SearchModalTest, type:"tool", placeholder: 'CODE 입력', toolType: 'register', noSelect:true},
     {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox, placeholder: '자동 입력'},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
-    {key: "amount", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 압력'},
+    {key: "amount", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 입력'},
+    {key: "set" , name : '본개수', editor:TextEditor, formatter: PlaceholderBox, placeholder: '본개수 입력'},
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   toolWarehousingList:[
@@ -1411,7 +1414,8 @@ export const columnlist: any = {
     {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox,},
     {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '-', type:"customer"},
-    {key: "warehousing", name: '입고량', formatter: PlaceholderBox, placeholder: '입고량 압력'},
+    {key: "warehousing", name: '입고량', formatter: PlaceholderBox, placeholder: '입고량 입력'},
+    {key: "set" , name : '본개수', formatter: PlaceholderBox},
     {key: "date", name: '입고일', },
   ],
   toolWarehousingUpdate:[
@@ -1420,6 +1424,7 @@ export const columnlist: any = {
     {key: "unit", name: '단위', },
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 입력'},
+    {key: "set" , name : '본개수', editor:TextEditor, formatter: PlaceholderBox, placeholder: '본개수 입력'},
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   documentManage:({move})=>[
