@@ -146,6 +146,7 @@ const BasicUser = ({}: IProps) => {
       if(row.telephone && !checkValid(row.telephone, "telephone")) throw('전화번호 양식을 맞추주세요.')
       if(alarmValidate("alarm", 1)) throw("SMS 알람은 1개 이상 선택할 수 없습니다.")
       if(alarmValidate("email_alarm", 1)) throw("Email 알람은 1개 이상 선택할 수 없습니다.")
+      if(alarmValidate("email_alarm", 1)) throw("Email 알람(제품정보)은 1개 이상 선택할 수 없습니다.")
   }
 
   const alarmValidate = (key:string, length:number) => {
