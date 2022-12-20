@@ -217,6 +217,7 @@ const AiMesRecord = ({}: IProps) => {
                 .filter((v: any) => v)
             : [];
 
+        convertColumn.push({ key : 'confidence', name : '신뢰도', width: 118})
         loadAllSelectItems([...convertColumn, ...additionalMenus], date, radioIdx);
     }
 
@@ -263,7 +264,7 @@ const AiMesRecord = ({}: IProps) => {
                 // sum:row.bom.map((bom) => bom.lot.amount).filter(v=>v).reduce((prev, current) => prev + current, result),
                 sum: row?.operationRecord.good_quantity,
                 // id: `sheet_${random_id}`,
-                reload: _reload
+                reload: _reload,
             }
         })
         setBasicRow([...tmpBasicRow]);

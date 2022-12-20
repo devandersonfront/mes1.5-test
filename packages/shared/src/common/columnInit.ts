@@ -80,6 +80,7 @@ export const columnlist: any = {
     { key: 'profile', formatter: FileEditer, type: "image" , unprintable : true},
     { key: 'alarm', name:"SMS 알람", formatter: Checkbox, width:118},
     { key: 'email_alarm', name:"Email 알람", formatter: Checkbox, width:118},
+    { key: 'product_email_alarm' , name:"Email 알람(제품정보)", formatter: Checkbox, width:118 }
   ],
   factory: [
     { key: 'name', name: '공장명', width: 240, editor: TextEditor, formatter: PlaceholderBox, placeholder: '공장명 입력', headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
@@ -253,7 +254,7 @@ export const columnlist: any = {
     {key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: '-'},
     {key: 'cm_id', name: '모델', formatter: SearchModalTest, type: 'customerModel', placeholder: '-'},
     {key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', overlay:true, headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
-    {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력'},
+    {key: 'name', name: '품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: '품명 입력', headerRenderer:HeaderSort, sortOption: "none",sorts: {}},
     {key: 'product_type', name: '구분',  formatter: DropDownEditor, editorOptions: { editOnClick: true }, headerRenderer: HeaderFilter,
       options: [
         { status: '0', name: "구분" },
@@ -334,7 +335,7 @@ export const columnlist: any = {
   ]),
   rawMaterial: [
     { key: 'code', name: '원자재 CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: "CODE 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'name', name: '원자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: "품명 입력" },
+    { key: 'name', name: '원자재 품명', editor: TextEditor, formatter: PlaceholderBox, placeholder: "품명 입력", headerRenderer:HeaderSort, sortOption: "none",sorts: {} },
     { key: 'texture', name: '재질', editor: TextEditor, formatter: PlaceholderBox, placeholder: "재질 입력" },
     { key: 'depth', name: '두께', editor: TextEditor, formatter: UnitContainer, inputType: 'number', unitData: 'T', placeholder: "0", toFix: 2 },
     { key: 'width', name: '가로(COIL 폭)', editor: TextEditor, formatter: UnitContainer, inputType: 'number', unitData: 'mm', placeholder: "0", toFix: 1 },
@@ -901,7 +902,7 @@ export const columnlist: any = {
     { key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
   ],
   aiRecordListV2: [
-    {key:"identification", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, },
+    { key:"identification", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, },
     { key: "product_id", name: "CODE", width: 118 },
     { key: "name", name: "품명", width: 118 },
     { key: "type", name: "품목 종류", width: 118 },
@@ -917,6 +918,8 @@ export const columnlist: any = {
     { key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
     { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
     { key: 'machine_id', name: '기계', formatter: MachineSelectModal, textAlign: 'center', type:"ai"},
+    { key: 'prediction', name : '예측', width: 118},
+    { key : 'confidence', name : '유사도', width: 118}
   ],
   finishListV2: [
     { key: "status", name: "상태", formatter: FinishCancelButton, width: 118 ,unprintable : true},
@@ -1394,13 +1397,15 @@ export const columnlist: any = {
     {key: "unit", name: '단위', },
     {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '-', type:"customer"},
     {key: "stock", name: '공구 재고량', formatter: UnitContainer, unitData:"EA", },
+    {key: "set" , name : '본개수', formatter: PlaceholderBox},
   ],
   toolWarehousingRegister:[
     {key: "tool_id", name: '공구 CODE', formatter: SearchModalTest, type:"tool", placeholder: 'CODE 입력', toolType: 'register', noSelect:true},
     {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '자동 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox, placeholder: '자동 입력'},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
-    {key: "amount", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 압력'},
+    {key: "amount", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 입력'},
+    {key: "set" , name : '본개수', editor:TextEditor, formatter: PlaceholderBox, placeholder: '본개수 입력'},
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   toolWarehousingList:[
@@ -1409,7 +1414,8 @@ export const columnlist: any = {
     {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox,},
     {key: "customer_id", name: '거래처', formatter: PlaceholderBox, placeholder: '-', type:"customer"},
-    {key: "warehousing", name: '입고량', formatter: PlaceholderBox, placeholder: '입고량 압력'},
+    {key: "warehousing", name: '입고량', formatter: PlaceholderBox, placeholder: '입고량 입력'},
+    {key: "set" , name : '본개수', formatter: PlaceholderBox},
     {key: "date", name: '입고일', },
   ],
   toolWarehousingUpdate:[
@@ -1418,6 +1424,7 @@ export const columnlist: any = {
     {key: "unit", name: '단위', },
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     {key: "warehousing", name: '입고량', editor:TextEditor, formatter: PlaceholderBox, placeholder: '입고량 입력'},
+    {key: "set" , name : '본개수', editor:TextEditor, formatter: PlaceholderBox, placeholder: '본개수 입력'},
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   documentManage:({move})=>[
@@ -1572,10 +1579,10 @@ export const columnlist: any = {
   aiProductLog:[
     {key: 'state', frozen: true, name: '상태',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'machine_name', frozen:true, name: '기계 이름', formatter:PlaceholderBox, width: 118,},
-    {key: 'machine_type', frozen:true, name: '기계 종류', formatter:PlaceholderBox, width: 118,},
+    // {key: 'machine_type', frozen:true, name: '기계 종류', formatter:PlaceholderBox, width: 118,},
     {key: 'identification', frozen:true, name: '지시 고유 번호', formatter:PlaceholderBox, width: 118,},
     {key: 'deadline', frozen:true, name: '작업 기한', formatter:PlaceholderBox, width:118},
-    {key: 'customer', frozen:true, name: '거래처', formatter:PlaceholderBox, width: 118,},
+    // {key: 'customer', frozen:true, name: '거래처', formatter:PlaceholderBox, width: 118,},
     {key: 'model', frozen:true, name: '모델', formatter:PlaceholderBox, width: 118,},
     {key: 'code', frozen:true, name: 'CODE',  formatter:PlaceholderBox, width: 118,},
     {key: 'product_name', frozen:true, name: '품명', formatter:PlaceholderBox, width: 118,},
@@ -1584,12 +1591,36 @@ export const columnlist: any = {
     {key: 'predictionCode', name: '예측 CODE',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
     {key: 'predictionName', name: '예측 품명',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
     {key: 'predictionProcess', name: '예측 공정',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'goal', name: '목표 생산량', formatter: PlaceholderBox, width: 118},
-    {key: 'total_good_quantity', name : '총 카운터', formatter:PlaceholderBox, width: 118},
+    {key: 'predictionConfidence', name : '예측 유사도' , width: 118},
+    {key: 'goal', name: '목표 생산량', width: 118},
+    {key: 'total_good_quantity', name : '총 카운터', width: 118},
     {key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', width: 300},
   ],
+
+  //ds업체 커스텀 칼럼, 추후 이런업체가 많아질경우 이후 로직 수정
+  aiProductLogDS:[
+    {key: 'state', frozen: true, name: '상태',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'machine_name', frozen:true, name: '기계 이름', formatter:PlaceholderBox, width: 118,},
+    // {key: 'machine_type', frozen:true, name: '기계 종류', formatter:PlaceholderBox, width: 118,},
+    // {key: 'identification', frozen:true, name: '지시 고유 번호', formatter:PlaceholderBox, width: 118,},
+    // {key: 'deadline', frozen:true, name: '작업 기한', formatter:PlaceholderBox, width:118},
+    // {key: 'customer', frozen:true, name: '거래처', formatter:PlaceholderBox, width: 118,},
+    // {key: 'model', frozen:true, name: '모델', formatter:PlaceholderBox, width: 118,},
+    // {key: 'code', frozen:true, name: 'CODE',  formatter:PlaceholderBox, width: 118,},
+    // {key: 'product_name', frozen:true, name: '품명', formatter:PlaceholderBox, width: 118,},
+    {key: 'process', name: '생산 공정', formatter:PlaceholderBox, width: 118,},
+    {key: 'predictionModel', name: '예측 모델',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
+    {key: 'predictionCode', name: '예측 CODE',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
+    {key: 'predictionName', name: '예측 품명',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
+    {key: 'predictionProcess', name: '예측 공정',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
+    {key: 'predictionConfidence', name : '예측 유사도' , width: 118},
+    // {key: 'goal', name: '목표 생산량', width: 118},
+    // {key: 'total_good_quantity', name : '총 카운터', width: 118},
+    // {key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', width: 300},
+  ],
+
   welding:[
-    {key: 'id', name: '기계ID',  type: 'machineInfo', formatter: StatusComponent, headerRenderer: HeaderSort, sortOption: "none", sorts: {}, width: 118,},
+    {key: 'machineId', name: '기계ID',  type: 'machineInfo', formatter: StatusComponent, headerRenderer: HeaderSort, sortOption: "none", sorts: {}, width: 118,},
     {key: 'period', name: '시간',  type: 'machineInfo', formatter: StatusComponent, headerRenderer: HeaderSort, sortOption: "none", sorts: {}, width: 140,},
     {key: 'ch', name: '채널',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'type', name: '계열',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
