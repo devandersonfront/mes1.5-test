@@ -11,6 +11,8 @@ import styled from "styled-components";
 import {MidrangeExcelFrameTable} from "../Excel/MidrangeExcelFrameTable";
 import Notiflix from "notiflix";
 import {MidrangeRecordRegister} from "../../@types/type";
+import { RadioButtonChecked, RadioButtonCheckedOutlined, RadioButtonUncheckedOutlined } from '@mui/icons-material'
+import IcSearchButton from '../../../public/images/btn_radio_check.png'
 
 
 interface IProps {
@@ -86,6 +88,9 @@ const MidrangeRegisterModal = ({ data, isOpen, setIsOpen, modify, reload}: IProp
         reload && reload()
     }
 
+    const [radioValue, setRadioValue] = useState(0)
+    const radioTexts = ['시료별 결과선택', '검사항목별 결과선택']
+
     return (
         <SearchModalWrapper >
             <Modal isOpen={isOpen} style={{
@@ -107,13 +112,37 @@ const MidrangeRegisterModal = ({ data, isOpen, setIsOpen, modify, reload}: IProp
                 <div style={{width: 1760, height: 800, display:'flex', flexDirection:'column', justifyContent: 'space-between'}}>
                     <div style={{overflowY: 'visible'}}>
                         <ModalTitle>
+                            <div style={{display: 'flex'}}>
                             <p style={{
                                 color: 'black',
                                 fontSize: 22,
                                 fontWeight: 'bold',
                                 margin: 0,
                             }}> {modify ? "초ㆍ중ㆍ종 검사 결과보기" : "초ㆍ중ㆍ종 검사 등록"}</p>
-                            <div style={{display: 'flex', flex: modify && !editPage ? .2 : 0, justifyContent:'space-between'}}>
+                                {
+                                    radioTexts.map((text, index) =>
+                                      <>
+                                          <input id={`radio_${index}`} name={`radio`} key={`radioInput${index}`} type={'radio'} style={{display: 'none'}} onClick={(e) => {setRadioValue(index)}}
+                                                 checked={radioValue === index}
+
+                                          />
+                                          <label key={`radioLabel${index}`} htmlFor={`radio_${index}`}>
+                                              <div key={`radioWrapper${index}`} style={{display:"flex", alignItems:"center", marginLeft: 10}}>
+                                                  {
+                                                      radioValue === index
+                                                        ? <RadioButtonCheckedOutlined/>
+                                                        : <RadioButtonUncheckedOutlined/>
+                                                  }
+
+                                                  <p key={`radioText${index}`} style={{margin: '0 0 0 10px', padding: 0, color: 'black', fontSize: 15}}>{text}</p>
+                                              </div>
+                                          </label>
+                                      </>
+                                    )
+                                }
+
+                            </div>
+                            <div style={{display: 'flex', flex: modify && !editPage ? .25 : 0, justifyContent:'space-between'}}>
                                 {modify && !editPage &&
                                   <>
                                     <Button onClick={()=> setEditPage(true)}>
@@ -144,7 +173,7 @@ const MidrangeRegisterModal = ({ data, isOpen, setIsOpen, modify, reload}: IProp
                             headerAlign={'center'}
                         />
                         <div style={{padding: '0 16px'}}>
-                            { midrangeData.record_id && <MidrangeExcelFrameTable modalData={midrangeData} setModalData={setMidrangeData} readOnly={readOnly} hasResult={modify}/>}
+                            { midrangeData.record_id && <MidrangeExcelFrameTable pivot={radioValue === 1 } modalData={midrangeData} setModalData={setMidrangeData} readOnly={readOnly} hasResult={modify}/>}
                         </div>
                     </div>
                     {
