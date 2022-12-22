@@ -64,7 +64,7 @@ const AiDataSet = () => {
         Notiflix.Loading.remove()
     };
     const dataSetting = (data:any) => {
-        const result = data.rows.map((row) =>{
+        const result = data?.rows?.map((row) =>{
             return {
                 ...row,
                 name:row?.product_info?.product_name,

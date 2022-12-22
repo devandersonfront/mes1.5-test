@@ -21,5 +21,5 @@ export {BasicMidrangeModify} from "./container/BasicMidrangeModify"
 export {BasicMidrangeRegister} from "./container/BasicMidrangeRegister"
 export {BasicMidrangeDetail} from "./container/BasicMidrangeDetail"
 export {ProductBatchRegister} from "./container/ProductBatchRegister"
-
+export {BasicPriceLog} from "./container/BasicPriceLog"
 

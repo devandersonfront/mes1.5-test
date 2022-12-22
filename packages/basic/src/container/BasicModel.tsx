@@ -19,6 +19,7 @@ import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util';
 import {TableSortingOptionType} from "shared/src/@types/type";
+import renewalColumn from "../../../main/common/unprintableKey";
 
 export interface IProps {
   children?: any
@@ -547,7 +548,7 @@ const BasicModel = ({}: IProps) => {
         selectable
         headerList={[
           SelectColumn,
-          ...column
+          ...renewalColumn(column)
         ]}
         row={basicRow}
         // setRow={setBasicRow}

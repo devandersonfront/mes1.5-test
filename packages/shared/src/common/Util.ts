@@ -134,6 +134,14 @@ export const getBomKey = (bom:any) => {
   }
 }
 
+export const columnsSort = (columns:any[]) => {
+  return columns.sort((prev, next) => {
+    if(prev.sequence > next.sequence) return 1
+    if(prev.sequence < next.sequence) return -1
+    return 0
+  });
+}
+
 // export const TypeCheck = (type:0 | 1 | 2 | "") => {
 //   switch(type){
 //     case 0 :

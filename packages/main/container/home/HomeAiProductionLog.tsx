@@ -33,12 +33,11 @@ export interface IProps {
     keyword?: string
     option?: number
 }
-
+const userInfo = cookie.load('userInfo')
 
 const HomeAiProductionLog = ({}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
-    const userInfo = cookie.load('userInfo')
     const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiProductLog"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
@@ -46,6 +45,10 @@ const HomeAiProductionLog = ({}: IProps) => {
         current_page: 1,
         totalPages : 1
     });
+
+    useEffect(()=>{
+        userInfo?.company === '4XX21Z' && setColumn(columnlist["aiProductLogDS"])
+    },[])
 
     useEffect(() => {
         // if(userInfo?.ca_id?.authorities?.some(auth => ['ROLE_PROD_02', 'ROLE_PROD_06'].includes(auth))){
@@ -62,7 +65,7 @@ const HomeAiProductionLog = ({}: IProps) => {
 
     const predictCheckList = (value) => {
 
-        if(!value.code){
+        if(!value.code || value.code === '-'){
             return true
         }
 
@@ -76,9 +79,9 @@ const HomeAiProductionLog = ({}: IProps) => {
 
     const convertData = (results) => {
         return results.map((result)=>
-            !predictCheckList({...result }) ?
-                {...result , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
-                : {...result , machine_type : TransferCodeToValue(result.machine_type, "machine")}
+            !predictCheckList(result) ?
+                {...result , predictionConfidence : `${(result?.predictionConfidence * 100).toFixed(2)}%` , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
+                : {...result , predictionConfidence : `${(result?.predictionConfidence * 100).toFixed(2)}%`,machine_type : TransferCodeToValue(result.machine_type, "machine")}
         )
     }
 
