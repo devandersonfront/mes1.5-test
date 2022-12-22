@@ -26,6 +26,7 @@ import axios from "axios";
 import moment from "moment";
 import ErrorList from "shared/src/common/ErrorList";
 import {TransferCodeToValue, TransferValueToCode} from "shared/src/common/TransferFunction";
+import {SF_ENDPOINT_PMS} from "shared/src/common/configset";
 
 export interface IProps {
     children?: any
@@ -52,14 +53,14 @@ const HomeAiProductionLog = ({}: IProps) => {
 
     useEffect(() => {
         // if(userInfo?.ca_id?.authorities?.some(auth => ['ROLE_PROD_02', 'ROLE_PROD_06'].includes(auth))){
-            Notiflix.Loading.circle()
-            LoadBasic()
-            const dashboard = setInterval(()=>{
-                LoadBasic()
-            },30000)
-            return () => {
-                clearInterval(dashboard)
-            }
+        Notiflix.Loading.circle()
+        getApi()
+        const dashboard = setInterval(()=>{
+            getApi()
+        },30000)
+        return () => {
+            clearInterval(dashboard)
+        }
         // }
     },[])
 
@@ -85,20 +86,47 @@ const HomeAiProductionLog = ({}: IProps) => {
         )
     }
 
+
+
+    const getPressList = async () => {
+        const tokenData = userInfo?.token;
+        return await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/simple`,{
+            headers : { Authorization : tokenData }
+        })
+    }
+
     const LoadBasic = async (pages : number = 1) => {
-        try {
-            const tokenData = userInfo?.token;
-            const res = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
-                params : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'},
-                headers : { Authorization : tokenData }
-            })
-            if(res.status === 200){
-                Notiflix.Loading.remove()
-                const {info_list , page, totalPages, menus} = res.data
-                const newData = convertData(info_list)
-                setBasicRow(newData)
-                setPage({current_page : page , totalPages : totalPages})
+        const tokenData = userInfo?.token;
+        return await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
+            params : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'},
+            headers : { Authorization : tokenData }
+        })
+    }
+
+    // loadBasic의 데이터로 맵 만들고,
+    const mappingData = (lists, results) => {
+        let map = new Map()
+        lists?.forEach((list)=>{
+            map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
+        })
+        const newData = results?.map((result)=>{
+            if(map.get(result.machine_code)){
+                return {...result , pressStatus : map.get(result.machine_code)}
+            }else{
+                return result
             }
+        })
+        return newData
+    }
+
+    const getApi = async () => {
+        try {
+            const pressList = await getPressList()
+            const result = await LoadBasic()
+            Notiflix.Loading.remove()
+            const newData = mappingData(pressList.data.results.content , result.data.info_list)
+            const data = convertData(newData)
+            setBasicRow(data)
         }catch (error) {
             if(error?.response?.status){
                 const errorNum : number = error?.response?.status
@@ -109,7 +137,6 @@ const HomeAiProductionLog = ({}: IProps) => {
             }
         }
     }
-
 
     useEffect(() => {
         dispatch(
