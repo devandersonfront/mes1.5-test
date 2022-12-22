@@ -132,9 +132,9 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
                                   if(dateStr < newData.inspection_time['beginning']){
                                       newData.inspection_time['beginning'] = dateStr
                                   }
-                                  if (dateStr > newData.inspection_time['middle']){
-                                      newData.inspection_time['middle'] = dateStr
-                                  }
+                                  // if (dateStr > newData.inspection_time['middle']){
+                                  //     newData.inspection_time['middle'] = dateStr
+                                  // }
                                   break;
                               default:
                           }
