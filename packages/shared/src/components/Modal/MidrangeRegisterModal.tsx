@@ -11,8 +11,7 @@ import styled from "styled-components";
 import {MidrangeExcelFrameTable} from "../Excel/MidrangeExcelFrameTable";
 import Notiflix from "notiflix";
 import {MidrangeRecordRegister} from "../../@types/type";
-import { RadioButtonChecked, RadioButtonCheckedOutlined, RadioButtonUncheckedOutlined } from '@mui/icons-material'
-import IcSearchButton from '../../../public/images/btn_radio_check.png'
+import { RadioButtonCheckedOutlined, RadioButtonUncheckedOutlined } from '@mui/icons-material'
 
 
 interface IProps {
