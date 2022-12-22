@@ -1578,7 +1578,7 @@ export const columnlist: any = {
     {key: 'download', name: '데이터 다운로드',  placeholder: '-'},
   ],
   aiProductLog:[
-    {key: 'state', frozen: true, name: '상태',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'pressStatus', frozen: true, name: '상태', width: 118},
     {key: 'machine_name', frozen:true, name: '기계 이름', formatter:PlaceholderBox, width: 118,},
     // {key: 'machine_type', frozen:true, name: '기계 종류', formatter:PlaceholderBox, width: 118,},
     {key: 'identification', frozen:true, name: '지시 고유 번호', formatter:PlaceholderBox, width: 118,},
@@ -1600,7 +1600,7 @@ export const columnlist: any = {
 
   //ds업체 커스텀 칼럼, 추후 이런업체가 많아질경우 이후 로직 수정
   aiProductLogDS:[
-    {key: 'state', frozen: true, name: '상태',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
+    {key: 'pressStatus', frozen: true, name: '상태',  type: 'machineInfo', formatter: StatusComponent, width: 118,},
     {key: 'machine_name', frozen:true, name: '기계 이름', formatter:PlaceholderBox, width: 118,},
     // {key: 'machine_type', frozen:true, name: '기계 종류', formatter:PlaceholderBox, width: 118,},
     // {key: 'identification', frozen:true, name: '지시 고유 번호', formatter:PlaceholderBox, width: 118,},
