@@ -52,7 +52,6 @@ const BasicDocument = ({ page, keyword, option, doc_id }: IProps) => {
     const LoadDocumentState = async () => {
         if (doc_id) {
             const res = await RequestMethod("get", "documentLoad", { path: { doc_id: doc_id } })
-            console.log(res,'resresres')
             if (res) {
                 return setParentData({ ...res })
             }

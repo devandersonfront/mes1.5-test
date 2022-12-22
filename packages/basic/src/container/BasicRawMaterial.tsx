@@ -9,7 +9,7 @@ import {
   ExcelDownloadModal,
   IExcelHeaderType,
   BarcodeModal,
-  columnlist, UnitContainer,
+  columnlist, UnitContainer, AddlButton,
 } from "shared";
 // @ts-ignore
 import { SelectColumn } from "react-data-grid";
@@ -27,6 +27,7 @@ import {selectUserInfo} from "shared/src/reducer/userInfo";
 import {barcodeOfCompany} from "shared/src/common/companyCode/companyCode";
 import {PlaceholderBox} from "shared/src/components/Formatter/PlaceholderBox";
 import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
+import {HeaderSort} from "shared/src/components/HeaderSort/HeaderSort";
 
 export interface IProps {
   children?: any;
@@ -311,6 +312,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
             }
           });
 
+
         if (menuData) {
           return {
             ...column,
@@ -320,6 +322,9 @@ const BasicRawMaterial = ({readonly}: IProps) => {
       })
       .filter((v: any) => v)
 
+      tmpColumn.push(
+          { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog" },
+      )
 
     let additionalMenus = res.menus
       ? res.menus
