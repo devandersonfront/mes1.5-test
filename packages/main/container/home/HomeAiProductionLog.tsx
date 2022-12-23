@@ -86,24 +86,24 @@ const HomeAiProductionLog = ({}: IProps) => {
         )
     }
 
-
-
     const getPressList = async () => {
         const tokenData = userInfo?.token;
         return await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/simple`,{
             headers : { Authorization : tokenData }
         })
     }
-
     const LoadBasic = async (pages : number = 1) => {
         const tokenData = userInfo?.token;
+        const params  = userInfo?.company === '4XX21Z'
+                ? { rangeNeeded : true , distinct : 'mfrCode'}
+                : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
+
         return await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
-            params : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'},
+            params : params,
             headers : { Authorization : tokenData }
         })
     }
 
-    // loadBasic의 데이터로 맵 만들고,
     const mappingData = (lists, results) => {
         let map = new Map()
         lists?.forEach((list)=>{
