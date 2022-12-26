@@ -60,7 +60,9 @@ export const barcodeOfCompany = (companyCode : string , data ?: any) : BarcodeSe
                 ri_materialType : 8,
                 ri_drawBitMap : 895,
                 op_materialType : materialTypeNum(data?.product?.type),
+                op_drawBitMap : 895,
                 companyCode : companyCode
+
             }
         case '4XX21Z' :
             return {
