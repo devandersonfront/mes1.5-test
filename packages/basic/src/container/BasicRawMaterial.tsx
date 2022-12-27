@@ -130,7 +130,6 @@ const BasicRawMaterial = ({readonly}: IProps) => {
             ...v,
             name: v.moddable ? v.name + "(필수)" : v.name,
             readonly:readonly ?? false,
-            formatter: v.formatter === SearchModalTest ? undefined : v.formatter,
             fixed: readonly ?? false
           };
         }),
