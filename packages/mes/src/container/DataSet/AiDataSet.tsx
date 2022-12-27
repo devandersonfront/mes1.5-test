@@ -15,7 +15,7 @@ const AiDataSet = () => {
     const dispatch = useDispatch()
     const [column, setColumn] = useState(columnlist.dataSet)
     const [basicRow, setBasicRow] = useState<any[]>([])
-    const [f1_score, setF1_Score] = useState<string>(0)
+    const [f1_score, setF1_Score] = useState<string>("0")
     const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
         page: 1,
         total: 1,
