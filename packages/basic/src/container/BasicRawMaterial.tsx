@@ -130,7 +130,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
             ...v,
             name: v.moddable ? v.name + "(필수)" : v.name,
             readonly:readonly ?? false,
-            formatter: v.formatter === SearchModalTest ? undefined : v.formatter,
+            // formatter: v.formatter === SearchModalTest ? undefined : v.formatter,
             fixed: readonly ?? false
           };
         }),
@@ -325,6 +325,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
       tmpColumn.push(
           { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog" },
       )
+
 
     let additionalMenus = res.menus
       ? res.menus

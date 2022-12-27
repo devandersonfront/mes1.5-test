@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {ReactNode, useEffect} from 'react';
 import styled from 'styled-components'
 //@ts-ignore
 import Search_icon from '../../../public/images/btn_search.png'
@@ -23,6 +23,7 @@ interface SelectParameter {
 //웰컴, 로그인 페이지 네비게이션 컴포넌트
 interface IProps {
   title: string
+  score?: ReactNode
   pageHelper?: string
   selectDate?:string | SelectParameter
   setSelectDate?:(value:SelectParameter | string) => void
@@ -104,7 +105,7 @@ const useStyles2 = makeStyles(_ => {
   }
 });
 
-const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsOnclick, isSearch, style,
+const Header = ({title, score, pageHelper, selectDate, setSelectDate, buttons, buttonsOnclick, isSearch, style,
                   searchOptionList, onChangeSearchOption, isCalendar, onChangeSelectDate, moreButtons, onClickMoreButton,
                   calendarType, setState, optionIndex, dataLimit, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code,
                   isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch, searchKeyword, noCode, radioButtons, onChangeRadioIndex, radioIndex}: IProps) => {
@@ -253,6 +254,7 @@ const Header = ({title, pageHelper, selectDate, setSelectDate, buttons, buttonsO
                   </DropDown>
                 }
               </ButtonWrapper>
+              {score && score}
             </div>
           </div>
           <div className={'unprintable'} style={{display:"flex", justifyContent:"right", marginBottom:"10px"}}>

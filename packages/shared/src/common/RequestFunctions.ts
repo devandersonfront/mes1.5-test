@@ -237,9 +237,13 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
           }
           return false
         })
-  } else if(apiType === "datasetList"){
+  } else if(apiType === "datasetList" || apiType === "f1Score"){
     const ENDPOINT = /*SF_ADDRESS*/  AI_ADDRESS
-    let tmpUrl = "http://"+ENDPOINT+ApiList[apiType]+`?page=${data.params.page}&pageSize=${data.params.pageSize}&company=${data.params.company_code}`
+
+    let tmpUrl = apiType === "datasetList" ?
+        "http://"+ENDPOINT+ApiList[apiType]+`?page=${data.params.page}&pageSize=${data.params.pageSize}&company=${data.params.company_code}`
+        :
+        "http://"+ENDPOINT+ApiList[apiType]+`?company_code=${data.params.company_code}`
 
     return Axios.get(tmpUrl, tokenData && {'headers': {'Authorization': tokenData}, responseType: responseType})
         .then((result) => {
@@ -531,6 +535,6 @@ const ApiList = {
   //log
   logOut: '/anonymous/logout',
   //doc
-  docChild : '/cnc/api/v1/document/load/child'
-
+  docChild : '/cnc/api/v1/document/load/child',
+  f1Score: "/api/train/f1score"
 }
