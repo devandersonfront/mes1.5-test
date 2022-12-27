@@ -6,7 +6,7 @@ import {
     IExcelHeaderType,
     MAX_VALUE, PaginationComponent,
     RequestMethod,
-    TextEditor, transferStringToCode,
+    TextEditor, transferStringToCode, UnitContainer,
 } from "shared";
 // @ts-ignore
 import { SelectColumn } from "react-data-grid";
@@ -217,7 +217,7 @@ const AiMesRecord = ({}: IProps) => {
                 .filter((v: any) => v)
             : [];
 
-        convertColumn.push({ key : 'confidence', name : '신뢰도', width: 118})
+        convertColumn.push({ key : 'confidence', name : '신뢰도',formatter:UnitContainer, unitData:"%", width: 118})
         loadAllSelectItems([...convertColumn, ...additionalMenus], date, radioIdx);
     }
 
@@ -263,6 +263,7 @@ const AiMesRecord = ({}: IProps) => {
                 worker_object: row.worker_object ?? row.worker,
                 // sum:row.bom.map((bom) => bom.lot.amount).filter(v=>v).reduce((prev, current) => prev + current, result),
                 sum: row?.operationRecord.good_quantity,
+                confidence: row?.confidence ? row.confidence.toFixed(4) * 100 : 0,
                 // id: `sheet_${random_id}`,
                 reload: _reload,
             }
