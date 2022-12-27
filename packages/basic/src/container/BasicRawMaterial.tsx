@@ -325,6 +325,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog" },
       )
 
+
     let additionalMenus = res.menus
       ? res.menus
           .map((menu: any) => {
