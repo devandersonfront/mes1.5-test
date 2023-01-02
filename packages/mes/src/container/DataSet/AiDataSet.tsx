@@ -15,7 +15,7 @@ const AiDataSet = () => {
     const dispatch = useDispatch()
     const [column, setColumn] = useState(columnlist.dataSet)
     const [basicRow, setBasicRow] = useState<any[]>([])
-
+    const [f1_score, setF1_Score] = useState<string>("0")
     const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
         page: 1,
         total: 1,
@@ -44,6 +44,15 @@ const AiDataSet = () => {
             </div>
         )
     }
+
+    const ScoreBoard = () => {
+        return (
+            <div style={{display:"flex",justifyContent:"right", color:"white",fontSize:"1.2em", alignItems:"flex-end", height:"100%"}}>
+                금일 학습모델 F1 Score : {f1_score}
+            </div>
+        )
+    }
+
     const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType) => {
         Notiflix.Loading.circle();
 
@@ -55,7 +64,12 @@ const AiDataSet = () => {
             },
         });
 
+        const f1Res = await RequestMethod("get", "f1Score", {
+            params:{company_code:cookie.load("userInfo").company}
+        })
+
         dataSetting(res)
+        setF1_Score(f1Res.f1_score ?? "-")
         setColumn([...column.map((v) => {
             if(v.key == "download") return {...v, formatter:downloadButton}
             return v
@@ -94,6 +108,7 @@ const AiDataSet = () => {
         <div>
             <PageHeader
                 title={"AI 데이터셋"}
+                score={ScoreBoard()}
             />
             <ExcelTable
                 editable
