@@ -238,7 +238,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           return {
             from:"2000-01-01",
             // to: moment(new Date()).format("YYYY-MM-DD")
-            to: "2022-12-31",
+            to: "2023-12-31",
             productIds:row.product.product_id,
             status:[0,1]
           }
