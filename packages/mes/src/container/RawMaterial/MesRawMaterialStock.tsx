@@ -429,8 +429,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   }
 
   const convertBarcodeData = (items) => {
-    return items.map((item)=>{
-      return {
+    return items.map((item)=>(
+      {
         material_id: item.code ?? 0,
         material_type: barcodeOfCompany(userInfo.companyCode).ri_materialType,
         material_lot_id : item.lot_rm_id,
@@ -448,13 +448,13 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         material_import_date : item?.date,
         material_bom_lot: null,
       }
-    })
+    ))
   }
 
   const openBarcodeModal = () => {
     if(selectList.size > 0){
       const items = getCheckItems()
-      if(!getCheckItems().some((item)=>item.is_complete)){
+      if(!items.some((item)=>item.is_complete)){
         const convertedData = convertBarcodeData(items)
         setBarcodeData(convertedData)
         setModal({type : 'barcode' , isVisible : true})
