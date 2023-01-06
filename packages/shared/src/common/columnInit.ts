@@ -430,7 +430,7 @@ export const columnlist: any = {
     { key: 'wip_name', name: '반제품명', width: 118, editor: TextEditor },
   ],
   additionalItem: (rows, setRows) => [
-    { key: 'title', editor: TextEditor, name: "추가 항목명", },
+    { key: 'title', editor: TextEditor, name: "추가 항목명",},
     {
       key: 'moddable', formatter: DropDownEditor, selectList: [
         { unit_id: '0', name: "필요" },

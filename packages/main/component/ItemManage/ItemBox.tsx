@@ -10,16 +10,15 @@ interface IProps {
 }
 
 const ItemBox = ({item,setItems}: IProps) => {
-
   return (
     <Item
-      style={{backgroundColor: !item.hide  ? POINT_COLOR : undefined,}}
+      style={{backgroundColor: !item?.hide  ? POINT_COLOR : undefined,}}
       onClick={() => {
         if(item.mi_id){
           if(item.moddable){
             setItems({
               ...item,
-              hide: !item.hide
+              hide: !item?.hide
             })
           }else{
             Notiflix.Notify.warning('필수인 항목은 숨기기가 불가능합니다.')
