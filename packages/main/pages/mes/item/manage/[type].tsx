@@ -186,8 +186,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   }
 
   const saveItem = async (code: string, items: IItemMenuType[], type?: 'additional') => {
-    console.log("items : ", items)
-    const res =  await RequestMethod('post', 'itemSave',items.map((item,index)=>({...item, sequence : index, unit:item.unit_id == "불필요" ? 0 : item.unit_id ?? 0}))
+    const res =  await RequestMethod('post', 'itemSave',items.map((item,index)=>({...item, sequence : index, unit:typeof item.unit_id == "string" ? 0 : item.unit_id ?? 0}))
         // {
         //   tab: code,
         //   menus: type ? items.map(v => {
