@@ -158,17 +158,27 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         const randomID = Math.random()*100;
         return {...value, id:"addi_"+randomID};
       })
+      console.log(baseList, addiList)
+      const sortList = baseList.map((item, index) => {
+        return {...item, sequence:index}
+      })
+
+      const sortAddList = addiList.map((item, index) => {
+        return {...item, sequence:index+28}
+      })
+
+      console.log(sortList, sortAddList)
       Notiflix.Loading.remove(300)
-      setBaseItem(baseList)
-      setAddiItem(addiList)
-      // setAddiItem(addiList.map((v: any, i: number) => {
+      setBaseItem(sortList)
+      setAddiItem(sortAddList)
+      // setAddiItem(sortAddList.map((v: any, i: number) => {
       //   const random_id = Math.random() * 1000
       //
       //   return {
       //     ...v,
-      //     unit: unitData[v.unit_id].name,
-      //     unit_id: unitData[v.unit_id].unit_id,
-      //     unitPK: unitData[v.unit_id].unit_id,
+      //     unit: unitData[v.unit_id]?.name,
+      //     unit_id: unitData[v.unit_id]?.unit_id,
+      //     unitPK: unitData[v.unit_id]?.unit_id,
       //     id: random_id
       //   }
       // }))
@@ -176,7 +186,8 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   }
 
   const saveItem = async (code: string, items: IItemMenuType[], type?: 'additional') => {
-    const res =  await RequestMethod('post', 'itemSave',items.map((item,index)=>({...item, sequence : index}))
+    console.log("items : ", items)
+    const res =  await RequestMethod('post', 'itemSave',items.map((item,index)=>({...item, sequence : index, unit:item.unit_id == "불필요" ? 0 : item.unit_id ?? 0}))
         // {
         //   tab: code,
         //   menus: type ? items.map(v => {
@@ -226,6 +237,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   }
 
   const deleteItem = async (code: string, items: IItemMenuType[]) => {
+    console.log(selectList, selectRow)
     if(selectList.size === 0){
       return Notiflix.Report.warning(
           '경고',
@@ -236,7 +248,6 @@ const ItemManagePage = ({title, type, code}: IProps) => {
 
     Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
         async() => {
-
           const map = convertDataToMap()
           const selectedRows = filterSelectedRows()
           const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
@@ -293,7 +304,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
     const tempRow = [...rows]
     const spliceRow = [...rows]
     spliceRow.splice(selectRow, 1)
-    const isCheck = spliceRow.some((row)=> row.title === tempRow[selectRow].title && row.title !== undefined && row.title !== '')
+    const isCheck = spliceRow.some((row)=> row?.title === tempRow[selectRow]?.title && row?.title !== undefined && row?.title !== '')
 
     if(spliceRow){
       if(isCheck){
@@ -369,12 +380,19 @@ const ItemManagePage = ({title, type, code}: IProps) => {
               <ItemManageBox title={title} items={addiItem} setItems={setAddiItem} type={'additional'}/>
               <ExcelTable
                   selectable
-                  headerList={columnlist.additionalItem(addiItem, setAddiItem)}
+                  headerList={[SelectColumn,...columnlist.additionalItem(addiItem, setAddiItem)]}
                   row={addiItem}
+
                   height={240}
                   setRow={(e) => competeAddtion(e)}
                   setSelectRow={(e) => {
-                    setSelectRow(e)}}
+                    console.log(e)
+                    setSelectRow(e)
+                  }}
+                  setSelectList={(e) => {
+                    console.log("checkbox : ", e)
+                    setSelectList(e)
+                  }}
               />
             </>
             }
