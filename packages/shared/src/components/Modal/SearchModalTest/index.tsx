@@ -357,6 +357,22 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           fontWeight: 'bold',
           margin: 0,
         }}>{searchModalInit && searchModalInit.title}</p>
+        {(!row?.operationRecord?.operation_sheet.os_id && searchList.length <= 0) &&
+          <HeaderButton onClick={async() => {
+            await RequestMethod("post", "operationSave", [row.operationRecord.operation_sheet])
+                .then(async(res) => {
+                  Notiflix.Loading.standard()
+                  setTimeout(() => {
+                    LoadBasic(1).then(() => {
+                      Notiflix.Loading.remove()
+                    })
+                  },1000)
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+          }}>작업지시서 생성</HeaderButton>
+        }
         {
           column.type === 'bom' && <div style={{marginLeft: 20}}>
               <Select value={tab ?? 0} onChange={(e) => {
@@ -783,5 +799,21 @@ const FooterButton = styled.div`
     font-weight: bold;
   }
 `
+
+const HeaderButton = styled.button`
+    height:32px;
+    color:white;
+    border-radius:6px;
+    font-size:15px;
+    font-weight:bold;
+    background:#717C90;
+    padding: 0 20px;
+    cursor: pointer;
+    display:flex;
+    margin-left: 16px;
+    justify-content:center;
+    align-items:center;
+`;
+
 
 export {SearchModalTest}

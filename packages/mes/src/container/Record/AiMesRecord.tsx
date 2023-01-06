@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
     columnlist,
-    ExcelTable, FinishButton,
+    ExcelTable,
     Header as PageHeader,
     IExcelHeaderType,
-    MAX_VALUE, PaginationComponent,
+    PaginationComponent,
     RequestMethod,
-    TextEditor, transferStringToCode, UnitContainer,
+    TextEditor, UnitContainer,
 } from "shared";
 // @ts-ignore
 import { SelectColumn } from "react-data-grid";
@@ -15,7 +15,6 @@ import { useRouter } from "next/router";
 import { NextPageContext } from "next";
 import moment from "moment";
 import { TransferCodeToValue } from "shared/src/common/TransferFunction";
-import { WorkModifyModal } from "../../../../shared/src/components/Modal/WorkModifyModal";
 import {
     deleteMenuSelectState,
     setMenuSelectState,
@@ -24,7 +23,6 @@ import { useDispatch } from "react-redux";
 import {CheckRecordLotNumber, getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
-import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import {alertMsg} from "shared/src/common/AlertMsg";
 import Big from "big.js";
 
@@ -38,13 +36,11 @@ interface IProps {
 const AiMesRecord = ({}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
-    const [excelOpen, setExcelOpen] = useState<boolean>(false)
     const [recordState, setRecordState] = useState<number>(0)
     const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [deleteBasic, setDeleteBasic] = useState<any>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiRecordListV2"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [optionList, setOptionList] = useState<string[]>(['수주번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자'])
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
         from: moment().subtract(1,'month').format('YYYY-MM-DD'),
@@ -56,16 +52,6 @@ const AiMesRecord = ({}: IProps) => {
         total: 1,
     });
     const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
-
-    const onSelectDate = (date: {from:string, to:string}) => {
-        setSelectDate(date)
-        reload(null, date)
-    }
-
-    const onRadioChange = (btnIdx:number) => {
-        setRecordState(btnIdx)
-        reload(null, null, null, btnIdx)
-    }
 
     const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType, radioIdx?: number) => {
         setKeyword(keyword)
