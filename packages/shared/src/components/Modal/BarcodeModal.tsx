@@ -18,6 +18,7 @@ import {SF_ENDPOINT_BARCODE} from "../../common/configset";
 
 
 interface Props {
+    multiple ?: boolean
     title : string,
     handleBarcode : (url : any ,clientIp : string) => void
     handleModal : (type : string , isVisible : boolean) => void
@@ -26,7 +27,7 @@ interface Props {
     isVisible : boolean
 }
 
-const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Props) => {
+const BarcodeModal = ({multiple,title,type,handleBarcode,handleModal,data,isVisible} : Props) => {
 
     const [selectIndex, setSelectIndex] = React.useState<number>(0)
     const [imageSrc, setImageSrc] = React.useState<any>()
@@ -134,7 +135,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Pr
                         {'해당 페이지 인쇄'}
                     </Button>
                     {
-                        type === 'record' &&
+                        multiple  &&
                         <Button onClick={() => onCaptureAllDOM(data)}>
                             {'모든 페이지 인쇄'}
                         </Button>
