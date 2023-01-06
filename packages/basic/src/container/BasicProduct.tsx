@@ -468,7 +468,7 @@ const BasicProduct = ({}: IProps) => {
       "functions":
           {"func0":{"checkLabelStatus":[]},
             "func1":{"clearBuffer":[]},
-            "func2":{"drawBitmap":[dataurl,0,0,barcodeOfCompany(userInfo.companyCode).pm_materialType,0]},
+            "func2":{"drawBitmap":[dataurl,0,0,barcodeOfCompany(userInfo.companyCode).pm_drawBitMap,0]},
             "func3":{"printBuffer":[]}
           }
     }
