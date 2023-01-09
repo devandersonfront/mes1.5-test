@@ -87,61 +87,63 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     }else if(row.bom){
       const checkMap = new Map([["rm_id",[]], ["sm_id",[]], ["product_id",[]]])
       const settingData = row.bom.map((bom, index) => {
-        switch (bom.bom.type){
-          case 0 :
-            let rm_ids = checkMap.get("rm_id")
-            if(checkMap.get("rm_id").filter(id => id == bom.bom.childRmId).length <= 0){
-              rm_ids.push(bom.bom.childRmId)
-              checkMap.set("rm_id", rm_ids)
-            }
-              return {...bom.lot.child_lot_rm.raw_material,
-                amount:bom.lot.amount,
-                current:bom.lot.child_lot_rm.current,
-                lot_number:bom.lot.child_lot_rm.lot_number,
-                lot_rm_id:bom.lot.child_lot_rm.lot_rm_id,
-                child_rm: {...bom.lot.child_lot_rm, stock:bom.lot.child_lot_rm.raw_material.stock, amount:bom.lot.amount},
-                childRmId:bom.bom.childRmId,
-                usage:bom.bom.usage,
-                type:bom.bom.type,
-                index:index
+        if(bom?.bom){
+          switch (bom.bom.type){
+            case 0 :
+              let rm_ids = checkMap.get("rm_id")
+              if(checkMap.get("rm_id").filter(id => id == bom.bom.childRmId).length <= 0){
+                rm_ids.push(bom.bom.childRmId)
+                checkMap.set("rm_id", rm_ids)
               }
-            break;
-          case 1:
-            let sm_ids = checkMap.get("sm_id")
-            if(checkMap.get("sm_id").filter(id => id == bom.bom.childSmId).length <= 0){
-              sm_ids.push(bom.bom.childSmId)
-              checkMap.set("sm_id", sm_ids)
-            }
+                return {...bom.lot.child_lot_rm.raw_material,
+                  amount:bom.lot.amount,
+                  current:bom.lot.child_lot_rm.current,
+                  lot_number:bom.lot.child_lot_rm.lot_number,
+                  lot_rm_id:bom.lot.child_lot_rm.lot_rm_id,
+                  child_rm: {...bom.lot.child_lot_rm, stock:bom.lot.child_lot_rm.raw_material.stock, amount:bom.lot.amount},
+                  childRmId:bom.bom.childRmId,
+                  usage:bom.bom.usage,
+                  type:bom.bom.type,
+                  index:index
+                }
+              break;
+            case 1:
+              let sm_ids = checkMap.get("sm_id")
+              if(checkMap.get("sm_id").filter(id => id == bom.bom.childSmId).length <= 0){
+                sm_ids.push(bom.bom.childSmId)
+                checkMap.set("sm_id", sm_ids)
+              }
 
-            return {...bom.lot.child_lot_sm.sub_material,
-              amount:bom.lot.amount,
-              current:bom.lot.child_lot_sm.current,
-              lot_number:bom.lot.child_lot_sm.lot_number,
-              lot_sm_id:bom.lot.child_lot_sm.lot_sm_id,
-              child_sm: {...bom.lot.child_lot_sm, stock:bom.lot.child_lot_sm.sub_material.stock},
-              childSmId: bom.bom.childSmId,
-              usage:bom.bom.usage,
-              type:bom.bom.type
-            }
-          case 2:
-            let product_ids = checkMap.get("product_id")
-            if(checkMap.get("product_id").filter(id => id == bom.bom.childProductId).length <= 0){
-              product_ids.push(bom.bom.childProductId)
-              checkMap.set("product_id", product_ids)
-            }
-            return {...bom.lot.child_lot_record.operation_sheet.product,
-              amount:bom.lot.amount,
-              // current:bom.lot.current,
-              current:bom.lot.child_lot_record.operation_sheet.product.stock,
-              lot_number:bom.lot.child_lot_record.lot_number,
-            //   lot_sm_id:bom.lot.child_lot_sm.lot_sm_id,
-              child_product:bom.lot.child_lot_record.operation_sheet.product,
-              childProductId: bom.bom.childProductId,
-              usage:bom.bom.usage,
-              type:bom.bom.type
-            }
-          default:
-            return "none"
+              return {...bom.lot.child_lot_sm.sub_material,
+                amount:bom.lot.amount,
+                current:bom.lot.child_lot_sm.current,
+                lot_number:bom.lot.child_lot_sm.lot_number,
+                lot_sm_id:bom.lot.child_lot_sm.lot_sm_id,
+                child_sm: {...bom.lot.child_lot_sm, stock:bom.lot.child_lot_sm.sub_material.stock},
+                childSmId: bom.bom.childSmId,
+                usage:bom.bom.usage,
+                type:bom.bom.type
+              }
+            case 2:
+              let product_ids = checkMap.get("product_id")
+              if(checkMap.get("product_id").filter(id => id == bom.bom.childProductId).length <= 0){
+                product_ids.push(bom.bom.childProductId)
+                checkMap.set("product_id", product_ids)
+              }
+              return {...bom.lot.child_lot_record.operation_sheet.product,
+                amount:bom.lot.amount,
+                // current:bom.lot.current,
+                current:bom.lot.child_lot_record.operation_sheet.product.stock,
+                lot_number:bom.lot.child_lot_record.lot_number,
+              //   lot_sm_id:bom.lot.child_lot_sm.lot_sm_id,
+                child_product:bom.lot.child_lot_record.operation_sheet.product,
+                childProductId: bom.bom.childProductId,
+                usage:bom.bom.usage,
+                type:bom.bom.type
+              }
+            default:
+              return "none"
+          }
         }
       }).filter(v=>v)
       let noOverap = settingData.reduce(function(acc, current) {
@@ -161,7 +163,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       setInputMaterialList(inputMaterialList)
     } else if(!row.bom && column.type == "ai"){
       const res = await RequestMethod('get',   "bomLoad",{
-        path: { os_id: os_id, key: key, }
+        path: { os_id: null, key: key, }
       })
       if(res){
         const inputMaterialList = toInputMaterialList(res)

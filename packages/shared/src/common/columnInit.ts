@@ -902,8 +902,8 @@ export const columnlist: any = {
     { key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
   ],
   aiRecordListV2: [
-    { key:"identification", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, },
-    { key: "product_id", name: "CODE", width: 118 },
+    { key:"identification", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
+    { key: "product_id", name: "CODE", width: 118, formatter: SearchModalTest, type: 'product', placeholder: '검색', noSelect:true, },
     { key: "name", name: "품명", width: 118 },
     { key: "type", name: "품목 종류", width: 118 },
     { key: "unit", name: "단위", width: 118 },

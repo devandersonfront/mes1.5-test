@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
     columnlist,
-    ExcelTable, FinishButton,
+    ExcelTable,
     Header as PageHeader,
     IExcelHeaderType,
-    MAX_VALUE, PaginationComponent,
+    PaginationComponent,
     RequestMethod,
-    TextEditor, transferStringToCode, UnitContainer,
+    TextEditor, UnitContainer,
 } from "shared";
 // @ts-ignore
 import { SelectColumn } from "react-data-grid";
@@ -15,7 +15,6 @@ import { useRouter } from "next/router";
 import { NextPageContext } from "next";
 import moment from "moment";
 import { TransferCodeToValue } from "shared/src/common/TransferFunction";
-import { WorkModifyModal } from "../../../../shared/src/components/Modal/WorkModifyModal";
 import {
     deleteMenuSelectState,
     setMenuSelectState,
@@ -24,7 +23,6 @@ import { useDispatch } from "react-redux";
 import {CheckRecordLotNumber, getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
-import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import {alertMsg} from "shared/src/common/AlertMsg";
 import Big from "big.js";
 
@@ -38,13 +36,11 @@ interface IProps {
 const AiMesRecord = ({}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
-    const [excelOpen, setExcelOpen] = useState<boolean>(false)
     const [recordState, setRecordState] = useState<number>(0)
     const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [deleteBasic, setDeleteBasic] = useState<any>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiRecordListV2"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [optionList, setOptionList] = useState<string[]>(['수주번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자'])
     const [optionIndex, setOptionIndex] = useState<number>(0)
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
         from: moment().subtract(1,'month').format('YYYY-MM-DD'),
@@ -56,16 +52,6 @@ const AiMesRecord = ({}: IProps) => {
         total: 1,
     });
     const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
-
-    const onSelectDate = (date: {from:string, to:string}) => {
-        setSelectDate(date)
-        reload(null, date)
-    }
-
-    const onRadioChange = (btnIdx:number) => {
-        setRecordState(btnIdx)
-        reload(null, null, null, btnIdx)
-    }
 
     const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType, radioIdx?: number) => {
         setKeyword(keyword)
@@ -128,6 +114,7 @@ const AiMesRecord = ({}: IProps) => {
                 page: page,
                 renderItem: 18,
             },
+            // params: getRequestParams(keyword, {from:"2022-01-01", to:"2023-12-31"}, _sortingOptions,radioIdx)
             params: getRequestParams(keyword, date, _sortingOptions,radioIdx)
         });
         if(res){
@@ -221,6 +208,48 @@ const AiMesRecord = ({}: IProps) => {
         loadAllSelectItems([...convertColumn, ...additionalMenus], date, radioIdx);
     }
 
+    const forSaveCleanUpData = (res:any) => {
+        return {
+            additional:res?.additional ?? null,
+            bom:res?.bom ?? null,
+            company:res?.company ?? null,
+            confidence:res?.confidence ?? null,
+            contract_id:res?.contract_id ?? null,
+            count:res?.bom == null ? res?.count : null,
+            date:res?.date ?? null,
+            deadline:res?.deadline ?? null,
+            end:res?.end ?? null,
+            goal:res?.goal ?? null,
+            good_quantity:res?.good_quantity ?? null,
+            id:res?.id ?? null,
+            identification:res?.identification ?? null,
+            input_bom:res?.input_bom ?? null,
+            lot_number:res?.lot_number ?? null,
+            machine:res?.machine ?? null,
+            machines:res?.machines ?? null,
+            mfr_code:res?.mfr_code ?? null,
+            name:res?.name ?? null,
+            operationRecord:res?.operationRecord ?? null,
+            operation_sheet:res?.operation_sheet ?? null,
+            prediction_id:res?.prediction_id ?? null,
+            prediction_result:res?.prediction_result ?? null,
+            process_id:res?.process_id ?? null,
+            product:res?.product ?? null,
+            product_id:res?.product_id ?? null,
+            start:res?.start ?? null,
+            status:res?.status ?? null,
+            sum:res?.sum ?? null,
+            tools:res?.tools ?? null,
+            type:res?.type ?? null,
+            unit:res?.unit ?? null,
+            uph:res?.uph ?? null,
+            worker:res?.worker ?? res.operationRecord.worker,
+            pause_reasons:res?.pause_reasons ?? null,
+            defect_reasons:res?.defect_reasons ?? null
+        }
+
+    }
+
     const cleanUpData = (res: any, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType, radioIdx?:number) => {
         const _reload = () => reload(null, date, _sortingOptions, radioIdx)
 
@@ -259,7 +288,7 @@ const AiMesRecord = ({}: IProps) => {
                 process_id: row?.product?.process?.name ?? "-",
                 user: row.worker,
                 sic_id: row.inspection_category,
-                worker: row.worker?.name ?? '-',
+                worker: row.worker?.name ?? row.operationRecord.worker ?? '-',
                 worker_object: row.worker_object ?? row.worker,
                 // sum:row.bom.map((bom) => bom.lot.amount).filter(v=>v).reduce((prev, current) => prev + current, result),
                 sum: row?.operationRecord.good_quantity,
@@ -293,7 +322,7 @@ const AiMesRecord = ({}: IProps) => {
                     }
                     if(v.molds) {
                         v.bom.map(bom => {
-                            const finalAmount = new Big(bom.lot?.amount).div(v.cavity)
+                            const finalAmount = new Big(Number(bom.lot?.amount)).div(bom?.bom.cavity)
                             const finalUsage = finalAmount.times(bom.bom?.usage)
                             if(!Number.isInteger(finalAmount.toNumber())) throw(alertMsg.productAmountNotCavityDivisor)
                             if(finalUsage.gt(bom.lot?.current)) throw (alertMsg.overStock)
@@ -304,17 +333,34 @@ const AiMesRecord = ({}: IProps) => {
                     return {
                         ...v,
                         additional:[],
-                        bom: v.bom.map(bom => {
-                            const outsourcing = bom.bom?.type === 2 && bom.bom?.child_product?.type > 2
+                        bom: v.bom.map((bom) => {
+                            const outsourcing = bom?.bom?.type === 2 && bom.bom?.child_product?.type > 2
                             const lotKey = outsourcing ? 'child_lot_outsourcing' :'child_lot_record'
                             return {
                                 ...bom,
+                                bom: {
+                                    childOutsourcingId:bom.bom?.childOutsourcingId ?? null,
+                                    childProductId:bom.bom?.childProductId ?? null,
+                                    childRmId:bom.bom?.childRmId ?? null,
+                                    childSmId:bom.bom?.childSmId ?? null,
+                                    child_product:bom.bom?.child_product ?? null,
+                                    child_rm:bom.bom?.child_rm ?? null,
+                                    child_sm:bom.bom?.child_sm ?? null,
+                                    key:bom.bom?.key ?? null,
+                                    parent:bom.bom?.parent ?? null,
+                                    parentId:bom.bom?.parentId ?? null,
+                                    seq:bom.bom?.seq ?? null,
+                                    setting:bom.bom?.setting ?? null,
+                                    type:bom.bom?.type ?? null,
+                                    usage:bom.bom?.usage ?? null,
+                                    version:bom.bom?.version ?? null,
+                                },
                                 lot: {
                                     ...bom.lot,
                                     [lotKey]: bom.lot?.[lotKey],
-                                    amount: v.molds?.length > 0 ? new Big(Number(bom.lot.amount)).div(v.cavity).toString() : bom.lot.amount}}
+                                    amount: v.molds?.length > 0 ? new Big(Number(bom.lot.amount)).div(bom?.bom?.cavity).toString() : Number(bom.lot.amount)}}
                         }),
-                        operation_sheet: v.operationRecord.operation_sheet,
+                        operation_sheet: v.operation_sheet ?? v.operationRecord.operation_sheet,
                         osId:v.os_id,
                         tools: v?.tools?.map((tool) => {
                             return{
@@ -338,7 +384,7 @@ const AiMesRecord = ({}: IProps) => {
                     }
                 }
                 }).filter((v) => v)
-            const res = await RequestMethod('post', `recordSave`,postBody)
+            const res = await RequestMethod('post', `recordSave`,postBody.map((finalData) => forSaveCleanUpData(finalData)))
             if (res?.length > 0) {
                 Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
                     DeleteBasic(true)
@@ -402,6 +448,9 @@ const AiMesRecord = ({}: IProps) => {
                             const total = row?.lotList[0]?.lots?.map((lot) => Number(lot.amount)).reduce((prev, current) => prev + current, tmp)
                             return {...row, current:total}
                         } else {
+                            row.processId = row.product.process.process_id
+                            row.process_id = row.product.process.name
+                            if(!row.bom) row.good_quantity = 0
                             return row
                         }
                     })
