@@ -215,7 +215,7 @@ const AiMesRecord = ({}: IProps) => {
             company:res?.company ?? null,
             confidence:res?.confidence ?? null,
             contract_id:res?.contract_id ?? null,
-            count:res?.count ?? null,
+            count:res?.bom == null ? res?.count : null,
             date:res?.date ?? null,
             deadline:res?.deadline ?? null,
             end:res?.end ?? null,
