@@ -414,6 +414,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
         </div>
       </Modal>
       <BarcodeModal
+          multiple
           title={'바코드 미리보기'}
           handleBarcode={handleBarcode}
           handleModal={handleModal}
