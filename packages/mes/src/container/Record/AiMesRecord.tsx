@@ -302,6 +302,7 @@ const AiMesRecord = ({}: IProps) => {
     }
     const SaveBasic = async () => {
         if(selectList.size <= 0) return Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
+        if(selectList.size > 1) return Notiflix.Report.warning("경고","데이터를 하나만 선택해주세요.","확인")
         try{
             const postBody = basicRow.map((v) => {
                 const cavity = v.molds?.length > 0 ? v.molds[0].mold?.mold?.cavity : 1
