@@ -302,7 +302,7 @@ const AiMesRecord = ({}: IProps) => {
     }
     const SaveBasic = async () => {
         if(selectList.size <= 0) return Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
-        if(selectList.size > 1) return Notiflix.Report.warning("경고","데이터를 하나만 선택해주세요.","확인")
+        // if(selectList.size > 1) return Notiflix.Report.warning("경고","데이터를 하나만 선택해주세요.","확인")
         try{
             const postBody = basicRow.map((v) => {
                 const cavity = v.molds?.length > 0 ? v.molds[0].mold?.mold?.cavity : 1
@@ -385,7 +385,7 @@ const AiMesRecord = ({}: IProps) => {
                     }
                 }
                 }).filter((v) => v)
-            const res = await RequestMethod('post', `recordSave`,postBody.map((finalData) => forSaveCleanUpData(finalData)))
+            const res = await RequestMethod('post', `aiCncRecordSave`,postBody.map((finalData) => forSaveCleanUpData(finalData)))
             if (res?.length > 0) {
                 Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
                     DeleteBasic(true)
