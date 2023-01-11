@@ -57,7 +57,7 @@ const EditListModal = ({ open, setOpen, onRowChange,}: IProps) =>{
             const oneRow:any = {}
             oneRow.product_id = row.id
             oneRow.goal = Number(row.goal)
-            oneRow.deadline = row.deadLine
+            oneRow.deadline = row.deadline
             result.push(oneRow)
         })
 
