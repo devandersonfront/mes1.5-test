@@ -96,7 +96,7 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
             const buttonKey = getButtonKey(button)
             if(selectList.size === 0 && buttonKey !== 'add') throw(alertMsg.noSelectedData)
             const event = buttonEvent && buttonEvent[buttonKey] !== undefined ? buttonEvent[buttonKey] : defaultButtonEvent[buttonKey]
-            event && event(data)
+            event && event(data, selectList)
         }catch(errMsg) {
             Notiflix.Report.warning('경고',errMsg,'확인')
         }
