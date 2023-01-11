@@ -18,7 +18,7 @@ interface IProps {
     open:boolean
     setOpen:(value:boolean) => void
     row?: any
-    onRowChange?: (e: any) => void
+    onRowChange?: (e?: any) => void
 }
 
 
@@ -68,7 +68,7 @@ const EditListModal = ({ open, setOpen, onRowChange,}: IProps) =>{
         const res = await RequestMethod("get", "sheetInsufficient",
             {
                 path:{
-                    page:1,
+                    page:pageInfo.page,
                     total:18
                 }
             })
@@ -181,7 +181,6 @@ const EditListModal = ({ open, setOpen, onRowChange,}: IProps) =>{
                     <div style={{ height: 40, width: "100%", display: 'flex', alignItems: 'flex-end'}}>
                         <div
                             onClick={() => {
-                                console.log("selectList : ", searchList.filter((row) => selectList.has(row.id)))
                                 setSearchList([])
                                 setSelectList(new Set())
                                 setOpen(false)
@@ -194,10 +193,12 @@ const EditListModal = ({ open, setOpen, onRowChange,}: IProps) =>{
                             onClick={() => {
                                 RequestMethod("post", "serialSave", forSaveCleanData(searchList.filter((row) => selectList.has(row.id))))
                                     .then((res) => {
-                                        console.log(res)
-                                        setSearchList([])
-                                        setSelectList(new Set())
-                                        setOpen(false)
+                                        Notiflix.Report.success("저장되었습니다.","","확인", () => {
+                                            onRowChange()
+                                            setSearchList([])
+                                            setSelectList(new Set())
+                                            setOpen(false)
+                                        })
                                     })
                             }}
                             style={{height: 40, backgroundColor: POINT_COLOR, width:"50%", display: 'flex', justifyContent: 'center', alignItems: 'center'}}

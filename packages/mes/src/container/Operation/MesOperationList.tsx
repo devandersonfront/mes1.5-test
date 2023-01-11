@@ -317,7 +317,7 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
 
   return (
     <div className={'excelPageContainer'}>
-      <EditListModal open={sheetModalOpen} setOpen={setSheetModalOpen} />
+      <EditListModal open={sheetModalOpen} setOpen={setSheetModalOpen} onRowChange={reload} />
       <PageHeader
         isSearch
         isCalendar
