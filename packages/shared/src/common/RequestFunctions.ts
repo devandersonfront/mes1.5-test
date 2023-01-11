@@ -321,7 +321,7 @@ const ApiList = {
   outsourcingImportSave : `/api/v1/outsourcing/import/save`,
   stockAdjustSave: '/api/v1/stock/adjustment/save',
   productBatchSave: '/cnc/api/v1/product/pop/save',
-
+  aiCncRecordSave: '/api/v1/ai/record/cnc/save',
   //modify
   operationModify: `/api/v1/operation/modify`,
 

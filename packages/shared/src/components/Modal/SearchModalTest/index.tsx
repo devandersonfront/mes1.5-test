@@ -17,13 +17,14 @@ import {MoldRegisterModal} from '../MoldRegisterModal'
 import Notiflix from 'notiflix'
 import {SearchModalResult, SearchResultSort} from '../../../Functions/SearchResultSort'
 import {Select} from '@material-ui/core'
-import {SearchIcon} from "../../../styles/styledComponents";
+import {CellButton, SearchIcon} from "../../../styles/styledComponents";
 import {useDispatch, useSelector} from "react-redux";
 import { RootState } from '../../../reducer'
 import modifyInfo from '../../../reducer/modifyInfo'
 //@ts-ignore
 import ModalSearch_icon from '../../../../public/images/list_search_icon.png'
 import moment from "moment";
+import {AddlButton} from "../../Buttons/AddlButton";
 
 interface IProps {
   column: IExcelHeaderType
@@ -238,7 +239,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           return {
             from:"2000-01-01",
             // to: moment(new Date()).format("YYYY-MM-DD")
-            to: "2022-12-31",
+            to: "2023-12-31",
             productIds:row.product.product_id,
             status:[0,1]
           }
@@ -315,7 +316,26 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     Notiflix.Loading.remove()
   }
   const getContents = () => {
-    if(row[`${column.key}`]){
+    if(column.theme === "aiModal" && (!row?.operationRecord?.operation_sheet.os_id )){
+      return (
+          <CellButton onClick={async() => {
+            await RequestMethod("post", "operationSave", [row.operationRecord.operation_sheet])
+                .then(async(res) => {
+                  Notiflix.Loading.standard()
+                  setTimeout(() => {
+                    LoadBasic(1).then(() => {
+                      Notiflix.Loading.remove()
+                      row.reload()
+                    })
+                  },1000)
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+
+          }}>생성</CellButton>
+      )
+    }else if(row[`${column.key}`]){
       if( typeof row[`${column.key}`] === "string"){
         return row[column.key];
       }else{
@@ -665,16 +685,16 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
   return (
     <SearchModalWrapper>
-      <div style={{width: column.modalType ? 'calc(100% - 32px)' : 'calc(100% - 40px)', height: column.modalType ? 32 : 40,
-        paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3,  background: row.border ? '#19B9DF80' : row?.warning ? "red" : undefined}
-      } onClick={() => {
-        if(row.first || !column.disableType){
-          setIsOpen(true)
-        }
-      }}>
-        {getContents()}
-      </div>
-      {(row.first || !column.disableType) &&
+        <div style={{width: column.modalType ? 'calc(100% - 32px)' : 'calc(100% - 40px)', height: column.modalType ? 32 : 40,
+          paddingLeft:8, opacity: row[`${column.key}`] ? 1 : .3,  background: row.border ? '#19B9DF80' : row?.warning ? "red" : undefined}
+        } onClick={() => {
+          if(!(column.theme === "aiModal" && (!row?.operationRecord?.operation_sheet.os_id))){
+            setIsOpen(true)
+          }
+        }}>
+          {getContents()}
+        </div>
+      {!(column.theme === "aiModal" && (!row?.operationRecord?.operation_sheet.os_id)) &&
         addSearchButton()
       }
       <Modal isOpen={isOpen} style={{
@@ -783,5 +803,21 @@ const FooterButton = styled.div`
     font-weight: bold;
   }
 `
+
+const HeaderButton = styled.button`
+    height:32px;
+    color:white;
+    border-radius:6px;
+    font-size:15px;
+    font-weight:bold;
+    background:#717C90;
+    padding: 0 20px;
+    cursor: pointer;
+    display:flex;
+    margin-left: 16px;
+    justify-content:center;
+    align-items:center;
+`;
+
 
 export {SearchModalTest}
