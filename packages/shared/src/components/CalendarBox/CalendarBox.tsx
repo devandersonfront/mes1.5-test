@@ -33,6 +33,9 @@ const CalendarBox = ({ row, column, onRowChange }: IProps) => {
 
   const minDate = () => {
     let minDate = moment('1900-01-01').subtract(1, 'days').toDate()
+    if(column.type == "Modal" && column.dependency){
+        return moment(row.date).toDate()
+    }
     switch(column.type)
     {
       case 'deadline': minDate = moment(row.date).toDate()

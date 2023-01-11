@@ -321,6 +321,7 @@ const ApiList = {
   outsourcingImportSave : `/api/v1/outsourcing/import/save`,
   stockAdjustSave: '/api/v1/stock/adjustment/save',
   productBatchSave: '/cnc/api/v1/product/pop/save',
+  serialSave: '/api/v1/sheet/serial/save',
   aiCncRecordSave: '/api/v1/ai/record/cnc/save',
   //modify
   operationModify: `/api/v1/operation/modify`,
@@ -536,5 +537,6 @@ const ApiList = {
   logOut: '/anonymous/logout',
   //doc
   docChild : '/cnc/api/v1/document/load/child',
-  f1Score: "/api/train/f1score"
+  f1Score: "/api/train/f1score",
+  sheetInsufficient:"/api/v1/sheet/insufficient_by_contract/load"
 }
