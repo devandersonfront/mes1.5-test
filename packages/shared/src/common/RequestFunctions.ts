@@ -322,6 +322,7 @@ const ApiList = {
   stockAdjustSave: '/api/v1/stock/adjustment/save',
   productBatchSave: '/cnc/api/v1/product/pop/save',
   serialSave: '/api/v1/sheet/serial/save',
+  aiCncRecordSave: '/api/v1/ai/record/cnc/save',
   //modify
   operationModify: `/api/v1/operation/modify`,
 
