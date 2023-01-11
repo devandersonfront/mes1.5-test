@@ -21,6 +21,7 @@ import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
+import EditListModal from "shared/src/components/Modal/EditModal/EditListModal";
 interface IProps {
   children?: any
   page?: number
@@ -49,6 +50,7 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
     page: 1,
     total: 1
   })
+  const [sheetModalOpen, setSheetModalOpen] = useState<boolean>(false)
 
   const onSelectDate = (date: {from:string, to:string}) => {
     const _date = todayOnly ? {from: moment().format('YYYY-MM-DD'), to:moment().format('YYYY-MM-DD')} : date
@@ -315,6 +317,7 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
 
   return (
     <div className={'excelPageContainer'}>
+      <EditListModal open={sheetModalOpen} setOpen={setSheetModalOpen} />
       <PageHeader
         isSearch
         isCalendar
@@ -333,11 +336,14 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
         //실제사용
         title={`${todayOnly ? '금일 ' : ''}작업지시서 리스트`}
         buttons={
-          ['', '수정하기', '삭제']
+          ['추천 작업지시서', '수정하기', '삭제']
         }
         buttonsOnclick={
           (e) => {
             switch(e) {
+              case 0:
+                setSheetModalOpen(true)
+                break
               case 1:
                 if(selectList.size === 0){
                   Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
@@ -386,9 +392,9 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
         let tmp: Set<any> = selectList
         let tmpRes = e.map(v => {
           if(v.isChange) {
-                            tmp.add(v.id)
-                            v.isChange = false
-                        }
+              tmp.add(v.id)
+              v.isChange = false
+          }
           if(v.update || v.finish){
             reload()
             return {
