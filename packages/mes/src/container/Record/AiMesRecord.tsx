@@ -451,7 +451,6 @@ const AiMesRecord = ({}: IProps) => {
                         } else {
                             row.processId = row.product.process.process_id
                             row.process_id = row.product.process.name
-                            if(!row.bom) row.good_quantity = 0
                             return row
                         }
                     })
