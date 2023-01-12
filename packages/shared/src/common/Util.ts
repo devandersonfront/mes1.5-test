@@ -155,3 +155,22 @@ export const columnsSort = (columns:any[]) => {
 //   }
 // }
 
+export const transTypeProduct = (type:string | number) => {
+  switch(type){
+    case 0:
+      return "반제품"
+    case 1:
+      return "재공품"
+    case 2:
+      return "완제품"
+    case "완제품":
+      return 2
+    case "반제품":
+      return 0
+    case "재공품":
+      return 1
+    default:
+      return null
+
+  }
+}
