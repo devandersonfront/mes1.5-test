@@ -68,6 +68,16 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
             raw_material: {...value.raw_material, type:value.raw_material.type_id, unit:value.raw_material.unit_id}
           })
         }
+      }else{
+        divisionData.push({
+          ...value,
+          amount:Number(value.amount),
+          unitCount:undefined,
+          lot_number:value.lot_number+`01-01`,
+          warehousing:Number(value.amount),
+          type:value.type_id,
+          raw_material: {...value.raw_material, type:value.raw_material.type_id, unit:value.raw_material.unit_id}
+        })
       }
     })
 
