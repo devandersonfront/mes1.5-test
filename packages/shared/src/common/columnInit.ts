@@ -193,6 +193,7 @@ export const columnlist: any = {
     { key: 'factory_id', name: '공장명', width: 118, formatter: SearchModalTest, type: 'factory', placeholder: "-" },
     { key: 'affiliated_id', name: '공장 세분화명', width: 118, formatter: subFactorySearchModal /*FactoryInfoModal*/, type: 'subFactory', placeholder: "-" },
     { key: 'product_id', name: '생산 품목', width: 118, formatter: ProductInfoModal, type: "machine", headerItems: [[{key: 'name', title:'기계명', infoWidth: 300},{ key: 'mfrCode', title: '제조 번호', infoWidth: 300 }]] ,unprintable : true},
+    { key: 'uses_total_counter', name: '토탈 카운터 사용', width: 118, formatter: Checkbox,},
   ],
   device: [
     { key: 'mfrName', name: '장치 제조사', editor: TextEditor, formatter: PlaceholderBox, placeholder: "제조사 입력" },
