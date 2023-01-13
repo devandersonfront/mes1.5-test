@@ -2,33 +2,27 @@ import React, {useEffect, useState} from "react"
 import styled from "styled-components"
 import Notiflix from "notiflix";
 import {RequestMethod} from "../../../common/RequestFunctions";
-import {UploadButton} from "../../../styles/styledComponents";
 import Modal from "react-modal";
 //@ts-ignore
 import IcX from "../../../../public/images/ic_x.png";
 import {ExcelTable} from "../../Excel/ExcelTable";
 import {searchModalList} from "../../../common/modalInit";
 import {POINT_COLOR} from "../../../common/configset";
-import {IExcelHeaderType} from "../../../@types/type";
-import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
 //@ts-ignore
 import {SelectColumn} from "react-data-grid";
 import {transTypeProduct} from "../../../common/Util";
+import {PaginationComponent} from "../../Pagination/PaginationComponent";
 
 interface IProps {
     open:boolean
     setOpen:(value:boolean) => void
     row?: any
-    onRowChange?: (e: any) => void
+    onRowChange?: (e?: any) => void
 }
 
 
 const EditListModal = ({ open, setOpen, onRowChange,}: IProps) =>{
-    // const [isOpen, setIsOpen] = useState<boolean>(false)
-    const [title, setTitle] = useState<string>('기계')
-    const [optionIndex, setOptionIndex] = useState<number>(0)
-    const [keyword, setKeyword] = useState<string>('')
     const [selectRow, setSelectRow] = useState<number>()
     const [selectList, setSelectList] = useState<Set<number>>(new Set());
     const [searchList, setSearchList] = useState<any[]>([])
@@ -37,55 +31,51 @@ const EditListModal = ({ open, setOpen, onRowChange,}: IProps) =>{
         page: 1,
         total: 1
     })
-
     const cleanUpData = (data:any) => {
-        console.log("Data : ", data)
-        const {code,name,type,unit,amount, currentGoal} = data.product
-        console.log("??? : ", code,name,type,unit,amount)
+        const {product_id, code,name,type,unit,amount, safetyStock, currentGoal} = data.product
         let tmpData:any = {}
-        tmpData.id =
+        tmpData.id = product_id
         tmpData.code = code
         tmpData.name = name
         tmpData.type = transTypeProduct(type)
         tmpData.unit = unit
         tmpData.contract_amount = data.contract_amount
-        tmpData.safety_stock = data.safety_stock
+        tmpData.deadline = new Intl.DateTimeFormat("fr-CA", {year: "numeric", month: "2-digit", day: "2-digit"}).format(Date.now())
+        tmpData.safetyStock = safetyStock
         tmpData.currentGoal = data.currentGoal
         tmpData.stock = data.stock
         tmpData.amount = amount
         tmpData.total = data.total
         tmpData.goal = Math.abs(data.total)
-        console.log("tmpData : ", tmpData)
-
-        // code
-        // name
-        // type
-        // unit
-        // contract_amount
-        // safety_stock
-        // stock
-        // current_goal
-        // total
-        // goal?
-
+        tmpData.date = new Intl.DateTimeFormat("fr-CA", {year: "numeric", month: "2-digit", day: "2-digit"}).format(Date.now())
         return tmpData
     }
+
+    const forSaveCleanData = (data:any[]) => {
+        const result = []
+        data.forEach((row) => {
+            const oneRow:any = {}
+            oneRow.product_id = row.id
+            oneRow.goal = Number(row.goal)
+            oneRow.deadline = row.deadline
+            result.push(oneRow)
+        })
+
+        return result
+    }
+
     const getData = async() => {
         const res = await RequestMethod("get", "sheetInsufficient",
             {
                 path:{
-                    page:1,
-                    total:1000
+                    page:pageInfo.page,
+                    total:18
                 }
             })
         if(res){
-            console.log(res.info_list)
-            // console.log(cleanUpData(res.info_list.map((row) => cleanUpData(row.product))))
             res.info_list.map((row) => console.log(cleanUpData(row)))
             const resultData = res.info_list.map((row) => cleanUpData(row))
-            new Array(14).fill({}).map(() => {
-                resultData.push(resultData[0])
-            })
+            setPageInfo({page:res.page, total:res.totalPages})
             setSearchList(resultData)
         }else{
             Notiflix.Report.warning("Error","서버 에러가 발생하였습니다.","확인", () => {
@@ -98,18 +88,7 @@ const EditListModal = ({ open, setOpen, onRowChange,}: IProps) =>{
         if(open) {
             getData()
         }
-    }, [open , searchKeyword])
-
-
-    const saveSubFactory = async () => {
-        onRowChange(searchList)
-        setOpen(false)
-    }
-
-    const deleteSubFactory = async() => {
-
-    }
-
+    }, [open , searchKeyword, pageInfo.page])
 
 
     return (
@@ -191,13 +170,19 @@ const EditListModal = ({ open, setOpen, onRowChange,}: IProps) =>{
                             headerAlign={'center'}
                         />
                     </div>
-                    <div>
-                        pagination
-                    </div>
+                    <PaginationComponent
+                        currentPage={pageInfo.page}
+                        totalPage={pageInfo.total}
+                        setPage={(page) => {
+                            setPageInfo({...pageInfo, page: page})
+                        }}
+                        themeType={"modal"}
+                    />
                     <div style={{ height: 40, width: "100%", display: 'flex', alignItems: 'flex-end'}}>
                         <div
                             onClick={() => {
-                                console.log("selectList : ", searchList.filter((row) => selectList.has(row.id)))
+                                setSearchList([])
+                                setSelectList(new Set())
                                 setOpen(false)
                             }}
                             style={{height: 40, backgroundColor:"#b3b3b3" , width:"50%", display: 'flex', justifyContent: 'center', alignItems: 'center'}}
@@ -206,8 +191,15 @@ const EditListModal = ({ open, setOpen, onRowChange,}: IProps) =>{
                         </div>
                         <div
                             onClick={() => {
-                                console.log("selectList : ", searchList.filter((row) => selectList.has(row.id)))
-                                setOpen(false)
+                                RequestMethod("post", "serialSave", forSaveCleanData(searchList.filter((row) => selectList.has(row.id))))
+                                    .then((res) => {
+                                        Notiflix.Report.success("저장되었습니다.","","확인", () => {
+                                            onRowChange()
+                                            setSearchList([])
+                                            setSelectList(new Set())
+                                            setOpen(false)
+                                        })
+                                    })
                             }}
                             style={{height: 40, backgroundColor: POINT_COLOR, width:"50%", display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                         >
