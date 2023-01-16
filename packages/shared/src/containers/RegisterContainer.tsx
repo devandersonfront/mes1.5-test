@@ -48,7 +48,7 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
     }
 
     const save = async (postBody: any) => {
-        const result = await RequestMethod("post", apiType,postBody)
+        const result = await RequestMethod("post", apiType, postBody)
         if(result){
             Notiflix.Report.success(
                 '성공',
@@ -139,7 +139,7 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
                 selectList={selectList}
                 headerList={[
                     SelectColumn,
-                ].concat(useRadio || multiRegister ? columnlist[columnKey](data, setData, radioValue) : columnlist[columnKey])}
+                ].concat(useRadio || multiRegister ? columnlist[columnKey](data, setData, radioValue).filter((data) => data) : columnlist[columnKey])}
                 row={data}
                 setRow={(rows) => {
                     rows.map((row) => {
