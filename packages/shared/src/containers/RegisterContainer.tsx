@@ -26,11 +26,12 @@ interface IProps {
     columnKey: string
     checkDuplicate?: (rows: any[]) => void
     duplicateKey?: string
+    radioNum ?: (num : number) => void
 }
 
 const defaultInitData = {isFirst:true}
 
-const RegisterContainer = ({radioButtons , useRadio, title, data, setData, validate, setPostBody, apiType, afterSavePath, initData, buttons, buttonEvent, multiRegister, columnKey, checkDuplicate, duplicateKey }:IProps) => {
+const RegisterContainer = ({radioButtons , useRadio, title, data, setData, validate, setPostBody, apiType, afterSavePath, initData, buttons, buttonEvent, multiRegister, columnKey, checkDuplicate, duplicateKey ,radioNum}:IProps) => {
     const [radioValue, setRadioValue] = useState<number>(0)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const router = useRouter()
@@ -38,6 +39,7 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
 
     useEffect(()=>{
         setData(addInitData([]))
+        radioNum(radioValue)
     },[radioValue])
 
     const filterSelectedRows = (data) => data.filter((row) => selectList.has(row.id))
