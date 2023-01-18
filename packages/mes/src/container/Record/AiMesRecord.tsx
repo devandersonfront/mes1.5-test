@@ -280,6 +280,7 @@ const AiMesRecord = ({}: IProps) => {
                 identification: row?.operationRecord?.operation_sheet?.identification ?? "-",
                 product_id: row?.product?.code ?? "-",
                 name: row?.product?.name ?? "-",
+                model:row?.product?.model?.model ?? "-",
                 type:
                     row?.product
                         ? TransferCodeToValue(row.product.type, "product")
