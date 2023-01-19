@@ -3,7 +3,7 @@ export type HomeOrderType = 'home'
 export type BasicOrderType =
     'userAuthMgmt' | 'factoryMgmt' | 'customerMgmt' | 'processMgmt' | 'qualityMgmt' |
     'deviceMgmt' | 'machineMgmt' | 'moldMgmt' | 'toolMgmt' | 'rawMgmt' | 'subMgmt' |
-    'productMgmt' | 'documentMgmt' | 'welding'
+    'productMgmt' | 'opAiDataset' | 'documentMgmt' | 'welding'
 
 export type MesOrderType =
     'businessMgmt' | 'pmReg' | 'rawMgmt' | 'subMgmt' | 'toolMgmt' | 'qualityMgmt' |

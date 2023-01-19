@@ -39,29 +39,12 @@ const userInfo = cookie.load('userInfo')
 const HomeAiProductionLog = ({}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
-    const [basicRow, setBasicRow] = useState<Array<any>>([])
-    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiProductLog"])
-    const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [ page, setPage ] = React.useState<{ current_page: number, totalPages: number }>({
-        current_page: 1,
-        totalPages : 1
-    });
+    const [ column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiProductLog"])
+    const [ list, setList] = useState<any[]>([])
+    const [ predictAi , setPredictAi ] = React.useState<any[]>([])
 
     useEffect(()=>{
         userInfo?.company === '4XX21Z' && setColumn(columnlist["aiProductLogDS"])
-    },[])
-
-    useEffect(() => {
-        // if(userInfo?.ca_id?.authorities?.some(auth => ['ROLE_PROD_02', 'ROLE_PROD_06'].includes(auth))){
-        Notiflix.Loading.circle()
-        getApi()
-        const dashboard = setInterval(()=>{
-            getApi()
-        },30000)
-        return () => {
-            clearInterval(dashboard)
-        }
-        // }
     },[])
 
     const predictCheckList = (value) => {
@@ -87,21 +70,55 @@ const HomeAiProductionLog = ({}: IProps) => {
     }
 
     const getPressList = async () => {
+
         const tokenData = userInfo?.token;
-        return await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/simple`,{
+        const res =  await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/simple`,{
             headers : { Authorization : tokenData }
+        }).catch((error)=>{
+            const errorNum : number = error?.response?.status
+            const message : string = error?.response?.data?.message
+            const [errorHeader,errorMessage] = ErrorList({errorNum , message})
+            Notiflix.Report.failure(errorHeader, errorMessage ,'확인' )
+            Notiflix.Loading.remove()
         })
+
+        if (res) {
+            Notiflix.Loading.remove()
+            const content = res?.data?.results?.content
+            setList(content)
+            return true
+        }else {
+            setTimeout(() => {
+                window.location.reload()
+            }, 30000)
+            Notiflix.Loading.remove()
+            return false
+        }
+
     }
+
     const LoadBasic = async (pages : number = 1) => {
         const tokenData = userInfo?.token;
         const params  = userInfo?.company === '4XX21Z'
-                ? { rangeNeeded : true , distinct : 'mfrCode'}
-                : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
+            ? { rangeNeeded : true , distinct : 'mfrCode'}
+            : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
 
-        return await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
+        const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
             params : params,
             headers : { Authorization : tokenData }
         })
+
+        if(result){
+            Notiflix.Loading.remove()
+            setPredictAi(result?.data?.info_list)
+            return true
+        }else{
+            setTimeout(() => {
+                window.location.reload()
+            }, 30000)
+            Notiflix.Loading.remove()
+            return false
+        }
     }
 
     const mappingData = (lists, results) => {
@@ -109,6 +126,7 @@ const HomeAiProductionLog = ({}: IProps) => {
         lists?.forEach((list)=>{
             map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
         })
+
         const newData = results?.map((result)=>{
             if(map.get(result.machine_code)){
                 return {...result , pressStatus : map.get(result.machine_code)}
@@ -119,24 +137,26 @@ const HomeAiProductionLog = ({}: IProps) => {
         return newData
     }
 
-    const getApi = async () => {
-        try {
-            const pressList = await getPressList()
-            const result = await LoadBasic()
-            Notiflix.Loading.remove()
-            const newData = mappingData(pressList.data.results.content , result.data.info_list)
-            const data = convertData(newData)
-            setBasicRow(data)
-        }catch (error) {
-            if(error?.response?.status){
-                const errorNum : number = error?.response?.status
-                const message : string = error?.response?.data?.message
-                const [errorHeader,errorMessage] = ErrorList({errorNum , message})
-                Notiflix.Report.failure(errorHeader, errorMessage ,'확인')
-                Notiflix.Loading.remove()
+    useEffect(() => {
+        Notiflix.Loading.circle()
+        getPressList()
+        LoadBasic()
+        let interval = setInterval(async () => {
+            const result = await getPressList()
+            if (!result) {
+                clearTimeout(interval)
             }
+        }, 2500)
+        interval = setInterval(async () => {
+            const result = await LoadBasic()
+            if (!result) {
+                clearTimeout(interval)
+            }
+        }, 30000)
+        return () => {
+            clearTimeout(interval)
         }
-    }
+    }, [])
 
     useEffect(() => {
         dispatch(
@@ -156,18 +176,8 @@ const HomeAiProductionLog = ({}: IProps) => {
             <ExcelTable
                 editable
                 headerList={column}
-                row={basicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = selectList
-                    e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
-                    })
-                    setSelectList(tmp)
-                    setBasicRow(e)
-                }}
-                selectList={selectList}
-                //@ts-ignore
-                setSelectList={setSelectList}
+                row={convertData(mappingData(list,predictAi))}
+                setRow={()=>{}}
                 width={1576}
                 height={'100%'}
             />

@@ -97,9 +97,7 @@ const AiDataSet = () => {
         getData(pageInfo.page)
     },[pageInfo.page])
     useEffect(() => {
-        dispatch(
-            setMenuSelectState({ main: "생산관리 등록", sub: router.pathname })
-        );
+        dispatch(setMenuSelectState({ main: "AI 데이터셋", sub: "" }));
         return () => {
             dispatch(deleteMenuSelectState());
         };

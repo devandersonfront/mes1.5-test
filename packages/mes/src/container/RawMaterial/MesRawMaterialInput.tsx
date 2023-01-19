@@ -10,6 +10,7 @@ import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { alertMsg } from 'shared/src/common/AlertMsg'
 import { RegisterContainer } from 'shared/src/containers/RegisterContainer'
+import {forEach} from "lodash";
 
 interface IProps {
   children?: any
@@ -53,12 +54,49 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
     version: undefined,
   })
 
+  const rawMaterialInputSave = async(data, selectList) => {
+    const divisionData = []
+    data.map((value) => {
+      if(value.unitCount && selectList.has(value.id)) {
+        for(let i = 0; i < value.unitCount; i++){
+          divisionData.push({...value,
+            amount:Number(value.amount)/value.unitCount,
+            unitCount:undefined,
+            lot_number:value.lot_number+`0${i+1}-0${value.unitCount}`,
+            warehousing:Number(value.amount)/value.unitCount,
+            type:value.type_id,
+            raw_material: {...value.raw_material, type:value.raw_material.type_id, unit:value.raw_material.unit_id}
+          })
+        }
+      }else{
+        divisionData.push({
+          ...value,
+          amount:Number(value.amount),
+          unitCount:undefined,
+          lot_number:value.lot_number+`01-01`,
+          warehousing:Number(value.amount),
+          type:value.type_id,
+          raw_material: {...value.raw_material, type:value.raw_material.type_id, unit:value.raw_material.unit_id}
+        })
+      }
+    })
+
+    await RequestMethod("post", "lotRmSave", divisionData)
+        .then((res) => {
+          Notiflix.Report.success("저장되었습니다.","","확인", () => {
+            router.push("/mes/rawmaterialV1u/inputList")
+          })
+        })
+
+  }
+
   return (
     <RegisterContainer title={'원자재 입고 등록'}
                        data={basicRow}
                        setData={setBasicRow}
                        validate={validate}
                        setPostBody={setPostBody}
+                       buttonEvent={{save:rawMaterialInputSave}}
                        apiType={'lotRmSave'}
                        afterSavePath={'/mes/rawmaterialV1u/inputList'}
                        columnKey={'rawinV1u'}
