@@ -971,6 +971,7 @@ export const columnlist: any = {
     { key: 'lot_number', name: 'LOT별 재고', formatter: LotInfoModal, width: 118, type: 'readonly' ,unprintable : true},
     { key: "stock", name: "재고량", width: 118 },
     { key: "basic_stock", name: "기존 재고", width: 118, editor: TextEditor, inputType: 'number' },
+    { key: "safety_stock", name: "안전 재고" ,width : 118},
     { key: "stock_adjust", name: "재고 조정", width: 118, formatter: AdjustQuantityModal, modalTitle: '재고 조정' },
   ],
 
