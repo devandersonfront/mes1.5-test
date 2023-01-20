@@ -27,6 +27,7 @@ import moment from "moment";
 import ErrorList from "shared/src/common/ErrorList";
 import {TransferCodeToValue, TransferValueToCode} from "shared/src/common/TransferFunction";
 import {SF_ENDPOINT_PMS} from "shared/src/common/configset";
+import {haveDistinct} from "shared/src/common/haveDistinct";
 
 export interface IProps {
     children?: any
@@ -99,7 +100,7 @@ const HomeAiProductionLog = ({}: IProps) => {
 
     const LoadBasic = async (pages : number = 1) => {
         const tokenData = userInfo?.token;
-        const params  = userInfo?.company === '4XX21Z'
+        const params  = haveDistinct(userInfo?.company)
             ? { rangeNeeded : true , distinct : 'mfrCode'}
             : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
 
