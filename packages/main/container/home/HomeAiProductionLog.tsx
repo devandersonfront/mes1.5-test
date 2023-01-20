@@ -40,15 +40,14 @@ const HomeAiProductionLog = ({}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [ column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiProductLog"])
-    const [ list, setList] = useState<any[]>([])
-    const [ predictAi , setPredictAi ] = React.useState<any[]>([])
+    const [ list, setList] = useState<any[]>()
+    const [ predictAi , setPredictAi ] = React.useState<any[]>()
 
     useEffect(()=>{
         userInfo?.company === '4XX21Z' && setColumn(columnlist["aiProductLogDS"])
     },[])
 
     const predictCheckList = (value) => {
-
         if(!value.code || value.code === '-'){
             return true
         }
@@ -62,7 +61,7 @@ const HomeAiProductionLog = ({}: IProps) => {
     }
 
     const convertData = (results) => {
-        return results.map((result)=>
+        return results?.map((result)=>
             !predictCheckList(result) ?
                 {...result , predictionConfidence : `${(result?.predictionConfidence * 100).toFixed(2)}%` , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
                 : {...result , predictionConfidence : `${(result?.predictionConfidence * 100).toFixed(2)}%`,machine_type : TransferCodeToValue(result.machine_type, "machine")}
@@ -74,27 +73,18 @@ const HomeAiProductionLog = ({}: IProps) => {
         const tokenData = userInfo?.token;
         const res =  await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/simple`,{
             headers : { Authorization : tokenData }
-        }).catch((error)=>{
-            const errorNum : number = error?.response?.status
-            const message : string = error?.response?.data?.message
-            const [errorHeader,errorMessage] = ErrorList({errorNum , message})
-            Notiflix.Report.failure(errorHeader, errorMessage ,'확인' )
-            Notiflix.Loading.remove()
+        }).catch(()=>{
+            Notiflix.Report.warning("경고",'실패한 요청이 있어, 특정 데이터만 나올 수 있습니다.',"확인");
         })
-
         if (res) {
             Notiflix.Loading.remove()
             const content = res?.data?.results?.content
             setList(content)
             return true
         }else {
-            setTimeout(() => {
-                window.location.reload()
-            }, 30000)
             Notiflix.Loading.remove()
             return false
         }
-
     }
 
     const LoadBasic = async (pages : number = 1) => {
@@ -106,6 +96,8 @@ const HomeAiProductionLog = ({}: IProps) => {
         const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
             params : params,
             headers : { Authorization : tokenData }
+        }).catch(()=>{
+            Notiflix.Report.warning("경고",'실패한 요청이 있어, 특정 데이터만 나올 수 있습니다.',"확인");
         })
 
         if(result){
@@ -113,28 +105,33 @@ const HomeAiProductionLog = ({}: IProps) => {
             setPredictAi(result?.data?.info_list)
             return true
         }else{
-            setTimeout(() => {
-                window.location.reload()
-            }, 30000)
+
             Notiflix.Loading.remove()
             return false
         }
     }
 
     const mappingData = (lists, results) => {
-        let map = new Map()
-        lists?.forEach((list)=>{
-            map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
-        })
 
-        const newData = results?.map((result)=>{
-            if(map.get(result.machine_code)){
-                return {...result , pressStatus : map.get(result.machine_code)}
-            }else{
-                return result
-            }
-        })
-        return newData
+        if(lists && results){
+            let map = new Map()
+            lists?.forEach((list)=>{
+                map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
+            })
+
+            const newData = results?.map((result)=>{
+                if(map.get(result.machine_code)){
+                    return {...result , pressStatus : map.get(result.machine_code)}
+                }else{
+                    return result
+                }
+            })
+            return convertData(newData)
+        }else if(lists){
+            return lists
+        }else{
+            return convertData(results)
+        }
     }
 
     useEffect(() => {
@@ -176,7 +173,7 @@ const HomeAiProductionLog = ({}: IProps) => {
             <ExcelTable
                 editable
                 headerList={column}
-                row={convertData(mappingData(list,predictAi))}
+                row={mappingData(list,predictAi)}
                 setRow={()=>{}}
                 width={1576}
                 height={'100%'}
