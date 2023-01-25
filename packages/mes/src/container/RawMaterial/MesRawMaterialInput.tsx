@@ -99,7 +99,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
           divisionData.push({
             ...value,
             amount: Number(value.amount) / value.unitCount,
-            unitCount: undefined,
+            unit_quantity: value.unitCount,
             lot_number: value.lot_number + `0${i + 1}-0${value.unitCount}`,
             warehousing: Number(value.amount) / value.unitCount,
             type: value.type_id,
@@ -110,7 +110,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
         divisionData.push({
           ...value,
           amount: Number(value.amount),
-          unitCount: undefined,
+          unit_quantity: value.unitCount,
           lot_number: value.lot_number + `01-01`,
           warehousing: Number(value.amount),
           type: value.type_id,
