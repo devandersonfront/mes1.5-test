@@ -14,4 +14,5 @@ export type BarcodeSettingType = {
     op_drawBitMap : number,
     op_material_bom_lot ?: string
     companyCode : string
+    rm_safetyStock : boolean
 }
