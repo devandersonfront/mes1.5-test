@@ -158,7 +158,7 @@ const HomeAiProductionLog = ({}: IProps) => {
             if (!result) {
                 clearTimeout(loadInteval)
             }
-        }, 10000)
+        }, 30000)
 
         return () => {
             clearTimeout(pressInterval)
