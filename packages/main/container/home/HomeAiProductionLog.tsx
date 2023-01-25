@@ -112,6 +112,47 @@ const HomeAiProductionLog = ({}: IProps) => {
         }
     }
 
+    const getIsTrained = (machine_codes : string[]) => {
+        const tokenData = userInfo?.token;
+        const result = axios.post(`${SF_ENDPOINT}/api/train/isTrained`, {
+            company_code: userInfo?.company, machine_codes: machine_codes,
+            headers : { Authorization : tokenData }
+        }).catch(()=>{
+            Notiflix.Report.warning("경고",'실패한 요청이 있어, 특정 데이터만 나올 수 있습니다.',"확인");
+        })
+        if(result){
+            Notiflix.Loading.remove()
+            return result
+        }
+    }
+
+    const checkTrained = (results) => {
+
+        const map = new Map()
+        const competeStr = '예측 DATA 생성중'
+        const listToCheck = results.filter((result)=> result.predictionCode === competeStr)
+        const lists: any = getIsTrained(listToCheck)
+
+        results.forEach((result)=> map.set(result.machine_code, result))
+
+        if(listToCheck.length < 0){
+            return results
+        }
+
+        lists.forEach((list) => (
+             map.set(list.machine_code, {
+                ...map.get(list.machine_code)
+                , predictionCode: list.is_trained ? competeStr : ''
+                , predictionModel: list.is_trained ? competeStr : ''
+                , predictionName :  list.is_trained ? competeStr : ''
+                , predictionProcess: list.is_trained ? competeStr : ''
+                , predictionConfidence : list.is_trained ? competeStr : ''
+            })
+        ))
+
+        return Array.from(map.values())
+    }
+
     const mappingData = (lists, results) => {
 
         if(lists && results){
@@ -119,7 +160,6 @@ const HomeAiProductionLog = ({}: IProps) => {
             lists?.forEach((list)=>{
                 map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
             })
-
             const newData = results?.map((result)=>{
                 if(map.get(result.machine_code)){
                     return {...result , pressStatus : map.get(result.machine_code)}
