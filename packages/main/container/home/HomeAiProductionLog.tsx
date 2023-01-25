@@ -140,23 +140,31 @@ const HomeAiProductionLog = ({}: IProps) => {
 
     useEffect(() => {
         Notiflix.Loading.circle()
+        let pressInterval;
+        let loadInteval
+
         getPressList()
         LoadBasic()
-        let interval = setInterval(async () => {
+
+        pressInterval = setInterval(async () => {
             const result = await getPressList()
             if (!result) {
-                clearTimeout(interval)
+                clearTimeout(pressInterval)
             }
         }, 2500)
-        interval = setInterval(async () => {
+
+        loadInteval = setInterval(async () => {
             const result = await LoadBasic()
             if (!result) {
-                clearTimeout(interval)
+                clearTimeout(loadInteval)
             }
-        }, 30000)
+        }, 10000)
+
         return () => {
-            clearTimeout(interval)
+            clearTimeout(pressInterval)
+            clearTimeout(loadInteval)
         }
+
     }, [])
 
     useEffect(() => {
