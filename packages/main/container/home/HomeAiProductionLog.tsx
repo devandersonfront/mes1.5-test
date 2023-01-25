@@ -26,7 +26,7 @@ import axios from "axios";
 import moment from "moment";
 import ErrorList from "shared/src/common/ErrorList";
 import {TransferCodeToValue, TransferValueToCode} from "shared/src/common/TransferFunction";
-import {SF_ENDPOINT_PMS} from "shared/src/common/configset";
+import {SF_AI_ADDRESS, SF_ENDPOINT_PMS} from "shared/src/common/configset";
 import {haveDistinct} from "shared/src/common/haveDistinct";
 
 export interface IProps {
@@ -64,8 +64,8 @@ const HomeAiProductionLog = ({}: IProps) => {
     const convertData = (results) => {
         return results?.map((result)=>
             !predictCheckList(result) ?
-                {...result , predictionConfidence : `${(result?.predictionConfidence * 100).toFixed(2)}%` , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
-                : {...result , predictionConfidence : `${(result?.predictionConfidence * 100).toFixed(2)}%`,machine_type : TransferCodeToValue(result.machine_type, "machine")}
+                {...result , predictionConfidence : result.predictionConfidence ? `${(result.predictionConfidence * 100).toFixed(2)}%` : '' , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
+                : {...result , predictionConfidence : result.predictionConfidence ?`${(result.predictionConfidence * 100).toFixed(2)}%` : '',machine_type : TransferCodeToValue(result.machine_type, "machine")}
         )
     }
 
@@ -103,13 +103,54 @@ const HomeAiProductionLog = ({}: IProps) => {
 
         if(result){
             Notiflix.Loading.remove()
-            setPredictAi(result?.data?.info_list)
+            setPredictAi(await checkTrained(result?.data?.info_list))
             return true
         }else{
 
             Notiflix.Loading.remove()
             return false
         }
+    }
+
+    const getIsTrained = async (machine_codes : string[]) => {
+        const tokenData = userInfo?.token;
+        const result = await axios.post(`${SF_AI_ADDRESS}/api/train/isTrained`, {
+            company_code: userInfo?.company, machine_codes: machine_codes
+        },{ headers : { Authorization : tokenData }}).catch(()=>{
+            Notiflix.Report.warning("경고",'실패한 요청이 있어, 특정 데이터만 나올 수 있습니다.',"확인");
+        })
+
+        if(result){
+            Notiflix.Loading.remove()
+            return result
+        }
+    }
+
+    const checkTrained = async (results) => {
+
+        const map = new Map()
+        const competeStr = '예측 DATA 생성중'
+        const listToCheck = results?.filter((result)=> result.predictionCode === competeStr)
+        const lists = await getIsTrained(listToCheck.map((list)=>(list.machine_code)))
+
+        results?.forEach((result)=> map.set(result.machine_code, result))
+
+        if(listToCheck?.length < 0){
+            return results
+        }
+
+        lists.data.forEach((list) => (
+             map.set(list.machine_code, {
+                ...map.get(list.machine_code)
+                , predictionCode: list.is_trained ? competeStr : ''
+                , predictionModel: list.is_trained ? competeStr : ''
+                , predictionName :  list.is_trained ? competeStr : ''
+                , predictionProcess: list.is_trained ? competeStr : ''
+                , predictionConfidence : list.is_trained ? competeStr : ''
+            })
+        ))
+
+        return Array.from(map.values())
     }
 
     const mappingData = (lists, results) => {
@@ -119,7 +160,6 @@ const HomeAiProductionLog = ({}: IProps) => {
             lists?.forEach((list)=>{
                 map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
             })
-
             const newData = results?.map((result)=>{
                 if(map.get(result.machine_code)){
                     return {...result , pressStatus : map.get(result.machine_code)}
