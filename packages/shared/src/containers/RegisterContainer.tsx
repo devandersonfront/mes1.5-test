@@ -26,11 +26,12 @@ interface IProps {
     columnKey: string
     checkDuplicate?: (rows: any[]) => void
     duplicateKey?: string
+    radioNum ?: (num : number) => void
 }
 
 const defaultInitData = {isFirst:true}
 
-const RegisterContainer = ({radioButtons , useRadio, title, data, setData, validate, setPostBody, apiType, afterSavePath, initData, buttons, buttonEvent, multiRegister, columnKey, checkDuplicate, duplicateKey }:IProps) => {
+const RegisterContainer = ({radioButtons , useRadio, title, data, setData, validate, setPostBody, apiType, afterSavePath, initData, buttons, buttonEvent, multiRegister, columnKey, checkDuplicate, duplicateKey ,radioNum}:IProps) => {
     const [radioValue, setRadioValue] = useState<number>(0)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const router = useRouter()
@@ -38,6 +39,7 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
 
     useEffect(()=>{
         setData(addInitData([]))
+        radioNum(radioValue)
     },[radioValue])
 
     const filterSelectedRows = (data) => data.filter((row) => selectList.has(row.id))
@@ -48,7 +50,7 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
     }
 
     const save = async (postBody: any) => {
-        const result = await RequestMethod("post", apiType,postBody)
+        const result = await RequestMethod("post", apiType, postBody)
         if(result){
             Notiflix.Report.success(
                 '성공',
@@ -139,7 +141,7 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
                 selectList={selectList}
                 headerList={[
                     SelectColumn,
-                ].concat(useRadio || multiRegister ? columnlist[columnKey](data, setData, radioValue) : columnlist[columnKey])}
+                ].concat(useRadio || multiRegister ? columnlist[columnKey](data, setData, radioValue).filter((data) => data) : columnlist[columnKey])}
                 row={data}
                 setRow={(rows) => {
                     rows.map((row) => {
