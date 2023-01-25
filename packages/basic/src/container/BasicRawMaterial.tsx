@@ -493,9 +493,20 @@ const BasicRawMaterial = ({readonly}: IProps) => {
     }
   };
 
+
+  const translateSafetyStock = async () => {
+
+    await RequestMethod("post",'safetyStock');
+    reload()
+
+  }
+
   const onClickHeaderButton = (index: number) => {
     switch (index) {
       case 0:
+        Notiflix.Confirm.show('변환' ,'변환을 하시겠습니까?' ,'확인','취소',()=>translateSafetyStock())
+        return;
+      case 1:
         const result = basicRow.find(row => selectList.has(row.id))
         if (selectList.size === 0) {
           return Notiflix.Report.warning(
@@ -512,13 +523,13 @@ const BasicRawMaterial = ({readonly}: IProps) => {
         }
         setModal({type : 'quantity' , isVisible : true})
         break;
-      case 1:
+      case 2:
         setExcelOpen(true)
         return
-      case 2:
+      case 3:
         router.push(`/mes/item/manage/rawmaterial`);
         break;
-      case 3:
+      case 4:
         let items = {};
 
         column.map((value) => {
@@ -546,11 +557,11 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           ...basicRow,
         ]);
         break;
-      case 4:
+      case 5:
         SaveBasic();
 
         break;
-      case 5:
+      case 6:
         if (selectList.size === 0) {
           return Notiflix.Report.warning(
             "경고",
@@ -683,9 +694,12 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           title={readonly ? "원자재 재고 현황" : "원자재 기준정보"}
           buttons={
             readonly ?
-                [ (selectList.size <= 1 && barcodeOfCompany(userInfo.companyCode).rm_tab && "바코드 미리보기"),]
+                [ (selectList.size <= 1 && barcodeOfCompany(userInfo.companyCode).rm_tab && "바코드 미리보기")]
                 :
-                [ (selectList.size <= 1 && barcodeOfCompany(userInfo.companyCode).rm_tab && "바코드 미리보기"), "엑셀", "항목관리", "행추가", "저장하기", "삭제", ]
+                [
+                  (barcodeOfCompany(userInfo.companyCode).rm_safetyStock && "갱신"),
+                  (selectList.size <= 1 && (barcodeOfCompany(userInfo.companyCode).rm_tab && "바코드 미리보기")),
+                  "엑셀", "항목관리", "행추가", "저장하기", "삭제"]
           }
           buttonsOnclick={onClickHeaderButton}
           // 안전재고 filter를 위한 옵션

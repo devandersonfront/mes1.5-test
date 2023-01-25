@@ -352,6 +352,7 @@ export const columnlist: any = {
     { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
+    { key: 'leadtime' , name : '발주 기준일' , editor : TextEditor , inputType: 'number' }
   ],
 
   subMaterial: [
@@ -500,7 +501,7 @@ export const columnlist: any = {
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', placeholder: '자동 입력' },
     { key: 'amount', name: '입고량(필수)', editor: TextEditor, formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', placeholder: '0', inputType: 'number' },
-    { key: 'unitCount', name: '단위량', editor: TextEditor, formatter: PlaceholderBox, searchType: 'rawin', placeholder: '0', inputType: 'number' },
+    { key: 'unitCount', name: '단위수량', editor: TextEditor, formatter: PlaceholderBox, searchType: 'rawin', placeholder: '0', inputType: 'number' },
     { key: 'price', name: '단가', editor: TextEditor, formatter: UnitContainer, unitData: '원', placeholder: '0', inputType: 'number' },
     { key: 'date', name: '입고일(필수)', formatter: CalendarBox },
     { key: 'lot_number', name: '원자재 LOT 번호(필수)', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'LOT 입력' },
@@ -907,6 +908,7 @@ export const columnlist: any = {
     { key:"identification", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
     { key: "product_id", name: "CODE", width: 118, formatter: SearchModalTest, type: 'product', placeholder: '검색', noSelect:true, },
     { key: "name", name: "품명", width: 118 },
+    { key: "model", name: "모델", width: 118 },
     { key: "type", name: "품목 종류", width: 118 },
     { key: "unit", name: "단위", width: 118 },
     { key: "process_id", name: "생산 공정", width: 118 },
