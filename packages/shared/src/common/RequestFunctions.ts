@@ -400,8 +400,13 @@ const ApiList = {
   defectReasonList: '/api/v1/process/reason/defect/list',
   rawinList: `/api/v1/rawmaterial/warehouse/list`,
   rawstockList: `/api/v1/rawmaterial/warehouse/list`,
+
   stockList: '/api/v1/stock/list',
   stockProductList: '/api/v1/stock/summary',
+
+  productInsufficientList : '/cnc/api/v1/product/insufficient/list',
+  productInsufficientSearch : '/cnc/api/v1/product/insufficient/search',
+
   stockSummaryList: '/api/v1/stock/summary/list',
   operactionList: `/api/v1/operation/list`,
   defectList: `/api/v1/quality/statistics/defect`,
@@ -539,6 +544,6 @@ const ApiList = {
   docChild : '/cnc/api/v1/document/load/child',
   f1Score: "/api/train/f1score",
   sheetInsufficient:"/api/v1/sheet/insufficient_by_contract/load",
-
   safetyStock : '/api/v1/raw-material/update/leadtime'
+
 }

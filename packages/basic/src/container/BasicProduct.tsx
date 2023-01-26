@@ -57,6 +57,7 @@ const BasicProduct = ({}: IProps) => {
   const [keyword, setKeyword] = useState<string>();
   const [productType, setProductType] = useState<string>('0');
   const [typeIndex, setTypeIndex] = useState<number>(0);
+  const [stock , setStock] = useState<number>(0)
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -93,6 +94,7 @@ const BasicProduct = ({}: IProps) => {
     setPageInfo({page:1, total:1})
   }
 
+
   const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
@@ -104,7 +106,7 @@ const BasicProduct = ({}: IProps) => {
 
   useEffect(() => {
     getData(pageInfo.page, keyword)
-  }, [pageInfo.page, productType, typeIndex]);
+  }, [pageInfo.page, productType, typeIndex, stock]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"제품 등록 관리",sub:""}))
@@ -327,9 +329,21 @@ const BasicProduct = ({}: IProps) => {
     return params
   }
 
+
+
   const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', keyword ? 'productSearch' : 'productList',{
+
+
+    const selectApi = () => {
+      if(stock === 1){
+        return keyword ? 'productInsufficientSearch' : 'productInsufficientList'
+      }else{
+        return keyword ? 'productSearch' : 'productList'
+      }
+    }
+
+    const res = await RequestMethod('get', selectApi() ,{
       path: {
         page: page ?? 1,
         renderItem: 18,
@@ -570,7 +584,12 @@ const BasicProduct = ({}: IProps) => {
             buttonsOnclick={onClickHeaderButton}
             moreButtons={['제품 BOM 일괄 등록']}
             onClickMoreButton={onClickMoreButton}
-
+            isRadio
+            radioValue={stock}
+            onChangeRadioValues={(e) => {
+              setStock(e)
+            }}
+            radioTexts={["전체", "안전재고 부족"]}
         />
         <ExcelTable
             editable
