@@ -20,7 +20,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
+import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
@@ -55,10 +55,10 @@ const MesOrderList = ({ page, search, option }: IProps) => {
 
   const onSelectDate = (date: {from:string, to:string}) => {
     setSelectDate(date)
-    reload(null, date)
+    reload(null, null, date)
   }
 
-  const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType) => {
+  const reload = (keyword?:string, sortingOptions?: TableSortingOptionType, date?:{from:string, to:string}) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
       setPageInfo({...pageInfo, page: 1})
@@ -80,25 +80,25 @@ const MesOrderList = ({ page, search, option }: IProps) => {
     };
   }, []);
 
-  const loadAllSelectItems = (column: IExcelHeaderType[], date?: {from:string, to:string}) => {
-    const changeOrder = (sort:string, order:string) => {
-      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-      setSortingOptions(_sortingOptions)
-      reload(null, date, _sortingOptions)
-    }
-    let tmpColumn = column.map((v: any) => {
-          const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-          return {
-            ...v,
-            pk: v.unit_id,
-            sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-            sorts: v.sorts ? sortingOptions : null,
-            result: v.sortOption ? changeOrder : null,
-          }
-    });
-
-      setColumn(tmpColumn);
-  };
+  // const loadAllSelectItems = (column: IExcelHeaderType[], date?: {from:string, to:string}) => {
+  //   const changeOrder = (sort:string, order:string) => {
+  //     const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+  //     setSortingOptions(_sortingOptions)
+  //     reload(null, date, _sortingOptions)
+  //   }
+  //   let tmpColumn = column.map((v: any) => {
+  //         const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+  //         return {
+  //           ...v,
+  //           pk: v.unit_id,
+  //           sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+  //           sorts: v.sorts ? sortingOptions : null,
+  //           result: v.sortOption ? changeOrder : null,
+  //         }
+  //   });
+  //
+  //     setColumn(tmpColumn);
+  // };
 
   const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType) => {
     let params = {}
@@ -191,8 +191,9 @@ const MesOrderList = ({ page, search, option }: IProps) => {
 
       tmpRow = res.info_list;
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus],date);
+    // loadAllSelectItems([...tmpColumn, ...additionalMenus],date);
 
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, reload, setColumn, date});
     let selectKey = "";
     let additionalData: any[] = [];
     tmpColumn.map((v: any) => {

@@ -20,7 +20,12 @@ import {
     setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { useDispatch } from "react-redux";
-import {CheckRecordLotNumber, getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
+import {
+    CheckRecordLotNumber,
+    getTableSortingOptions,
+    loadAllSelectItems,
+    setExcelTableHeight
+} from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
 import {alertMsg} from "shared/src/common/AlertMsg";
@@ -74,25 +79,6 @@ const AiMesRecord = ({}: IProps) => {
         };
     }, []);
 
-    const loadAllSelectItems = (column: IExcelHeaderType[], date?: {from:string, to:string}, radioIdx?:number) => {
-        const changeOrder = (sort:string, order:string) => {
-            const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-            setSortingOptions(_sortingOptions)
-            // reload(null, date, _sortingOptions, radioIdx)
-        }
-        let tmpColumn = column.map((v: any) => {
-            const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-            return {
-                ...v,
-                pk: v.unit_id,
-                sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-                sorts: v.sorts ? sortingOptions : null,
-                result: v.sortOption ? changeOrder : null,
-            }
-        });
-
-        setColumn(tmpColumn);
-    }
 
     const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType, radioIdx?: number) => {
         let params = {}
@@ -205,7 +191,7 @@ const AiMesRecord = ({}: IProps) => {
             : [];
 
         convertColumn.push({ key : 'confidence', name : '신뢰도',formatter:UnitContainer, unitData:"%", width: 118})
-        loadAllSelectItems([...convertColumn, ...additionalMenus], date, radioIdx);
+        loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, setColumn});
     }
 
     const forSaveCleanUpData = (res:any) => {

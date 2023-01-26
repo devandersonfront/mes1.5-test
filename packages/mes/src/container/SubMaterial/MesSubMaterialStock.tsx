@@ -20,7 +20,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "../../../../shared/src/reducer/menuSelectState";
-import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
+import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
@@ -81,25 +81,6 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
     };
   }, []);
 
-  const loadAllSelectItems = (column: IExcelHeaderType[], date?: {from:string, to:string}) => {
-    const changeOrder = (sort:string, order:string) => {
-      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-      setSortingOptions(_sortingOptions)
-      reload(undefined, date, _sortingOptions)
-    }
-    let tmpColumn = column.map((v: any) => {
-      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-      return {
-        ...v,
-        pk: v.unit_id,
-        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-        sorts: v.sorts ? sortingOptions : null,
-        result: v.sortOption ? changeOrder : null,
-      }
-    });
-
-    setColumn(tmpColumn);
-  }
 
   const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType, _nzState?: boolean, _expState?:boolean) => {
     let params = {}
@@ -198,7 +179,7 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
       tmpRow = res.info_list;
     }
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus], date);
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, setColumn});
 
     let selectKey = "";
     let additionalData: any[] = [];

@@ -21,7 +21,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
+import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
 
@@ -139,7 +139,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
 
     tmpRow = info_list.info_list;
 
-    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, reload, setColumn});
 
     let selectKey = "";
     let additionalData: any[] = [];
@@ -185,36 +185,6 @@ const BasicTool = ({ page, search, option }: IProps) => {
     setBasicRow([...tmpBasicRow]);
   };
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    const changeOrder = (sort:string, order:string) => {
-      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-      setSortingOptions(_sortingOptions)
-      reload(null, _sortingOptions)
-    }
-    let tmpColumn = column.map((v: any) => {
-      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-      return {
-        ...v,
-        pk: v.unit_id,
-        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-        sorts: v.sorts ? sortingOptions : null,
-        result: v.sortOption ? changeOrder : null,
-      }
-    });
-
-    // if(type !== 'productprocess'){
-    Promise.all(tmpColumn).then((res) => {
-      setColumn([
-        ...res.map((v) => {
-          return {
-            ...v,
-            name: v.moddable ? v.name + "(필수)" : v.name,
-          };
-        }),
-      ]);
-    });
-    // }
-  };
 
   const getRequestParams = (keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     let params = {}

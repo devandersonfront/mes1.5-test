@@ -1,5 +1,11 @@
-import {BomObjectType, BomType, LoadItemTypes, TableSortingOptionType} from '../@types/type'
+// <<<<<<< HEAD
+// import {BomObjectType, BomType, LoadItemTypes, TableSortingOptionType} from '../@types/type'
+// =======
+import {BomObjectType, BomType, IExcelHeaderType, LoadItemTypes, TableSortingOptionType} from '../@types/type'
+// >>>>>>> 69ee186b0 (REFACTOR: list 페이지에서 사용하는 loadAllSelectItems function 공용화)
 import { TransferCodeToValue } from './TransferFunction'
+import {PlaceholderBox} from "../components/Formatter/PlaceholderBox";
+import {TextEditor} from "../components/InputBox/ExcelBasicInputBox";
 
 export const ParseResponse = (res: any | string | any[]) : any[] => {
   if (typeof res === 'string') {
@@ -135,7 +141,6 @@ export const getBomKey = (bom:any) => {
 }
 
 export const columnsSort = (columns:any[]) => {
-  console.log("columns : ", columns)
   return columns.sort((prev, next) => {
     if(prev.sequence > next.sequence) return 1
     if(prev.sequence < next.sequence) return -1
@@ -176,7 +181,6 @@ export const transTypeProduct = (type:string | number) => {
   }
 }
 
-
 export const duplicateCheckWithArray = (array:Array<any>, keys:Array<string>, nullCheck?:boolean):boolean => {
   try{
     if(nullCheck && array.length <= 0) return false
@@ -206,7 +210,7 @@ export const loadAllSelectItems = async ({column, sortingOptions, setSortingOpti
     setSortingOptions(_sortingOptions)
     reload(null, _sortingOptions, date && date,)
   }
-  let tmpColumn = column.map((v: any) => {
+  let tmpColumn = columnsSort(column).map((v: any) => {
     const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
     return {
       ...v,
@@ -227,3 +231,25 @@ export const loadAllSelectItems = async ({column, sortingOptions, setSortingOpti
   })
 }
 
+export const additionalMenus:(res:any) => any[] = (res:any) =>
+   res.menus
+        .map((menu: any) => {
+          if (menu.colName === null && !menu.hide) {
+            return {
+              id: menu.mi_id,
+              name: menu.title,
+              width: menu.width,
+              // key: menu.title,
+              key: menu.mi_id,
+              formatter: PlaceholderBox,
+              editor: TextEditor,
+              type: "additional",
+              unit: menu.unit,
+              tab: menu.tab,
+              version: menu.version,
+              colName: menu.mi_id,
+              sequence:menu.sequence,
+            };
+          }
+        })
+        .filter((v: any) => v)

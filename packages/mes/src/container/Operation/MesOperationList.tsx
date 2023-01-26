@@ -16,7 +16,7 @@ import {useRouter} from 'next/router'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from 'react-redux'
-import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
+import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { TableSortingOptionType } from 'shared/src/@types/type'
@@ -55,10 +55,10 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
   const onSelectDate = (date: {from:string, to:string}) => {
     const _date = todayOnly ? {from: moment().format('YYYY-MM-DD'), to:moment().format('YYYY-MM-DD')} : date
     setSelectDate(_date)
-    reload(null, _date)
+    reload(null, null, _date)
   }
 
-  const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType) => {
+  const reload = (keyword?:string, sortingOptions?: TableSortingOptionType, date?:{from:string, to:string},) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
       setPageInfo({...pageInfo, page: 1})
@@ -78,25 +78,6 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
     })
   },[])
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[], date?: {from:string, to:string}) => {
-    const changeOrder = (sort:string, order:string) => {
-      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-      setSortingOptions(_sortingOptions)
-      reload(null, date, _sortingOptions)
-    }
-    let tmpColumn = column.map((v: any) => {
-      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-      return {
-        ...v,
-        pk: v.unit_id,
-        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-        sorts: v.sorts ? sortingOptions : null,
-        result: v.sortOption ? changeOrder : null,
-      }
-    });
-
-    setColumn(tmpColumn);
-  }
 
   const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType) => {
     let params = {}
@@ -252,10 +233,7 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
 
       tmpRow = res.info_list
 
-    loadAllSelectItems( [
-      ...tmpColumn,
-      ...additionalMenus
-    ], date)
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, reload, setColumn});
 
 
     let selectKey = ""

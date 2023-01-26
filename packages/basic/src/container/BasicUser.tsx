@@ -18,7 +18,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
+import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
 import { alertMsg } from 'shared/src/common/AlertMsg'
@@ -83,34 +83,6 @@ const BasicUser = ({}: IProps) => {
     };
   }, []);
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    const changeOrder = (sort:string, order:string) => {
-      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-      setSortingOptions(_sortingOptions)
-      reload(null, _sortingOptions)
-    }
-    let tmpColumn = column.map((v: any) => {
-      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-      return {
-        ...v,
-        pk: v.unit_id,
-        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-        sorts: v.sorts ? sortingOptions : null,
-        result: v.sortOption ? changeOrder : null,
-      }
-    });
-
-    Promise.all(tmpColumn).then((res) => {
-      setColumn([
-        ...res.map((v) => {
-          return {
-            ...v,
-            name: v.moddable ? v.name + "(필수)" : v.name,
-          };
-        }),
-      ]);
-    });
-  };
 
   const checkValid = (input: string, type:'password' | 'id' | 'telephone') => {
     let regex = undefined
@@ -417,7 +389,7 @@ const BasicUser = ({}: IProps) => {
       : [];
 
     tmpRow = res.info_list;
-    loadAllSelectItems([...tmpColumn, ...additionalMenus]);
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, reload, setColumn});
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
       let realTableData: any = changeRow(row);
