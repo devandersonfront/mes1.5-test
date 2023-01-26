@@ -136,7 +136,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
         unit: row.unit ?? "-",
         id: `stock${random_id}`,
         expanded : false,
-        safety_stock : row.safetyStock,
+        // safety_stock : row.safetyStock,
         // detailType : 'MASTER',
         getDetail,
         reload,
