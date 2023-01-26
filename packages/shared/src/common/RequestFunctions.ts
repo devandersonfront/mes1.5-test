@@ -543,8 +543,7 @@ const ApiList = {
   //doc
   docChild : '/cnc/api/v1/document/load/child',
   f1Score: "/api/train/f1score",
-  sheetInsufficient:"/api/v1/sheet/insufficient_by_contract/load"
-
-
+  sheetInsufficient:"/api/v1/sheet/insufficient_by_contract/load",
+  safetyStock : '/api/v1/raw-material/update/leadtime'
 
 }

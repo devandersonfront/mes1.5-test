@@ -589,7 +589,7 @@ const BasicProduct = ({}: IProps) => {
             onChangeRadioValues={(e) => {
               setStock(e)
             }}
-            radioTexts={["전체", "재고 부족"]}
+            radioTexts={["전체", "안전재고 부족"]}
         />
         <ExcelTable
             editable

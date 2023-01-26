@@ -352,6 +352,7 @@ export const columnlist: any = {
     { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', editor: TextEditor, formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
+    { key: 'leadtime' , name : '발주 기준일' , editor : TextEditor , inputType: 'number' }
   ],
 
   subMaterial: [
@@ -517,6 +518,7 @@ export const columnlist: any = {
     {key: 'height', name:'세로(Feeder)', formatter: UnitContainer, unitData: 'mm', placeholder: '0', width: 118},
     {key: 'type', name:'재질 종류',formatter: PlaceholderBox, placeholder:'자동 입력', width: 118 },
     {key: 'warehousing',name: '입고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', width: 118},
+    {key: 'unit_quantity' , name :'단위 수량'},
     {key: 'price', name: '단가', formatter: UnitContainer,editor: TextEditor,inputType: 'number', width:118, placeholder: "0", unitData:"원"},
     {key: 'date', name: '입고일', width: 118, headerRenderer: HeaderSort, sortOption: "none",sorts: {} },
     {key: 'lot_number', name: '원자재 LOT 번호', width: 118},
@@ -971,7 +973,6 @@ export const columnlist: any = {
     { key: 'lot_number', name: 'LOT별 재고', formatter: LotInfoModal, width: 118, type: 'readonly' ,unprintable : true},
     { key: "stock", name: "재고량", width: 118 },
     { key: "basic_stock", name: "기존 재고", width: 118, editor: TextEditor, inputType: 'number' },
-    { key: "safety_stock", name: "안전 재고" ,width : 118},
     { key: "stock_adjust", name: "재고 조정", width: 118, formatter: AdjustQuantityModal, modalTitle: '재고 조정' },
   ],
 

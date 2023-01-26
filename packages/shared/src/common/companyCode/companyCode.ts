@@ -33,6 +33,7 @@ export const barcodeOfCompany = (companyCode : string , data ?: any) : BarcodeSe
         rm_tab : true,
         rm_materialType : 2,
         rm_drawBitMap : 800,
+        rm_safetyStock : false,
         //제품 등록 관리
         pm_tab : true,
         pm_materialType : 2,
@@ -67,7 +68,8 @@ export const barcodeOfCompany = (companyCode : string , data ?: any) : BarcodeSe
         case '4XX21Z' :
             return {
                 ...basicDefault,
-                companyCode : companyCode
+                companyCode : companyCode,
+                rm_safetyStock : true
             }
         case 'OGU84E' :
             return {

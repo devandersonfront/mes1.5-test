@@ -40,7 +40,6 @@ const MesStockList = ({ page, search, option }: IProps) => {
   const [keyword, setKeyword] = useState<string>();
   const [types, setTypes] = useState<string>(undefined);
   const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({page: 1, total: 1,});
-  const [stock , setStock] = useState<number>(0)
 
   const onColumnFilter = (value:string, key:string) => {
     switch(key){
@@ -85,20 +84,12 @@ const MesStockList = ({ page, search, option }: IProps) => {
 
   useEffect(() => {
     getData(pageInfo.page, keyword)
-  }, [pageInfo.page, stock]);
+  }, [pageInfo.page]);
 
   const getData = async (page: number = 1, keyword?: string) => {
     Notiflix.Loading.circle();
 
-    const selectApi = () => {
-      if(stock === 1){
-        return keyword ? 'stockInsufficientSearch' : 'stockInsufficientList'
-      }else{
-        return keyword ? 'stockSearch' : 'stockList'
-      }
-    }
-
-    const res = await RequestMethod("get", selectApi(), {
+    const res = await RequestMethod("get", keyword ? 'stockSearch' : 'stockList', {
       path: {page: page, renderItem: 12},
       params: getRequestParams(keyword)
     });
@@ -195,12 +186,6 @@ const MesStockList = ({ page, search, option }: IProps) => {
             title={"재고 현황"}
             buttons={["저장"]}
             buttonsOnclick={buttonsOnclick}
-            isRadio
-            radioValue={stock}
-            onChangeRadioValues={(e) => {
-              setStock(e)
-            }}
-            radioTexts={["전체", "재고 부족"]}
         />
         <ExcelTable
             editable
