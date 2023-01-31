@@ -518,6 +518,7 @@ export const columnlist: any = {
     {key: 'height', name:'세로(Feeder)', formatter: UnitContainer, unitData: 'mm', placeholder: '0', width: 118},
     {key: 'type', name:'재질 종류',formatter: PlaceholderBox, placeholder:'자동 입력', width: 118 },
     {key: 'warehousing',name: '입고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin', width: 118},
+    {key: 'unit_quantity' , name :'단위 수량'},
     {key: 'price', name: '단가', formatter: UnitContainer,editor: TextEditor,inputType: 'number', width:118, placeholder: "0", unitData:"원"},
     {key: 'date', name: '입고일', width: 118, headerRenderer: HeaderSort, sortOption: "none",sorts: {} },
     {key: 'lot_number', name: '원자재 LOT 번호', width: 118},

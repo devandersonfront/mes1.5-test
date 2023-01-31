@@ -81,8 +81,14 @@ const MesStockList = ({ page, search, option }: IProps) => {
     return params
   }
 
-  const getData = async (page: number = 1, keyword?: string ) => {
+
+  useEffect(() => {
+    getData(pageInfo.page, keyword)
+  }, [pageInfo.page]);
+
+  const getData = async (page: number = 1, keyword?: string) => {
     Notiflix.Loading.circle();
+
     const res = await RequestMethod("get", keyword ? 'stockSearch' : 'stockList', {
       path: {page: page, renderItem: 12},
       params: getRequestParams(keyword)
@@ -130,6 +136,7 @@ const MesStockList = ({ page, search, option }: IProps) => {
         unit: row.unit ?? "-",
         id: `stock${random_id}`,
         expanded : false,
+        // safety_stock : row.safetyStock,
         // detailType : 'MASTER',
         getDetail,
         reload,
