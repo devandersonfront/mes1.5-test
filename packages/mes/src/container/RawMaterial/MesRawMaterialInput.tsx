@@ -100,7 +100,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
             ...value,
             amount: Number(value.amount) / value.unitCount,
             unit_quantity: value.unitCount,
-            lot_number: value.lot_number + `0${i + 1}-0${value.unitCount}`,
+            lot_number: value.lot_number + `0${i + 1}/0${value.unitCount}`,
             warehousing: Number(value.amount) / value.unitCount,
             type: value.type_id,
             raw_material: {
@@ -116,7 +116,7 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
           ...value,
           amount: Number(value.amount),
           unit_quantity: value.unitCount,
-          lot_number: value.lot_number + `01-01`,
+          lot_number: value.lot_number + `01/01`,
           warehousing: Number(value.amount),
           type: value.type_id,
           raw_material: {
