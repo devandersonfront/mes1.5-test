@@ -91,8 +91,10 @@ const HomeAiProductionLog = ({}: IProps) => {
     const LoadBasic = async (pages : number = 1) => {
         const tokenData = userInfo?.token;
         const params  = haveDistinct(userInfo?.company)
-            ? { rangeNeeded : true , distinct : 'mfrCode'}
+            ? { rangeNeeded : true , distinct : 'mfrCode', from : "2023-01-01" , to : '9999-12-31'}
             : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
+
+        // const params  ={ rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
 
         const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
             params : params,
@@ -222,7 +224,8 @@ const HomeAiProductionLog = ({}: IProps) => {
             <ExcelTable
                 editable
                 headerList={column}
-                row={mappingData(list,predictAi)}
+                // row={mappingData(list,predictAi)}
+                row={[{}]}
                 setRow={()=>{}}
                 width={1576}
                 height={'100%'}
