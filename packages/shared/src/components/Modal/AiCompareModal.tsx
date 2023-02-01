@@ -27,6 +27,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>(null)
     useEffect(() => {
         if(isOpen){
+            Notiflix.Loading.standard()
             axios.get(`${SF_AI_ADDRESS}/api/product_info/pair/${row.product_id}`,
                 {'headers': {'Authorization': cookie.load('userInfo').token},}
             )
@@ -51,6 +52,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                                 )
                             })
                             setBasic(tmpBasic)
+                            Notiflix.Loading.remove()
                         })
                 })
         }
@@ -64,7 +66,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                         row.setModalOpen()
                     }
                 }}>
-                    예측 순위 결정
+                    confirm
                 </CellButton>
         )
     }

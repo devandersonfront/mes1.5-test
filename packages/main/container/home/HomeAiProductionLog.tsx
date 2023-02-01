@@ -109,8 +109,10 @@ const HomeAiProductionLog = ({}: IProps) => {
 
         if(result){
             Notiflix.Loading.remove()
-            setPredictAi(await checkTrained(result?.data?.info_list))
-            return true
+            if(result?.data?.info_list.length > 0){
+                setPredictAi(await checkTrained(result?.data?.info_list))
+                return true
+            }
         }else{
             Notiflix.Loading.remove()
             return false
