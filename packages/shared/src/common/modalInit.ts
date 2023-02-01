@@ -716,10 +716,10 @@ export const searchModalList: any = {
     { key: "goal", name: "지시량", width: 118, editor: TextEditor, formatter: LineBorderContainer, placeholder: 0, inputType: 'number', textType:'modal' },
   ],
   aiPredictionProduct:[
-    {key: 'predictionModel', name: '예측 모델',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'predictionCode', name: '예측 CODE',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'predictionName', name: '예측 품명',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'predictionProcess', name: '예측 공정',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'ranking', name: '순위',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
+    {key: 'predictionModel', name: '예측 모델',  formatter:LineBorderContainer, },
+    {key: 'predictionCode', name: '예측 CODE',  formatter:LineBorderContainer, },
+    {key: 'predictionName', name: '예측 품명',  formatter:LineBorderContainer, },
+    {key: 'predictionProcess', name: '예측 공정',  formatter:LineBorderContainer, },
+    {key: 'ranking', name: '순위', formatter:LineBorderContainer, },
   ]
 }
