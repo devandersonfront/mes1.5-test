@@ -69,8 +69,8 @@ const HomeAiProductionLog = ({}: IProps) => {
     const convertData = (results) => {
         return results?.map((result)=>
             !predictCheckList(result) ?
-                {...result , predictionConfidence : result.predictionConfidence ? `${(result.predictionConfidence * 100).toFixed(2)}%` : '' , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
-                : {...result , predictionConfidence : result.predictionConfidence ?`${(result.predictionConfidence * 100).toFixed(2)}%` : '',machine_type : TransferCodeToValue(result.machine_type, "machine")}
+                {...result , prediction_confidence : result.prediction_confidence ? `${(result.prediction_confidence * 100).toFixed(2)}%` : '' , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
+                : {...result , prediction_confidence : result.prediction_confidence ?`${(result.prediction_confidence * 100).toFixed(2)}%` : '',machine_type : TransferCodeToValue(result.machine_type, "machine")}
         )
     }
 
@@ -147,11 +147,11 @@ const HomeAiProductionLog = ({}: IProps) => {
         lists.data.forEach((list) => (
              map.set(list.machine_code, {
                 ...map.get(list.machine_code)
-                , predictionCode: list.is_trained ? competeStr : ''
-                , predictionModel: list.is_trained ? competeStr : ''
-                , predictionName :  list.is_trained ? competeStr : ''
-                , predictionProcess: list.is_trained ? competeStr : ''
-                , predictionConfidence : list.is_trained ? competeStr : ''
+                , prediction_code: list.is_trained ? competeStr : ''
+                , prediction_model: list.is_trained ? competeStr : ''
+                , prediction_name :  list.is_trained ? competeStr : ''
+                , prediction_process: list.is_trained ? competeStr : ''
+                , prediction_confidence : list.is_trained ? competeStr : ''
             })
         ))
 
