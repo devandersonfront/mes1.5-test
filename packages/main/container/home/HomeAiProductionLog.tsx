@@ -137,7 +137,7 @@ const HomeAiProductionLog = ({}: IProps) => {
 
         const map = new Map()
         const competeStr = '예측 DATA 생성중'
-        const listToCheck = results?.filter((result)=> result.predictionCode === competeStr)
+        const listToCheck = results?.filter((result)=> result.prediction_code === competeStr)
         const lists = await getIsTrained(listToCheck.map((list)=>(list.machine_code)))
 
         results?.forEach((result)=> map.set(result.machine_code, result))
