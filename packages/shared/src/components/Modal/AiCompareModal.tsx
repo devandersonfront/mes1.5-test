@@ -66,7 +66,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                         row.setModalOpen()
                     }
                 }}>
-                    confirm
+                    예측 품목 변경
                 </CellButton>
         )
     }
