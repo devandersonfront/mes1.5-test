@@ -599,7 +599,7 @@ export const InnerBoxWrap = styled.div`
     //margin-top: 32px;
 `
 
-export const CellButton = styled.div`
+export const CellButton = styled.div<{disabled?:boolean}>`
   width: 112px;
   height: 32px;
  
@@ -613,6 +613,10 @@ export const CellButton = styled.div`
   &:hover{
     opacity:70%;   
   }
+  ${props => props.disabled && 
+    `opacity:0.5;`
+}
+  
 `
 
 export const UnitWrapper = styled.div`

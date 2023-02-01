@@ -22,9 +22,10 @@ interface IProps {
   title:string
   setIsOpen: (ioOpen: boolean) => void
   resetFunction:() => void
+  onlyForm ?: boolean
 }
 
-const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction}: IProps) => {
+const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction , onlyForm}: IProps) => {
   const token = cookie.load('userInfo')?.token
     const ref = useRef(null)
     const convertBlobToBase64 = (blob) => new Promise((resolve, reject) => {
@@ -143,31 +144,32 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction}:
             </div>
           </div>
           <div style={{width: 700, height: 240, display: 'flex', justifyContent: 'space-around', alignItems: 'center'}}>
-            <CellButton
-              style={{
-                width: 200,
-                height: 80
-              }}
-              onClick={formExcelDownload}
-            >양식 다운로드</CellButton>
-            <CellButton
-              style={{
-                width: 200,
-                height: 80
-              }}
-              onClick={allExcelDownload}
-            >전체 다운로드</CellButton>
-
-            <CellButton
-                style={{
-                  width: 200,
-                  height: 80
-                }}
-                onClick={()=>ref.current.click()}
-            >
-                <input type={"file"} ref={ref} accept={".xlsx, .xls"} style={{display:"none", position:"absolute"}} onChange={(e) => excelUpload(e.target.files[0])} />
-                업로드
-            </CellButton>
+              <CellButton
+                  style={{
+                      width: 200,
+                      height: 80
+                  }}
+                  onClick={formExcelDownload}
+              >양식 다운로드</CellButton>
+              {
+                  !onlyForm && <CellButton
+                      style={{
+                          width: 200,
+                          height: 80
+                      }}
+                      onClick={allExcelDownload}
+                  >전체 다운로드</CellButton>
+              }
+              <CellButton
+                  style={{
+                      width: 200,
+                      height: 80
+                  }}
+                  onClick={()=>ref.current.click()}
+              >
+                  <input type={"file"} ref={ref} accept={".xlsx, .xls"} style={{display:"none", position:"absolute"}} onChange={(e) => excelUpload(e.target.files[0])} />
+                  업로드
+              </CellButton>
           </div>
         </div>
       </Modal>

@@ -66,6 +66,7 @@ import { AddRowButton } from '../components/Buttons/AddRowButton'
 import {DatetimePickerBox} from "../components/CalendarBox/DatetimePickerBox";
 import {MachineSelectModal} from "../components/Modal/MachineSelectModal";
 import Checkbox from "../components/InputBox/Checkbox";
+import {AiCompareModal} from "../components/Modal/AiCompareModal";
 
 export const columnlist: any = {
   member: [
@@ -1593,14 +1594,15 @@ export const columnlist: any = {
     {key: 'code', frozen:true, name: 'CODE',  formatter:PlaceholderBox, width: 118,},
     {key: 'product_name', frozen:true, name: '품명', formatter:PlaceholderBox, width: 118,},
     {key: 'process', name: '생산 공정', formatter:PlaceholderBox, width: 118,},
-    {key: 'predictionModel', name: '예측 모델',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'predictionCode', name: '예측 CODE',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'predictionName', name: '예측 품명',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'predictionProcess', name: '예측 공정',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'predictionConfidence', name : '예측 유사도' , width: 118},
+    {key: 'prediction_model', name: '예측 모델',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
+    {key: 'prediction_code', name: '예측 CODE',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
+    {key: 'prediction_name', name: '예측 품명',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
+    {key: 'prediction_process', name: '예측 공정',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
+    {key: 'prediction_confidence', name : '예측 유사도' , width: 118},
     {key: 'goal', name: '목표 생산량', width: 118},
     {key: 'total_good_quantity', name : '총 카운터', width: 118},
     {key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', width: 300},
+    {key: 'confirm', name: '예측 순위 관리', formatter: AiCompareModal, type: 'machineInfo', width: 118},
   ],
 
   //ds업체 커스텀 칼럼, 추후 이런업체가 많아질경우 이후 로직 수정
@@ -1671,4 +1673,5 @@ export const columnlist: any = {
     { key: 'log', name: '단가 변동일', formatter: PlaceholderBox,headerRenderer: HeaderSort, sortOption: "none", sorts: {}, },
     { key: 'price', name: '단가', formatter: UnitContainer, unitData: "원",headerRenderer: HeaderSort, sortOption: "none", sorts: {}, },
   ],
+
 }

@@ -44,6 +44,11 @@ const HomeAiProductionLog = ({}: IProps) => {
     const [ list, setList] = useState<any[]>()
     const [ predictAi , setPredictAi ] = React.useState<any[]>()
 
+    const [modalOpen, setModalOpen] = useState<boolean>(false)
+
+    const changeModalState = () => {
+        setModalOpen(value => !value)
+    }
     useEffect(()=>{
         userInfo?.company === '4XX21Z' && setColumn(columnlist["aiProductLogDS"])
     },[])
@@ -64,13 +69,12 @@ const HomeAiProductionLog = ({}: IProps) => {
     const convertData = (results) => {
         return results?.map((result)=>
             !predictCheckList(result) ?
-                {...result , predictionConfidence : result.predictionConfidence ? `${(result.predictionConfidence * 100).toFixed(2)}%` : '' , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
-                : {...result , predictionConfidence : result.predictionConfidence ?`${(result.predictionConfidence * 100).toFixed(2)}%` : '',machine_type : TransferCodeToValue(result.machine_type, "machine")}
+                {...result , prediction_confidence : result.prediction_confidence ? `${(result.prediction_confidence * 100).toFixed(2)}%` : '' , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
+                : {...result , prediction_confidence : result.prediction_confidence ?`${(result.prediction_confidence * 100).toFixed(2)}%` : '',machine_type : TransferCodeToValue(result.machine_type, "machine")}
         )
     }
 
     const getPressList = async () => {
-
         const tokenData = userInfo?.token;
         const res =  await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/simple`,{
             headers : { Authorization : tokenData }
@@ -91,8 +95,10 @@ const HomeAiProductionLog = ({}: IProps) => {
     const LoadBasic = async (pages : number = 1) => {
         const tokenData = userInfo?.token;
         const params  = haveDistinct(userInfo?.company)
-            ? { rangeNeeded : true , distinct : 'mfrCode'}
+            ? { rangeNeeded : true , distinct : 'mfrCode',}
             : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
+
+        // const params  ={ rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
 
         const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
             params : params,
@@ -106,7 +112,6 @@ const HomeAiProductionLog = ({}: IProps) => {
             setPredictAi(await checkTrained(result?.data?.info_list))
             return true
         }else{
-
             Notiflix.Loading.remove()
             return false
         }
@@ -142,11 +147,11 @@ const HomeAiProductionLog = ({}: IProps) => {
         lists.data.forEach((list) => (
              map.set(list.machine_code, {
                 ...map.get(list.machine_code)
-                , predictionCode: list.is_trained ? competeStr : ''
-                , predictionModel: list.is_trained ? competeStr : ''
-                , predictionName :  list.is_trained ? competeStr : ''
-                , predictionProcess: list.is_trained ? competeStr : ''
-                , predictionConfidence : list.is_trained ? competeStr : ''
+                , prediction_code: list.is_trained ? competeStr : ''
+                , prediction_model: list.is_trained ? competeStr : ''
+                , prediction_name :  list.is_trained ? competeStr : ''
+                , prediction_process: list.is_trained ? competeStr : ''
+                , prediction_confidence : list.is_trained ? competeStr : ''
             })
         ))
 
@@ -156,11 +161,14 @@ const HomeAiProductionLog = ({}: IProps) => {
     const mappingData = (lists, results) => {
 
         if(lists && results){
+            const newResult = results.map((result) => {
+                return {...result, setModalOpen:changeModalState}
+            })
             let map = new Map()
             lists?.forEach((list)=>{
                 map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
             })
-            const newData = results?.map((result)=>{
+            const newData = newResult?.map((result)=>{
                 if(map.get(result.machine_code)){
                     return {...result , pressStatus : map.get(result.machine_code)}
                 }else{
@@ -171,7 +179,9 @@ const HomeAiProductionLog = ({}: IProps) => {
         }else if(lists){
             return lists
         }else{
-            return convertData(results)
+            return convertData(results?.map((result) => {
+                return {...result, setModalOpen:changeModalState}
+            }))
         }
     }
 
@@ -183,26 +193,29 @@ const HomeAiProductionLog = ({}: IProps) => {
         getPressList()
         LoadBasic()
 
-        pressInterval = setInterval(async () => {
-            const result = await getPressList()
-            if (!result) {
-                clearTimeout(pressInterval)
-            }
-        }, 2500)
+        if(!modalOpen){
+            pressInterval = setInterval(async () => {
+                const result = await getPressList()
+                if (!result) {
+                    clearTimeout(pressInterval)
+                }
+            }, 2500)
 
-        loadInteval = setInterval(async () => {
-            const result = await LoadBasic()
-            if (!result) {
-                clearTimeout(loadInteval)
-            }
-        }, 30000)
+            loadInteval = setInterval(async () => {
+                const result = await LoadBasic()
+                if (!result) {
+                    clearTimeout(loadInteval)
+                }
+            }, 30000)
+
+        }
+
 
         return () => {
             clearTimeout(pressInterval)
             clearTimeout(loadInteval)
         }
-
-    }, [])
+    }, [modalOpen])
 
     useEffect(() => {
         dispatch(
@@ -223,7 +236,6 @@ const HomeAiProductionLog = ({}: IProps) => {
                 editable
                 headerList={column}
                 row={mappingData(list,predictAi)}
-                setRow={()=>{}}
                 width={1576}
                 height={'100%'}
             />
