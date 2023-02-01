@@ -44,10 +44,10 @@ const HomeAiProductionLog = ({}: IProps) => {
     const [ list, setList] = useState<any[]>()
     const [ predictAi , setPredictAi ] = React.useState<any[]>()
 
-    const [modalOpen, setModalOpen] = useState<number>(0)
+    const [modalOpen, setModalOpen] = useState<boolean>(false)
 
     const changeModalState = () => {
-        setModalOpen(0)
+        setModalOpen(value => !value)
     }
     useEffect(()=>{
         userInfo?.company === '4XX21Z' && setColumn(columnlist["aiProductLogDS"])
@@ -67,7 +67,6 @@ const HomeAiProductionLog = ({}: IProps) => {
     }
 
     const convertData = (results) => {
-        console.log(results)
         return results?.map((result)=>
             !predictCheckList(result) ?
                 {...result , predictionConfidence : result.predictionConfidence ? `${(result.predictionConfidence * 100).toFixed(2)}%` : '' , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
@@ -113,7 +112,6 @@ const HomeAiProductionLog = ({}: IProps) => {
             setPredictAi(await checkTrained(result?.data?.info_list))
             return true
         }else{
-
             Notiflix.Loading.remove()
             return false
         }
@@ -195,9 +193,7 @@ const HomeAiProductionLog = ({}: IProps) => {
         getPressList()
         LoadBasic()
 
-        console.log("modalOpen : ", modalOpen)
-
-        if(modalOpen == 0){
+        if(!modalOpen){
             pressInterval = setInterval(async () => {
                 const result = await getPressList()
                 if (!result) {
@@ -219,7 +215,6 @@ const HomeAiProductionLog = ({}: IProps) => {
             clearTimeout(pressInterval)
             clearTimeout(loadInteval)
         }
-
     }, [modalOpen])
 
     useEffect(() => {
@@ -241,12 +236,6 @@ const HomeAiProductionLog = ({}: IProps) => {
                 editable
                 headerList={column}
                 row={mappingData(list,predictAi)}
-                // row={[{}]}
-                setRow={()=>{}}
-                onRowClick={(row) => {
-                    setModalOpen(1)
-                    // console.log(row, modalOpen)
-                }}
                 width={1576}
                 height={'100%'}
             />
