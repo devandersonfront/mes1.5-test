@@ -1602,7 +1602,6 @@ export const columnlist: any = {
     {key: 'goal', name: '목표 생산량', width: 118},
     {key: 'total_good_quantity', name : '총 카운터', width: 118},
     {key: 'achievement', name: '달성률', formatter: CommonProgressBar, type: 'machineInfo', width: 300},
-    {key: 'confirm', name: '예측 품목 관리', formatter: AiCompareModal, type: 'machineInfo', width: 118},
   ],
 
   //ds업체 커스텀 칼럼, 추후 이런업체가 많아질경우 이후 로직 수정
