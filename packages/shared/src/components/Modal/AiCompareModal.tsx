@@ -64,7 +64,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                         row.setModalOpen()
                     }
                 }}>
-                    예측
+                    예측 순위 결정
                 </CellButton>
         )
     }
