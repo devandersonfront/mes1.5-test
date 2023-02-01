@@ -44,6 +44,11 @@ const HomeAiProductionLog = ({}: IProps) => {
     const [ list, setList] = useState<any[]>()
     const [ predictAi , setPredictAi ] = React.useState<any[]>()
 
+    const [modalOpen, setModalOpen] = useState<number>(0)
+
+    const changeModalState = () => {
+        setModalOpen(0)
+    }
     useEffect(()=>{
         userInfo?.company === '4XX21Z' && setColumn(columnlist["aiProductLogDS"])
     },[])
@@ -62,6 +67,7 @@ const HomeAiProductionLog = ({}: IProps) => {
     }
 
     const convertData = (results) => {
+        console.log(results)
         return results?.map((result)=>
             !predictCheckList(result) ?
                 {...result , predictionConfidence : result.predictionConfidence ? `${(result.predictionConfidence * 100).toFixed(2)}%` : '' , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
@@ -70,7 +76,6 @@ const HomeAiProductionLog = ({}: IProps) => {
     }
 
     const getPressList = async () => {
-
         const tokenData = userInfo?.token;
         const res =  await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/simple`,{
             headers : { Authorization : tokenData }
@@ -91,8 +96,10 @@ const HomeAiProductionLog = ({}: IProps) => {
     const LoadBasic = async (pages : number = 1) => {
         const tokenData = userInfo?.token;
         const params  = haveDistinct(userInfo?.company)
-            ? { rangeNeeded : true , distinct : 'mfrCode'}
+            ? { rangeNeeded : true , distinct : 'mfrCode',}
             : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
+
+        // const params  ={ rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
 
         const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
             params : params,
@@ -156,11 +163,14 @@ const HomeAiProductionLog = ({}: IProps) => {
     const mappingData = (lists, results) => {
 
         if(lists && results){
+            const newResult = results.map((result) => {
+                return {...result, setModalOpen:changeModalState}
+            })
             let map = new Map()
             lists?.forEach((list)=>{
                 map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
             })
-            const newData = results?.map((result)=>{
+            const newData = newResult?.map((result)=>{
                 if(map.get(result.machine_code)){
                     return {...result , pressStatus : map.get(result.machine_code)}
                 }else{
@@ -171,7 +181,9 @@ const HomeAiProductionLog = ({}: IProps) => {
         }else if(lists){
             return lists
         }else{
-            return convertData(results)
+            return convertData(results?.map((result) => {
+                return {...result, setModalOpen:changeModalState}
+            }))
         }
     }
 
@@ -183,26 +195,32 @@ const HomeAiProductionLog = ({}: IProps) => {
         getPressList()
         LoadBasic()
 
-        pressInterval = setInterval(async () => {
-            const result = await getPressList()
-            if (!result) {
-                clearTimeout(pressInterval)
-            }
-        }, 2500)
+        console.log("modalOpen : ", modalOpen)
 
-        loadInteval = setInterval(async () => {
-            const result = await LoadBasic()
-            if (!result) {
-                clearTimeout(loadInteval)
-            }
-        }, 30000)
+        if(modalOpen == 0){
+            pressInterval = setInterval(async () => {
+                const result = await getPressList()
+                if (!result) {
+                    clearTimeout(pressInterval)
+                }
+            }, 2500)
+
+            loadInteval = setInterval(async () => {
+                const result = await LoadBasic()
+                if (!result) {
+                    clearTimeout(loadInteval)
+                }
+            }, 30000)
+
+        }
+
 
         return () => {
             clearTimeout(pressInterval)
             clearTimeout(loadInteval)
         }
 
-    }, [])
+    }, [modalOpen])
 
     useEffect(() => {
         dispatch(
@@ -223,7 +241,12 @@ const HomeAiProductionLog = ({}: IProps) => {
                 editable
                 headerList={column}
                 row={mappingData(list,predictAi)}
+                // row={[{}]}
                 setRow={()=>{}}
+                onRowClick={(row) => {
+                    setModalOpen(1)
+                    // console.log(row, modalOpen)
+                }}
                 width={1576}
                 height={'100%'}
             />
