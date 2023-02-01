@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react"
 import {ExcelTable} from "../Excel/ExcelTable";
-import {POINT_COLOR, SF_ENDPOINT} from "../../common/configset";
+import {POINT_COLOR, SF_AI_ADDRESS, SF_ENDPOINT} from "../../common/configset";
 import {searchModalList} from "../../common/modalInit"
 import Modal from "react-modal";
 import {CellButton} from "../../styles/styledComponents";
@@ -27,7 +27,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>(null)
     useEffect(() => {
         if(isOpen){
-            axios.get(`http://220.126.8.137:3000/api/product_info/pair/${row.product_id}`,
+            axios.get(`${SF_AI_ADDRESS}/api/product_info/pair/${row.product_id}`,
                 {'headers': {'Authorization': cookie.load('userInfo').token},}
             )
                 .then((res) => {
