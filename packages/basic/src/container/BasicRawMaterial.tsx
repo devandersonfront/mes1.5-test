@@ -504,7 +504,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch (index) {
       case 0:
-        Notiflix.Confirm.show('변환' ,'변환을 하시겠습니까?' ,'확인','취소',()=>translateSafetyStock())
+        Notiflix.Confirm.show('갱신' ,'갱신을 하시겠습니까?' ,'확인','취소',()=>translateSafetyStock())
         return;
       case 1:
         const result = basicRow.find(row => selectList.has(row.id))
@@ -694,7 +694,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           title={readonly ? "원자재 재고 현황" : "원자재 기준정보"}
           buttons={
             readonly ?
-                [ (selectList.size <= 1 && barcodeOfCompany(userInfo.companyCode).rm_tab && "바코드 미리보기")]
+                [ '',(selectList.size <= 1 && barcodeOfCompany(userInfo.companyCode).rm_tab && "바코드 미리보기")]
                 :
                 [
                   (barcodeOfCompany(userInfo.companyCode).rm_safetyStock && "갱신"),
