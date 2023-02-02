@@ -39,7 +39,7 @@ const RegisterContainer = ({radioButtons , useRadio, title, data, setData, valid
 
     useEffect(()=>{
         setData(addInitData([]))
-        radioNum(radioValue)
+        radioNum && radioNum(radioValue)
     },[radioValue])
 
     const filterSelectedRows = (data) => data.filter((row) => selectList.has(row.id))
