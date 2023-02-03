@@ -844,7 +844,7 @@ export const columnlist: any = {
     { key: "deadline", name: "작업 기한", formatter: CalendarBox, width: 118, type: 'deadline' },
     { key: "customer_id", name: "거래처", formatter: PlaceholderBox, placeholder: '자동입력', width: 118, type: 'autoInput' },
     { key: "cm_id", name: "모델", formatter: PlaceholderBox, placeholder: '자동입력', width: 118, type: 'autoInput' },
-    { key: "product_id", name: "CODE", formatter: SearchModalTest, type: 'product', placeholder: '검색', width: 150, disableType: "true" },
+    { key: "product_id", name: "CODE", formatter: PlaceholderBox, type: 'product', placeholder: '검색', width: 150, disableType: "true" },
     { key: "name", name: "품명", formatter: PlaceholderBox, placeholder: '자동입력', width: 120, type: 'autoInput' },
     { key: "type", name: "품목 종류", formatter: PlaceholderBox, placeholder: '자동입력', width: 118, type: 'autoInput' },
     { key: "unit", name: "단위", formatter: PlaceholderBox, placeholder: '자동입력', width: 118, type: 'autoInput' },
