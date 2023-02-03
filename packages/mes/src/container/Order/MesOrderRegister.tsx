@@ -221,6 +221,7 @@ const MesOrderRegister = ({ }: IProps) => {
 
       <ExcelDownloadModal
           isOpen={excelOpen}
+          toMovePageName={'/mes/order/list'}
           category={"contract"}
           title={"수주 정보"}
           setIsOpen={setExcelOpen}
