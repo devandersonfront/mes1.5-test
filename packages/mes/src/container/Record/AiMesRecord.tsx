@@ -322,7 +322,7 @@ const AiMesRecord = ({}: IProps) => {
                     }else if(v.bom == null){
                         throw(alertMsg.needsBom)
                     }
-                    if(v.molds) {
+                    if(v.molds.length > 0) {
                         v.bom.map(bom => {
                             const finalAmount = new Big(Number(bom.lot?.amount)).div(bom?.bom.cavity)
                             const finalUsage = finalAmount.times(bom.bom?.usage)
@@ -335,12 +335,12 @@ const AiMesRecord = ({}: IProps) => {
                     return {
                         ...v,
                         additional:[],
-                        bom: v.bom.map((bom) => {
+                        bom: v.bom.map((bom, index) => {
                             const outsourcing = bom?.bom?.type === 2 && bom.bom?.child_product?.type > 2
                             const lotKey = outsourcing ? 'child_lot_outsourcing' :'child_lot_record'
                             return {
                                 ...bom,
-                                bom: {
+                                bom: bom?.bom ? {
                                     childOutsourcingId:bom.bom?.childOutsourcingId ?? null,
                                     childProductId:bom.bom?.childProductId ?? null,
                                     childRmId:bom.bom?.childRmId ?? null,
@@ -356,7 +356,7 @@ const AiMesRecord = ({}: IProps) => {
                                     type:bom.bom?.type ?? null,
                                     usage:bom.bom?.usage ?? null,
                                     version:bom.bom?.version ?? null,
-                                },
+                                } : v.input_bom[index].bom,
                                 lot: {
                                     ...bom.lot,
                                     [lotKey]: bom.lot?.[lotKey],
