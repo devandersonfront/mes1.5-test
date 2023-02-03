@@ -73,7 +73,6 @@ const EditListModal = ({ open, setOpen, onRowChange,}: IProps) =>{
                 }
             })
         if(res){
-            res.info_list.map((row) => console.log(cleanUpData(row)))
             const resultData = res.info_list.map((row) => cleanUpData(row))
             setPageInfo({page:res.page, total:res.totalPages})
             setSearchList(resultData)

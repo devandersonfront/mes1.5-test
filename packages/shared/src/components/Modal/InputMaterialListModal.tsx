@@ -48,11 +48,12 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const [lotList, setLotList] = useState<any[]>([])
   const [inputMaterial, setInputMaterial] = useState<any>()
   const isModify = column.action === 'modify'
+  const isAIModal = column.type === 'ai'
   const isOutsourcing = column.type === 'outsourcing'
   const cavity = row.molds?.filter(mold => mold?.mold?.setting === 1)?.[0]?.mold?.mold?.cavity ?? 1
   useEffect(() => {
     if(isOpen){
-      getInputMaterialList(row.product.bom_root_id, row.osId)
+      getInputMaterialList(row.product.bom_root_id, isAIModal ? row.operation_sheet?.os_id : row.osId)
       setHeaderItemsValue(getHeaderItems(row, column.type))
     }
   },[isOpen])
@@ -69,13 +70,13 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   }, [ inputMaterial ])
 
   const getInputMaterialList = async (key: string, os_id?: number | string) => {
-    if(key && column.type !== "ai"){
+    if(key){
       const pathVar = isOutsourcing ? [key] : { os_id: os_id, bom: 'bom', key: key, }
-      const res = await RequestMethod('get', isOutsourcing ? "bomLoad" : `sheetBomLoad`,{
+      const res = await RequestMethod('get', isOutsourcing || (!row.bom && isAIModal) ? "bomLoad" : `sheetBomLoad`,{
         path: pathVar
       })
 
-      if(res){
+      if(res && res.length > 0){
         const inputMaterialList = toInputMaterialList(res)
         setInputMaterialList(inputMaterialList)
       } else {
@@ -84,100 +85,6 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           setIsOpen(false)
         }
       )}
-    }else if(row.bom){
-      const checkMap = new Map([["rm_id",[]], ["sm_id",[]], ["product_id",[]]])
-      const settingData = row.bom.map((bom, index) => {
-        if(bom?.bom){
-          switch (bom.bom.type){
-            case 0 :
-              let rm_ids = checkMap.get("rm_id")
-              if(checkMap.get("rm_id").filter(id => id == bom.bom.childRmId).length <= 0){
-                rm_ids.push(bom.bom.childRmId)
-                checkMap.set("rm_id", rm_ids)
-              }
-                return {...bom.lot.child_lot_rm.raw_material,
-                  amount:bom.lot.amount,
-                  current:bom.lot.child_lot_rm.current,
-                  lot_number:bom.lot.child_lot_rm.lot_number,
-                  lot_rm_id:bom.lot.child_lot_rm.lot_rm_id,
-                  child_rm: {...bom.lot.child_lot_rm, stock:bom.lot.child_lot_rm.raw_material.stock, amount:bom.lot.amount},
-                  childRmId:bom.bom.childRmId,
-                  usage:bom.bom.usage,
-                  type:bom.bom.type,
-                  index:index
-                }
-              break;
-            case 1:
-              let sm_ids = checkMap.get("sm_id")
-              if(checkMap.get("sm_id").filter(id => id == bom.bom.childSmId).length <= 0){
-                sm_ids.push(bom.bom.childSmId)
-                checkMap.set("sm_id", sm_ids)
-              }
-
-              return {...bom.lot.child_lot_sm.sub_material,
-                amount:bom.lot.amount,
-                current:bom.lot.child_lot_sm.current,
-                lot_number:bom.lot.child_lot_sm.lot_number,
-                lot_sm_id:bom.lot.child_lot_sm.lot_sm_id,
-                child_sm: {...bom.lot.child_lot_sm, stock:bom.lot.child_lot_sm.sub_material.stock},
-                childSmId: bom.bom.childSmId,
-                usage:bom.bom.usage,
-                type:bom.bom.type
-              }
-            case 2:
-              let product_ids = checkMap.get("product_id")
-              if(checkMap.get("product_id").filter(id => id == bom.bom.childProductId).length <= 0){
-                product_ids.push(bom.bom.childProductId)
-                checkMap.set("product_id", product_ids)
-              }
-              return {...bom.lot.child_lot_record.operation_sheet.product,
-                amount:bom.lot.amount,
-                // current:bom.lot.current,
-                current:bom.lot.child_lot_record.operation_sheet.product.stock,
-                lot_number:bom.lot.child_lot_record.lot_number,
-              //   lot_sm_id:bom.lot.child_lot_sm.lot_sm_id,
-                child_product:bom.lot.child_lot_record.operation_sheet.product,
-                childProductId: bom.bom.childProductId,
-                usage:bom.bom.usage,
-                type:bom.bom.type
-              }
-            default:
-              return "none"
-          }
-        }
-      }).filter(v=>v)
-      let noOverap = settingData.reduce(function(acc, current) {
-        if (acc.findIndex(({ rm_id }) => rm_id === current.rm_id) === -1) {
-          acc.push(current)
-        }
-        if (acc.findIndex(({ sm_id }) => sm_id === current.sm_id) === -1) {
-          acc.push(current)
-        }
-        if (acc.findIndex(({ product_id }) => product_id === current.product_id) === -1) {
-          acc.push(current)
-        }
-
-        return acc;
-      }, []);
-      const inputMaterialList = toInputMaterialList(noOverap)
-      setInputMaterialList(inputMaterialList)
-    } else if(!row.bom && column.type == "ai"){
-      const res = await RequestMethod('get',   "bomLoad",{
-        path: { os_id: null, key: key, }
-      })
-      if(res){
-        const inputMaterialList = toInputMaterialList(res)
-        setInputMaterialList(inputMaterialList)
-      } else {
-        Notiflix.Report.warning("경고",alertMsg.noBom,"확인",() => {
-              isOutsourcing && onRowChange({...row, bomChecked: true})
-              setIsOpen(false)
-            }
-        )}
-      // const inputMaterialList = toInputMaterialList(res)
-      // setInputMaterialList(inputMaterialList)
-      // console.log("inputMaterialList : ", inputMaterialList)
-
     }else Notiflix.Report.warning("경고",alertMsg.noBom,"확인",() => setIsOpen(false))
   }
 
@@ -309,7 +216,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
       const originalAmount = originalLotNumAndLotMap.get(getBomKey(input.tab, lot))?.originalAmount ?? originalLotNumAndLotMap.get(getBomKey(input.tab, lot))?.amount ?? "0"
       const totalUsage = lotAmount === '0' ? new Big(0) : new Big(Number(lotAmount)).div(cavity).times(input.usage)
       const originalTotalUsage = originalAmount === '0' ? new Big(0) : new Big(originalAmount).div(row?.originalCavity ?? 1).times(input.usage)
-      const actualCurrent = isModify ? new Big(lot.current).plus(originalTotalUsage) : new Big(lot.current)
+      const actualCurrent = isModify && !isAIModal ? new Big(lot.current).plus(originalTotalUsage) : new Big(lot.current)
       const maxAmount = Math.floor(new Big(actualCurrent).div(input.usage).times(cavity).toNumber())
       return {
           ...lot,
@@ -341,7 +248,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           }
           setIsOpen(true)
         }} hoverColor={POINT_COLOR} haveId status={column.modalType ? "modal" : "table"}>
-          <p>{column.type === 'ai' ? row.good_quantity : '자재 보기'}</p>
+          <p>{isAIModal ? row.good_quantity : '자재 보기'}</p>
         </UploadButton>
     )
 
@@ -354,7 +261,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     const originalBom = row.originalBom ?? inputMaterialList.map((v) => {
       return v.bom_info
     }).filter(v => v)
-    const bomList = isOutsourcing ? inputMaterialList.map(input => ({bom: input.bom})) :  column.type == "ai" ? row.bom : row.input_bom
+    const bomList = isOutsourcing ? inputMaterialList.map(input => ({bom: input.bom})) :  isAIModal ? row.bom : row.input_bom
     bomList?.map((bom) => {
       const bomObject = getBomObject(bom.bom)
       inputBomIdMap.set(bomObject.bomKey, bom)
@@ -368,8 +275,8 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           const lotObjectKey = bom.tab === 0 ? 'child_lot_rm' : bom.tab === 1 ? 'child_lot_sm' : bom.type < 3 ? 'child_lot_record' : 'child_lot_outsourcing'
           bomToSave.push({
             ...inputBomIdMap.get(bom.bomKey),
-            record_id: bom.record_id,
-            // bom: {...bom, type:bom.tab},
+            record_id: undefined,
+            bom: {...bom, type:bom.tab},
             lot: {
               elapsed: lot.elapsed,
               type: bom.tab,
@@ -432,6 +339,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
     }
 
   }
+
 
   const ModalButtons = () => {
     return <div style={{ height: 56, display: 'flex', alignItems: 'flex-end'}}>
@@ -573,6 +481,15 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                   width={1746}
                   rowHeight={32}
                   height={288}
+                  onRowClick={(clicked) => {const e = inputMaterialList.indexOf(clicked)
+                    const tmpInputMaterialList = inputMaterialList.slice()
+                    tmpInputMaterialList[e] = {
+                      ...tmpInputMaterialList[e],
+                      page: 1,
+                      total: 1
+                    }
+                    setInputMaterialList(tmpInputMaterialList)
+                  }}
                   type={'searchModal'}
                   headerAlign={'center'}
               />
