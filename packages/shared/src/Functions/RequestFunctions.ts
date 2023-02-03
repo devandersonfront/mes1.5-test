@@ -257,5 +257,6 @@ const ApiList = {
   bomLoad: `/api/v1/bom`,
   bomSave: `/api/v1/bom/save`,
 
-  sheetBomLoad: `/api/v1/sheet`
+  sheetBomLoad: `/api/v1/sheet`,
+  // f1Score: "/train/f1score"
 }

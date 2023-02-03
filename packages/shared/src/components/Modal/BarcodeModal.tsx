@@ -12,12 +12,13 @@ import {result} from "lodash";
 import cookie from "react-cookies";
 import {useSelector} from "react-redux";
 import {selectUserInfo} from "../../reducer/userInfo";
-import {customBarcodeCompanyCode} from "../../common/companyCode";
+import {barcodeOfCompany} from "../../common/companyCode/companyCode";
 import {SF_ENDPOINT_BARCODE} from "../../common/configset";
 
 
 
 interface Props {
+    multiple ?: boolean
     title : string,
     handleBarcode : (url : any ,clientIp : string) => void
     handleModal : (type : string , isVisible : boolean) => void
@@ -26,7 +27,7 @@ interface Props {
     isVisible : boolean
 }
 
-const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Props) => {
+const BarcodeModal = ({multiple,title,type,handleBarcode,handleModal,data,isVisible} : Props) => {
 
     const [selectIndex, setSelectIndex] = React.useState<number>(0)
     const [imageSrc, setImageSrc] = React.useState<any>()
@@ -81,7 +82,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Pr
             },
             {
                 responseType:'blob',
-                params : {company : customBarcodeCompanyCode(userInfo.companyCode)},
+                params : {company : barcodeOfCompany(userInfo.companyCode).companyCode},
             })
             .then((res) => {
                 Notiflix.Loading.remove()
@@ -134,7 +135,7 @@ const BarcodeModal = ({title,type,handleBarcode,handleModal,data,isVisible} : Pr
                         {'해당 페이지 인쇄'}
                     </Button>
                     {
-                        type === 'record' &&
+                        multiple  &&
                         <Button onClick={() => onCaptureAllDOM(data)}>
                             {'모든 페이지 인쇄'}
                         </Button>

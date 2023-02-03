@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from 'react';
+import React, { ChangeEvent, useState } from 'react'
 import styled from "styled-components";
 import {MidrangeExcelDropdown} from "../Dropdown/MidrangeExcelDropdown";
 import moment from "moment";
@@ -15,14 +15,14 @@ import { SelectChangeEvent } from '@mui/material'
 
 type inspectionType = 'beginning' | 'middle' | 'end'
 interface IProps {
+    pivot: boolean,
     modalData: any
     setModalData: (e) => void
     readOnly: boolean
     hasResult: boolean
 }
 
-const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult }: IProps)  => {
-
+const MidrangeExcelFrameTable =  ({ pivot, modalData, setModalData, readOnly, hasResult }: IProps)  => {
     const inspectionPhases : {key:inspectionType, value:string}[] = [{key:'beginning', value:'초품'}, {key:'middle', value:'중품'}, {key:'end', value:'종품'}]
     React.useEffect(()=>{
         const legendary_list = modalData.legendary?.map((legend) => {
@@ -36,7 +36,7 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
             writer: hasResult ? modalData.writer : cookie.load('userInfo'),
             record_id: modalData.record_id,
             inspection_info: hasResult ? modalData.inspection_info : initializeInspectionInfo(modalData.inspection_info),
-            inspection_result: hasResult ? modalData.inspection_result : initializeInspectionResult(modalData.samples),
+            inspection_result: hasResult ? modalData.inspection_result : initializeInspectionResult(pivot ? modalData.inspection_info.beginning.length : modalData.samples),
             inspection_time: modalData.inspection_time,
             samples: modalData.samples,
             operation_inspection_id: modalData?.operation_inspection_id
@@ -56,7 +56,7 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
     }
 
     const initializeInspectionResult = (sampleCount: number) => {
-        const dataResults = Array.from({length: sampleCount}, (_, i) => ({sequence: i+1, pass: true}))
+        const dataResults = Array.from({length: sampleCount}, (_, i) => ({sequence: i+1, pass: false}))
         let res = {}
         inspectionPhases.map(phase => res[phase.key] = dataResults)
         return res
@@ -132,9 +132,9 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
                                   if(dateStr < newData.inspection_time['beginning']){
                                       newData.inspection_time['beginning'] = dateStr
                                   }
-                                  if (dateStr > newData.inspection_time['middle']){
-                                      newData.inspection_time['middle'] = dateStr
-                                  }
+                                  // if (dateStr > newData.inspection_time['middle']){
+                                  //     newData.inspection_time['middle'] = dateStr
+                                  // }
                                   break;
                               default:
                           }
@@ -165,6 +165,22 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
                       </>))
                     }
                 </div>
+              {
+                  pivot && <div style={{flex: 1, flexDirection:'column'}}>
+                      {
+                          modalData.inspection_info?.[type]?.map((v,i) => (
+                            <>
+                                <BottomLeftBorder key={'range' + i} style={{height:'40px'}}>
+                                    <MidrangeExcelDropdown contents={[ '합격', '불합격' ]}
+                                                           onChange={(e) => resultChange(type, e, i)}
+                                                           value={modalData.inspection_result[type][i]?.pass ? '합격' : '불합격'}
+                                                           readOnly={readOnly}/>
+                                </BottomLeftBorder>
+                            </>
+                          ))
+                      }
+                  </div>
+              }
           </div>)
     }
     let arr = Array.from({length: 10}, (_, i) => '-')
@@ -209,7 +225,7 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
 
     const getResults = (type: inspectionType) => {
         return(
-          <div style={{display:'flex'}}>
+          <div style={{display:'flex', flexDirection: pivot ? "column" : "row"}}>
               {arr.map((defaultValue,arrIdx)=>
                 ( arrIdx > 8 ?
                     <NoTopBorder style={{flex:1, height:'40px'}}>
@@ -259,7 +275,6 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
           )))
     }
 
-
         return (
         <div>
             <MidrangeTitle>초ㆍ중ㆍ종 검사 결과</MidrangeTitle>
@@ -270,7 +285,7 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
                         <MidrangeMemberSearchModal readOnly={readOnly} value={modalData.writer?.name ?? '-'} onChangeManger={(writer)=> setModalData({...modalData, writer: writer})}/>
                     </BottomLeftBorder>
                 </div>
-                <div style={{display:'flex', flex: 3.5}}>
+                <div style={{display:'flex', flex: pivot ? 4.5 :3.5}}>
                     <BottomLeftBorder style={{flex:1.5}}>
                         점검시간
                     </BottomLeftBorder>
@@ -280,6 +295,13 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
                     <BottomLeftBorder style={{flex:1}}>
                         점검 기준
                     </BottomLeftBorder>
+                    {
+                    pivot && (
+                      <BottomLeftBorder style={{flex:1}}>
+                        결과
+                    </BottomLeftBorder>)
+                    }
+
                 </div>
                 <div style={{backgroundColor: "#F4F6FA", flex:10}}>
                     <NoTopBorder style={{height: "40px"}}>
@@ -296,15 +318,15 @@ const MidrangeExcelFrameTable =  ({ modalData, setModalData, readOnly, hasResult
                       <div style={{flex: 1}}>
                         <BottomLeftBorder style={{ fontWeight: 'bold', height:'100%'}}> {phase.value} </BottomLeftBorder>
                       </div>
-                      <div style={{ display: 'flex', flex: 3.5 }}>
+                      <div style={{ display: 'flex', flex: pivot ? 4.5 : 3.5 }}>
                           <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                               {getCriteria(phase.key)}
-                              <BottomLeftBorder style={{ height: '40px' }}>결과</BottomLeftBorder>
+                              {!pivot && <BottomLeftBorder style={{ height: '40px' }}>결과</BottomLeftBorder>}
                           </div>
                       </div>
                       <div style={{ flex: 10 }}>
                           {getRecords(phase.key)}
-                          {getResults(phase.key)}
+                          {!pivot && getResults(phase.key)}
                       </div>
                   </div>
                 ))

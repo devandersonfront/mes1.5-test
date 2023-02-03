@@ -1,8 +1,10 @@
+import {columnsSort} from "shared/src/common/Util";
+
 const addColumnClass= (column) => {
 
     let moveNum = 0;
     let addClass = false
-    return column.map((data,index)=>{
+    return columnsSort(column.map((data,index)=>{
         if(data.unprintable || data.key === "select-row"){
             addClass = true
             moveNum++
@@ -12,7 +14,8 @@ const addColumnClass= (column) => {
         }else{
             return data
         }
-    })
+    }))
+
 }
 
 export default addColumnClass

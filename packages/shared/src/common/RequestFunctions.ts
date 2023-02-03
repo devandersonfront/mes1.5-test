@@ -237,18 +237,22 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
           }
           return false
         })
-  } else if(apiType === "datasetList"){
+  } else if(apiType === "datasetList" || apiType === "f1Score"){
     const ENDPOINT = /*SF_ADDRESS*/  AI_ADDRESS
-    let tmpUrl = "http://"+ENDPOINT+ApiList[apiType]+`?page=${data.params.page}&pageSize=${data.params.pageSize}&company=${data.params.company_code}`
+
+    let tmpUrl = apiType === "datasetList" ?
+        "http://"+ENDPOINT+ApiList[apiType]+`?page=${data.params.page}&pageSize=${data.params.pageSize}&company=${data.params.company_code}`
+        :
+        "http://"+ENDPOINT+ApiList[apiType]+`?company_code=${data.params.company_code}`
 
     return Axios.get(tmpUrl, tokenData && {'headers': {'Authorization': tokenData}, responseType: responseType})
         .then((result) => {
           return result.data
         })
         .catch((error) => {
-          if(error.response.status === 400) {
+          if(error?.response?.status === 400) {
             Notiflix.Report.failure('저장할 수 없습니다.', '입력값을 확인해주세요', '확인')
-          }else if(error.response.status === 500){
+          }else if(error?.response?.status === 500){
             Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
           }
           return false
@@ -317,13 +321,18 @@ const ApiList = {
   outsourcingImportSave : `/api/v1/outsourcing/import/save`,
   stockAdjustSave: '/api/v1/stock/adjustment/save',
   productBatchSave: '/cnc/api/v1/product/pop/save',
-
+  serialSave: '/api/v1/sheet/serial/save',
+  aiCncRecordSave: '/api/v1/ai/record/cnc/save',
+  aiRecordConfirm: '/api/v1/ai/record/confirm',
   //modify
   operationModify: `/api/v1/operation/modify`,
 
   //load
   authorityLoad: `/api/v1/member/auth/load`,
   productLoad: `/cnc/api/v1/product/load`,
+  //
+  aipProductLoad: `/api/v1/product/load`,
+  //
   productprocessList: `/api/v1/product/process/load`,
   machineDetailLoad: `/api/v1/machine/load`,
   inspectCategoryLoad: `/cnc/api/v1/product/inspect/category/load/`,
@@ -395,8 +404,13 @@ const ApiList = {
   defectReasonList: '/api/v1/process/reason/defect/list',
   rawinList: `/api/v1/rawmaterial/warehouse/list`,
   rawstockList: `/api/v1/rawmaterial/warehouse/list`,
+
   stockList: '/api/v1/stock/list',
   stockProductList: '/api/v1/stock/summary',
+
+  productInsufficientList : '/cnc/api/v1/product/insufficient/list',
+  productInsufficientSearch : '/cnc/api/v1/product/insufficient/search',
+
   stockSummaryList: '/api/v1/stock/summary/list',
   operactionList: `/api/v1/operation/list`,
   defectList: `/api/v1/quality/statistics/defect`,
@@ -408,6 +422,7 @@ const ApiList = {
   factoryList: `/api/v1/factory/list`,
   deviceList: `/api/v1/device/list`,
   rawMaterialList: `/api/v1/raw-material/list`,
+  rawMaterialInsufficientList:'/api/v1/raw-material/insufficient/list',
   subMaterialList: `/api/v1/sub-material/list`,
   rawInList: `/api/v1/lot-rm/list`,
   subInList: `/api/v1/lot-sm/list`,
@@ -442,6 +457,8 @@ const ApiList = {
   outsourcingImportList : `/api/v1/outsourcing/import/list`,
   stockAdjustList: '/api/v1/stock/adjustment/list',
   datasetList:'/api/dataset/list',
+  weldingList: `/api/v1/machine/excel/welding/list`,
+  serialPrice:`/api/v1/raw-material/serial-price-difference/list`,
 
   //search
   memberSearch: `/api/v1/member/search`,
@@ -468,6 +485,7 @@ const ApiList = {
   factorySearch: `/api/v1/factory/search`,
   subFactorySearch: `/api/v1/subFactory/search`,
   rawInListSearch: `/api/v1/lot-rm/search`,
+  rawMaterialInsufficientSearch:'/api/v1/raw-material/insufficient/search',
   contractSearch: `/api/v1/contract/search`,
   lotRmSearch: `/api/v1/lot-rm/search`,
   lotSmSearch: `/api/v1/lot-sm/search`,
@@ -525,6 +543,11 @@ const ApiList = {
   recordEnd: `/cnc/api/v1/record/complete`,
 
   //log
-  logOut: '/anonymous/logout'
+  logOut: '/anonymous/logout',
+  //doc
+  docChild : '/cnc/api/v1/document/load/child',
+  f1Score: "/api/train/f1score",
+  sheetInsufficient:"/api/v1/sheet/insufficient_by_contract/load",
+  safetyStock : '/api/v1/raw-material/update/leadtime'
 
 }

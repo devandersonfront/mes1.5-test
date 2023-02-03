@@ -32,7 +32,7 @@ const MidrangeExcelDropdown = ({contents,value,onChange, readOnly}: IProps) => {
         >
             {contents?.map((title,index) => {
                 return (<option key={title+'Midrange'+index} value={title} >
-                    {title}
+                    {title === '선택 없음' && readOnly ? '' : title}
                 </option>)
             })}
         </select>

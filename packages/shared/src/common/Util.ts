@@ -134,6 +134,14 @@ export const getBomKey = (bom:any) => {
   }
 }
 
+export const columnsSort = (columns:any[]) => {
+  return columns.sort((prev, next) => {
+    if(prev.sequence > next.sequence) return 1
+    if(prev.sequence < next.sequence) return -1
+    return 0
+  });
+}
+
 // export const TypeCheck = (type:0 | 1 | 2 | "") => {
 //   switch(type){
 //     case 0 :
@@ -147,3 +155,22 @@ export const getBomKey = (bom:any) => {
 //   }
 // }
 
+export const transTypeProduct = (type:string | number) => {
+  switch(type){
+    case 0:
+      return "반제품"
+    case 1:
+      return "재공품"
+    case 2:
+      return "완제품"
+    case "완제품":
+      return 2
+    case "반제품":
+      return 0
+    case "재공품":
+      return 1
+    default:
+      return null
+
+  }
+}

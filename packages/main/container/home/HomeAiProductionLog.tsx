@@ -25,6 +25,9 @@ import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menu
 import axios from "axios";
 import moment from "moment";
 import ErrorList from "shared/src/common/ErrorList";
+import {TransferCodeToValue, TransferValueToCode} from "shared/src/common/TransferFunction";
+import {SF_AI_ADDRESS, SF_ENDPOINT_PMS} from "shared/src/common/configset";
+import {haveDistinct} from "shared/src/common/haveDistinct";
 
 export interface IProps {
     children?: any
@@ -32,73 +35,189 @@ export interface IProps {
     keyword?: string
     option?: number
 }
-
+const userInfo = cookie.load('userInfo')
 
 const HomeAiProductionLog = ({}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
-    const userInfo = cookie.load('userInfo')
-    const [basicRow, setBasicRow] = useState<Array<any>>([])
-    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiProductLog"])
-    const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [ page, setPage ] = React.useState<{ current_page: number, totalPages: number }>({
-        current_page: 1,
-        totalPages : 1
-    });
+    const [ column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiProductLog"])
+    const [ list, setList] = useState<any[]>()
+    const [ predictAi , setPredictAi ] = React.useState<any[]>()
 
+    const [modalOpen, setModalOpen] = useState<boolean>(false)
 
-    useEffect(() => {
-        // if(userInfo?.ca_id?.authorities?.some(auth => ['ROLE_PROD_02', 'ROLE_PROD_06'].includes(auth))){
-            Notiflix.Loading.circle()
-            LoadBasic()
-            const dashboard = setInterval(()=>{
-                LoadBasic()
-            },30000)
-            return () => {
-                clearInterval(dashboard)
-            }
-        // }
+    const changeModalState = () => {
+        setModalOpen(value => !value)
+    }
+    useEffect(()=>{
+        userInfo?.company === '4XX21Z' && setColumn(columnlist["aiProductLogDS"])
     },[])
 
-
     const predictCheckList = (value) => {
+        if(!value.code || value.code === '-'){
+            return true
+        }
 
         const codeCheck = value.predictionCode === value.code
         const modelCheck = value.predictionModel === value.model
         const nameCheck = value.predictionName === value.product_name
+        const processCheck = value.predictionProcess === value.process
 
-        return codeCheck && modelCheck && nameCheck
+        return codeCheck && modelCheck && nameCheck && processCheck
     }
 
     const convertData = (results) => {
-        return results.map((result)=> !predictCheckList(result) ? {...result , color : 'red'} : {...result})
+        return results?.map((result)=>
+            !predictCheckList(result) ?
+                {...result , prediction_confidence : result.prediction_confidence ? `${(result.prediction_confidence * 100).toFixed(2)}%` : '' , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
+                : {...result , prediction_confidence : result.prediction_confidence ?`${(result.prediction_confidence * 100).toFixed(2)}%` : '',machine_type : TransferCodeToValue(result.machine_type, "machine")}
+        )
     }
 
-    const LoadBasic = async (pages : number = 1) => {
-        try {
-            const tokenData = userInfo?.token;
-            const res = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
-                params : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'},
-                headers : { Authorization : tokenData }
-            })
-            if(res.status === 200){
-                Notiflix.Loading.remove()
-                const {info_list , page, totalPages, menus} = res.data
-                const newData = convertData(info_list)
-                setBasicRow(newData)
-                setPage({current_page : page , totalPages : totalPages})
-            }
-        }catch (error) {
-            if(error?.response?.status){
-                const errorNum : number = error?.response?.status
-                const message : string = error?.response?.data?.message
-                const [errorHeader,errorMessage] = ErrorList({errorNum , message})
-                Notiflix.Report.failure(errorHeader, errorMessage ,'확인')
-                Notiflix.Loading.remove()
-            }
+    const getPressList = async () => {
+        const tokenData = userInfo?.token;
+        const res =  await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/simple`,{
+            headers : { Authorization : tokenData }
+        }).catch(()=>{
+            Notiflix.Report.warning("경고",'실패한 요청이 있어, 특정 데이터만 나올 수 있습니다.',"확인");
+        })
+        if (res) {
+            Notiflix.Loading.remove()
+            const content = res?.data?.results?.content
+            setList(content)
+            return true
+        }else {
+            Notiflix.Loading.remove()
+            return false
         }
     }
 
+    const LoadBasic = async (pages : number = 1) => {
+        const tokenData = userInfo?.token;
+        const params  = haveDistinct(userInfo?.company)
+            ? { rangeNeeded : true , distinct : 'mfrCode',}
+            : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
+
+        // const params  ={ rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
+
+        const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
+            params : params,
+            headers : { Authorization : tokenData }
+        }).catch(()=>{
+            Notiflix.Report.warning("경고",'실패한 요청이 있어, 특정 데이터만 나올 수 있습니다.',"확인");
+        })
+
+        if(result){
+            Notiflix.Loading.remove()
+            if(result?.data?.info_list.length > 0){
+                setPredictAi(await checkTrained(result?.data?.info_list))
+                return true
+            }
+        }else{
+            Notiflix.Loading.remove()
+            return false
+        }
+    }
+
+    const getIsTrained = async (machine_codes : string[]) => {
+        const tokenData = userInfo?.token;
+        const result = await axios.post(`${SF_AI_ADDRESS}/api/train/isTrained`, {
+            company_code: userInfo?.company, machine_codes: machine_codes
+        },{ headers : { Authorization : tokenData }}).catch(()=>{
+            Notiflix.Report.warning("경고",'실패한 요청이 있어, 특정 데이터만 나올 수 있습니다.',"확인");
+        })
+
+        if(result){
+            Notiflix.Loading.remove()
+            return result
+        }
+    }
+
+    const checkTrained = async (results) => {
+
+        const map = new Map()
+        const competeStr = '예측 DATA 생성중'
+        const listToCheck = results?.filter((result)=> result.prediction_code === competeStr)
+        const lists = await getIsTrained(listToCheck.map((list)=>(list.machine_code)))
+
+        results?.forEach((result)=> map.set(result.machine_code, result))
+
+        if(listToCheck?.length < 0){
+            return results
+        }
+
+        lists.data.forEach((list) => (
+             map.set(list.machine_code, {
+                ...map.get(list.machine_code)
+                , prediction_code: list.is_trained ? competeStr : ''
+                , prediction_model: list.is_trained ? competeStr : ''
+                , prediction_name :  list.is_trained ? competeStr : ''
+                , prediction_process: list.is_trained ? competeStr : ''
+                , prediction_confidence : list.is_trained ? competeStr : ''
+            })
+        ))
+
+        return Array.from(map.values())
+    }
+
+    const mappingData = (lists, results) => {
+
+        if(lists && results){
+            const newResult = results.map((result) => {
+                return {...result, setModalOpen:changeModalState}
+            })
+            let map = new Map()
+            lists?.forEach((list)=>{
+                map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
+            })
+            const newData = newResult?.map((result)=>{
+                if(map.get(result.machine_code)){
+                    return {...result , pressStatus : map.get(result.machine_code)}
+                }else{
+                    return result
+                }
+            })
+            return convertData(newData)
+        }else if(lists){
+            return lists
+        }else{
+            return convertData(results?.map((result) => {
+                return {...result, setModalOpen:changeModalState}
+            }))
+        }
+    }
+
+    useEffect(() => {
+        Notiflix.Loading.circle()
+        let pressInterval;
+        let loadInteval
+
+        getPressList()
+        LoadBasic()
+
+        if(!modalOpen){
+            pressInterval = setInterval(async () => {
+                const result = await getPressList()
+                if (!result) {
+                    clearTimeout(pressInterval)
+                }
+            }, 2500)
+
+            loadInteval = setInterval(async () => {
+                const result = await LoadBasic()
+                if (!result) {
+                    clearTimeout(loadInteval)
+                }
+            }, 30000)
+
+        }
+
+
+        return () => {
+            clearTimeout(pressInterval)
+            clearTimeout(loadInteval)
+        }
+    }, [modalOpen])
 
     useEffect(() => {
         dispatch(
@@ -118,18 +237,7 @@ const HomeAiProductionLog = ({}: IProps) => {
             <ExcelTable
                 editable
                 headerList={column}
-                row={basicRow}
-                setRow={(e) => {
-                    let tmp: Set<any> = selectList
-                    e.map(v => {
-                        if(v.isChange) tmp.add(v.id)
-                    })
-                    setSelectList(tmp)
-                    setBasicRow(e)
-                }}
-                selectList={selectList}
-                //@ts-ignore
-                setSelectList={setSelectList}
+                row={mappingData(list,predictAi)}
                 width={1576}
                 height={'100%'}
             />

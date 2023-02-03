@@ -50,6 +50,7 @@ export const BasicTitles = (customTarget?: string) => {
     subMgmt: toMenu(titles.subMgmt, '/mes/basic/submaterial'),
     productMgmt: toMenu(titles.productMgmt, '/mes/basic/productV1u'),
     documentMgmt: toMenu(titles.documentMgmt, '/mes/basic/document'),
+    welding: toMenu(titles.welding, '/mes/basic/welding'),
   }
   switch(customTarget){
     case 'dohwa' : return {
@@ -59,6 +60,7 @@ export const BasicTitles = (customTarget?: string) => {
     case 'ai' : return {
       ...basicDefault,
       _modelMgmt: toMenu(dohwaTitles._modelMgmt, '/mes/basic/customer/model'),
+      opAiDataset: toMenu(titles.opAiDataset, '/mes/ai/dataset')
     }
     case 'custom' : return {
       ...basicDefault,
@@ -163,9 +165,8 @@ export const MesTitles = (customTarget?: string) => {
     }
     case 'ai': return {
       ...mesDefault,
-      pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList', '_opAiDataset']),
+      pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList', ]),
       _opAiReList: toMenu(titles._opAiReList,'/mes/ai/recordV2/list'),
-      _opAiDataset: toMenu(titles._opAiDataset, '/mes/ai/dataset')
     }
     case 'custom' : return {
       ...mesDefault,
@@ -281,8 +282,13 @@ export const HomeAuth = (customTarget?: string) => {
     subMgmt: toAuth(titles.subMgmt, false, true, false, [], auth.subMgmt ),
     productMgmt: toAuth(titles.productMgmt, false, true, false, [], auth.productMgmt ),
     documentMgmt: toAuth(titles.documentMgmt, false, true, false, [], auth.documentMgmt ),
+    welding: toAuth(titles.welding, false, true, false, [], auth.documentMgmt ),
   }
   switch(customTarget){
+    case 'ai' : return {
+      ...basicDefault,
+      opAiDataset: toAuth(titles.opAiDataset, true, false, true, []),
+    }
     default: return basicDefault
   }
 }

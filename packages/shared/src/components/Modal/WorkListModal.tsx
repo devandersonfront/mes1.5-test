@@ -22,6 +22,7 @@ import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
 import {useSelector} from "react-redux";
 import {selectUserInfo} from "../../reducer/userInfo";
+import {barcodeOfCompany} from "../../common/companyCode/companyCode";
 
 interface IProps {
   column: IExcelHeaderType
@@ -174,7 +175,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
       "functions":
           {"func0":{"checkLabelStatus":[]},
             "func1":{"clearBuffer":[]},
-            "func2":{"drawBitmap":[barcode,20,0,800,0]},
+            "func2":{"drawBitmap":[barcode,0,0,barcodeOfCompany(userInfo.companyCode).op_drawBitMap,0]},
             "func3":{"printBuffer":[]}
           }
     }
@@ -231,7 +232,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
     const mainMachine = items.machines?.filter((machine)=>(machine.machine.type === 1))
     const data = []
 
-    return items.map((item)=>{
+        return items.map((item)=>{
 
         let lotList = item.bom.map((v)=>{
           if(v.lot.child_lot_rm){
@@ -247,7 +248,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
 
         return {
           material_id: item.productId,
-          material_type: userInfo.companyCode === '2SZ57L' ? materialTypeOfCompany(item.product) : 5,
+          material_type: barcodeOfCompany(userInfo.companyCode, item).op_materialType,
           material_lot_id : item.record_id,
           material_lot_number: item.lot_number,
           material_quantity : item.good_quantity,
@@ -261,7 +262,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
           material_unit : 'EA',
           material_texture_type : null,
           material_import_date: null,
-          material_bom_lot: userInfo.companyCode === '4MN60H' ? lotList.join(',') : null
+          material_bom_lot: barcodeOfCompany(userInfo.companyCode,item).op_material_bom_lot
         }
     })
   }
@@ -413,6 +414,7 @@ const WorkListModal = ({column, row, onRowChange}: IProps) => {
         </div>
       </Modal>
       <BarcodeModal
+          multiple
           title={'바코드 미리보기'}
           handleBarcode={handleBarcode}
           handleModal={handleModal}

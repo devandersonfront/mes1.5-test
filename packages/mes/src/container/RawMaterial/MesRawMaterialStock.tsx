@@ -27,6 +27,7 @@ import addColumnClass from '../../../../main/common/unprintableKey'
 import {CompleteButton} from "shared/src/components/Buttons/CompleteButton";
 import { alertMsg } from 'shared/src/common/AlertMsg';
 import {selectUserInfo} from "shared/src/reducer/userInfo";
+import {barcodeOfCompany} from "../../../../shared/src/common/companyCode/companyCode";
 
 interface IProps {
   children?: any
@@ -367,17 +368,20 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     }
   }
 
-  const handleBarcode = async (dataurl : string , clientIP : string) => {
-    Notiflix.Loading.circle()
-    const data = {
-      "functions":
-          {"func0":{"checkLabelStatus":[]},
-            "func1":{"clearBuffer":[]},
-            "func2":{"drawBitmap":[dataurl,20,0,800,0]},
-            "func3":{"printBuffer":[]}
-          }
-    }
+  const filterBarcode = (barcode : string) => {
 
+    return {
+      "functions":
+              {"func0":{"checkLabelStatus":[]},
+                "func1":{"clearBuffer":[]},
+                "func2":{"drawBitmap":[barcode,0,0,barcodeOfCompany(userInfo.companyCode).ri_drawBitMap,0]},
+                "func3":{"printBuffer":[]}
+              }
+    }
+  }
+
+  const requestPrintApi = async (clientIP,data) => {
+    Notiflix.Loading.circle()
     await fetch(`http://${clientIP}:18080/WebPrintSDK/Printer1`,{
       method : 'POST',
       headers : {
@@ -389,11 +393,30 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     }).catch((error) => {
       Notiflix.Loading.remove()
       if(error){
-        Notiflix.Report.failure('서버 에러', '서버 에러입니다. 관리자에게 문의하세요', '확인')
+        Notiflix.Report.failure('프린터 없음', '프린터 연결을 확인해 주세요.', '확인')
         return false
       }
     })
   }
+
+  const printBarcodes = async (barcodes : string[], ip : string) => {
+    const convertBarcodes = barcodes.map((barcode)=>(filterBarcode(barcode)))
+    convertBarcodes.map(async (data)=>{
+      await requestPrintApi(ip,data)
+    })
+  }
+
+
+  const printBarcode = async (barcode : string , ip : string) => {
+    const convertBarcode = filterBarcode(barcode)
+    await requestPrintApi(ip,convertBarcode)
+  }
+
+  const handleBarcode = async (dataurl: string[] | string, clientIP : string) => {
+    typeof dataurl === 'string' ? await printBarcode(dataurl,clientIP) : await printBarcodes(dataurl,clientIP)
+  }
+
+
 
   const handleModal = (type : 'barcode',isVisible) => {
     setModal({type , isVisible})
@@ -405,44 +428,40 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
     return tempList
   }
 
-  const convertBarcodeData = (quantityData) => {
-
-    console.log(quantityData,'quantityDataquantityData')
-
-    return [{
-      material_id: quantityData.code ?? 0,
-      material_type: userInfo.companyCode === '2SZ57L' ? 8 : 3,
-      material_lot_id : quantityData.lot_rm_id,
-      material_lot_number: quantityData.lot_number,
-      material_quantity : quantityData?.realCurrent ?? 0,
-      material_name: !!quantityData.name ? quantityData.name : '-',
-      material_code: quantityData.rm_id,
-      material_customer: quantityData.customer_id ?? "-",
-      material_model: quantityData.model?.model ?? "-",
-      material_machine_name : null,
-      material_size : userInfo.companyCode === '4MN60H' ?
-          `${quantityData.depth} * ${quantityData.width} * ${quantityData.height}`
-          : `${quantityData.depth} * ${quantityData.width}`
-      ,
-      material_texture : quantityData?.texture,
-      material_unit : TransferCodeToValue(quantityData?.raw_material.unit,'rawMaterialUnit') as string,
-      material_texture_type : quantityData?.type,
-      material_import_date : quantityData?.date,
-      material_bom_lot: null,
-    }]
+  const convertBarcodeData = (items) => {
+    return items.map((item)=>(
+      {
+        material_id: item.code ?? 0,
+        material_type: barcodeOfCompany(userInfo.companyCode).ri_materialType,
+        material_lot_id : item.lot_rm_id,
+        material_lot_number: item.lot_number,
+        material_quantity : item?.realCurrent ?? 0,
+        material_name: !!item.name ? item.name : '-',
+        material_code: item.rm_id,
+        material_customer: item.customer_id ?? "-",
+        material_model: item.model?.model ?? "-",
+        material_machine_name : null,
+        material_size : barcodeOfCompany(userInfo.companyCode, item).ri_materialSize,
+        material_texture : item?.texture,
+        material_unit : TransferCodeToValue(item?.raw_material.unit,'rawMaterialUnit') as string,
+        material_texture_type : item?.type,
+        material_import_date : item?.date,
+        material_bom_lot: null,
+      }
+    ))
   }
 
   const openBarcodeModal = () => {
     if(selectList.size > 0){
       const items = getCheckItems()
-      if(!items[0].is_complete){
-        const convertedData = convertBarcodeData(items[0])
+      if(!items.some((item)=>item.is_complete)){
+        const convertedData = convertBarcodeData(items)
         setBarcodeData(convertedData)
         setModal({type : 'barcode' , isVisible : true})
       }else{
-        Notiflix.Report.warning("경고", "사용 완료된 원자재 재고입니다.", "확인")
+        Notiflix.Report.warning("경고", "사용 완료된 원자재 재고가 존재합니다.", "확인")
       }
-    }else{
+      } else{
       Notiflix.Report.warning("경고", "데이터를 선택해주세요.", "확인")
     }
   }
@@ -472,9 +491,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         setSelectDate={onSelectDate}
         title={"원자재 입고 현황"}
         buttons={
-          selectList.size > 1
-              ?
-              ['', '수정하기', '삭제']:
               ['바코드 미리보기', '수정하기', '삭제']
         }
         buttonsOnclick={onClickHeaderButton}
@@ -506,6 +522,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         height={setExcelTableHeight(basicRow.length)}
       />
       <BarcodeModal
+          multiple
           title={'바코드 미리보기'}
           handleBarcode={handleBarcode}
           handleModal={handleModal}

@@ -28,6 +28,7 @@ import renewalColumn from '../../../main/common/unprintableKey'
 import { alertMsg } from 'shared/src/common/AlertMsg'
 import {insert_productList} from "shared/src/reducer/ProductSelect";
 import {selectUserInfo} from "shared/src/reducer/userInfo";
+import {barcodeOfCompany} from "shared/src/common/companyCode/companyCode";
 
 export interface IProps {
   children?: any
@@ -56,6 +57,7 @@ const BasicProduct = ({}: IProps) => {
   const [keyword, setKeyword] = useState<string>();
   const [productType, setProductType] = useState<string>('0');
   const [typeIndex, setTypeIndex] = useState<number>(0);
+  const [stock , setStock] = useState<number>(0)
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -92,6 +94,7 @@ const BasicProduct = ({}: IProps) => {
     setPageInfo({page:1, total:1})
   }
 
+
   const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
@@ -103,7 +106,7 @@ const BasicProduct = ({}: IProps) => {
 
   useEffect(() => {
     getData(pageInfo.page, keyword)
-  }, [pageInfo.page, productType, typeIndex]);
+  }, [pageInfo.page, productType, typeIndex, stock]);
 
   useEffect(() => {
     dispatch(setMenuSelectState({main:"제품 등록 관리",sub:""}))
@@ -326,9 +329,21 @@ const BasicProduct = ({}: IProps) => {
     return params
   }
 
+
+
   const getData = async (page: number = 1, keyword?: string, _sortingOptions?: TableSortingOptionType) => {
     Notiflix.Loading.circle()
-    const res = await RequestMethod('get', keyword ? 'productSearch' : 'productList',{
+
+
+    const selectApi = () => {
+      if(stock === 1){
+        return keyword ? 'productInsufficientSearch' : 'productInsufficientList'
+      }else{
+        return keyword ? 'productSearch' : 'productList'
+      }
+    }
+
+    const res = await RequestMethod('get', selectApi() ,{
       path: {
         page: page ?? 1,
         renderItem: 18,
@@ -467,7 +482,7 @@ const BasicProduct = ({}: IProps) => {
       "functions":
           {"func0":{"checkLabelStatus":[]},
             "func1":{"clearBuffer":[]},
-            "func2":{"drawBitmap":[dataurl,20,0,800,0]},
+            "func2":{"drawBitmap":[dataurl,0,0,barcodeOfCompany(userInfo.companyCode).pm_drawBitMap,0]},
             "func3":{"printBuffer":[]}
           }
     }
@@ -494,17 +509,6 @@ const BasicProduct = ({}: IProps) => {
     setModal({type , isVisible})
   }
 
-  const materialTypeOfCompany = (data) => {
-    switch (data.type) {
-      case '완제품' :
-        return 6
-      case '반제품':
-      case '재공품':
-        return 7
-      default :
-        return 2
-    }
-  }
 
   const convertBarcodeData = (quantityData) => {
 
@@ -512,7 +516,7 @@ const BasicProduct = ({}: IProps) => {
 
     return [{
       material_id: quantityData.product_id,
-      material_type: userInfo.companyCode === '2SZ57L' ? materialTypeOfCompany(quantityData) : 2,
+      material_type: barcodeOfCompany(userInfo.companyCode, quantityData).pm_materialType,
       material_lot_id : 0,
       material_lot_number: '0',
       material_quantity : quantityData.quantity,
@@ -524,7 +528,6 @@ const BasicProduct = ({}: IProps) => {
       material_size : null,
       material_texture : null,
       material_unit : null,
-
       material_texture_type : null,
       material_import_date : null,
       material_bom_lot: null,
@@ -581,7 +584,12 @@ const BasicProduct = ({}: IProps) => {
             buttonsOnclick={onClickHeaderButton}
             moreButtons={['제품 BOM 일괄 등록']}
             onClickMoreButton={onClickMoreButton}
-
+            isRadio
+            radioValue={stock}
+            onChangeRadioValues={(e) => {
+              setStock(e)
+            }}
+            radioTexts={["전체", "안전재고 부족"]}
         />
         <ExcelTable
             editable

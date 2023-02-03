@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
-  columnlist,
+  columnlist, ExcelDownloadModal,
   ExcelTable,
   Header as PageHeader,
   RequestMethod,
@@ -29,7 +29,7 @@ interface IProps {
 const MesOrderRegister = ({ }: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
-
+  const [excelOpen, setExcelOpen] = useState<boolean>(false)
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [basicRow, setBasicRow] = useState<Array<any>>([{
     date: moment().format('YYYY-MM-DD'),
@@ -145,11 +145,16 @@ const MesOrderRegister = ({ }: IProps) => {
 
   const onClickHeaderButton = (index: number) => {
     switch (index) {
+
       case 0:
+        setExcelOpen(true)
+        break;
+
+      case 1:
         SaveBasic()
 
         break;
-      case 1:
+      case 2:
         if (selectList.size < 1) {
           Notiflix.Report.warning("경고", "데이터를 선택해주세요.", "확인")
         } else {
@@ -180,7 +185,7 @@ const MesOrderRegister = ({ }: IProps) => {
       <PageHeader
         title={"수주 정보 등록"}
         buttons={
-          ['저장하기', '삭제']
+          ['엑셀', '저장하기', '삭제']
         }
         buttonsOnclick={onClickHeaderButton}
       />
@@ -211,8 +216,19 @@ const MesOrderRegister = ({ }: IProps) => {
         width={1576}
         height={setExcelTableHeight(basicRow.length)}
       />
+
       {operationModal && <OperationRegisterModal row={basicRow.filter((v) => v.ai_check)} isOpen={operationModal} setIsOpen={setOperationModal}/>}
+
+      <ExcelDownloadModal
+          isOpen={excelOpen}
+          category={"contract"}
+          title={"수주 정보"}
+          setIsOpen={setExcelOpen}
+          resetFunction={() => {}}
+          onlyForm={true}
+      />
     </div>
+
   );
 }
 

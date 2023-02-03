@@ -40,7 +40,11 @@ const LoginPage = ({children, data, setData } : IProps) => {
           userId : res.user_id,
           companyCode : res.company
         }))
-        router.push('/mes/dashboard').then()
+        if(cookie.load("userInfo").company == "9UZ50Q"){
+          location.href='/mes/dashboard'
+        }else{
+          router.push('/mes/dashboard').then()
+        }
       }
     }else{
       Notiflix.Report.warning('에러', '아이디와 비밀번호를 입력해주세요', '확인')

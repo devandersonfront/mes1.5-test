@@ -1,10 +1,10 @@
 import React from 'react'
-import MenuNavigation from '../../../../component/MenuNav/MenuNavigation'
-import ProfileHeader from '../../../../component/Profile/ProfileHeader'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {NextPageContext} from 'next'
-import {AiDataSet} from 'mes'
+import MenuNavigation from '../../../../../component/MenuNav/MenuNavigation'
+import { ProfileHeader } from 'shared'
+import {BasicPriceLog} from "basic";
 
 interface IProps {
     children?: any
@@ -14,13 +14,12 @@ interface IProps {
 }
 
 const BasicContainer = ({page, keyword, option}: IProps) => {
-
     return (
         <div style={{display: 'flex', }}>
             <MenuNavigation pageType={'BASIC'}/>
             <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
-                <AiDataSet />
+                <BasicPriceLog />
             </div>
         </div>
     );

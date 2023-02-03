@@ -68,7 +68,7 @@ const ToolInfoModal = ({column, row, onRowChange, modify}: IProps) => {
       {
         sequence : tool.sequence,
         setting : tool.setting,
-        tool: {...tool}
+        tool: {...tool, customerArray: null, customerId:null, customer:null}
       }
     )).filter((tool) => tool.tool.tool_id)
 

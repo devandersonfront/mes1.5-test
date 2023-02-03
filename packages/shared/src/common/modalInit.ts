@@ -701,5 +701,25 @@ export const searchModalList: any = {
     { key: "process_id", name: "생산공정", width: 118, editor: TextEditor, formatter: LineBorderContainer, placeholder: 0, inputType: 'number' },
     { key: "goal", name: "목표 생산량", width: 118, editor: TextEditor, formatter: LineBorderContainer, placeholder: 0, inputType: 'number', textType:'modal' },
     { key: "input", name: "자재 선택", width: 118, formatter: BomRegisterModal, modalType:true, type:"noload"},
+  ],
+  aiOperationList:[
+    { key: "code", name: "CODE", width: 118, formatter: LineBorderContainer, textType:'modal' },
+    { key: "name", name: "품명", width: 118, formatter: LineBorderContainer, textType:'modal' },
+    { key: "type", name: "품목종류", width: 118, formatter: LineBorderContainer, textType:'modal' },
+    { key: "unit", name: "단위", width: 118, formatter: LineBorderContainer, textType:'modal' },
+    { key: "contract_amount", name: "주문량", width: 118, formatter: LineBorderContainer, placeholder: 0, inputType: 'number', textType:'modal' },
+    { key: "deadline", name: "작업종료일", width: 118, formatter: CalendarBox, placeholder: 0, type:'Modal', dependency:"deadline"},
+    { key: "safetyStock", name: "안전재고", width: 118, formatter: LineBorderContainer, placeholder: 0, inputType: 'number', textType:'modal' },
+    { key: "stock", name: "현재고", width: 118, formatter: LineBorderContainer, placeholder: 0, inputType: 'number', textType:'modal' },
+    { key: "currentGoal", name: "생산예정량", width: 118, formatter: LineBorderContainer, placeholder: 0, inputType: 'number', textType:'modal' },
+    { key: "total", name: "계", width: 118, formatter: LineBorderContainer, placeholder: 0, inputType: 'number', textType:'modal' },
+    { key: "goal", name: "지시량", width: 118, editor: TextEditor, formatter: LineBorderContainer, placeholder: 0, inputType: 'number', textType:'modal' },
+  ],
+  aiPredictionProduct:[
+    {key: 'predictionModel', name: '예측 모델',  formatter:LineBorderContainer, },
+    {key: 'predictionCode', name: '예측 CODE',  formatter:LineBorderContainer, },
+    {key: 'predictionName', name: '예측 품명',  formatter:LineBorderContainer, },
+    {key: 'predictionProcess', name: '예측 공정',  formatter:LineBorderContainer, },
+    {key: 'ranking', name: '순위', formatter:LineBorderContainer, },
   ]
 }

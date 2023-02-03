@@ -12,6 +12,7 @@ import {
 } from './menuTitles'
 import {BasicOrderType, CncOrderType, HomeOrderType, MesOrderType, PmsOrderType} from './menuTitles/types'
 import {titles} from "./menuTitles/titles";
+import cookie from 'react-cookies'
 
 export type IMenu = 'HOME' | 'BASIC' | 'MES' | 'PMS' | 'WMS' | 'UMS' | 'SETTING' | "CNC" | ""
 
@@ -81,8 +82,15 @@ const HomeOrder = (customTarget?: string): HomeOrderType[] => {
 const BasicOrder = (customTarget?: string): BasicOrderType[] => {
     const defaultOrder: BasicOrderType[] = [ 'userAuthMgmt', 'factoryMgmt', 'customerMgmt', 'processMgmt', 'qualityMgmt', 'deviceMgmt',
         'machineMgmt', 'moldMgmt', 'toolMgmt', 'rawMgmt', 'subMgmt', 'productMgmt', 'documentMgmt' ]
+
+    if(cookie.load('userInfo')?.company === "9UZ50Q"){
+        defaultOrder.push("welding")
+    }
+
     switch(customTarget){
         case 'dohwa': defaultOrder.splice(7,1)
+        case 'ai' : return [ 'userAuthMgmt', 'factoryMgmt', 'customerMgmt', 'processMgmt', 'qualityMgmt', 'deviceMgmt',
+            'machineMgmt', 'moldMgmt', 'toolMgmt', 'rawMgmt', 'subMgmt', 'productMgmt', 'opAiDataset', 'documentMgmt' ]
         default: return defaultOrder
     }
 }

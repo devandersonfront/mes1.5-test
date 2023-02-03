@@ -37,7 +37,7 @@ export const titles = {
     _todayOpList: '금일 작업지시서 리스트',
     _opReList: '작업 일보 리스트',
     _opAiReList: 'AI 작업 일보 리스트',
-    _opAiDataset: 'AI 데이터셋',
+    opAiDataset: 'AI 데이터셋',
     _opComList: '작업 완료 리스트',
     mesRawMgmt: '원자재 관리',
     _rawReg: '원자재 입고 등록',
@@ -113,6 +113,7 @@ export const titles = {
     _moldProblemReg: '금형 문제 유형 등록',
     _moldDailyInspReg: '금형 일상정검 등록',
     _moldDailyInspSts: '금형 일상정검 일일현황',
+    welding:'용접 정보 리스트'
 }
 
 export const dohwaTitles = {

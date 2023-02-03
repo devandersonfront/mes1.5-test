@@ -118,7 +118,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
       rowKeyGetter={rowKeyGetter}
       className={className}
       columns={headerList}
-      rows={row.length > 0 ? row : []}
+      rows={row?.length > 0 ? row : []}
       components={{noRowsFallback: <EmptyRowsRenderer />}}
       onColumnResize={(v, i) => {
         tempData.map((time,i)=>{
@@ -162,8 +162,8 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
         editable: editable,
       }}
       onRowsChange={(data, idx) => {
-        if(type === 'expandable'){
-          return expandRowsChange(data,idx)
+        if(data[idx.indexes[0]]?.hasOwnProperty('expanded') && !data[idx.indexes[0]]?.isChange){
+          expandRowsChange(data,idx)
         }
         setSelectRow && setSelectRow(idx.indexes[0])
         setRow(data, idx.indexes[0])}}
@@ -195,7 +195,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
         scrollEnd && scrollEnd(isAtBottom(e))
       }}
         //@ts-ignore
-      rowClass={(row : any) => row.color}
+      rowClass={(row : any) => row?.color}
     />
   }
 
