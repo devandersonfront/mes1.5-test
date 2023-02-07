@@ -73,7 +73,7 @@ const WorkModifyModal = ({row, isOpen, setIsOpen}: IProps) => {
         goal: row.operation_sheet?.goal,
         total_counter: row.good_quantity + row.poor_quantity,
         total_good_quantity: row?.good_quantity,
-        total_poor_quantity: row?.good_quantity
+        total_poor_quantity: row?.poor_quantity
         // unit: row[0].operation_sheet?.product?.unit,
       })
       const newList = {

@@ -95,59 +95,16 @@ const AddTabButton = ({ row, column, onRowChange}: IProps) => {
         break;
     }
     if(res){
-      // const lots = Array.isArray(row.bom) ? row.bom.map((bom) => bom.lot) : [row.bom].map((bom) => bom.lot)
       const parsedRes = ParseResponse(res)
-      // const lots2 = Array.isArray(row.bom) ? row.bom.map((bom) => bom.lot) : [row.bom].map((bom) => bom.lot)
-      // const lotList = lots2.map((v, i) => {
-      //         let type, date, warehousing, elapsed
-      //         switch(v?.type){
-      //           case 0:
-      //             type = 'child_lot_rm'
-      //             date = v.date
-      //             warehousing = v.warehousing
-      //             elapsed = v.elapsed
-      //             break
-      //           case 1 :
-      //             type = 'child_lot_sm'
-      //             date = v.date
-      //             warehousing = v.warehousing
-      //             elapsed = null
-      //             break
-      //           case 2:
-      //             if(row.product_type === '외주품'){
-      //               type = 'child_lot_outsourcing'
-      //               date = moment(v[type].import_date).format("YYYY-MM-DD")
-      //               warehousing = v[type].warehousing
-      //               elapsed = null
-      //             } else {
-      //               type = 'child_lot_record'
-      //               date = moment(v[type].end).format("YYYY-MM-DD")
-      //               warehousing = v[type].good_quantity
-      //               elapsed = null
-      //             }
-      //             break
-      //         }
-      //         return {
-      //           ...v,
-      //           ...v[type],
-      //           date,
-      //           elapsed,
-      //           warehousing,
-      //           current: v.current,
-      //           amount: v.amount,
-      //           seq: i+1,
-      //         }
-      //       })
+
       const lots =  {
-        ...row,
+        // ...row,
         ...inputMaterial,
         page: res.page,
         total: res.totalPages,
         clicked: true,
-        lotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.lotList,...parsedRes],
-        // lotList: lotList,
-        // lotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.lotList,...parsedRes],
-        // rowLotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.rowLotList,...parsedRes],
+        lotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.rowLotList,...parsedRes],
+        rowLotList: initPage && initPage === 1 ? [...parsedRes] : [ ...inputMaterial.rowLotList,...parsedRes],
         loadMaterialLot
       }
       if(setInput){

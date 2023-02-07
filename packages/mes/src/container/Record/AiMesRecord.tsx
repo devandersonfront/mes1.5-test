@@ -322,7 +322,7 @@ const AiMesRecord = ({}: IProps) => {
                     }else if(v.bom == null){
                         throw(alertMsg.needsBom)
                     }
-                    if(v.molds.length > 0) {
+                    if(v.molds?.length > 0) {
                         v.bom.map(bom => {
                             const finalAmount = new Big(Number(bom.lot?.amount)).div(bom?.bom.cavity)
                             const finalUsage = finalAmount.times(bom.bom?.usage)
@@ -332,6 +332,7 @@ const AiMesRecord = ({}: IProps) => {
                             //   lotTotalAmountMap.set(bom.osb_id, currentAmount + Number(bom.lot.amount))
                         })
                     }
+
                     return {
                         ...v,
                         additional:[],
@@ -377,7 +378,7 @@ const AiMesRecord = ({}: IProps) => {
                                     }
                                 }}
                         }).filter(v=>v.tool.tool.code) ?? [],
-                        machines: [],
+                        machines: v.machines.map(machine => ({ machine: {...machine.machine, machine: { ...machine.machine.machine, additional: []}}})),
                         version: undefined,
                         uph:0,
                         // inspection_category:0,
@@ -386,6 +387,7 @@ const AiMesRecord = ({}: IProps) => {
                     }
                 }
                 }).filter((v) => v)
+
             const res = await RequestMethod('post', `aiCncRecordSave`,postBody.map((finalData) => forSaveCleanUpData(finalData)))
             if (res?.length > 0) {
                 Notiflix.Report.success('저장되었습니다.', '', '확인', () => {

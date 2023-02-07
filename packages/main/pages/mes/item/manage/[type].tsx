@@ -158,7 +158,6 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         const randomID = Math.random()*100;
         return {...value, id:"addi_"+randomID};
       })
-      console.log(baseList, addiList)
       const sortList = baseList.map((item, index) => {
         return {...item, sequence:index}
       })
@@ -167,7 +166,6 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         return {...item, sequence:index+28}
       })
 
-      console.log(sortList, sortAddList)
       Notiflix.Loading.remove(300)
       setBaseItem(sortList)
       setAddiItem(sortAddList)
@@ -236,7 +234,6 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   }
 
   const deleteItem = async (code: string, items: IItemMenuType[]) => {
-    console.log(selectList, selectRow)
     if(selectList.size === 0){
       return Notiflix.Report.warning(
           '경고',
@@ -389,7 +386,6 @@ const ItemManagePage = ({title, type, code}: IProps) => {
                     setSelectRow(e)
                   }}
                   setSelectList={(e) => {
-                    console.log("checkbox : ", e)
                     setSelectList(e)
                   }}
               />
