@@ -27,7 +27,7 @@ const MesKpiOperation = () => {
     const [entireRow , setEntireRow] = useState<any[]>([])
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
     const [processBasicRow, setProcessBasicRow] = useState<any>({id: ''});
-    const [dropDown , setDropDown] = useState<string[]>(['전체'])
+    const [dropDown , setDropDown] = useState<string[]>([])
 
     const changeHeaderStatus = (value:number) => {
         setHeaderStatus(value);
@@ -52,13 +52,11 @@ const MesKpiOperation = () => {
         to: moment(new Date()).subtract(1,"day").format('YYYY-MM-DD')
     });
 
-
     const makeDropDownList = (rows) => {
-        const rowNames = rows.map((row)=> row.name)
-        const dropDownList = rowNames.filter((v, i) => rowNames.indexOf(v) === i);
-        setDropDown([dropDown,...dropDownList])
+        const rowCodes = rows.map((row)=> row.code)
+        const dropDownList = rowCodes.filter((v, i) => rowCodes.indexOf(v) === i);
+        setDropDown(['전체',...dropDownList])
     }
-
 
     const buttonEvents = async(index:number) => {
         switch (index) {
@@ -114,6 +112,8 @@ const MesKpiOperation = () => {
                     operation : v.cu_rate
                 }
             })
+
+
             setPauseBasicRow(filterResponse)
             makeDropDownList(filterResponse)
             setEntireRow(filterResponse)
@@ -159,7 +159,7 @@ const MesKpiOperation = () => {
         if(index === 0){
             return setPauseBasicRow(entireRow)
         }
-        setPauseBasicRow(entireRow.filter((row)=>row.name === dropDown[index]))
+        setPauseBasicRow(entireRow.filter((row)=>row.code === dropDown[index]))
     }
 
     return (
