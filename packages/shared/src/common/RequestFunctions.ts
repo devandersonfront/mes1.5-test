@@ -184,8 +184,7 @@ export const requestApi = async (type: RequestType,url: string, data?: any, toke
               return false
             }
           })
-  }
-}
+  }}
 
 export const RequestMethod = async (MethodType: RequestType, apiType: string, data?: any, token?: string, responseType?: 'blob', params?: any, path?:any) => {
   const tokenData = token ?? cookie.load('userInfo')?.token;
@@ -259,6 +258,7 @@ export const RequestMethod = async (MethodType: RequestType, apiType: string, da
         })
   }else {
     const response = await requestApi(MethodType, ApiList[apiType], data, tokenData, responseType, params, path)
+    Notiflix.Loading.remove()
     return response
   }
 }

@@ -10,6 +10,7 @@ import Notiflix from "notiflix";
 import {useRouter} from "next/router";
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
+import DropDown from "shared/src/components/Dropdown/DropDown";
 
 
 interface SelectParameter {
@@ -22,8 +23,12 @@ const MesKpiOperation = () => {
     const router = useRouter()
     const dispatch = useDispatch()
 
+
+    const [entireRow , setEntireRow] = useState<any[]>([])
     const [pauseBasicRow, setPauseBasicRow] = useState<any[]>([]);
     const [processBasicRow, setProcessBasicRow] = useState<any>({id: ''});
+    const [dropDown , setDropDown] = useState<string[]>([])
+
     const changeHeaderStatus = (value:number) => {
         setHeaderStatus(value);
     }
@@ -38,6 +43,7 @@ const MesKpiOperation = () => {
         }
         return v
     }));
+
     const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set());
     const [headerStatus, setHeaderStatus] = useState<number | string>("");
 
@@ -45,6 +51,12 @@ const MesKpiOperation = () => {
         from: moment(new Date()).subtract(1,'month').format('YYYY-MM-DD'),
         to: moment(new Date()).subtract(1,"day").format('YYYY-MM-DD')
     });
+
+    const makeDropDownList = (rows) => {
+        const rowCodes = rows.map((row)=> row.code)
+        const dropDownList = rowCodes.filter((v, i) => rowCodes.indexOf(v) === i);
+        setDropDown(['전체',...dropDownList])
+    }
 
     const buttonEvents = async(index:number) => {
         switch (index) {
@@ -100,7 +112,11 @@ const MesKpiOperation = () => {
                     operation : v.cu_rate
                 }
             })
+
+
             setPauseBasicRow(filterResponse)
+            makeDropDownList(filterResponse)
+            setEntireRow(filterResponse)
         }
     }
 
@@ -139,6 +155,13 @@ const MesKpiOperation = () => {
         })
     },[])
 
+    const filterRows = (index : number) => {
+        if(index === 0){
+            return setPauseBasicRow(entireRow)
+        }
+        setPauseBasicRow(entireRow.filter((row)=>row.code === dropDown[index]))
+    }
+
     return (
         <div className={'excelPageContainer'}>
             <PageHeader title={"설비가동률(P)"} />
@@ -173,6 +196,9 @@ const MesKpiOperation = () => {
                         </span>
                 }
                 <div style={{display: 'flex', }}>
+                    <DropDown items={processBasicRow.id ? dropDown : []} onClick={(index)=>filterRows(index)}>
+                        <span style={{marginLeft: 10,fontSize: '30px', color: 'white', fontWeight: 'bold'}} className="material-symbols-outlined">more_vert</span>
+                    </DropDown>
                     <DateRangeCalendar selectDate={selectDate as SelectParameter} onChangeSelectDate={setSelectDate} dataLimit={false} />
                     <ButtonGroup buttons={['']} buttonsOnclick={buttonEvents}/>
                 </div>

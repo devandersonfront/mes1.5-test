@@ -15,6 +15,8 @@ import axios from "axios";
 import {SF_ENDPOINT, SF_ENDPOINT_EXCEL} from "../../common/configset";
 import Axios from "axios";
 import Notiflix from "notiflix"
+import {router} from "next/client";
+import {useRouter} from "next/router";
 
 interface IProps {
   isOpen: boolean
@@ -23,10 +25,12 @@ interface IProps {
   setIsOpen: (ioOpen: boolean) => void
   resetFunction:() => void
   onlyForm ?: boolean
+  toMovePageName ?: string
 }
 
-const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction , onlyForm}: IProps) => {
+const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction , onlyForm , toMovePageName}: IProps) => {
   const token = cookie.load('userInfo')?.token
+    const router = useRouter()
     const ref = useRef(null)
     const convertBlobToBase64 = (blob) => new Promise((resolve, reject) => {
         const reader = new FileReader;
@@ -39,6 +43,7 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction ,
 
   const formExcelDownload = async() => {
     let blobData:Blob
+    Notiflix.Loading.circle()
     await axios.get(`${SF_ENDPOINT_EXCEL}/api/v1/download/form/${category}`, {
       headers:{
         'Content-Type': "ms-vnd/excel",
@@ -47,9 +52,11 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction ,
       responseType:"blob"
     })
         .then((res) => {
+            Notiflix.Loading.remove()
             blobData = res.data
         }).catch((err) => {
-          console.log(err)
+            Notiflix.Loading.remove()
+            console.log(err)
         })
 
       if(blobData){
@@ -64,6 +71,7 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction ,
 
   const allExcelDownload = async () => {
       let blobData:Blob
+      Notiflix.Loading.circle()
       await axios.get(`${SF_ENDPOINT_EXCEL}/api/v1/download/${category}`, {
           headers:{
               'Content-Type': "ms-vnd/excel",
@@ -72,6 +80,7 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction ,
           responseType:"blob"
       }, )
           .then((res) => {
+              Notiflix.Loading.remove()
               blobData = res.data
           }).catch((err) => {
               console.log(err)
@@ -89,7 +98,7 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction ,
 
     const excelUpload = async(file:File) => {
       const formData = new FormData()
-
+      Notiflix.Loading.circle()
       formData.append("file", file)
         await Axios.post(`${SF_ENDPOINT_EXCEL}/api/v1/upload/${category}`, formData,{
                 headers:
@@ -99,10 +108,13 @@ const ExcelDownloadModal = ({isOpen, category, title, setIsOpen, resetFunction ,
                     }
             })
           .then((res) => {
+              Notiflix.Loading.remove()
               resetFunction()
               setIsOpen(false)
+              toMovePageName && router.push(toMovePageName)
               // blobData = res.data
           }).catch((err) => {
+              Notiflix.Loading.remove()
               if(err.response.data.message){
                   Notiflix.Report.failure("실패",err.response.data.message,"확인")
               }else{

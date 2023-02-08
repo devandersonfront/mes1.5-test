@@ -13,7 +13,7 @@ import {searchModalList} from '../../common/modalInit'
 import Search_icon from '../../../public/images/btn_search.png'
 import {RequestMethod} from '../../common/RequestFunctions'
 import Notiflix from 'notiflix'
-import {TransferCodeToValue} from "../../common/TransferFunction";
+import { TransferCodeToValue, TransferValueToCode } from '../../common/TransferFunction'
 import {UploadButton} from "../../styles/styledComponents";
 import { getUsageType } from '../../common/Util'
 import Tooltip from 'rc-tooltip'
@@ -64,6 +64,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                 aiData.machineType = TransferCodeToValue(row.machine.machine.type, 'machine'),
                 aiData.isDefault = true
                 aiData.setting = true
+                aiData.machine_id = row.machine.machine.machine_id
                 setSearchList([aiData])
             }
             setSummaryData({
@@ -139,7 +140,8 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                         machine: {
                             sequence: v.sequence,
                             machine: {
-                                ...v
+                                ...v,
+                                type: TransferValueToCode(v.machineType, "machine")
                             },
                             setting: v.setting
                         }

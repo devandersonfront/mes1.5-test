@@ -393,7 +393,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
         type: settingType(row.type),
         // warning 값에다 데이터를 넣으면 전체 row 색을 바꿀 수 있음(꼭 warning 값이 아니고 바꿔도됨)
         // warning:index % 2 ? "red" : null,
-        customer_id: row.customer && row.customer.name,
+        customer_id: row.customer ? row.customer.name : "-",
         id: `rawmaterial_${random_id}`,
       };
     });
