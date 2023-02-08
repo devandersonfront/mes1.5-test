@@ -82,8 +82,12 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
     (async () => {
       if (basicRow.every((row)=>row.bom_root_id) && inputBom) {
         const result = await Promise.all(basicRow.map(async row => await SearchBasic(row)))
-        setBasicRow(result)
-        setInputBom(false)
+        if(result.includes(undefined)){
+          Notiflix.Report.warning("경고","BOM을 등록해주세요.","확인",)
+        }else{
+          // setBasicRow(result)
+        }
+        // setInputBom(false)
       }
     })();
   },[inputBom])
@@ -150,7 +154,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const SearchBasic = async (row) => {
     Notiflix.Loading.circle()
     const res = await RequestMethod('get', `bomLoad`,{path: { key: row.bom_root_id }})
-    if(res) {
+    if(res && !!res) {
       let searchList = changeRow(res)
       const isValidation = executeValidation(searchList)
       if (!isValidation) {
@@ -464,6 +468,11 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             setRow={async (row) => {
               if(row.length > 0)
               {
+                const result = await Promise.all(row.map(async one => await SearchBasic(one)))
+                if(result.includes(undefined)){
+                  Notiflix.Report.warning("경고","BOM을 등록해주세요.","확인",)
+                  return
+                }
                 if(parentProduct ? codeCheck ? row?.[0].product?.product_id !== parentProduct?.product?.product_id : row?.[0].contract_id !== parentProduct.contract_id : true) {
                   setParentProduct(row?.[0])
                 } else {
