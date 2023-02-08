@@ -86,6 +86,8 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
     }
   }
 
+  console.log(selectMenu)
+
   return (
       <div className={'nav unprintable'} style={{display: 'flex' , height : '100%'}}>
         <MenuNavComponent>
@@ -199,7 +201,7 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
                                 } else if(sub.url) {
                                   router.push(sub.url)
                                 }
-                              }} selectSub={sub.url == selectMenu.sub}>
+                              }} selectSub={sub.url === selectMenu.sub}>
                                 <p style={{fontSize: 13, paddingLeft: 12}}>· {sub.title}</p>
                               </SideMenuItem>
                               {
@@ -213,7 +215,7 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
                                           third : []
                                         }))
                                       }
-                                    }} selectSub={third.url == selectMenu.sub}>
+                                    }} selectSub={third.url === selectMenu.sub}>
                                       <p style={{fontSize: 13, paddingLeft: 30}}>· {third.title}</p>
                                     </SideMenuItem>
                                 ))

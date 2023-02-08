@@ -97,7 +97,7 @@ const AiDataSet = () => {
         getData(pageInfo.page)
     },[pageInfo.page])
     useEffect(() => {
-        dispatch(setMenuSelectState({ main: "AI 데이터셋", sub: "" }));
+        dispatch(setMenuSelectState({ main: "AI 데이터셋", sub: "/mes/ai/dataset" }));
         return () => {
             dispatch(deleteMenuSelectState());
         };

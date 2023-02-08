@@ -62,7 +62,7 @@ const BasicTool = ({ page, search, option }: IProps) => {
   }, [pageInfo.page]);
 
   useEffect(() => {
-    dispatch(setMenuSelectState({ main: "공구 기준정보", sub: "" }));
+    dispatch(setMenuSelectState({ main: "공구 기준정보", sub: "/mes/basic/tool" }));
     return () => {
       dispatch(deleteMenuSelectState());
     };

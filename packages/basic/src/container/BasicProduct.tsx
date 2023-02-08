@@ -109,7 +109,7 @@ const BasicProduct = ({}: IProps) => {
   }, [pageInfo.page, productType, typeIndex, stock]);
 
   useEffect(() => {
-    dispatch(setMenuSelectState({main:"제품 등록 관리",sub:""}))
+    dispatch(setMenuSelectState({main:"제품 등록 관리",sub:"/mes/basic/productV1u"}))
     return (() => {
       dispatch(deleteMenuSelectState())
     })
