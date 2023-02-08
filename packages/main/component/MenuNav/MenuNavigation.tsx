@@ -69,6 +69,7 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
       dispatch(setMenuState({
         main: [],
         sub: [],
+        third : []
       }))
     }else{
       setMenuType(selectType)
@@ -77,6 +78,9 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
         main: tmpMenu,
         sub: new Array(tmpMenu?.length).fill([]).map((v, i) => {
           return []
+        }),
+        third: new Array(tmpMenu?.length).fill([]).map((v, i) => {
+          return new Array(30).fill([])
         }),
       }))
     }
@@ -173,18 +177,48 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
                     </SideMenuItem>
                     {
                       selector.sub[i] && selector.sub[i].length ?
-                          selector.sub[i].map((sub =>
-                                  <SideMenuItem onClick={() => {
-                                    if(sub.url){
-                                      router.push(sub.url)
-                                      dispatch(setMenuState({
-                                        main: [],
-                                        sub: [],
-                                      }))
-                                    }
-                                  }} selectSub={sub.url == selectMenu.sub}>
-                                    <p style={{fontSize: 13, paddingLeft: 12}}>· {sub.title}</p>
-                                  </SideMenuItem>
+                          selector.sub[i].map(((sub,index) =>
+                            <>
+                              <SideMenuItem onClick={() => {
+                                if(sub.subMenu && sub.subMenu.length){
+                                  let tmpSubMenus = [...selector.third]
+                                  // 있으면 비우고 없으면 채워라
+                                  if(tmpSubMenus[i][index].length){
+                                    tmpSubMenus = tmpSubMenus.map(menu => [...menu])
+                                    tmpSubMenus[i][index] = []
+                                  }else{
+                                    //이중배열 복사
+                                    //*깊은 복사하지 않고 이중배열을 직접 바꿀시 원본 훼손문제로 에러뜸
+                                    tmpSubMenus = tmpSubMenus.map(menu => [...menu])
+                                    tmpSubMenus[i][index] = sub.subMenu ?? []
+                                  }
+                                  dispatch(setMenuState({
+                                    ...selector,
+                                    third: [...tmpSubMenus],
+                                  }))
+                                } else if(sub.url) {
+                                  router.push(sub.url)
+                                }
+                              }} selectSub={sub.url == selectMenu.sub}>
+                                <p style={{fontSize: 13, paddingLeft: 12}}>· {sub.title}</p>
+                              </SideMenuItem>
+                              {
+                                selector.third[i][index].map((third)=>(
+                                    <SideMenuItem onClick={() => {
+                                      if(third.url){
+                                        router.push(third.url)
+                                        dispatch(setMenuState({
+                                          main: [],
+                                          sub: [],
+                                          third : []
+                                        }))
+                                      }
+                                    }} selectSub={third.url == selectMenu.sub}>
+                                      <p style={{fontSize: 13, paddingLeft: 30}}>· {third.title}</p>
+                                    </SideMenuItem>
+                                ))
+                              }
+                            </>
                           ))
                           : null
                     }
