@@ -67,7 +67,7 @@ const BasicMold = ({}: IProps) => {
   }, [pageInfo.page]);
 
   useEffect(() => {
-    dispatch(setMenuSelectState({ main: "금형 기준정보", sub: "" }));
+    dispatch(setMenuSelectState({ main: "금형 기준정보", sub: "/mes/basic/moldV1u" }));
     return () => {
       dispatch(deleteMenuSelectState());
     };

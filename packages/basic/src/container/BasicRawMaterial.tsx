@@ -82,7 +82,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
   }, [pageInfo.page, safety_status]);
 
   useEffect(() => {
-    dispatch(setMenuSelectState({ main: "원자재 기준정보", sub: "" }));
+    dispatch(setMenuSelectState({ main: "원자재 기준정보", sub: "/mes/basic/rawmaterialV1u" }));
     return () => {
       dispatch(deleteMenuSelectState());
     };

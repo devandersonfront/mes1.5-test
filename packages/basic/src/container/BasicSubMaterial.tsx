@@ -69,7 +69,7 @@ const BasicSubMaterial = ({ }: IProps) => {
   }, [pageInfo.page]);
 
   useEffect(() => {
-    dispatch(setMenuSelectState({ main: "부자재 기준정보", sub: "" }));
+    dispatch(setMenuSelectState({ main: "부자재 기준정보", sub: "/mes/basic/submaterial" }));
     return () => {
       dispatch(deleteMenuSelectState());
     };

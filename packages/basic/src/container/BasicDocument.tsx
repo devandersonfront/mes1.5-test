@@ -216,7 +216,7 @@ const BasicDocument = ({ page, keyword, option, doc_id }: IProps) => {
     }, [doc_id])
 
     useEffect(() => {
-        dispatch(setMenuSelectState({ main: "문서 관리", sub: "" }))
+        dispatch(setMenuSelectState({ main: "문서 관리", sub: "/mes/basic/document" }))
         return (() => {
             dispatch(deleteMenuSelectState())
         })
