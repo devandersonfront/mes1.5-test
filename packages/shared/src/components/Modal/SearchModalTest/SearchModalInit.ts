@@ -95,6 +95,12 @@ export const SearchInit: Record<string, SearchInitType> = {
     searchFilter: ['제조 번호', '기게 이름', '기계 종류', '톤 수', '공장명'],
     excelColumnType: 'device'
   },
+  aiProduct:{
+    title: '제품 검색',
+    searchFilter: ['CODE', '모델', '거래처', '품명'],
+    excelColumnType: 'aiProduct',
+    placeholder: 'CODE 검색'
+  },
   product: {
     title: '제품 검색',
     searchFilter: ['CODE', '모델', '거래처', '품명'],

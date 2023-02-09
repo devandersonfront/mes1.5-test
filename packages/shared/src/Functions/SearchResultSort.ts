@@ -64,6 +64,23 @@ export const SearchResultSort = (infoList, type: string) => {
         }
       })
     }
+    case 'aiProduct': {
+      const columnKeys = searchModalList.productSearch.map(columns => columns.key)
+      return infoList.map((v) => {
+        let obj = {}
+        columnKeys.map(column => obj[column] = v[column] === undefined ? noneSelected : v[column])
+        return {
+          ...v,
+          ...obj,
+          product_type: TransferCodeToValue(v.type, 'productType'),
+          // customer_name: v.customer ? v.customer.name : "",
+          customer_name: "aiTest",
+          model_name: v.model ? v.model.model : "",
+          type_name: TransferCodeToValue(v.type, 'product'),
+          type_id:v.type
+        }
+      })
+    }
     case 'rawMaterial': {
       const columnKeys = searchModalList.rawMaterialSearch.map(columns => columns.key)
       return infoList.map((v) => {

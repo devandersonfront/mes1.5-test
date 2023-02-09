@@ -114,8 +114,8 @@ const AiMesRecord = ({}: IProps) => {
                 page: page,
                 renderItem: 18,
             },
-            // params: getRequestParams(keyword, {from:"2022-01-01", to:"2023-12-31"}, _sortingOptions,radioIdx)
-            params: getRequestParams(keyword, date, _sortingOptions,radioIdx)
+            params: getRequestParams(keyword, {from:"2022-01-01", to:"2023-12-31"}, _sortingOptions,radioIdx)
+            // params: getRequestParams(keyword, date, _sortingOptions,radioIdx)
         });
         if(res){
             setDeleteBasic(res.info_list)

@@ -38,6 +38,9 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([])
+
+  const [rankingList, setRankingList] = useState<any[]>([{}])
+
   const [tab, setTab] = useState<number>(0)
   const [searchModalInit, setSearchModalInit] = useState<any>()
   const [searchModalColumn, setSearchModalColumn] = useState<Array<IExcelHeaderType>>()
@@ -202,6 +205,23 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     })
   }, [tab])
 
+  // AI 작업일보 우선순위 list 뽑는 API
+  const getAiRankingList = async() => {
+
+    // await RequestMethod("get", "aiRankListLoad", {})
+    //     .then((res) => {
+    //       console.log(res)
+    //       setRankingList(res)
+    //     })
+    //     .catch((err) => {
+    //       console.log(err)
+    //
+    //     })
+
+    // setRankingList()
+
+  }
+
   const LoadBasic = async (page:number) => {
     setLoadState(false)
     Notiflix.Loading.circle();
@@ -308,6 +328,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           setPageInfo({page:res.page, total:res.totalPages});
         }else{
           setSearchList([...SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
+          setRankingList(SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType).filter((row, index) => index < 3))
           setPageInfo({page:res.page, total:res.totalPages});
         }
       }
@@ -315,6 +336,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     setLoadState(true)
     Notiflix.Loading.remove()
   }
+
+
   const getContents = () => {
     if(column.theme === "aiModal" && (!row?.operationRecord?.operation_sheet.os_id )){
       return (
@@ -726,13 +749,25 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
             {column.type !== "toolProduct" &&
               SearchBox()
             }
+            {
+            (column.type == "product" && column.theme == "aiModal") &&
+              <div style={{marginBottom:10}}>
+                <ExcelTable
+                    type={'searchModal'}
+                    headerList={searchModalInit && searchModalColumn.concat({ key: "rank", name: "순위", width: 118 },)}
+                    row={rankingList}
+                    width={1744}
+                    height={160}
+                />
+              </div>
+            }
             <ExcelTable
               resizable
               headerList={ searchModalInit && searchModalColumn}
               row={searchList ?? []}
               width={1744}
               rowHeight={32}
-              height={640}
+              height={(column.type == "product" && column.theme == "aiModal") ? 480 : 640}
               onRowClick={(clicked) => {
                 const e = searchList.indexOf(clicked)
                 const update = searchList.map(
