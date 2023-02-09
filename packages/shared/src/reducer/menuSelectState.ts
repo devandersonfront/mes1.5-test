@@ -7,7 +7,7 @@ export type MenuSelectState = {
 }
 
 const initialState : MenuSelectState = {
-    sub: '',
+    sub: 'init',
     main: ''
 }
 
