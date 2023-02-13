@@ -327,8 +327,17 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           setSearchList([ ...searchList,...SearchResultSort( res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
         }else{
+          const dummyData = []
+          SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType).filter((row, index) => index < 3)
+              .map((row, index) => {
+                if(index < 3){
+                  dummyData.push({rank:index+1, ...row})
+                }
+              })
+
+
           setSearchList([...SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
-          setRankingList(SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType).filter((row, index) => index < 3))
+          setRankingList(dummyData)
           setPageInfo({page:res.page, total:res.totalPages});
         }
       }
@@ -339,7 +348,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
 
 
   const getContents = () => {
-    if(column.theme === "aiModal" && (!row?.operationRecord?.operation_sheet.os_id )){
+    if(column.theme === "aiModal" && column.key == "identification" && (!row?.operationRecord?.operation_sheet.os_id )){
       return (
           <CellButton onClick={async() => {
             await RequestMethod("post", "operationSave", [row.operationRecord.operation_sheet])
@@ -754,7 +763,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               <div style={{marginBottom:10}}>
                 <ExcelTable
                     type={'searchModal'}
-                    headerList={searchModalInit && searchModalColumn.concat({ key: "rank", name: "순위", width: 118 },)}
+                    headerList={searchModalInit && [{ key: "rank", name: "순위", width: 80 }, ...searchModalColumn]}
                     row={rankingList}
                     width={1744}
                     height={160}
