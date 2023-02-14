@@ -209,6 +209,7 @@ const AiMesRecord = ({}: IProps) => {
     }
 
     const forSaveCleanUpData = (res:any) => {
+        console.log(res)
         return {
             additional:res?.additional ?? null,
             bom:res?.bom ?? null,
@@ -219,7 +220,7 @@ const AiMesRecord = ({}: IProps) => {
             date:res?.date ?? null,
             deadline:res?.deadline ?? null,
             end:res?.end ?? null,
-            goal:res?.goal ?? null,
+            // goal:res?.goal ?? null,
             good_quantity:res?.good_quantity ?? null,
             id:res?.id ?? null,
             identification:res?.identification ?? null,
@@ -240,7 +241,7 @@ const AiMesRecord = ({}: IProps) => {
             status:res?.status ?? null,
             sum:res?.sum ?? null,
             tools:res?.tools ?? null,
-            type:res?.type ?? null,
+            type:res?.product?.type ?? null,
             unit:res?.unit ?? null,
             uph:res?.uph ?? null,
             worker:res?.worker ?? res.operationRecord.worker,
@@ -305,6 +306,7 @@ const AiMesRecord = ({}: IProps) => {
         if(selectList.size <= 0) return Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
         // if(selectList.size > 1) return Notiflix.Report.warning("경고","데이터를 하나만 선택해주세요.","확인")
         try{
+            console.log("basicRow : ", basicRow)
             const postBody = basicRow.map((v) => {
                 const cavity = v.molds?.length > 0 ? v.molds[0].mold?.mold?.cavity : 1
                 if (selectList.has(v.id)) {
@@ -378,7 +380,8 @@ const AiMesRecord = ({}: IProps) => {
                                     }
                                 }}
                         }).filter(v=>v.tool.tool.code) ?? [],
-                        machines: v.machines.map(machine => ({ machine: {...machine.machine, machine: { ...machine.machine.machine, additional: []}}})),
+                        machines:[{machine:v.machine}],
+                            // v.machines.map(machine => ({ machine: {...machine.machine, machine: { ...machine.machine.machine, additional: []}}})),
                         version: undefined,
                         uph:0,
                         // inspection_category:0,
