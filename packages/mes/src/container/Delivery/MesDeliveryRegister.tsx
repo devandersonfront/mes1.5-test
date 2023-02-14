@@ -35,35 +35,32 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
   const [codeCheck, setCodeCheck] = useState<boolean>(false)
 
+
+
   useEffect(() => {
     getMenus().then((res) => {
       if(res && orderIdentificationId.identification !== ""){
-        RequestMethod("get", "contractSearch", {
+        RequestMethod("get", "contractLoad", {
           path:{
-            page:1,
-            renderItem:22
-          },
-          params:{
-            keyword:orderIdentificationId.identification,
-            opt:0
+            contract_id:orderIdentificationId.identification,
           }
         })
             .then((res) => {
               setBasicRow([{
                 ...basicRow[0],
-                date: res.info_list[0].deadline,
-                contract: res.info_list[0],
-                contract_id: res.info_list[0].identification,
-                product:res.info_list[0].product,
+                date: res.deadline,
+                contract: res,
+                contract_id: res.identification,
+                product:res.product,
                 // product_id: res.info_list[0].product.product_id,
-                customer_id: res.info_list[0].product.customer?.name,
-                name: res.info_list[0].product.name,
-                product_name: res.info_list[0].product.name,
-                cm_id: res.info_list[0].product.model?.model,
-                product_id: res.info_list[0].product.code,
-                type: TransferCodeToValue(res.info_list[0].product.type, "product"),
-                unit: res.info_list[0].product.unit,
-                version: res.info_list[0].product.version,
+                customer_id: res.product.customer?.name,
+                name: res.product.name,
+                product_name: res.product.name,
+                cm_id: res.product.model?.model,
+                product_id: res.product.code,
+                type: TransferCodeToValue(res.product.type, "product"),
+                unit: res.product.unit,
+                version: res.product.version,
               }])
             })
       }

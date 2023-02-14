@@ -125,14 +125,21 @@ export const MesTitles = (customTarget?: string) => {
     _outsourcingExport: toMenu(titles._outsourcingExport,'/mes/outsourcing/delivery'),
     _outsourcingExportList: toMenu(titles._outsourcingExportList,'/mes/outsourcing/delivery/list'),
 
-    kpi: toMenu(titles.kpi,'',['_pLeadTime','_manHour','_defect','_oLeadTime','_powerUsage','_uph','_operation']),
-    _pLeadTime: toMenu(titles._pLeadTime,'/mes/kpi/leadtime/manufacture'),
-    _manHour: toMenu(titles._manHour,'/mes/kpi/manhour'),
-    _defect: toMenu(titles._defect,'/mes/kpi/defect'),
-    _oLeadTime: toMenu(titles._oLeadTime,'/mes/kpi/leadtime/order'),
-    _powerUsage: toMenu(titles._powerUsage,'/mes/kpi/powerusage'),
-    _uph: toMenu(titles._uph,'/mes/kpi/uph'),
-    _operation: toMenu(titles._operation,'/mes/kpi/operation')
+    kpi: toMenu(titles.kpi,'',['_pIndex','_qIndex','_cIndex','_dIndex','_eIndex']),
+
+    _pIndex : toMenu(titles._pIndex, '' , ['__pLeadTime','__uph','__operation']),
+    _qIndex : toMenu(titles._qIndex, '' , ['__defect']),
+    _cIndex : toMenu(titles._cIndex, '' , ['__manHour']),
+    _dIndex : toMenu(titles._dIndex, '' , ['__oLeadTime']),
+    _eIndex : toMenu(titles._eIndex, '' , ['__powerUsage']),
+
+    __pLeadTime: toMenu(titles.__pLeadTime,'/mes/kpi/leadtime/manufacture'),
+    __manHour: toMenu(titles.__manHour,'/mes/kpi/manhour'),
+    __defect: toMenu(titles.__defect,'/mes/kpi/defect'),
+    __oLeadTime: toMenu(titles.__oLeadTime,'/mes/kpi/leadtime/order'),
+    __powerUsage: toMenu(titles.__powerUsage,'/mes/kpi/powerusage'),
+    __uph: toMenu(titles.__uph,'/mes/kpi/uph'),
+    __operation: toMenu(titles.__operation,'/mes/kpi/operation')
   }
   switch(customTarget){
     case 'bk': return {
@@ -337,13 +344,13 @@ export const MesAuth = (customTarget?: string) => {
    _outsourcingExport: toAuth(titles._outsourcingExport,false, true, false, [], auth._outsourcingExport),
    _outsourcingExportList: toAuth(titles._outsourcingExportList,false, true, false, [], auth._outsourcingExportList),
     kpi: toAuth(titles.kpi, false, true, false, ['_pLeadTime','_manHour','_defect','_oLeadTime','_powerUsage','_uph','_operation']),
-    _pLeadTime: toAuth(titles._pLeadTime, false, true, false, [], auth._pLeadTime),
-    _manHour: toAuth(titles._manHour, false, true, false, [], auth._manHour),
-    _defect: toAuth(titles._defect, false, true, false, [], auth._defect),
-    _oLeadTime: toAuth(titles._oLeadTime, false, true, false, [], auth._oLeadTime),
-    _powerUsage: toAuth(titles._powerUsage, false, true, false, [], auth._powerUsage),
-    _uph: toAuth(titles._uph, false, true, false, [], auth._uph),
-    _operation: toAuth(titles._operation, false, true, false, [], auth._operation),
+    _pLeadTime: toAuth(titles.__pLeadTime, false, true, false, [], auth._pLeadTime),
+    _manHour: toAuth(titles.__manHour, false, true, false, [], auth._manHour),
+    _defect: toAuth(titles.__defect, false, true, false, [], auth._defect),
+    _oLeadTime: toAuth(titles.__oLeadTime, false, true, false, [], auth._oLeadTime),
+    _powerUsage: toAuth(titles.__powerUsage, false, true, false, [], auth._powerUsage),
+    _uph: toAuth(titles.__uph, false, true, false, [], auth._uph),
+    _operation: toAuth(titles.__operation, false, true, false, [], auth._operation),
   }
   switch(customTarget){
     case 'bk': return {

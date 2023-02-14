@@ -140,13 +140,16 @@ const BASIC_MENUS: IMenuType[] = BasicOrder(customTarget).map(menu => {
     }
 })
 
-
 const MES_MENUS: IMenuType[] = MesOrder(customTarget).map(menu => ({
     title:MesTitles(customTarget)[menu].title,
     url: MesTitles(customTarget)[menu].url,
     subMenu: MesTitles(customTarget)[menu]?.subMenu?.map(sub => ({
         title: MesTitles(customTarget)[sub].title,
-        url: MesTitles(customTarget)[sub].url
+        url: MesTitles(customTarget)[sub].url,
+        subMenu : MesTitles(customTarget)[sub]?.subMenu?.map(third => ({
+            title: MesTitles(customTarget)[third]?.title,
+            url: MesTitles(customTarget)[third]?.url
+        }))
     }))
 }))
 

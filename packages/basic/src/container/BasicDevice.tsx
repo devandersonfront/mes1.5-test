@@ -78,7 +78,7 @@ const BasicDevice = ({}: IProps) => {
   }, [pageInfo.page, typesState]);
 
   useEffect(() => {
-    dispatch(setMenuSelectState({main:"주변장치 기준정보",sub:""}))
+    dispatch(setMenuSelectState({main:"주변장치 기준정보",sub:"/mes/basic/device"}))
     return (() => {
       dispatch(deleteMenuSelectState())
     })

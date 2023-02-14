@@ -14,11 +14,10 @@ const OrderRegisterButton = ({row, column}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch();
 
-
   return (
       <div style={{width:"100%", height:"100%",display:"flex", justifyContent:"center", alignItems:"center"}}>
         <CellButton onClick={() => {
-          dispatch(change_delivery_identification(row.identification))
+          dispatch(change_delivery_identification(row.contract_id))
           router.push(column.url)
         }}>
           {column.title}

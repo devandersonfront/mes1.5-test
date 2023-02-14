@@ -55,6 +55,7 @@ const SelectList = styled.ul`
 
 const SelectItem = styled.li`
     padding: 10px 30px 10px 10px;
+    height : 40px;
     border-radius:6px;
     font-size:15px;
     font-weight:bold;
