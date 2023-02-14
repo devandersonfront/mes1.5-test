@@ -1,5 +1,5 @@
 interface deliveryRegisterState {
-    identification:string
+    identification:any
 }
 
 

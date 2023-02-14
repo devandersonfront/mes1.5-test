@@ -70,22 +70,31 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   }, [ inputMaterial ])
 
   const getInputMaterialList = async (key: string, os_id?: number | string) => {
-    if(key){
-      const pathVar = isOutsourcing ? [key] : { os_id: os_id, bom: 'bom', key: key, }
-      const res = await RequestMethod('get', isOutsourcing || (!row.bom && isAIModal) ? "bomLoad" : `sheetBomLoad`,{
-        path: pathVar
-      })
-
-      if(res && res.length > 0){
-        const inputMaterialList = toInputMaterialList(res)
-        setInputMaterialList(inputMaterialList)
-      } else {
-        Notiflix.Report.warning("경고",alertMsg.noBom,"확인",() => {
-          isOutsourcing && onRowChange({...row, bomChecked: true})
-          setIsOpen(false)
-        }
-      )}
-    }else Notiflix.Report.warning("경고",alertMsg.noBom,"확인",() => setIsOpen(false))
+    try{
+      if(key){
+        if(!row.identification) throw("작업지시서(지시고유번호)를 선택해주세요.")
+        const pathVar = isOutsourcing ? [key] : { os_id: os_id, bom: 'bom', key: key, }
+        //(!row.bom && isAIModal)
+        //isOutsourcing  ? "bomLoad" :
+        const res = await RequestMethod('get',  `sheetBomLoad`,{
+          path: pathVar
+        })
+        if(
+            res && res.length > 0
+            // res && Object.keys(res).length === 0 && res.constructor === Object
+        ){
+          const inputMaterialList = toInputMaterialList(res)
+          setInputMaterialList(inputMaterialList)
+        } else {
+          Notiflix.Report.warning("경고","작업지시서(지시고유번호)를 선택해주세요.","확인",() => {
+                isOutsourcing && onRowChange({...row, bomChecked: true})
+                setIsOpen(false)
+              }
+          )}
+      }else throw(alertMsg.noBom)
+    }catch (err) {
+      Notiflix.Report.warning("경고",err,"확인",() => setIsOpen(false))
+    }
   }
 
   const getBomLotMap = () => {

@@ -85,7 +85,7 @@ const BasicMachineV1u = ({option}: IProps) => {
   }, [pageInfo.page, typesState]);
 
   useEffect(() => {
-    dispatch(setMenuSelectState({main:"기계 기준정보",sub:""}))
+    dispatch(setMenuSelectState({main:"기계 기준정보",sub:"/mes/basic/machine"}))
     return (() => {
       dispatch(deleteMenuSelectState())
     })

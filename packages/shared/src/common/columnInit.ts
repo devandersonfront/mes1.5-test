@@ -908,7 +908,7 @@ export const columnlist: any = {
   ],
   aiRecordListV2: [
     { key:"identification", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
-    { key: "product_id", name: "CODE", width: 118, formatter: SearchModalTest, type: 'product', placeholder: '검색', noSelect:true, },
+    { key: "product_id", name: "CODE", width: 118, formatter: SearchModalTest, type: 'product', placeholder: '검색', noSelect:true, theme:"aiModal" },
     { key: "name", name: "품명", width: 118 },
     { key: "model", name: "모델", width: 118 },
     { key: "type", name: "품목 종류", width: 118 },
@@ -1008,6 +1008,7 @@ export const columnlist: any = {
     { key: "type", name: "품목 종류", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     { key: "unit", name: "단위", width: 118, formatter: PlaceholderBox, placeholder: '자동입력' },
     { key: "amount", name: "수주량", width: 118, editor: TextEditor, formatter: PlaceholderBox, placeholder: 0, inputType: 'number' },
+    { key: "stock", name : "품목 재고" , width: 118, formatter: PlaceholderBox, placeholder: 0}
   ]),
 
   orderList: [
