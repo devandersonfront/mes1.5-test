@@ -25,6 +25,11 @@ import modifyInfo from '../../../reducer/modifyInfo'
 import ModalSearch_icon from '../../../../public/images/list_search_icon.png'
 import moment from "moment";
 import {AddlButton} from "../../Buttons/AddlButton";
+import axios from "axios";
+import cookie from "react-cookies";
+import {transTypeProduct} from "../../../common/Util";
+import {render} from "react-dom";
+import {LineBorderContainer} from "../../Formatter/LineBorderContainer";
 
 interface IProps {
   column: IExcelHeaderType
@@ -33,13 +38,19 @@ interface IProps {
 }
 
 const SearchModalTest = ({column, row, onRowChange}: IProps) => {
+
+  const userInfo = cookie.load('userInfo')
+  const tokenData = userInfo?.token;
+
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [optionIndex, setOptionIndex] = useState<number>(0)
   const [keyword, setKeyword] = useState<string>('')
-  const [selectRow, setSelectRow] = useState<number>()
+  const [selectRow, setSelectRow] = useState<{index:number, selectType:"ai" | "basic"}>()
   const [searchList, setSearchList] = useState<any[]>([])
 
-  const [rankingList, setRankingList] = useState<any[]>([{}])
+  const [rankingList, setRankingList] = useState<any[]>([])
+
+  const [forRankingData, setForRankingData] = useState<{mfr_code:string, product_id:number}>()
 
   const [tab, setTab] = useState<number>(0)
   const [searchModalInit, setSearchModalInit] = useState<any>()
@@ -52,6 +63,11 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
   const [loadState, setLoadState] = useState<boolean>(false)
 
 
+  useEffect(() => {
+    if(column.type == "product" && column.theme == "aiModal"){
+      setForRankingData({mfr_code:row.mfr_code, product_id:row.prediction_result})
+    }
+  },[])
 
   useEffect(() => {
     if(isOpen){
@@ -205,22 +221,6 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     })
   }, [tab])
 
-  // AI 작업일보 우선순위 list 뽑는 API
-  const getAiRankingList = async() => {
-
-    // await RequestMethod("get", "aiRankListLoad", {})
-    //     .then((res) => {
-    //       console.log(res)
-    //       setRankingList(res)
-    //     })
-    //     .catch((err) => {
-    //       console.log(err)
-    //
-    //     })
-
-    // setRankingList()
-
-  }
 
   const LoadBasic = async (page:number) => {
     setLoadState(false)
@@ -297,6 +297,29 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           }
       }
     }
+
+    if(column.type == "product" && column.theme == "aiModal"){
+      const aiResult = await axios.get(`http://dev-sizl-ai-backend-lb-1626843213.ap-northeast-2.elb.amazonaws.com/api/product_sim_info/${forRankingData.mfr_code}/${forRankingData.product_id}`, {'headers': {'Authorization': tokenData},})
+
+      const product_list = new Array(aiResult.data.length).fill({})
+      aiResult.data.map(async(row1, index) => {
+        const result = await RequestMethod("get", "aipProductLoad", {path:{id:row1?.product_id}}).then((res) => res)
+        if(result){
+          const obj:any = {...result}
+          obj.customer_name = result?.customer?.name
+          obj.model_name = result?.model?.model
+          obj.code = result?.code
+          obj.name = result?.name
+          obj.type_name = transTypeProduct(result?.type)
+          obj.type = result?.type
+          obj.stock = result?.stock
+          obj.rank = index+1
+          product_list[index] = obj
+        }
+      })
+      setRankingList(product_list)
+    }
+
     const res = await RequestMethod('get', `${searchModalInit.excelColumnType}Search`,{
       path: searchToolInProduct(row)
       ,
@@ -327,21 +350,15 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           setSearchList([ ...searchList,...SearchResultSort( res.info_list, searchModalInit.excelColumnType)])
           setPageInfo({page:res.page, total:res.totalPages});
         }else{
-          const dummyData = []
-          SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType).filter((row, index) => index < 3)
-              .map((row, index) => {
-                if(index < 3){
-                  dummyData.push({rank:index+1, ...row})
-                }
-              })
-
-
-          setSearchList([...SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
-          setRankingList(dummyData)
+          setTimeout(() => {
+            setSearchList([...SearchResultSort(!column.noSelect ? [{id:null, noneSelected: true}, ...res.info_list] : res.info_list, searchModalInit.excelColumnType)])
+          },500)
           setPageInfo({page:res.page, total:res.totalPages});
         }
       }
     }
+
+
     setLoadState(true)
     Notiflix.Loading.remove()
   }
@@ -391,6 +408,17 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }} modalType={column.modalType}>
       <img style={column.modalType ? {width: 16.3, height: 16.3} : {width: 30, height: 30}} src={ModalSearch_icon}/>
     </SearchIcon>
+  }
+
+  const selectDataType = (selectRow:{index:number, selectType:"ai" | "basic"}) => {
+    const {index, selectType} = selectRow
+    switch (selectType) {
+      case "ai":
+        return rankingList[index]
+      case "basic":
+      default:
+        return searchList[index]
+    }
   }
 
   const ContentHeader = () => {
@@ -560,11 +588,11 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         switch(type){
           case "bom":
           case "rawMaterial" :
-            return SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, null, column.modalType).name;
+            return SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, null, column.modalType).name;
           case "machine" :
           case "mold":
           case "operation":
-            return searchList[selectRow].name;
+            return selectDataType(selectRow).name;
           default:
             return row.name;
         }
@@ -573,8 +601,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         onRowChange(
           {
             ...row,
-            ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType),
-            manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, null, column.modalType).manager,
+            ...SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, column.staticCalendar, column.modalType),
+            manager: SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, null, column.modalType).manager,
             name: selectNameFunction(column.type),
             tab: tab,
             date: row.date,
@@ -585,15 +613,15 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           }
         )
       }else if(column.type === "toolProduct"){
-        const res = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType)
+        const res = SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, column.staticCalendar, column.modalType)
         delete res.doubleClick
         onRowChange(res)
       }else if(column.type === 'customer'){
         onRowChange(
           {
             ...row,
-            ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType),
-            manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, null, column.modalType).manager,
+            ...SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, column.staticCalendar, column.modalType),
+            manager: SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, null, column.modalType).manager,
             name: selectNameFunction(column.type),
             tab: tab,
             // type_name: undefined,
@@ -614,7 +642,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
       }else if(column.type === 'factory'){
         onRowChange({
           ...row,
-          ...SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType),
+          ...SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, column.staticCalendar, column.modalType),
           name: selectNameFunction(column.type),
           tab: tab,
           // type_name: undefined,
@@ -635,8 +663,8 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
         onRowChange(
           {
             ...row,
-            ...SearchModalResult(searchList[selectRow], column.toolType === 'register' ? 'toolRegister' : searchModalInit.excelColumnType, column.staticCalendar, column.modalType),
-            manager: SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, null, column.modalType).manager,
+            ...SearchModalResult(selectDataType(selectRow), column.toolType === 'register' ? 'toolRegister' : searchModalInit.excelColumnType, column.staticCalendar, column.modalType),
+            manager: SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, null, column.modalType).manager,
             // name: selectNameFunction(column.type),
             tab: tab,
             // type_name: undefined,
@@ -657,7 +685,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               return false
           }
         }
-        const searchModalResult = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType)
+        const searchModalResult = SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, column.staticCalendar, column.modalType)
         delete searchModalResult.doubleClick
         if(checkChanged(searchModalResult))
         {
@@ -675,7 +703,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           )
         }
       }else if(column.type === "operation"){
-        const modalRes = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType, column.type)
+        const modalRes = SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, column.staticCalendar, column.modalType, column.type)
         onRowChange({
           ...row,
           ...modalRes,
@@ -693,8 +721,26 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
           deadline:row?.deadline,
           goal:row?.goal,
         })
+      }else if(column.type === "product" && column.theme == "aiModal"){
+        const modalRes = SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, column.staticCalendar, column.modalType, column.type)
+        onRowChange({
+          ...row,
+          ...modalRes,
+          manager: modalRes.manager,
+          // name: selectNameFunction(column.type),
+          id:row.id,
+          tab: tab,
+          // type_name: undefined,
+          version: row.version,
+          isChange: true,
+          //일상 점검 모달에서 작성자 확인 / 관리자 확인 구분 용도
+          returnType:column.key,
+          date:row?.date,
+          deadline:row?.deadline,
+          goal:row?.goal
+        })
       }else{
-        const modalRes = SearchModalResult(searchList[selectRow], searchModalInit.excelColumnType, column.staticCalendar, column.modalType, column.type)
+        const modalRes = SearchModalResult(selectDataType(selectRow), searchModalInit.excelColumnType, column.staticCalendar, column.modalType, column.type)
         onRowChange({
           ...row,
           ...modalRes,
@@ -763,8 +809,25 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
               <div style={{marginBottom:10}}>
                 <ExcelTable
                     type={'searchModal'}
-                    headerList={searchModalInit && [{ key: "rank", name: "순위", width: 80 }, ...searchModalColumn]}
+                    headerList={searchModalInit && [{ key: "rank", name: "순위", width: 80, formatter:LineBorderContainer }, ...searchModalColumn]}
                     row={rankingList}
+                    onRowClick={(clicked) => {
+                      const e = rankingList.indexOf(clicked)
+                      const update = rankingList.map(
+                          (row, index) => index === e
+                              ? {
+                                ...row,
+                                doubleClick: confirmFunction,
+                                border: true,
+                              }
+                              : {
+                                ...row,
+                                border: false
+                              }
+                      );
+                      setRankingList(update)
+                      setSelectRow({index:e, selectType:"ai"})
+                    }}
                     width={1744}
                     height={160}
                 />
@@ -792,7 +855,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
                     }
                 );
                 setSearchList(update)
-                setSelectRow(e)
+                setSelectRow({index:e, selectType:"basic"})
               }}
               type={'searchModal'}
               scrollEnd={(value) => {
