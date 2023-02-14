@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {IExcelHeaderType} from '../../../@types/type'
 import styled from 'styled-components'
 import Modal from 'react-modal'
-import {POINT_COLOR} from '../../../common/configset'
+import {POINT_COLOR, SF_AI_ADDRESS} from '../../../common/configset'
 //@ts-ignore
 import IcSearchButton from '../../../../public/images/ic_search.png'
 //@ts-ignore
@@ -299,7 +299,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
 
     if(column.type == "product" && column.theme == "aiModal"){
-      const aiResult = await axios.get(`http://dev-sizl-ai-backend-lb-1626843213.ap-northeast-2.elb.amazonaws.com/api/product_sim_info/${forRankingData.mfr_code}/${forRankingData.product_id}`, {'headers': {'Authorization': tokenData},})
+      const aiResult = await axios.get(`${SF_AI_ADDRESS}${forRankingData.mfr_code}/${forRankingData.product_id}`, {'headers': {'Authorization': tokenData},})
 
       const product_list = new Array(aiResult.data.length).fill({})
       aiResult.data.map(async(row1, index) => {
