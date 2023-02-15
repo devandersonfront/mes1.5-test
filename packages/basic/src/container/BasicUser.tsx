@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   columnlist,
-  excelDownload,
+  excelDownload, ExcelDownloadModal,
   ExcelTable, FileEditer,
   Header as PageHeader,
   IExcelHeaderType,
@@ -37,8 +37,7 @@ const email_reg = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
 const BasicUser = ({}: IProps) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [excelDownOpen, setExcelDownOpen] = useState<boolean>(false);
-  const [excelUploadOpen, setExcelUploadOpen] = useState<boolean>(false);
+  const [excelOpen, setExcelOpen] = useState<boolean>(false);
   const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
   const [basicRow, setBasicRow] = useState<Array<any>>([
     {
@@ -454,15 +453,12 @@ const BasicUser = ({}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch (index) {
       case 0:
-        setExcelUploadOpen(true);
+        setExcelOpen(true);
         break;
       case 1:
-        setExcelDownOpen(true);
-        break;
-      case 2:
         router.push(`/mes/item/manage/member`);
         break;
-      case 3:
+      case 2:
         let items = {};
 
         column.map((value) => {
@@ -489,10 +485,10 @@ const BasicUser = ({}: IProps) => {
         ]);
         break;
 
-      case 4:
+      case 3:
         SaveBasic();
         break;
-      case 5:
+      case 4:
         if (selectList.size === 0) {
           return Notiflix.Report.warning(
             "선택 경고",
@@ -625,6 +621,14 @@ const BasicUser = ({}: IProps) => {
         setPage={(page) => {
           setPageInfo({ ...pageInfo, page: page });
         }}
+      />
+
+      <ExcelDownloadModal
+          isOpen={excelOpen}
+          category={"member"}
+          title={"유저 관리"}
+          setIsOpen={setExcelOpen}
+          resetFunction={() => reload()}
       />
 
     </div>
