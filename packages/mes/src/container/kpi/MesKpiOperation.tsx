@@ -171,13 +171,14 @@ const MesKpiOperation = () => {
                 headerList={processColumn}
                 row={[processBasicRow]}
                 setRow={(row) => {
+                    console.log('row',row)
                     setProcessBasicRow({...processBasicRow,
                         id : row[0].machine_id,
                         mfrName : row[0].mfrName,
                         name : row[0].name,
                         mfrCode : row[0].mfrCode,
                         // undefined 나옴
-                        machine_type: row[0].machine_type ?? '-',
+                        machine_type: row[0].type ?? '-',
                     })
                 }}
                 selectList={selectList}
