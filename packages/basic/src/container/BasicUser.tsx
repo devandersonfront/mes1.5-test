@@ -578,7 +578,7 @@ const BasicUser = ({}: IProps) => {
         }}
         optionIndex={optionIndex}
         title={title}
-        buttons={["", "", "항목관리", "행 추가", "저장하기", "삭제"]}
+        buttons={["엑셀", "항목관리", "행 추가", "저장하기", "삭제"]}
         buttonsOnclick={onClickHeaderButton}
       />
       <ExcelTable
