@@ -131,6 +131,11 @@ const MesDeliveryRegister = ({page, keyword, option}: IProps) => {
             ...v,
             name: v.name+'(필수)'
           }
+        }else if(v.name === '품명'){
+          return {
+            ...v,
+            width:460
+          }
         }else {
           return {
             ...v,
