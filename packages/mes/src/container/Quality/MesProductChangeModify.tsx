@@ -15,6 +15,7 @@ import moment from "moment";
 import {useRouter} from "next/router";
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
+import Notiflix from "notiflix";
 
 const MesProductChangeModify = () => {
     const router = useRouter()
@@ -32,6 +33,8 @@ const MesProductChangeModify = () => {
             {name: '', UUID: '', sequence: 3},
         ]
     )
+
+    console.log(files,'filesfiles')
 
     const productChangeLoad = async (pcr_id: string) => {
         const res = await RequestMethod('get', `productChangeLoad`,{
@@ -127,9 +130,16 @@ const MesProductChangeModify = () => {
                 productChangeSave()
                 return
             case 2 :
-                productChangeDelete()
+                Notiflix.Confirm.show('삭재','삭제하시겠습니까?','확인' , '취소',()=>{productChangeDelete()})
                 return
         }
+    }
+
+    const deleteFile = (index : number) => {
+        const deletedFile = files.map((file , fileNum)=>(
+            index === fileNum ? {...file , name : '', sequence : index , UUID : ''} : file
+        ))
+        setFiles(deletedFile)
     }
 
     return (
@@ -167,7 +177,13 @@ const MesProductChangeModify = () => {
             <TitleInput title={'제목'} value={changeInfo.title} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, title: e.target.value})}/>
             <TitleTextArea title={'설명'} value={changeInfo.content} placeholder={''} onChange={(e)=>setChangeInfo({...changeInfo, content: e.target.value})}/>
             {files.map((v,i) =>
-                <TitleFileUpload title={'첨부파일 0'+(i+1)} index={i} value={v.name} placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'} deleteOnClick={()=>{}} fileOnClick={(fileInfo: ChangeProductFileInfo)=>fileChange(fileInfo,i)}/>
+                <TitleFileUpload
+                    title={'첨부파일 0'+(i+1)}
+                    index={i}
+                    value={v.name}
+                    placeholder={'파일을 선택해주세요 ( 크기 : 10MB 이하, 확장자 : .hwp .xlsx .doc .docx .jpeg .png .pdf 의 파일만 가능합니다.)'}
+                    deleteOnClick={()=> deleteFile(i)}
+                    fileOnClick={(fileInfo: ChangeProductFileInfo) => fileChange(fileInfo,i)}/>
             )}
             <TitleCalendarBox value={changeInfo.registered} onChange={(date)=>setChangeInfo({...changeInfo, registered: moment(date).format('YYYY.MM.DD')})}/>
         </div>
