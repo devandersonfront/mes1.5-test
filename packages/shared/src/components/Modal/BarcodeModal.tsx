@@ -39,7 +39,7 @@ const BarcodeModal = ({multiple,title,type,handleBarcode,handleModal,data,isVisi
 
     const getLocalAddress = async () => {
 
-        return await fetch('http://api.ipify.org/?format=json')
+        return await fetch('http://api64.ipify.org/?format=json')
             .then(response => response.json())
             .then(result => result)
             .catch((error)=>{
