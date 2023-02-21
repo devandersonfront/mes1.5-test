@@ -85,9 +85,9 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
         if(result.includes(undefined)){
           Notiflix.Report.warning("경고","BOM을 등록해주세요.","확인",)
         }else{
-          // setBasicRow(result)
+          setBasicRow(result)
         }
-        // setInputBom(false)
+        setInputBom(false)
       }
     })();
   },[inputBom])
