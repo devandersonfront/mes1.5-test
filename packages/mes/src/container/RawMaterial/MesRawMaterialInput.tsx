@@ -39,6 +39,9 @@ const MesRawMaterialInput = ({page, keyword, option}: IProps) => {
   }
 
   const checkDuplicateLotNumber = (lotNumbers: string[]) => {
+    lotNumbers.forEach(lot => {
+      if(!lot || lot.length == 0) throw("LOT번호를 입력해주세요.")
+    })
     if(lotNumbers.length !== new Set(lotNumbers).size) throw (alertMsg.duplicateLotNumber)
   }
 
