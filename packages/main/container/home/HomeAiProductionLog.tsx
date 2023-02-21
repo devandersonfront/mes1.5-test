@@ -139,7 +139,7 @@ const HomeAiProductionLog = ({}: IProps) => {
 
         results?.forEach((result)=> map.set(result.machine_code, result))
 
-        if(listToCheck?.length < 0){
+        if(listToCheck?.length < 1){
             return results
         }
 
@@ -163,6 +163,7 @@ const HomeAiProductionLog = ({}: IProps) => {
             const newResult = results.map((result) => {
                 return {...result, setModalOpen:changeModalState}
             })
+
             let map = new Map()
             lists?.forEach((list)=>{
                 map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
@@ -174,10 +175,8 @@ const HomeAiProductionLog = ({}: IProps) => {
                     return result
                 }
             })
-
-            console.log(newData,'newDatanewData')
-
             return convertData(newData)
+
         }else if(lists){
             return lists
         }else{
