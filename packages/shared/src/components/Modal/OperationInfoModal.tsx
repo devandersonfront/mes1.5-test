@@ -78,6 +78,7 @@ const OperationInfoModal = ({column, row, onRowChange}: IProps) => {
     const res = await RequestMethod('get', `sheetList`, {
       params: {
         contractIds: row.contract_id,
+        rangeNeeded : false
         // nz: true
       }
     })
