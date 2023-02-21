@@ -57,20 +57,17 @@ const HomeAiProductionLog = ({}: IProps) => {
         if(!value.code || value.code === '-'){
             return true
         }
-
-        const codeCheck = value.predictionCode === value.code
-        const modelCheck = value.predictionModel === value.model
-        const nameCheck = value.predictionName === value.product_name
-        const processCheck = value.predictionProcess === value.process
+        const codeCheck = value.prediction_code === value.code
+        const modelCheck = value.prediction_model === value.model
+        const nameCheck = value.prediction_name === value.product_name
+        const processCheck = value.prediction_process === value.process
 
         return codeCheck && modelCheck && nameCheck && processCheck
     }
 
     const convertData = (results) => {
         return results?.map((result)=>
-            !predictCheckList(result) ?
-                {...result , prediction_confidence : result.prediction_confidence ? `${(result.prediction_confidence * 100).toFixed(2)}%` : '' , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
-                : {...result , prediction_confidence : result.prediction_confidence ?`${(result.prediction_confidence * 100).toFixed(2)}%` : '',machine_type : TransferCodeToValue(result.machine_type, "machine")}
+            !predictCheckList(result) ? {...result , prediction_confidence : result.prediction_confidence ? `${(result.prediction_confidence * 100).toFixed(2)}%` : '' , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'} : {...result , prediction_confidence : result.prediction_confidence ?`${(result.prediction_confidence * 100).toFixed(2)}%` : '',machine_type : TransferCodeToValue(result.machine_type, "machine")}
         )
     }
 
@@ -177,6 +174,9 @@ const HomeAiProductionLog = ({}: IProps) => {
                     return result
                 }
             })
+
+            console.log(newData,'newDatanewData')
+
             return convertData(newData)
         }else if(lists){
             return lists
