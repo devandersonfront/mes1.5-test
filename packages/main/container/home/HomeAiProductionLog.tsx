@@ -65,9 +65,18 @@ const HomeAiProductionLog = ({}: IProps) => {
         return codeCheck && modelCheck && nameCheck && processCheck
     }
 
+    const convertPredictionConfidence = (confidence) => {
+        if(!confidence) return ''
+        if(typeof confidence === 'number') return `${(confidence * 100).toFixed(2)}%`
+        else return confidence
+    }
+
     const convertData = (results) => {
+
         return results?.map((result)=>
-            !predictCheckList(result) ? {...result , prediction_confidence : result.prediction_confidence ? `${(result.prediction_confidence * 100).toFixed(2)}%` : '' , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'} : {...result , prediction_confidence : result.prediction_confidence ?`${(result.prediction_confidence * 100).toFixed(2)}%` : '',machine_type : TransferCodeToValue(result.machine_type, "machine")}
+            !predictCheckList(result) ?
+                {...result , prediction_confidence : convertPredictionConfidence(result.prediction_confidence) , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
+                : {...result , prediction_confidence : convertPredictionConfidence(result.prediction_confidence) ,machine_type : TransferCodeToValue(result.machine_type, "machine")}
         )
     }
 
@@ -158,7 +167,6 @@ const HomeAiProductionLog = ({}: IProps) => {
     }
 
     const mappingData = (lists, results) => {
-
         if(lists && results){
             const newResult = results.map((result) => {
                 return {...result, setModalOpen:changeModalState}
@@ -168,6 +176,7 @@ const HomeAiProductionLog = ({}: IProps) => {
             lists?.forEach((list)=>{
                 map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
             })
+
             const newData = newResult?.map((result)=>{
                 if(map.get(result.machine_code)){
                     return {...result , pressStatus : map.get(result.machine_code)}
@@ -175,11 +184,16 @@ const HomeAiProductionLog = ({}: IProps) => {
                     return result
                 }
             })
+
+
+            console.log(convertData(newData),'convertData(newData)')
+
             return convertData(newData)
 
         }else if(lists){
             return lists
         }else{
+
             return convertData(results?.map((result) => {
                 return {...result, setModalOpen:changeModalState}
             }))
