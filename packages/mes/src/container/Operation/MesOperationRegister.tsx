@@ -81,12 +81,19 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   useEffect(()=> {
     (async () => {
       if (basicRow.every((row)=>row.bom_root_id) && inputBom) {
-        const result = await Promise.all(basicRow.map(async row => await SearchBasic(row)))
-        if(result.includes(undefined)){
-          Notiflix.Report.warning("경고","BOM을 등록해주세요.","확인",)
-        }else{
-          setBasicRow(result)
+        let failList = []
+        const result = await Promise.all(basicRow.map(async (row) => {
+          const rowData = await SearchBasic(row);
+          if(rowData == undefined){
+            failList.push(row.code)
+          }
+          return rowData ?? row
+        }))
+
+        if(failList.length > 0) {
+          Notiflix.Report.warning("경고", `BOM이 없는 제품이 있습니다.(${failList})`, "확인",)
         }
+        setBasicRow(result)
         setInputBom(false)
       }
     })();
@@ -144,11 +151,10 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
 
     if(!haveBasic){
       isValidation = true
-      Notiflix.Report.warning("경고",`자재 보기를 눌러 BOM 등록을 해주세요. 품목 종류별로 최소 한 개 이상은 사용해야 합니다.`,"확인",)
+      Notiflix.Report.warning("경고",`BOM이 없습니다.(추후 문구 변경 필요)`,"확인",)
     }
 
     return isValidation
-
   }
 
   const SearchBasic = async (row) => {
@@ -355,10 +361,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             contract: selectedData[0].contract,
             os_id: undefined,
             version: undefined,
-            input_bom: [ ...row?.input_bom?.map((bom) => {
-              bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
-              return { ...bom }
-            }) ] ?? [],
+            input_bom: null,
             status: 1,
           }
         }))
@@ -428,9 +431,21 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = async(index: number) => {
     switch(index){
       case 0:
-        break;
-      case 2:
+      try{
+        const notHasSearchList = []
+        basicRow.filter(row => {
+          if (selectList.has(row.id) && !row.searchList) {
+            notHasSearchList.push(row.code)
+            // throw (row.code)
+          }
+        })
+        if(notHasSearchList.length > 0){
+          throw(`${notHasSearchList}의 BOM이 없습니다.`)
+        }
         setModal({...modal, isVisible : true})
+      }catch(e){
+        Notiflix.Report.warning("경고",`${e}`,"확인",)
+      }
         break;
     }
   }
@@ -453,7 +468,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             }}
             radioIndex={Number(!!!codeCheck)}
             title={"작업지시서 등록"}
-            buttons={['', '', '저장하기', '']}
+            buttons={['저장하기']}
             buttonsOnclick={onClickHeaderButton}
         />
         <ExcelTable
