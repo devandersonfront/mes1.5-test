@@ -468,11 +468,6 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             setRow={async (row) => {
               if(row.length > 0)
               {
-                const result = await Promise.all(row.map(async one => await SearchBasic(one)))
-                if(result.includes(undefined)){
-                  Notiflix.Report.warning("경고","BOM을 등록해주세요.","확인",)
-                  return
-                }
                 if(parentProduct ? codeCheck ? row?.[0].product?.product_id !== parentProduct?.product?.product_id : row?.[0].contract_id !== parentProduct.contract_id : true) {
                   setParentProduct(row?.[0])
                 } else {
