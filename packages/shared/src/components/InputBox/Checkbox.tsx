@@ -11,10 +11,10 @@ interface IProps {
 const Checkbox = ({row, column, onRowChange, onClose}: IProps) => {
     return (
         <div onDoubleClick={() => {
-            onRowChange({...row, [column.key]:!row[column.key]})
+            onRowChange({...row, [column.key]:!row[column.key], isChange:true})
         }}>
             <input type={"checkbox"} checked={row[column.key]} onChange={(e) => {
-                onRowChange({...row, [column.key]:e.target.checked})
+                onRowChange({...row, [column.key]:e.target.checked, isChange:true})
             }} />
         </div>
     )
