@@ -9,6 +9,8 @@ import {ParseResponse} from "../../../common/Util";
 import { useRouter } from "next/router";
 import Notiflix from "notiflix";
 import {NoAmountValidation, NoneSelectedValidation, RequiredValidation} from "../../../validations/Validation";
+//@ts-ignore
+import {SelectColumn} from "react-data-grid";
 
 interface IProps {
     row: any
@@ -20,6 +22,9 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<any[]>([])
     const [column, setColumn] = useState(searchModalList.operationRegister)
+    const [selectList, setSelectList] = useState<Set<number>>(new Set())
+
+    console.log(row)
 
     const getBomData = async(root_id:string) => {
         const res = await RequestMethod('get', `bomLoad`, {path: {key: root_id}})
@@ -30,10 +35,11 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
     const totalData = async() => {
         setBasicRow(await Promise.all(row.map(async(v) =>{
             return {
+                id: v.id,
                 identification:v?.operationData?.contract.identification,
                 bom_root_id:v.bom_root_id,
-                date: v?.operationData?.date,
-                deadline: v?.operationData?.deadline,
+                date: v?.date,
+                deadline: v?.deadline,
                 product_id: v?.product_id ?? v?.code,
                 customer_id: v?.customer_id,
                 cm_id: v?.cm_id,
@@ -141,11 +147,24 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
                     </div>
                     <ExcelTable
                         resizable
-                        headerList={column}
+                        headerList={[SelectColumn,...column]}
                         row={basicRow}
                         setRow={(e) => {
-                            setBasicRow(e)
+                            let tmp: Set<any> = new Set(selectList)
+                            const newRow = e.map(v => {
+                                if (v.isChange) tmp.add(v.id)
+                                return {
+                                    ...v,
+                                    id:v.id,
+                                    isChange: false
+                                }
+                            })
+                            setSelectList(tmp)
+                            setBasicRow(newRow)
                         }}
+                        selectList={selectList}
+                        //@ts-ignore
+                        setSelectList={setSelectList}
                         width={1744}
                         rowHeight={32}
                         height={640}
@@ -165,18 +184,42 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
                         <FooterButton
                             onClick={() => {
                                 //setBasicRow(basicRow)
-                                SaveBasic(basicRow.map(v=> {
-                                    return {...v.input,
-                                            product_id:v.input?.product?.product_id,
-                                            goal:v.goal,
-                                            date:v.date,
-                                            deadline:v.deadline,
-                                            input_bom: v?.input_bom?.map((bom) => {
-                                                delete bom.parent
-                                                return bom
-                                            }) ?? v?.input?.input_bom
+                                const saveData = basicRow.filter((one) => {
+                                    console.log("one : ", one, selectList)
+                                    return selectList.has(one.id)
+                                })
+
+                                try{
+                                    const notHasSearchList = []
+                                    console.log(selectList, basicRow)
+                                    basicRow.filter(row => {
+                                        //input_bom.length를 확인해서 있다면 bom 체크 없다면 notHasSearchList에 담기
+                                        if (selectList.has(row.id) && row.input.input_bom.length <= 0) {
+                                            notHasSearchList.push(row.product_id)
+                                        }
+                                    })
+                                    console.log("saveData : ", saveData, notHasSearchList)
+                                    if(notHasSearchList.length > 0){
+                                        throw(`${notHasSearchList}의 BOM이 없습니다.`)
                                     }
-                                }))
+
+                                    SaveBasic(saveData.map(v=> {
+                                            return {...v.input,
+                                                    product_id:v.input?.product?.product_id,
+                                                    goal:v.goal,
+                                                    date:v.date,
+                                                    deadline:v.deadline,
+                                                    input_bom: v?.input_bom?.map((bom) => {
+                                                        delete bom.parent
+                                                        return bom
+                                                    }) ?? v?.input?.input_bom
+                                            }
+                                    }))
+
+                                }catch(e){
+                                    Notiflix.Report.warning("경고",`${e}`,"확인",)
+                                }
+
                             }}
                             style={{backgroundColor: POINT_COLOR}}
                         >
