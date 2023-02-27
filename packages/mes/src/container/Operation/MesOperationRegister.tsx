@@ -435,21 +435,26 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
   const onClickHeaderButton = async(index: number) => {
     switch(index){
       case 0:
-      try{
-        const notHasSearchList = []
-        basicRow.filter(row => {
-          if (selectList.has(row.id) && !row.searchList) {
-            notHasSearchList.push(row.code)
-            // throw (row.code)
+        try{
+          const selectDatas = basicRow.filter(row => selectList.has(row.id))
+          if(selectList.size <= 0 || basicRow[0].id == undefined) throw("선택된 데이터가 없습니다.")
+          selectDatas.map((oneData) => {
+            if(!oneData?.goal) throw ("목표 생산량을 입력해주세요.")
+          })
+
+          const notHasSearchList = []
+          basicRow.filter(row => {
+            if (selectList.has(row.id) && !row.searchList) {
+              notHasSearchList.push(row.code)
+            }
+          })
+          if(notHasSearchList.length > 0){
+            throw(`${notHasSearchList}의 BOM이 없습니다.`)
           }
-        })
-        if(notHasSearchList.length > 0){
-          throw(`${notHasSearchList}의 BOM이 없습니다.`)
+          setModal({...modal, isVisible : true})
+        }catch(e){
+          Notiflix.Report.warning("경고",`${e}`,"확인", () => setInputBom(check => !check))
         }
-        setModal({...modal, isVisible : true})
-      }catch(e){
-        Notiflix.Report.warning("경고",`${e}`,"확인",)
-      }
         break;
     }
   }
