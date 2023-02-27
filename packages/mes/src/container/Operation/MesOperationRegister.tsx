@@ -86,6 +86,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           const rowData = await SearchBasic(row);
           if(rowData == undefined){
             failList.push(row.code)
+            row.searchList = null
           }
           return rowData ?? row
         }))
@@ -361,7 +362,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             contract: selectedData[0].contract,
             os_id: undefined,
             version: undefined,
-            input_bom: null,
+            // input_bom: null,
             status: 1,
           }
         }))
