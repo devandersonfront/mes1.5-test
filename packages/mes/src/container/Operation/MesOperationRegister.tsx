@@ -361,7 +361,10 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
             contract: selectedData[0].contract,
             os_id: undefined,
             version: undefined,
-            input_bom: null,
+            input_bom: [ ...row?.input_bom?.map((bom) => {
+              bom.bom.setting = bom.bom.setting === "여" || bom.bom.setting === 1 ? 1 : 0
+              return { ...bom }
+            }) ] ?? [],
             status: 1,
           }
         }))
