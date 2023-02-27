@@ -89,6 +89,7 @@ export const titles = {
     _cncMon: 'CNC 설비 모니터링',
     cncStats: 'CNC 데이터 통계',
     _prodStats: '생산량',
+    _prodTotalStats : '총생산량',
     _errorStats: '에러',
     _idleStats: '기계 비 가동시간',
     cncMnt: 'CNC 관리',
