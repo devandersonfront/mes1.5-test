@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     columnlist,
     ExcelTable,
@@ -14,9 +14,9 @@ import { setExcelTableHeight } from 'shared/src/common/Util'
 
 const BasicMidrangeModify = () => {
     const column:Array<IExcelHeaderType> = columnlist["midrangeExam"]
-    const sampleColumn:Array<IExcelHeaderType> = columnlist['midrange']
+    const [sampleColumn, setSampleColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrange'])
     const legendaryColumn:Array<IExcelHeaderType> = columnlist['midrangeLegendary']
-    const itemColumn:Array<IExcelHeaderType> = columnlist['midrangeInspectionItem']
+    const [itemColumn, setItemColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeInspectionItem'])
     const router = useRouter()
     const [basicRow, setBasicRow] = useState<Array<any>>([{}])
     const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([{}])
@@ -44,6 +44,26 @@ const BasicMidrangeModify = () => {
         LoadMidrange(Number(router.query.product_id))
     },[router.query])
 
+
+    useEffect(() => {
+            const midrange = [...columnlist['midrange']]
+            midrange.map((col) => {
+                delete col.readonly
+                return col
+            })
+            setSampleColumn([...midrange])
+
+            const midrangeInspectionItem = [...columnlist['midrangeInspectionItem']]
+            midrangeInspectionItem.map((col) => {
+                if(col.key == "unit" || col.key == "type"){
+                    delete col.readonly
+                }
+                return col
+            })
+            setItemColumn([...midrangeInspectionItem])
+
+    }, [])
+
     const validateCategoryInfo = (info) => {
         if(!!!info.name) throw('검사 항목을 입력해주세요')
         if(!!!info.standard) throw('검사 기준을 입력해주세요')
@@ -59,13 +79,13 @@ const BasicMidrangeModify = () => {
     const MidrangeSave = async () => {
         try{
             const categoryInfo = itemBasicRow.map((v, i)=>{
-                validateCategoryInfo(v)
+                // validateCategoryInfo(v)
                 return {...v, type: v.type === "범례 적용" ? 1 : 0}
             })
 
             const legendaryKeyValue = {}
             legendaryBasicRow.map((v,i)=>{
-                validateLegendsInfo(v)
+                // validateLegendsInfo(v)
                 legendaryKeyValue[v.legendary] = v.LegendaryExplain
             })
 

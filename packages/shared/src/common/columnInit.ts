@@ -718,6 +718,7 @@ export const columnlist: any = {
     {key: "sequence", name: '구분', formatter: PlaceholderBox, width: 48,},
     {key: 'name', name: '검사 항목',width: 480, formatter: PlaceholderBox, placeholder: '검사 항목 입력', editor: TextEditor},
     {key: 'unit', name: '단위', width: 80, formatter: DropDownEditor, selectList: [
+        {pk: null, name: '없음'},
         {pk: 'mm', name: 'mm'},
         {pk: 'cm', name: 'cm'},
         {pk: 'm', name: 'm'},

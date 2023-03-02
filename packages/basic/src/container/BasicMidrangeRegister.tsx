@@ -11,8 +11,6 @@ import {MidrangeButton} from "shared/src/styles/styledComponents";
 import Notiflix from "notiflix";
 import {useRouter} from "next/router";
 import { setExcelTableHeight } from 'shared/src/common/Util'
-import { sum } from 'lodash'
-import { MidrangeRegisterModal } from 'shared/src/components/Modal/MidrangeRegisterModal'
 
 const BasicMidrangeRegister = () => {
     const column:Array<IExcelHeaderType> = columnlist["midrangeExam"]
@@ -23,7 +21,7 @@ const BasicMidrangeRegister = () => {
     const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([{samples: 1}])
     const [legendaryBasicRow, setLegendaryBasicRow] = useState<Array<any>>([])
-    const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{sequence:1, unit: 'mm', type: 0}])
+    const [itemBasicRow, setItemBasicRow] = useState<Array<any>>([{sequence:0, unit: '없음', type: 0}])
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [selectCheckListIndex, setSelectCheckListIndex] = useState<number>(null)
     const [selectLegendaryIndex, setSelectLegendaryIndex] = useState<number>(null)
@@ -60,14 +58,14 @@ const BasicMidrangeRegister = () => {
     const MidrangeSave = async () => {
         try{
             const categoryInfo = itemBasicRow.map((v, i)=>{
-                validateCategoryInfo(v)
+                // validateCategoryInfo(v)
                 return {...v, type: v.type === "범례 적용" ? 1 : 0}
             })
 
 
             const legendaryKeyValue = {}
            legendaryBasicRow.map((v,i)=>{
-                validateLegendsInfo(v)
+                // validateLegendsInfo(v)
                 legendaryKeyValue[v.legendary] = v.LegendaryExplain
             })
 
