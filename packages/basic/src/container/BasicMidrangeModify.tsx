@@ -286,14 +286,14 @@ const BasicMidrangeModify = () => {
                 height={setExcelTableHeight(itemBasicRow.length) - 8}
                 width={1576}
             />
-            {/*<div style={{display : 'flex'}}>*/}
-            {/*    <MidrangeButton onClick={()=>deleteRowButton('item')} style={{backgroundColor :'#98999B'}}>*/}
-            {/*        -검사 항목 삭제*/}
-            {/*    </MidrangeButton>*/}
-            {/*    <MidrangeButton onClick={()=>addRowButton('item')}>*/}
-            {/*        +검사 항목 추가*/}
-            {/*    </MidrangeButton>*/}
-            {/*</div>*/}
+            <div style={{display : 'flex'}}>
+                <MidrangeButton onClick={()=>deleteRowButton('item')} style={{backgroundColor :'#98999B'}}>
+                    -검사 항목 삭제
+                </MidrangeButton>
+                <MidrangeButton onClick={()=>addRowButton('item')}>
+                    +검사 항목 추가
+                </MidrangeButton>
+            </div>
             {
                 isOpen && <MidrangeFormReviewModal data={{basic: basicRow, samples: sampleBasicRow, legendary: legendaryBasicRow, item: itemBasicRow}} isOpen={isOpen} setIsOpen={setIsOpen}/>
             }
