@@ -209,7 +209,6 @@ const AiMesRecord = ({}: IProps) => {
     }
 
     const forSaveCleanUpData = (res:any) => {
-        console.log(res)
         return {
             additional:res?.additional ?? null,
             bom:res?.bom ?? null,
@@ -309,7 +308,6 @@ const AiMesRecord = ({}: IProps) => {
         if(selectList.size <= 0) return Notiflix.Report.warning("경고","데이터를 선택해주세요.","확인")
         // if(selectList.size > 1) return Notiflix.Report.warning("경고","데이터를 하나만 선택해주세요.","확인")
         try{
-            console.log("basicRow : ", basicRow)
             const postBody = basicRow.map((v) => {
                 const cavity = v.product.molds?.length > 0 ? v.product.molds[0].mold?.cavity : 1
                 if (selectList.has(v.id)) {
@@ -329,10 +327,7 @@ const AiMesRecord = ({}: IProps) => {
                     }
                     if(v.molds?.length > 0) {
                         v.bom.map(bom => {
-                            console.log(bom, bom.lot?.amount, bom?.bom.cavity, cavity)
-                            console.log(new Big(40).div(1), bom.lot?.amount)
-                            const finalAmount = new Big(Number(bom.lot?.amount)).div(1)
-                            console.log("finalAmount : ", finalAmount)
+                            const finalAmount = new Big(Number(bom.lot?.amount)).div(bom?.bom.cavity ?? cavity)
                             const finalUsage = finalAmount.times(bom.bom?.usage)
                             if(!Number.isInteger(finalAmount.toNumber())) throw(alertMsg.productAmountNotCavityDivisor)
                             if(finalUsage.gt(bom.lot?.current)) throw (alertMsg.overStock)
@@ -402,7 +397,6 @@ const AiMesRecord = ({}: IProps) => {
                     }
                 }
                 }).filter((v) => v)
-                console.log("postBody : ", postBody)
             const res = await RequestMethod('post', `aiCncRecordSave`,postBody.map((finalData) => forSaveCleanUpData(finalData)))
             if (res?.length > 0) {
                 Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
@@ -472,6 +466,14 @@ const AiMesRecord = ({}: IProps) => {
                             return row
                         }
                     })
+                    let tmpSelectList: Set<any> = selectList
+                    e.map(v => {
+                        if(v.isChange) {
+                            tmpSelectList.add(v.id)
+                            v.isChange = false
+                        }
+                    })
+                    setSelectList(tmpSelectList)
                     setBasicRow(result)
                     // const deleteCheck = e.every(prop => prop.finish === false);
                     // if(!deleteCheck) reload()
