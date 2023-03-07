@@ -53,12 +53,16 @@ const MultiFileUploadModal = ({ row, column, onRowChange, onClose }: IProps) => 
                 onClickImageUpload()
                 break;
             case 1:
-                const deleteList = row.work_standard_image.map((image) => {
+                const deleteList = row.work_standard_image?.map((image) => {
                     if(!selectItems.has(image)){
                         return image
                     }
                 }).filter(value => value)
 
+                if(deleteList.length == row.work_standard_image.length){
+                    Notiflix.Report.warning("경고","사진을 선택해주세요.","확인")
+                    break;
+                }
                 onRowChange({...row,
                     work_standard_image:deleteList,
                     isChange:true,
