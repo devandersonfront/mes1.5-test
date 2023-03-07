@@ -228,6 +228,7 @@ const AiMesRecord = ({}: IProps) => {
             lot_number:res?.lot_number ?? null,
             machine:res?.machine ?? null,
             machines:res?.machines ?? null,
+            molds:res?.molds ?? null,
             mfr_code:res?.mfr_code ?? null,
             name:res?.name ?? null,
             operationRecord:res?.operationRecord ?? null,
@@ -296,6 +297,8 @@ const AiMesRecord = ({}: IProps) => {
                 sum: row?.operationRecord.good_quantity,
                 confidence: row?.confidence ? row.confidence.toFixed(4) * 100 : 0,
                 // id: `sheet_${random_id}`,
+                molds: row.operationRecord?.molds,
+                tools: row.operationRecord?.tools,
                 reload: _reload,
             }
         })
@@ -308,7 +311,7 @@ const AiMesRecord = ({}: IProps) => {
         try{
             console.log("basicRow : ", basicRow)
             const postBody = basicRow.map((v) => {
-                const cavity = v.molds?.length > 0 ? v.molds[0].mold?.mold?.cavity : 1
+                const cavity = v.product.molds?.length > 0 ? v.product.molds[0].mold?.cavity : 1
                 if (selectList.has(v.id)) {
                     if(CheckRecordLotNumber(v.lot_number)){
                         throw(alertMsg.wrongLotNumber)
@@ -326,7 +329,10 @@ const AiMesRecord = ({}: IProps) => {
                     }
                     if(v.molds?.length > 0) {
                         v.bom.map(bom => {
-                            const finalAmount = new Big(Number(bom.lot?.amount)).div(bom?.bom.cavity)
+                            console.log(bom, bom.lot?.amount, bom?.bom.cavity, cavity)
+                            console.log(new Big(40).div(1), bom.lot?.amount)
+                            const finalAmount = new Big(Number(bom.lot?.amount)).div(1)
+                            console.log("finalAmount : ", finalAmount)
                             const finalUsage = finalAmount.times(bom.bom?.usage)
                             if(!Number.isInteger(finalAmount.toNumber())) throw(alertMsg.productAmountNotCavityDivisor)
                             if(finalUsage.gt(bom.lot?.current)) throw (alertMsg.overStock)
@@ -363,24 +369,30 @@ const AiMesRecord = ({}: IProps) => {
                                 lot: {
                                     ...bom.lot,
                                     [lotKey]: bom.lot?.[lotKey],
-                                    amount: v.molds?.length > 0 ? new Big(Number(bom.lot.amount)).div(bom?.bom?.cavity).toString() : Number(bom.lot.amount)}}
+                                    amount: v.molds?.length > 0 ? new Big(Number(bom.lot.amount)).div(bom?.bom?.cavity ?? cavity).toString() : Number(bom.lot.amount)}}
                         }),
                         operation_sheet: v.operation_sheet ?? v.operationRecord.operation_sheet,
                         osId:v.os_id,
-                        tools: v?.tools?.map((tool) => {
-                            return{
-                                ...tool,
-                                tool:{
-                                    sequence: tool.tool?.sequence,
-                                    setting: 1,
-                                    used: Number(tool.tool.used),
-                                    tool: {
-                                        ...tool.tool.tool,
-                                        customer: tool.tool.customerArray
-                                    }
-                                }}
-                        }).filter(v=>v.tool.tool.code) ?? [],
+                        // tools: v?.tools?.map((tool) => {
+                        //     return{
+                        //         ...tool,
+                        //         tool:{
+                        //             sequence: tool.tool?.sequence,
+                        //             setting: 1,
+                        //             used: Number(tool.tool.used),
+                        //             tool: {
+                        //                 ...tool.tool.tool,
+                        //                 customer: tool.tool.customerArray
+                        //             }
+                        //         }}
+                        // }).filter(v=>v.tool.tool.code) ?? [],
                         machines:[{machine:v.machine}],
+                        // machines:v.operationRecord.machines,
+                        // molds:v.product.molds.map((mold) => {
+                        //     return {mold:mold}
+                        // }),
+                        molds:v.operationRecord.molds,
+                        tools:v.operationRecord.tools,
                             // v.machines.map(machine => ({ machine: {...machine.machine, machine: { ...machine.machine.machine, additional: []}}})),
                         version: undefined,
                         uph:0,
@@ -390,7 +402,7 @@ const AiMesRecord = ({}: IProps) => {
                     }
                 }
                 }).filter((v) => v)
-
+                console.log("postBody : ", postBody)
             const res = await RequestMethod('post', `aiCncRecordSave`,postBody.map((finalData) => forSaveCleanUpData(finalData)))
             if (res?.length > 0) {
                 Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
