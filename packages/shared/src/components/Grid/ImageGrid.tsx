@@ -41,21 +41,28 @@ const ImageGrid = ({images, selectItems, changeSelectItems}:ImageGridType) => {
                 <ImageOpenModal url={imgDatas[selectImg].url} open={open} changeSetOnImage={changeSetOnImage} uuid={imgDatas[selectImg].UUID} photoId={imgDatas[selectImg].fileId}/>
             }
             <ImgGridBox>
-                {(images !== null && imgDatas) && imgDatas.map((url, index) => {
-                    return(
-                            <Image src={url.url} alt={"이미지 로딩에 실패했습니다."} className={selectItems.has(url.UUID) ? "border" : ""}
-                                 onClick={() => {
-                                     setSelectImg(index)
-                                     changeSelectItems(url.UUID)
-                                 }}
-                                 onDoubleClick={() => {
-                                     setOpen(true)
-                                 }}
+                {(images !== null && imgDatas) &&
+                    imgDatas.map((url, index) => {
+                        return(
+                                <Image src={url.url} alt={"이미지 로딩에 실패했습니다."} className={selectItems.has(url.UUID) ? "border" : ""}
+                                     onClick={() => {
+                                         setSelectImg(index)
+                                         changeSelectItems(url.UUID)
+                                     }}
+                                     onDoubleClick={() => {
+                                         setOpen(true)
+                                     }}
 
-                            />
-                    )
-                })}
+                                />
+                        )
+                    })
+                }
             </ImgGridBox>
+                {!(images !== null && imgDatas)  &&
+                    <div style={{width:"100%", height:"10em", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                        등록된 작업 표준서가 없습니다.
+                    </div>
+                }
         </div>
     )
 }

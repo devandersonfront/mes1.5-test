@@ -671,7 +671,7 @@ export const columnlist: any = {
         { pk: '2', name: '완제품' },
       ]
     },
-    { key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer, type: "image", readonly: true, width: 120 ,unprintable : true},
+    { key: 'work_standard_image', name: '작업 표준서', formatter: MultiFileUploadModal, type: "image", readonly: true, width: 120 ,unprintable : true},
   ],
   midrange: [
     {

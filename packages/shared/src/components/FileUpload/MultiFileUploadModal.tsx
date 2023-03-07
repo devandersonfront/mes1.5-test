@@ -139,9 +139,10 @@ const MultiFileUploadModal = ({ row, column, onRowChange, onClose }: IProps) => 
                             src={Icon_X} style={{ borderRadius: "4px", width: "24px", height: "24px", marginRight: "4px", marginLeft: '4px' }} />
                     </div>
                     <PageHeader
-                        title={"제품 등록 관리"}
-                        buttons={["추가","삭제"]}
+                        title={"작업 표준서 리스트"}
+                        buttons={!column.readonly && ["추가","삭제"]}
                         buttonsOnclick={ButtonEvents}
+                        type={"modal"}
                     />
                     <ImageGrid images={row.work_standard_image} selectItems={selectItems} changeSelectItems={changeSelectItems} />
                 </div>
