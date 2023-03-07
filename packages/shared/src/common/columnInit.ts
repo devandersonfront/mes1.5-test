@@ -67,6 +67,7 @@ import {DatetimePickerBox} from "../components/CalendarBox/DatetimePickerBox";
 import {MachineSelectModal} from "../components/Modal/MachineSelectModal";
 import Checkbox from "../components/InputBox/Checkbox";
 import {AiCompareModal} from "../components/Modal/AiCompareModal";
+import {MultiFileUploadModal} from "../components/FileUpload/MultiFileUploadModal";
 
 export const columnlist: any = {
   member: [
@@ -300,7 +301,7 @@ export const columnlist: any = {
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal, unprintable: true},
     {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, inputType:'number', formatter: UnitContainer, placeholder: '0', toFix:1},
     {key: 'price', name: '단가', editor: TextEditor, inputType:'number', formatter: UnitContainer, placeholder: '0', toFix:1, unitData:'원'},
-    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer , unprintable: true},
+    {key: 'work_standard_image', name: '작업 표준서', formatter: MultiFileUploadModal , unprintable: true},
     {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' , unprintable: true},
     {key: 'safety_stock' , name : '안전 재고', placeholder: '0' ,editor: TextEditor, formatter: PlaceholderBox , inputType: 'number'}
   ],
