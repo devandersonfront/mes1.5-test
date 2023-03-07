@@ -18,7 +18,6 @@ interface IProps {
 // 스페어 0
 // 기본 1
 const DropDownEditor = ({ row, onRowChange, column }: IProps) => {
-  console.log(column)
   const getSelectList = () => {
     if(column.key === 'type' && column.tab === 'ROLE_BASE_15'){
       const selectListIdx = row.product_type ==='생산품' ? 0 : 1

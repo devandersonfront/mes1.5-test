@@ -156,7 +156,7 @@ const BasicProduct = ({}: IProps) => {
               }
             }).filter((machine) => machine.machine.machine_id)?? []
           ],
-          work_standard_image:row.work_standard_image?.uuid,
+          work_standard_image:row.work_standard_image,
           type: row.type_id,
           safety_stock : Number(row.safety_stock),
           safety_stock_id : Number(row.safety_stock_id) == 0 ? null : Number(row.safety_stock_id),
