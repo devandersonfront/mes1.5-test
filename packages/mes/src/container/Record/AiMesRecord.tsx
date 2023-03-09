@@ -298,6 +298,7 @@ const AiMesRecord = ({}: IProps) => {
                 // id: `sheet_${random_id}`,
                 molds: row.operationRecord?.molds,
                 tools: row.operationRecord?.tools,
+                worked_product: row.recordProductName.length > 0 ? row.recordProductName : "-",
                 reload: _reload,
             }
         })
@@ -398,6 +399,7 @@ const AiMesRecord = ({}: IProps) => {
                 }
                 }).filter((v) => v)
             const res = await RequestMethod('post', `aiCncRecordSave`,postBody.map((finalData) => forSaveCleanUpData(finalData)))
+
             if (res?.length > 0) {
                 Notiflix.Report.success('저장되었습니다.', '', '확인', () => {
                     DeleteBasic(true)
