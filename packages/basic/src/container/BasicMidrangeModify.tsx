@@ -291,7 +291,24 @@ const BasicMidrangeModify = () => {
                         }
                     })
                 }}
-                setRow={setItemBasicRow}
+                setRow={(row) => {
+                    try{
+                        row.map((value) => {
+                            if(value.type_id == "2"){
+                                legendaryBasicRow.map((value) => {
+                                    if(value.legendary == "확인" || value.legendary == "취소"){
+                                        throw("이미 있음")
+                                    }
+                                })
+                                legendaryBasicRow.push({sequence:legendaryBasicRow.length, LegendaryExplain:"1", legendary:"확인"})
+                                legendaryBasicRow.push({sequence:legendaryBasicRow.length, LegendaryExplain:"2", legendary:"취소"})
+                            }
+                        })
+                        setItemBasicRow(row)
+                    }catch(err){
+                        setItemBasicRow(row)
+                    }
+                }}
                 height={setExcelTableHeight(itemBasicRow.length) - 8}
                 width={1576}
             />
