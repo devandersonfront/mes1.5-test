@@ -80,7 +80,7 @@ const BasicMidrangeModify = () => {
         try{
             const categoryInfo = itemBasicRow.map((v, i)=>{
                 // validateCategoryInfo(v)
-                return {...v, type: v.type === "범례 적용" ? 1 : 0}
+                return {...v, type: v.type !== "수치 입력" ? 1 : 0}
             })
 
             const legendaryKeyValue = {}
