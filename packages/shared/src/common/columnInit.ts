@@ -737,6 +737,7 @@ export const columnlist: any = {
     {key: 'type', name: '기록 방법', width: 118, formatter: DropDownEditor, selectList: [
         {pk: '0', name: '수치 입력'},
         {pk: '1', name: '범례 적용'},
+        {pk: '2', name: '확인'},
       ] },
   ],
   midrangeInspectionItemDetail: [
@@ -916,6 +917,7 @@ export const columnlist: any = {
     { key: "type", name: "품목 종류", width: 118 },
     { key: "unit", name: "단위", width: 118 },
     { key: "process_id", name: "생산 공정", width: 118 },
+    { key: "worked_product", name: "작업 품목", width: 118 },
     { key: "lot_number", name: "LOT 번호", editor: TextEditor, width: 118 },
     { key: "worker", name: "작업자",  formatter: SearchModalTest, type: 'user', width: 118 },
     {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'black', width: 200, type : "start"},
@@ -923,8 +925,8 @@ export const columnlist: any = {
     { key: "paused_time", name: "일시 정지 시간", formatter: PauseInfoModal, /*type: 'readonly',*/ modalType: false, width: 118 },
     { key: "good_quantity", name: "양품 수량", formatter: InputMaterialListModal,width: 118, /*readonly:true */ type:"ai", action:"modify"},
     { key: "poor_quantity", name: "불량 수량", formatter: DefectInfoModal, width: 118, textAlign: 'center'},
-    { key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
-    { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
+    { key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true, theme:"aiModal"},
+    { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true, theme:"aiModal"},
     { key: 'machine_id', name: '기계', formatter: MachineSelectModal, textAlign: 'center', type:"ai"},
     { key: 'prediction', name : '예측', width: 118},
     { key : 'confidence', name : '유사도', width: 118}

@@ -174,3 +174,27 @@ export const transTypeProduct = (type:string | number) => {
 
   }
 }
+
+
+export const duplicateCheckWithArray = (array:Array<any>, keys:Array<string>, nullCheck?:boolean):boolean => {
+  try{
+    if(nullCheck && array.length <= 0) return false
+    keys.map((key) => {
+      array.map((_, index1) => {
+        const standard = _[key]
+        if(!standard) throw false
+        array.map((row, index2) => {
+          if(index1 !== index2){
+            if(row[key] == standard) throw false
+          }
+        })
+      })
+
+    })
+    return true
+  }
+  catch (err){
+    return false
+  }
+}
+

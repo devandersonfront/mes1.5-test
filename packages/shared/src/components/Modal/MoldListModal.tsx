@@ -17,13 +17,12 @@ import {TransferCodeToValue} from "../../common/TransferFunction";
 import {UploadButton} from "../../styles/styledComponents";
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
+import {DropDownEditor} from "../Dropdown/ExcelBasicDropdown";
 interface IProps {
   column: IExcelHeaderType
   row: any
   onRowChange: (e: any) => void
 }
-
-const optionList = ['제조번호','제조사명','기계명','','담당자명']
 
 const headerItems: {title: string, infoWidth: number, key: string, unit?: string}[][] = [
   [
@@ -55,6 +54,7 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
   const [keyword, setKeyword] = useState<string>('')
   const [selectRow, setSelectRow] = useState<number>()
   const [searchList, setSearchList] = useState<any[]>([{seq: 1}])
+  const [forSelectColumn, setForSelectColumn] = useState<any[]>(searchModalList.moldList)
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
@@ -92,6 +92,16 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
       })
     }
   }, [isOpen, searchKeyword])
+
+  useEffect(() => {
+    if(column.theme == "aiModal"){
+      setForSelectColumn([...forSelectColumn,
+        {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
+            {pk: 'basic', name: '기본'},
+            {pk: 'spare', name: '스페어'},
+          ], type: 'Modal'},])
+    }
+  },[])
 
   const changeRow = (row: any, key?: string) => {
     let tmpData = {
@@ -227,7 +237,7 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
           </div>
           <div style={{padding: '0 16px', width: 1776}}>
             <ExcelTable
-              headerList={searchModalList.moldList}
+              headerList={forSelectColumn}
               row={searchList ?? [{}]}
               setRow={(e) => setSearchList([...e])}
               width={1746}
@@ -249,6 +259,43 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
             />
           </div>
           <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
+            {column.theme == "aiModal" ?
+                <div style={{height: 40, display: 'flex', alignItems: 'flex-end'}}>
+                  <div
+                      onClick={() => setIsOpen(false)}
+                      style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                  >
+                    <p>취소</p>
+                  </div>
+                  <div
+                      onClick={async () => {
+                        try{
+                          const moldResult = {
+                            ...row,
+                            molds: row.molds.map((mold, index) => {
+                              mold.mold.setting = searchList[index].setting
+                              return mold
+                            }),
+                            isChange:true
+                          }
+                          const defaultSettingCount = searchList.filter(row => row.setting === 1).length
+                          if (defaultSettingCount !== 1) {
+                            throw("기본설정은 한 개여야 합니다.")
+                          }
+                          setIsOpen(false)
+
+                          onRowChange(moldResult)
+                        } catch(errMsg){
+                          Notiflix.Report.warning('경고', errMsg, '확인')
+                        }
+
+                      }}
+                      style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                  >
+                    <p>등록하기</p>
+                  </div>
+                </div>
+                :
             <div
               onClick={() => {
                 setIsOpen(false)
@@ -257,6 +304,7 @@ const MoldListModal = ({column, row, onRowChange}: IProps) => {
             >
               <p>확인</p>
             </div>
+            }
           </div>
         </div>
       </Modal>
@@ -284,7 +332,7 @@ const Button = styled.button`
     justify-content:center;
     align-items:center;
     cursor:pointer;
-    
+
 `;
 
 const HeaderTable = styled.div`
@@ -318,7 +366,7 @@ const HeaderTableText = styled.p`
 const HeaderTableTitle = styled.div`
   width: 110px;
   padding: 0 8px;
-  display: flex; 
+  display: flex;
   align-items: center;
 `
 
