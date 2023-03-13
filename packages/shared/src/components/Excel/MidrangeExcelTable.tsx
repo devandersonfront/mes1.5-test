@@ -24,13 +24,13 @@ const MidrangeExcelTable =  ({ formReviewData }: IProps)  => {
 
         if(formReviewData !== undefined) {
             const inspection_beginning = formReviewData.item.map((v) => {
-                return {...v, samples: formReviewData.samples[0].samples, type: v.type === '범례 적용' ? 1 : 0, data_result: []}
+                return {...v, samples: formReviewData.samples[0].samples, type: v.type !== '수치 입력' ? 1 : 0, data_result: []}
             })
             const inspection_middle = formReviewData.item.map((v) => {
-                return {...v, samples: formReviewData.samples[0].samples, type: v.type === '범례 적용' ? 1 : 0, data_result: []}
+                return {...v, samples: formReviewData.samples[0].samples, type: v.type !== '수치 입력' ? 1 : 0, data_result: []}
             })
             const inspection_end = formReviewData.item.map((v) => {
-                return {...v, samples: formReviewData.samples[0].samples, type: v.type === '범례 적용' ? 1 : 0, data_result: []}
+                return {...v, samples: formReviewData.samples[0].samples, type: v.type !== '수치 입력' ? 1 : 0, data_result: []}
             })
 
             const legendary_list = formReviewData.legendary.map((v) => {

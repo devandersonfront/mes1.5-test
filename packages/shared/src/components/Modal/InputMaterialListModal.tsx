@@ -72,16 +72,14 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
   const getInputMaterialList = async (key: string, os_id?: number | string) => {
     try{
       if(key){
-        if(!row.identification) throw("작업지시서(지시고유번호)를 선택해주세요.")
+        if(!row.identification && column.type !== "outsourcing") throw("작업지시서(지시고유번호)를 선택해주세요.")
         const pathVar = isOutsourcing ? [key] : { os_id: os_id, bom: 'bom', key: key, }
         //(!row.bom && isAIModal)
-        //isOutsourcing  ? "bomLoad" :
-        const res = await RequestMethod('get',  `sheetBomLoad`,{
+        const res = await RequestMethod('get',  isOutsourcing  ? "bomLoad" : `sheetBomLoad`,{
           path: pathVar
         })
         if(
-            res && res.length > 0
-            // res && Object.keys(res).length === 0 && res.constructor === Object
+            res && isOutsourcing ? Object.keys(res).length != 0 : res.length > 0
         ){
           const inputMaterialList = toInputMaterialList(res)
           setInputMaterialList(inputMaterialList)
