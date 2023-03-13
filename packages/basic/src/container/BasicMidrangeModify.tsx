@@ -10,7 +10,7 @@ import {IExcelHeaderType} from 'shared/src/@types/type'
 import {MidrangeButton} from "shared/src/styles/styledComponents";
 import {useRouter} from "next/router";
 import Notiflix from "notiflix";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import {duplicateCheckWithArray, setExcelTableHeight} from 'shared/src/common/Util'
 
 const BasicMidrangeModify = () => {
     const column:Array<IExcelHeaderType> = columnlist["midrangeExam"]
@@ -220,7 +220,16 @@ const BasicMidrangeModify = () => {
                 setIsOpen(!isOpen)
                 return
             case 1 :
-                MidrangeSave()
+                const duplication:boolean = duplicateCheckWithArray(legendaryBasicRow, ["legendary"])
+                const essential:boolean = duplicateCheckWithArray(itemBasicRow, ["name","standard"], true);
+
+                if(duplication && essential){
+                    MidrangeSave()
+                }else if(!duplication){
+                    Notiflix.Report.warning("경고", "중복된 범례가 있습니다.","확인")
+                }else if(!essential){
+                    Notiflix.Report.warning("경고", "필수값을 입력해주시기 바랍니다.(검사 항목, 점검 기준)","확인")
+                }
                 return
         }
     }
