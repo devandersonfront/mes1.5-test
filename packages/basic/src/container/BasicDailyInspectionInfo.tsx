@@ -7,6 +7,7 @@ import {useRouter} from "next/router";
 import DailyInspectionModal from "../../../shared/src/components/Modal/DailyInspection/DailyInspectionModal";
 import {TransferCodeToValue, TransferValueToCode} from "shared/src/common/TransferFunction";
 import cookie from "react-cookies";
+import {duplicateCheckWithArray, setExcelTableHeight} from "shared/src/common/Util";
 
 export interface IProps {
     machine_id?: number
@@ -131,12 +132,38 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                 return
 
             case 1:
-                if(machine_id){
-                    saveInspecMachine(forSaveClean(basicRow, photoTitleList))
-                }else{
-                    saveInspecMold(forSaveClean(basicRow, photoTitleList))
-            }
-                return
+                try{
+                    if(basicRow.check_list.length <= 0){
+                        throw "검사항목을 입력해주세요."
+                    }
+                    // 범례 적용이 있는지 확인 : 있으면 false
+                    const result = basicRow.check_list.every((row) => row.dropDown != "범례 적용")
+
+                    if(!result) {
+                        const duplicationForLegendary: boolean = duplicateCheckWithArray(basicRow.legendary_list, ["legendary"])
+                        if (basicRow.legendary_list.length <= 0) {
+                            throw "범례를 입력해주세요."
+                        } else if (duplicationForLegendary) {
+                            if(machine_id){
+                                saveInspecMachine(forSaveClean(basicRow, photoTitleList))
+                            }else{
+                                saveInspecMold(forSaveClean(basicRow, photoTitleList))
+                            }
+                        } else {
+                            Notiflix.Report.warning("경고", "중복된 데이터가 있습니다.", "확인")
+                        }
+                    }else{
+                        if(machine_id){
+                            saveInspecMachine(forSaveClean(basicRow, photoTitleList))
+                        }else{
+                            saveInspecMold(forSaveClean(basicRow, photoTitleList))
+                        }
+                    }
+
+                    return
+                }catch (err){
+                    Notiflix.Report.warning("",err,"확인")
+                }
 
             default:
                 return
@@ -202,6 +229,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
             productInfo.name = data.mold?.name
             productInfo.code = data.mold?.code
         }
+        console.log(productInfo)
         return [productInfo]
     }
 
@@ -342,6 +370,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
     useEffect(() => {
         LoadInspecData(machine_id ? "machine" : "mold")
     }, []);
+
     return (
         <div>
             <DailyInspectionModal isOpen={infoModalOpen} setIsOpen={setInfoModalOpen} basicRow={basicRow} setBasicRow={changeSetBasicRow} modalType={machine_id ? "machine" : "mold"} modalSelectOption={modalSelectOption}/>
@@ -372,7 +401,8 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
 
             <div>
                 <ExcelTable headerList={columnlist.dailyInspectionMachineLegendary}
-                            row={basicRow?.legendary_list}
+                            editable
+                            row={basicRow.legendary_list}
                             setRow={(e) => {
                                 setBasicRow({...basicRow , legendary_list : e})
                                 setModalSelectOption(e)
@@ -387,7 +417,8 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                                     }
                                 })
                             }}
-                            height={basicRow.legendary_list?.length * 40 >= 40*18+56 ? 40*19 : basicRow.legendary_list?.length * 40 + 40}
+                            width={1576}
+                            height={setExcelTableHeight(basicRow.legendary_list.length) - 8}
                 />
                 <ButtonGroup>
                     <DeleteButton onClick={() => {
@@ -443,7 +474,8 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
                             }
                         })
                     }}
-                    height={basicRow.check_list?.length * 40 >= 40*18+56 ? 40*19 : basicRow.check_list?.length * 40 + 40}
+                    width={1576}
+                    height={setExcelTableHeight(basicRow.check_list.length) - 8}
                 />
                 <ButtonGroup>
                     <DeleteButton onClick={() => {

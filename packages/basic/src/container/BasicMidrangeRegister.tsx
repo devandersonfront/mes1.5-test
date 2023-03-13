@@ -10,7 +10,7 @@ import {IExcelHeaderType} from 'shared/src/@types/type'
 import {MidrangeButton} from "shared/src/styles/styledComponents";
 import Notiflix from "notiflix";
 import {useRouter} from "next/router";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import {duplicateCheckWithArray, setExcelTableHeight} from 'shared/src/common/Util'
 
 const BasicMidrangeRegister = () => {
     const column:Array<IExcelHeaderType> = columnlist["midrangeExam"]
@@ -47,8 +47,6 @@ const BasicMidrangeRegister = () => {
     const validateCategoryInfo = (info) => {
         if(!!!info.name) throw('검사 항목을 입력해주세요')
         if(!!!info.standard) throw('검사 기준을 입력해주세요')
-        if(!!!info.error_minimum) throw('최소값을 입력해주세요')
-        if(!!!info.error_maximum) throw('최대값을 입력해주세요')
     }
 
     const validateLegendsInfo = (info) => {
@@ -58,6 +56,8 @@ const BasicMidrangeRegister = () => {
 
     const MidrangeSave = async () => {
         try{
+
+
             const categoryInfo = itemBasicRow.map((v, i)=>{
                 // validateCategoryInfo(v)
                 return {...v, type: v.type !== "수치 입력" ? 1 : 0}
@@ -96,7 +96,16 @@ const BasicMidrangeRegister = () => {
                 setIsOpen(!isOpen)
                 return
             case 1 :
-                MidrangeSave()
+                const duplication:boolean = duplicateCheckWithArray(legendaryBasicRow, ["legendary"])
+                const essential:boolean = duplicateCheckWithArray(itemBasicRow, ["name","standard"], true);
+
+                if(duplication && essential){
+                    MidrangeSave()
+                }else if(!duplication){
+                    Notiflix.Report.warning("경고", "중복된 범례가 있습니다.","확인")
+                }else if(!essential){
+                    Notiflix.Report.warning("경고", "필수값을 입력해주시기 바랍니다.(검사 항목, 점검 기준)","확인")
+                }
                 return
         }
     }
