@@ -15,6 +15,8 @@ import {TransferCodeToValue} from "../../common/TransferFunction";
 import {UploadButton} from "../../styles/styledComponents";
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
+import Notiflix from "notiflix";
+import {DropDownEditor} from "../Dropdown/ExcelBasicDropdown";
 interface IProps {
     column: IExcelHeaderType
     row: any
@@ -48,6 +50,8 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
     const [summaryData, setSummaryData] = useState<any>({})
     const [searchList, setSearchList] = useState<any[]>([])
 
+    const [forSelectColumn, setForSelectColumn] = useState<any[]>(searchModalList.toolList)
+
     useEffect(() => {
         if(isOpen) {
             if(!!row.tools && row.tools.length){
@@ -56,6 +60,7 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
                     used: tool.tool.used,
                     customer: tool.tool.tool.customer?.name ?? '-',
                     sequence: idx+1,
+                    setting:tool.tool.setting,
                   })
                 )
                 setSearchList(newSearchList)
@@ -79,6 +84,15 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
         }
     }, [isOpen])
 
+    useEffect(() => {
+        if(column.theme == "aiModal"){
+            setForSelectColumn([...forSelectColumn,
+                {key: 'spare', name: '기본/스페어 설정', width: 160, formatter: DropDownEditor,selectList: [
+                        {pk: 'basic', name: '기본'},
+                        {pk: 'spare', name: '스페어'},
+                    ], type: 'Modal'},])
+        }
+    },[])
     const getSummaryInfo = (info) => {
         return summaryData[info.key] ?? '-'
     }
@@ -173,7 +187,7 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
                     </div>
                     <div style={{padding: '0 16px', width: 1776}}>
                         <ExcelTable
-                            headerList={searchModalList.toolList}
+                            headerList={forSelectColumn}
                             row={searchList ?? [{}]}
                             setRow={(e) => setSearchList([...e])}
                             width={1746}
@@ -192,7 +206,43 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
                             headerAlign={'center'}
                         />
                     </div>
-                    <div style={{ height: 50, display: 'flex', alignItems: 'flex-end'}}>
+                    {column.theme == "aiModal" ?
+                        <div style={{height: 40, display: 'flex', alignItems: 'flex-end'}}>
+                            <div
+                                onClick={() => setIsOpen(false)}
+                                style={{width: 888, height: 40, backgroundColor: '#b3b3b3', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                            >
+                                <p>취소</p>
+                            </div>
+                            <div
+                                onClick={async () => {
+                                    try{
+                                        const toolResult = {
+                                            ...row,
+                                            tools: row.tools.map((tool, index) => {
+                                                tool.tool.setting = searchList[index].setting
+                                                return tool
+                                            }),
+                                            isChange:true
+                                        }
+                                        const defaultSettingCount = searchList.filter(row => row.setting === 1).length
+                                        if (defaultSettingCount !== 1) {
+                                            throw("기본설정은 한 개여야 합니다.")
+                                        }
+                                        setIsOpen(false)
+
+                                        onRowChange(toolResult)
+                                    } catch(errMsg){
+                                        Notiflix.Report.warning('경고', errMsg, '확인')
+                                    }
+
+                                }}
+                                style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                            >
+                                <p>등록하기</p>
+                            </div>
+                        </div>
+                        :
                         <div
                             onClick={() => {
                                 setIsOpen(false)
@@ -201,7 +251,7 @@ const ToolListModal = ({column, row, onRowChange}: IProps) => {
                         >
                             <p>확인</p>
                         </div>
-                    </div>
+                    }
                 </div>
             </Modal>
         </SearchModalWrapper>

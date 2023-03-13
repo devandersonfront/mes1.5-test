@@ -61,6 +61,7 @@ interface IProps {
   noCode?: boolean
   moreButtons?: string[]
   onClickMoreButton?: (index:number) => void
+  type?: "modal" | "basic"
 }
 
 
@@ -108,7 +109,7 @@ const useStyles2 = makeStyles(_ => {
 const Header = ({title, score, pageHelper, selectDate, setSelectDate, buttons, buttonsOnclick, isSearch, style,
                   searchOptionList, onChangeSearchOption, isCalendar, onChangeSelectDate, moreButtons, onClickMoreButton,
                   calendarType, setState, optionIndex, dataLimit, calendarTitle, isNz, onChangeNz, nz,isExp,onChangeExp, exp, isCode, onChangeCode, code,
-                  isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch, searchKeyword, noCode, radioButtons, onChangeRadioIndex, radioIndex}: IProps) => {
+                  isRadio, radioTexts, radioValue, onChangeRadioValues, onSearch, searchKeyword, noCode, radioButtons, onChangeRadioIndex, radioIndex, type}: IProps) => {
 
   const [keyword, setKeyword] = React.useState<string>()
 
@@ -172,10 +173,10 @@ const Header = ({title, score, pageHelper, selectDate, setSelectDate, buttons, b
             <div style={{width: '100%',display: 'flex', justifyContent:"space-between"}}>
               <div className={'header_title'} style={{marginTop:20}}>
                 {
-                    title && <span style={{fontSize: 22, marginRight: 18, marginLeft: 3, fontWeight: 'bold', color: 'white'}}>{title}</span>
+                    title && <span style={{fontSize: 22, marginRight: 18, marginLeft: 3, fontWeight: 'bold', color: type == "modal" ? 'black' : 'white'}}>{title}</span>
                 }
                 {
-                    pageHelper && <span style={{fontSize: 12, color: 'white'}}>*{pageHelper}</span>
+                    pageHelper && <span style={{fontSize: 12, color: type == "modal" ? 'black' : 'white'}}>*{pageHelper}</span>
                 }
               </div>
               <ButtonWrapper style={{  marginTop: 20}}>

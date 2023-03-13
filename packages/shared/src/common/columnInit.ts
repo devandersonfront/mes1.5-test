@@ -67,6 +67,7 @@ import {DatetimePickerBox} from "../components/CalendarBox/DatetimePickerBox";
 import {MachineSelectModal} from "../components/Modal/MachineSelectModal";
 import Checkbox from "../components/InputBox/Checkbox";
 import {AiCompareModal} from "../components/Modal/AiCompareModal";
+import {MultiFileUploadModal} from "../components/FileUpload/MultiFileUploadModal";
 
 export const columnlist: any = {
   member: [
@@ -300,7 +301,7 @@ export const columnlist: any = {
     {key: 'machine_id', name: '기계', formatter: MachineInfoModal, unprintable: true},
     {key: 'standard_uph', name: '기준 UPH', editor: TextEditor, inputType:'number', formatter: UnitContainer, placeholder: '0', toFix:1},
     {key: 'price', name: '단가', editor: TextEditor, inputType:'number', formatter: UnitContainer, placeholder: '0', toFix:1, unitData:'원'},
-    {key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer , unprintable: true},
+    {key: 'work_standard_image', name: '작업 표준서', formatter: MultiFileUploadModal , unprintable: true},
     {key: 'sic_id', name: '초ㆍ중ㆍ종 검사', formatter: MidRangeButton, title: '검사항목 등록' , unprintable: true},
     {key: 'safety_stock' , name : '안전 재고', placeholder: '0' ,editor: TextEditor, formatter: PlaceholderBox , inputType: 'number'}
   ],
@@ -670,7 +671,7 @@ export const columnlist: any = {
         { pk: '2', name: '완제품' },
       ]
     },
-    { key: 'work_standard_image', name: '작업 표준서', formatter: FileEditer, type: "image", readonly: true, width: 120 ,unprintable : true},
+    { key: 'work_standard_image', name: '작업 표준서', formatter: MultiFileUploadModal, type: "image", readonly: true, width: 120 ,unprintable : true},
   ],
   midrange: [
     {
@@ -915,6 +916,7 @@ export const columnlist: any = {
     { key: "type", name: "품목 종류", width: 118 },
     { key: "unit", name: "단위", width: 118 },
     { key: "process_id", name: "생산 공정", width: 118 },
+    { key: "worked_product", name: "작업 품목", width: 118 },
     { key: "lot_number", name: "LOT 번호", editor: TextEditor, width: 118 },
     { key: "worker", name: "작업자",  formatter: SearchModalTest, type: 'user', width: 118 },
     {key: 'start', name: '작업 시작 일시', formatter: DatetimePickerBox, textAlign: 'center', theme: 'black', width: 200, type : "start"},
@@ -922,8 +924,8 @@ export const columnlist: any = {
     { key: "paused_time", name: "일시 정지 시간", formatter: PauseInfoModal, /*type: 'readonly',*/ modalType: false, width: 118 },
     { key: "good_quantity", name: "양품 수량", formatter: InputMaterialListModal,width: 118, /*readonly:true */ type:"ai", action:"modify"},
     { key: "poor_quantity", name: "불량 수량", formatter: DefectInfoModal, width: 118, textAlign: 'center'},
-    { key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
-    { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
+    { key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true, theme:"aiModal"},
+    { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true, theme:"aiModal"},
     { key: 'machine_id', name: '기계', formatter: MachineSelectModal, textAlign: 'center', type:"ai"},
     { key: 'prediction', name : '예측', width: 118},
     { key : 'confidence', name : '유사도', width: 118}
