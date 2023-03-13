@@ -737,6 +737,7 @@ export const columnlist: any = {
     {key: 'type', name: '기록 방법', width: 118, formatter: DropDownEditor, selectList: [
         {pk: '0', name: '수치 입력'},
         {pk: '1', name: '범례 적용'},
+        {pk: '2', name: '확인'},
       ] },
   ],
   midrangeInspectionItemDetail: [
