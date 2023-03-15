@@ -133,14 +133,17 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
 
             case 1:
                 try{
+                    const duplicationForLegendary: boolean = duplicateCheckWithArray(basicRow.legendary_list, ["legendary"])
                     if(basicRow.check_list.length <= 0){
                         throw "검사항목을 입력해주세요."
+                    }
+                    if(!duplicationForLegendary){
+                        throw "중복된 범례가 있습니다."
                     }
                     // 범례 적용이 있는지 확인 : 있으면 false
                     const result = basicRow.check_list.every((row) => row.dropDown != "범례 적용")
 
                     if(!result) {
-                        const duplicationForLegendary: boolean = duplicateCheckWithArray(basicRow.legendary_list, ["legendary"])
                         if (basicRow.legendary_list.length <= 0) {
                             throw "범례를 입력해주세요."
                         } else if (duplicationForLegendary) {
@@ -162,7 +165,7 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
 
                     return
                 }catch (err){
-                    Notiflix.Report.warning("",err,"확인")
+                    Notiflix.Report.warning("경고",err,"확인")
                 }
 
             default:
