@@ -110,17 +110,20 @@ export const getServerSideProps = async (ctx: any) => {
       case 'stock' :
         return {
           title:"재고현황",
-          code:"ROLE_STK_01"
+          code:"ROLE_STK_01",
+          placeholder: 'stock'
         }
       case "device":
         return {
           title: "주변창지 정보관리",
-          code:"ROLE_BASE_12"
+          code:"ROLE_BASE_12",
+          placeholder: 'device'
         }
       case "tool" :
         return {
           title: "공구 관리",
-          code: "ROLE_BASE_14"
+          code: "ROLE_BASE_14",
+          placeholder: 'tool'
         }
     }
   }
@@ -153,14 +156,12 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
 
   const itemSetting = (columns:any[]) => {
     const originalColumn = columnlist[placeholder]
-    console.log("originalColumn : ", originalColumn)
     const result = columns.map((col) => {
       if(col.colName == null){
         col.placeholder = "추가 항목"
       }else{
         originalColumn.map((origin, index) => {
           if(col.colName == origin.key) {
-            console.log("origin.name : ", origin.name, index)
             col.placeholder = origin.name
             return
           }
@@ -169,7 +170,6 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
       return col
     })
 
-    console.log("result : ", result)
     setItem(result)
   }
 
@@ -305,7 +305,7 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
 
 
   return (
-      <div style={{display: 'flex', height: 1500}}>
+      <div style={{display: 'flex', }}>
         <MenuNavigation/>
         <div>
           <ProfileHeader/>
@@ -333,69 +333,8 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
                 headerList={[SelectColumn,...columnlist.baseItem(item, setItem)]}
                 setRow={(e) => competeAddtion(e)}
                 row={item}
-                height={240}
-                // setRow={setItem}
+                height={500}
             />
-            {/*<ItemManageBox title={title} items={baseItem} setItems={setBaseItem} type={'base'}/>*/}
-            {/*<ExcelTable*/}
-            {/*    headerList={[...columnlist.baseItem(baseItem, setBaseItem)]}*/}
-            {/*    row={baseItem}*/}
-            {/*    height={240}*/}
-            {/*    setRow={setBaseItem}*/}
-            {/*/>*/}
-            {/*<br/><br/>*/}
-            {/*{code !== "ROLE_STK_01" &&*/}
-            {/*<>*/}
-            {/*  <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>*/}
-            {/*    <HeaderButton onClick={() => {*/}
-
-            {/*      const existence = valueExistence()*/}
-
-            {/*      if(!existence){*/}
-            {/*        const resultArray = [];*/}
-            {/*        baseItem.map((value)=>{*/}
-            {/*          resultArray.push({...value})*/}
-            {/*        })*/}
-            {/*        addiItem.map((value)=>{*/}
-            {/*          resultArray.push({...value, unit:value.unit_id ?? value.unit, moddable: value.moddablePK === "1" ? false : true})*/}
-            {/*        })*/}
-            {/*        saveItem(code, resultArray, 'additional')*/}
-            {/*      }else{*/}
-            {/*        return Notiflix.Report.warning(*/}
-            {/*            '경고',*/}
-            {/*            `"${existence}"을 입력 해주세요`,*/}
-            {/*            '확인',*/}
-            {/*        );*/}
-            {/*      }*/}
-            {/*    }} key={`btnCreate`}>추가항목 저장</HeaderButton>*/}
-            {/*    <HeaderButton onClick={() => {*/}
-            {/*      const random_id = Math.random() * 1000;*/}
-            {/*      setAddiItem([...addiItem, {*/}
-            {/*        id: `addi_${random_id}`,*/}
-            {/*        width: 118,*/}
-            {/*        sequence:baseItem.length,*/}
-            {/*        tab:baseItem[0].tab*/}
-            {/*      }])*/}
-            {/*    }} key={`btnCreate`}>행 추가</HeaderButton>*/}
-            {/*    <HeaderButton onClick={() => deleteItem(code, addiItem)} key={`btnCreate`}>삭제</HeaderButton>*/}
-            {/*  </div>*/}
-            {/*  <ItemManageBox title={title} items={addiItem} setItems={setAddiItem} type={'additional'}/>*/}
-            {/*  <ExcelTable*/}
-            {/*      selectable*/}
-            {/*      headerList={[SelectColumn,...columnlist.additionalItem(addiItem, setAddiItem)]}*/}
-            {/*      row={addiItem}*/}
-
-            {/*      height={240}*/}
-            {/*      setRow={(e) => competeAddtion(e)}*/}
-            {/*      setSelectRow={(e) => {*/}
-            {/*        setSelectRow(e)*/}
-            {/*      }}*/}
-            {/*      setSelectList={(e) => {*/}
-            {/*        setSelectList(e)*/}
-            {/*      }}*/}
-            {/*  />*/}
-            {/*</>*/}
-            {/*}*/}
           </div>
         </div>
       </div>

@@ -18,7 +18,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
+import {additionalMenus, getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
 import { alertMsg } from 'shared/src/common/AlertMsg'
@@ -366,30 +366,9 @@ const BasicUser = ({}: IProps) => {
       })
       .filter((v: any) => v);
 
-    let additionalMenus = res.menus
-      ? res.menus
-          .map((menu: any) => {
-            if (menu.colName === null && !menu.hide) {
-              return {
-                id: menu.mi_id,
-                name: menu.title,
-                width: menu.width,
-                // key: menu.title,
-                key: menu.mi_id,
-                editor: TextEditor,
-                type: "additional",
-                unit: menu.unit,
-                tab: menu.tab,
-                version: menu.version,
-                colName: menu.mi_id,
-              };
-            }
-          })
-          .filter((v: any) => v)
-      : [];
 
     tmpRow = res.info_list;
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, reload, setColumn});
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn});
 
     let tmpBasicRow = tmpRow.map((row: any, index: number) => {
       let realTableData: any = changeRow(row);
