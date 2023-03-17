@@ -11,7 +11,7 @@ import {HeaderButton} from '../../../../styles/styledComponents'
 import ItemManageBox from '../../../../component/ItemManage/ItemManageBox'
 //@ts-ignore
 import Notiflix from "notiflix";
-import { IItemMenuType, RequestMethod, RootState } from 'shared'
+import {IExcelHeaderType, IItemMenuType, RequestMethod, RootState} from 'shared'
 import { useRouter } from 'next/router'
 import cookie from 'react-cookies'
 
@@ -19,6 +19,7 @@ interface IProps {
   title: string
   type: string
   code: string
+  placeholder:string
 }
 
 export const getServerSideProps = async (ctx: any) => {
@@ -28,57 +29,68 @@ export const getServerSideProps = async (ctx: any) => {
       case 'member':
         return {
           title: '유저 관리',
-          code: 'ROLE_HR_02'
+          code: 'ROLE_HR_02',
+          placeholder: 'member'
         }
       case 'customer':
         return {
           title: '거래처 정보 관리',
-          code: 'ROLE_BASE_01'
+          code: 'ROLE_BASE_01',
+          placeholder: 'customer'
         }
       case 'process':
         return {
           title: '공정 관리',
-          code: 'ROLE_BASE_02'
+          code: 'ROLE_BASE_02',
+          placeholder: 'process'
         }
       case 'machine':
         return {
           title: '기계 기준정보',
-          code: 'ROLE_BASE_04'
+          code: 'ROLE_BASE_04',
+          placeholder: 'machineV2'
         }
       case 'product':
         return {
           title: '제품 등록 관리',
-          code: 'ROLE_BASE_15'
+          code: 'ROLE_BASE_15',
+          placeholder: 'productV1u'
         }
       case 'rawmaterial':
         return {
           title: '원자재 기준정보',
-          code: 'ROLE_BASE_06'
+          code: 'ROLE_BASE_06',
+          placeholder: 'rawMaterial'
         }
       case 'submaterial':
         return {
           title: '부자재 기준정보',
-          code: 'ROLE_BASE_13'
+          code: 'ROLE_BASE_13',
+          placeholder: 'subMaterial'
         }
       case 'mold':
         return {
           title: '금형 기준정보',
-          code: 'ROLE_BASE_07'
+          code: 'ROLE_BASE_07',
+          placeholder: 'mold'
         }
       case 'model':
         return {
           title: "거래처 모델정보",
-          code: 'ROLE_BASE_08'
+          code: 'ROLE_BASE_08',
+          placeholder: 'model'
         }
       case 'factory' :
         return {
           title:"공장 기준정보",
-          code: "ROLE_BASE_11"
+          code: "ROLE_BASE_11",
+          placeholder: 'factory'
         }
       case 'rawin':
         return {
           title: "원자재 입고 관리",
-          code: 'ROLE_RMAT_01'
+          code: 'ROLE_RMAT_01',
+          placeholder: 'rawinV1u'
         }
       case 'rawstock':
         return {
@@ -119,22 +131,18 @@ export const getServerSideProps = async (ctx: any) => {
     props: {
       title: tempObject ? tempObject.title : "",
       code: tempObject ? tempObject.code : "",
+      placeholder:tempObject ? tempObject.placeholder : "",
       type: ctx.query.type
     }
   }
 }
 
-let unitData = [
-  {unit_id: '0', name: "개별관리"},
-  {unit_id: '1', name: "통일"},
-  {unit_id: '2', name: "없음"},
-]
 
-const ItemManagePage = ({title, type, code}: IProps) => {
-
+const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
   const router = useRouter();
-  const [baseItem, setBaseItem] = useState<IItemMenuType[]>([])
-  const [addiItem, setAddiItem] = useState<IItemMenuType[]>([])
+  const [item, setItem] = useState<IItemMenuType[]>([])
+  // const [baseItem, setBaseItem] = useState<IItemMenuType[]>([])
+  // const [addiItem, setAddiItem] = useState<IItemMenuType[]>([])
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set())
   const [selectRow , setSelectRow] = useState<number>(0);
   let userInfo = cookie.load('userInfo')
@@ -143,6 +151,27 @@ const ItemManagePage = ({title, type, code}: IProps) => {
     return userInfo.ca_id.name === 'MASTER' ?? undefined
   }
 
+  const itemSetting = (columns:any[]) => {
+    const originalColumn = columnlist[placeholder]
+    console.log("originalColumn : ", originalColumn)
+    const result = columns.map((col) => {
+      if(col.colName == null){
+        col.placeholder = "추가 항목"
+      }else{
+        originalColumn.map((origin, index) => {
+          if(col.colName == origin.key) {
+            console.log("origin.name : ", origin.name, index)
+            col.placeholder = origin.name
+            return
+          }
+        })
+      }
+      return col
+    })
+
+    console.log("result : ", result)
+    setItem(result)
+  }
 
   const listItem = async (code: string) => {
     const res =  await RequestMethod('get', 'itemList', {
@@ -158,45 +187,20 @@ const ItemManagePage = ({title, type, code}: IProps) => {
         const randomID = Math.random()*100;
         return {...value, id:"addi_"+randomID};
       })
-      const sortList = baseList.map((item, index) => {
-        return {...item, sequence:index}
-      })
-
-      const sortAddList = addiList.map((item, index) => {
-        return {...item, sequence:index+28}
-      })
 
       Notiflix.Loading.remove(300)
-      setBaseItem(sortList)
-      setAddiItem(sortAddList)
-      // setAddiItem(sortAddList.map((v: any, i: number) => {
-      //   const random_id = Math.random() * 1000
-      //
-      //   return {
-      //     ...v,
-      //     unit: unitData[v.unit_id]?.name,
-      //     unit_id: unitData[v.unit_id]?.unit_id,
-      //     unitPK: unitData[v.unit_id]?.unit_id,
-      //     id: random_id
-      //   }
-      // }))
+
+      itemSetting(baseList.concat(addiList).sort((a,b) => a.sequence - b.sequence))
     }
   }
 
-  const saveItem = async (code: string, items: IItemMenuType[], type?: 'additional') => {
-    const res =  await RequestMethod('post', 'itemSave',items.map((item,index)=>({...item, sequence : index, unit:typeof item.unit_id == "string" ? 0 : item.unit_id ?? 0}))
-        // {
-        //   tab: code,
-        //   menus: type ? items.map(v => {
-        //     if(v.title){
-        //       return {
-        //         ...v,
-        //         unit: v['unitPK'],
-        //       }
-        //     }
-        //   }).filter(v => v) : items,
-        // }
-        ,undefined , undefined ,undefined,code)
+  const saveItem = async (code: string, items: IItemMenuType[]) => {
+    console.log("items : ", items)
+    const res =  await RequestMethod(
+        'post', 'itemSave',
+        items.map((item,index)=>({...item, sequence : index, title:item.title.length > 0  ? item.title : item.placeholder})),
+        undefined , undefined ,undefined, code
+    )
     if(res !== null || res !== undefined) {
       listItem(code)
       Notiflix.Report.success(
@@ -209,12 +213,12 @@ const ItemManagePage = ({title, type, code}: IProps) => {
 
   const convertDataToMap = () => {
     const map = new Map()
-    addiItem.map((v)=>map.set(v.id , v))
+    item.map((v)=>map.set(v.id , v))
     return map
   }
 
   const filterSelectedRows = () => {
-    return addiItem.map((row : any)=> selectList.has(row.id) && row).filter(v => v)
+    return item.map((row : any)=> selectList.has(row.id) && row).filter(v => v)
   }
 
   const classfyNormalAndHave = (selectedRows) => {
@@ -256,7 +260,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
 
           Notiflix.Report.success('삭제되었습니다.','','확인');
           selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-          setAddiItem(Array.from(map.values()))
+          setItem(Array.from(map.values()))
           setSelectList(new Set())
         }
     )
@@ -279,22 +283,6 @@ const ItemManagePage = ({title, type, code}: IProps) => {
   }, [])
 
 
-  const valueExistence = () => {
-
-    if(addiItem.length > 0){
-
-      const nameCheck = addiItem.every((data)=> data.title)
-
-      if(!nameCheck){
-        return '추가 항목명'
-      }
-
-    }
-
-    return false;
-
-  }
-
   const competeAddtion = (rows) => {
 
     const tempRow = [...rows]
@@ -312,7 +300,7 @@ const ItemManagePage = ({title, type, code}: IProps) => {
       }
     }
 
-    setAddiItem(rows)
+    setItem(rows)
   }
 
 
@@ -328,69 +316,86 @@ const ItemManagePage = ({title, type, code}: IProps) => {
             <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
               {/*<HeaderButton onClick={() => {*/}
               {/*}} key={`btnCreate`}>초기화</HeaderButton>*/}
-              <HeaderButton onClick={() => saveItem(code, baseItem)} key={`btnCreate`}>저장</HeaderButton>
+              <HeaderButton onClick={() => saveItem(code, item)} key={`btnCreate`}>저장</HeaderButton>
+              <HeaderButton onClick={() => {
+                const random_id = Math.random() * 1000;
+                setItem([...item, {
+                  id: `addi_${random_id}`,
+                  width: 118,
+                  sequence:item.length,
+                  tab:item[0].tab
+                }])
+              }} key={`btnCreate`}>행 추가</HeaderButton>
+              <HeaderButton onClick={() => deleteItem(code, item)} key={`btnCreate`}>삭제</HeaderButton>
             </div>
-            <ItemManageBox title={title} items={baseItem} setItems={setBaseItem} type={'base'}/>
+            <ItemManageBox title={title} items={item} setItems={setItem} type={'base'}/>
             <ExcelTable
-                headerList={[...columnlist.baseItem(baseItem, setBaseItem)]}
-                row={baseItem}
+                headerList={[SelectColumn,...columnlist.baseItem(item, setItem)]}
+                setRow={(e) => competeAddtion(e)}
+                row={item}
                 height={240}
-                setRow={setBaseItem}
+                // setRow={setItem}
             />
-            <br/><br/>
-            {code !== "ROLE_STK_01" &&
-            <>
-              <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
-                <HeaderButton onClick={() => {
+            {/*<ItemManageBox title={title} items={baseItem} setItems={setBaseItem} type={'base'}/>*/}
+            {/*<ExcelTable*/}
+            {/*    headerList={[...columnlist.baseItem(baseItem, setBaseItem)]}*/}
+            {/*    row={baseItem}*/}
+            {/*    height={240}*/}
+            {/*    setRow={setBaseItem}*/}
+            {/*/>*/}
+            {/*<br/><br/>*/}
+            {/*{code !== "ROLE_STK_01" &&*/}
+            {/*<>*/}
+            {/*  <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>*/}
+            {/*    <HeaderButton onClick={() => {*/}
 
-                  const existence = valueExistence()
+            {/*      const existence = valueExistence()*/}
 
-                  if(!existence){
-                    const resultArray = [];
-                    baseItem.map((value)=>{
-                      resultArray.push({...value})
-                    })
-                    addiItem.map((value)=>{
-                      resultArray.push({...value, unit:value.unit_id ?? value.unit, moddable: value.moddablePK === "1" ? false : true})
-                    })
-                    saveItem(code, resultArray, 'additional')
-                  }else{
-                    return Notiflix.Report.warning(
-                        '경고',
-                        `"${existence}"을 입력 해주세요`,
-                        '확인',
-                    );
-                  }
-                }} key={`btnCreate`}>추가항목 저장</HeaderButton>
-                <HeaderButton onClick={() => {
-                  const random_id = Math.random() * 1000;
-                  setAddiItem([...addiItem, {
-                    id: `addi_${random_id}`,
-                    width: 118,
-                    sequence:baseItem.length,
-                    tab:baseItem[0].tab
-                  }])
-                }} key={`btnCreate`}>행 추가</HeaderButton>
-                <HeaderButton onClick={() => deleteItem(code, addiItem)} key={`btnCreate`}>삭제</HeaderButton>
-              </div>
-              <ItemManageBox title={title} items={addiItem} setItems={setAddiItem} type={'additional'}/>
-              <ExcelTable
-                  selectable
-                  headerList={[SelectColumn,...columnlist.additionalItem(addiItem, setAddiItem)]}
-                  row={addiItem}
+            {/*      if(!existence){*/}
+            {/*        const resultArray = [];*/}
+            {/*        baseItem.map((value)=>{*/}
+            {/*          resultArray.push({...value})*/}
+            {/*        })*/}
+            {/*        addiItem.map((value)=>{*/}
+            {/*          resultArray.push({...value, unit:value.unit_id ?? value.unit, moddable: value.moddablePK === "1" ? false : true})*/}
+            {/*        })*/}
+            {/*        saveItem(code, resultArray, 'additional')*/}
+            {/*      }else{*/}
+            {/*        return Notiflix.Report.warning(*/}
+            {/*            '경고',*/}
+            {/*            `"${existence}"을 입력 해주세요`,*/}
+            {/*            '확인',*/}
+            {/*        );*/}
+            {/*      }*/}
+            {/*    }} key={`btnCreate`}>추가항목 저장</HeaderButton>*/}
+            {/*    <HeaderButton onClick={() => {*/}
+            {/*      const random_id = Math.random() * 1000;*/}
+            {/*      setAddiItem([...addiItem, {*/}
+            {/*        id: `addi_${random_id}`,*/}
+            {/*        width: 118,*/}
+            {/*        sequence:baseItem.length,*/}
+            {/*        tab:baseItem[0].tab*/}
+            {/*      }])*/}
+            {/*    }} key={`btnCreate`}>행 추가</HeaderButton>*/}
+            {/*    <HeaderButton onClick={() => deleteItem(code, addiItem)} key={`btnCreate`}>삭제</HeaderButton>*/}
+            {/*  </div>*/}
+            {/*  <ItemManageBox title={title} items={addiItem} setItems={setAddiItem} type={'additional'}/>*/}
+            {/*  <ExcelTable*/}
+            {/*      selectable*/}
+            {/*      headerList={[SelectColumn,...columnlist.additionalItem(addiItem, setAddiItem)]}*/}
+            {/*      row={addiItem}*/}
 
-                  height={240}
-                  setRow={(e) => competeAddtion(e)}
-                  setSelectRow={(e) => {
-                    console.log(e)
-                    setSelectRow(e)
-                  }}
-                  setSelectList={(e) => {
-                    setSelectList(e)
-                  }}
-              />
-            </>
-            }
+            {/*      height={240}*/}
+            {/*      setRow={(e) => competeAddtion(e)}*/}
+            {/*      setSelectRow={(e) => {*/}
+            {/*        setSelectRow(e)*/}
+            {/*      }}*/}
+            {/*      setSelectList={(e) => {*/}
+            {/*        setSelectList(e)*/}
+            {/*      }}*/}
+            {/*  />*/}
+            {/*</>*/}
+            {/*}*/}
           </div>
         </div>
       </div>

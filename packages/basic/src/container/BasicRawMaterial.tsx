@@ -343,6 +343,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
                 tab: menu.tab,
                 version: menu.version,
                 colName: menu.mi_id,
+                sequence:menu.sequence
               };
             }
           })
@@ -351,7 +352,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
 
     tmpRow = res.info_list;
 
-    loadAllSelectItems([...columnsSort(tmpColumn), ...additionalMenus]);
+    loadAllSelectItems([...columnsSort(tmpColumn.concat(additionalMenus))]);
 
     let selectKey = "";
     let additionalData: any[] = [];

@@ -1,4 +1,4 @@
-import {BomObjectType, BomType, TableSortingOptionType} from '../@types/type'
+import {BomObjectType, BomType, LoadItemTypes, TableSortingOptionType} from '../@types/type'
 import { TransferCodeToValue } from './TransferFunction'
 
 export const ParseResponse = (res: any | string | any[]) : any[] => {
@@ -135,6 +135,7 @@ export const getBomKey = (bom:any) => {
 }
 
 export const columnsSort = (columns:any[]) => {
+  console.log("columns : ", columns)
   return columns.sort((prev, next) => {
     if(prev.sequence > next.sequence) return 1
     if(prev.sequence < next.sequence) return -1
@@ -196,5 +197,33 @@ export const duplicateCheckWithArray = (array:Array<any>, keys:Array<string>, nu
   catch (err){
     return false
   }
+}
+
+export const loadAllSelectItems = async ({column, sortingOptions, setSortingOptions, reload, setColumn, changeSetTypesState, date}: LoadItemTypes) => {
+
+  const changeOrder = (sort:string, order:string) => {
+    const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+    setSortingOptions(_sortingOptions)
+    reload(null, _sortingOptions, date && date,)
+  }
+  let tmpColumn = column.map((v: any) => {
+    const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+    return {
+      ...v,
+      pk: v.unit_id,
+      sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+      sorts: v.sorts ? sortingOptions : null,
+      result: v.sortOption ? changeOrder : v.headerRenderer ? changeSetTypesState : null,
+    }
+  });
+
+  Promise.all(tmpColumn).then(res => {
+    setColumn([...res.map(v=> {
+      return {
+        ...v,
+        name: v.moddable ? v.name+'(필수)' : v.name
+      }
+    })])
+  })
 }
 
