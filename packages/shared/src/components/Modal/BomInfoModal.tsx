@@ -27,6 +27,7 @@ import {RootState} from "../../reducer";
 import ModalButton from '../Buttons/ModalButton'
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap_white.css';
+import ButtonGroup from "../ButtonGroup";
 
 interface IProps {
   column: IExcelHeaderType
@@ -43,6 +44,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   const [selectRow, setSelectRow] = useState<number>(undefined)
   const [searchList, setSearchList] = useState<any[]>([])
   const [headerData, setHeaderData] = useState<any>();
+  const [bomReverse, setBomReverse] = useState<boolean>(false)
 
   useEffect(() => {
     if(isOpen) {
@@ -62,26 +64,28 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
       setHeaderData(row)
     }else{
       dispatch(reset_summary_info());
+      setBomReverse(false)
     }
   }, [isOpen])
 
   useEffect(() => {
     if(isOpen) {
       const bomKey = tabStore?.datas[tabStore.index]?.code
-      if(bomKey && tabStore.index !== 0){
+      // if(bomKey && tabStore.index !== 0){
         getModalData(bomKey)
-      } else {
-        setSearchList(tabStore?.datas[tabStore.index]?.data)
-        setHeaderData(row)
-      }
+      // } else {
+      //   setSearchList(tabStore?.datas[tabStore.index]?.data)
+      //   setHeaderData(row)
+      // }
     }
 
-  },[tabStore.index])
+  },[tabStore.index, bomReverse])
 
 
   const getModalData = async(bomKey: string) => {
-      await RequestMethod("get", "bomLoad", {path: { key: bomKey }})
+      await RequestMethod("get", bomReverse ? "bomReverseLoad" : "bomLoad", {path: { key: bomReverse ? row.product_id : bomKey }})
           .then((res) => {
+            bomReverse && console.log("res : ", res)
             const result = changeRow(res);
             setSearchList(result)
             result.map((value, i) => {
@@ -111,6 +115,7 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
     }
 
     tmpData = row.map((v, i) => {
+      console.log(v)
       const bomDetail:{childData:any, bomType: TransferType, objectKey:string} = {
         childData: {},
         bomType: undefined,
@@ -132,9 +137,13 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
           break;
         }
         case 2:{
-          bomDetail['childData'] = v.child_product
-          bomDetail['bomType'] = 'product'
-          bomDetail['objectKey'] = 'product'
+          if(bomReverse){
+            bomDetail['childData'] = v.parent
+          }else{
+            bomDetail['childData'] = v.child_product
+          }
+            bomDetail['bomType'] = 'product'
+            bomDetail['objectKey'] = 'product'
           break;
         }
       }
@@ -399,67 +408,142 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   }
 
   const getButtons = () => {
-    return <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
-      <Button onClick={() => {
-        setSearchList(prev =>[
-          ...prev,
-          {
-            setting: 1,
-            seq: prev.length+1
-          }
-        ])
-      }}>
-        <p>행 추가</p>
-      </Button>
-      <Button style={{marginLeft: 16}} onClick={() => {
-        if(selectRow === undefined || selectRow === 0){
-          return;
-        }else{
-          let tmpRow = searchList.slice()
-          let tmp = tmpRow[selectRow]
-          tmpRow[selectRow] = {...tmpRow[selectRow - 1], seq: tmpRow[selectRow - 1].seq + 1, isChange: true}
-          tmpRow[selectRow - 1] = {...tmp, seq: tmp.seq - 1, isChange: true}
-          setSearchList(tmpRow)
-          setSelectRow(selectRow-1)
-        }
-      }}>
-        <p>위로</p>
-      </Button>
-      <Button style={{marginLeft: 16}} onClick={() => {
-        if(selectRow === searchList.length-1 || selectRow === undefined){
-          return
-        } else {
-          let tmpRow = searchList.slice()
-          let tmp = tmpRow[selectRow]
-          tmpRow[selectRow] = {...tmpRow[selectRow + 1], seq: tmpRow[selectRow + 1].seq - 1, isChange: true}
-          tmpRow[selectRow + 1] = {...tmp, seq: tmp.seq + 1, isChange: true}
-          setSearchList(tmpRow)
-          setSelectRow(selectRow + 1)
-        }
-      }}>
-        <p>아래로</p>
-      </Button>
-      <Button style={{marginLeft: 16}} onClick={() => {
-        if(selectRow === undefined){
-          return Notiflix.Report.warning(
-            '경고',
-            '선택된 정보가 없습니다.',
-            '확인',
-          );
-        } else {
-          let tmpRow = [...searchList]
-          tmpRow.splice(selectRow, 1)
-          const filterRow = tmpRow.map((v , i)=>{
-            return {...v , seq : i + 1, isChange:true}
-          })
-          setSearchList(filterRow)
-          setSelectRow(undefined)
-        }
-
-      }}>
-        <p>삭제</p>
-      </Button>
-    </div>
+    return <ButtonGroup buttons={["BOM 역조회", "행 추가", "위로", "아래로", "삭제"]}
+                        buttonsOnclick={(index) => {
+                          switch(index){
+                            case 0:
+                                  if(tabStore.datas.length > 1){
+                                    Notiflix.Report.warning("경고","BOM 탭을 닫아주세요.","확인",)
+                                    return
+                                  }
+                                  setBomReverse((value) => !value)
+                              break;
+                            case 1:
+                              setSearchList(prev =>[
+                                    ...prev,
+                                    {
+                                      setting: 1,
+                                      seq: prev.length+1
+                                    }
+                                  ])
+                              break;
+                            case 2:
+                                  if(selectRow === undefined || selectRow === 0){
+                                    return;
+                                  }else{
+                                    let tmpRow = searchList.slice()
+                                    let tmp = tmpRow[selectRow]
+                                    tmpRow[selectRow] = {...tmpRow[selectRow - 1], seq: tmpRow[selectRow - 1].seq + 1, isChange: true}
+                                    tmpRow[selectRow - 1] = {...tmp, seq: tmp.seq - 1, isChange: true}
+                                    setSearchList(tmpRow)
+                                    setSelectRow(selectRow-1)
+                                  }
+                              break;
+                            case 3:
+                                    if(selectRow === searchList.length-1 || selectRow === undefined){
+                                      return
+                                    } else {
+                                      let tmpRow = searchList.slice()
+                                      let tmp = tmpRow[selectRow]
+                                      tmpRow[selectRow] = {...tmpRow[selectRow + 1], seq: tmpRow[selectRow + 1].seq - 1, isChange: true}
+                                      tmpRow[selectRow + 1] = {...tmp, seq: tmp.seq + 1, isChange: true}
+                                      setSearchList(tmpRow)
+                                      setSelectRow(selectRow + 1)
+                                    }
+                              break;
+                            case 4:
+                                  if(selectRow === undefined){
+                                    return Notiflix.Report.warning(
+                                      '경고',
+                                      '선택된 정보가 없습니다.',
+                                      '확인',
+                                    );
+                                  } else {
+                                    let tmpRow = [...searchList]
+                                    tmpRow.splice(selectRow, 1)
+                                    const filterRow = tmpRow.map((v , i)=>{
+                                      return {...v , seq : i + 1, isChange:true}
+                                    })
+                                    setSearchList(filterRow)
+                                    setSelectRow(undefined)
+                                  }
+                              break;
+                            default: break;
+                          }
+                        }}
+    />
+    // return <div style={{display: 'flex', justifyContent: 'flex-end', margin: '24px 48px 8px 0'}}>
+    //   <Button onClick={() => {
+    //     if(tabStore.datas.length > 1){
+    //       Notiflix.Report.warning("경고","BOM 탭을 닫아주세요.","확인",)
+    //       return
+    //     }
+    //     setBomReverse((value) => !value)
+    //   }}>
+    //     <p>BOM 역조회</p>
+    //   </Button>
+    //
+    //   <Button onClick={() => {
+    //     setSearchList(prev =>[
+    //       ...prev,
+    //       {
+    //         setting: 1,
+    //         seq: prev.length+1
+    //       }
+    //     ])
+    //   }}>
+    //     <p>행 추가</p>
+    //   </Button>
+    //
+    //   <Button style={{marginLeft: 16}} onClick={() => {
+    //     if(selectRow === undefined || selectRow === 0){
+    //       return;
+    //     }else{
+    //       let tmpRow = searchList.slice()
+    //       let tmp = tmpRow[selectRow]
+    //       tmpRow[selectRow] = {...tmpRow[selectRow - 1], seq: tmpRow[selectRow - 1].seq + 1, isChange: true}
+    //       tmpRow[selectRow - 1] = {...tmp, seq: tmp.seq - 1, isChange: true}
+    //       setSearchList(tmpRow)
+    //       setSelectRow(selectRow-1)
+    //     }
+    //   }}>
+    //     <p>위로</p>
+    //   </Button>
+    //   <Button style={{marginLeft: 16}} onClick={() => {
+    //     if(selectRow === searchList.length-1 || selectRow === undefined){
+    //       return
+    //     } else {
+    //       let tmpRow = searchList.slice()
+    //       let tmp = tmpRow[selectRow]
+    //       tmpRow[selectRow] = {...tmpRow[selectRow + 1], seq: tmpRow[selectRow + 1].seq - 1, isChange: true}
+    //       tmpRow[selectRow + 1] = {...tmp, seq: tmp.seq + 1, isChange: true}
+    //       setSearchList(tmpRow)
+    //       setSelectRow(selectRow + 1)
+    //     }
+    //   }}>
+    //     <p>아래로</p>
+    //   </Button>
+    //   <Button style={{marginLeft: 16}} onClick={() => {
+    //     if(selectRow === undefined){
+    //       return Notiflix.Report.warning(
+    //         '경고',
+    //         '선택된 정보가 없습니다.',
+    //         '확인',
+    //       );
+    //     } else {
+    //       let tmpRow = [...searchList]
+    //       tmpRow.splice(selectRow, 1)
+    //       const filterRow = tmpRow.map((v , i)=>{
+    //         return {...v , seq : i + 1, isChange:true}
+    //       })
+    //       setSearchList(filterRow)
+    //       setSelectRow(undefined)
+    //     }
+    //
+    //   }}>
+    //     <p>삭제</p>
+    //   </Button>
+    // </div>
   }
 
   const headers = [
@@ -550,15 +634,11 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
             {
               Headers()
             }
-            <div style={{display: 'flex', justifyContent: 'space-between', height: 64}}>
-              <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', paddingLeft: 16,}}>
-                <div style={{ display: 'flex', width: 1200}}>
-                  {
-                    getBomTab()
-                  }
-                </div>
+            <div style={{display: 'flex', justifyContent: 'space-between', height: 64, padding:"0 16px", alignItems:"center"}}>
+              <div style={{height: '100%', display: 'flex', alignItems: 'flex-end', }}>
+                  {getBomTab()}
               </div>
-                {column.type !== "readonly" && tabStore.index === 0 && getButtons()}
+                  {column.type !== "readonly" && tabStore.index === 0 && getButtons()}
             </div>
             <div style={{padding: '0 16px', width: 1776}}>
               <ExcelTable

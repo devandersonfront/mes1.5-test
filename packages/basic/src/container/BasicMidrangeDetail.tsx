@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     columnlist,
     ExcelTable,
@@ -10,13 +10,12 @@ import {IExcelHeaderType} from 'shared/src/@types/type'
 import {useRouter} from "next/router";
 import Notiflix from "notiflix";
 import { setExcelTableHeight } from 'shared/src/common/Util'
-import { sum } from 'lodash'
 
 const BasicMidrangeDetail = () => {
     const column:Array<IExcelHeaderType> = columnlist["midrangeExam"]
-    const sampleColumn:Array<IExcelHeaderType> = columnlist['midrange']
+    const [sampleColumn, setSampleColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrange'])
     const legendaryColumn:Array<IExcelHeaderType> = columnlist['midrangeLegendary']
-    const itemColumn:Array<IExcelHeaderType> = columnlist['midrangeInspectionItem']
+    const [itemColumn, setItemColumn] = useState<Array<IExcelHeaderType>>(columnlist['midrangeInspectionItem'])
     const [basicRow, setBasicRow] = useState<Array<any>>([])
     const [sampleBasicRow, setSampleBasicRow] = useState<Array<any>>([])
     const [legendaryBasicRow, setLegendaryBasicRow] = useState<Array<any>>([])
@@ -26,6 +25,41 @@ const BasicMidrangeDetail = () => {
     const [sampleSelectList, setSampleSelectList] = useState<Set<number>>(new Set())
     const router = useRouter()
 
+
+    useEffect(() => {
+        const midrange = [...columnlist['midrange']]
+        midrange.map((col) => {
+            col.readonly = true
+            return col
+        })
+        setSampleColumn([...midrange])
+
+        const midrangeInspectionItem = [...columnlist['midrangeInspectionItem']]
+        midrangeInspectionItem.map((col) => {
+            if(col.key == "unit" || col.key == "type"){
+                col.readonly = true
+            }
+                return col
+        })
+        setItemColumn([...midrangeInspectionItem])
+        return (() => {
+            const midrange = [...columnlist['midrange']]
+            midrange.map((col) => {
+                delete col.readonly
+                return col
+            })
+            setSampleColumn([...midrange])
+
+            const midrangeInspectionItem = [...columnlist['midrangeInspectionItem']]
+            midrangeInspectionItem.map((col) => {
+                if(col.key == "unit" || col.key == "type"){
+                    delete col.readonly
+                }
+                return col
+            })
+            setItemColumn([...midrangeInspectionItem])
+        })
+    }, [])
     const LoadMidrange = async (product_id: number) => {
         Notiflix.Loading.circle()
         const res = await RequestMethod('get', `inspectCategoryLoad`,{
@@ -90,9 +124,7 @@ const BasicMidrangeDetail = () => {
         <div>
             <PageHeader title={"초ㆍ중ㆍ종 검사항목 정보"} buttons={[ '목록 보기', '검사 양식 검토', '수정하기']} buttonsOnclick={buttonEvents} />
             <ExcelTable
-                headerList={[
-                    ...column
-                ]}
+                headerList={column}
                 row={basicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = selectList
@@ -108,9 +140,7 @@ const BasicMidrangeDetail = () => {
                 height={basicRow.length * 40 >= 40*18+56 ? 40*19 : basicRow.length * 40 + 56}
             />
             <ExcelTable
-                headerList={[
-                    ...sampleColumn
-                ]}
+                headerList={sampleColumn}
                 row={sampleBasicRow}
                 setRow={(e) => {
                     let tmp: Set<any> = sampleSelectList

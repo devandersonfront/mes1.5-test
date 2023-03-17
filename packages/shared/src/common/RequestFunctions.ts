@@ -523,6 +523,7 @@ const ApiList = {
   loadMenu: `/menu/authorize/list`,
 
   bomLoad: `/api/v1/bom`,
+  bomReverseLoad: `/api/v1/bom/reverse`,
   bomSave: `/api/v1/bom/save`,
 
   sheetBomLoad: `/api/v1/sheet`,
