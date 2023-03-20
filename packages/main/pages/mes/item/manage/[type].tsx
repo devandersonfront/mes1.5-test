@@ -123,7 +123,7 @@ export const getServerSideProps = async (ctx: any) => {
         return {
           title: "공구 관리",
           code: "ROLE_BASE_14",
-          placeholder: 'tool'
+          placeholder: 'toolRegister'
         }
     }
   }
@@ -144,8 +144,6 @@ export const getServerSideProps = async (ctx: any) => {
 const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
   const router = useRouter();
   const [item, setItem] = useState<IItemMenuType[]>([])
-  // const [baseItem, setBaseItem] = useState<IItemMenuType[]>([])
-  // const [addiItem, setAddiItem] = useState<IItemMenuType[]>([])
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set())
   const [selectRow , setSelectRow] = useState<number>(0);
   let userInfo = cookie.load('userInfo')
@@ -160,6 +158,7 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
       if(col.colName == null){
         col.placeholder = "추가 항목"
       }else{
+
         originalColumn.map((origin, index) => {
           if(col.colName == origin.key) {
             col.placeholder = origin.name
@@ -182,7 +181,9 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
     if(res){
       const results = res
 
-      let baseList = results.bases
+      let baseList = results.bases.map((row) => {
+        return {...row, id:row.mi_id}
+      })
       let addiList = results.additional.map((value)=>{
         const randomID = Math.random()*100;
         return {...value, id:"addi_"+randomID};
@@ -195,7 +196,6 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
   }
 
   const saveItem = async (code: string, items: IItemMenuType[]) => {
-    console.log("items : ", items)
     const res =  await RequestMethod(
         'post', 'itemSave',
         items.map((item,index)=>({...item, sequence : index, title:item.title.length > 0  ? item.title : item.placeholder})),
@@ -218,50 +218,35 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
   }
 
   const filterSelectedRows = () => {
-    return item.map((row : any)=> selectList.has(row.id) && row).filter(v => v)
-  }
-
-  const classfyNormalAndHave = (selectedRows) => {
-
-    const normalRows = []
-    const haveIdRows = []
-
-    selectedRows.map((row : any)=>{
-      if(row.mi_id){
-        haveIdRows.push(row)
-      }else{
-        normalRows.push(row)
+    const items = item.map((row : any)=> {
+      if(selectList.has(row.id) && row.colName !== null) {
+        throw("기존 항목은 삭제할 수 없습니다.")
       }
-    })
-
-    return [normalRows , haveIdRows]
+      else return selectList.has(row.id) && row
+    }).filter(v => v)
+    return items
   }
+
 
   const deleteItem = async (code: string, items: IItemMenuType[]) => {
-    if(selectList.size === 0){
-      return Notiflix.Report.warning(
-          '경고',
-          '선택된 정보가 없습니다.',
-          '확인',
-      );
-    }
+    if(selectList.size === 0) throw("선택된 정보가 없습니다.")
 
     Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
         async() => {
-          const map = convertDataToMap()
-          const selectedRows = filterSelectedRows()
-          const [normalRows , haveIdRows] = classfyNormalAndHave(selectedRows)
+          try{
+            const map = convertDataToMap()
+            const selectedRows = filterSelectedRows()
+            await RequestMethod('delete','itemDelete', selectedRows,)
+                .then(res =>
+                    Notiflix.Report.success('삭제되었습니다.', '', '확인'))
 
-          if(haveIdRows.length > 0){
+            selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+            setItem(Array.from(map.values()))
+            setSelectList(new Set())
 
-            if(normalRows.length !== 0) selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-            await RequestMethod('delete','itemDelete', haveIdRows.map((row,index)=>({...row, seq : index})))
+          }catch(err){
+            Notiflix.Report.warning('경고', err, '확인',)
           }
-
-          Notiflix.Report.success('삭제되었습니다.','','확인');
-          selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
-          setItem(Array.from(map.values()))
-          setSelectList(new Set())
         }
     )
   }
@@ -334,6 +319,8 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
                 setRow={(e) => competeAddtion(e)}
                 row={item}
                 height={500}
+                selectList={selectList}
+                setSelectList={setSelectList}
             />
           </div>
         </div>
