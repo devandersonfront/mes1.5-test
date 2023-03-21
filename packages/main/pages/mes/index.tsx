@@ -44,11 +44,7 @@ const Container = styled.div`
 export default function Home() {
   return (
     <Container>
-      <WelcomePage>
-        <div>
-
-        </div>
-      </WelcomePage>
+      <WelcomePage/>
     </Container>
   )
 }

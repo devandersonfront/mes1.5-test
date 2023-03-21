@@ -36,7 +36,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                         params:{product_ids:[res.data.product_id, res.data.pair_product_id]}
                     })
                         .then((res) => {
-                            let tmpBasic = res.map((product, index) => {
+                            let tmpBasic = res?.map((product, index) => {
                                 return (
                                     {
                                         id: product.product_id,

@@ -1,33 +1,22 @@
 import React, {useEffect, useState} from 'react'
 import {
     columnlist,
-    excelDownload,
-    ExcelDownloadModal,
     ExcelTable,
-    Header as PageHeader,
-    IExcelHeaderType,
-    MAX_VALUE,
-    PaginationComponent,
-    RequestMethod, SF_ENDPOINT,
-    TextEditor
+    Header as PageHeader, IExcelHeaderType, requestApi, SF_ENDPOINT,
 } from 'shared'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
-import Notiflix from "notiflix";
-import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
-import {useDispatch} from "react-redux";
-import {Stomp} from "@stomp/stompjs"
 //@ts-ignore
 import SockJS from "sockjs-client"
 import cookie from "react-cookies";
-import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import axios from "axios";
-import moment from "moment";
-import ErrorList from "shared/src/common/ErrorList";
-import {TransferCodeToValue, TransferValueToCode} from "shared/src/common/TransferFunction";
-import {SF_AI_ADDRESS, SF_ENDPOINT_PMS} from "shared/src/common/configset";
 import {haveDistinct} from "shared/src/common/haveDistinct";
+import moment from "moment";
+import axios from "axios";
+import Notiflix from "notiflix";
+import {SF_AI_ADDRESS, SF_ENDPOINT_PMS} from "shared/src/common/configset";
+import {useInterval} from "usehooks-ts";
+import {TransferCodeToValue} from "shared/src/common/TransferFunction";
 
 export interface IProps {
     children?: any
@@ -35,94 +24,27 @@ export interface IProps {
     keyword?: string
     option?: number
 }
-const userInfo = cookie.load('userInfo')
+
+let aiLimitNum = 0;
+let pressLimitNum = 0;
 
 const HomeAiProductionLog = ({}: IProps) => {
-    const router = useRouter()
-    const dispatch = useDispatch()
-    const [ column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiProductLog"])
-    const [ list, setList] = useState<any[]>()
-    const [ predictAi , setPredictAi ] = React.useState<any[]>()
-
+    const userInfo = cookie.load('userInfo')
+    const [ai , setAi] = useState<any>()
+    const [pressList , setPressList] = useState<any[]>([])
+    const [isAiRequest , setIsAiRequest] = useState<boolean>(false)
+    const [isPressRequest , setIsPressRequest] = useState<boolean>(false)
+    const [allStop , setAllStop] = useState<boolean>(false)
+    const [pressStop, setPressStop] = useState<boolean>(false)
+    const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiProductLog"])
+    const [data ,setData] = useState<any[]>([])
+    const [timeout , setTimeout] = useState<number>(3000)
     const [modalOpen, setModalOpen] = useState<boolean>(false)
 
+
+    console.log(timeout,'timeouttimeout')
     const changeModalState = () => {
         setModalOpen(value => !value)
-    }
-    useEffect(()=>{
-        userInfo?.company === '4XX21Z' && setColumn(columnlist["aiProductLogDS"])
-    },[])
-
-    const predictCheckList = (value) => {
-        if(!value.code || value.code === '-'){
-            return true
-        }
-        const codeCheck = value.prediction_code === value.code
-        const modelCheck = value.prediction_model === value.model
-        const nameCheck = value.prediction_name === value.product_name
-        const processCheck = value.prediction_process === value.process
-
-        return codeCheck && modelCheck && nameCheck && processCheck
-    }
-
-    const convertPredictionConfidence = (confidence) => {
-        if(!confidence) return ''
-        if(typeof confidence === 'number') return `${(confidence * 100).toFixed(2)}%`
-        else return confidence
-    }
-
-    const convertData = (results) => {
-
-        return results?.map((result)=>
-            !predictCheckList(result) ?
-                {...result , prediction_confidence : convertPredictionConfidence(result.prediction_confidence) , machine_type : TransferCodeToValue(result.machine_type, "machine"), color : 'red'}
-                : {...result , prediction_confidence : convertPredictionConfidence(result.prediction_confidence) ,machine_type : TransferCodeToValue(result.machine_type, "machine")}
-        )
-    }
-
-    const getPressList = async () => {
-        const tokenData = userInfo?.token;
-        const res =  await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/simple`,{
-            headers : { Authorization : tokenData }
-        }).catch(()=>{
-            Notiflix.Report.warning("경고",'실패한 요청이 있어, 특정 데이터만 나올 수 있습니다.',"확인");
-        })
-        if (res) {
-            Notiflix.Loading.remove()
-            const content = res?.data?.results?.content
-            setList(content)
-            return true
-        }else {
-            Notiflix.Loading.remove()
-            return false
-        }
-    }
-
-    const LoadBasic = async (pages : number = 1) => {
-        const tokenData = userInfo?.token;
-        const params  = haveDistinct(userInfo?.company)
-            ? { rangeNeeded : true , distinct : 'mfrCode',}
-            : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
-
-        // const params  ={ rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
-
-        const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
-            params : params,
-            headers : { Authorization : tokenData }
-        }).catch(()=>{
-            Notiflix.Report.warning("경고",'실패한 요청이 있어, 특정 데이터만 나올 수 있습니다.',"확인");
-        })
-
-        if(result){
-            Notiflix.Loading.remove()
-            if(result?.data?.info_list.length > 0){
-                setPredictAi(await checkTrained(result?.data?.info_list))
-                return true
-            }
-        }else{
-            Notiflix.Loading.remove()
-            return false
-        }
     }
 
     const getIsTrained = async (machine_codes : string[]) => {
@@ -139,6 +61,18 @@ const HomeAiProductionLog = ({}: IProps) => {
         }
     }
 
+    const predictCheckList = (value) => {
+        if(!value.code || value.code === '-'){
+            return true
+        }
+        const codeCheck = value.prediction_code === value.code
+        const modelCheck = value.prediction_model === value.model
+        const nameCheck = value.prediction_name === value.product_name
+        const processCheck = value.prediction_process === value.process
+
+        return codeCheck && modelCheck && nameCheck && processCheck
+    }
+
     const checkTrained = async (results) => {
 
         const map = new Map()
@@ -153,7 +87,7 @@ const HomeAiProductionLog = ({}: IProps) => {
         }
 
         lists.data.forEach((list) => (
-             map.set(list.machine_code, {
+            map.set(list.machine_code, {
                 ...map.get(list.machine_code)
                 , prediction_code: list.is_trained ? competeStr : ''
                 , prediction_model: list.is_trained ? competeStr : ''
@@ -166,81 +100,132 @@ const HomeAiProductionLog = ({}: IProps) => {
         return Array.from(map.values())
     }
 
-    const mappingData = (lists, results) => {
-        if(lists && results){
-            const newResult = results.map((result) => {
-                return {...result, setModalOpen:changeModalState}
-            })
+    const getAi = async (pages : number = 1) => {
+        const tokenData = userInfo?.token;
+        const params  = haveDistinct(userInfo?.company)
+            ? { rangeNeeded : true , distinct : 'mfrCode',}
+            : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
 
-            let map = new Map()
-            lists?.forEach((list)=>{
-                map?.set(list.productDetails.machineDetail.mfrCode, list.pressStatus)
-            })
+        const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
+            params : params,
+            headers : { Authorization : tokenData },
+        })
 
-            const newData = newResult?.map((result)=>{
-                if(map.get(result.machine_code)){
-                    return {...result , pressStatus : map.get(result.machine_code)}
-                }else{
-                    return result
-                }
-            })
-
-
-            console.log(convertData(newData),'convertData(newData)')
-
-            return convertData(newData)
-
-        }else if(lists){
-            return lists
+        if(result) {
+            const data = result?.data?.info_list
+            Notiflix.Loading.remove()
+            if (data.length) {
+                setIsAiRequest(true)
+                setAi(await checkTrained(data))
+                return await checkTrained(data)
+            }
         }else{
-
-            return convertData(results?.map((result) => {
-                return {...result, setModalOpen:changeModalState}
-            }))
+            aiLimitNum++
+            setIsAiRequest(false)
+            Notiflix.Loading.remove()
+            setPressList([])
+            return false
         }
     }
 
-    useEffect(() => {
-        Notiflix.Loading.circle()
-        let pressInterval;
-        let loadInteval
+    const getPressList = async (mfrCodes : string) => {
+        const tokenData = userInfo?.token;
+        try {
+            const res =  await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/statement`,{
+                params : { page : 1 , size : 20 , mfrCodes },
+                headers : { Authorization : tokenData },
+                timeout : timeout
+            })
 
-        getPressList()
-        LoadBasic()
+            if (res) {
+                Notiflix.Loading.remove()
+                setIsPressRequest(true)
+                setPressList(res?.data?.results?.content)
+                return res?.data?.results?.content
+            }
 
-        if(!modalOpen){
-            pressInterval = setInterval(async () => {
-                const result = await getPressList()
-                if (!result) {
-                    clearTimeout(pressInterval)
-                }
-            }, 2500)
-
-            loadInteval = setInterval(async () => {
-                const result = await LoadBasic()
-                if (!result) {
-                    clearTimeout(loadInteval)
-                }
-            }, 30000)
-
+        }catch (e) {
+            if(timeout === 10000){
+                pressLimitNum++
+                Notiflix.Loading.remove()
+                setIsPressRequest(false)
+                setTimeout(2000)
+                return Notiflix.Report.warning('경고' , '잠시후 다시 시도해 주세요' , '확인')
+            }
+            setIsPressRequest(true)
+            setTimeout((prev) => prev + 1000);
+            setPressList([])
         }
+    }
 
-
-        return () => {
-            clearTimeout(pressInterval)
-            clearTimeout(loadInteval)
+    useInterval(async () => {
+        if(isAiRequest){
+            const result = await getAi()
+            setData(mappingData(result,pressList))
         }
-    }, [modalOpen])
+    }, !allStop && isAiRequest && !modalOpen ? 35000 : null);
+
+    useInterval(async () => {
+        const codes = ai.map((result)=>result.machine_code)
+        if(ai && isAiRequest && isPressRequest){
+            const result = await getPressList(codes.join(','))
+            setData(mappingData(ai,result))
+        }
+    }, !allStop && isAiRequest && isPressRequest && !modalOpen ? timeout : null);
+
+    useInterval(()=>{
+        setIsPressRequest(true)
+    },(!allStop && !pressStop && !isPressRequest) ? 60000 : null)
+
+    useInterval(()=>{
+        setIsAiRequest(true)
+    },(!allStop && !isAiRequest && aiLimitNum <= 5) ? 60000 : null)
+
+    const convertPredictionConfidence = (confidence) => {
+        if(!confidence) return ''
+        if(typeof confidence === 'number') return `${(confidence * 100).toFixed(2)}%`
+        else return confidence
+    }
+
+    const mappingData = (aiResults : any[] , pressResults : any []) => {
+        return aiResults.map((result, index)=>(
+            {
+                ...result ,
+                pressStatus : pressResults && pressResults[index]?.pressStatus ,
+                prediction_confidence : convertPredictionConfidence(result.prediction_confidence) ,
+                machine_type : TransferCodeToValue(result.machine_type, "machine"),
+                color : !predictCheckList(result) ? 'red' : undefined,
+                setModalOpen:changeModalState
+            }
+        ))
+    }
+
+    const getApi = async () => {
+        const aiResults = await getAi()
+        const codes = aiResults.map((result)=>result.machine_code)
+        const pressResults = await getPressList(codes.join(','))
+        setData(mappingData(aiResults,pressResults))
+    }
+
+    useEffect(()=>{
+        getApi()
+    },[])
 
     useEffect(() => {
-        dispatch(
-            setMenuSelectState({ main: "HOME", sub: router.pathname })
-        );
-        return () => {
-            dispatch(deleteMenuSelectState());
-        };
-    }, []);
+        if (aiLimitNum === 3) {
+            setAllStop(true)
+        }
+    }, [aiLimitNum]);
 
+    useEffect(() => {
+        if (pressLimitNum === 3) {
+            setPressStop(true)
+        }
+    }, [pressLimitNum]);
+
+    useEffect(()=>{
+        userInfo?.company === '4XX21Z' && setColumn(columnlist["aiProductLogDS"])
+    },[])
 
     return (
         <div>
@@ -250,7 +235,7 @@ const HomeAiProductionLog = ({}: IProps) => {
             <ExcelTable
                 editable
                 headerList={column}
-                row={mappingData(list,predictAi)}
+                row={data}
                 width={1576}
                 height={'100%'}
             />
