@@ -16,7 +16,7 @@ import {useRouter} from 'next/router'
 import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from 'react-redux'
-import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
+import {additionalMenus, getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
 import { TableSortingOptionType } from 'shared/src/@types/type'
@@ -196,7 +196,8 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
-            unit:menu.unit
+            unit:menu.unit,
+            sequence:menu.sequence
           }
         } else if(menu.colName === 'id' && column.key === 'tmpId'){
           menuData = {
@@ -204,7 +205,8 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
-            unit:menu.unit
+            unit:menu.unit,
+            sequence:menu.sequence
           }
         }
       })
@@ -217,38 +219,19 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
       }
     }).filter((v:any) => v)
 
-    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-      if(menu.colName === null){
-        return {
-          id: menu.id,
-          name: menu.title,
-          width: menu.width,
-          key: menu.title,
-          editor: TextEditor,
-          type: 'additional',
-          unit: menu.unit
-        }
-      }
-    }).filter((v: any) => v) : []
 
       tmpRow = res.info_list
 
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, reload, setColumn});
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn});
 
 
     let selectKey = ""
-    let additionalData: any[] = []
     tmpColumn.map((v: any) => {
       if(v.selectList){
         selectKey = v.key
       }
     })
 
-    additionalMenus.map((v: any) => {
-      if(v.type === 'additional'){
-        additionalData.push(v.key)
-      }
-    })
 
     let pk = "";
     Object.keys(tmpRow).map((v) => {
@@ -314,7 +297,7 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
         //실제사용
         title={`${todayOnly ? '금일 ' : ''}작업지시서 리스트`}
         buttons={
-          ['추천 작업지시서', '수정하기', '삭제']
+          ['추천 작업지시서', todayOnly ? '' : '항목 관리', '수정하기', '삭제']
         }
         buttonsOnclick={
           (e) => {
@@ -323,6 +306,9 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
                 setSheetModalOpen(true)
                 break
               case 1:
+                router.push(`/mes/item/manage/operationV1u`);
+                break;
+              case 2:
                 if(selectList.size === 0){
                   Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
                 }else if(selectList.size === 1){

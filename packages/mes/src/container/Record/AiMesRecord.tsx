@@ -21,6 +21,7 @@ import {
 } from "shared/src/reducer/menuSelectState";
 import { useDispatch } from "react-redux";
 import {
+    additionalMenus,
     CheckRecordLotNumber,
     getTableSortingOptions,
     loadAllSelectItems,
@@ -151,6 +152,8 @@ const AiMesRecord = ({}: IProps) => {
                         width: menu.width,
                         tab: menu.tab,
                         unit: menu.unit,
+                        sequence: menu.sequence
+
                     };
                 } else if (menu.colName === "id" && column.key === "tmpId") {
                     menuData = {
@@ -159,6 +162,7 @@ const AiMesRecord = ({}: IProps) => {
                         width: menu.width,
                         tab: menu.tab,
                         unit: menu.unit,
+                        sequence: menu.sequence
                     };
                 }
             });
@@ -172,26 +176,8 @@ const AiMesRecord = ({}: IProps) => {
         })
             .filter((v: any) => v);
 
-        let additionalMenus = res.menus
-            ? res.menus
-                .map((menu: any) => {
-                    if (menu.colName === null) {
-                        return {
-                            id: menu.id,
-                            name: menu.title,
-                            width: menu.width,
-                            key: menu.title,
-                            editor: TextEditor,
-                            type: "additional",
-                            unit: menu.unit,
-                        };
-                    }
-                })
-                .filter((v: any) => v)
-            : [];
-
         convertColumn.push({ key : 'confidence', name : '신뢰도',formatter:UnitContainer, unitData:"%", width: 118})
-        loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, setColumn});
+        loadAllSelectItems({column:convertColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, setColumn});
     }
 
     const forSaveCleanUpData = (res:any) => {
@@ -405,14 +391,18 @@ const AiMesRecord = ({}: IProps) => {
         <div className={'excelPageContainer'}>
             <PageHeader
                 title={"AI 작업 일보 리스트"}
-                buttons={["저장하기", "삭제"]}
+                buttons={["항목관리", "저장하기", "삭제",]}
                 buttonsOnclick={(e) => {
                     switch (e) {
                         case 0: {
+                            router.push(`/mes/item/manage/aiRecord`);
+                            break
+                        }
+                        case 1: {
                             SaveBasic()
                             break;
                         }
-                        case 1: {
+                        case 2: {
                             if (selectList.size === 0) {
                                 return Notiflix.Report.warning(
                                     "경고",
@@ -441,7 +431,6 @@ const AiMesRecord = ({}: IProps) => {
                     ...addColumnClass(column)
                 ]}
                 row={basicRow}
-                // setRow={setBasicRow}
                 setRow={(e) => {
                     const tmp = 0
                     const result = e.map((row, index) => {
@@ -463,8 +452,6 @@ const AiMesRecord = ({}: IProps) => {
                     })
                     setSelectList(tmpSelectList)
                     setBasicRow(result)
-                    // const deleteCheck = e.every(prop => prop.finish === false);
-                    // if(!deleteCheck) reload()
                 }}
                 selectList={selectList}
                 //@ts-ignore
@@ -479,21 +466,6 @@ const AiMesRecord = ({}: IProps) => {
                     setPageInfo({...pageInfo, page: page})
                 }}
             />
-            {/*{excelOpen && (*/}
-            {/*    <WorkModifyModal*/}
-            {/*        row={*/}
-            {/*            {...basicRow.filter(row => selectList.has(row.id)).map(row => ({*/}
-            {/*                    ...row,*/}
-            {/*                    worker: row.user,*/}
-            {/*                    worker_name: row.user.name,*/}
-            {/*                    sum: row.poor_quantity + row.good_quantity,*/}
-            {/*                    input_bom: row.operation_sheet.input_bom,*/}
-            {/*                }))[0]}*/}
-            {/*        }*/}
-            {/*        isOpen={excelOpen}*/}
-            {/*        setIsOpen={setExcelOpen}*/}
-            {/*    />*/}
-            {/*)}*/}
         </div>
     );
 };

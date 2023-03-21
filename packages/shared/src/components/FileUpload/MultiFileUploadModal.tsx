@@ -69,7 +69,6 @@ const MultiFileUploadModal = ({ row, column, onRowChange, onClose }: IProps) => 
                 })
                 break;
             case 2:
-                console.log("selectItems : ", selectItems)
                 // let downloads:Promise<any>[] = []
                     // selectItems.forEach((item) => {
                 // window.location.href = "http://43.200.106.125:8443/anonymous/download/"+item

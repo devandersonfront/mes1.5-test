@@ -20,7 +20,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
+import {additionalMenus, getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
@@ -151,6 +151,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
                 width: menu.width,
                 tab: menu.tab,
                 unit: menu.unit,
+                sequence:menu.sequence,
               };
             } else if (menu.colName === "id" && column.key === "tmpId") {
               menuData = {
@@ -159,6 +160,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
                 width: menu.width,
                 tab: menu.tab,
                 unit: menu.unit,
+                sequence:menu.sequence,
               };
             }
           });
@@ -171,40 +173,15 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         }
       })
       .filter((v: any) => v);
-    let additionalMenus = res.menus
-      ? res.menus
-          .map((menu: any) => {
-            if (menu.colName === null) {
-              return {
-                id: menu.id,
-                name: menu.title,
-                width: menu.width,
-                key: menu.title,
-                editor: TextEditor,
-                type: "additional",
-                unit: menu.unit,
-              };
-            }
-          })
-          .filter((v: any) => v)
-      : [];
 
       tmpRow = res.info_list;
 
-    // loadAllSelectItems([...tmpColumn, ...additionalMenus],date);
 
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, reload, setColumn, date});
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn, date});
     let selectKey = "";
-    let additionalData: any[] = [];
     tmpColumn.map((v: any) => {
       if (v.selectList) {
         selectKey = v.key;
-      }
-    });
-
-    additionalMenus.map((v: any) => {
-      if (v.type === "additional") {
-        additionalData.push(v.key);
       }
     });
 
@@ -322,6 +299,9 @@ const MesOrderList = ({ page, search, option }: IProps) => {
 
   const buttonEvents = (btnIdx: number) => {
     switch (btnIdx) {
+      case 0:
+        router.push(`/mes/item/manage/order`)
+        break;
       case 1:
         Notiflix.Loading.circle();
         let check = false;
@@ -382,7 +362,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         //@ts-ignore
         setSelectDate={onSelectDate}
         title={"수주 현황"}
-        buttons={["", "수정하기", "삭제"]}
+        buttons={["항목 관리", "수정하기", "삭제"]}
         buttonsOnclick={buttonEvents}
       />
         <ExcelTable

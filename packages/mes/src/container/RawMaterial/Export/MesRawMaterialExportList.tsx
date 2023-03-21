@@ -143,7 +143,8 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
                         name: menu.title,
                         width: menu.width,
                         tab:menu.tab,
-                        unit:menu.unit
+                        unit:menu.unit,
+                        sequence:menu.sequence
                     }
                 } else if(menu.colName === 'id' && column.key === 'tmpId'){
                     menuData = {
@@ -151,7 +152,8 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
                         name: menu.title,
                         width: menu.width,
                         tab:menu.tab,
-                        unit:menu.unit
+                        unit:menu.unit,
+                        sequence:menu.sequence
                     }
                 }
             })
@@ -301,13 +303,16 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
 
     const onClickHeaderButton = (index: number) => {
         const noneSelected = selectList.size <= 0
-        if(noneSelected){
+        if(noneSelected && index !== 0){
             return Notiflix.Report.warning("데이터를 선택해주세요.","","확인")
         }
         switch(index){
             case 0:
+                router.push(`/mes/item/manage/rawExportList`);
+                break;
+            case 1:
                 Notiflix.Confirm.show("경고","데이터를 삭제하시겠습니까?", "확인", "취소", () => DeleteBasic())
-                return;
+                break;
         }
     }
 
@@ -328,7 +333,7 @@ const MesRawMaterialExportList = ({page, search, option}: IProps) => {
                 selectDate={selectDate}
                 //@ts-ignore
                 setSelectDate={onSelectDate}
-                buttons={["삭제"]}
+                buttons={["항목관리", "삭제"]}
                 buttonsOnclick={onClickHeaderButton}
                 title={"원자재 출고 현황"}
             />

@@ -185,9 +185,6 @@ const HomeAiProductionLog = ({}: IProps) => {
                 }
             })
 
-
-            console.log(convertData(newData),'convertData(newData)')
-
             return convertData(newData)
 
         }else if(lists){

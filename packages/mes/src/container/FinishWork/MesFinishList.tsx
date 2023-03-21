@@ -236,6 +236,16 @@ const MesFinishList = ({page, search, option}: IProps) => {
         //@ts-ignore
         setSelectDate={onSelectDate}
         title={"작업 완료 리스트"}
+        buttons={["항목관리"]}
+        buttonsOnclick={(index) => {
+          switch (index) {
+            case 0:
+              router.push(`/mes/item/manage/finishV2`);
+              break
+            default:
+              break
+          }
+        }}
       />
       <ExcelTable
         editable

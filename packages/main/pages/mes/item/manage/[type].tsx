@@ -20,6 +20,7 @@ interface IProps {
   type: string
   code: string
   placeholder:string
+  isAdditional?:boolean
 }
 
 export const getServerSideProps = async (ctx: any) => {
@@ -30,61 +31,71 @@ export const getServerSideProps = async (ctx: any) => {
         return {
           title: '유저 관리',
           code: 'ROLE_HR_02',
-          placeholder: 'member'
+          placeholder: 'member',
+          additional: true
         }
       case 'customer':
         return {
           title: '거래처 정보 관리',
           code: 'ROLE_BASE_01',
-          placeholder: 'customer'
+          placeholder: 'customer',
+          additional: true
         }
       case 'process':
         return {
           title: '공정 관리',
           code: 'ROLE_BASE_02',
-          placeholder: 'process'
+          placeholder: 'process',
+          additional: true
         }
       case 'machine':
         return {
           title: '기계 기준정보',
           code: 'ROLE_BASE_04',
-          placeholder: 'machineV2'
+          placeholder: 'machineV2',
+          additional: true
         }
       case 'product':
         return {
           title: '제품 등록 관리',
           code: 'ROLE_BASE_15',
-          placeholder: 'productV1u'
+          placeholder: 'productV1u',
+          additional: true
         }
       case 'rawmaterial':
         return {
           title: '원자재 기준정보',
           code: 'ROLE_BASE_06',
-          placeholder: 'rawMaterial'
+          placeholder: 'rawMaterial',
+          additional: true
         }
       case 'submaterial':
         return {
           title: '부자재 기준정보',
           code: 'ROLE_BASE_13',
-          placeholder: 'subMaterial'
+          placeholder: 'subMaterial',
+          additional: true
         }
       case 'mold':
         return {
           title: '금형 기준정보',
           code: 'ROLE_BASE_07',
-          placeholder: 'mold'
+          placeholder: 'mold',
+          additional: true
         }
       case 'model':
         return {
           title: "거래처 모델정보",
           code: 'ROLE_BASE_08',
-          placeholder: 'model'
+          placeholder: 'model',
+          additional: true
         }
       case 'factory' :
         return {
           title:"공장 기준정보",
           code: "ROLE_BASE_11",
-          placeholder: 'factory'
+          placeholder: 'factory',
+          additional: true
         }
       case 'rawin':
         return {
@@ -95,17 +106,14 @@ export const getServerSideProps = async (ctx: any) => {
       case 'rawstock':
         return {
           title: "원자재 재고 관리",
-          code: 'ROLE_RMAT_02'
+          code: 'ROLE_RMAT_02',
+          placeholder: 'rawinV1u'
         }
       case 'operation' :
         return {
           title: "작업지시서 리스트",
-          code: "ROLE_PROD_02"
-        }
-      case 'delivery' :
-        return {
-          title: "납품 관리",
-          code: "ROLE_SHPT_01"
+          code: "ROLE_PROD_02",
+          placeholder: 'rawinV1u'
         }
       case 'stock' :
         return {
@@ -125,6 +133,96 @@ export const getServerSideProps = async (ctx: any) => {
           code: "ROLE_BASE_14",
           placeholder: 'toolRegister'
         }
+      case "order" :
+        return {
+          title: "수주 현황",
+          code: "ROLE_SALES_02",
+          placeholder: 'orderList'
+        }
+      case "delivery" :
+        return {
+          title: "납품 현황",
+          code: "ROLE_SALES_04",
+          placeholder: 'deliveryList'
+        }
+      case "operationV1u" :
+        return {
+          title: "작업지시서",
+          code: "ROLE_PROD_02",
+          placeholder: 'operationListV2'
+        }
+      case "recordV2" :
+        return {
+          title: "작업일보",
+          code: "ROLE_PROD_08",
+          placeholder: 'cncRecordListV2'
+        }
+        case "aiRecord" :
+        return {
+          title: "AI 작업일보",
+          code: "ROLE_PROD_08",
+          placeholder: 'aiRecordListV2'
+        }
+      case "finishV2":
+        return {
+          title: "작업완료",
+          code: "ROLE_PROD_06",
+          placeholder: 'finishListV2'
+        }
+      case "rawInputlist":
+        return {
+          title: "원자재 입고",
+          code: "ROLE_RMAT_02",
+          placeholder: 'rawstockV1u'
+        }
+      case "rawExportList":
+        return {
+          title: "원자재 출고",
+          code: "ROLE_RMAT_03",
+          placeholder: 'rawstockExport'
+        }
+      case "subStockList":
+        return {
+          title: "부자재 재고",
+          code: "ROLE_WIP_02",
+          placeholder: 'substockV1u'
+        }
+      case "subExportList":
+        return {
+          title: "부자재 출고",
+          code: "ROLE_WIP_03",
+          placeholder: 'substockExport'
+        }
+      case "warehousingList":
+        return {
+          title: "공구 입고",
+          code: "ROLE_TOOL_02",
+          placeholder: 'toolList'
+        }
+      case "toolList":
+        return {
+          title: "공구 입고",
+          code: "ROLE_BASE_14",
+          placeholder: 'toolList'
+        }
+      case "outOrderList":
+        return {
+          title: "외주 발주 현황",
+          code: "ROLE_OUTS_01",
+          placeholder: 'outsourcingOrderList'
+        }
+      case "outImportList":
+        return {
+          title: "외주 입고 현황",
+          code: "ROLE_OUTS_02",
+          placeholder: 'outsourcingImportList'
+        }
+      case "outsourcingDeliveryList":
+        return {
+          title: "외주 출고 현황",
+          code: "ROLE_OUTS_03",
+          placeholder: 'outsourcingDeliveryList'
+        }
     }
   }
 
@@ -135,13 +233,14 @@ export const getServerSideProps = async (ctx: any) => {
       title: tempObject ? tempObject.title : "",
       code: tempObject ? tempObject.code : "",
       placeholder:tempObject ? tempObject.placeholder : "",
-      type: ctx.query.type
+      type: ctx.query.type,
+      isAdditional: tempObject?.additional ?? false
     }
   }
 }
 
 
-const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
+const ItemManagePage = ({title, type, code, placeholder, isAdditional}: IProps) => {
   const router = useRouter();
   const [item, setItem] = useState<IItemMenuType[]>([])
   const [selectList, setSelectList] = useState<ReadonlySet<number>>(new Set())
@@ -154,21 +253,21 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
 
   const itemSetting = (columns:any[]) => {
     const originalColumn = columnlist[placeholder]
-    const result = columns.map((col) => {
+    const result = columns.map((col, index) => {
       if(col.colName == null){
         col.placeholder = "추가 항목"
+        col.sequence = index
       }else{
 
-        originalColumn.map((origin, index) => {
+        originalColumn.map((origin,) => {
           if(col.colName == origin.key) {
             col.placeholder = origin.name
-            return
+            col.sequence = index
           }
         })
       }
       return col
     })
-
     setItem(result)
   }
 
@@ -196,18 +295,31 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
   }
 
   const saveItem = async (code: string, items: IItemMenuType[]) => {
-    const res =  await RequestMethod(
-        'post', 'itemSave',
-        items.map((item,index)=>({...item, sequence : index, title:item.title.length > 0  ? item.title : item.placeholder})),
-        undefined , undefined ,undefined, code
-    )
-    if(res !== null || res !== undefined) {
-      listItem(code)
-      Notiflix.Report.success(
-          '성공',
-          '저장되었습니다.',
-          'Okay',
-      );
+    try{
+      const postBody = items.map((item,index)=> {
+        if(!item.title?.length) {
+          throw("항목명을 입력해주세요.")
+        }
+        return {...item, sequence:index, title:item.title?.length > 0 ? item.title : item.placeholder}
+      })
+
+      const res =  await RequestMethod(
+          'post', 'itemSave',
+          postBody,
+          undefined , undefined ,undefined, code
+      )
+
+      if(res !== null || res !== undefined) {
+        listItem(code)
+        Notiflix.Report.success(
+            '성공',
+            '저장되었습니다.',
+            'Okay',
+        );
+      }
+    }catch(err){
+      console.log(err)
+      Notiflix.Report.warning("경고",err,"확인",)
     }
   }
 
@@ -302,16 +414,20 @@ const ItemManagePage = ({title, type, code, placeholder}: IProps) => {
               {/*<HeaderButton onClick={() => {*/}
               {/*}} key={`btnCreate`}>초기화</HeaderButton>*/}
               <HeaderButton onClick={() => saveItem(code, item)} key={`btnCreate`}>저장</HeaderButton>
-              <HeaderButton onClick={() => {
-                const random_id = Math.random() * 1000;
-                setItem([...item, {
-                  id: `addi_${random_id}`,
-                  width: 118,
-                  sequence:item.length,
-                  tab:item[0].tab
-                }])
-              }} key={`btnCreate`}>행 추가</HeaderButton>
-              <HeaderButton onClick={() => deleteItem(code, item)} key={`btnCreate`}>삭제</HeaderButton>
+              {isAdditional &&
+                  <>
+                    <HeaderButton onClick={() => {
+                      const random_id = Math.random() * 1000;
+                      setItem([...item, {
+                        id: `addi_${random_id}`,
+                        width: 118,
+                        sequence: item.length,
+                        tab: item[0].tab
+                      }])
+                    }} key={`btnCreate`}>행 추가</HeaderButton>
+                    <HeaderButton onClick={() => deleteItem(code, item)} key={`btnCreate`}>삭제</HeaderButton>
+                  </>
+              }
             </div>
             <ItemManageBox title={title} items={item} setItems={setItem} type={'base'}/>
             <ExcelTable

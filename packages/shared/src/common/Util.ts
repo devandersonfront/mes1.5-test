@@ -211,6 +211,7 @@ export const loadAllSelectItems = async ({column, sortingOptions, setSortingOpti
     reload(null, _sortingOptions, date && date,)
   }
   let tmpColumn = columnsSort(column).map((v: any) => {
+
     const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
     return {
       ...v,
@@ -220,6 +221,7 @@ export const loadAllSelectItems = async ({column, sortingOptions, setSortingOpti
       result: v.sortOption ? changeOrder : v.headerRenderer ? changeSetTypesState : null,
     }
   });
+
 
   Promise.all(tmpColumn).then(res => {
     setColumn([...res.map(v=> {
@@ -232,6 +234,7 @@ export const loadAllSelectItems = async ({column, sortingOptions, setSortingOpti
 }
 
 export const additionalMenus:(res:any) => any[] = (res:any) =>
+
    res.menus
         .map((menu: any) => {
           if (menu.colName === null && !menu.hide) {

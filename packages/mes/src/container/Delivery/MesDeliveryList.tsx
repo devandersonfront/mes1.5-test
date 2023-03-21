@@ -21,7 +21,7 @@ import {
   deleteMenuSelectState,
   setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
+import {additionalMenus, getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
@@ -82,26 +82,6 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
       dispatch(deleteMenuSelectState());
     };
   }, []);
-
-  // const loadAllSelectItems = (column: IExcelHeaderType[],date?: {from:string, to:string}) => {
-  //   const changeOrder = (sort:string, order:string) => {
-  //     const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-  //     setSortingOptions(_sortingOptions)
-  //     reload(null, date, _sortingOptions)
-  //   }
-  //   let tmpColumn = column.map((v: any) => {
-  //     const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-  //     return {
-  //       ...v,
-  //       pk: v.unit_id,
-  //       sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-  //       sorts: v.sorts ? sortingOptions : null,
-  //       result: v.sortOption ? changeOrder : null,
-  //     }
-  //   });
-  //
-  //   setColumn(tmpColumn);
-  // };
 
   const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType) => {
     let params = {}
@@ -166,6 +146,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
                 width: menu.width,
                 tab: menu.tab,
                 unit: menu.unit,
+                sequence:menu.sequence
               };
             } else if (menu.colName === "id" && column.key === "tmpId") {
               menuData = {
@@ -174,6 +155,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
                 width: menu.width,
                 tab: menu.tab,
                 unit: menu.unit,
+                sequence:menu.sequence
               };
             }
           });
@@ -187,39 +169,15 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
       })
       .filter((v: any) => v);
 
-    let additionalMenus = res.menus
-      ? res.menus
-          .map((menu: any) => {
-            if (menu.colName === null) {
-              return {
-                id: menu.id,
-                name: menu.title,
-                width: menu.width,
-                key: menu.title,
-                editor: TextEditor,
-                type: "additional",
-                unit: menu.unit,
-              };
-            }
-          })
-          .filter((v: any) => v)
-      : [];
 
     tmpRow = res.info_list;
 
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, reload, setSortingOptions, setColumn});
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, reload, setSortingOptions, setColumn});
 
     let selectKey = "";
-    let additionalData: any[] = [];
     tmpColumn.map((v: any) => {
       if (v.selectList) {
         selectKey = v.key;
-      }
-    });
-
-    additionalMenus.map((v: any) => {
-      if (v.type === "additional") {
-        additionalData.push(v.key);
       }
     });
 
@@ -306,10 +264,13 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
         //@ts-ignore
         setSelectDate={onSelectDate}
         title={"납품 현황"}
-        buttons={["", "수정하기", "삭제"]}
+        buttons={["항목 관리", "수정하기", "삭제"]}
         buttonsOnclick={
           (e) => {
             switch (e) {
+              case 0:
+                router.push(`/mes/item/manage/delivery`)
+                break
               case 1:
                 try {
                   if(selectList?.size === 0) throw(alertMsg.noSelectedData)

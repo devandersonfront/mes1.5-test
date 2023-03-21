@@ -100,7 +100,6 @@ const
                 result: v.sortOption ? changeOrder : null,
             }
         });
-
         setColumn(tmpColumn);
     }
 
@@ -152,7 +151,8 @@ const
                         name: menu.title,
                         width: menu.width,
                         tab:menu.tab,
-                        unit:menu.unit
+                        unit:menu.unit,
+                        sequence:menu.sequence
                     }
                 } else if(menu.colName === 'id' && column.key === 'tmpId'){
                     menuData = {
@@ -160,7 +160,8 @@ const
                         name: menu.title,
                         width: menu.width,
                         tab:menu.tab,
-                        unit:menu.unit
+                        unit:menu.unit,
+                        sequence:menu.sequence
                     }
                 }
             })
@@ -169,7 +170,8 @@ const
                 name: "수정",
                 width: column.width,
                 tab:column.tab,
-                unit:column.unit
+                unit:column.unit,
+                sequence:column.sequence
             }
             if(menuData){
                 return {
@@ -179,39 +181,16 @@ const
             }
         }).filter((v:any) => v)
 
-        let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-            if(menu.colName === null){
-                return {
-                    id: menu.id,
-                    name: menu.title,
-                    width: menu.width,
-                    key: menu.title,
-                    editor: TextEditor,
-                    type: 'additional',
-                    unit: menu.unit
-                }
-            }
-        }).filter((v: any) => v) : []
-
-        // tmpRow = res.info_list
 
         loadAllSelectItems( [
             ...tmpColumn,
-            ...additionalMenus
         ], date, _nzState, _expState )
 
 
         let selectKey = ""
-        let additionalData: any[] = []
         tmpColumn.map((v: any) => {
             if(v.selectList){
                 selectKey = v.key
-            }
-        })
-
-        additionalMenus.map((v: any) => {
-            if(v.type === 'additional'){
-                additionalData.push(v.key)
             }
         })
 
@@ -316,10 +295,13 @@ const
                 //@ts-ignore
                 setSelectDate={onSelectDate}
                 title={"부자재 출고 현황"}
-                buttons={["삭제"]}
+                buttons={["항목관리", "삭제"]}
                 buttonsOnclick={(e) => {
                     switch(e){
                         case 0:
+                            router.push(`/mes/item/manage/subExportList`);
+                            break
+                        case 1:
                             DeleteBasic()
                             break
                         default:

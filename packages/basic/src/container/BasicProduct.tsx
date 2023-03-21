@@ -97,7 +97,6 @@ const BasicProduct = ({}: IProps) => {
 
   const reload = (keyword?:string, sortingOptions?: TableSortingOptionType) => {
     setKeyword(keyword)
-    console.log("pageInfo : ", pageInfo)
     if(pageInfo.page > 1) {
       setPageInfo({...pageInfo, page: 1})
     } else {
