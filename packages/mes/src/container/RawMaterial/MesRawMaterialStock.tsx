@@ -249,7 +249,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         onClickEvent: (row) =>  row.is_complete ? SaveBasic(row)
           : Notiflix.Confirm.show(`재고 수량이 '0'으로 변경됩니다. 진행 하시겠습니까?`, '*사용완료 처리된 자재는 작업이력 수정 시 수정불가해집니다.', '예','아니오', () => SaveBasic(row), ()=>{},
             {width: '400px'}),
-        onClickReturnEvent: (row, remark) => Notiflix.Confirm.show(`경고`, '출고 처리 하시겠습니까?', '예','아니오', () => SaveBasic(row, true), ()=>{}, {width: '400px'})
+        onClickReturnEvent: (row, remark) => Notiflix.Confirm.show(`경고`, '출고 처리 하시겠습니까?', '예','아니오', () => SaveBasic(row, true), ()=>{}, {width: '400px'}),
+        remark: row.remark.length > 0 ? row.remark : "-"
       }
     })
     setSelectList(new Set)

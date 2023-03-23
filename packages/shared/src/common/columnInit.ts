@@ -491,6 +491,7 @@ export const columnlist: any = {
     { key: 'price', name: '단가', editor: TextEditor, formatter: UnitContainer, unitData: '원', placeholder: '0', inputType: 'number' },
     { key: 'date', name: '입고일(필수)', formatter: CalendarBox },
     { key: 'lot_number', name: '원자재 LOT 번호(필수)', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'LOT 입력' },
+    { key: 'remark', name: '비고', editor: TextEditor, formatter: PlaceholderBox, placeholder: '비고 입력' },
     { key: 'addRow', name: '행 추가', formatter: AddRowButton, basicRow, setBasicRow  },
   ]),
 
@@ -512,7 +513,8 @@ export const columnlist: any = {
     {key: 'customer_id', name: '거래처', width: 118},
     {key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118},
     {key: 'exhaustion', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소'},
-    {key: 'export', name: '출고', formatter: ExportButton, width: 118, type: 'rawMaterial', action: 'register'}
+    {key: 'export', name: '출고', formatter: ExportButton, width: 118, type: 'rawMaterial', action: 'register'},
+    {key: 'remark', name: '비고', formatter: PlaceholderBox, width: 118, }
   ],
 
   rawstockModify: [

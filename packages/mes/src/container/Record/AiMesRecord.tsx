@@ -270,7 +270,7 @@ const AiMesRecord = ({}: IProps) => {
                 // id: `sheet_${random_id}`,
                 molds: row.operationRecord?.molds,
                 tools: row.operationRecord?.tools,
-                worked_product: row.recordProductName.length > 0 ? row.recordProductName : "-",
+                worked_product: row.recordProductName?.length > 0 ? row.recordProductName : "-",
                 reload: _reload,
             }
         })
