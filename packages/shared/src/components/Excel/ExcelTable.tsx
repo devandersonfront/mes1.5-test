@@ -120,6 +120,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
       columns={headerList}
       rows={row?.length > 0 ? row : []}
       components={{noRowsFallback: <EmptyRowsRenderer />}}
+
       onColumnResize={(v, i) => {
         tempData.map((time,i)=>{
             clearTimeout(time)
@@ -158,7 +159,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
       }}
       rowHeight={rowHeight ?? 40}
       defaultColumnOptions={{
-        resizable: true,
+        resizable: resizable,
         editable: editable,
       }}
       onRowsChange={(data, idx) => {

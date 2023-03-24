@@ -21,7 +21,7 @@ import {
     deleteMenuSelectState,
     setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
-import {getTableSortingOptions, setExcelTableHeight} from "shared/src/common/Util";
+import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from "shared/src/common/Util";
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
 import {SearchModalTest} from "shared/src/components/Modal/SearchModalTest";
@@ -83,50 +83,8 @@ const BasicPriceLog = ({}: IProps) => {
     const cleanUpData = (res: any) => {
         let tmpColumn = columnlist["priceLog"];
         let tmpRow = [];
-        tmpColumn = tmpColumn
-            .map((column: any) => {
-                let menuData: object | undefined;
-                // res.menus &&
-                // res.menus.map((menu: any) => {
-                //     if (!menu.hide) {
-                //         if (menu.colName === column.key) {
-                //             menuData = {
-                //                 id: menu.mi_id,
-                //                 name: menu.title,
-                //                 width: menu.width,
-                //                 tab: menu.tab,
-                //                 unit: menu.unit,
-                //                 moddable: !menu.moddable,
-                //                 version: menu.version,
-                //                 sequence: menu.sequence,
-                //                 hide: menu.hide,
-                //             };
-                //         } else if (menu.colName === "id" && column.key === "tmpId") {
-                //             menuData = {
-                //                 id: menu.mi_id,
-                //                 name: menu.title,
-                //                 width: menu.width,
-                //                 tab: menu.tab,
-                //                 unit: menu.unit,
-                //                 moddable: !menu.moddable,
-                //                 version: menu.version,
-                //                 sequence: menu.sequence,
-                //                 hide: menu.hide,
-                //             };
-                //         }
-                //     }
-                // });
 
-                if (menuData) {
-                    return {
-                        ...column,
-                        ...menuData,
-                    };
-                }
-            })
-            .filter((v: any) => v);
-
-        loadAllSelectItems(column)
+        loadAllSelectItems({column, sortingOptions, setSortingOptions,  setColumn});
         tmpRow = res.info_list;
 
         let selectKey = "";
@@ -169,36 +127,36 @@ const BasicPriceLog = ({}: IProps) => {
         setBasicRow([...tmpBasicRow]);
     };
 
-    const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-        const changeOrder = (sort:string, order:string) => {
-            const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-            setSortingOptions(_sortingOptions)
-            getData()
-        }
-        let tmpColumn = column.map((v: any) => {
-            const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-            return {
-                ...v,
-                pk: v.unit_id,
-                sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-                sorts: v.sorts ? sortingOptions : null,
-                result: v.sortOption ? changeOrder : null,
-            }
-        });
-        Promise.all(tmpColumn).then((res) => {
-            setColumn([
-                ...res.map((v,index) => {
-                    return {
-                        ...v,
-                        name: v.moddable ? v.name + "(필수)" : v.name,
-                        // readonly:readonly ?? false,
-                        formatter: v.formatter === SearchModalTest ? undefined : v.formatter,
-                        // fixed: readonly ?? false
-                    };
-                }),
-            ]);
-        });
-    };
+    // const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
+    //     const changeOrder = (sort:string, order:string) => {
+    //         const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+    //         setSortingOptions(_sortingOptions)
+    //         getData()
+    //     }
+    //     let tmpColumn = column.map((v: any) => {
+    //         const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+    //         return {
+    //             ...v,
+    //             pk: v.unit_id,
+    //             sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+    //             sorts: v.sorts ? sortingOptions : null,
+    //             result: v.sortOption ? changeOrder : null,
+    //         }
+    //     });
+    //     Promise.all(tmpColumn).then((res) => {
+    //         setColumn([
+    //             ...res.map((v,index) => {
+    //                 return {
+    //                     ...v,
+    //                     name: v.moddable ? v.name + "(필수)" : v.name,
+    //                     // readonly:readonly ?? false,
+    //                     formatter: v.formatter === SearchModalTest ? undefined : v.formatter,
+    //                     // fixed: readonly ?? false
+    //                 };
+    //             }),
+    //         ]);
+    //     });
+    // };
 
     return (
         <div className={'excelPageContainer'}>

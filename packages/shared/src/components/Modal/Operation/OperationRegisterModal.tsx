@@ -24,8 +24,6 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
     const [column, setColumn] = useState(searchModalList.operationRegister)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
 
-    console.log(row)
-
     const getBomData = async(root_id:string) => {
         const res = await RequestMethod('get', `bomLoad`, {path: {key: root_id}})
         const parsedRes = ParseResponse(res)
@@ -185,20 +183,17 @@ const OperationRegisterModal = ({row, isOpen, setIsOpen}) => {
                             onClick={() => {
                                 //setBasicRow(basicRow)
                                 const saveData = basicRow.filter((one) => {
-                                    console.log("one : ", one, selectList)
                                     return selectList.has(one.id)
                                 })
 
                                 try{
                                     const notHasSearchList = []
-                                    console.log(selectList, basicRow)
                                     basicRow.filter(row => {
                                         //input_bom.length를 확인해서 있다면 bom 체크 없다면 notHasSearchList에 담기
                                         if (selectList.has(row.id) && row.input.input_bom.length <= 0) {
                                             notHasSearchList.push(row.product_id)
                                         }
                                     })
-                                    console.log("saveData : ", saveData, notHasSearchList)
                                     if(notHasSearchList.length > 0){
                                         throw(`${notHasSearchList}의 BOM이 없습니다.`)
                                     }

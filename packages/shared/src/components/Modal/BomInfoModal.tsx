@@ -85,7 +85,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
   const getModalData = async(bomKey: string) => {
       await RequestMethod("get", bomReverse ? "bomReverseLoad" : "bomLoad", {path: { key: bomReverse ? row.product_id : bomKey }})
           .then((res) => {
-            bomReverse && console.log("res : ", res)
             const result = changeRow(res);
             setSearchList(result)
             result.map((value, i) => {
@@ -115,7 +114,6 @@ const BomInfoModal = ({column, row, onRowChange}: IProps) => {
     }
 
     tmpData = row.map((v, i) => {
-      console.log(v)
       const bomDetail:{childData:any, bomType: TransferType, objectKey:string} = {
         childData: {},
         bomType: undefined,

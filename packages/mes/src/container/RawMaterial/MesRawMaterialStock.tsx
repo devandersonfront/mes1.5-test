@@ -19,7 +19,7 @@ import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch, useSelector} from 'react-redux'
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
+import {additionalMenus, getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import {BarcodeDataType} from "shared/src/common/barcodeType";
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
 import { TableSortingOptionType } from 'shared/src/@types/type'
@@ -175,7 +175,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
-            unit:menu.unit
+            unit:menu.unit,
+            sequence:menu.sequence
           }
         } else if(menu.colName === 'id' && column.key === 'tmpId'){
           menuData = {
@@ -183,7 +184,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
             name: menu.title,
             width: menu.width,
             tab:menu.tab,
-            unit:menu.unit
+            unit:menu.unit,
+            sequence:menu.sequence
           }
         }
       })
@@ -195,24 +197,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       }
     }).filter((v:any) => v)
 
-    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-      if(menu.colName === null){
-        return {
-          id: menu.id,
-          name: menu.title,
-          width: menu.width,
-          key: menu.title,
-          editor: TextEditor,
-          type: 'additional',
-          unit: menu.unit
-        }
-      }
-    }).filter((v: any) => v) : []
 
-    loadAllSelectItems( [
-      ...tmpColumn,
-      ...additionalMenus
-    ], date, _nzState, _expState )
+    loadAllSelectItems( [...tmpColumn, ...additionalMenus(res)], date, _nzState, _expState )
 
 
     let selectKey = ""
@@ -223,11 +209,6 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
       }
     })
 
-    additionalMenus.map((v: any) => {
-      if(v.type === 'additional'){
-        additionalData.push(v.key)
-      }
-    })
 
     let pk = "";
     Object.keys(res.info_list).map((v) => {
@@ -343,14 +324,17 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
 
   const onClickHeaderButton = (index: number) => {
     const noneSelected = selectList.size === 0
-    if(noneSelected){
+    if(noneSelected && index !== 1){
       return Notiflix.Report.warning('경고', alertMsg.noSelectedData,"확인")
     }
     switch(index){
       case 0:
         openBarcodeModal()
-        return;
+        break
       case 1:
+        router.push(`/mes/item/manage/rawInputlist`);
+        break
+      case 2:
         const selectedRows = basicRow.filter(v => selectList.has(v.id))
         const exported = selectedRows.some(row => row.warehousing !== row.current )
         if(exported){
@@ -363,7 +347,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
           router.push('/mes/rawmaterialV1u/modify')
         }
         return;
-      case 2:
+      case 3:
         Notiflix.Confirm.show("경고","데이터를 삭제하시겠습니까?", "확인", "취소", () => DeleteBasic())
         return;
     }
@@ -492,7 +476,7 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
         setSelectDate={onSelectDate}
         title={"원자재 입고 현황"}
         buttons={
-              ['바코드 미리보기', '수정하기', '삭제']
+              ['바코드 미리보기', '항목관리', '수정하기', '삭제']
         }
         buttonsOnclick={onClickHeaderButton}
       />

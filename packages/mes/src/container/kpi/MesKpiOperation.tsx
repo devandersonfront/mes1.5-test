@@ -171,7 +171,6 @@ const MesKpiOperation = () => {
                 headerList={processColumn}
                 row={[processBasicRow]}
                 setRow={(row) => {
-                    console.log('row',row)
                     setProcessBasicRow({...processBasicRow,
                         id : row[0].machine_id,
                         mfrName : row[0].mfrName,

@@ -232,7 +232,6 @@ const BasicDailyInspectionInfo = ({machine_id, mold_id}: IProps) => {
             productInfo.name = data.mold?.name
             productInfo.code = data.mold?.code
         }
-        console.log(productInfo)
         return [productInfo]
     }
 

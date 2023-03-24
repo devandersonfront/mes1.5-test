@@ -18,7 +18,7 @@ import Notiflix from "notiflix"
 import {useDispatch, useSelector} from "react-redux";
 import {setToolDataAdd} from "shared/src/reducer/toolInfo";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import {columnsSort, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import { alertMsg } from 'shared/src/common/AlertMsg'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
@@ -162,14 +162,12 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
                     tab: menu.tab,
                     version: menu.version,
                     colName: menu.mi_id,
+                    sequence: menu.sequence
                 }
             }
         }).filter((v: any) => v) : []
         tmpRow = info_list.info_list
-        setColumn([
-            ...tmpColumn,
-            ...additionalMenus
-        ])
+        setColumn(columnsSort([...tmpColumn,]))
 
 
         let selectKey = ""
@@ -220,27 +218,30 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
 
     const ButtonEvents = (index:number) => {
         const noneSelected = selectList.size === 0
-        if(noneSelected){
+        if(noneSelected && index !== 0){
             return Notiflix.Report.warning('경고', alertMsg.noSelectedData,"확인")
         }
         switch(index) {
             case 0:
+                router.push(`/mes/item/manage/warehousingList`);
+                break
+            case 1:
                 const selectedRows = basicRow.filter(v => selectList.has(v.id))
                     dispatch(setModifyInitData({
                         modifyInfo: selectedRows,
                         type: "toolin"
                     }))
                     router.push('/mes/tool/update')
-                return
-            case 1:
+                break
+            case 2:
                 if(selectList.size > 1) {
                     return  Notiflix.Report.warning("경고",alertMsg.onlyOne,"확인" )
                 }
                 Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",()=>DeleteBasic())
 
-                return
+                break
             default:
-                return
+                break
         }
     }
 
@@ -250,7 +251,7 @@ const MesToolWarehousingList = ({page, search, option}: IProps) => {
             <PageHeader
                 title={"공구 입고 리스트"}
                 buttons={
-                    ["수정 하기", '삭제']
+                    ["항목관리", "수정 하기", '삭제']
                 }
                 buttonsOnclick={ButtonEvents}
                 isCalendar

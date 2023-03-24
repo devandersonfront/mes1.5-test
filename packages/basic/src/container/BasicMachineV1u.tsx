@@ -19,7 +19,7 @@ import {NextPageContext} from 'next'
 import moment from "moment"
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util';
+import {additionalMenus, getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util';
 import {TableSortingOptionType} from "shared/src/@types/type";
 import addColumnClass from '../../../main/common/unprintableKey'
 export interface IProps {
@@ -91,32 +91,6 @@ const BasicMachineV1u = ({option}: IProps) => {
     })
   },[])
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    const changeOrder = (sort:string, order:string) => {
-      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-      setSortingOptions(_sortingOptions)
-      reload(null, _sortingOptions)
-    }
-    let tmpColumn = column.map((v: any) => {
-      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-      return {
-        ...v,
-        pk: v.unit_id,
-        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-        sorts: v.sorts ? sortingOptions : null,
-        result: v.sortOption ? changeOrder : v.selectList ? changeSetTypesState : null,
-      }
-    });
-
-    Promise.all(tmpColumn).then(res => {
-      setColumn([...res.map(v=> {
-        return {
-          ...v,
-          name: v.moddable ? v.name+'(필수)' : v.name
-        }
-      })])
-    })
-  }
 
   const SaveBasic = async () => {
     let result = [];
@@ -278,40 +252,17 @@ const BasicMachineV1u = ({option}: IProps) => {
       }
     }).filter((v:any) => v)
 
-    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-      if(menu.colName === null && !menu.hide){
-        return {
-          id: menu.mi_id,
-          name: menu.title,
-          width: menu.width,
-          // key: menu.title,
-          key: menu.mi_id,
-          editor: TextEditor,
-          type: 'additional',
-          unit: menu.unit,
-          tab: menu.tab,
-          version: menu.version,
-          colName: menu.mi_id,
-        }
-      }
-    }).filter((v: any) => v) : []
 
     tmpRow = res.info_list
 
 
-    loadAllSelectItems( [...tmpColumn, ...additionalMenus])
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn, changeSetTypesState});
 
     let selectKey = ""
     let additionalData: any[] = []
     tmpColumn.map((v: any) => {
       if(v.selectList){
         selectKey = v.key
-      }
-    })
-
-    additionalMenus.map((v: any) => {
-      if(v.type === 'additional'){
-        additionalData.push(v.key)
       }
     })
 

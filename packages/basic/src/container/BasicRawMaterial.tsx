@@ -18,7 +18,13 @@ import { useRouter } from "next/router";
 import { NextPageContext } from "next";
 import {useDispatch, useSelector} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState,} from "shared/src/reducer/menuSelectState";
-import {columnsSort, getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
+import {
+  additionalMenus,
+  columnsSort,
+  getTableSortingOptions,
+  loadAllSelectItems,
+  setExcelTableHeight
+} from 'shared/src/common/Util'
 import {BarcodeDataType} from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
@@ -107,35 +113,6 @@ const BasicRawMaterial = ({readonly}: IProps) => {
     }
   };
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    const changeOrder = (sort:string, order:string) => {
-      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-      setSortingOptions(_sortingOptions)
-      reload(null, _sortingOptions)
-    }
-    let tmpColumn = column.map((v: any) => {
-      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-      return {
-        ...v,
-        pk: v.unit_id,
-        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-        sorts: v.sorts ? sortingOptions : null,
-        result: v.sortOption ? changeOrder : null,
-      }
-    });
-    Promise.all(tmpColumn).then((res) => {
-      setColumn([
-        ...res.map((v,index) => {
-          return {
-            ...v,
-            name: v.moddable ? v.name + "(필수)" : v.name,
-            readonly:readonly ?? false,
-            fixed: readonly ?? false
-          };
-        }),
-      ]);
-    });
-  };
 
   const SaveBasic = async () => {
     let selectCheck = false;
@@ -325,45 +302,15 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog" },
       )
 
-
-    let additionalMenus = res.menus
-      ? res.menus
-          .map((menu: any) => {
-            if (menu.colName === null && !menu.hide) {
-              return {
-                id: menu.mi_id,
-                name: menu.title,
-                width: menu.width,
-                // key: menu.title,
-                key: menu.mi_id,
-                formatter: PlaceholderBox,
-                editor: TextEditor,
-                type: "additional",
-                unit: menu.unit,
-                tab: menu.tab,
-                version: menu.version,
-                colName: menu.mi_id,
-              };
-            }
-          })
-          .filter((v: any) => v)
-      : [];
-
     tmpRow = res.info_list;
 
-    loadAllSelectItems([...columnsSort(tmpColumn), ...additionalMenus]);
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn});
 
     let selectKey = "";
     let additionalData: any[] = [];
     tmpColumn.map((v: any) => {
       if (v.selectList) {
         selectKey = v.key;
-      }
-    });
-
-    additionalMenus.map((v: any) => {
-      if (v.type === "additional") {
-        additionalData.push(v.key);
       }
     });
 
@@ -504,7 +451,11 @@ const BasicRawMaterial = ({readonly}: IProps) => {
   const onClickHeaderButton = (index: number) => {
     switch (index) {
       case 0:
-        Notiflix.Confirm.show('갱신' ,'갱신을 하시겠습니까?' ,'확인','취소',()=>translateSafetyStock())
+        if(!readonly){
+          Notiflix.Confirm.show('갱신' ,'갱신을 하시겠습니까?' ,'확인','취소',()=>translateSafetyStock())
+        }else{
+          router.push(`/mes/item/manage/rawmaterial`);
+        }
         return;
       case 1:
         const result = basicRow.find(row => selectList.has(row.id))
@@ -694,7 +645,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           title={readonly ? "원자재 재고 현황" : "원자재 기준정보"}
           buttons={
             readonly ?
-                [ '',(selectList.size <= 1 && barcodeOfCompany(userInfo.companyCode).rm_tab && "바코드 미리보기")]
+                [ '항목관리',(selectList.size <= 1 && barcodeOfCompany(userInfo.companyCode).rm_tab && "바코드 미리보기")]
                 :
                 [
                   (barcodeOfCompany(userInfo.companyCode).rm_safetyStock && "갱신"),

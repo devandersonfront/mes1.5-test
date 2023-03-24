@@ -352,6 +352,7 @@ export const columnlist: any = {
     { key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})) },
     { key: 'price', name: '단가', editor: TextEditor, formatter: UnitContainer, placeholder: "0", unitData:"원", inputType: "number"},
     { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
+    { key: 'safety_stock_status', name: '안전', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'customer_id', name: '거래처', formatter: UnitContainer, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
     { key: 'leadtime' , name : '발주 기준일' , inputType: 'number' }
@@ -432,23 +433,6 @@ export const columnlist: any = {
       ], width: 118
     },
     { key: 'wip_name', name: '반제품명', width: 118, editor: TextEditor },
-  ],
-  additionalItem: (rows, setRows) => [
-    { key: 'title', editor: TextEditor, name: "추가 항목명",},
-    {
-      key: 'moddable', formatter: DropDownEditor, selectList: [
-        { unit_id: '0', name: "필요" },
-        { unit_id: '1', name: "불필요" }
-      ], name: "단위 필요 유무", width:118
-    },
-    {
-      key: 'unit', formatter: DropDownEditor, selectList: [
-        { unit_id: '0', name: "개별관리" },
-        { unit_id: '1', name: "통일" },
-        { unit_id: '2', name: "없음" },
-      ], name: "단위 관리", width:118
-    },
-    { key: 'moveButtons', width: 200, formatter: MoveButtons, rows, setRows },
   ],
   rawin: [
     { key: 'customer_id', frozen: true },
@@ -621,7 +605,7 @@ export const columnlist: any = {
   ],
 
   baseItem: (rows, setRows) =>  [
-    { key: 'title', editor: TextEditor, name: "기본 항목명" },
+    { key: 'title', editor: TextEditor, formatter:PlaceholderBox, name: "항목명", type:"manage",},
     { key: 'moveButtons', width: 200, formatter: MoveButtons, rows, setRows },
   ],
   pause: [
@@ -1522,7 +1506,7 @@ export const columnlist: any = {
     ]
   ),
   outsourcingImportList: [
-    {key: 'contract_id', name: '발주 고유번호', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'export_id', name: '발주 고유번호', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'name', name: '품명', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'product_id', name: 'CODE', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'customer_id', name: '거래처', formatter:PlaceholderBox, placeholder: '-'},
@@ -1574,10 +1558,11 @@ export const columnlist: any = {
     {key: 'identification', name: '납품 고유번호', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'name', name: '품명', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'product_id', name: 'CODE', formatter:PlaceholderBox, placeholder: '-'},
+    {key: 'contract_id', name: '??', formatter:PlaceholderBox, placeholder: '-'},
     {key: "customer_id", name: "거래처", formatter: PlaceholderBox, placeholder: '-' },
     {key: 'cm_id', name: '모델', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'date', name: '납품 날짜', formatter:PlaceholderBox, placeholder: '-'},
-    {key: 'amount', name: '총 납품 수량', formatter:PlaceholderBox, placeholder: '-'},
+    // {key: 'amount', name: '총 납품 수량', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'lots', name: 'LOT별 납품수량', formatter: LotDeliveryInfoModal, type:"outsourcing", readonly:true},
   ],
   dataSet:[
