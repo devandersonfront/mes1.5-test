@@ -29,21 +29,21 @@ export const getServerSideProps = async (ctx: any) => {
     switch(type) {
       case 'member':
         return {
-          title: '유저 관리',
+          title: '유저',
           code: 'ROLE_HR_02',
           placeholder: 'member',
           additional: true
         }
       case 'customer':
         return {
-          title: '거래처 정보 관리',
+          title: '거래처 정보',
           code: 'ROLE_BASE_01',
           placeholder: 'customer',
           additional: true
         }
       case 'process':
         return {
-          title: '공정 관리',
+          title: '공정 종류',
           code: 'ROLE_BASE_02',
           placeholder: 'process',
           additional: true
@@ -57,7 +57,7 @@ export const getServerSideProps = async (ctx: any) => {
         }
       case 'product':
         return {
-          title: '제품 등록 관리',
+          title: '제품',
           code: 'ROLE_BASE_15',
           placeholder: 'productV1u',
           additional: true
@@ -105,7 +105,7 @@ export const getServerSideProps = async (ctx: any) => {
         }
       case 'rawstock':
         return {
-          title: "원자재 재고 관리",
+          title: "원자재 재고",
           code: 'ROLE_RMAT_02',
           placeholder: 'rawinV1u'
         }
@@ -123,13 +123,14 @@ export const getServerSideProps = async (ctx: any) => {
         }
       case "device":
         return {
-          title: "주변창지 정보관리",
+          title: "주변장치",
           code:"ROLE_BASE_12",
-          placeholder: 'device'
+          placeholder: 'device',
+          additional: true
         }
       case "tool" :
         return {
-          title: "공구 관리",
+          title: "공구",
           code: "ROLE_BASE_14",
           placeholder: 'toolRegister'
         }
@@ -297,7 +298,7 @@ const ItemManagePage = ({title, type, code, placeholder, isAdditional}: IProps) 
   const saveItem = async (code: string, items: IItemMenuType[]) => {
     try{
       const postBody = items.map((item,index)=> {
-        if(!item.title?.length) {
+        if(!item.placeholder && !item.title?.length) {
           throw("항목명을 입력해주세요.")
         }
         return {...item, sequence:index, title:item.title?.length > 0 ? item.title : item.placeholder}
@@ -311,10 +312,11 @@ const ItemManagePage = ({title, type, code, placeholder, isAdditional}: IProps) 
 
       if(res !== null || res !== undefined) {
         listItem(code)
+        setSelectList(new Set())
         Notiflix.Report.success(
             '성공',
             '저장되었습니다.',
-            'Okay',
+            '확인',
         );
       }
     }catch(err){
@@ -331,8 +333,10 @@ const ItemManagePage = ({title, type, code, placeholder, isAdditional}: IProps) 
 
   const filterSelectedRows = () => {
     const items = item.map((row : any)=> {
-      if(selectList.has(row.id) && row.colName !== null) {
+      if(selectList.has(row.id) && (row.colName !== null && row.colName !== undefined)) {
         throw("기존 항목은 삭제할 수 없습니다.")
+      }else if(row.colName !== null){
+        return
       }
       else return selectList.has(row.id) && row
     }).filter(v => v)
@@ -340,20 +344,22 @@ const ItemManagePage = ({title, type, code, placeholder, isAdditional}: IProps) 
   }
 
 
-  const deleteItem = async (code: string, items: IItemMenuType[]) => {
+  const deleteItem = async () => {
     if(selectList.size === 0) throw("선택된 정보가 없습니다.")
-
     Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
         async() => {
           try{
             const map = convertDataToMap()
             const selectedRows = filterSelectedRows()
             await RequestMethod('delete','itemDelete', selectedRows,)
-                .then(res =>
-                    Notiflix.Report.success('삭제되었습니다.', '', '확인'))
+                .then(() => Notiflix.Report.success('삭제되었습니다.', '', '확인'))
 
-            selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
+            selectList.forEach((row) => {
+              map.delete(row)
+            })
+            // selectedRows.forEach((nRow)=>{ map.delete(nRow.id)})
             setItem(Array.from(map.values()))
+            // listItem(code)
             setSelectList(new Set())
 
           }catch(err){
@@ -413,9 +419,7 @@ const ItemManagePage = ({title, type, code, placeholder, isAdditional}: IProps) 
             <div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
               {/*<HeaderButton onClick={() => {*/}
               {/*}} key={`btnCreate`}>초기화</HeaderButton>*/}
-              <HeaderButton onClick={() => saveItem(code, item)} key={`btnCreate`}>저장</HeaderButton>
               {isAdditional &&
-                  <>
                     <HeaderButton onClick={() => {
                       const random_id = Math.random() * 1000;
                       setItem([...item, {
@@ -425,13 +429,20 @@ const ItemManagePage = ({title, type, code, placeholder, isAdditional}: IProps) 
                         tab: item[0].tab
                       }])
                     }} key={`btnCreate`}>행 추가</HeaderButton>
-                    <HeaderButton onClick={() => deleteItem(code, item)} key={`btnCreate`}>삭제</HeaderButton>
-                  </>
+              }
+              <HeaderButton onClick={() => saveItem(code, item)} key={`btnCreate`}>저장</HeaderButton>
+              {isAdditional &&
+                <HeaderButton onClick={deleteItem} key={`btnCreate`}>삭제</HeaderButton>
               }
             </div>
             <ItemManageBox title={title} items={item} setItems={setItem} type={'base'}/>
             <ExcelTable
-                headerList={[SelectColumn,...columnlist.baseItem(item, setItem)]}
+                headerList={
+                  isAdditional ?
+                  [SelectColumn,...columnlist.baseItem(item, setItem)]
+                      :
+                  columnlist.baseItem(item, setItem)
+                }
                 setRow={(e) => competeAddtion(e)}
                 row={item}
                 height={500}
