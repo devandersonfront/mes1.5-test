@@ -158,7 +158,13 @@ const MesSubMaterialStock = ({ page, search, option }: IProps) => {
       .filter((v: any) => v);
 
 
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, setColumn});
+    if (pageInfo.page > 1) {
+      tmpRow = [...basicRow, ...res.info_list];
+    } else {
+      tmpRow = res.info_list;
+    }
+
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, setColumn});
 
     let selectKey = "";
     tmpColumn.map((v: any) => {

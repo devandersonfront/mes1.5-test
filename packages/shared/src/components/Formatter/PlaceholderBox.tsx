@@ -13,7 +13,7 @@ const PlaceholderBox = ({row, column, setRow}: IProps) => {
       const overLayNode = () => {
           return (
               <div style={{fontWeight : 'bold'}} placeholder={column.type == "manage" ? row.placeholder : column.placeholder}>
-                  {row[column.key].length > 0 ? row[column.key] : row["placeholder"] ?? column.placeholder}
+                  {row[column?.key]?.length > 0 ? row[column.key] : row["placeholder"] ?? column.placeholder}
               </div>
           )
       }

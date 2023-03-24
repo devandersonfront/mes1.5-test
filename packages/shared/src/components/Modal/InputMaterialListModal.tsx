@@ -236,11 +236,11 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
           originalAmount,
           originalCurrent: Number(lot.current),
           actualCurrent: actualCurrent.toNumber(),
-          current: new Big(actualCurrent).minus(totalUsage).toNumber(),
+          current: isModify && lot.is_complete ? 0 : new Big(actualCurrent).minus(totalUsage).toNumber(),
           isComplete: isModify ? lot.current !== 0 && lot.is_complete ? '사용완료' : '-' : lot.is_complete ? '사용완료' : '-' ,
           is_complete: isModify && lot.current === 0 && lot.is_complete ? false: lot.is_complete,
-          maxAmount
-        }
+          maxAmount: isModify && lot.current !== 0 && lot.is_complete ? 0 : maxAmount
+      }
     })
   }
 
@@ -477,8 +477,7 @@ const InputMaterialListModal = ({column, row, onRowChange}: IProps) => {
                     let tmp = inputMaterials.map((input, inputIdx) => {
                       if(input.lotList && idx === inputIdx ){
                         setSelected({index: idx, type: input.type_name, product: input.code, productType: input.product_type})
-                        const rowLotList = toLotList(input)
-                        setLotList(rowLotList)
+                        setLotList(toLotList(input))
                       }
                       delete input.lotList
                       return input
