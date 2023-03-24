@@ -421,7 +421,8 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
           unit: row.child_product.unit,
           goal: object.contract?.amount ?? 0,
           process_id: row.child_product.process?.name ?? '-',
-          readonly: true,
+          machines: row.child_product.machines,
+          readonly: false,
         }
       })
       parentProduct = parentProduct.concat(childProducts)
@@ -502,7 +503,7 @@ const MesOperationRegister = ({page, keyword, option}: IProps) => {
                     return {
                       ...row,
                       id,
-                      isChange: false
+                      isChange: false,
                     }
                   })
                   setSelectList(newSelectList)
