@@ -325,7 +325,7 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
                   Notiflix.Report.warning("경고","데이터를 하나만 선택해주시기 바랍니다.","확인");
                 }
                 break;
-              case 2:
+              case 3:
                 if(selectList.size <= 0) {
                   return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
                 }
