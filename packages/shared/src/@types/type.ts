@@ -122,6 +122,7 @@ export interface IItemMenuType {
   tab?:string
   moddable?:boolean
   moddablePK?:any
+  placeholder?:string
 }
 
 export type MachineType = {
@@ -271,3 +272,12 @@ export interface TableSortingOptionType {
   orders:string[]
 }
 
+export interface LoadItemTypes {
+  column:IExcelHeaderType[]
+  sortingOptions: TableSortingOptionType
+  setSortingOptions:(TableSortingOptionType) => void
+  setColumn: (arr:Array<IExcelHeaderType>) => void
+  reload?: (keyword?:string, sortingOptions?: TableSortingOptionType, date?:{from:string, to:string},) => void
+  changeSetTypesState?: (value:number) => void
+  date?:{from:string, to:string}
+}

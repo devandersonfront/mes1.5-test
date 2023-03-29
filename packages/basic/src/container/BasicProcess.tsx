@@ -16,7 +16,7 @@ import {useRouter} from 'next/router'
 import {NextPageContext} from 'next'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
+import {additionalMenus, getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import {TableSortingOptionType} from "shared/src/@types/type";
 
 export interface IProps {
@@ -68,33 +68,6 @@ const BasicProcess = ({}: IProps) => {
     })
   },[])
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[]) => {
-    const changeOrder = (sort:string, order:string) => {
-      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-      setSortingOptions(_sortingOptions)
-      reload(null, _sortingOptions)
-    }
-    let tmpColumn = column.map((v: any) => {
-      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-      return {
-        ...v,
-        pk: v.unit_id,
-        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-        sorts: v.sorts ? sortingOptions : null,
-        result: v.sortOption ? changeOrder : null,
-      }
-    });
-
-    Promise.all(tmpColumn).then(res => {
-      setColumn([...res.map(v=> {
-        return {
-          ...v,
-          name: v.moddable ? v.name+'(필수)' : v.name
-        }
-      })])
-    })
-    // }
-  }
   const SaveBasic = async () => {
     const existence = valueExistence()
 
@@ -342,25 +315,7 @@ const BasicProcess = ({}: IProps) => {
       }
     }).filter((v:any) => v)
 
-    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-      if(menu.colName === null && !menu.hide){
-        return {
-          id: menu.mi_id,
-          name: menu.title,
-          width: menu.width,
-          // key: menu.title,
-          key: menu.mi_id,
-          editor: TextEditor,
-          type: 'additional',
-          unit: menu.unit,
-          tab: menu.tab,
-          version: menu.version,
-          colName: menu.mi_id,
-        }
-      }
-    }).filter((v: any) => v) : []
-
-    loadAllSelectItems( [...tmpColumn, ...additionalMenus])
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn});
 
     tmpRow = res.info_list
 

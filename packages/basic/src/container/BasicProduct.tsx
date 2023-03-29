@@ -20,7 +20,7 @@ import {NextPageContext} from 'next'
 import axios from 'axios';
 import {useDispatch, useSelector} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import {getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util';
+import {columnsSort, getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util';
 import { BarcodeDataType } from "shared/src/common/barcodeType";
 import {QuantityModal} from "shared/src/components/Modal/QuantityModal";
 import {TableSortingOptionType} from "shared/src/@types/type";
@@ -255,6 +255,7 @@ const BasicProduct = ({}: IProps) => {
             tab: menu.tab,
             version: menu.version,
             colName: menu.mi_id,
+            sequence:menu.sequence
           })
         }
       }
@@ -280,7 +281,7 @@ const BasicProduct = ({}: IProps) => {
         options: col.options ? col.key === 'type' ? typeOptions[productType] as {status:number | string, name:string}[] : col.options : undefined
       }
     })
-    setColumn(newCols.concat(addedCols))
+    setColumn(columnsSort(newCols.concat(addedCols)))
   }
 
   const cleanUpData = (res: any) => {

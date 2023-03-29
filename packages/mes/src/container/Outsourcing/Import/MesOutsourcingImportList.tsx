@@ -14,7 +14,7 @@ import Notiflix from "notiflix";
 import { NextPageContext } from 'next'
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
 import { useDispatch,  } from "react-redux";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import {columnsSort, setExcelTableHeight} from 'shared/src/common/Util'
 import {useRouter} from "next/router";
 import {CalendarBox} from "shared/src/components/CalendarBox/CalendarBox";
 import {TableSortingOptionType} from "shared/src/@types/type";
@@ -69,7 +69,17 @@ const MesOutsourcingImportList = () => {
 
     const convertColumn = (menus) => {
         const colNames = menus.map(menu => menu.colName)
-        return column.filter((data)=> colNames.includes(data.key))
+        let resultMenus = []
+        menus.map((menu) => {
+            column.map((col) => {
+                if(col.key == menu.colName){
+                    resultMenus.push({...col, ...menu,name:menu.title})
+                }
+            })
+        })
+        column.filter((data)=> colNames.includes(data.key))
+
+        return columnsSort(resultMenus)
     }
 
     const onSelectDate = (date: { from: string, to: string }) => {
@@ -145,6 +155,9 @@ const MesOutsourcingImportList = () => {
     const buttonEvent = (buttonIndex:number) => {
         switch (buttonIndex) {
             case 0:
+                router.push(`/mes/item/manage/outImportList`);
+                break
+            case 1:
                 try {
                     if(selectList?.size === 0) throw(alertMsg.noSelectedData)
                     if(selectList.size > 1) throw(alertMsg.onlyOne)
@@ -155,7 +168,7 @@ const MesOutsourcingImportList = () => {
                       Notiflix.Report.warning('경고',errMsg,"확인")
                 }
                 break
-            case 1:
+            case 2:
                 selectList?.size > 0 ?
                     Notiflix.Confirm.show("경고", "삭제하시겠습니까?", "확인", "취소",
                         () => {
@@ -183,7 +196,7 @@ const MesOutsourcingImportList = () => {
                 optionIndex={optionIndex}
                 searchOptionList={["Lot번호", "CODE","품명"]}
                 buttons={
-                    ['수정하기', '삭제']
+                    ['항목관리', '수정하기', '삭제']
                 }
                 buttonsOnclick={buttonEvent}
             />

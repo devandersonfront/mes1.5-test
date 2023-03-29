@@ -18,7 +18,7 @@ import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
+import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
 interface IProps {
@@ -50,10 +50,10 @@ const MesFinishList = ({page, search, option}: IProps) => {
 
   const onSelectDate = (date: {from:string, to:string}) => {
     setSelectDate(date)
-    reload(null, date)
+    reload(null, null, date)
   }
 
-  const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType) => {
+  const reload = (keyword?:string, sortingOptions?: TableSortingOptionType, date?:{from:string, to:string},) => {
     setKeyword(keyword)
     if(pageInfo.page > 1) {
       setPageInfo({...pageInfo, page: 1})
@@ -73,25 +73,6 @@ const MesFinishList = ({page, search, option}: IProps) => {
     })
   },[])
 
-  const loadAllSelectItems = async (column: IExcelHeaderType[], date?: {from:string, to:string}) => {
-    const changeOrder = (sort:string, order:string) => {
-      const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-      setSortingOptions(_sortingOptions)
-      reload(null, date, _sortingOptions)
-    }
-    let tmpColumn = column.map((v: any) => {
-      const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-      return {
-        ...v,
-        pk: v.unit_id,
-        sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-        sorts: v.sorts ? sortingOptions : null,
-        result: v.sortOption ? changeOrder : null,
-      }
-    });
-
-    setColumn(tmpColumn);
-  }
 
   const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType) => {
     let params = {}
@@ -179,10 +160,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
 
     tmpRow = res.info_list
 
-    loadAllSelectItems( [
-      ...tmpColumn,
-      ...additionalMenus
-    ], date)
+    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, reload, setColumn, date});
 
 
     let selectKey = ""
@@ -258,6 +236,16 @@ const MesFinishList = ({page, search, option}: IProps) => {
         //@ts-ignore
         setSelectDate={onSelectDate}
         title={"작업 완료 리스트"}
+        buttons={["항목관리"]}
+        buttonsOnclick={(index) => {
+          switch (index) {
+            case 0:
+              router.push(`/mes/item/manage/finishV2`);
+              break
+            default:
+              break
+          }
+        }}
       />
       <ExcelTable
         editable

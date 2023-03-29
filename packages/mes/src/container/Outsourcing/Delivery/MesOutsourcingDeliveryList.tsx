@@ -13,7 +13,7 @@ import Notiflix from "notiflix";
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
 import { useDispatch,  } from "react-redux";
 import {useRouter} from "next/router";
-import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
+import {columnsSort, getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import {TableSortingOptionType} from "shared/src/@types/type";
 import {TransferCodeToValue} from "shared/src/common/TransferFunction";
 import moment from "moment";
@@ -139,7 +139,7 @@ const MesOutsourcingDeliveryList = () => {
                 result: col.sortOption ? changeOrder : null,
             }
         })
-        setColumn(newCols)
+        setColumn(columnsSort(newCols))
     }
 
     const cleanUpData = (res: any, date?: { from: string, to: string }) => {
@@ -189,6 +189,9 @@ const MesOutsourcingDeliveryList = () => {
     const buttonEvent = (buttonIndex:number) => {
         switch (buttonIndex) {
             case 0:
+                router.push(`/mes/item/manage/outsourcingDeliveryList`);
+                break
+            case 1:
                 try {
                     if(selectList?.size === 0) throw(alertMsg.noSelectedData)
                     if(selectList.size > 1) throw(alertMsg.onlyOne)
@@ -198,7 +201,7 @@ const MesOutsourcingDeliveryList = () => {
                     Notiflix.Report.warning('경고',errMsg,"확인")
                 }
                 break
-            case 1:
+            case 2:
                 try {
                     if(selectList?.size === 0) throw(alertMsg.noSelectedData)
                     if(selectList.size > 1) throw(alertMsg.onlyOne)
@@ -228,7 +231,7 @@ const MesOutsourcingDeliveryList = () => {
                 optionIndex={optionIndex}
                 searchOptionList={optionList}
                 buttons={
-                    ['수정하기', '삭제']
+                    ['항목관리', '수정하기', '삭제']
                 }
                 buttonsOnclick={buttonEvent}
             />
@@ -237,7 +240,7 @@ const MesOutsourcingDeliveryList = () => {
                 resizable
                 headerList={[
                     SelectColumn,
-                    ...columnlist.outsourcingDeliveryList
+                    ...column
                 ]}
                 row={basicRow}
                 setRow={(row) => {

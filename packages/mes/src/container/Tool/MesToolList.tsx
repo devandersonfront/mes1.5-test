@@ -18,7 +18,7 @@ import Notiflix from "notiflix"
 import {useDispatch, useSelector} from "react-redux";
 import {setToolDataAdd} from "shared/src/reducer/toolInfo";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util'
+import {columnsSort, setExcelTableHeight} from 'shared/src/common/Util'
 import addColumnClass from '../../../../main/common/unprintableKey'
 interface IProps {
     children?: any
@@ -27,18 +27,12 @@ interface IProps {
     option?: number
 }
 
-interface SelectParameter {
-    from: string
-    to: string
-}
-
 const MesToolList = ({ page, search, option }: IProps) => {
     const router = useRouter();
     const dispatch = useDispatch();
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
     const [column, setColumn] = useState<any>(columnlist.toolList)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [selectDate, setSelectDate] = useState<SelectParameter>({ from: moment().subtract(1, "month").format("YYYY-MM-DD"), to: moment().format("YYYY-MM-DD") })
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [pageInfo, setPageInfo] = useState<{ page: number, total: number }>({ page: 1, total: 1 });
     const [keyword, setKeyword] = useState<string>();
@@ -138,43 +132,16 @@ const MesToolList = ({ page, search, option }: IProps) => {
             }
         }).filter((v: any) => v)
 
-        let additionalMenus = info_list.menus ? info_list.menus.map((menu: any) => {
-            if (menu.colName === null && !menu.hide) {
-                return {
-                    id: menu.mi_id,
-                    name: menu.title,
-                    width: menu.width,
-                    // key: menu.title,
-                    key: menu.mi_id,
-                    editor: TextEditor,
-                    type: 'additional',
-                    unit: menu.unit,
-                    tab: menu.tab,
-                    version: menu.version,
-                    colName: menu.mi_id,
-                }
-            }
-        }).filter((v: any) => v) : []
 
         tmpRow = info_list.info_list
 
-        setColumn([
-            ...tmpColumn,
-            ...additionalMenus
-        ])
+        setColumn(columnsSort(tmpColumn))
 
 
         let selectKey = ""
-        let additionalData: any[] = []
         tmpColumn.map((v: any) => {
             if (v.selectList) {
                 selectKey = v.key
-            }
-        })
-
-        additionalMenus.map((v: any) => {
-            if (v.type === 'additional') {
-                additionalData.push(v.key)
             }
         })
 
@@ -203,13 +170,6 @@ const MesToolList = ({ page, search, option }: IProps) => {
         setBasicRow(tmpBasicRow)
     }
 
-    const DeleteBasic = async () => {
-        const res = await RequestMethod("delete", "lotToolDelete", basicRow.filter((row) => selectList.has(row.id)))
-
-        if (res) {
-            Notiflix.Report.success("삭제되었습니다.", "", "확인", () => reload())
-        }
-    }
 
     return (
         <div className={'excelPageContainer noCheckBox'}>
@@ -222,6 +182,17 @@ const MesToolList = ({ page, search, option }: IProps) => {
                 searchOptionList={["공구 CODE", "공구 품명", "거래처"]}
                 onChangeSearchOption={setOptionIndex}
                 optionIndex={optionIndex}
+                buttons={["항목관리"]}
+                buttonsOnclick={(index) => {
+                    switch (index) {
+                        case 0:
+                            router.push(`/mes/item/manage/toolList`);
+                            break
+                        default:
+                            break
+
+                    }
+                }}
             />
             <ExcelTable
                 resizable

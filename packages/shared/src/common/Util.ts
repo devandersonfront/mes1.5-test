@@ -1,5 +1,7 @@
-import {BomObjectType, BomType, TableSortingOptionType} from '../@types/type'
+import {BomObjectType, BomType, IExcelHeaderType, LoadItemTypes, TableSortingOptionType} from '../@types/type'
 import { TransferCodeToValue } from './TransferFunction'
+import {PlaceholderBox} from "../components/Formatter/PlaceholderBox";
+import {TextEditor} from "../components/InputBox/ExcelBasicInputBox";
 
 export const ParseResponse = (res: any | string | any[]) : any[] => {
   if (typeof res === 'string') {
@@ -175,7 +177,6 @@ export const transTypeProduct = (type:string | number) => {
   }
 }
 
-
 export const duplicateCheckWithArray = (array:Array<any>, keys:Array<string>, nullCheck?:boolean):boolean => {
   try{
     if(nullCheck && array.length <= 0) return false
@@ -198,3 +199,56 @@ export const duplicateCheckWithArray = (array:Array<any>, keys:Array<string>, nu
   }
 }
 
+export const loadAllSelectItems = async ({column, sortingOptions, setSortingOptions, reload, setColumn, changeSetTypesState, date}: LoadItemTypes) => {
+
+  const changeOrder = (sort:string, order:string) => {
+    const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+    setSortingOptions(_sortingOptions)
+    reload(null, _sortingOptions, date && date,)
+  }
+  let tmpColumn = columnsSort(column).map((v: any) => {
+
+    const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+    return {
+      ...v,
+      pk: v.unit_id,
+      sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+      sorts: v.sorts ? sortingOptions : null,
+      result: v.sortOption ? changeOrder : v.headerRenderer ? changeSetTypesState : null,
+    }
+  });
+
+
+  Promise.all(tmpColumn).then(res => {
+    setColumn([...res.map(v=> {
+      return {
+        ...v,
+        name: v.moddable ? v.name+'(필수)' : v.name
+      }
+    })])
+  })
+}
+
+export const additionalMenus:(res:any) => any[] = (res:any) =>
+
+   res.menus
+        .map((menu: any) => {
+          if (menu.colName === null && !menu.hide) {
+            return {
+              id: menu.mi_id,
+              name: menu.title,
+              width: menu.width,
+              // key: menu.title,
+              key: menu.mi_id,
+              formatter: PlaceholderBox,
+              editor: TextEditor,
+              type: "additional",
+              unit: menu.unit,
+              tab: menu.tab,
+              version: menu.version,
+              colName: menu.mi_id,
+              sequence:menu.sequence,
+            };
+          }
+        })
+        .filter((v: any) => v)
