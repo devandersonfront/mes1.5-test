@@ -284,14 +284,16 @@ const ItemManagePage = ({title, type, code, placeholder, isAdditional}: IProps) 
       let baseList = results.bases.map((row) => {
         return {...row, id:row.mi_id}
       })
-      let addiList = results.additional.map((value)=>{
+      let addiList = results.additional.map((value, index)=>{
         const randomID = Math.random()*100;
         return {...value, id:"addi_"+randomID};
       })
 
       Notiflix.Loading.remove(300)
 
-      itemSetting(baseList.concat(addiList).sort((a,b) => a.sequence - b.sequence))
+      itemSetting(baseList.concat(addiList).sort((a,b) => a.sequence - b.sequence).map((col, index) =>{
+        return {...col, sequence:index}
+      }))
     }
   }
 
