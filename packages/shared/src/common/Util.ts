@@ -1,8 +1,4 @@
-// <<<<<<< HEAD
-// import {BomObjectType, BomType, LoadItemTypes, TableSortingOptionType} from '../@types/type'
-// =======
 import {BomObjectType, BomType, IExcelHeaderType, LoadItemTypes, TableSortingOptionType} from '../@types/type'
-// >>>>>>> 69ee186b0 (REFACTOR: list 페이지에서 사용하는 loadAllSelectItems function 공용화)
 import { TransferCodeToValue } from './TransferFunction'
 import {PlaceholderBox} from "../components/Formatter/PlaceholderBox";
 import {TextEditor} from "../components/InputBox/ExcelBasicInputBox";
