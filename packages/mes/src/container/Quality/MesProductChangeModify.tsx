@@ -34,8 +34,6 @@ const MesProductChangeModify = () => {
         ]
     )
 
-    console.log(files,'filesfiles')
-
     const productChangeLoad = async (pcr_id: string) => {
         const res = await RequestMethod('get', `productChangeLoad`,{
             path: {

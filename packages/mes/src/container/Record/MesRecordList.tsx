@@ -21,7 +21,7 @@ import {
     setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { useDispatch } from "react-redux";
-import { getTableSortingOptions, setExcelTableHeight } from 'shared/src/common/Util'
+import {additionalMenus, getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
@@ -93,7 +93,7 @@ const MesRecordList = ({}: IProps) => {
             setSortingOptions(_sortingOptions)
             reload(null, date, _sortingOptions, radioIdx)
         }
-        let tmpColumn = column.map((v: any) => {
+        let tmpColumn = column.map((v: any, index) => {
             const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
             return {
                 ...v,
@@ -101,6 +101,7 @@ const MesRecordList = ({}: IProps) => {
                 sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
                 sorts: v.sorts ? sortingOptions : null,
                 result: v.sortOption ? changeOrder : null,
+                sequence: v.sequence
             }
         });
 
@@ -228,6 +229,7 @@ const MesRecordList = ({}: IProps) => {
                         width: menu.width,
                         tab: menu.tab,
                         unit: menu.unit,
+                        sequence:menu.sequence
                     };
                 } else if (menu.colName === "id" && column.key === "tmpId") {
                     menuData = {
@@ -236,6 +238,7 @@ const MesRecordList = ({}: IProps) => {
                         width: menu.width,
                         tab: menu.tab,
                         unit: menu.unit,
+                        sequence:menu.sequence
                     };
                 }
             });
@@ -249,26 +252,7 @@ const MesRecordList = ({}: IProps) => {
         })
             .filter((v: any) => v);
 
-        let additionalMenus = res.menus
-            ? res.menus
-                .map((menu: any) => {
-                    if (menu.colName === null) {
-                        return {
-                            id: menu.id,
-                            name: menu.title,
-                            width: menu.width,
-                            key: menu.title,
-                            editor: TextEditor,
-                            type: "additional",
-                            unit: menu.unit,
-                        };
-                    }
-                })
-                .filter((v: any) => v)
-            : [];
-
-
-        loadAllSelectItems([...convertColumn, ...additionalMenus], date, radioIdx);
+        loadAllSelectItems([...convertColumn, ...additionalMenus(res)], date, radioIdx);
     }
 
     const cleanUpData = (res: any, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType, radioIdx?:number) => {
@@ -336,9 +320,12 @@ const MesRecordList = ({}: IProps) => {
                 setSelectDate={onSelectDate}
                 //실제사용
                 title={"작업 일보 리스트"}
-                buttons={["", "수정하기", "삭제"]}
+                buttons={["항목 관리", "수정하기", "삭제"]}
                 buttonsOnclick={(e) => {
                     switch (e) {
+                        case 0:
+                            router.push(`/mes/item/manage/recordV2`);
+                            break
                         case 1: {
                             if (selectList.size === 1) {
                                 dispatch(setModifyInitData({

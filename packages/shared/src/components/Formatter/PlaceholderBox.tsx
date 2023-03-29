@@ -10,28 +10,20 @@ interface IProps {
 }
 
 const PlaceholderBox = ({row, column, setRow}: IProps) => {
-
       const overLayNode = () => {
           return (
-              <div style={{fontWeight : 'bold'}}>
-                  {row[column.key] ? row[column.key] : column.placeholder}
+              <div style={{fontWeight : 'bold'}} placeholder={column.type == "manage" ? row.placeholder : column.placeholder}>
+                  {row[column?.key]?.length > 0 ? row[column.key] : row["placeholder"] ?? column.placeholder}
               </div>
           )
       }
       return(
-          <Background className={row[column.key] ?? 'unprintable'} style={{backgroundColor:row?.warning ? "red" : undefined}}>
-              {
-                  column.overlay ?
-                  <Tooltip placement={'rightTop'} overlay={overLayNode} arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
-                      <p style={{padding: 0, color: '#ffffff', opacity: row[column.key] ? 1 : column.type === 'autoInput' ? .5 : .3, textAlign: 'center', width: '100%' }}>
-                          {row[column.key] ? row[column.key] : column.placeholder}
-                      </p>
-                  </Tooltip>
-                      :
-                  <p style={{padding: 0, color: '#ffffff', opacity: row[column.key] ? 1 : column.type === 'autoInput' ? .5 : .3, textAlign: 'center', width: '100%' }}>
-                      {row[column.key] ? row[column.key] : column.placeholder}
+          <Background className={row?.[column.key] ?? 'unprintable'} style={{backgroundColor:row?.warning ? "red" : undefined}}>
+              <Tooltip placement={'rightTop'} overlay={overLayNode} trigger={ column.overlay ? "hover" : ""} arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
+                  <p style={{padding: 0, color: '#ffffff', opacity: row?.[column.key] ? 1 : column.type === 'autoInput' ? .5 : .3, textAlign: 'center', width: '100%' }}>
+                      {row?.[column?.key]?.length > 0 ? row?.[column.key] : row?.["placeholder"] ?? column.placeholder}
                   </p>
-              }
+              </Tooltip>
           </Background>
       )
 }

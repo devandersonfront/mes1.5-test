@@ -86,8 +86,6 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
     }
   }
 
-  console.log(selectMenu)
-
   return (
       <div className={'nav unprintable'} style={{display: 'flex' , height : '100%'}}>
         <MenuNavComponent>
