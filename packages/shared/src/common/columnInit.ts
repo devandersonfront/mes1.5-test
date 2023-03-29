@@ -789,6 +789,7 @@ export const columnlist: any = {
     { key: "process_id", name: "생산 공정", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "goal", name: "목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118, inputType: 'number' , textMultiInput },
     { key: 'input', name: '자재 선택', formatter: BomRegisterModal, width: 118 },
+    { key: 'machine_id', name: '기계', formatter: MachineInfoModal, unprintable: true, type:"operation" },
   ]),
   operationIdentificationRegisterV2: (textMultiInput?) => ([
     { key: "contract_id", name: "수주 번호", formatter: SearchModalTest, type: 'order', placeholder: '검색', disableType: "true", width: 118, noSelect: true },
@@ -803,6 +804,7 @@ export const columnlist: any = {
     { key: "process_id", name: "생산 공정", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "goal", name: "목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118, inputType: 'number' , textMultiInput },
     { key: 'input', name: '자재 선택', formatter: BomRegisterModal, width: 118 },
+    { key: 'machine_id', name: '기계', formatter: MachineInfoModal, unprintable: true, type:"operation" },
   ]),
   operationListV2: [
     { key: "status", name: "상태", width: 118 },

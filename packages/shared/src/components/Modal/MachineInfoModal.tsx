@@ -32,6 +32,7 @@ const MachineInfoModal = ({column, row, onRowChange}: IProps) => {
 
   useEffect(() => {
     if(isOpen) {
+      if(column?.type == "operation" && !row.id) Notiflix.Report.warning("제품을 선택해주세요.","","확인",() => setIsOpen(false))
       if(row.machines?.length){
         setSearchList(row.machines.map((v,i) => {
           return {
@@ -108,11 +109,16 @@ const MachineInfoModal = ({column, row, onRowChange}: IProps) => {
 
   const updateData = async () => {
     const requestBody = getRequestBody()
-    return await RequestMethod('post', 'prdMachineSave', requestBody, null, null, null, row.product_id).then(() =>
+    return await RequestMethod('post', 'prdMachineSave', requestBody,
+        null, null, null, column.type == "operation" ? row.id : row.product_id).then(() =>
       Notiflix.Report.success('저장되었습니다.','','확인', () =>
       {
-        row.reload()
-        // setIsOpen(false)
+        if(column.type == "operation"){
+          onRowChange({...row, machines: requestBody})
+          setIsOpen(false)
+        }else{
+          row.reload()
+        }
       }))
   }
 
@@ -152,15 +158,18 @@ const MachineInfoModal = ({column, row, onRowChange}: IProps) => {
   return (
     <MultiSelectModal buttonTitle={'기계'} title={'기계 정보 (제품 생산되는 데 사용되는 모든 기계를 입력해주세요)'} hasData={row.machines?.length > 0} isOpen={isOpen}
                  onModalButtonClick={() => setIsOpen(true)} onClose={onCloseEvent}
-                 onConfirm={onConfirm} disabled={row.readonly}
-                 validateConfirm={executeValidation} headers={[
-      [ { key: '거래처명', value: row.customerArray?.name ?? "-" }, { key: '모델', value: row.modelArray?.model ?? "-" }, ],
-      [ { key: 'CODE', value: row.code ?? "-" }, { key: '품명', value: row.name ?? "-" }, {
-        key: '품목 종류',
-        value: row.type ? TransferCodeToValue(row.type, 'material') : "-"
-      }, { key: '생산 공정', value: row.process?.name ?? "-" } ],
-      [ { key: '단위', value: row.unit ?? "-" } ]
-    ]} data={searchList} setData={setSearchList}
+                 onConfirm={onConfirm}
+                 disabled={row.readonly}
+                 validateConfirm={executeValidation}
+                 headers={[
+                   [ { key: '거래처명', value: row.customerArray?.name ?? "-" }, { key: '모델', value: row.modelArray?.model ?? "-" }, ],
+                   [ { key: 'CODE', value: row.code ?? "-" }, { key: '품명', value: row.name ?? "-" }, {
+                     key: '품목 종류',
+                     value: row.type ? TransferCodeToValue(row.type, 'material') : "-"
+                   }, { key: '생산 공정', value: row.process?.name ?? "-" } ],
+                   [ { key: '단위', value: row.unit ?? "-" } ]
+                 ]}
+                 data={searchList} setData={setSearchList}
                  dataColumnKey={'machineInfo'} changeRow={changeRow}/>
   )
 }

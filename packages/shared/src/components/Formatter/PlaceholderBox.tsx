@@ -21,7 +21,7 @@ const PlaceholderBox = ({row, column, setRow}: IProps) => {
           <Background className={row?.[column.key] ?? 'unprintable'} style={{backgroundColor:row?.warning ? "red" : undefined}}>
               <Tooltip placement={'rightTop'} overlay={overLayNode} trigger={ column.overlay ? "hover" : ""} arrowContent={<div className="rc-tooltip-arrow-inner"></div>}>
                   <p style={{padding: 0, color: '#ffffff', opacity: row?.[column.key] ? 1 : column.type === 'autoInput' ? .5 : .3, textAlign: 'center', width: '100%' }}>
-                      {row?.[column?.key]?.length > 0 ? row?.[column.key] : row?.["placeholder"] ?? column.placeholder}
+                      {typeof row?.[column?.key] == "number" ? row?.[column?.key] : row?.[column?.key]?.length > 0 ? row?.[column?.key] : row?.["placeholder"] ?? column.placeholder}
                   </p>
               </Tooltip>
           </Background>
