@@ -65,6 +65,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                 aiData.isDefault = true
                 aiData.setting = true
                 aiData.machine_id = row.machine.machine.machine_id
+                // aiData.machine = row.machine
                 setSearchList([aiData])
             }
             setSummaryData({
