@@ -104,7 +104,8 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                     ...v.machine,
                     machineType: TransferCodeToValue(v.machine.type, 'machine'),
                     sequence: index+1,
-                    setting: v.machine.machine_id === selectedMachine ? 1 : 0,
+                    // setting: v.machine.machine_id === selectedMachine ? 1 : 0,
+                    setting: v.setting,
                     isDefault: getUsageType(v.setting)
                 }
             }))
