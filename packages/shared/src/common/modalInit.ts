@@ -242,8 +242,8 @@ export const searchModalList: any = {
     {key: 'machineType', name: '기계 종류', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
     {key: 'isDefault', name: '기본/스페어', width: 160, formatter: LineBorderContainer, placeholder: '-', textAlign: 'center' },
     {key: 'setting', name: '사용 여부', width: 160, formatter: DropDownEditor,selectList: [
-        {pk: 1, name: '여'},
-        {pk: 0, name: '부'},
+        {pk: 'basic', name: '여'},
+        {pk: 'spare', name: '부'},
       ], type: 'Modal'},
   ],
   toolUse: (savedTools) => ([
