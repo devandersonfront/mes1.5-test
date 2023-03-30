@@ -1,4 +1,4 @@
-import {titles, dohwaTitles, bkTitles,customTitles} from './titles'
+import {titles, dohwaTitles, bkTitles, customTitles, eunhaeTitles} from './titles'
 import {auth} from './auth'
 
 function toMenu(title: string, url: string, subMenu ?: string[]) {
@@ -254,6 +254,12 @@ export const PmsTitles = (customTarget?: string) => {
     _moldDailyInspSts: toMenu(titles._moldDailyInspSts, '/pms/v2/press/maintenance/moldDailyStatus'),
   }
   switch (customTarget) {
+    case 'eunhae': return {
+      ...pmsDefault,
+      pressMon: toMenu(titles.pressMon, '', [ '_pressAnalMon', '_pressStsMon' , '_pressLineMon', '_pressProcessMon' ]),
+      _pressLineMon : toMenu(eunhaeTitles._pressLineMon, '/pms/new/monitoring/line'),
+      _pressProcessMon: toMenu(eunhaeTitles._pressProcessMon, '/pms/new/monitoring/process'),
+    }
     default:
       return pmsDefault
   }

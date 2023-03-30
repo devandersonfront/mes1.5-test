@@ -67,8 +67,9 @@ export const authList = (type: string) => {
     }
 }
 
-const customTarget = process.env.NEXT_PUBLIC_CUSTOM_TARGET
 
+const user = cookie.load('userInfo')
+let customTarget = user?.company === '9UZ50Q' ? 'eunhae' : process.env.REACT_APP_PUBLIC_CUSTOM_TARGET
 
 const HomeOrder = (customTarget?: string): HomeOrderType[] => {
     const defaultOrder: HomeOrderType[] = ['home']
