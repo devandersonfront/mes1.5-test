@@ -27,19 +27,32 @@ export interface IProps {
 
 let aiLimitNum = 0;
 let pressLimitNum = 0;
+let aiIntervalTime = 60000
+let pressInterval = 3000
+let pressIntervalLimit = pressInterval + 1000
 
 const HomeAiProductionLog = ({}: IProps) => {
     const userInfo = cookie.load('userInfo')
     const [ai , setAi] = useState<any>()
+    const [aiTime , setAiTime] = useState<number>(0)
     const [pressList , setPressList] = useState<any[]>([])
-    const [isAiRequest , setIsAiRequest] = useState<boolean>(false)
-    const [isPressRequest , setIsPressRequest] = useState<boolean>(false)
+    const [pressTime , setPressTime] = useState<number>(0)
     const [allStop , setAllStop] = useState<boolean>(false)
     const [pressStop, setPressStop] = useState<boolean>(false)
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiProductLog"])
     const [data ,setData] = useState<any[]>([])
-    const [timeout , setTimeout] = useState<number>(3000)
     const [modalOpen, setModalOpen] = useState<boolean>(false)
+
+    useInterval(async () => {
+        await getAi()
+    }, aiTime);
+
+    useInterval(async () => {
+        if(ai){
+            const codes = ai.map((result)=>result.machine_code)
+            await getPressList(codes.join(','))
+        }
+    }, pressTime);
 
     const changeModalState = () => {
         setModalOpen(value => !value)
@@ -99,30 +112,29 @@ const HomeAiProductionLog = ({}: IProps) => {
     }
 
     const getAi = async (pages : number = 1) => {
-        const tokenData = userInfo?.token;
-        const params  = haveDistinct(userInfo?.company)
-            ? { rangeNeeded : true , distinct : 'mfrCode',}
-            : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
+        try {
+            const tokenData = userInfo?.token;
+            const params  = haveDistinct(userInfo?.company)
+                ? { rangeNeeded : true , distinct : 'mfrCode',}
+                : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
 
-        const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
-            params : params,
-            headers : { Authorization : tokenData },
-        })
+            const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
+                params : params,
+                headers : { Authorization : tokenData },
+            })
 
-        if(result) {
-            const data = result?.data?.info_list
-            Notiflix.Loading.remove()
-            if (data.length) {
-                setIsAiRequest(true)
-                setAi(await checkTrained(data))
-                return await checkTrained(data)
+            if(result) {
+                const data = result?.data?.info_list
+                setAiTime(aiIntervalTime)
+                Notiflix.Loading.remove()
+                if (!!data.length) {
+                    setAi(await checkTrained(data))
+                    setData(ai)
+                }
             }
-        }else{
-            aiLimitNum++
-            setIsAiRequest(false)
+        }catch(e){
             Notiflix.Loading.remove()
-            setPressList([])
-            return false
+            aiLimitNum++
         }
     }
 
@@ -132,52 +144,27 @@ const HomeAiProductionLog = ({}: IProps) => {
             const res =  await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/statement`,{
                 params : { page : 1 , size : 20 , mfrCodes },
                 headers : { Authorization : tokenData },
-                timeout : timeout
+                timeout : pressTime
             })
-
             if (res) {
                 Notiflix.Loading.remove()
-                setIsPressRequest(true)
-                setPressList(res?.data?.results?.content)
-                return res?.data?.results?.content
+                const press = res?.data?.results?.content
+                setPressTime(pressInterval)
+                setPressList(press)
+                setData(mappingData(ai,press))
             }
-
         }catch (e) {
-            if(timeout === 10000){
+            if(pressTime === pressIntervalLimit){
                 pressLimitNum++
                 Notiflix.Loading.remove()
-                setIsPressRequest(false)
-                setTimeout(2000)
+                setPressTime(pressInterval)
                 return Notiflix.Report.warning('경고' , '잠시후 다시 시도해 주세요' , '확인')
             }
-            setIsPressRequest(true)
-            setTimeout((prev) => prev + 1000);
+            setPressTime(prevTime => prevTime + 1000)
             setPressList([])
         }
     }
 
-    useInterval(async () => {
-        if(isAiRequest){
-            const result = await getAi()
-            setData(mappingData(result,pressList))
-        }
-    }, !allStop && isAiRequest && !modalOpen ? 35000 : null);
-
-    useInterval(async () => {
-        const codes = ai.map((result)=>result.machine_code)
-        if(ai && isAiRequest && isPressRequest){
-            const result = await getPressList(codes.join(','))
-            setData(mappingData(ai,result))
-        }
-    }, !allStop && isAiRequest && isPressRequest && !modalOpen ? timeout : null);
-
-    useInterval(()=>{
-        setIsPressRequest(true)
-    },(!allStop && !pressStop && !isPressRequest) ? 60000 : null)
-
-    useInterval(()=>{
-        setIsAiRequest(true)
-    },(!allStop && !isAiRequest && aiLimitNum <= 5) ? 60000 : null)
 
     const convertPredictionConfidence = (confidence) => {
         if(!confidence) return ''
@@ -185,7 +172,7 @@ const HomeAiProductionLog = ({}: IProps) => {
         else return confidence
     }
 
-    const mappingData = (aiResults : any[] , pressResults : any []) => {
+    const mappingData = (aiResults : any[] , pressResults ?: any []) => {
         return aiResults.map((result, index)=>(
             {
                 ...result ,
@@ -197,17 +184,6 @@ const HomeAiProductionLog = ({}: IProps) => {
             }
         ))
     }
-
-    const getApi = async () => {
-        const aiResults = await getAi()
-        const codes = aiResults.map((result)=>result.machine_code)
-        const pressResults = await getPressList(codes.join(','))
-        setData(mappingData(aiResults,pressResults))
-    }
-
-    useEffect(()=>{
-        getApi()
-    },[])
 
     useEffect(() => {
         if (aiLimitNum === 3) {
