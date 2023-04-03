@@ -67,7 +67,7 @@ const BasicMold = ({}: IProps) => {
   }, [pageInfo.page]);
 
   useEffect(() => {
-    dispatch(setMenuSelectState({ main: "금형 기준정보", sub: "/mes/basic/moldV1u" }));
+    dispatch(setMenuSelectState({ main: "금형 기준정보", sub: "/mes/basic/mold" }));
     return () => {
       dispatch(deleteMenuSelectState());
     };
@@ -283,72 +283,10 @@ const BasicMold = ({}: IProps) => {
   };
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist["moldV2"];
-    let tmpRow = [];
-    tmpColumn = tmpColumn
-      .map((column: any) => {
-        let menuData: object | undefined;
-        res.menus &&
-          res.menus.map((menu: any) => {
-            if (!menu.hide) {
-              if (menu.colName === column.key) {
-                menuData = {
-                  id: menu.mi_id,
-                  name: menu.title,
-                  width: menu.width,
-                  tab: menu.tab,
-                  unit: menu.unit,
-                  moddable: !menu.moddable,
-                  version: menu.version,
-                  sequence: menu.sequence,
-                  hide: menu.hide,
-                };
-              } else if (menu.colName === "id" && column.key === "tmpId") {
-                menuData = {
-                  id: menu.mi_id,
-                  name: menu.title,
-                  width: menu.width,
-                  tab: menu.tab,
-                  unit: menu.unit,
-                  moddable: !menu.moddable,
-                  version: menu.version,
-                  sequence: menu.sequence,
-                  hide: menu.hide,
-                };
-              }
-            }
-          });
 
-        if (menuData) {
-          return {
-            ...column,
-            ...menuData,
-          };
-        }
-      })
-      .filter((v: any) => v);
+    loadAllSelectItems({column:additionalMenus(columnlist["moldV2"], res), sortingOptions, setSortingOptions, reload, setColumn});
 
-
-    tmpRow = res.info_list;
-
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn});
-
-    let selectKey = "";
-    let additionalData: any[] = [];
-    tmpColumn.map((v: any) => {
-      if (v.selectList) {
-        selectKey = v.key;
-      }
-    });
-
-    let pk = "";
-    Object.keys(tmpRow).map((v) => {
-      if (v.indexOf("_id") !== -1) {
-        pk = v;
-      }
-    });
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+    let tmpBasicRow = res.info_list.map((row: any, index: number) => {
       let appendAdditional: any = {};
 
       row.additional &&

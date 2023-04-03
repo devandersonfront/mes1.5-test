@@ -70,65 +70,9 @@ const BasicTool = ({ page, search, option }: IProps) => {
 
 
   const cleanUpData = (info_list: any) => {
-    let tmpColumn = columnlist["toolRegister"];
-    let tmpRow: Array<any> = [];
-    tmpColumn = tmpColumn
-      .map((column: any) => {
-        let menuData: object | undefined;
-        info_list.menus &&
-          info_list.menus.map((menu: any) => {
-            if (!menu.hide) {
-              if (menu.colName === column.key) {
-                menuData = {
-                  id: menu.mi_id,
-                  name: menu.title,
-                  width: menu.width,
-                  tab: menu.tab,
-                  unit: menu.unit,
-                  moddable: !menu.moddable,
-                  version: menu.version,
-                  sequence: menu.sequence,
-                  hide: menu.hide,
-                };
-              } else if (menu.colName === "id" && column.key === "tmpId") {
-                menuData = {
-                  id: menu.mi_id,
-                  name: menu.title,
-                  width: menu.width,
-                  tab: menu.tab,
-                  unit: menu.unit,
-                  moddable: !menu.moddable,
-                  version: menu.version,
-                  sequence: menu.sequence,
-                  hide: menu.hide,
-                };
-              }
-            }
-          });
+    loadAllSelectItems({column:additionalMenus(columnlist["toolRegister"], info_list), sortingOptions, setSortingOptions, reload, setColumn});
 
-        if (menuData) {
-          return {
-            ...column,
-            ...menuData,
-          };
-        }
-      })
-      .filter((v: any) => v);
-
-
-    tmpRow = info_list.info_list;
-
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(info_list)), sortingOptions, setSortingOptions, reload, setColumn});
-
-    let selectKey = "";
-    tmpColumn.map((v: any) => {
-      if (v.selectList) {
-        selectKey = v.key;
-      }
-    });
-
-
-    let tmpBasicRow = tmpRow.map((row: any) => {
+    let tmpBasicRow = info_list.info_list.map((row: any) => {
       let appendAdditional: any = {};
 
       row.customer_id = row.customer?.name;
