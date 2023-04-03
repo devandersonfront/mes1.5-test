@@ -18,7 +18,7 @@ import moment from 'moment'
 import {TransferCodeToValue} from 'shared/src/common/TransferFunction'
 import {useDispatch} from "react-redux";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import {getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
+import {additionalMenus, getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
 interface IProps {
@@ -112,79 +112,27 @@ const MesFinishList = ({page, search, option}: IProps) => {
   }
 
   const cleanUpData = (res: any, date?: {from:string, to:string}) => {
-    let tmpColumn = columnlist["finishListV2"];
-    let tmpRow = []
-    tmpColumn = tmpColumn.map((column: any) => {
-      let menuData: object | undefined;
-      res.menus && res.menus.map((menu: any) => {
-        if(menu.colName === column.key){
-          menuData = {
-            id: menu.id,
-            name: menu.title,
-            width: menu.width,
-            tab:menu.tab,
-            unit:menu.unit
-          }
-        } else if(menu.colName === 'id' && column.key === 'tmpId'){
-          menuData = {
-            id: menu.id,
-            name: menu.title,
-            width: menu.width,
-            tab:menu.tab,
-            unit:menu.unit
-          }
-        }
-      })
 
-      if(menuData){
-        return {
-          ...column,
-          ...menuData,
-        }
-      }
-    }).filter((v:any) => v)
-
-    let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-      if(menu.colName === null){
-        return {
-          id: menu.id,
-          name: menu.title,
-          width: menu.width,
-          key: menu.title,
-          editor: TextEditor,
-          type: 'additional',
-          unit: menu.unit
-        }
-      }
-    }).filter((v: any) => v) : []
-
-    tmpRow = res.info_list
-
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, reload, setColumn, date});
+    // let additionalMenus = res.menus ? res.menus.map((menu:any) => {
+    //   if(menu.colName === null){
+    //     return {
+    //       id: menu.id,
+    //       name: menu.title,
+    //       width: menu.width,
+    //       key: menu.title,
+    //       editor: TextEditor,
+    //       type: 'additional',
+    //       unit: menu.unit
+    //     }
+    //   }
+    // }).filter((v: any) => v) : []
 
 
-    let selectKey = ""
-    let additionalData: any[] = []
-    tmpColumn.map((v: any) => {
-      if(v.selectList){
-        selectKey = v.key
-      }
-    })
+    // loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, reload, setColumn, date});
+    loadAllSelectItems({column:additionalMenus(columnlist["finishListV2"] ,res), sortingOptions, setSortingOptions, reload, setColumn, date});
 
-    additionalMenus.map((v: any) => {
-      if(v.type === 'additional'){
-        additionalData.push(v.key)
-      }
-    })
 
-    let pk = "";
-    Object.keys(tmpRow).map((v) => {
-      if(v.indexOf('_id') !== -1){
-        pk = v
-      }
-    })
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+    let tmpBasicRow = res.info_list.map((row: any, index: number) => {
 
       let appendAdditional: any = {}
 

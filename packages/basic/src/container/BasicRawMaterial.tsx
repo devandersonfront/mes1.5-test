@@ -250,78 +250,14 @@ const BasicRawMaterial = ({readonly}: IProps) => {
 
   const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["rawMaterial"];
-    let tmpRow = [];
-
-    tmpColumn = tmpColumn
-      .map((column: any) => {
-
-        let menuData: object | undefined;
-        res.menus &&
-          res.menus.map((menu: any) => {
-
-            if (!menu.hide) {
-              if (menu.colName === column.key) {
-                menuData = {
-                  id: menu.mi_id,
-                  name: menu.title,
-                  width: menu.width,
-                  tab: menu.tab,
-                  unit: menu.unit,
-                  moddable: !menu.moddable,
-                  version: menu.version,
-                  sequence: menu.sequence,
-                  hide: menu.hide,
-                };
-              } else if (menu.colName === "id" && column.key === "tmpId") {
-                menuData = {
-                  id: menu.mi_id,
-                  name: menu.title,
-                  width: menu.width,
-                  tab: menu.tab,
-                  unit: menu.unit,
-                  moddable: !menu.moddable,
-                  version: menu.version,
-                  sequence: menu.sequence,
-                  hide: menu.hide,
-                };
-              }
-            }
-          });
-
-
-        if (menuData) {
-          return {
-            ...column,
-            ...menuData,
-          };
-        }
-      })
-      .filter((v: any) => v)
-
       tmpColumn.push(
-          { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog" },
+          { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog", sequence:12},
       )
 
-    tmpRow = res.info_list;
+    loadAllSelectItems({column:additionalMenus(tmpColumn, res), sortingOptions, setSortingOptions, reload, setColumn});
 
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn});
 
-    let selectKey = "";
-    let additionalData: any[] = [];
-    tmpColumn.map((v: any) => {
-      if (v.selectList) {
-        selectKey = v.key;
-      }
-    });
-
-    let pk = "";
-    Object.keys(tmpRow).map((v) => {
-      if (v.indexOf("_id") !== -1) {
-        pk = v;
-      }
-    });
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+    let tmpBasicRow = res.info_list.map((row: any, index: number) => {
       let appendAdditional: any = {};
 
       row.additional &&
@@ -657,7 +593,6 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           isRadio
           radioValue={safety_status}
           onChangeRadioValues={(e) => {
-            console.log(e)
             setSafety_status(e)
           }}
           radioTexts={["전체", "안전재고 부족"]}
@@ -665,7 +600,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
         <ExcelTable
           editable
           resizable
-          resizeSave
+          resizeSave={!readonly}
           selectable
           headerList={[
             SelectColumn,

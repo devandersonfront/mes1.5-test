@@ -107,8 +107,8 @@ const BasicUser = ({}: IProps) => {
   const validate = (row) =>{
       if(!!!row.name) throw('이름은 필수입니다.')
       if(!!!row.authorityPK) throw('권한은 필수입니다.')
-      if(!!!row.tmpId) throw('아이디는 필수입니다.')
-      if(!!row.tmpId && checkValid(row.tmpId, 'id')) throw('아이디에 한글이 들어갈 수 없습니다.')
+      if(!!!row.id) throw('아이디는 필수입니다.')
+      if(!!row.id && checkValid(row.id, 'id')) throw('아이디에 한글이 들어갈 수 없습니다.')
       if(!!!row.password) throw('비밀번호는 필수입니다.')
       if(!!!row['password-confirm']) throw('비밀번호 확인은 필수입니다.')
       if(!!row.password && !!row['password-confirm'] && row.password !== row['password-confirm']) throw('비밀번호와 비밀번호 확인이 서로 일치하지 않습니다.')
@@ -144,7 +144,7 @@ const BasicUser = ({}: IProps) => {
         validate(row)
         return {
           ...row,
-          id: row.tmpId,
+          id: row.id,
           authority: row.authorityPK,
           profile: row.profile?.uuid,
           version: row.version ?? undefined,
@@ -321,56 +321,9 @@ const BasicUser = ({}: IProps) => {
   };
 
   const cleanUpData = (res: any) => {
-    let tmpColumn = columnlist.member;
-    let tmpRow = [];
-    tmpColumn = tmpColumn
-      .map((column: any, index) => {
-        let menuData: object | undefined;
-        res.menus &&
-          res.menus.map((menu: any) => {
-            if (!menu.hide) {
-              if (menu.colName === column.key) {
-                menuData = {
-                  id: menu.mi_id,
-                  name: menu.title,
-                  width: menu.width,
-                  tab: menu.tab,
-                  unit: menu.unit,
-                  moddable: !menu.moddable,
-                  version: menu.version,
-                  sequence: menu.sequence,
-                  hide: menu.hide,
-                };
-              } else if (menu.colName === "id" && column.key === "tmpId") {
-                menuData = {
-                  id: menu.mi_id,
-                  name: menu.title,
-                  width: menu.width,
-                  tab: menu.tab,
-                  unit: menu.unit,
-                  moddable: !menu.moddable,
-                  version: menu.version,
-                  sequence: menu.sequence,
-                  hide: menu.hide,
-                };
-              }
-            }
-          });
+    loadAllSelectItems({column:additionalMenus(columnlist.member, res), sortingOptions, setSortingOptions, reload, setColumn});
 
-        if (menuData) {
-          return {
-            ...column,
-            ...menuData,
-          };
-        }
-      })
-      .filter((v: any) => v);
-
-
-    tmpRow = res.info_list;
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn});
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+    let tmpBasicRow = res.info_list.map((row: any, index: number) => {
       let realTableData: any = changeRow(row);
       let appendAdditional: any = {};
 
@@ -386,6 +339,7 @@ const BasicUser = ({}: IProps) => {
         ...row,
         ...realTableData,
         ...appendAdditional,
+        user_id:row.id,
         authority: row.ca_id.name,
         authorityPK: row.ca_id.ca_id,
       };
@@ -393,13 +347,6 @@ const BasicUser = ({}: IProps) => {
     setBasicRow([...tmpBasicRow]);
   };
 
-  const downloadExcel = () => {
-    let tmpSelectList: boolean[] = [];
-    basicRow.map((row) => {
-      tmpSelectList.push(selectList.has(row.id));
-    });
-    excelDownload(column, basicRow, `process`, "process", tmpSelectList);
-  };
 
   const onClickHeaderButton = (index: number) => {
     switch (index) {

@@ -80,7 +80,7 @@ export const getServerSideProps = async (ctx: any) => {
         return {
           title: '금형 기준정보',
           code: 'ROLE_BASE_07',
-          placeholder: 'mold',
+          placeholder: 'moldV2',
           additional: true
         }
       case 'model':
