@@ -217,42 +217,8 @@ const MesRecordList = ({}: IProps) => {
 
 
     const convertColumn = (res, date?: {from:string, to:string}, radioIdx?:number) => {
-        let tmpColumn = columnlist["cncRecordListV2"];
-        const convertColumn = tmpColumn.map((column: any) => {
-            let menuData: object | undefined;
-            res.menus &&
-            res.menus.map((menu: any) => {
-                if (menu.colName === column.key) {
-                    menuData = {
-                        id: menu.id,
-                        name: menu.title,
-                        width: menu.width,
-                        tab: menu.tab,
-                        unit: menu.unit,
-                        sequence:menu.sequence
-                    };
-                } else if (menu.colName === "id" && column.key === "tmpId") {
-                    menuData = {
-                        id: menu.id,
-                        name: menu.title,
-                        width: menu.width,
-                        tab: menu.tab,
-                        unit: menu.unit,
-                        sequence:menu.sequence
-                    };
-                }
-            });
 
-            if (menuData) {
-                return {
-                    ...column,
-                    ...menuData,
-                };
-            }
-        })
-            .filter((v: any) => v);
-
-        loadAllSelectItems([...convertColumn, ...additionalMenus(res)], date, radioIdx);
+        loadAllSelectItems(additionalMenus(columnlist["cncRecordListV2"],res), date, radioIdx);
     }
 
     const cleanUpData = (res: any, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType, radioIdx?:number) => {

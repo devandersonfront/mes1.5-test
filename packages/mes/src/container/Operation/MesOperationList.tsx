@@ -185,62 +185,12 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
   }
 
   const cleanUpData = (res: any, date?: {from:string, to:string}) => {
-    let tmpColumn = columnlist["operationListV2"];
-    let tmpRow = []
-    tmpColumn = tmpColumn.map((column: any) => {
-      let menuData: object | undefined;
-      res.menus && res.menus.map((menu: any) => {
-        if(menu.colName === column.key){
-          menuData = {
-            id: menu.id,
-            name: menu.title,
-            width: menu.width,
-            tab:menu.tab,
-            unit:menu.unit,
-            sequence:menu.sequence
-          }
-        } else if(menu.colName === 'id' && column.key === 'tmpId'){
-          menuData = {
-            id: menu.id,
-            name: menu.title,
-            width: menu.width,
-            tab:menu.tab,
-            unit:menu.unit,
-            sequence:menu.sequence
-          }
-        }
-      })
 
-      if(menuData){
-        return {
-          ...column,
-          ...menuData,
-        }
-      }
-    }).filter((v:any) => v)
+    loadAllSelectItems({column:additionalMenus(columnlist["operationListV2"], res), sortingOptions, setSortingOptions, reload, setColumn});
 
 
-      tmpRow = res.info_list
 
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn});
-
-
-    let selectKey = ""
-    tmpColumn.map((v: any) => {
-      if(v.selectList){
-        selectKey = v.key
-      }
-    })
-
-
-    let pk = "";
-    Object.keys(tmpRow).map((v) => {
-      if(v.indexOf('_id') !== -1){
-        pk = v
-      }
-    })
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+    let tmpBasicRow = res.info_list.map((row: any, index: number) => {
 
       let appendAdditional: any = {}
 
