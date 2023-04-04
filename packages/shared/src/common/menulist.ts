@@ -30,7 +30,7 @@ export const menuSelect = (type: IMenu) => {
         case 'MES'    :
             return MES_MENUS
         case 'PMS'    :
-            return PMS_MENUS
+            return PMS_MENUS()
         case 'CNC'    :
             return CNC_MENUS
         case 'WMS'    :
@@ -68,7 +68,6 @@ export const authList = (type: string) => {
 }
 
 let customTarget = process.env.NEXT_PUBLIC_CUSTOM_TARGET
-let companyTarget = process.env. NEXT_PUBLIC_COMPANY_TARGET
 
 const HomeOrder = (customTarget?: string): HomeOrderType[] => {
     const defaultOrder: HomeOrderType[] = ['home']
@@ -153,14 +152,18 @@ const MES_MENUS: IMenuType[] = MesOrder(customTarget).map(menu => ({
     }))
 }))
 
-const PMS_MENUS: IMenuType[] = PmsOrder(customTarget).map(menu => ({
-    title: PmsTitles(customTarget , companyTarget)[menu].title,
-    url: PmsTitles(customTarget , companyTarget)[menu].url,
-    subMenu: PmsTitles(customTarget , companyTarget)[menu]?.subMenu?.map(sub => ({
-        title: PmsTitles(customTarget, companyTarget)[sub].title,
-        url: PmsTitles(customTarget, companyTarget)[sub].url
+const PMS_MENUS = () => {
+    const user = cookie.load('userInfo')
+    let companyTarget = user?.company === '9UZ50Q' ? 'eunhae' : process.env.NEXT_PUBLIC_COMPANY_TARGET
+    return PmsOrder(customTarget).map(menu => ({
+        title: PmsTitles(customTarget , companyTarget)[menu].title,
+        url: PmsTitles(customTarget , companyTarget)[menu].url,
+        subMenu: PmsTitles(customTarget , companyTarget)[menu]?.subMenu?.map(sub => ({
+            title: PmsTitles(customTarget, companyTarget)[sub].title,
+            url: PmsTitles(customTarget, companyTarget)[sub].url
+        }))
     }))
-}))
+}
 
 const CNC_MENUS: IMenuType[] = CncOrder(customTarget).map(menu => ({
     title:CncTitles(customTarget)[menu].title,
