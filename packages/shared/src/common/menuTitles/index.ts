@@ -218,7 +218,7 @@ export const CncTitles = (customTarget?: string) => {
   }
 }
 
-export const PmsTitles = (customTarget?: string) => {
+export const PmsTitles = (customTarget?: string , companyTitles?: string) => {
   const pmsDefault = {
     pressMon: toMenu(titles.pressMon, '', [ '_pressAnalMon', '_pressStsMon' ]),
     _pressAnalMon: toMenu(titles._pressAnalMon, '/pms/v2/factoryMonitoring'),
@@ -254,16 +254,22 @@ export const PmsTitles = (customTarget?: string) => {
     _moldDailyInspSts: toMenu(titles._moldDailyInspSts, '/pms/v2/press/maintenance/moldDailyStatus'),
   }
   switch (customTarget) {
+    default:
+      return {...pmsDefault , ...PmsCompanyTitles(companyTitles)}
+  }
+}
+
+export const PmsCompanyTitles = (companyTitles : string) => {
+  switch (companyTitles) {
     case 'eunhae': return {
-      ...pmsDefault,
       pressMon: toMenu(titles.pressMon, '', [ '_pressAnalMon', '_pressStsMon' , '_pressLineMon', '_pressProcessMon' ]),
       _pressLineMon : toMenu(eunhaeTitles._pressLineMon, '/pms/new/monitoring/line'),
       _pressProcessMon: toMenu(eunhaeTitles._pressProcessMon, '/pms/new/monitoring/process'),
     }
-    default:
-      return pmsDefault
+    default : return {}
   }
 }
+
 
 export const HomeAuth = (customTarget?: string) => {
   const homeDefault = {
