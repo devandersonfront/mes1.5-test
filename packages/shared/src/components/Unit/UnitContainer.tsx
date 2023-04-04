@@ -18,7 +18,7 @@ type SelectListType = {
 
 const UnitContainer = ({ row, column, onRowChange }: IProps) => {
   const [title, setTitle] = useState<string>("")
-
+  console.log("row : ", row, ", column : ", column)
   useEffect(() => {
     let fixNumber: any = Number(row[column.key]);
     if (!isNaN(Number(fixNumber))) {
@@ -44,7 +44,7 @@ const UnitContainer = ({ row, column, onRowChange }: IProps) => {
       <UnitBox className={'layoutCenter'}>
         {
           column.searchType === 'rawin'
-            ? <span>{TransferCodeToValue(row.unit_id,'rawMaterialUnit')}</span>
+            ? <span>{TransferCodeToValue(row?.unit_id ?? row.raw_material.unit,'rawMaterialUnit')}</span>
             : column.type === 'selectUnit'
               ? <span>{row.unit}</span>
               : column.selectList ?
