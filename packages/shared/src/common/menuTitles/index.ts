@@ -1,4 +1,4 @@
-import {titles, dohwaTitles, bkTitles,customTitles} from './titles'
+import {titles, dohwaTitles, bkTitles, customTitles, eunhaeTitles} from './titles'
 import {auth} from './auth'
 
 function toMenu(title: string, url: string, subMenu ?: string[]) {
@@ -218,7 +218,7 @@ export const CncTitles = (customTarget?: string) => {
   }
 }
 
-export const PmsTitles = (customTarget?: string) => {
+export const PmsTitles = (customTarget?: string , companyTitles?: string) => {
   const pmsDefault = {
     pressMon: toMenu(titles.pressMon, '', [ '_pressAnalMon', '_pressStsMon' ]),
     _pressAnalMon: toMenu(titles._pressAnalMon, '/pms/v2/factoryMonitoring'),
@@ -255,9 +255,21 @@ export const PmsTitles = (customTarget?: string) => {
   }
   switch (customTarget) {
     default:
-      return pmsDefault
+      return {...pmsDefault , ...PmsCompanyTitles(companyTitles)}
   }
 }
+
+export const PmsCompanyTitles = (companyTitles : string) => {
+  switch (companyTitles) {
+    case 'eunhae': return {
+      pressMon: toMenu(titles.pressMon, '', [ '_pressAnalMon', '_pressStsMon' , '_pressLineMon', '_pressProcessMon' ]),
+      _pressLineMon : toMenu(eunhaeTitles._pressLineMon, '/pms/new/monitoring/line'),
+      _pressProcessMon: toMenu(eunhaeTitles._pressProcessMon, '/pms/new/monitoring/process'),
+    }
+    default : return {}
+  }
+}
+
 
 export const HomeAuth = (customTarget?: string) => {
   const homeDefault = {

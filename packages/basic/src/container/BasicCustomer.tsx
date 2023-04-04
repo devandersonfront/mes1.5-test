@@ -333,72 +333,10 @@ const BasicCustomer = ({}: IProps) => {
 
 
   const cleanUpData = async (res: any) => {
-    let tmpColumn = columnlist["customer"];
-    let tmpRow = [];
-    tmpColumn = tmpColumn
-      .map((column: any) => {
-        let menuData: object | undefined;
-        res.menus &&
-          res.menus.map((menu: any) => {
-            if (!menu.hide) {
-              if (menu.colName === column.key) {
-                menuData = {
-                  id: menu.mi_id,
-                  name: menu.title,
-                  width: menu.width,
-                  tab: menu.tab,
-                  unit: menu.unit,
-                  moddable: !menu.moddable,
-                  version: menu.version,
-                  sequence: menu.sequence,
-                  hide: menu.hide,
-                };
-              } else if (menu.colName === "id" && column.key === "tmpId") {
-                menuData = {
-                  id: menu.mi_id,
-                  name: menu.title,
-                  width: menu.width,
-                  tab: menu.tab,
-                  unit: menu.unit,
-                  moddable: !menu.moddable,
-                  version: menu.version,
-                  sequence: menu.sequence,
-                  hide: menu.hide,
-                };
-              }
-            }
-          });
 
-        if (menuData) {
-          return {
-            ...column,
-            ...menuData,
-          };
-        }
-      })
-      .filter((v: any) => v);
+    loadAllSelectItems({column:additionalMenus(columnlist["customer"], res), sortingOptions, setSortingOptions, reload, setColumn});
 
-
-    tmpRow = res.info_list;
-
-    let selectKey = "";
-    tmpColumn.map((v: any) => {
-      if (v.selectList) {
-        selectKey = v.key;
-      }
-    });
-
-
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn});
-
-    let pk = "";
-    Object.keys(tmpRow).map((v) => {
-      if (v.indexOf("_id") !== -1) {
-        pk = v;
-      }
-    });
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+    let tmpBasicRow = res.info_list.map((row: any, index: number) => {
       let appendAdditional: any = {};
 
       row.additional &&

@@ -141,43 +141,43 @@ const AiMesRecord = ({}: IProps) => {
 
     const convertColumn = (res, date?: {from:string, to:string}, radioIdx?:number) => {
         let tmpColumn = columnlist["aiRecordListV2"];
-        const convertColumn = tmpColumn.map((column: any) => {
-            let menuData: object | undefined;
-            res.menus &&
-            res.menus.map((menu: any) => {
-                if (menu.colName === column.key) {
-                    menuData = {
-                        id: menu.id,
-                        name: menu.title,
-                        width: menu.width,
-                        tab: menu.tab,
-                        unit: menu.unit,
-                        sequence: menu.sequence
+        // const convertColumn = tmpColumn.map((column: any) => {
+        //     let menuData: object | undefined;
+        //     res.menus &&
+        //     res.menus.map((menu: any) => {
+        //         if (menu.colName === column.key) {
+        //             menuData = {
+        //                 id: menu.id,
+        //                 name: menu.title,
+        //                 width: menu.width,
+        //                 tab: menu.tab,
+        //                 unit: menu.unit,
+        //                 sequence: menu.sequence
+        //
+        //             };
+        //         } else if (menu.colName === "id" && column.key === "tmpId") {
+        //             menuData = {
+        //                 id: menu.id,
+        //                 name: menu.title,
+        //                 width: menu.width,
+        //                 tab: menu.tab,
+        //                 unit: menu.unit,
+        //                 sequence: menu.sequence
+        //             };
+        //         }
+        //     });
+        //
+        //     if (menuData) {
+        //         return {
+        //             ...column,
+        //             ...menuData,
+        //         };
+        //     }
+        // })
+        //     .filter((v: any) => v);
 
-                    };
-                } else if (menu.colName === "id" && column.key === "tmpId") {
-                    menuData = {
-                        id: menu.id,
-                        name: menu.title,
-                        width: menu.width,
-                        tab: menu.tab,
-                        unit: menu.unit,
-                        sequence: menu.sequence
-                    };
-                }
-            });
-
-            if (menuData) {
-                return {
-                    ...column,
-                    ...menuData,
-                };
-            }
-        })
-            .filter((v: any) => v);
-
-        convertColumn.push({ key : 'confidence', name : '신뢰도',formatter:UnitContainer, unitData:"%", width: 118})
-        loadAllSelectItems({column:convertColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, setColumn});
+        tmpColumn.push({ key : 'confidence', name : '신뢰도',formatter:UnitContainer, unitData:"%", width: 118})
+        loadAllSelectItems({column:additionalMenus(tmpColumn, res), sortingOptions, setSortingOptions, setColumn});
     }
 
     const forSaveCleanUpData = (res:any) => {

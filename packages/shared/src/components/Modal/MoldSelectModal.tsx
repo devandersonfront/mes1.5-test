@@ -94,7 +94,7 @@ const MoldSelectModal = ({column, row, onRowChange}: IProps) => {
         return {
           ...v.mold,
           sequence: index+1,
-          setting: v.mold.mold_id === selectedMold ? 1 : 0,
+          setting: v.setting,
           isDefault: getUsageType(v.setting)
         }
       }))

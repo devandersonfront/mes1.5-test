@@ -137,62 +137,12 @@ const MesOrderList = ({ page, search, option }: IProps) => {
   };
 
   const cleanUpData = (res: any,date?: {from:string, to:string}) => {
-    let tmpColumn = columnlist["orderList"];
-    let tmpRow = [];
-    tmpColumn = tmpColumn
-      .map((column: any) => {
-        let menuData: object | undefined;
-        res.menus &&
-          res.menus.map((menu: any) => {
-            if (menu.colName === column.key) {
-              menuData = {
-                id: menu.id,
-                name: menu.title,
-                width: menu.width,
-                tab: menu.tab,
-                unit: menu.unit,
-                sequence:menu.sequence,
-              };
-            } else if (menu.colName === "id" && column.key === "tmpId") {
-              menuData = {
-                id: menu.id,
-                name: menu.title,
-                width: menu.width,
-                tab: menu.tab,
-                unit: menu.unit,
-                sequence:menu.sequence,
-              };
-            }
-          });
-
-        if (menuData) {
-          return {
-            ...column,
-            ...menuData,
-          };
-        }
-      })
-      .filter((v: any) => v);
-
-      tmpRow = res.info_list;
 
 
-    loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn, date});
-    let selectKey = "";
-    tmpColumn.map((v: any) => {
-      if (v.selectList) {
-        selectKey = v.key;
-      }
-    });
+    // loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn, date});
+    loadAllSelectItems({column:additionalMenus(columnlist["orderList"], res), sortingOptions, setSortingOptions, reload, setColumn, date});
 
-    let pk = "";
-    Object.keys(tmpRow).map((v) => {
-      if (v.indexOf("_id") !== -1) {
-        pk = v;
-      }
-    });
-
-    let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+    let tmpBasicRow = res.info_list.map((row: any, index: number) => {
       let appendAdditional: any = {};
 
       row.additional &&

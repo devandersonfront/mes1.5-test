@@ -172,4 +172,9 @@ export const customTitles = {
     _uph: '생산지수(UPH)(P)',
 }
 
+export const eunhaeTitles = {
+    _pressProcessMon : '공정별 모니터링',
+    _pressLineMon : '라인별 모니터링'
+}
+
 

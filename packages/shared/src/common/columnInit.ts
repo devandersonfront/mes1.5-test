@@ -71,15 +71,15 @@ import {MultiFileUploadModal} from "../components/FileUpload/MultiFileUploadModa
 
 export const columnlist: any = {
   member: [
-    { key: 'name', formatter: PlaceholderBox, placeholder: "성명 입력", editor: TextEditor, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'appointment', formatter: PlaceholderBox, placeholder: "직책 입력", editor: TextEditor },
-    { key: 'telephone', formatter: PlaceholderBox, placeholder: "전화번호 입력", editor: TextEditor },
-    { key: 'email', formatter: PlaceholderBox, placeholder: "이메일 입력", editor: TextEditor },
-    { key: 'authority', formatter: AuthoritySearchModal },
-    { key: 'tmpId', formatter: PlaceholderBox, placeholder: "아이디 입력", editor: TextEditor, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'password',formatter: PasswordBox, placeholder: "비밀번호 입력", editor: TextEditor },
-    { key: 'password-confirm', formatter: PasswordBox, placeholder: "비밀번호 확인", editor: TextEditor },
-    { key: 'profile', formatter: FileEditer, type: "image" , unprintable : true},
+    { key: 'name', name:"성명", formatter: PlaceholderBox, placeholder: "성명 입력", editor: TextEditor, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
+    { key: 'appointment', name:"직책", formatter: PlaceholderBox, placeholder: "직책 입력", editor: TextEditor },
+    { key: 'telephone', name:"전화번호", formatter: PlaceholderBox, placeholder: "전화번호 입력", editor: TextEditor },
+    { key: 'email', name:"이메일", formatter: PlaceholderBox, placeholder: "이메일 입력", editor: TextEditor },
+    { key: 'authority', name:"권한", formatter: AuthoritySearchModal },
+    { key: 'id', name:"아이디", formatter: PlaceholderBox, placeholder: "아이디 입력", editor: TextEditor, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
+    { key: 'password', name:"비밀번호",formatter: PasswordBox, placeholder: "비밀번호 입력", editor: TextEditor },
+    { key: 'password-confirm', name:"비밀번호 확인", formatter: PasswordBox, placeholder: "비밀번호 확인", editor: TextEditor },
+    { key: 'profile', name:"프로필", formatter: FileEditer, type: "image" , unprintable : true},
     { key: 'alarm', name:"SMS 알람", formatter: Checkbox, width:118},
     { key: 'email_alarm', name:"Email 알람", formatter: Checkbox, width:118},
     { key: 'product_email_alarm' , name:"Email 알람(제품정보)", formatter: Checkbox, width:118 }
@@ -94,53 +94,23 @@ export const columnlist: any = {
     { key: 'affiliated_id', name: '공장 세분화', width: 120, formatter: /*IdnfoModal*/ FactoryInfoModal, type: 'factoryRegister', summaryType: 'factory' ,unprintable : true},
   ],
   customer: [
-    { key: 'name', editor: TextEditor, formatter: PlaceholderBox, placeholder: "거래처명 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'rep', editor: TextEditor, formatter: PlaceholderBox, placeholder: "대표자명 입력" },
-    { key: 'manager', editor: TextEditor, formatter: PlaceholderBox, placeholder: "담당자명 입력" },
-    { key: 'telephone', editor: TextEditor, formatter: PlaceholderBox, placeholder: "전화번호 입력" },
-    { key: 'cellphone', editor: TextEditor, formatter: PlaceholderBox, placeholder: "휴대폰 번호 입력" },
-    { key: 'fax', editor: TextEditor, formatter: PlaceholderBox, placeholder: "FAX 입력" },
-    { key: 'address', editor: TextEditor, formatter: PlaceholderBox, placeholder: "주소 입력" },
-    { key: 'crn', editor: TextEditor, formatter: PlaceholderBox, placeholder: "사업자 번호 입력" },
-    { key: 'photo', formatter: FileEditer , unprintable : true},
+    { key: 'name', name:"거래처명", editor: TextEditor, formatter: PlaceholderBox, placeholder: "거래처명 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
+    { key: 'rep', name:"대표자명", editor: TextEditor, formatter: PlaceholderBox, placeholder: "대표자명 입력" },
+    { key: 'manager', name:"담당자명", editor: TextEditor, formatter: PlaceholderBox, placeholder: "담당자명 입력" },
+    { key: 'telephone', name:"전화번호", editor: TextEditor, formatter: PlaceholderBox, placeholder: "전화번호 입력" },
+    { key: 'cellphone', name:"휴대폰 번호", editor: TextEditor, formatter: PlaceholderBox, placeholder: "휴대폰 번호 입력" },
+    { key: 'fax', name:"FAX", editor: TextEditor, formatter: PlaceholderBox, placeholder: "FAX 입력" },
+    { key: 'address', name:"주소", editor: TextEditor, formatter: PlaceholderBox, placeholder: "주소 입력" },
+    { key: 'crn', name:"사업자 번호", editor: TextEditor, formatter: PlaceholderBox, placeholder: "사업자 번호 입력" },
+    { key: 'photo', name:"사업자 등록증", formatter: FileEditer , unprintable : true},
   ],
   model: [
-    { key: 'customer_id', formatter: SearchModalTest, type: 'customer', placeholder: "-", noSelect: true, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-    { key: 'crn', formatter: PlaceholderBox, placeholder: "자동 입력" },
-    { key: 'model', editor: TextEditor, formatter: PlaceholderBox, placeholder: "모델 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
+    { key: 'customer_id', name:"거래처", formatter: SearchModalTest, type: 'customer', placeholder: "-", noSelect: true, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
+    { key: 'crn', name:"사업자 번호", formatter: PlaceholderBox, placeholder: "자동 입력" },
+    { key: 'model', name:"모델", editor: TextEditor, formatter: PlaceholderBox, placeholder: "모델 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
   ],
   process: [
-    { key: 'name', editor: TextEditor, formatter: PlaceholderBox, placeholder: "공정명 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
-  ],
-  machine: [
-    { key: 'name', editor: TextEditor },
-    {
-      key: 'type', formatter: DropDownEditor, selectList: [
-        { pk: 0, name: "선택없음" },
-        { pk: 1, name: "프레스" },
-        { pk: 2, name: "로봇" },
-        { pk: 3, name: "용접기" },
-        { pk: 4, name: "밀링" },
-        { pk: 5, name: "선반" },
-        { pk: 6, name: "탭핑기" },
-      ]
-    },
-    { key: 'madeAt', editor: CalendarBox },
-    { key: 'mfrCode', editor: TextEditor },
-    { key: 'user_id', formatter: SearchModalTest, type: 'member' },
-    { key: 'manufacturer', editor: TextEditor },
-    { key: 'photo', formatter: FileEditer },
-    { key: 'qualify', formatter: FileEditer },
-    { key: 'capacity', formatter: FileEditer },
-    { key: 'guideline', formatter: FileEditer },
-    {
-      key: 'interwork', formatter: DropDownEditor, selectList: [
-        { pk: 'true', name: '유' },
-        { pk: 'false', name: '무' }
-      ]
-    },
-    { key: 'tons', editor: TextEditor, formatter: UnitContainer, unitData: 'T', },
-    { key: 'volt', editor: TextEditor, formatter: UnitContainer, unitData: 'V', },
+    { key: 'name', name:"공정명", editor: TextEditor, formatter: PlaceholderBox, placeholder: "공정명 입력", headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
   ],
   machineV2: [ //기계기준정보
     { key: 'mfrName', name: '기계 제조사', editor: TextEditor, width: 118, formatter: PlaceholderBox, placeholder: "제조사 입력" },
@@ -233,24 +203,6 @@ export const columnlist: any = {
     { key: 'guideline', name: '사용 설명서', formatter: FileEditer, type: "image" ,unprintable : true},
     { key: 'factory_id', name: '공장명', formatter: SearchModalTest, type: "factory", placeholder: "-" },
     { key: 'affiliated_id', name: '공장 세분화명', formatter: subFactorySearchModal, type: "subFactory" /*FactoryInfoModal*/, placeholder: "-" },
-  ],
-  product: [
-    { key: 'customer_id', formatter: CustomerSearchModal, searchType: 'product' },
-    { key: 'cm_id', formatter: ModelSearchModal, searchType: 'product' },
-    { key: 'code', editor: TextEditor },
-    { key: 'name', editor: TextEditor },
-    { key: 'texture', editor: TextEditor },
-    { key: 'depth', editor: TextEditor, formatter: UnitContainer, inputType: 'number', unitData: 'mm', toFix: 2 },
-    { key: 'width', editor: TextEditor, formatter: UnitContainer, inputType: 'number', unitData: 'mm' },
-    { key: 'height', editor: TextEditor, formatter: UnitContainer, inputType: 'number', unitData: 'mm' },
-    {
-      key: 'type', formatter: DropDownEditor, selectList: [
-        { pk: 'COIL', name: 'COIL' },
-        { pk: 'SHEET', name: 'SHEET' }
-      ]
-    },
-    { key: 'unitWeight', editor: TextEditor, formatter: UnitContainer, inputType: 'number', unitData: 'kg', searchType: 'rawin' },
-    { key: 'pp_id', formatter: CellButtonComponent, },
   ],
 
   productV1u: [
@@ -352,7 +304,7 @@ export const columnlist: any = {
     { key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})) },
     { key: 'price', name: '단가', editor: TextEditor, formatter: UnitContainer, placeholder: "0", unitData:"원", inputType: "number"},
     { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
-    { key: 'safety_stock_status', name: '안전', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
+    { key: 'safety_stock_status', name: '안전재고 사용', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'customer_id', name: '거래처', formatter: UnitContainer, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
     { key: 'leadtime' , name : '발주 기준일' , inputType: 'number' }
@@ -373,22 +325,6 @@ export const columnlist: any = {
     },
     { key: 'stock', name: '부자재 재고량', formatter: UnitContainer, type: 'selectUnit', placeholder: "0", toFix: 2 },
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
-  ],
-  mold: [
-    { key: 'customer_id', },
-    { key: 'cm_id', },
-    { key: 'code', },
-    { key: 'name', },
-    { key: 'seq', },
-    { key: 'process_id', },
-    { key: 'mold_name' },
-    { key: 'cavity', },
-    { key: 'spm', editor: TextEditor },
-    { key: 'slideHeight', editor: TextEditor },
-    { key: 'limit', editor: TextEditor },
-    { key: 'inspect', editor: TextEditor },
-    { key: 'current', editor: TextEditor },
-
   ],
   moldV2: [
     { key: 'code', name: 'CODE', editor: TextEditor, formatter: PlaceholderBox, placeholder: 'CODE 입력', headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
@@ -509,7 +445,7 @@ export const columnlist: any = {
     {key: 'price', name: '단가', formatter: UnitContainer,editor: TextEditor,inputType: 'number', width:118, placeholder: "0", unitData:"원"},
     {key: 'date', name: '입고일', width: 118, headerRenderer: HeaderSort, sortOption: "none",sorts: {} },
     {key: 'lot_number', name: '원자재 LOT 번호', width: 118},
-    {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, unitData: 'kg', searchType: 'rawin',width: 118},
+    {key: 'current', name: 'LOT 재고량', formatter: UnitContainer, searchType: 'rawin',width: 118},
     {key: 'customer_id', name: '거래처', width: 118},
     {key: 'expiration', name: '사용 기준일', formatter: UnitContainer, unitData: '일', width: 118},
     {key: 'exhaustion', name: '재고 현황', formatter: CompleteButton, width: 118, beforeEventTitle:'사용 완료', afterEventTitle:'사용 완료 취소'},
@@ -789,6 +725,7 @@ export const columnlist: any = {
     { key: "process_id", name: "생산 공정", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "goal", name: "목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118, inputType: 'number' , textMultiInput },
     { key: 'input', name: '자재 선택', formatter: BomRegisterModal, width: 118 },
+    { key: 'machine_id', name: '기계', formatter: MachineInfoModal, unprintable: true, type:"operation" },
   ]),
   operationIdentificationRegisterV2: (textMultiInput?) => ([
     { key: "contract_id", name: "수주 번호", formatter: SearchModalTest, type: 'order', placeholder: '검색', disableType: "true", width: 118, noSelect: true },
@@ -803,6 +740,7 @@ export const columnlist: any = {
     { key: "process_id", name: "생산 공정", formatter: PlaceholderBox, placeholder: '자동입력', type: 'autoInput', width: 118 },
     { key: "goal", name: "목표 생산량", editor: TextEditor, formatter: PlaceholderBox, placeholder: '0', width: 118, inputType: 'number' , textMultiInput },
     { key: 'input', name: '자재 선택', formatter: BomRegisterModal, width: 118 },
+    { key: 'machine_id', name: '기계', formatter: MachineInfoModal, unprintable: true, type:"operation" },
   ]),
   operationListV2: [
     { key: "status", name: "상태", width: 118 },
@@ -896,7 +834,8 @@ export const columnlist: any = {
     { key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
   ],
   aiRecordListV2: [
-    { key:"identification", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
+    { key:"contract_id", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
+    { key:"identification", name:"지시 고유 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
     { key: "product_id", name: "CODE", width: 118, formatter: SearchModalTest, type: 'product', placeholder: '검색', noSelect:true, theme:"aiModal" },
     { key: "name", name: "품명", width: 118 },
     { key: "model", name: "모델", width: 118 },

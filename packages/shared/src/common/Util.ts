@@ -1,8 +1,4 @@
-// <<<<<<< HEAD
-// import {BomObjectType, BomType, LoadItemTypes, TableSortingOptionType} from '../@types/type'
-// =======
 import {BomObjectType, BomType, IExcelHeaderType, LoadItemTypes, TableSortingOptionType} from '../@types/type'
-// >>>>>>> 69ee186b0 (REFACTOR: list 페이지에서 사용하는 loadAllSelectItems function 공용화)
 import { TransferCodeToValue } from './TransferFunction'
 import {PlaceholderBox} from "../components/Formatter/PlaceholderBox";
 import {TextEditor} from "../components/InputBox/ExcelBasicInputBox";
@@ -210,12 +206,12 @@ export const loadAllSelectItems = async ({column, sortingOptions, setSortingOpti
     setSortingOptions(_sortingOptions)
     reload(null, _sortingOptions, date && date,)
   }
-  let tmpColumn = columnsSort(column).map((v: any) => {
 
+  let tmpColumn = columnsSort(column).map((v: any) => {
     const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
     return {
       ...v,
-      pk: v.unit_id,
+      pk: v?.unit_id,
       sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
       sorts: v.sorts ? sortingOptions : null,
       result: v.sortOption ? changeOrder : v.headerRenderer ? changeSetTypesState : null,
@@ -233,26 +229,57 @@ export const loadAllSelectItems = async ({column, sortingOptions, setSortingOpti
   })
 }
 
-export const additionalMenus:(res:any) => any[] = (res:any) =>
-
-   res.menus
-        .map((menu: any) => {
-          if (menu.colName === null && !menu.hide) {
+export const additionalMenus:(tmpColumn:any[], res:any) => any[] = (tmpColumn, res) => {
+  tmpColumn = tmpColumn
+        .map((column: any) => {
+          let menuData: object | undefined;
+          res.menus &&
+          res.menus.map((menu: any) => {
+            if (!menu.hide) {
+              if (menu.colName === column.key) {
+                menuData = {
+                  id: menu.id,
+                  mi_id: menu.mi_id,
+                  name: menu.title,
+                  width: menu.width,
+                  tab: menu.tab,
+                  unit: menu.unit,
+                  sequence:menu.sequence,
+                  hide:menu.hide,
+                  version: menu?.version ?? null
+                };
+              }
+            }
+          });
+          if (menuData) {
             return {
-              id: menu.mi_id,
-              name: menu.title,
-              width: menu.width,
-              // key: menu.title,
-              key: menu.mi_id,
-              formatter: PlaceholderBox,
-              editor: TextEditor,
-              type: "additional",
-              unit: menu.unit,
-              tab: menu.tab,
-              version: menu.version,
-              colName: menu.mi_id,
-              sequence:menu.sequence,
+              ...column,
+              ...menuData,
             };
           }
-        })
-        .filter((v: any) => v)
+        }).filter(value=> value)
+
+  return tmpColumn.concat(res.menus
+      .map((menu: any) => {
+        if (menu.colName === null && !menu.hide) {
+          return {
+            id: menu.mi_id,
+            name: menu.title,
+            width: menu.width,
+            // key: menu.title,
+            key: menu.mi_id,
+            mi_id: menu.mi_id,
+            formatter: PlaceholderBox,
+            editor: TextEditor,
+            type: "additional",
+            unit: menu.unit,
+            tab: menu.tab,
+            version: menu.version,
+            colName: menu.mi_id,
+            sequence: menu.sequence,
+          };
+        }
+      })
+      .filter((v: any) => v))
+
+}

@@ -165,57 +165,8 @@ const MesRawMaterialStock = ({page, search, option}: IProps) => {
   };
 
   const cleanUpData = (res: any, date?: {from:string, to:string}, _nzState?:boolean, _expState?:boolean) => {
-    let tmpColumn = columnlist["rawstockV1u"];
-    tmpColumn = tmpColumn.map((column: any) => {
-      let menuData: object | undefined;
-      res.menus && res.menus.map((menu: any) => {
-        if(menu.colName === column.key){
-          menuData = {
-            id: menu.id,
-            name: menu.title,
-            width: menu.width,
-            tab:menu.tab,
-            unit:menu.unit,
-            sequence:menu.sequence
-          }
-        } else if(menu.colName === 'id' && column.key === 'tmpId'){
-          menuData = {
-            id: menu.id,
-            name: menu.title,
-            width: menu.width,
-            tab:menu.tab,
-            unit:menu.unit,
-            sequence:menu.sequence
-          }
-        }
-      })
-      if(menuData){
-        return {
-          ...column,
-          ...menuData
-        }
-      }
-    }).filter((v:any) => v)
 
-
-    loadAllSelectItems( [...tmpColumn, ...additionalMenus(res)], date, _nzState, _expState )
-
-
-    let selectKey = ""
-    let additionalData: any[] = []
-    tmpColumn.map((v: any) => {
-      if(v.selectList){
-        selectKey = v.key
-      }
-    })
-
-
-    let pk = "";
-    Object.keys(res.info_list).map((v) => {
-      if(v.indexOf('_id') !== -1){
-        pk = v
-      }
-    })
+    loadAllSelectItems( additionalMenus(columnlist["rawstockV1u"], res), date, _nzState, _expState )
 
     let tmpBasicRow = res.info_list.map((row: any, index: number) => {
 

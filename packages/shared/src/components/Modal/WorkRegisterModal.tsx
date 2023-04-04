@@ -129,7 +129,17 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
                 }
               }}
           }).filter(v=>v.tool.tool.code),
-          machines: v?.machines ? v?.machines.filter((machine) => machine.machine.setting == 1) : [],
+          machines: v?.machines ?
+              v?.machines.filter((machine) => machine.machine.setting == 1)
+              :
+              v.product.machines.filter(machine => machine.setting == 1)
+                  .map((machine) => {
+                    return {machine:machine}
+                  }),
+          molds: v.molds ?? v.product.molds.filter(mold => mold.setting == 1)
+              .map((mold) => {
+                return {mold:mold}
+              }),
           version: undefined
         }
       }).filter((v) => v)
@@ -283,9 +293,7 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
               <p style={{color: '#717C90'}}>취소</p>
             </div>
             <div
-              onClick={() => {
-                SaveBasic()
-              }}
+              onClick={SaveBasic}
               style={{width: 888, height: 40, backgroundColor: POINT_COLOR, display: 'flex', justifyContent: 'center', alignItems: 'center'}}
             >
               <p>저장</p>
@@ -304,46 +312,6 @@ const SearchModalWrapper = styled.div`
   justify-content:center;
   align-items:center;
 `
-
-const Button = styled.button`
-    width:112px;
-    height:32px;
-    color:white;
-    font-size:15px;
-    border:none;
-    border-radius:6px;
-    background:#717C90;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-
-`;
-
-const TabBox = styled.button`
-  max-width: 214.5px;
-  min-width: 40px;
-  height: 32px;
-  background-color: #19B9DF;
-  opacity: 0.5;
-  border: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-right: 4px;
-  cursor: pointer;
-  flex: 1;
-  p {
-    font-size: 15px;
-    width: 168px;
-    text-overflow: ellipsis;
-    color: white;
-    padding-left: 8px;
-    text-align: left;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-`;
 
 const HeaderTable = styled.div`
   width: 1744px;
