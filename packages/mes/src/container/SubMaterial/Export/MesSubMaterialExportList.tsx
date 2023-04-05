@@ -145,23 +145,27 @@ const
         tmpColumn = tmpColumn.map((column: any) => {
             let menuData: object | undefined;
             res.menus && res.menus.map((menu: any) => {
-                if(menu.colName === column.key){
-                    menuData = {
-                        id: menu.id,
-                        name: menu.title,
-                        width: menu.width,
-                        tab:menu.tab,
-                        unit:menu.unit,
-                        sequence:menu.sequence
-                    }
-                } else if(menu.colName === 'id' && column.key === 'tmpId'){
-                    menuData = {
-                        id: menu.id,
-                        name: menu.title,
-                        width: menu.width,
-                        tab:menu.tab,
-                        unit:menu.unit,
-                        sequence:menu.sequence
+                if(!menu.hide){
+                    if(menu.colName === column.key){
+                        menuData = {
+                            id: menu.id,
+                            mi_id: menu.mi_id,
+                            name: menu.title,
+                            width: menu.width,
+                            tab:menu.tab,
+                            unit:menu.unit,
+                            sequence:menu.sequence
+                        }
+                    } else if(menu.colName === 'id' && column.key === 'tmpId'){
+                        menuData = {
+                            id: menu.id,
+                            mi_id: menu.mi_id,
+                            name: menu.title,
+                            width: menu.width,
+                            tab:menu.tab,
+                            unit:menu.unit,
+                            sequence:menu.sequence
+                        }
                     }
                 }
             })
@@ -181,7 +185,7 @@ const
             }
         }).filter((v:any) => v)
 
-
+        console.log(tmpColumn)
         loadAllSelectItems( [
             ...tmpColumn,
         ], date, _nzState, _expState )
@@ -312,6 +316,7 @@ const
             <ExcelTable
                 editable
                 resizable
+                resizeSave
                 selectable
                 headerList={[
                     SelectColumn,
