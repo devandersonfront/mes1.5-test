@@ -100,12 +100,8 @@ const HomeAiProductionLog = ({}: IProps) => {
 
     const getAi = async (pages : number = 1) => {
         const tokenData = userInfo?.token;
-        const params  = haveDistinct(userInfo?.company)
-            ? { rangeNeeded : true , distinct : 'mfrCode',}
-            : { rangeNeeded : true , from : moment().format('YYYY-MM-DD') , to : '9999-12-31'}
-
         const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
-            params : params,
+            params : { rangeNeeded : true , distinct : 'mfrCode'},
             headers : { Authorization : tokenData },
         })
 
@@ -129,7 +125,7 @@ const HomeAiProductionLog = ({}: IProps) => {
     const getPressList = async (mfrCodes : string) => {
         const tokenData = userInfo?.token;
         try {
-            const res =  await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/statement`,{
+            const res =  await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/status`,{
                 params : { page : 1 , size : 20 , mfrCodes },
                 headers : { Authorization : tokenData },
                 timeout : timeout
