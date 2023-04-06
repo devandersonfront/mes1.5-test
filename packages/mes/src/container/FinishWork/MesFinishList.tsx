@@ -113,22 +113,6 @@ const MesFinishList = ({page, search, option}: IProps) => {
 
   const cleanUpData = (res: any, date?: {from:string, to:string}) => {
 
-    // let additionalMenus = res.menus ? res.menus.map((menu:any) => {
-    //   if(menu.colName === null){
-    //     return {
-    //       id: menu.id,
-    //       name: menu.title,
-    //       width: menu.width,
-    //       key: menu.title,
-    //       editor: TextEditor,
-    //       type: 'additional',
-    //       unit: menu.unit
-    //     }
-    //   }
-    // }).filter((v: any) => v) : []
-
-
-    // loadAllSelectItems({column:tmpColumn.concat(additionalMenus), sortingOptions, setSortingOptions, reload, setColumn, date});
     loadAllSelectItems({column:additionalMenus(columnlist["finishListV2"] ,res), sortingOptions, setSortingOptions, reload, setColumn, date});
 
 
@@ -198,6 +182,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
       <ExcelTable
         editable
         resizable
+        resizeSave
         selectable
         headerList={[
           SelectColumn,

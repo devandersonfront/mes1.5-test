@@ -200,7 +200,6 @@ export const duplicateCheckWithArray = (array:Array<any>, keys:Array<string>, nu
 }
 
 export const loadAllSelectItems = async ({column, sortingOptions, setSortingOptions, reload, setColumn, changeSetTypesState, date}: LoadItemTypes) => {
-
   const changeOrder = (sort:string, order:string) => {
     const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
     setSortingOptions(_sortingOptions)
@@ -217,7 +216,6 @@ export const loadAllSelectItems = async ({column, sortingOptions, setSortingOpti
       result: v.sortOption ? changeOrder : v.headerRenderer ? changeSetTypesState : null,
     }
   });
-
 
   Promise.all(tmpColumn).then(res => {
     setColumn([...res.map(v=> {

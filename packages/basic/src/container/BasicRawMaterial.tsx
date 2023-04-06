@@ -600,7 +600,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
         <ExcelTable
           editable
           resizable
-          resizeSave={!readonly}
+          resizeSave
           selectable
           headerList={[
             SelectColumn,
