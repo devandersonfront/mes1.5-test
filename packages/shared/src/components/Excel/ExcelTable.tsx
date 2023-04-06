@@ -122,42 +122,38 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
       components={{noRowsFallback: <EmptyRowsRenderer />}}
 
       onColumnResize={(v, i) => {
-        tempData.map((time,i)=>{
+        if(resizeSave){
+          tempData.map((time,i)=>{
             clearTimeout(time)
-        })
-        tempData.push(
-            setTimeout(()=>{
-              const tmpHeader = [];
-              headerList.map((value,index)=>{
-                let tmpOneLine:any = {};
-                if(value.key !== "select-row"){
-                  if(index === v){
-                    tmpOneLine = {...value, mi_id:value.mi_id, width:i <= 80 ? 80 : i,colName:value.key, title:value.name.split("(필수)")[0], hide:value.hide };
+          })
+          tempData.push(
+              setTimeout(()=>{
+                const tmpHeader = [];
+                headerList.map((value,index)=>{
+                  let tmpOneLine:any = {};
+                  if(value.key !== "select-row"){
+                    if(index === v){
+                      tmpOneLine = {...value, mi_id:value.mi_id, width:i <= 80 ? 80 : i,colName:value.key, title:value.name.split("(필수)")[0], hide:value.hide };
+                    }
+                    else if(value.type === "additional"){
+                      tmpOneLine = {...value, mi_id:value.mi_id ?? value.id, colName:value.key, title:value.name, hide:value.hide, tab:headerList[1].tab, version:headerList[1].version  };
+                    }
+                    else{
+                      tmpOneLine = {...value, mi_id:value.mi_id, colName:value.key, title:value.name.split("(필수)")[0], hide:value.hide };
+                    }
                   }
-                  else if(value.type === "additional"){
-                    tmpOneLine = {...value, mi_id:value.mi_id ?? value.id, colName:value.key, title:value.name, hide:value.hide, tab:headerList[1].tab, version:headerList[1].version  };
-                  }
-                  else{
-                    tmpOneLine = {...value, mi_id:value.mi_id, colName:value.key, title:value.name.split("(필수)")[0], hide:value.hide };
-                  }
-                }
-                if(Object.keys(tmpOneLine).length > 0) tmpHeader.push(tmpOneLine);
-              })
-              // headerList[v] = {...headerList[v], mi_id: headerList[v].id, width:i <= 80 ? 80 : i, }
+                  if(Object.keys(tmpOneLine).length > 0) tmpHeader.push(tmpOneLine);
+                })
+                  RequestMethod("post", "itemSave", tmpHeader.filter(v=>v.key)
+                    , undefined, undefined, undefined,headerList[v].tab )
+                    .then((res)=> {
+                      headerList[v].width = i <= 80 ? 80 : i;
 
-              if(resizeSave) RequestMethod("post", "itemSave", tmpHeader.filter(v=>v.key)
-
-              // {
-              //         mi_id:headerList[v].id, width:i <= 80 ? 80 : i,title:tmpHeader, hide:false, unit:headerList[v].unitData, moddable: headerList[v].moddable
-              //       }
-              , undefined, undefined, undefined,headerList[v].tab )
-                  .then((res)=> {
-                    headerList[v].width = i <= 80 ? 80 : i;
-
-                    setHeaderList && setHeaderList(headerList)
-                  })
-            },800)
-        );
+                      setHeaderList && setHeaderList(headerList)
+                    })
+              },800)
+          );
+        }
       }}
       rowHeight={rowHeight ?? 40}
       defaultColumnOptions={{

@@ -340,6 +340,7 @@ const MesRecordList = ({}: IProps) => {
             <ExcelTable
                 editable
                 resizable
+                resizeSave
                 selectable
                 headerList={[
                     SelectColumn,
