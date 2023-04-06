@@ -14,7 +14,7 @@ import Notiflix from "notiflix";
 import { NextPageContext } from 'next'
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
 import { useDispatch,  } from "react-redux";
-import {columnsSort, setExcelTableHeight} from 'shared/src/common/Util'
+import {additionalMenus, columnsSort, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import {useRouter} from "next/router";
 import {CalendarBox} from "shared/src/components/CalendarBox/CalendarBox";
 import {TableSortingOptionType} from "shared/src/@types/type";
@@ -84,10 +84,10 @@ const MesOutsourcingImportList = () => {
 
     const onSelectDate = (date: { from: string, to: string }) => {
         setSelectDate(date)
-        reload(null, date)
+        reload(null, null,date)
     }
 
-    const reload = (keyword?: string, date?: { from: string, to: string }, sortingOptions?: TableSortingOptionType) => {
+    const reload = (keyword?: string, sortingOptions?: TableSortingOptionType,  date?: { from: string, to: string }) => {
         setKeyword(keyword)
         if (pageInfo.page > 1) {
             setPageInfo({...pageInfo, page: 1})
@@ -126,6 +126,7 @@ const MesOutsourcingImportList = () => {
                 reload();
             } else {
                 setBasicRow(convertData(res.info_list));
+                loadAllSelectItems({column:additionalMenus(columnlist["outsourcingImportList"], res), sortingOptions, setSortingOptions, reload, setColumn});
                 setColumn(convertColumn(res.menus))
                 setPageInfo({page: res.page, total: res.totalPages})
             }
@@ -203,6 +204,7 @@ const MesOutsourcingImportList = () => {
             <ExcelTable
                 editable
                 resizable
+                resizeSave
                 headerList={[
                     SelectColumn,
                     ...column
