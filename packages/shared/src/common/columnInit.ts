@@ -833,6 +833,32 @@ export const columnlist: any = {
     { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
     { key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
   ],
+
+  cncRecordListV2InComplete: [
+    { key: "contract_id", name: "수주 번호", width: 118 },
+    { key: "identification", name: "지시 고유 번호", width: 118 },
+    { key: "product_id", name: "CODE", width: 118 },
+    { key: "name", name: "품명", width: 118 },
+    { key: "type", name: "품목 종류", width: 118 },
+    { key: "unit", name: "단위", width: 118 },
+    { key: "process_id", name: "생산 공정", width: 118 },
+    { key: "lot_number", name: "LOT 번호", width: 118 },
+    { key: "worker", name: "작업자", width: 118 },
+    { key: "start", name: "작업 시작 일시", width: 118 },
+    { key: "end", name: "작업 종료 일시", width: 118, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
+    { key: "paused_time", name: "일시 정지 시간", formatter: PauseInfoModal, type: 'readonly', modalType: false, width: 118 },
+    { key: "good_quantity", name: "양품 수량", width: 118 },
+    { key: "poor_quantity", name: "불량 수량", formatter: DefectInfoModal, type: 'readonly', width: 118 },
+    { key: "sic_id", name: "초ㆍ중ㆍ종 검사", width: 118, formatter: MidrangeFrameButton ,unprintable : true},
+    { key: "uph", name: "UPH", width: 118 },
+    { key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, readonly:true ,unprintable : true},
+    { key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
+    { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
+    { key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
+    { key: 'force_kill', name: '작업완료 처리', formatter: FinishButton, width: 118 ,unprintable : true},
+  ],
+
+
   aiRecordListV2: [
     { key:"contract_id", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
     { key:"identification", name:"지시 고유 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
