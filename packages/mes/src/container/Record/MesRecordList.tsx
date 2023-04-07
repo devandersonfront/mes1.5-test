@@ -217,8 +217,7 @@ const MesRecordList = ({}: IProps) => {
 
 
     const convertColumn = (res, date?: {from:string, to:string}, radioIdx?:number) => {
-
-        loadAllSelectItems(additionalMenus(columnlist["cncRecordListV2"],res), date, radioIdx);
+        loadAllSelectItems(additionalMenus(columnlist[radioIdx ? "cncRecordListV2InComplete" : "cncRecordListV2"],res), date, radioIdx);
     }
 
     const cleanUpData = (res: any, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType, radioIdx?:number) => {
@@ -341,6 +340,7 @@ const MesRecordList = ({}: IProps) => {
             <ExcelTable
                 editable
                 resizable
+                resizeSave
                 selectable
                 headerList={[
                     SelectColumn,

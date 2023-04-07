@@ -18,7 +18,6 @@ type SelectListType = {
 
 const UnitContainer = ({ row, column, onRowChange }: IProps) => {
   const [title, setTitle] = useState<string>("")
-  console.log("row : ", row, ", column : ", column)
   useEffect(() => {
     let fixNumber: any = Number(row[column.key]);
     if (!isNaN(Number(fixNumber))) {

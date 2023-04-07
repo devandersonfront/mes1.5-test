@@ -266,6 +266,7 @@ const BasicProduct = ({}: IProps) => {
       const sortIndex = sortingOptions.sorts.findIndex(sort => sort ===col.key)
       return {
         ...col,
+        mi_id: menu.mi_id,
         id: menu.mi_id,
         name: !menu.moddable ? `${menu.title}(필수)`: menu.title,
         width: menu.width,
@@ -278,7 +279,7 @@ const BasicProduct = ({}: IProps) => {
         sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : col.sortOption ?? null,
         sorts: col.sorts ? sortingOptions : null,
         result: col.sortOption ? changeOrder : col.options ? onColumnFilter : null,
-        options: col.options ? col.key === 'type' ? typeOptions[productType] as {status:number | string, name:string}[] : col.options : undefined
+        options: col.options ? col.key === 'type' ? typeOptions[productType] as {status:number | string, name:string}[] : col.options : undefined,
       }
     })
     setColumn(columnsSort(newCols.concat(addedCols)))
