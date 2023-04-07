@@ -36,23 +36,25 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                         params:{product_ids:[res.data.product_id, res.data.pair_product_id]}
                     })
                         .then((res) => {
-                            let tmpBasic = res?.map((product, index) => {
-                                return (
-                                    {
-                                        id: product.product_id,
-                                        confirm_product:product.product_id,
-                                        aor_id:row.ai_operation_record_id,
-                                        predictionModel: product?.model?.model ?? "-",
-                                        predictionCode: product.code,
-                                        predictionName: product.name,
-                                        predictionProcess: product.process.name,
-                                        ranking:index+1,
-                                        border:product.product_id == row.product_id
-                                    }
-                                )
-                            })
-                            setBasic(tmpBasic)
-                            Notiflix.Loading.remove()
+                            if(res){
+                                let tmpBasic = res?.map((product, index) => {
+                                    return (
+                                        {
+                                            id: product.product_id,
+                                            confirm_product:product.product_id,
+                                            aor_id:row.ai_operation_record_id,
+                                            predictionModel: product?.model?.model ?? "-",
+                                            predictionCode: product.code,
+                                            predictionName: product.name,
+                                            predictionProcess: product.process.name,
+                                            ranking:index+1,
+                                            border:product.product_id == row.product_id
+                                        }
+                                    )
+                                })
+                                setBasic(tmpBasic)
+                                Notiflix.Loading.remove()
+                            }
                         })
                 })
         }
