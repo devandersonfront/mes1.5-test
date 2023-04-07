@@ -1,65 +1,103 @@
-import React, {useEffect, useState} from 'react'
-import {
-    columnlist,
-    ExcelTable,
-    Header as PageHeader, IExcelHeaderType, requestApi, SF_ENDPOINT,
-} from 'shared'
-// @ts-ignore
-import {SelectColumn} from 'react-data-grid'
-import {NextPageContext} from 'next'
-//@ts-ignore
-import SockJS from "sockjs-client"
-import cookie from "react-cookies";
-import {haveDistinct} from "shared/src/common/haveDistinct";
-import moment from "moment";
-import axios from "axios";
-import Notiflix from "notiflix";
-import {SF_AI_ADDRESS, SF_ENDPOINT_PMS} from "shared/src/common/configset";
+import React, { useState, useEffect } from "react";
 import {useInterval} from "usehooks-ts";
+import axios from "axios";
+import {columnlist, ExcelTable, Header as PageHeader, IExcelHeaderType, SF_ENDPOINT} from "shared";
+import cookie from "react-cookies";
+import {SF_AI_ADDRESS, SF_ENDPOINT_PMS} from "shared/src/common/configset";
+import Notiflix from "notiflix";
 import {TransferCodeToValue} from "shared/src/common/TransferFunction";
 
-export interface IProps {
-    children?: any
-    page?: number
-    keyword?: string
-    option?: number
-}
+let refreshTime = 10000
+let aiInitTime = 35000
+let pressLimitTime = 7000
+let pressInitTime = 3000
+let limitCount = 3
 
-let aiLimitNum = 0;
-let pressLimitNum = 0;
+const HomeAiProductionLog = () => {
 
-const HomeAiProductionLog = ({}: IProps) => {
     const userInfo = cookie.load('userInfo')
-    const [ai , setAi] = useState<any>()
-    const [pressList , setPressList] = useState<any[]>([])
-    const [isAiRequest , setIsAiRequest] = useState<boolean>(false)
-    const [isPressRequest , setIsPressRequest] = useState<boolean>(false)
-    const [allStop , setAllStop] = useState<boolean>(false)
-    const [pressStop, setPressStop] = useState<boolean>(false)
+
+    const [machineData, setMachineData] = useState(null); // AI 데이터 상태
+    const [machineRetryCount , setMachineRetryCount] = useState(0)
+    const [machineIntervalTime , setMachineIntervalTime] = useState(aiInitTime)
+
+    const [statusData, setStatusData] = useState(null)
+    const [statusRetryCount, setStatusRetryCount] = useState(0)
+    const [statusIntervalTime, setStatusIntervalTime] = useState(pressInitTime)
+
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiProductLog"])
     const [data ,setData] = useState<any[]>([])
-    const [timeout , setTimeout] = useState<number>(3000)
     const [modalOpen, setModalOpen] = useState<boolean>(false)
 
-    const changeModalState = () => {
-        setModalOpen(value => !value)
-    }
-
-    const getIsTrained = async (machine_codes : string[]) => {
+    const isTrainedMachine = async (machine_codes : string[]) => {
         const tokenData = userInfo?.token;
-        const result = await axios.post(`${SF_AI_ADDRESS}/api/train/isTrained`, {
+        const trainedMachine = await axios.post(`${SF_AI_ADDRESS}/api/train/isTrained`, {
             company_code: userInfo?.company, machine_codes: machine_codes
         },{ headers : { Authorization : tokenData }}).catch(()=>{
             Notiflix.Report.warning("경고",'실패한 요청이 있어, 특정 데이터만 나올 수 있습니다.',"확인");
         })
 
-        if(result){
+        if(trainedMachine){
             Notiflix.Loading.remove()
-            return result
+            return trainedMachine
         }
     }
 
-    const predictCheckList = (value) => {
+    const checkTrainedMachine = async (machineData) => {
+
+        const map = new Map();
+        const competeStr = '예측 DATA 생성중';
+        const listToCheck = machineData?.filter(data => data.prediction_code === competeStr);
+        const machineCodes = listToCheck.map(list => list.machine_code);
+        const lists = await isTrainedMachine(machineCodes);
+
+        machineData?.forEach(result => map.set(result.machine_code, result));
+
+        if (listToCheck.length < 1) {
+            return machineData;
+        }
+
+        lists.data.forEach(list => {
+            const initValue = list.is_trained ? competeStr : ''
+            const machineCode = list.machine_code;
+            const result = map.get(machineCode);
+            map.set(machineCode, {
+                ...result,
+                prediction_code: initValue,
+                prediction_model: initValue,
+                prediction_name: initValue,
+                prediction_process: initValue,
+                prediction_confidence: initValue
+            });
+        })
+
+        return Array.from(map.values());
+    }
+
+    const mappingData = (machines : any[] , status ?: any []) => {
+        return machines.map((result, index)=>(
+            {
+                ...result ,
+                pressStatus : status && status[index]?.pressStatus ,
+                prediction_confidence : convertPredictionConfidence(result.prediction_confidence) ,
+                machine_type : TransferCodeToValue(result.machine_type, "machine"),
+                color : !comparePredictionResult(result) ? 'red' : undefined,
+                setModalOpen:changeModalState
+            }
+        ))
+    }
+
+    const changeModalState = () => {
+        setModalOpen(value => !value)
+    }
+
+    const convertPredictionConfidence = (confidence) => {
+        if(!confidence) return ''
+        if(typeof confidence === 'number') return `${(confidence * 100).toFixed(2)}%`
+        else return confidence
+    }
+
+    const comparePredictionResult = (value) => {
         if(!value.code || value.code === '-'){
             return true
         }
@@ -71,155 +109,90 @@ const HomeAiProductionLog = ({}: IProps) => {
         return codeCheck && modelCheck && nameCheck && processCheck
     }
 
-    const checkTrained = async (results) => {
+    const getMachineData = async (pages : number = 1) => {
 
-        const map = new Map()
-        const competeStr = '예측 DATA 생성중'
-        const listToCheck = results?.filter((result)=> result.prediction_code === competeStr)
-        const lists = await getIsTrained(listToCheck.map((list)=>(list.machine_code)))
-
-        results?.forEach((result)=> map.set(result.machine_code, result))
-
-        if(listToCheck?.length < 1){
-            return results
-        }
-
-        lists.data.forEach((list) => (
-            map.set(list.machine_code, {
-                ...map.get(list.machine_code)
-                , prediction_code: list.is_trained ? competeStr : ''
-                , prediction_model: list.is_trained ? competeStr : ''
-                , prediction_name :  list.is_trained ? competeStr : ''
-                , prediction_process: list.is_trained ? competeStr : ''
-                , prediction_confidence : list.is_trained ? competeStr : ''
-            })
-        ))
-
-        return Array.from(map.values())
-    }
-
-    const getAi = async (pages : number = 1) => {
         const tokenData = userInfo?.token;
-        const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
-            params : { rangeNeeded : true , distinct : 'mfrCode'},
-            headers : { Authorization : tokenData },
-        })
+        try {
+            const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
+                params : { rangeNeeded : true , distinct : 'mfrCode'},
+                headers : { Authorization : tokenData },
+            })
+            const machineData = result?.data?.info_list
+            const trainedMachine = await checkTrainedMachine(machineData)
+            setMachineData(trainedMachine)
+            setMachineRetryCount(0);
+            return trainedMachine
 
-        if(result) {
-            const data = result?.data?.info_list
-            Notiflix.Loading.remove()
-            if (data.length) {
-                setIsAiRequest(true)
-                setAi(await checkTrained(data))
-                return await checkTrained(data)
+        }catch (e) {
+            if(machineRetryCount === limitCount){
+                setStatusIntervalTime(null)
+                setMachineIntervalTime(null)
+                return Notiflix.Report.warning('경고' , '잠시후 다시 시도해 주세요' , '확인')
             }
-        }else{
-            aiLimitNum++
-            setIsAiRequest(false)
-            Notiflix.Loading.remove()
-            setPressList([])
-            return false
+            setMachineIntervalTime(null)
+            setTimeout(() => {
+                setMachineRetryCount((prevRetry) => prevRetry + 1);
+                setMachineIntervalTime(aiInitTime);
+            }, refreshTime);
         }
     }
 
-    const getPressList = async (mfrCodes : string) => {
+    const getStatusData = async (mfrCodes : string) => {
         const tokenData = userInfo?.token;
         try {
             const res =  await axios.get(`${SF_ENDPOINT_PMS}/api/v2/monitoring/presses/status`,{
-                params : { page : 1 , size : 20 , mfrCodes },
-                headers : { Authorization : tokenData },
-                timeout : timeout
+                params : { page : 1 , size : 20 , mfrCodes},
+                headers : { Authorization : tokenData},
+                timeout : statusIntervalTime
             })
-
-            if (res) {
-                Notiflix.Loading.remove()
-                setIsPressRequest(true)
-                setPressList(res?.data?.results?.content)
-                return res?.data?.results?.content
+            const content = res?.data?.results?.content
+            setStatusData(content);
+            setStatusRetryCount(0);
+            return content
+        } catch (error) {
+            if(statusRetryCount === limitCount) return setStatusIntervalTime(null)
+            if(statusIntervalTime < pressLimitTime) {
+                setTimeout(() => {
+                    setStatusIntervalTime((prevTime) => prevTime + 1000);
+                }, 1000);
+            } else {
+                setStatusIntervalTime(null)
+                setTimeout(() => {
+                    setStatusRetryCount((prevRetry) => prevRetry + 1);
+                    setStatusIntervalTime(pressInitTime);
+                }, refreshTime);
             }
-
-        }catch (e) {
-            if(timeout === 10000){
-                pressLimitNum++
-                Notiflix.Loading.remove()
-                setIsPressRequest(false)
-                setTimeout(2000)
-                return Notiflix.Report.warning('경고' , '잠시후 다시 시도해 주세요' , '확인')
-            }
-            setIsPressRequest(true)
-            setTimeout((prev) => prev + 1000);
-            setPressList([])
         }
+    };
+
+    const requestInitApi = async () => {
+        const machineData = await getMachineData()
+        const codes = machineData.map((result) => result.machine_code)
+        const statusData = await getStatusData(codes.join(','))
+        setData(mappingData(machineData,statusData))
     }
 
     useInterval(async () => {
-        if(isAiRequest){
-            const result = await getAi()
-            setData(mappingData(result,pressList))
-        }
-    }, !allStop && isAiRequest && !modalOpen ? 35000 : null);
+        const result = await getMachineData()
+        setData(mappingData(result,statusData))
+    },  !modalOpen ? machineIntervalTime : null);
 
     useInterval(async () => {
-        const codes = ai.map((result)=>result.machine_code)
-        if(ai && isAiRequest && isPressRequest){
-            const result = await getPressList(codes.join(','))
-            setData(mappingData(ai,result))
+        if(machineData){
+            const codes = machineData.map((result)=>result.machine_code)
+            const statusData = await getStatusData(codes.join(','))
+            setData(mappingData(machineData,statusData))
         }
-    }, !allStop && isAiRequest && isPressRequest && !modalOpen ? timeout : null);
-
-    useInterval(()=>{
-        setIsPressRequest(true)
-    },(!allStop && !pressStop && !isPressRequest) ? 60000 : null)
-
-    useInterval(()=>{
-        setIsAiRequest(true)
-    },(!allStop && !isAiRequest && aiLimitNum <= 5) ? 60000 : null)
-
-    const convertPredictionConfidence = (confidence) => {
-        if(!confidence) return ''
-        if(typeof confidence === 'number') return `${(confidence * 100).toFixed(2)}%`
-        else return confidence
-    }
-
-    const mappingData = (aiResults : any[] , pressResults : any []) => {
-        return aiResults.map((result, index)=>(
-            {
-                ...result ,
-                pressStatus : pressResults && pressResults[index]?.pressStatus ,
-                prediction_confidence : convertPredictionConfidence(result.prediction_confidence) ,
-                machine_type : TransferCodeToValue(result.machine_type, "machine"),
-                color : !predictCheckList(result) ? 'red' : undefined,
-                setModalOpen:changeModalState
-            }
-        ))
-    }
-
-    const getApi = async () => {
-        const aiResults = await getAi()
-        const codes = aiResults.map((result)=>result.machine_code)
-        const pressResults = await getPressList(codes.join(','))
-        setData(mappingData(aiResults,pressResults))
-    }
-
-    useEffect(()=>{
-        getApi()
-    },[])
+    },  !modalOpen ? statusIntervalTime : null);
 
     useEffect(() => {
-        if (aiLimitNum === 3) {
-            setAllStop(true)
-        }
-    }, [aiLimitNum]);
-
-    useEffect(() => {
-        if (pressLimitNum === 3) {
-            setPressStop(true)
-        }
-    }, [pressLimitNum]);
+        requestInitApi()
+    }, [modalOpen]);
 
     useEffect(()=>{
         userInfo?.company === '4XX21Z' && setColumn(columnlist["aiProductLogDS"])
     },[])
+
 
     return (
         <div>
@@ -234,17 +207,7 @@ const HomeAiProductionLog = ({}: IProps) => {
                 height={'100%'}
             />
         </div>
-    );
+    )
 }
 
-export const getServerSideProps = (ctx: NextPageContext) => {
-    return {
-        props: {
-            page: ctx.query.page ?? 1,
-            keyword: ctx.query.keyword ?? "",
-            option: ctx.query.opt ?? 0,
-        }
-    }
-}
-
-export {HomeAiProductionLog};
+export default HomeAiProductionLog

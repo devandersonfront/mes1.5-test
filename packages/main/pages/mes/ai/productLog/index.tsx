@@ -4,7 +4,7 @@ import ProfileHeader from '../../../../component/Profile/ProfileHeader'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {NextPageContext} from 'next'
-import HomeAiProductionLogTest from "../../../../container/home/HomeAiProductionLogTest";
+import HomeAiProductionLog from "../../../../container/home/HomeAiProductionLog";
 
 
 interface IProps {
@@ -21,7 +21,7 @@ const BasicContainer = ({page, keyword, option}: IProps) => {
             <MenuNavigation pageType={'HOME'}/>
             <div style={{paddingBottom: 40}}>
                 <ProfileHeader/>
-                <HomeAiProductionLogTest/>
+                <HomeAiProductionLog/>
             </div>
         </div>
     );
