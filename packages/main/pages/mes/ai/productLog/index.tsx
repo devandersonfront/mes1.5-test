@@ -4,7 +4,8 @@ import ProfileHeader from '../../../../component/Profile/ProfileHeader'
 // @ts-ignore
 import {SelectColumn} from 'react-data-grid'
 import {NextPageContext} from 'next'
-import {HomeAiProductionLog} from "../../../../container/home/HomeAiProductionLog";
+import HomeAiProductionLog from "../../../../container/home/HomeAiProductionLog";
+
 
 interface IProps {
     children?: any
