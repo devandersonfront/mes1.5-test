@@ -200,6 +200,7 @@ const HomeAiProductionLog = () => {
                 title={"AI 생산 제품 현황"}
             />
             <ExcelTable
+                resizable
                 editable
                 headerList={column}
                 row={data}
