@@ -134,7 +134,7 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
         if(machineInUse.length > 1) {
             return Notiflix.Report.warning("경고", "기계를 하나만 선택해주시기 바랍니다.", "확인");
         }
-        if(selectRow !== undefined && selectRow !== null){
+        if((selectRow !== undefined && selectRow !== null) || machineInUse.length > 0){
             onRowChange({
                 ...row,
                 machines: searchList.map(v => {
@@ -152,8 +152,10 @@ const MachineSelectModal = ({column, row, onRowChange}: IProps) => {
                 name: row.name,
                 isChange: true
             })
-            onClose()
+        }else{
+            Notiflix.Report.failure("경고", "등록된 기계가 없습니다.", "확인")
         }
+        onClose()
     }
 
     return (
