@@ -89,6 +89,8 @@ const WorkRegisterModal = ({column, row, onRowChange}: IProps) => {
           throw(alertMsg.noWorker)
         }else if(!v.sum) {
           throw(alertMsg.noProductAmount)
+        }else if(!v.machines && v.product.machines.length <= 0){
+          throw ("등록된 기계가 없습니다.")
         }
         if(v.molds) {
           v.bom.map(bom => {
