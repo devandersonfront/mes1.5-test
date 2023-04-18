@@ -68,6 +68,7 @@ import {MachineSelectModal} from "../components/Modal/MachineSelectModal";
 import Checkbox from "../components/InputBox/Checkbox";
 import {AiCompareModal} from "../components/Modal/AiCompareModal";
 import {MultiFileUploadModal} from "../components/FileUpload/MultiFileUploadModal";
+import {AddlButton} from "../components/Buttons/AddlButton";
 
 export const columnlist: any = {
   member: [
@@ -307,7 +308,8 @@ export const columnlist: any = {
     { key: 'safety_stock_status', name: '안전재고 사용', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'customer_id', name: '거래처', formatter: UnitContainer, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
-    { key: 'leadtime' , name : '발주 기준일' , inputType: 'number' }
+    { key: 'leadtime' , name : '발주 기준일' , inputType: 'number' },
+    { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog"},
   ],
 
   subMaterial: [
@@ -506,6 +508,7 @@ export const columnlist: any = {
   substockV1u: [
     {key: 'wip_id',name:'부자재 CODE', formatter: PlaceholderBox, placeholder: '부자재 CODE', width: 118},
     {key: 'name', name:'부자재 품명', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
+    {key: 'elapsed', name:'경과일', formatter: UnitContainer, unitData: '일', placeholder:'자동 입력', width: 118},
     {key: 'unit', name:'단위', formatter: PlaceholderBox, placeholder:'자동 입력', width: 118},
     {key: 'customer_id', name:'거래처', width: 118},
     {key: 'warehousing',name: '입고량', searchType: 'rawin', width: 118},
@@ -833,6 +836,32 @@ export const columnlist: any = {
     { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
     { key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
   ],
+
+  cncRecordListV2InComplete: [
+    { key: "contract_id", name: "수주 번호", width: 118 },
+    { key: "identification", name: "지시 고유 번호", width: 118 },
+    { key: "product_id", name: "CODE", width: 118 },
+    { key: "name", name: "품명", width: 118 },
+    { key: "type", name: "품목 종류", width: 118 },
+    { key: "unit", name: "단위", width: 118 },
+    { key: "process_id", name: "생산 공정", width: 118 },
+    { key: "lot_number", name: "LOT 번호", width: 118 },
+    { key: "worker", name: "작업자", width: 118 },
+    { key: "start", name: "작업 시작 일시", width: 118 },
+    { key: "end", name: "작업 종료 일시", width: 118, headerRenderer: HeaderSort, sortOption: "none", sorts: {} },
+    { key: "paused_time", name: "일시 정지 시간", formatter: PauseInfoModal, type: 'readonly', modalType: false, width: 118 },
+    { key: "good_quantity", name: "양품 수량", width: 118 },
+    { key: "poor_quantity", name: "불량 수량", formatter: DefectInfoModal, type: 'readonly', width: 118 },
+    { key: "sic_id", name: "초ㆍ중ㆍ종 검사", width: 118, formatter: MidrangeFrameButton ,unprintable : true},
+    { key: "uph", name: "UPH", width: 118 },
+    { key: 'input', name: '투입 자재', formatter: LotInputInfoModal, width: 118, readonly:true ,unprintable : true},
+    { key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
+    { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
+    { key: 'machine_id', name: '기계', formatter: MachineListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true},
+    { key: 'force_kill', name: '작업완료 처리', formatter: FinishButton, width: 118 ,unprintable : true},
+  ],
+
+
   aiRecordListV2: [
     { key:"contract_id", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
     { key:"identification", name:"지시 고유 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
@@ -1414,7 +1443,7 @@ export const columnlist: any = {
     {key: 'order_date', name: '발주 날짜', formatter: PlaceholderBox},
     {key: 'due_date', name: '입고 희망일', formatter:PlaceholderBox},
     // {key: 'customer', name: '거래처', formatter:PlaceholderBox, placeholder: '-'},
-    {key: 'bom', name: '투입 자재', formatter:LotInputInfoModal, width: 118, readonly: true, type:"outsourcing" ,unprintable : true},
+    {key: 'bom', name: '투입 자재', formatter:LotInputInfoModal, readonly: true, type:"outsourcing" ,unprintable : true},
   ],
   outsourcingOrderModify: [
     {key: 'product_id', name: '품명', formatter:PlaceholderBox, type: 'product', placeholder: '-'},
@@ -1494,15 +1523,15 @@ export const columnlist: any = {
     {key: 'amount', name: '총 납품 수량', formatter:PlaceholderBox, placeholder: '자동 입력'},
   ],
   outsourcingDeliveryList: [
-    {key: 'identification', name: '납품 고유번호', formatter:PlaceholderBox, placeholder: '-'},
-    {key: 'name', name: '품명', formatter:PlaceholderBox, placeholder: '-'},
-    {key: 'product_id', name: 'CODE', formatter:PlaceholderBox, placeholder: '-'},
-    {key: 'contract_id', name: '??', formatter:PlaceholderBox, placeholder: '-'},
-    {key: "customer_id", name: "거래처", formatter: PlaceholderBox, placeholder: '-' },
-    {key: 'cm_id', name: '모델', formatter:PlaceholderBox, placeholder: '-'},
-    {key: 'date', name: '납품 날짜', formatter:PlaceholderBox, placeholder: '-'},
-    // {key: 'amount', name: '총 납품 수량', formatter:PlaceholderBox, placeholder: '-'},
-    {key: 'lots', name: 'LOT별 납품수량', formatter: LotDeliveryInfoModal, type:"outsourcing", readonly:true},
+    {key: 'identification', name: '납품 고유번호', formatter:PlaceholderBox, placeholder: '-', },
+    {key: 'name', name: '품명', formatter:PlaceholderBox, placeholder: '-', },
+    {key: 'product_id', name: 'CODE', formatter:PlaceholderBox, placeholder: '-', },
+    {key: 'contract_id', name: '??', formatter:PlaceholderBox, placeholder: '-', },
+    {key: "customer_id", name: "거래처", formatter: PlaceholderBox, placeholder: '-' , },
+    {key: 'cm_id', name: '모델', formatter:PlaceholderBox, placeholder: '-', },
+    {key: 'date', name: '납품 날짜', formatter:PlaceholderBox, placeholder: '-', },
+    // {key: 'amount', name: '총 납품 수량', formatter:PlaceholderBox, placeholder: '-', },
+    {key: 'lots', name: 'LOT별 납품수량', formatter: LotDeliveryInfoModal, type:"outsourcing", readonly:true, },
   ],
   dataSet:[
     {key: 'name', name: '제품명', formatter:PlaceholderBox, placeholder: '-'},

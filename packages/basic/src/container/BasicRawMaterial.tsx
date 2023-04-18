@@ -250,9 +250,6 @@ const BasicRawMaterial = ({readonly}: IProps) => {
 
   const cleanUpData = (res: any) => {
     let tmpColumn = columnlist["rawMaterial"];
-      tmpColumn.push(
-          { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog", sequence:12},
-      )
 
     loadAllSelectItems({column:additionalMenus(tmpColumn, res), sortingOptions, setSortingOptions, reload, setColumn});
 
@@ -600,7 +597,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
         <ExcelTable
           editable
           resizable
-          resizeSave={!readonly}
+          resizeSave
           selectable
           headerList={[
             SelectColumn,

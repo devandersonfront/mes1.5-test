@@ -172,8 +172,9 @@ const MesOutsourcingOrderList = () => {
             return {
                 ...col,
                 id: menu.mi_id,
+                mi_id: menu.mi_id,
                 name: !menu.moddable ? `${menu.title}(필수)`: menu.title,
-                // width: menu.width,
+                width: menu.width,
                 tab:menu.tab,
                 unit:menu.unit,
                 moddable: !menu.moddable,
@@ -236,6 +237,7 @@ const MesOutsourcingOrderList = () => {
             <ExcelTable
                 editable
                 resizable
+                resizeSave
                 headerList={[
                     SelectColumn, ...column
                 ]}
