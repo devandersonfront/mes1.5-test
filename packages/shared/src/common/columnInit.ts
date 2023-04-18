@@ -68,6 +68,7 @@ import {MachineSelectModal} from "../components/Modal/MachineSelectModal";
 import Checkbox from "../components/InputBox/Checkbox";
 import {AiCompareModal} from "../components/Modal/AiCompareModal";
 import {MultiFileUploadModal} from "../components/FileUpload/MultiFileUploadModal";
+import {AddlButton} from "../components/Buttons/AddlButton";
 
 export const columnlist: any = {
   member: [
@@ -307,7 +308,8 @@ export const columnlist: any = {
     { key: 'safety_stock_status', name: '안전재고 사용', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'customer_id', name: '거래처', formatter: UnitContainer, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
-    { key: 'leadtime' , name : '발주 기준일' , inputType: 'number' }
+    { key: 'leadtime' , name : '발주 기준일' , inputType: 'number' },
+    { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog"},
   ],
 
   subMaterial: [
