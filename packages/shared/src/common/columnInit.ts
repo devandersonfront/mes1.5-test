@@ -492,7 +492,7 @@ export const columnlist: any = {
     {key: 'customer_id', name: '거래처', formatter: PlaceholderBox, placeholder:"-", width: 118},
     {key: 'remark', name: '비고', formatter: PlaceholderBox, overlay:true, placeholder:"-", width: 118},
     {key: 'cancel', name: '출고 취소', formatter: CompleteButton, width: 118, beforeEventTitle:'출고 취소'},
-    {key: 'export', name: '수정', formatter: ExportButton, width: 118, type: 'rawMaterial', action: 'modify'}
+    {key: 'edit', name: '수정', formatter: ExportButton, width: 118, type: 'rawMaterial', action: 'modify'}
   ],
 
   subinV1u: (basicRow, setBasicRow) => ([
@@ -540,7 +540,7 @@ export const columnlist: any = {
     {key: 'current', name: 'LOT 재고량', width: 118},
     {key: 'remark', name: '비고', width: 118, formatter: PlaceholderBox, overlay:true, placeholder:"-"},
     {key: 'cancel', name: '출고 취소', formatter: CompleteButton, width: 118, beforeEventTitle:'출고 취소'},
-    {key: 'export', name: '수정', formatter: ExportButton, width: 118, type: 'subMaterial', action: 'modify'}
+    {key: 'edit', name: '수정', formatter: ExportButton, width: 118, type: 'subMaterial', action: 'modify'}
   ],
 
   baseItem: (rows, setRows) =>  [
