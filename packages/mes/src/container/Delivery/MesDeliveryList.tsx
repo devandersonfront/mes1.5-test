@@ -244,6 +244,7 @@ const MesDeliveryList = ({ page, search, option }: IProps) => {
       <ExcelTable
         editable
         resizable
+        resizeSave
         selectable
         headerList={[
           SelectColumn,

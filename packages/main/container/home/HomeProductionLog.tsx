@@ -66,6 +66,7 @@ const HomeProductionLog = ({}: IProps) => {
                 const {info_list , page, totalPages, menus} = res.data
                 const renewalColumn = convertColumn(menus)
                 const renewalData = convertData(info_list)
+                console.log("renewalColumn : ", renewalColumn)
                 setBasicRow(renewalData)
                 setColumn(renewalColumn)
                 setPage({current_page : page , totalPages : totalPages})
@@ -87,7 +88,7 @@ const HomeProductionLog = ({}: IProps) => {
             columns.map((column) => {
                 if(!column.hide){
                     if (column.colName === v.key) {
-                        renewalColumn.push({ ...columnlist['productionLog'][i], key: column.colName, name: column.title })
+                        renewalColumn.push({ ...columnlist['productionLog'][i], key: column.colName, name: column.title,tab:column.tab, mi_id: column.mi_id })
                     }
                 }
             })
@@ -116,6 +117,8 @@ const HomeProductionLog = ({}: IProps) => {
                 calendarType={"current"}
             />
             <ExcelTable
+                resizable
+                resizeSave
                 editable
                 headerList={column}
                 row={basicRow}

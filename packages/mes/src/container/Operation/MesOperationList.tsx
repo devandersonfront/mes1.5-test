@@ -295,6 +295,7 @@ const MesOperationList = ({page, search, option, todayOnly}: IProps) => {
     <ExcelTable
       editable
       resizable
+      resizeSave
       selectable
       headerList={[
         SelectColumn,

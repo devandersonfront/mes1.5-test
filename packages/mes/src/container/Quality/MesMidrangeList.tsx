@@ -14,7 +14,7 @@ import Notiflix from "notiflix";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { deleteMenuSelectState, setMenuSelectState } from "shared/src/reducer/menuSelectState";
-import { setExcelTableHeight } from 'shared/src/common/Util';
+import {additionalMenus, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util';
 import addColumnClass from '../../../../main/common/unprintableKey'
 
 interface IProps {
@@ -46,10 +46,10 @@ const MesMidrangeList = ({ option }: IProps) => {
 
     const onSelectDate = (date: {from:string, to:string}) => {
         setSelectDate(date)
-        reload(null, date)
+        reload(null, null, date)
     }
 
-    const reload = (keyword?:string, date?:{from:string, to:string}, ) => {
+    const reload = (keyword?:string, sortingOptions?: any, date?:{from:string, to:string}, ) => {
         setKeyword(keyword)
         if(pageInfo.page > 1) {
             setPageInfo({...pageInfo, page: 1})
@@ -71,7 +71,7 @@ const MesMidrangeList = ({ option }: IProps) => {
 
     const convertToRowData = (infoList: any[], date?:{from:string, to:string}) => {
         const _reload = () => {
-            reload(null, date)
+            reload(null, null, date)
         }
         return infoList.map((info) => {
             const randomId = Math.random() * 1000;
@@ -127,6 +127,8 @@ const MesMidrangeList = ({ option }: IProps) => {
                     page: res.page,
                     total: res.totalPages
                 })
+                loadAllSelectItems({column:additionalMenus(columnlist["midrangeList"], res), setColumn, reload})
+
                 setBasicRow(convertToRowData(res.info_list, date))
             }
         }
@@ -154,6 +156,7 @@ const MesMidrangeList = ({ option }: IProps) => {
             <ExcelTable
                 editable
                 resizable
+                resizeSave
                 headerList={addColumnClass(column)}
                 row={basicRow}
                 setRow={(e) => {
