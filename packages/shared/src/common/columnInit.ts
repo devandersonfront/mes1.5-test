@@ -492,7 +492,7 @@ export const columnlist: any = {
     {key: 'customer_id', name: '거래처', formatter: PlaceholderBox, placeholder:"-", width: 118},
     {key: 'remark', name: '비고', formatter: PlaceholderBox, overlay:true, placeholder:"-", width: 118},
     {key: 'cancel', name: '출고 취소', formatter: CompleteButton, width: 118, beforeEventTitle:'출고 취소'},
-    {key: 'export', name: '수정', formatter: ExportButton, width: 118, type: 'rawMaterial', action: 'modify'}
+    {key: 'edit', name: '수정', formatter: ExportButton, width: 118, type: 'rawMaterial', action: 'modify'}
   ],
 
   subinV1u: (basicRow, setBasicRow) => ([
@@ -540,7 +540,7 @@ export const columnlist: any = {
     {key: 'current', name: 'LOT 재고량', width: 118},
     {key: 'remark', name: '비고', width: 118, formatter: PlaceholderBox, overlay:true, placeholder:"-"},
     {key: 'cancel', name: '출고 취소', formatter: CompleteButton, width: 118, beforeEventTitle:'출고 취소'},
-    {key: 'export', name: '수정', formatter: ExportButton, width: 118, type: 'subMaterial', action: 'modify'}
+    {key: 'edit', name: '수정', formatter: ExportButton, width: 118, type: 'subMaterial', action: 'modify'}
   ],
 
   baseItem: (rows, setRows) =>  [
@@ -1550,9 +1550,9 @@ export const columnlist: any = {
     {key: 'identification', frozen:true, name: '지시 고유 번호', formatter:PlaceholderBox, width: 118,},
     {key: 'deadline', frozen:true, name: '작업 기한', formatter:PlaceholderBox, width:118},
     // {key: 'customer', frozen:true, name: '거래처', formatter:PlaceholderBox, width: 118,},
-    {key: 'model', frozen:true, name: '모델', formatter:PlaceholderBox, width: 118,},
-    {key: 'code', frozen:true, name: 'CODE',  formatter:PlaceholderBox, width: 118,},
-    {key: 'product_name', frozen:true, name: '품명', formatter:PlaceholderBox, width: 118,},
+    {key: 'model', frozen:true, name: '모델', formatter:PlaceholderBox, width: 200 },
+    {key: 'code', frozen:true, name: 'CODE',  formatter:PlaceholderBox, width: 200},
+    {key: 'product_name', frozen:true, name: '품명', formatter:PlaceholderBox, width: 200,},
     {key: 'process', name: '생산 공정', formatter:PlaceholderBox, width: 118,},
     {key: 'prediction_model', name: '예측 모델',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
     {key: 'prediction_code', name: '예측 CODE',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
@@ -1576,10 +1576,10 @@ export const columnlist: any = {
     // {key: 'code', frozen:true, name: 'CODE',  formatter:PlaceholderBox, width: 118,},
     // {key: 'product_name', frozen:true, name: '품명', formatter:PlaceholderBox, width: 118,},
     {key: 'process', name: '생산 공정', formatter:PlaceholderBox, width: 118,},
-    {key: 'prediction_model', name: '예측 모델',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'prediction_code', name: '예측 CODE',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'prediction_name', name: '예측 품명',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
-    {key: 'prediction_process', name: '예측 공정',  type: 'machineInfo', formatter:PlaceholderBox, width: 118},
+    {key: 'prediction_model', name: '예측 모델',  type: 'machineInfo', formatter:PlaceholderBox, width: 200},
+    {key: 'prediction_code', name: '예측 CODE',  type: 'machineInfo', formatter:PlaceholderBox, width: 230},
+    {key: 'prediction_name', name: '예측 품명',  type: 'machineInfo', formatter:PlaceholderBox, width: 230},
+    {key: 'prediction_process', name: '예측 공정',  type: 'machineInfo', formatter:PlaceholderBox, width: 200},
     {key: 'prediction_confidence', name : '예측 유사도' , width: 118},
     // {key: 'goal', name: '목표 생산량', width: 118},
     // {key: 'total_good_quantity', name : '총 카운터', width: 118},
