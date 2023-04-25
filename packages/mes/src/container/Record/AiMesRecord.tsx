@@ -143,7 +143,7 @@ const AiMesRecord = ({}: IProps) => {
         let tmpColumn = columnlist["aiRecordListV2"];
 
         tmpColumn.push({ key : 'confidence', name : '신뢰도',formatter:UnitContainer, unitData:"%", width: 118})
-        loadAllSelectItems({column:additionalMenus(tmpColumn, res), sortingOptions, setSortingOptions, setColumn});
+        // loadAllSelectItems({column:additionalMenus(tmpColumn, res), sortingOptions, setSortingOptions, setColumn});
     }
 
     const forSaveCleanUpData = (res:any) => {
@@ -234,6 +234,7 @@ const AiMesRecord = ({}: IProps) => {
                 sum: row?.operationRecord.good_quantity,
                 confidence: row?.confidence ? row.confidence.toFixed(4) * 100 : 0,
                 // id: `sheet_${random_id}`,
+                prediction: row.prediction_result,
                 molds: row.operationRecord?.molds,
                 tools: row.operationRecord?.tools,
                 worked_product: row.recordProductName?.length > 0 ? row.recordProductName : "-",
@@ -357,18 +358,14 @@ const AiMesRecord = ({}: IProps) => {
         <div className={'excelPageContainer'}>
             <PageHeader
                 title={"AI 작업 일보 리스트"}
-                buttons={["항목관리", "저장하기", "삭제",]}
+                buttons={["저장하기", "삭제",]}
                 buttonsOnclick={(e) => {
                     switch (e) {
                         case 0: {
-                            router.push(`/mes/item/manage/aiRecord`);
-                            break
-                        }
-                        case 1: {
                             SaveBasic()
                             break;
                         }
-                        case 2: {
+                        case 1: {
                             if (selectList.size === 0) {
                                 return Notiflix.Report.warning(
                                     "경고",
@@ -391,7 +388,6 @@ const AiMesRecord = ({}: IProps) => {
             <ExcelTable
                 editable
                 resizable
-                resizeSave
                 selectable
                 headerList={[
                     SelectColumn,
