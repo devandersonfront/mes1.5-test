@@ -21,7 +21,7 @@ import {
     setMenuSelectState,
 } from "shared/src/reducer/menuSelectState";
 import { useDispatch } from "react-redux";
-import {additionalMenus, getTableSortingOptions, setExcelTableHeight} from 'shared/src/common/Util'
+import {additionalMenus, getTableSortingOptions, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
 import addColumnClass from '../../../../main/common/unprintableKey'
 import { setModifyInitData } from 'shared/src/reducer/modifyInfo'
@@ -57,7 +57,7 @@ const MesRecordList = ({}: IProps) => {
 
     const onSelectDate = (date: {from:string, to:string}) => {
         setSelectDate(date)
-        reload(null, date)
+        reload(null, null, date)
     }
 
     const onRadioChange = (btnIdx:number) => {
@@ -65,7 +65,7 @@ const MesRecordList = ({}: IProps) => {
         reload(null, null, null, btnIdx)
     }
 
-    const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType, radioIdx?: number) => {
+    const reload = (keyword?:string, sortingOptions?: TableSortingOptionType, date?:{from:string, to:string}, radioIdx?: number) => {
         setKeyword(keyword)
         if(pageInfo.page > 1) {
             setPageInfo({...pageInfo, page: 1})
@@ -87,26 +87,26 @@ const MesRecordList = ({}: IProps) => {
         };
     }, []);
 
-    const loadAllSelectItems = (column: IExcelHeaderType[], date?: {from:string, to:string}, radioIdx?:number) => {
-        const changeOrder = (sort:string, order:string) => {
-            const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-            setSortingOptions(_sortingOptions)
-            reload(null, date, _sortingOptions, radioIdx)
-        }
-        let tmpColumn = column.map((v: any, index) => {
-            const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-            return {
-                ...v,
-                pk: v.unit_id,
-                sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-                sorts: v.sorts ? sortingOptions : null,
-                result: v.sortOption ? changeOrder : null,
-                sequence: v.sequence
-            }
-        });
-
-        setColumn(tmpColumn);
-    }
+    // const loadAllSelectItems = (column: IExcelHeaderType[], date?: {from:string, to:string}, radioIdx?:number) => {
+    //     const changeOrder = (sort:string, order:string) => {
+    //         const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+    //         setSortingOptions(_sortingOptions)
+    //         reload(null, date, _sortingOptions, radioIdx)
+    //     }
+    //     let tmpColumn = column.map((v: any, index) => {
+    //         const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+    //         return {
+    //             ...v,
+    //             pk: v.unit_id,
+    //             sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+    //             sorts: v.sorts ? sortingOptions : null,
+    //             result: v.sortOption ? changeOrder : null,
+    //             sequence: v.sequence
+    //         }
+    //     });
+    //
+    //     setColumn(tmpColumn);
+    // }
 
     const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType, radioIdx?: number) => {
         let params = {}
@@ -217,11 +217,12 @@ const MesRecordList = ({}: IProps) => {
 
 
     const convertColumn = (res, date?: {from:string, to:string}, radioIdx?:number) => {
-        loadAllSelectItems(additionalMenus(columnlist[radioIdx ? "cncRecordListV2InComplete" : "cncRecordListV2"],res), date, radioIdx);
+        loadAllSelectItems({column:additionalMenus(columnlist["cncRecordListV2"], res), sortingOptions, setSortingOptions, reload, setColumn, date});
+        // loadAllSelectItems(additionalMenus(columnlist[radioIdx ? "cncRecordListV2InComplete" : "cncRecordListV2"],res), date, radioIdx);
     }
 
     const cleanUpData = (res: any, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType, radioIdx?:number) => {
-        const _reload = () => reload(null, date, _sortingOptions, radioIdx)
+        const _reload = () => reload(null, _sortingOptions, date, radioIdx)
 
         let tmpBasicRow = res.info_list.map((row: any, index: number) => {
             let appendAdditional: any = {};

@@ -274,8 +274,8 @@ export interface TableSortingOptionType {
 
 export interface LoadItemTypes {
   column:IExcelHeaderType[]
-  sortingOptions: TableSortingOptionType
-  setSortingOptions:(TableSortingOptionType) => void
+  sortingOptions?: TableSortingOptionType
+  setSortingOptions?:(TableSortingOptionType) => void
   setColumn: (arr:Array<IExcelHeaderType>) => void
   reload?: (keyword?:string, sortingOptions?: TableSortingOptionType, date?:{from:string, to:string},) => void
   changeSetTypesState?: (value:number) => void

@@ -207,16 +207,15 @@ export const loadAllSelectItems = async ({column, sortingOptions, setSortingOpti
   }
 
   let tmpColumn = columnsSort(column).map((v: any) => {
-    const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+    const sortIndex =  sortingOptions == null ? null : sortingOptions?.sorts?.findIndex(value => value === v.key)
     return {
       ...v,
       pk: v?.unit_id,
-      sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+      sortOption: sortIndex !== null ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
       sorts: v.sorts ? sortingOptions : null,
       result: v.sortOption ? changeOrder : v.headerRenderer ? changeSetTypesState : null,
     }
   });
-
   Promise.all(tmpColumn).then(res => {
     setColumn([...res.map(v=> {
       return {
