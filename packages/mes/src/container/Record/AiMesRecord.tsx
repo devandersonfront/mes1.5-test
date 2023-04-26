@@ -21,10 +21,7 @@ import {
 } from "shared/src/reducer/menuSelectState";
 import { useDispatch } from "react-redux";
 import {
-    additionalMenus,
-    CheckRecordLotNumber,
-    getTableSortingOptions,
-    loadAllSelectItems,
+    CheckRecordLotNumber, getTableSortingOptions,
     setExcelTableHeight
 } from 'shared/src/common/Util'
 import { TableSortingOptionType } from 'shared/src/@types/type'
@@ -138,12 +135,80 @@ const AiMesRecord = ({}: IProps) => {
         }
     };
 
+    const loadAllSelectItems = (column: IExcelHeaderType[], date?: {from:string, to:string}, radioIdx?:number) => {
+        const changeOrder = (sort:string, order:string) => {
+            const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
+            setSortingOptions(_sortingOptions)
+            // reload(null, date, _sortingOptions, radioIdx)
+        }
+        let tmpColumn = column.map((v: any) => {
+            const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
+            return {
+                ...v,
+                pk: v.unit_id,
+                sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
+                sorts: v.sorts ? sortingOptions : null,
+                result: v.sortOption ? changeOrder : null,
+            }
+        });
+
+        setColumn(tmpColumn);
+    }
 
     const convertColumn = (res, date?: {from:string, to:string}, radioIdx?:number) => {
         let tmpColumn = columnlist["aiRecordListV2"];
+        const convertColumn = tmpColumn.map((column: any) => {
+            let menuData: object | undefined;
+            res.menus &&
+            res.menus.map((menu: any) => {
+                if (menu.colName === column.key) {
+                    menuData = {
+                        id: menu.id,
+                        name: menu.title,
+                        width: menu.width,
+                        tab: menu.tab,
+                        unit: menu.unit,
+                    };
+                } else if (menu.colName === "id" && column.key === "tmpId") {
+                    menuData = {
+                        id: menu.id,
+                        name: menu.title,
+                        width: menu.width,
+                        tab: menu.tab,
+                        unit: menu.unit,
+                    };
+                }
+            });
 
-        tmpColumn.push({ key : 'confidence', name : '신뢰도',formatter:UnitContainer, unitData:"%", width: 118})
-        // loadAllSelectItems({column:additionalMenus(tmpColumn, res), sortingOptions, setSortingOptions, setColumn});
+            if (menuData) {
+                return {
+                    ...column,
+                    ...menuData,
+                };
+            }
+        })
+            .filter((v: any) => v);
+
+        let additionalMenus = res.menus
+            ? res.menus
+                .map((menu: any) => {
+                    if (menu.colName === null) {
+                        return {
+                            id: menu.id,
+                            name: menu.title,
+                            width: menu.width,
+                            key: menu.title,
+                            editor: TextEditor,
+                            type: "additional",
+                            unit: menu.unit,
+                        };
+                    }
+                })
+                .filter((v: any) => v)
+            : [];
+
+        convertColumn.push({ key : 'confidence', name : '신뢰도',formatter:UnitContainer, unitData:"%", width: 118})
+        loadAllSelectItems([...convertColumn, ...additionalMenus], date, radioIdx);
     }
 
     const forSaveCleanUpData = (res:any) => {
