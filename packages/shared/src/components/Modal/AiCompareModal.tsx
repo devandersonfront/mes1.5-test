@@ -14,6 +14,11 @@ import {Select} from "@material-ui/core";
 import {MoldRegisterModal} from "./MoldRegisterModal";
 //@ts-ignore
 import IcX from "../../../public/images/ic_x.png";
+import {LineBorderContainer} from "../Formatter/LineBorderContainer";
+import {columnlist} from "../../common/columnInit";
+//@ts-ignore
+import Search_icon from "../../../public/images/btn_search.png";
+import {SearchInit} from "./SearchModalTest/SearchModalInit";
 
 interface IProps {
     row: any
@@ -24,9 +29,18 @@ interface IProps {
 const AiCompareModal =  ({row, column, setRow}: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [basic, setBasic] = useState<any[]>([])
+    const [subBasic, setSubBasic] = useState<any[]>([])
     const [selectRow, setSelectRow] = useState<number>(null)
+
+    const [selectState, setSelectState] = useState<"basic" | "sub">("basic")
+    const [searchModalInit, setSearchModalInit] = useState<any>(SearchInit.product)
+    const [keyword, setKeyword] = useState<string>("")
+    const [option, setOption] = useState<number>(0)
+    const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:1})
+
     useEffect(() => {
         if(isOpen){
+            setSelectRow(null)
             Notiflix.Loading.standard()
             axios.get(`${SF_AI_ADDRESS}/api/product_info/pair/${row.product_id}`,
                 {'headers': {'Authorization': cookie.load('userInfo').token},}
@@ -56,9 +70,120 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                                 Notiflix.Loading.remove()
                             }
                         })
+                    getProductDatas("basic")
                 })
         }
     }, [isOpen])
+
+    const getProductDatas = (type:"basic" | "sub", scrollEnd?:boolean) => {
+        RequestMethod("get", scrollEnd ? "productSearch" : "productList",{
+            path: {
+                page: scrollEnd ? pageInfo.page : 1,
+                renderItem: 18,
+            },
+            params:{keyword, opt:option}
+        })
+            .then((res) => {
+                if(res){
+                    // setSubBasic(res.info_list)
+                    let tmpBasic = res?.info_list?.map((product, index) => {
+                        return (
+                            {
+                                id: product.product_id,
+                                confirm_product:product.product_id,
+                                aor_id:row.ai_operation_record_id,
+                                predictionModel: product?.model?.model ?? "-",
+                                predictionCode: product.code,
+                                predictionName: product.name,
+                                predictionProcess: product.process.name,
+                                ranking:index+1,
+                                border:product.product_id == row.product_id
+                            }
+                        )
+                    })
+
+                    setSubBasic(scrollEnd ? subBasic.concat(tmpBasic) : tmpBasic)
+                    Notiflix.Loading.remove()
+                }
+            })
+    }
+
+
+    const SearchBox = () => {
+
+        return <div style={{
+            height: 32, margin: '16px 0 16px 16px',
+            display: 'flex',
+        }}>
+            <div style={{
+                width: 120, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                backgroundColor: '#F4F6FA', border: '0.5px solid #B3B3B3',
+                borderRight: 'none',
+            }}>
+                <select key={searchModalInit?.searchFilter[0]}
+                        defaultValue={searchModalInit?.searchFilter[0]}
+                        onChange={(e) => {
+                            const option = Number(e.target.value)
+                            setOption(option)
+                            // setPageInfo({total:1, page:1});
+                            // SearchBasic('', Number(e.target.value))
+                        }}
+                        style={{
+                            color: 'black',
+                            backgroundColor: '#00000000',
+                            border: 0,
+                            height: 32,
+                            width: 120,
+                            fontSize:15,
+                            fontWeight: 'bold'
+                        }}
+                >
+
+                    {
+                        searchModalInit && searchModalInit.searchFilter.map((v, i) => {
+                            if(v !== ""){
+                                return (<option key={i.toString()} value={i}>{v}</option>)
+                            }
+                        })
+                    }
+                </select>
+            </div>
+            <input
+                value={keyword ?? ""}
+                type={"text"}
+                placeholder="검색어를 입력해주세요."
+                onChange={(e) => {
+                    setKeyword(e.target.value)
+                    setPageInfo({total:1, page:1});
+                }}
+                onKeyDown={(e) => {
+                    if(e.key === 'Enter'){
+                        console.log("option : ", option, "  keyword : ", keyword)
+                        getProductDatas(selectState)
+                        // LoadBasic(1);
+                    }
+                }}
+                style={{
+                    width:1592,
+                    height:"32px",
+                    paddingLeft:"10px",
+                    border:"0.5px solid #B3B3B3",
+                    backgroundColor: 'rgba(0,0,0,0)'
+                }}
+            />
+            <div
+                className={'img_wrapper unprintable'}
+                style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
+                onClick={() => {
+                    console.log("option : ", option, "  keyword : ", keyword)
+                    getProductDatas(selectState)
+                    // LoadBasic(1);
+                }}
+            >
+                <img src={Search_icon} style={{width:"16px",height:"16px"}} />
+            </div>
+        </div>
+    }
 
     const content = () => {
         return (
@@ -88,7 +213,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                     fontSize: 22,
                     fontWeight: 'bold',
                     margin: 0,
-                }}>예측 순위</p>
+                }}>변경 제품</p>
 
             </div>
             <div id={'content-close-button'} style={{display: 'flex'}}>
@@ -107,9 +232,11 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
     }
 
     const confirmFunction = () => {
-        if(selectRow !== null && row.product_id !== basic[selectRow].product_id){
+        const data = selectState == "basic" ? basic : subBasic
+
+        if(selectRow !== null && row.product_id !== data[selectRow].product_id){
             Notiflix.Loading.standard()
-            RequestMethod("post", "aiRecordConfirm", {aor_id:basic[selectRow].aor_id, confirm_product:basic[selectRow].confirm_product})
+            RequestMethod("post", "aiRecordConfirm", {aor_id:data[selectRow].aor_id, confirm_product:data[selectRow].confirm_product})
                 .then((res) => {
                     Notiflix.Loading.remove()
                     Notiflix.Report.success("저장됐습니다.","","확인", () => {
@@ -119,8 +246,40 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                 })
             return
         }
+
         row.setModalOpen()
         setIsOpen(false)
+
+    }
+
+    const onClickEvent = (type:"basic" | "sub", clicked:any) => {
+        const datas = {basic, sub:subBasic}
+        const e = datas[type].indexOf(clicked)
+        const update = datas[type].map(
+            (row, index) => {
+                return {
+                    ...row,
+                    border: index === e
+                }
+            }
+        );
+        const unset = datas[type == "basic" ? "sub" : "basic"].map(
+            (row, index) => {
+                return {
+                    ...row,
+                    border: false
+                }
+            }
+        );
+        if(type == "basic"){
+            setBasic(update)
+            setSubBasic(unset)
+        }else{
+            setSubBasic(update)
+            setBasic(unset)
+        }
+        setSelectRow(e)
+        setSelectState(type)
 
     }
 
@@ -149,32 +308,46 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                     flexDirection: 'column',
                     justifyContent: 'space-between',
                 }}>
-                    {/*<div id={'content-root'}>*/}
+                <div id={'content-root'}>
                     {ContentHeader()}
+                    {SearchBox()}
+                    {/*{*/}
+                    {/*    (column.type == "product" && column.theme == "aiModal") &&*/}
+                    <div>
+                        <div style={{marginBottom:10}}>
+                            <ExcelTable
+                                type={'searchModal'}
+                                headerList={searchModalList.aiPredictionProduct}
+                                row={basic}
+                                onRowClick={(clicked) => {
+                                    onClickEvent("basic", clicked)
+                                }}
+                                width={1744}
+                                height={160}
+                            />
+                        </div>
+                    {/*}*/}
                         <ExcelTable
-                            resizable
-                            headerList={searchModalList.aiPredictionProduct}
-                            row={basic}
+                            // resizable
+                            type={'searchModal'}
+                            headerList={searchModalList.simpleProduct}
+                            row={subBasic}
                             width={1744}
                             rowHeight={32}
-                            height={640}
+                            height={480}
                             onRowClick={(clicked) => {
-                                const e = basic.indexOf(clicked)
-                                const update = basic.map(
-                                        (row, index) => {
-                                            return {
-                                                ...row,
-                                                border: index === e
-                                            }
-                                    }
-                                );
-                                setBasic(update)
-                                setSelectRow(e)
+                                onClickEvent("sub", clicked)
                             }}
-                            type={'searchModal'}
-                            // scrollEnd={(value) => {}}
+                            scrollEnd={(value) => {
+                                if(value){
+                                    setPageInfo({...pageInfo, page:pageInfo.page+1})
+                                    getProductDatas(selectState, true)
+                                }
+                            }}
                         />
-                    {/*</div>*/}
+
+                    </div>
+                </div>
                     <div style={{ height: 40, display: 'flex', alignItems: 'flex-end'}}>
                         <FooterButton
                             onClick={() => {
