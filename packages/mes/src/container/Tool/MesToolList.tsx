@@ -18,8 +18,9 @@ import Notiflix from "notiflix"
 import {useDispatch, useSelector} from "react-redux";
 import {setToolDataAdd} from "shared/src/reducer/toolInfo";
 import {deleteMenuSelectState, setMenuSelectState} from "shared/src/reducer/menuSelectState";
-import {columnsSort, setExcelTableHeight} from 'shared/src/common/Util'
+import {additionalMenus, columnsSort, loadAllSelectItems, setExcelTableHeight} from 'shared/src/common/Util'
 import addColumnClass from '../../../../main/common/unprintableKey'
+import {TableSortingOptionType} from "shared/src/@types/type";
 interface IProps {
     children?: any
     page?: number
@@ -31,13 +32,13 @@ const MesToolList = ({ page, search, option }: IProps) => {
     const router = useRouter();
     const dispatch = useDispatch();
     const [basicRow, setBasicRow] = useState<Array<any>>([]);
-    const [column, setColumn] = useState<any>(columnlist.toolList)
+    const [column, setColumn] = useState<any>(columnlist.toolRegister)
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionIndex, setOptionIndex] = useState<number>(0);
     const [pageInfo, setPageInfo] = useState<{ page: number, total: number }>({ page: 1, total: 1 });
     const [keyword, setKeyword] = useState<string>();
 
-    const reload = (keyword?:string, date?:{from:string, to:string}) => {
+    const reload = (keyword?:string, sortingOptions?: TableSortingOptionType, date?:{from:string, to:string},) => {
         setKeyword(keyword)
         if(pageInfo.page > 1) {
             setPageInfo({...pageInfo, page: 1})
@@ -90,62 +91,10 @@ const MesToolList = ({ page, search, option }: IProps) => {
     }
 
     const cleanUpData = (info_list: any) => {
-        let tmpColumn = columnlist["toolList"];
-        let tmpRow: Array<any> = []
-        tmpColumn = tmpColumn.map((column: any) => {
-            let menuData: object | undefined;
-            info_list.menus && info_list.menus.map((menu: any) => {
-                if (!menu.hide) {
-                    if (menu.colName === column.key) {
-                        menuData = {
-                            id: menu.mi_id,
-                            name: menu.title,
-                            width: menu.width,
-                            tab: menu.tab,
-                            unit: menu.unit,
-                            moddable: !menu.moddable,
-                            version: menu.version,
-                            sequence: menu.sequence,
-                            hide: menu.hide
-                        }
-                    } else if (menu.colName === 'id' && column.key === 'tmpId') {
-                        menuData = {
-                            id: menu.mi_id,
-                            name: menu.title,
-                            width: menu.width,
-                            tab: menu.tab,
-                            unit: menu.unit,
-                            moddable: !menu.moddable,
-                            version: menu.version,
-                            sequence: menu.sequence,
-                            hide: menu.hide
-                        }
-                    }
-                }
-            })
 
-            if (menuData) {
-                return {
-                    ...column,
-                    ...menuData
-                }
-            }
-        }).filter((v: any) => v)
+        loadAllSelectItems({column:additionalMenus(columnlist["toolList"], info_list), sortingOptions:null, setSortingOptions:null, reload, setColumn});
 
-
-        tmpRow = info_list.info_list
-
-        setColumn(columnsSort(tmpColumn))
-
-
-        let selectKey = ""
-        tmpColumn.map((v: any) => {
-            if (v.selectList) {
-                selectKey = v.key
-            }
-        })
-
-        let tmpBasicRow = tmpRow.map((row: any, index: number) => {
+        let tmpBasicRow = info_list.info_list.map((row: any, index: number) => {
             let appendAdditional: any = {}
             row.additional && row.additional.map((v: any) => {
                 appendAdditional = {
@@ -196,6 +145,7 @@ const MesToolList = ({ page, search, option }: IProps) => {
             />
             <ExcelTable
                 resizable
+                resizeSave
                 headerList={addColumnClass(column)}
                 row={basicRow}
                 setRow={(e) => {

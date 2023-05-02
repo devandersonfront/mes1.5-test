@@ -80,26 +80,6 @@ const MesOrderList = ({ page, search, option }: IProps) => {
     };
   }, []);
 
-  // const loadAllSelectItems = (column: IExcelHeaderType[], date?: {from:string, to:string}) => {
-  //   const changeOrder = (sort:string, order:string) => {
-  //     const _sortingOptions = getTableSortingOptions(sort, order, sortingOptions)
-  //     setSortingOptions(_sortingOptions)
-  //     reload(null, date, _sortingOptions)
-  //   }
-  //   let tmpColumn = column.map((v: any) => {
-  //         const sortIndex = sortingOptions.sorts.findIndex(value => value === v.key)
-  //         return {
-  //           ...v,
-  //           pk: v.unit_id,
-  //           sortOption: sortIndex !== -1 ? sortingOptions.orders[sortIndex] : v.sortOption ?? null,
-  //           sorts: v.sorts ? sortingOptions : null,
-  //           result: v.sortOption ? changeOrder : null,
-  //         }
-  //   });
-  //
-  //     setColumn(tmpColumn);
-  // };
-
   const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType) => {
     let params = {}
     if(keyword) {
@@ -139,7 +119,6 @@ const MesOrderList = ({ page, search, option }: IProps) => {
   const cleanUpData = (res: any,date?: {from:string, to:string}) => {
 
 
-    // loadAllSelectItems({column:tmpColumn.concat(additionalMenus(res)), sortingOptions, setSortingOptions, reload, setColumn, date});
     loadAllSelectItems({column:additionalMenus(columnlist["orderList"], res), sortingOptions, setSortingOptions, reload, setColumn, date});
 
     let tmpBasicRow = res.info_list.map((row: any, index: number) => {
@@ -318,6 +297,7 @@ const MesOrderList = ({ page, search, option }: IProps) => {
         <ExcelTable
           editable
           resizable
+          resizeSave
           selectable
           headerList={[
             SelectColumn,
