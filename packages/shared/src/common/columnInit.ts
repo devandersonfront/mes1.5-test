@@ -302,11 +302,11 @@ export const columnlist: any = {
         { pk: 2, name: 'SHEET' }
       ]
     },
-    { key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})) },
+    { key: 'stock', name: '원자재 재고량', formatter: UnitContainer, placeholder: "0", selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})),headerRenderer: HeaderSort, sortOption: "none", sorts: {}  },
     { key: 'price', name: '단가', editor: TextEditor, formatter: UnitContainer, placeholder: "0", unitData:"원", inputType: "number"},
     { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'safety_stock_status', name: '안전재고 사용', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
-    { key: 'customer_id', name: '거래처', formatter: UnitContainer, type: 'customer', placeholder: "-" },
+    { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
     { key: 'leadtime' , name : '발주 기준일' , inputType: 'number' },
     { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog"},
@@ -863,8 +863,8 @@ export const columnlist: any = {
 
 
   aiRecordListV2: [
-    { key:"contract_id", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
     { key:"identification", name:"지시 고유 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
+    { key:"contract_id", name:"수주 번호", formatter: SearchModalTest, type: 'operation', placeholder: '검색', noSelect:true, theme:"aiModal" },
     { key: "product_id", name: "CODE", width: 118, formatter: SearchModalTest, type: 'product', placeholder: '검색', noSelect:true, theme:"aiModal" },
     { key: "name", name: "품명", width: 118 },
     { key: "model", name: "모델", width: 118 },
@@ -1374,7 +1374,7 @@ export const columnlist: any = {
     {key: "date", name: '입고일', formatter: CalendarBox, maxDate:true},
   ],
   toolWarehousingList:[
-    // {key: 'elapsed', name: '경과일', formatter: UseDateCell, width: 118},
+    {key: 'elapsed', name: '경과일', formatter: UseDateCell, width: 118},
     {key: "tool_id", name: '공구 CODE',  formatter: PlaceholderBox, placeholder: 'CODE 입력'},
     {key: "name", name: '공구 품명', formatter: PlaceholderBox, placeholder: '품명 입력'},
     {key: "unit", name: '단위', formatter: PlaceholderBox,},

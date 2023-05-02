@@ -211,6 +211,12 @@ const BasicRawMaterial = ({readonly}: IProps) => {
       params['orders'] = _sortingOptions ? _sortingOptions.orders : sortingOptions.orders
       params['sorts'] = _sortingOptions ? _sortingOptions.sorts : sortingOptions.sorts
     }
+    if(safety_status == 2){
+      params['in_stock'] = true
+    }else{
+      // params['in_stock'] = null
+    }
+
       // params['safety_status'] = !!safety_status
     return params
   }
@@ -590,9 +596,10 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           isRadio
           radioValue={safety_status}
           onChangeRadioValues={(e) => {
+            setPageInfo({page:1, total:1})
             setSafety_status(e)
           }}
-          radioTexts={["전체", "안전재고 부족"]}
+          radioTexts={["전체", "안전재고 부족", "재고 있음"]}
         />
         <ExcelTable
           editable
