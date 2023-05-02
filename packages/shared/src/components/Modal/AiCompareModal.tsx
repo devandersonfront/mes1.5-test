@@ -16,6 +16,7 @@ import {MoldRegisterModal} from "./MoldRegisterModal";
 import IcX from "../../../public/images/ic_x.png";
 import {LineBorderContainer} from "../Formatter/LineBorderContainer";
 import {columnlist} from "../../common/columnInit";
+//@ts-ignore
 import Search_icon from "../../../public/images/btn_search.png";
 import {SearchInit} from "./SearchModalTest/SearchModalInit";
 
@@ -234,21 +235,20 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
         const data = selectState == "basic" ? basic : subBasic
 
         if(selectRow !== null && row.product_id !== data[selectRow].product_id){
-            console.log("result : ", data[selectRow], {aor_id:data[selectRow].aor_id, confirm_product:data[selectRow].confirm_product})
-        //     Notiflix.Loading.standard()
-        //     RequestMethod("post", "aiRecordConfirm", {aor_id:data[selectRow].aor_id, confirm_product:data[selectRow].confirm_product})
-        //         .then((res) => {
-        //             Notiflix.Loading.remove()
-        //             Notiflix.Report.success("저장됐습니다.","","확인", () => {
-        //                 row.setModalOpen()
-        //                 setIsOpen(false)
-        //             })
-        //         })
-        //     return
+            Notiflix.Loading.standard()
+            RequestMethod("post", "aiRecordConfirm", {aor_id:data[selectRow].aor_id, confirm_product:data[selectRow].confirm_product})
+                .then((res) => {
+                    Notiflix.Loading.remove()
+                    Notiflix.Report.success("저장됐습니다.","","확인", () => {
+                        row.setModalOpen()
+                        setIsOpen(false)
+                    })
+                })
+            return
         }
 
-        // row.setModalOpen()
-        // setIsOpen(false)
+        row.setModalOpen()
+        setIsOpen(false)
 
     }
 
