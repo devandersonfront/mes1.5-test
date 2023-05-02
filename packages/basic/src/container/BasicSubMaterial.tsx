@@ -88,8 +88,7 @@ const BasicSubMaterial = ({ }: IProps) => {
       });
       return result;
     };
-    let result = basicRow
-      .map((row, i) => {
+    let result = basicRow.map((row, i) => {
         if (selectList.has(row.id)) {
           selectCheck = true;
           if (!row.code) codeCheck = false;
@@ -101,7 +100,6 @@ const BasicSubMaterial = ({ }: IProps) => {
           });
 
           let selectData: any = {};
-
           Object.keys(row).map((v) => {
             if (v.indexOf("PK") !== -1) {
               selectData = {
@@ -124,15 +122,14 @@ const BasicSubMaterial = ({ }: IProps) => {
               };
             }
           });
-
           return {
             ...row,
             ...selectData,
-            customer: row.customer?.id ? row.customer : null,
+            customer: row.customer?.customer_id ? row.customer : null,
             additional: [
               ...additional
                 .map((v, index) => {
-                  //if(!row[v.colName]) return undefined;
+                  // if(!row[v.colName]) return undefined;
                   return {
                     mi_id: v.id,
                     title: v.name,
@@ -148,17 +145,8 @@ const BasicSubMaterial = ({ }: IProps) => {
         }
       })
       .filter((v) => v);
-
     if (selectCheck && codeCheck) {
-      let res = await RequestMethod("post", `subMaterialSave`, result).catch(
-        (error) => {
-          return (
-            error.data &&
-            Notiflix.Report.warning("경고", `${error.data.message}`, "확인")
-          );
-        }
-      );
-
+      let res = await RequestMethod("post", `subMaterialSave`, result)
       if (res) {
         Notiflix.Report.success("저장되었습니다.", "", "확인", () => reload());
       }
@@ -456,8 +444,8 @@ const BasicSubMaterial = ({ }: IProps) => {
 
           setSelectList(tmp)
           e.map((value, index) => {
-            if (value.customerArray) {
-              basicRow[index].customer = value;
+            if (value?.customerArray?.customer_id) {
+              basicRow[index].customer = value.customerArray;
             }
           })
 
@@ -467,8 +455,10 @@ const BasicSubMaterial = ({ }: IProps) => {
           selectList={selectList}
           //@ts-ignore
           setSelectList={setSelectList}
-          onRowClick={(clicked) => {const e = basicRow.indexOf(clicked)
-              setSelectRow(e)}}
+          onRowClick={(clicked) => {
+            const e = basicRow.indexOf(clicked)
+            setSelectRow(e)}
+          }
           width={1576}
           height={setExcelTableHeight(basicRow.length)}
         />

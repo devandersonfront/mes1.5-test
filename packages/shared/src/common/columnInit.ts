@@ -306,7 +306,7 @@ export const columnlist: any = {
     { key: 'price', name: '단가', editor: TextEditor, formatter: UnitContainer, placeholder: "0", unitData:"원", inputType: "number"},
     { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'safety_stock_status', name: '안전재고 사용', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
-    { key: 'customer_id', name: '거래처', formatter: UnitContainer, type: 'customer', placeholder: "-" },
+    { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
     { key: 'expiration', name: '사용기준일', formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
     { key: 'leadtime' , name : '발주 기준일' , inputType: 'number' },
     { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog"},
