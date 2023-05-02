@@ -99,80 +99,53 @@ const BasicCustomer = ({}: IProps) => {
 
 
   const getPostBody =() => {
-    const searchAiID = (rowAdditional: any[], index: number) => {
-      let result: number = undefined;
-      rowAdditional.map((addi, i) => {
-        if (index === i) {
-          result = addi.ai_id;
-        }
-      });
-      return result;
-    };
-    return basicRow
-      .map((row, i) => {
-        if (selectList.has(row.id)) {
-          let selectKey: string[] = [];
-          let additional: any[] = [];
-          column.map((v) => {
-            if (v.type === "additional") {
-              additional.push(v);
-            }
-          });
+    return basicRow.filter(row => selectList.has(row.id)).map(row => {
+      const additional = column.filter(col => col.type === "additional").map((col: any, idx) => ({
+        mi_id: col.id,
+        title: col.name,
+        value: row[col.colName] ?? "",
+        unit: col.unit,
+        ai_id: row.additional[idx],
+        version: row.additional[idx]?.version ?? undefined,
+      }))
 
-          let selectData: any = {};
-
-          Object.keys(row).map((v) => {
-            if (v.indexOf("PK") !== -1) {
-              selectData = {
-                ...selectData,
-                [v.split("PK")[0]]: row[v],
-              };
-            }
-            if (v === "unitWeight") {
-              selectData = {
-                ...selectData,
-                unitWeight: Number(row["unitWeight"]),
-              };
-            }
-
-            if (v === "photo") {
-              selectData = {
-                ...selectData,
-                photo: row["photo"]?.uuid,
-              };
-            }
-
-            if (v === "tmpId") {
-              selectData = {
-                ...selectData,
-                id: row["tmpId"],
-              };
-            }
-          });
-          return {
-            ...row,
+      let selectData: any = {};
+      Object.keys(row).map((v) => {
+        if (v.indexOf("PK") !== -1) {
+          selectData = {
             ...selectData,
-            additional: [
-              ...additional
-                .map((v, index) => {
-                  //if(!row[v.colName]) return undefined;
-                  // result.push(
-                  return {
-                    mi_id: v.id,
-                    title: v.name,
-                    value: row[v.colName] ?? "",
-                    unit: v.unit,
-                    ai_id: searchAiID(row.additional, index) ?? undefined,
-                    version: row.additional[index]?.version ?? undefined,
-                  };
-                  // )
-                })
-                .filter((v) => v),
-            ],
+            [v.split("PK")[0]]: row[v],
           };
         }
-      })
-      .filter((v) => v)
+        if (v === "unitWeight") {
+          selectData = {
+            ...selectData,
+            unitWeight: Number(row["unitWeight"]),
+          };
+        }
+
+        if (v === "photo") {
+          selectData = {
+            ...selectData,
+            photo: row["photo"]?.uuid,
+          };
+        }
+
+        if (v === "tmpId") {
+          selectData = {
+            ...selectData,
+            id: row["tmpId"],
+          };
+        }
+      });
+
+
+      return {
+        ...row,
+        ...selectData,
+        additional
+      }
+    })
   }
 
   const SaveBasic = async () => {
