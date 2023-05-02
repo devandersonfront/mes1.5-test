@@ -596,6 +596,7 @@ const BasicRawMaterial = ({readonly}: IProps) => {
           isRadio
           radioValue={safety_status}
           onChangeRadioValues={(e) => {
+            setPageInfo({page:1, total:1})
             setSafety_status(e)
           }}
           radioTexts={["전체", "안전재고 부족", "재고 있음"]}
