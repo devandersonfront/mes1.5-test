@@ -189,11 +189,6 @@ const HomeAiProductionLog = () => {
         requestInitApi()
     }, [modalOpen]);
 
-    useEffect(()=>{
-        // userInfo?.company === '4XX21Z' &&
-        setColumn(columnlist["aiProductLogDS"])
-    },[])
-
 
     return (
         <div>

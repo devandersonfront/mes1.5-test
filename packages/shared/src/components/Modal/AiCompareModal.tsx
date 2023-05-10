@@ -40,36 +40,40 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
 
     useEffect(() => {
         if(isOpen){
+            alert("?@??@??@?@?")
             setSelectRow(null)
             Notiflix.Loading.standard()
             axios.get(`${SF_AI_ADDRESS}/api/product_info/pair/${row.product_id}`,
                 {'headers': {'Authorization': cookie.load('userInfo').token},}
             )
                 .then((res) => {
-                    RequestMethod("get", "aipProductLoad",{
-                        params:{product_ids:[res.data.product_id, res.data.pair_product_id]}
-                    })
-                        .then((res) => {
-                            if(res){
-                                let tmpBasic = res?.map((product, index) => {
-                                    return (
-                                        {
-                                            id: product.product_id,
-                                            confirm_product:product.product_id,
-                                            aor_id:row.ai_operation_record_id,
-                                            predictionModel: product?.model?.model ?? "-",
-                                            predictionCode: product.code,
-                                            predictionName: product.name,
-                                            predictionProcess: product.process.name,
-                                            ranking:index+1,
-                                            border:product.product_id == row.product_id
-                                        }
-                                    )
-                                })
-                                setBasic(tmpBasic)
-                                Notiflix.Loading.remove()
-                            }
+                    console.log("S?DS?DS?DSD??SD : ", row)
+                    if(row.has_pair){
+                        RequestMethod("get", "aipProductLoad",{
+                            params:{product_ids:[res.data.product_id, res.data.pair_product_id]}
                         })
+                            .then((res) => {
+                                if(res){
+                                    let tmpBasic = res?.map((product, index) => {
+                                        return (
+                                            {
+                                                id: product.product_id,
+                                                confirm_product:product.product_id,
+                                                aor_id:row.ai_operation_record_id,
+                                                predictionModel: product?.model?.model ?? "-",
+                                                predictionCode: product.code,
+                                                predictionName: product.name,
+                                                predictionProcess: product.process.name,
+                                                ranking:index+1,
+                                                border:product.product_id == row.product_id
+                                            }
+                                        )
+                                    })
+                                    setBasic(tmpBasic)
+                                    Notiflix.Loading.remove()
+                                }
+                            })
+                    }
                     getProductDatas("basic")
                 })
         }
@@ -187,11 +191,11 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
 
     const content = () => {
         return (
-                <CellButton style={{width:"100%", height:"100%"}} disabled={!row.has_pair} onClick={() => {
-                    if(row.has_pair){
+                <CellButton style={{width:"100%", height:"100%"}}  onClick={() => {
+                    // if(row.has_pair){
                         setIsOpen(true)
                         row.setModalOpen()
-                    }
+                    // }
                 }}>
                     예측 품목 변경
                 </CellButton>
