@@ -193,11 +193,9 @@ export {BarcodeModal}
 
 
 const TitleContainer = Styled.div`
-
     display : flex;
     justify-content : space-between;
     align-items : center;
-
 `
 
 const TitleSpan = Styled.span`
