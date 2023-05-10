@@ -33,9 +33,9 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
     const [selectRow, setSelectRow] = useState<number>(null)
 
     const [selectState, setSelectState] = useState<"basic" | "sub">("basic")
-    const [searchModalInit, setSearchModalInit] = useState<any>(SearchInit.product)
+    const searchModalInit = ['', '모델', '코드', '품명']
     const [keyword, setKeyword] = useState<string>("")
-    const [option, setOption] = useState<number>(0)
+    const [option, setOption] = useState<number>(1)
     const [pageInfo, setPageInfo] = useState<{page:number, total:number}>({page:1, total:1})
 
     useEffect(() => {
@@ -76,7 +76,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
     }, [isOpen])
 
     const getProductDatas = (type:"basic" | "sub", scrollEnd?:boolean) => {
-        RequestMethod("get", scrollEnd ? "productSearch" : "productList",{
+        RequestMethod("get", "productSearch" ,{
             path: {
                 page: scrollEnd ? pageInfo.page : 1,
                 renderItem: 18,
@@ -120,8 +120,8 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                 backgroundColor: '#F4F6FA', border: '0.5px solid #B3B3B3',
                 borderRight: 'none',
             }}>
-                <select key={searchModalInit?.searchFilter[0]}
-                        defaultValue={searchModalInit?.searchFilter[0]}
+                <select key={searchModalInit[0]}
+                        defaultValue={searchModalInit[0]}
                         onChange={(e) => {
                             const option = Number(e.target.value)
                             setOption(option)
@@ -140,7 +140,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                 >
 
                     {
-                        searchModalInit && searchModalInit.searchFilter.map((v, i) => {
+                        searchModalInit.map((v, i) => {
                             if(v !== ""){
                                 return (<option key={i.toString()} value={i}>{v}</option>)
                             }
