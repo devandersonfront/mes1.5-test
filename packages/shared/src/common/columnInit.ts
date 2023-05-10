@@ -1543,7 +1543,6 @@ export const columnlist: any = {
     {key: 'valid_data', name: '유효 데이터수', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'download', name: '데이터 다운로드',  placeholder: '-'},
   ],
-
   // aiProductLog:[
   //   {key: 'pressStatus', frozen: true, name: '상태', width: 118},
   //   {key: 'machine_name', frozen:true, name: '기계 이름', formatter:PlaceholderBox, width: 118,},

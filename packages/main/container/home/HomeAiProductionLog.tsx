@@ -190,7 +190,6 @@ const HomeAiProductionLog = () => {
     }, [modalOpen]);
 
 
-
     return (
         <div>
             <PageHeader
