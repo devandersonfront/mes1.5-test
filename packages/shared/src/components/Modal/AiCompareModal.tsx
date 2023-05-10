@@ -40,14 +40,12 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
 
     useEffect(() => {
         if(isOpen){
-            alert("?@??@??@?@?")
             setSelectRow(null)
             Notiflix.Loading.standard()
             axios.get(`${SF_AI_ADDRESS}/api/product_info/pair/${row.product_id}`,
                 {'headers': {'Authorization': cookie.load('userInfo').token},}
             )
                 .then((res) => {
-                    console.log("S?DS?DS?DSD??SD : ", row)
                     if(row.has_pair){
                         RequestMethod("get", "aipProductLoad",{
                             params:{product_ids:[res.data.product_id, res.data.pair_product_id]}
@@ -162,7 +160,6 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                 }}
                 onKeyDown={(e) => {
                     if(e.key === 'Enter'){
-                        console.log("option : ", option, "  keyword : ", keyword)
                         getProductDatas(selectState)
                         // LoadBasic(1);
                     }
@@ -179,7 +176,6 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                 className={'img_wrapper unprintable'}
                 style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
                 onClick={() => {
-                    console.log("option : ", option, "  keyword : ", keyword)
                     getProductDatas(selectState)
                     // LoadBasic(1);
                 }}

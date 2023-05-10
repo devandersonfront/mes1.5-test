@@ -115,36 +115,32 @@ const BasicUser = ({}: IProps) => {
       if(!!row.password && !checkValid(row.password, 'password')) throw('비밀번호는 8자 이상 16자 이하이어야 하며, 숫자/영문/특수문자(#?!@$%^&*-)를 모두 포함해야 합니다.')
       if(row.alarm && !row.email) throw('이메일을 입력해주세요.')
       if(row.telephone && !checkValid(row.telephone, "telephone")) throw('전화번호 양식을 맞추주세요.')
-      if(alarmValidate("alarm", 1)) throw("SMS 알람은 1개 이상 선택할 수 없습니다.")
-      if(alarmValidate("email_alarm", 1)) throw("Email 알람은 1개 이상 선택할 수 없습니다.")
-      if(alarmValidate("product_email_alarm", 1)) throw("Email 알람(제품정보)은 1개 이상 선택할 수 없습니다.")
+      checkAlarmLimit(row)
   }
 
-  const alarmValidate = (key:string, length:number) => {
-    let count = 0
-    basicRow.map((row) => {
-      if(row[key] && row[key] !== undefined) count++
-    })
-    //true가 나오면 length보다 값이 많다는 뜻
-    if(count > length) return true
+  const checkAlarmLimit = (row: any) => {
+    const alarmKeys = ["alarm", "email_alarm", "product_email_alarm"]
+    const filtered = Object.keys(row).filter(key => alarmKeys.includes(key) && row[key])
+    if(filtered.length > 1) {
+      throw("알람 설정은 (SMS, Email, Email(제품)) 알람 중 1개만 선택할 수 있습니다.")
+    }
   }
+
   const SaveBasic = async () => {
     try{
       if(selectList.size === 0){
         throw(alertMsg.noSelectedData)
       }
-      basicRow.map((v,i) => {
-        if(selectList.has(v.id) && v?.email && v?.email.length < 0 && !email_reg.test(v.email)) {
+      basicRow.forEach((v,i) => {
+        if(selectList.has(v.rowKey) && v?.email && v?.email.length < 0 && !email_reg.test(v.email)) {
           throw("Email 형식을 맞춰주시기 바랍니다.")
         }
       })
-
       const addedColumn = column.filter(col => col.type === 'additional')
-      const postBody = basicRow.filter(row => selectList.has(row.id)).map(row => {
+      const postBody = basicRow.filter(row => selectList.has(row.rowKey)).map(row => {
         validate(row)
         return {
           ...row,
-          id: row.id,
           authority: row.authorityPK,
           profile: row.profile?.uuid,
           version: row.version ?? undefined,
@@ -169,81 +165,46 @@ const BasicUser = ({}: IProps) => {
     }
   };
 
-  const setAdditionalData = () => {
-    const addtional = [];
-    basicRow.map((row) => {
-      if (selectList.has(row.id)) {
-        column.map((v) => {
-          if (v.type === "additional") {
-            addtional.push(v);
-          }
-        });
-      }
-    });
-
-    return addtional;
-  };
-
   const convertDataToMap = () => {
     const map = new Map();
-    basicRow.map((v) => map.set(v.id, v));
+    basicRow.map((v) => map.set(v.rowKey, v));
     return map;
   };
 
   const filterSelectedRows = () => {
-    return basicRow
-      .map((row) => selectList.has(row.id) && row)
-      .filter((v) => v);
+    return basicRow.filter(row => selectList.has(row.rowKey))
   };
 
-  const classfyNormalAndHave = (selectedRows) => {
-    const haveIdRows = [];
+  const savedRows = (selectedRows) => {
+    return selectedRows.filter(row => row.user_id)
+  };
 
-    selectedRows.map((row: any) => {
-      if (row.user_id) {
-        haveIdRows.push(row);
-      }
-    });
-
-    return haveIdRows;
+  const notSavedRows = (selectedRows) => {
+    return selectedRows.filter(row => !!!row.user_id )
   };
 
   const DeleteBasic = async () => {
     const map = convertDataToMap();
     const selectedRows = filterSelectedRows();
-    const haveIdRows = classfyNormalAndHave(selectedRows);
-    const additional = setAdditionalData();
+    const haveIdRows = savedRows(selectedRows);
     let deletable = true;
 
     if (haveIdRows.length > 0) {
+      const toDelete = haveIdRows.map((row) => ({
+        ...row,
+        authority: row.authorityPK,
+      }))
       deletable = await RequestMethod(
         "delete",
         "memberDelete",
-        haveIdRows.map((row) => ({
-          ...row,
-          id: row.tmpId,
-          authority: row.authorityPK,
-          additional: [
-            ...additional
-              .map((v) => {
-                if (row[v.name]) {
-                  return {
-                    id: v.id,
-                    title: v.name,
-                    value: row[v.name],
-                    unit: v.unit,
-                  };
-                }
-              })
-              .filter((v) => v),
-          ],
-        }))
+        toDelete
       );
       reload();
     } else {
       selectedRows.forEach((row) => {
-        map.delete(row.id);
-      });
+          map.delete(row.rowKey);
+        });
+
       setBasicRow(Array.from(map.values()));
       setPageInfo({ page: pageInfo.page, total: pageInfo.total });
       setSelectList(new Set());
@@ -295,28 +256,21 @@ const BasicUser = ({}: IProps) => {
   };
 
   const changeRow = (row: any) => {
-    let tmpData = {};
+    const additional: any = (row.additional || {}).reduce((acc, curr) => {
+      acc[curr.mi_id] = curr.value
+      return acc
+    }, {});
 
-    if (row.additional && row.additional.length) {
-      row.additional.map((v) => {
-        tmpData = {
-          ...tmpData,
-          [v.key]: v.value,
-        };
-      });
-    }
+    const random_id = Math.random() * 1000;
 
     return {
-      user_id: row.user_id,
-      name: row.name,
-      appointment: row.appointment,
-      telephone: row.telephone,
-      email: row.email,
-      authority: row.authority.name,
-      authorityPK: row.authority.ca_id,
-      tmpId: row.id,
+      ...row,
+      authority: row.ca_id.name,
+      authorityPK: row.ca_id.ca_id,
+      rowKey: `user_${random_id}`,
       password: null,
-      ...tmpData,
+      additional: row.additional,
+      ...additional,
     };
   };
 
@@ -324,27 +278,9 @@ const BasicUser = ({}: IProps) => {
     loadAllSelectItems({column:additionalMenus(columnlist.member, res), sortingOptions, setSortingOptions, reload, setColumn});
 
     let tmpBasicRow = res.info_list.map((row: any, index: number) => {
-      let realTableData: any = changeRow(row);
-      let appendAdditional: any = {};
-
-      row.additional &&
-        row.additional.map((v: any) => {
-          appendAdditional = {
-            ...appendAdditional,
-            [v.mi_id]: v.value,
-          };
-        });
-
-      return {
-        ...row,
-        ...realTableData,
-        ...appendAdditional,
-        user_id:row.id,
-        authority: row.ca_id.name,
-        authorityPK: row.ca_id.ca_id,
-      };
+      return changeRow(row);
     });
-    setBasicRow([...tmpBasicRow]);
+    setBasicRow(tmpBasicRow);
   };
 
 
@@ -375,7 +311,7 @@ const BasicUser = ({}: IProps) => {
         setBasicRow([
           {
             ...items,
-            id: `user_${random_id}`,
+            rowKey: `user_${random_id}`,
             name: null,
             additional: [],
           },
@@ -422,7 +358,7 @@ const BasicUser = ({}: IProps) => {
     // 내가 선택한것중에 Master가 있어면 return false
     let isAuthority = false;
     basicRow.forEach((row) => {
-      if (selectList.has(row.id)) {
+      if (selectList.has(row.rowKey)) {
         if (row.authority === "MASTER") {
           isAuthority = true;
         }
@@ -492,7 +428,7 @@ const BasicUser = ({}: IProps) => {
             let newSelectList: Set<any> = selectList;
             e.map((v) => {
               if (v.isChange) {
-                newSelectList.add(v.id)
+                newSelectList.add(v.rowKey)
                 v.isChange = false
               }
             });
@@ -512,6 +448,7 @@ const BasicUser = ({}: IProps) => {
         setSelectList={setSelectList}
         width={1576}
         height={setExcelTableHeight(basicRow.length)}
+        rowKeyGetter={(row) => row.rowKey}
       />
       <PaginationComponent
         currentPage={pageInfo.page}

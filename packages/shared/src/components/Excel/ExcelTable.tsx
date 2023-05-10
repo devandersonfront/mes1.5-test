@@ -40,9 +40,10 @@ interface IProps {
   customHeaderRowHeight?: number
   onDoubleClick?: (row: Array<any>, col?:any) => void
   onRowClick?: (row: any) => void
+  rowKeyGetter?: (row: any) => any
 }
 
-const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff, onDoubleClick, onRowClick}: IProps) => {
+const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff, onDoubleClick, onRowClick, rowKeyGetter}: IProps) => {
   const [ selectedRows, setSelectedRows ] = useState<ReadonlySet<number>>(selectList ?? new Set())
 
   useEffect(() => {
@@ -53,8 +54,11 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
     setSelectList && setSelectList(selectedRows)
   }, [ selectedRows ])
 
-  const rowKeyGetter = (row: any) => {
-    return row?.id;
+  const _rowKeyGetter = (row: any) => {
+    if(rowKeyGetter != null) {
+      return rowKeyGetter(row)
+    } else {
+      return row?.id}
   }
 
   const scrollState = () => {
@@ -115,7 +119,7 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
       //@ts-ignore
       rowClass={(row) => row?.border ? 'selectRow' : undefined}
       headerRowHeight={customHeaderRowHeight ?? 40}
-      rowKeyGetter={rowKeyGetter}
+      rowKeyGetter={_rowKeyGetter}
       className={className}
       columns={headerList}
       rows={row?.length > 0 ? row : []}

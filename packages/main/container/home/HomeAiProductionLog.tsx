@@ -75,7 +75,7 @@ const HomeAiProductionLog = () => {
     }
 
     const mappingData = (machines : any[] , status ?: any []) => {
-        return machines.map((result, index)=>(
+        return machines?.map((result, index)=>(
             {
                 ...result ,
                 pressStatus : status && status[index]?.pressStatus ,
@@ -101,12 +101,12 @@ const HomeAiProductionLog = () => {
         if(!value.code || value.code === '-'){
             return true
         }
-        const codeCheck = value.prediction_code === value.code
-        const modelCheck = value.prediction_model === value.model
-        const nameCheck = value.prediction_name === value.product_name
+        // const codeCheck = value.prediction_code === value.code
+        // const modelCheck = value.prediction_model === value.model
+        // const nameCheck = value.prediction_name === value.product_name
         const processCheck = value.prediction_process === value.process
 
-        return codeCheck && modelCheck && nameCheck && processCheck
+        return processCheck
     }
 
     const getMachineData = async (pages : number = 1) => {
@@ -167,8 +167,8 @@ const HomeAiProductionLog = () => {
 
     const requestInitApi = async () => {
         const machineData = await getMachineData()
-        const codes = machineData.map((result) => result.machine_code)
-        const statusData = await getStatusData(codes.join(','))
+        const codes = machineData?.map((result) => result.machine_code)
+        const statusData = await getStatusData(codes?.join(','))
         setData(mappingData(machineData,statusData))
     }
 
