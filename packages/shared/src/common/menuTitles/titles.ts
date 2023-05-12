@@ -1,6 +1,7 @@
 export const titles = {
     home: 'HOME',
     _productLog : '생산현황',
+    _notice: '공지사항',
     _aiProductLog : 'AI 생산 제품 현황',
     basicMgmt: '기준정보 관리',
     mes: 'MES',
