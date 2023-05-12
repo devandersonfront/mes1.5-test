@@ -11,8 +11,9 @@ export const toAuth = (title: string, show: boolean, checkable: boolean, check: 
 
 export const HomeTitles = (customTarget?:string) => {
   const homeDefault = {
-    home : toMenu(titles.home , '', customTarget === 'ai' ? ['_aiProductLog','_productLog'] : ['_productLog']),
+    home : toMenu(titles.home , '', customTarget === 'ai' ? ['_aiProductLog','_productLog', '_notice'] : ['_productLog', '_notice']),
     _productLog : toMenu(titles._productLog, '/mes/home/productLog'),
+    _notice : toMenu(titles._notice, 'https://sizl-dev.notion.site/361da79588284923bad7a4dc4571a8b1'),
   }
   switch (customTarget) {
     case 'ai' : return {
