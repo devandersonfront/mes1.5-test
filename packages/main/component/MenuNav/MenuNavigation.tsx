@@ -197,7 +197,9 @@ const MenuNavigation = ({pageType, subType}: IProps) => {
                                     third: [...tmpSubMenus],
                                   }))
                                 } else if(sub.url) {
-                                  router.push(sub.url)
+                                  if(sub.url.includes("notion.site")) window.open(sub.url)
+                                  else router.push(sub.url)
+                                  // router.push(sub.url)
                                 }
                               }} selectSub={sub.url === selectMenu.sub}>
                                 <p style={{fontSize: 13, paddingLeft: 12}}>· {sub.title}</p>
