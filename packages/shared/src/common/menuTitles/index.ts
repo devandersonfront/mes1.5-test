@@ -13,7 +13,7 @@ export const HomeTitles = (customTarget?:string) => {
   const homeDefault = {
     home : toMenu(titles.home , '', customTarget === 'ai' ? ['_aiProductLog','_productLog', '_notice'] : ['_productLog', '_notice']),
     _productLog : toMenu(titles._productLog, '/mes/home/productLog'),
-    _notice : toMenu(titles._notice, process.env.NEXT_PUBLIC_SF_ENDPOINT_NOTICE),
+    _notice : toMenu(titles._notice, process.env.NEXT_PUBLIC_NOTICE_ADDRESS),
   }
   switch (customTarget) {
     case 'ai' : return {
