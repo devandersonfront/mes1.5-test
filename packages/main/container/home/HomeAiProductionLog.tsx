@@ -114,7 +114,7 @@ const HomeAiProductionLog = () => {
         const tokenData = userInfo?.token;
         try {
             const result  = await axios.get(`${SF_ENDPOINT}/api/v1/sheet/ai/monitoring/list/${pages}/20`,{
-                params : { rangeNeeded : true , distinct : 'mfrCode'},
+                params : { rangeNeeded : true , distinct : 'mfrCode', status:'0,3,4'},
                 headers : { Authorization : tokenData },
             })
             const machineData = result?.data?.info_list
