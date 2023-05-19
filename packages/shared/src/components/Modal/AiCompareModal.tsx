@@ -40,6 +40,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
 
     useEffect(() => {
         if(isOpen){
+            onClickEvent()
             setSelectRow(null)
             Notiflix.Loading.standard()
             axios.get(`${SF_AI_ADDRESS}/api/product_info/pair/${row.product_id}`,
@@ -63,7 +64,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                                                 predictionName: product.name,
                                                 predictionProcess: product.process.name,
                                                 ranking:index+1,
-                                                border:product.product_id == row.product_id
+                                                // border:product.product_id == row.product_id
                                             }
                                         )
                                     })
@@ -72,12 +73,18 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                                 }
                             })
                     }
-                    getProductDatas("basic")
+                    getProductDatas()
                 })
+        }
+        return () => {
+            setPageInfo({page:1, total:1})
         }
     }, [isOpen])
 
-    const getProductDatas = (type:"basic" | "sub", scrollEnd?:boolean) => {
+    useEffect(() => {
+        if(isOpen) getProductDatas(true)
+    },[pageInfo.page])
+    const getProductDatas = ( scrollEnd?:boolean, search?:boolean) => {
         RequestMethod("get", "productSearch" ,{
             path: {
                 page: scrollEnd ? pageInfo.page : 1,
@@ -99,13 +106,20 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                                 predictionName: product.name,
                                 predictionProcess: product.process.name,
                                 ranking:index+1,
-                                border:product.product_id == row.product_id
+                                // border:product.product_id == row.product_id
                             }
                         )
                     })
-
-                    setSubBasic(scrollEnd ? subBasic.concat(tmpBasic) : tmpBasic)
-                    Notiflix.Loading.remove()
+                    if(search){
+                        setSubBasic(tmpBasic)
+                        setPageInfo({page:res.page, total:res.totalPages})
+                        Notiflix.Loading.remove()
+                    }
+                    else if(res.totalPages >= res.page){
+                        setSubBasic(scrollEnd ? subBasic.concat(tmpBasic) : tmpBasic)
+                        setPageInfo({page:res.page, total:res.totalPages})
+                        Notiflix.Loading.remove()
+                    }
                 }
             })
     }
@@ -160,7 +174,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                 }}
                 onKeyDown={(e) => {
                     if(e.key === 'Enter'){
-                        getProductDatas(selectState)
+                        getProductDatas(undefined, true)
                         // LoadBasic(1);
                     }
                 }}
@@ -176,7 +190,7 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                 className={'img_wrapper unprintable'}
                 style={{background:"#19B9DF", width:"32px",height:"32px",display:"flex",justifyContent:"center",alignItems:"center", cursor: 'pointer'}}
                 onClick={() => {
-                    getProductDatas(selectState)
+                    getProductDatas()
                     // LoadBasic(1);
                 }}
             >
@@ -252,8 +266,27 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
 
     }
 
-    const onClickEvent = (type:"basic" | "sub", clicked:any) => {
+    const onClickEvent = (type?:"basic" | "sub" , clicked?:any) => {
         const datas = {basic, sub:subBasic}
+        if(type == null || type == undefined){
+            setBasic(basic.map(
+                (row, index) => {
+                    return {
+                        ...row,
+                        border: false
+                    }
+                }
+            ))
+            setSubBasic(subBasic.map(
+                (row, index) => {
+                    return {
+                        ...row,
+                        border: false
+                    }
+                }
+            ))
+            return
+        }
         const e = datas[type].indexOf(clicked)
         const update = datas[type].map(
             (row, index) => {
@@ -274,8 +307,11 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
         if(type == "basic"){
             setBasic(update)
             setSubBasic(unset)
-        }else{
+        }else if(type == "sub"){
             setSubBasic(update)
+            setBasic(unset)
+        }else{
+            setSubBasic(unset)
             setBasic(unset)
         }
         setSelectRow(e)
@@ -340,8 +376,9 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
                             }}
                             scrollEnd={(value) => {
                                 if(value){
-                                    setPageInfo({...pageInfo, page:pageInfo.page+1})
-                                    getProductDatas(selectState, true)
+                                    if(pageInfo.page !== pageInfo.total){
+                                        setPageInfo({...pageInfo, page:pageInfo.page+1})
+                                    }
                                 }
                             }}
                         />
