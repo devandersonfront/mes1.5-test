@@ -328,7 +328,7 @@ const AiMesRecord = ({}: IProps) => {
                     }else if(!v.operation_sheet) {
                         throw(alertMsg.noOperation)
                     }else if(v.bom == null){
-                        throw(alertMsg.needsBom)
+                        throw("해당 제품의 BOM 재고가 부족합니다.")
                     }
                     if(v.molds?.length > 0) {
                         v.bom.map(bom => {
