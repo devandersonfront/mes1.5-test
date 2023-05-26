@@ -307,7 +307,7 @@ export const columnlist: any = {
     { key: 'safety_stock', name: '안전재고량', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'safety_stock_status', name: '안전재고 사용', editor: TextEditor, formatter: UnitContainer, placeholder: "0", inputType: 'number', toFix: 2, selectList: RAW_MATERIAL_UNIT_CODE.map(unit => ({pk: unit.code, name:unit.value})), fixed:true},
     { key: 'customer_id', name: '거래처', formatter: SearchModalTest, type: 'customer', placeholder: "-" },
-    { key: 'expiration', name: '사용기준일', formatter: UnitContainer, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
+    { key: 'expiration', name: '사용기준일', formatter: UnitContainer, editor: TextEditor, unitData: '일', placeholder: '기준일 입력', inputType: 'number', },
     { key: 'leadtime' , name : '발주 기준일' , inputType: 'number' },
     { key: 'log', name: '단가 변경 이력', width:118, formatter: AddlButton, url:"/mes/basic/rawmaterialV1u/priceLog"},
   ],
@@ -1543,7 +1543,6 @@ export const columnlist: any = {
     {key: 'valid_data', name: '유효 데이터수', formatter:PlaceholderBox, placeholder: '-'},
     {key: 'download', name: '데이터 다운로드',  placeholder: '-'},
   ],
-
   // aiProductLog:[
   //   {key: 'pressStatus', frozen: true, name: '상태', width: 118},
   //   {key: 'machine_name', frozen:true, name: '기계 이름', formatter:PlaceholderBox, width: 118,},
