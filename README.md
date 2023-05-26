@@ -56,7 +56,8 @@ shared - 재사용하는 컴포넌트나 column의 관련된 파일을 담당
 + NVM => n : v8.0.1
 + YARN : v1.22.17
 
-
+***
+ 
     AWS 접속 및 node, npm , yarn , forever 설치 
     npm install next
     npm install lerna -global
@@ -83,6 +84,7 @@ dependency 오류 시 해결방법
 
 <span style="color:red">첫번째, npm config set legacy-peer-deps true 후 npm install</span> </br>
 <span style="color:red">두번쨰, ~/.npmrc -> legacy-peer-deps = true</span>
+
 
 
 
