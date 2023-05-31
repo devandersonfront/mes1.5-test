@@ -20,7 +20,7 @@ shared - 재사용하는 컴포넌트나 column의 관련된 파일을 담당
 ## 2.1 업체 서버의 폴더 구성 
 
 + MES_CLOUD (MES)
-+ MES_CLOUD_AI (MES AI)
++ MES_CLOUD_AI (MES AI) ❖ 같은 MES_CLOUD repo를 사용하지만 .env.local에 선언된 값이 다름
 + [sizl-pms-mes-vhost2 (PROXY,PMS,PMS AI)](https://github.com/SIZLcorp/sizl-proxy-vhost)
 
 ## 2.2 .env 파일 구성
