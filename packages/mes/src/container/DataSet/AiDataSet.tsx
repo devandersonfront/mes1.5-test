@@ -94,8 +94,8 @@ const AiDataSet = () => {
         setPageInfo({page:data.page, total:data.totalPages})
     }
     useEffect(() => {
-        getData(pageInfo.page)
-    },[pageInfo.page])
+        getData()
+    },[])
     useEffect(() => {
         dispatch(setMenuSelectState({ main: "AI 데이터셋", sub: "/mes/ai/dataset" }));
         return () => {
@@ -119,6 +119,7 @@ const AiDataSet = () => {
                 currentPage={pageInfo.page}
                 totalPage={pageInfo.total}
                 setPage={(page) => {
+                    getData(page)
                     setPageInfo({...pageInfo, page: page})
                 }}
             />
