@@ -40,11 +40,15 @@ const AiCompareModal =  ({row, column, setRow}: IProps) => {
 
     useEffect(() => {
         if(isOpen){
+            const userInfo = cookie.load('userInfo')
             onClickEvent()
             setSelectRow(null)
             Notiflix.Loading.standard()
             axios.get(`${SF_AI_ADDRESS}/api/product_info/pair/${row.product_id}`,
-                {'headers': {'Authorization': cookie.load('userInfo').token},}
+                {
+                    params : {company_code : userInfo.company},
+                    'headers': {'Authorization': cookie.load('userInfo').token}
+                }
             )
                 .then((res) => {
                     if(row.has_pair){
