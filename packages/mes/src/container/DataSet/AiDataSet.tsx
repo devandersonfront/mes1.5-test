@@ -60,7 +60,7 @@ const AiDataSet = () => {
             params: {
                 page: page,
                 pageSize: 18,
-                company_code:cookie.load("userInfo").company
+                company:cookie.load("userInfo").company
             },
         });
 
