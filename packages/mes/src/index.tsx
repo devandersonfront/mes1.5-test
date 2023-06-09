@@ -4,6 +4,9 @@ export {MesOperationRegister} from './container/Operation/MesOperationRegister'
 export {MesOperationList} from './container/Operation/MesOperationList'
 export {MesOperationModify} from './container/Operation/MesOperationModify'
 
+//작업지시서 DS 전용
+export {MesOperationList as MesOperationListDS} from './container/Operation/DS/MesOperationList'
+
 //불량 이력 관리
 
 export {MesDefectRegister} from './container/Defect/MesDefectRegister'
