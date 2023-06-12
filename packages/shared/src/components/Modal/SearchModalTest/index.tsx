@@ -299,7 +299,7 @@ const SearchModalTest = ({column, row, onRowChange}: IProps) => {
     }
 
     if(column.type == "product" && column.theme == "aiModal"){
-      const aiResult = await axios.get(`${SF_AI_ADDRESS}/api/product_sim_info/${userInfo.company_code}/${forRankingData.mfr_code}/${forRankingData.product_id}`,
+      const aiResult = await axios.get(`${SF_AI_ADDRESS}/api/product_sim_info/${userInfo.company}/${forRankingData.mfr_code}/${forRankingData.product_id}`,
           {
             'headers': {'Authorization': tokenData}
           })
