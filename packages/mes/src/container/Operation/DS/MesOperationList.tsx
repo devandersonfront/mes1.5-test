@@ -11,6 +11,7 @@ import styled from "styled-components";
 import moment from "moment";
 import BasicModal from "../../../../../shared/src/components/Modal/BasicModal";
 import {MesOperationList as MesOperationDetailList} from '../MesOperationList'
+import { MultiSelect } from '@mantine/core';
 
 
 type RecordType = {
@@ -24,7 +25,9 @@ type RecordType = {
 
 const MesOperationList = () => {
 
-    const recordColumn = [
+    const column = [
+        {key : 'date' , name : '작업일자'},
+        {key : 'machine' , name : '기계'},
         {key : 'model' , name : '모델'},
         {key : 'code' , name : 'CODE'},
         {key : 'product_name' , name : '품목명'},
@@ -37,24 +40,12 @@ const MesOperationList = () => {
         }}
     ]
 
-    const [operationDate , setOperationDate] = useState<Array<{date : string , id : number}>>([
-        {date : '2023-05-14' , id : 1},
-        {date : '2023-05-15' , id : 2},
-        {date : '2023-05-15' , id : 3},
-        {date : '2023-05-15' , id : 4},
-        {date : '2023-05-15' , id : 5},
-        {date : '2023-05-15' , id : 6},
-    ])
+    const [recordDate] = useState<string[]>(['React', 'Angular', 'Svelte', 'Vue', 'Riot', 'Next.js', 'Blitz.js'])
+    const [selectRecordDate , setSelectRecordDate] = useState<string[]>([])
+    const [machine] = useState<string[]>(['A','B','C','D','E'])
+    const [selectMachine , setSelectMachine] = useState<string[]>([])
 
-    const [machines , setMachines] = useState<Array<{machine_name : string , id : number}>>([
-        {machine_name : '400ton 피더 프레스' , id : 1},
-        {machine_name : '250ton 피더 프레스' , id : 2},
-        {machine_name : '250ton 피더 프레스' , id : 3},
-        {machine_name : '250ton 피더 프레스' , id : 4},
-        {machine_name : '250ton 피더 프레스' , id : 5},
-    ])
-
-    const [record, setRecord] = useState<RecordType[]>([
+    const [recordList, setRecordList] = useState<RecordType[]>([
         {model : 'NQ' , code : '65-wt', product_name : '브라켓 1차' , quantity : '1000' , time :'08:30 ~ 11:30'},
         {model : 'SQ' , code : '85-wt', product_name : '브라켓 2차' , quantity : '2000' , time :'09:30 ~ 12:30'}
     ])
@@ -66,10 +57,13 @@ const MesOperationList = () => {
 
     const [isVisible , setIsVisible] = useState<boolean>(false)
 
-    const getOperationDate = async () => {
+    const getOperationDateApi = async () => {
         const result = RequestMethod('get','operationDate',{
             params : {date : {from : selectDate.from , to : selectDate.to}}
         })
+        if(result){
+            // setRecordDate()
+        }
     }
 
     const getMachinesApi = (operationDateId : number) => {
@@ -77,23 +71,20 @@ const MesOperationList = () => {
         //     params : {operationDateId : operationDateId}
         // })
     }
-    const getRecordApi = (machineId : number) => {
+    const getRecordListAPi= () => {
         // const result = RequestMethod('get','operationRecords',{
         //     params : {machineId : machineId}
         // })
     }
 
-    const buttonsOnclick = async (index : number) => {
-        switch (index) {
-            case 0 : {
-                return await getOperationDate()
-            }
-        }
-    }
-
     const onClickInfoButton = () => {
         setIsVisible(true)
     }
+
+    useEffect(()=>{
+        getRecordListAPi()
+    },[])
+
 
     return (
         <>
@@ -105,43 +96,45 @@ const MesOperationList = () => {
                 selectDate={selectDate}
                 //@ts-ignore
                 setSelectDate={setSelectDate}
-                buttons={['조회']}
-                buttonsOnclick={buttonsOnclick}
             />
-            <MesOperationContainer>
-                <DateTableSection>
-                    <ExcelTable
-                        width={'100%'}
-                        showColorOnClick
-                        headerList={[{key : 'date' , name : '작업일자'}]}
-                        row={operationDate}
-                        onRowClick={(selectedRow) => {
-                            const operationDateId = selectedRow.id
-                            getMachinesApi(operationDateId)
-                        }}
-                    />
-                </DateTableSection>
-                <MachineTableSection>
-                    <ExcelTable
-                        width={'100%'}
-                        showColorOnClick
-                        headerList={[{key : 'machine_name' , name : '기계'}]}
-                        row={machines}
-                        onRowClick={(selectedRow) => {
-                            const machineId = selectedRow.id
-                            getRecordApi(machineId)
-                        }}
-                    />
-                </MachineTableSection>
-                <RecordTableSection>
-                    <ExcelTable
-                        width={'100%'}
-                        showColorOnClick
-                        headerList={recordColumn}
-                        row={record}
-                    />
-                </RecordTableSection>
-            </MesOperationContainer>
+            <MultiSelectContainer>
+                <MultiSelect
+                    data={recordDate}
+                    onChange={setSelectRecordDate}
+                    label="작업일자"
+                    placeholder="검색할 작업일자를 선택해주세요"
+                    styles={{
+                        root : {
+                            minWidth : 300,
+                        },
+                        label : {
+                            color : '#FFFFFF'
+                    }}}
+                    clearButtonProps={{ 'aria-label': 'Clear selection' }}
+                    clearable
+                />
+                <MultiSelect
+                    data={machine}
+                    onChange={setSelectMachine}
+                    label="기계"
+                    placeholder="검색할 기계를 선택해주세요"
+                    styles={{
+                        root : {
+                            minWidth : 300,
+                        },
+                        label : {
+                            color : '#FFFFFF'
+                    }}}
+                    clearButtonProps={{ 'aria-label': 'Clear selection' }}
+                    clearable
+                />
+            </MultiSelectContainer>
+            <ExcelTable
+                width={'100%'}
+                headerList={column}
+                setRow={setRecordList}
+                row={recordList}
+            />
             <BasicModal backgroundColor={'DARKBLUE'} isOpen={isVisible} onClose={()=>{setIsVisible(false)}}>
                 <MesOperationDetailList isDetail/>
             </BasicModal>
@@ -162,20 +155,8 @@ export const getServerSideProps = (ctx: NextPageContext) => {
 
 export {MesOperationList};
 
-const MesOperationContainer = styled.div`
-    display : flex;
-    width : 1500px;
-    gap : 3%;
-`
-
-const DateTableSection = styled.div`
-    flex : 1 0 15%;   
-`
-const MachineTableSection = styled.div`
-    flex : 1 0 20%;
-`
-const RecordTableSection = styled.div`
-    flex : 1 0 55%;
+const MultiSelectContainer = styled.div`
+    margin-bottom : 10px;
 `
 
 const ModalInfoButton = styled.div`

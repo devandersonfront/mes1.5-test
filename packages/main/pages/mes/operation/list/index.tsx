@@ -16,12 +16,11 @@ interface IProps {
 const BasicContainer = ({page, keyword, option}: IProps) => {
 
     return (
-        <div style={{display: 'flex', }}>
-
+        <div style={{display: 'flex'}}>
             <MenuNavigation pageType={'MES'}/>
-            <div style={{paddingBottom: 40}}>
+            <div style={{paddingBottom: 40, width : '100%'}}>
                 <ProfileHeader/>
-                <MesOperationListDS page={page} search={keyword} option={option}/>
+                <MesOperationListDS />
             </div>
         </div>
     );
