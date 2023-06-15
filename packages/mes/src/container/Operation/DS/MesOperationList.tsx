@@ -126,7 +126,7 @@ const MesOperationList = () => {
                 isCalendar
                 calendarTitle={'작업 기한'}
                 calendarType={'period'}
-                title={'작업일보 리스트 - 2'}
+                title={'작업지시서 리스트 - 2'}
                 selectDate={selectDate}
                 //@ts-ignore
                 setSelectDate={setSelectDate}
@@ -139,12 +139,18 @@ const MesOperationList = () => {
                     placeholder="검색할 작업일자를 선택해주세요"
                     styles={{
                         root : {
+                            backgroundColor : 'inherit',
                             marginRight : 10,
                             minWidth : 300,
                         },
                         label : {
                             color : '#FFFFFF'
-                    }}}
+                        },
+                        input : {
+                            backgroundColor : 'inherit',
+                            color : '#FFFFFF'
+                        }
+                    }}
                     clearButtonProps={{ 'aria-label': 'Clear selection' }}
                     clearable
                 />
@@ -155,12 +161,18 @@ const MesOperationList = () => {
                     placeholder="검색할 기계를 선택해주세요"
                     styles={{
                         root : {
+                            backgroundColor : 'inherit',
                             marginRight : 10,
                             minWidth : 300,
                         },
                         label : {
                             color : '#FFFFFF'
-                    }}}
+                        },
+                        input : {
+                            backgroundColor : 'inherit',
+                            color : '#FFFFFF'
+                        }
+                    }}
                     clearButtonProps={{ 'aria-label': 'Clear selection' }}
                     clearable
                 />
