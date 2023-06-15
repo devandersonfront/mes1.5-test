@@ -29,11 +29,12 @@ interface IProps {
   option?: number
   todayOnly?: boolean
   isDetail?: boolean
+  row : any
 }
 
 const optionList = ['지시 고유 번호', '거래처명', '모델', 'CODE', '품명']
 
-const MesOperationList = ({page, search, option, todayOnly,isDetail}: IProps) => {
+const MesOperationList = ({todayOnly,isDetail,row}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 

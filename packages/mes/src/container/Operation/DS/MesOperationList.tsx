@@ -22,6 +22,13 @@ type RecordType = {
     time : string
 }
 
+type MachineType = {
+    machineId: number,
+    mfrCode: string,
+    type: string,
+    mfrName?: string,
+    name?: string
+}
 
 const MesOperationList = () => {
 
@@ -33,58 +40,85 @@ const MesOperationList = () => {
         {key : 'product_name' , name : '품목명'},
         {key : 'quantity' , name : '수량'},
         {key : 'time' , name : '시간'},
-        {key : 'detail' , name : '상세보기', formatter : ({row}) => {
+        {key : 'detail' , name : '상세보기', formatter : ({row, onRowChange}) => {
             return (
-                <ModalInfoButton onClick={onClickInfoButton}>클릭</ModalInfoButton>
+                <>
+                    <ModalInfoButton onClick={onClickInfoButton}>클릭</ModalInfoButton>
+                    {
+                        row.isVisible &&
+                        <BasicModal
+                            backgroundColor={'DARKBLUE'}
+                            isOpen={row.isVisible}
+                            onClose={() => onRowChange({...row, isVisible : false})}
+                        >
+                            <MesOperationDetailList row={row} isDetail />
+                        </BasicModal>
+                    }
+                </>
             )
         }}
     ]
 
-    const [recordDate] = useState<string[]>(['React', 'Angular', 'Svelte', 'Vue', 'Riot', 'Next.js', 'Blitz.js'])
+    const [recordDate , setRecordDate] = useState<string[]>([])
     const [selectRecordDate , setSelectRecordDate] = useState<string[]>([])
-    const [machine] = useState<string[]>(['A','B','C','D','E'])
-    const [selectMachine , setSelectMachine] = useState<string[]>([])
-
-    const [recordList, setRecordList] = useState<RecordType[]>([
-        {model : 'NQ' , code : '65-wt', product_name : '브라켓 1차' , quantity : '1000' , time :'08:30 ~ 11:30'},
-        {model : 'SQ' , code : '85-wt', product_name : '브라켓 2차' , quantity : '2000' , time :'09:30 ~ 12:30'}
-    ])
-
+    const [machineList , setMachineList] = useState<MachineType[]>([])
+    const [selectMachineName , setSelectMachineName] = useState<string[]>([])
+    const [recordList, setRecordList] = useState<RecordType[]>([])
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
         from: moment().subtract(1,'month').format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD')
     })
 
-    const [isVisible , setIsVisible] = useState<boolean>(false)
-
     const getOperationDateApi = async () => {
-        const result = RequestMethod('get','operationDate',{
+        const result = await RequestMethod('get','operationDate',{
             params : {date : {from : selectDate.from , to : selectDate.to}}
         })
-        if(result){
-            // setRecordDate()
+        if(result) setRecordDate(result)
+    }
+
+    const getMachinesApi = async () => {
+        const result = await RequestMethod('get','operationMachines')
+        if(result) {
+            setMachineList(result)
         }
     }
 
-    const getMachinesApi = (operationDateId : number) => {
-        // const result = RequestMethod('get','operationMachines',{
-        //     params : {operationDateId : operationDateId}
-        // })
-    }
-    const getRecordListAPi= () => {
-        // const result = RequestMethod('get','operationRecords',{
-        //     params : {machineId : machineId}
-        // })
+    const getRecordListAPi= async (selectedMachineList : string[], selectedDateList :  string[] ) => {
+
+        const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
+        const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
+
+        const result = await RequestMethod('get','operationRecords',{
+            params : {
+                start : selectDate.from,
+                end : selectDate.to,
+                machineCode : machineCodeList,
+                date : selectedDateList,
+                page : 1,
+                renderItem : 18,
+                sorts : null,
+                orders : null
+            }
+        })
+
+        if(result) setRecordList(result)
     }
 
     const onClickInfoButton = () => {
-        setIsVisible(true)
+        setRecordList((row)=>({...row , isVisible : true}))
     }
 
     useEffect(()=>{
-        getRecordListAPi()
+        getMachinesApi()
     },[])
 
+    useEffect(()=>{
+        getOperationDateApi()
+    },[selectDate])
+
+    useEffect(()=>{
+        getRecordListAPi(selectMachineName,selectRecordDate)
+    },[selectMachineName,selectRecordDate])
 
     return (
         <>
@@ -105,6 +139,7 @@ const MesOperationList = () => {
                     placeholder="검색할 작업일자를 선택해주세요"
                     styles={{
                         root : {
+                            marginRight : 10,
                             minWidth : 300,
                         },
                         label : {
@@ -114,12 +149,13 @@ const MesOperationList = () => {
                     clearable
                 />
                 <MultiSelect
-                    data={machine}
-                    onChange={setSelectMachine}
+                    data={machineList.map((machine)=>machine.name)}
+                    onChange={setSelectMachineName}
                     label="기계"
                     placeholder="검색할 기계를 선택해주세요"
                     styles={{
                         root : {
+                            marginRight : 10,
                             minWidth : 300,
                         },
                         label : {
@@ -135,27 +171,15 @@ const MesOperationList = () => {
                 setRow={setRecordList}
                 row={recordList}
             />
-            <BasicModal backgroundColor={'DARKBLUE'} isOpen={isVisible} onClose={()=>{setIsVisible(false)}}>
-                <MesOperationDetailList isDetail/>
-            </BasicModal>
         </>
     )
 
 }
 
-export const getServerSideProps = (ctx: NextPageContext) => {
-    return {
-        props: {
-            page: ctx.query.page ?? 1,
-            keyword: ctx.query.keyword ?? "",
-            option: ctx.query.opt ?? 0,
-        }
-    }
-}
-
 export {MesOperationList};
 
 const MultiSelectContainer = styled.div`
+    display : flex;
     margin-bottom : 10px;
 `
 
