@@ -56,16 +56,18 @@ const AiDataSet = () => {
     const getData = async (page: number = 1, keyword?: string, date?: {from:string, to:string}, _sortingOptions?: TableSortingOptionType) => {
         Notiflix.Loading.circle();
 
+        const useInfo = cookie.load("userInfo")
+
         const res = await RequestMethod("get", 'datasetList', {
             params: {
                 page: page,
                 pageSize: 18,
-                company_code:cookie.load("userInfo").company
+                company_code:useInfo.company
             },
         });
 
         const f1Res = await RequestMethod("get", "f1Score", {
-            params:{company_code:cookie.load("userInfo").company}
+            params:{company_code:useInfo.company}
         })
 
         dataSetting(res)
