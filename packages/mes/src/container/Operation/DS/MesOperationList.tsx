@@ -12,6 +12,11 @@ import moment from "moment";
 import BasicModal from "../../../../../shared/src/components/Modal/BasicModal";
 import {MesOperationList as MesOperationDetailList} from '../MesOperationList'
 import { MultiSelect } from '@mantine/core';
+import axios from "axios";
+import {SF_ENDPOINT_SERVERLESS} from "shared/src/common/configset";
+import {useSelector} from "react-redux";
+import {selectUserInfo} from "shared/src/reducer/userInfo";
+import cookie from "react-cookies";
 
 
 type RecordType = {
@@ -58,6 +63,7 @@ const MesOperationList = () => {
             )
         }}
     ]
+    const userInfo = cookie.load('userInfo')
 
     const [recordDate , setRecordDate] = useState<string[]>([])
     const [selectRecordDate , setSelectRecordDate] = useState<string[]>([])
@@ -70,38 +76,42 @@ const MesOperationList = () => {
     })
 
     const getOperationDateApi = async () => {
-        const result = await RequestMethod('get','operationDate',{
-            params : {date : {from : selectDate.from , to : selectDate.to}}
-        })
-        if(result) setRecordDate(result)
+        const tokenData = userInfo?.token;
+        // const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/active_date`, {
+        //     headers : { Authorization : tokenData }
+        // })
+        // if(result) setRecordDate(result.data)
     }
 
     const getMachinesApi = async () => {
-        const result = await RequestMethod('get','operationMachines')
-        if(result) {
-            setMachineList(result)
-        }
+        const tokenData = userInfo?.token;
+        // const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/machine`, {
+        //     headers : { Authorization : tokenData }
+        // })
+        // if(result) {
+        //     setMachineList(result.data)
+        // }
     }
 
     const getRecordListAPi= async (selectedMachineList : string[], selectedDateList :  string[] ) => {
 
-        const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
-        const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
-
-        const result = await RequestMethod('get','operationRecords',{
-            params : {
-                start : selectDate.from,
-                end : selectDate.to,
-                machineCode : machineCodeList,
-                date : selectedDateList,
-                page : 1,
-                renderItem : 18,
-                sorts : null,
-                orders : null
-            }
-        })
-
-        if(result) setRecordList(result)
+        // const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
+        // const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
+        //
+        // const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/list`,{
+        //     params : {
+        //         start : selectDate.from,
+        //         end : selectDate.to,
+        //         machineCode : machineCodeList,
+        //         date : selectedDateList,
+        //         page : 1,
+        //         renderItem : 18,
+        //         sorts : null,
+        //         orders : null
+        //     }
+        // })
+        //
+        // if(result) setRecordList(result.data)
     }
 
     const onClickInfoButton = () => {
