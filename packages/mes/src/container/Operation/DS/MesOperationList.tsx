@@ -77,19 +77,26 @@ const MesOperationList = () => {
 
     const getOperationDateApi = async () => {
         const tokenData = userInfo?.token;
-        // const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/active_date`, {
-        //     headers : { Authorization : tokenData }
-        // })
-        // if(result) setRecordDate(result.data)
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/active_date`, {
+            params : { start : selectDate.from , end : selectDate.to },
+            headers : { Authorization : tokenData }
+        })
+
+        if(result.status === 200) {
+            const operationDateList = result.data.response.map((result)=> moment(result.date).format('YYYY-MM-DD'))
+            setRecordDate(operationDateList)
+        }
     }
 
     const getMachinesApi = async () => {
-        const tokenData = userInfo?.token;
+        // const tokenData = userInfo?.token;
         // const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/machine`, {
         //     headers : { Authorization : tokenData }
         // })
-        // if(result) {
-        //     setMachineList(result.data)
+
+        // if(result.status === 200) {
+        //     const operationMachineList = result.data.response.map((result)=> result.machine)
+        //     setMachineList(operationMachineList)
         // }
     }
 
