@@ -113,8 +113,6 @@ const MesOperationList = () => {
                 end : new Date(selectDate.to).toISOString(),
                 machineCode : machineCodeList,
                 date : selectedDateList,
-                page : 1,
-                renderItem : 18,
                 sorts : null,
                 orders : null
             }},
@@ -124,7 +122,6 @@ const MesOperationList = () => {
         )
 
         if(result.status) {
-            // console.log(result.data.response,'result.data.response')
             setRecordList(result.data.response)
         }
     }
@@ -143,7 +140,7 @@ const MesOperationList = () => {
 
     useEffect(()=>{
         getRecordListAPi(selectMachineName,selectRecordDate)
-    },[selectMachineName,selectRecordDate])
+    },[selectDate,selectMachineName,selectRecordDate])
 
     return (
         <>
@@ -151,7 +148,7 @@ const MesOperationList = () => {
                 isCalendar
                 calendarTitle={'작업 기한'}
                 calendarType={'period'}
-                title={'작업지시서 리스트 - 2'}
+                title={'작업일보 리스트 - 2'}
                 selectDate={selectDate}
                 //@ts-ignore
                 setSelectDate={setSelectDate}
