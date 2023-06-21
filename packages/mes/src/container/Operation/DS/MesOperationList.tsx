@@ -20,11 +20,14 @@ import cookie from "react-cookies";
 
 
 type RecordType = {
-    model : string
-    code : string
-    product_name : string
-    quantity : string
-    time : string
+    date : string
+    customerModelName : string
+    machineName : string
+    machineCode : string
+    productCode : string
+    productName : string
+    recordQuantity : string
+    timeString : string
 }
 
 type MachineType = {
@@ -39,12 +42,13 @@ const MesOperationList = () => {
 
     const column = [
         {key : 'date' , name : '작업일자'},
-        {key : 'machine' , name : '기계'},
-        {key : 'model' , name : '모델'},
-        {key : 'code' , name : 'CODE'},
-        {key : 'product_name' , name : '품목명'},
-        {key : 'quantity' , name : '수량'},
-        {key : 'time' , name : '시간'},
+        {key : 'machineName' , name : '기계'},
+        {key : 'machineCode' , name : '기계CODE'},
+        {key : 'customerModelName' , name : '모델'},
+        {key : 'productName' , name : '품목명'},
+        {key : 'productCode' , name : '품목CODE'},
+        {key : 'recordQuantity' , name : '수량'},
+        {key : 'timeString' , name : '시간'},
         {key : 'detail' , name : '상세보기', formatter : ({row, onRowChange}) => {
             return (
                 <>
@@ -78,7 +82,7 @@ const MesOperationList = () => {
     const getOperationDateApi = async () => {
         const tokenData = userInfo?.token;
         const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/active_date`, {
-            params : { start : selectDate.from , end : selectDate.to },
+            params : { start : new Date(selectDate.from).toISOString() , end : new Date(selectDate.to).toISOString()},
             headers : { Authorization : tokenData }
         })
 
@@ -89,36 +93,40 @@ const MesOperationList = () => {
     }
 
     const getMachinesApi = async () => {
-        // const tokenData = userInfo?.token;
-        // const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/machine`, {
-        //     headers : { Authorization : tokenData }
-        // })
-
-        // if(result.status === 200) {
-        //     const operationMachineList = result.data.response.map((result)=> result.machine)
-        //     setMachineList(operationMachineList)
-        // }
+        const tokenData = userInfo?.token;
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/machine`, {
+            headers : { Authorization : tokenData }
+        })
+        if(result.status) {
+            setMachineList(result.data.response)
+        }
     }
 
     const getRecordListAPi= async (selectedMachineList : string[], selectedDateList :  string[] ) => {
+        const tokenData = userInfo?.token;
+        const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
+        const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
 
-        // const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
-        // const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
-        //
-        // const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/list`,{
-        //     params : {
-        //         start : selectDate.from,
-        //         end : selectDate.to,
-        //         machineCode : machineCodeList,
-        //         date : selectedDateList,
-        //         page : 1,
-        //         renderItem : 18,
-        //         sorts : null,
-        //         orders : null
-        //     }
-        // })
-        //
-        // if(result) setRecordList(result.data)
+        const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/list`,{
+            params : {
+                start : new Date(selectDate.from).toISOString(),
+                end : new Date(selectDate.to).toISOString(),
+                machineCode : machineCodeList,
+                date : selectedDateList,
+                page : 1,
+                renderItem : 18,
+                sorts : null,
+                orders : null
+            }},
+            {
+                headers : { Authorization : tokenData }
+            }
+        )
+
+        if(result.status) {
+            // console.log(result.data.response,'result.data.response')
+            setRecordList(result.data.response)
+        }
     }
 
     const onClickInfoButton = () => {
