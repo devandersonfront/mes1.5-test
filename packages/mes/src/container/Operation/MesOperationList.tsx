@@ -28,13 +28,13 @@ interface IProps {
   search?: string
   option?: number
   todayOnly?: boolean
-  isDetail?: boolean
-  row : any
+  isModal?: boolean
+  sheetCode ?: string
 }
 
 const optionList = ['지시 고유 번호', '거래처명', '모델', 'CODE', '품명']
 
-const MesOperationList = ({todayOnly,isDetail,row}: IProps) => {
+const MesOperationList = ({todayOnly,isModal,sheetCode}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -47,7 +47,7 @@ const MesOperationList = ({todayOnly,isDetail,row}: IProps) => {
     from: todayOnly ?  moment().format('YYYY-MM-DD') : moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
   })
-  const [keyword, setKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>(sheetCode ?? "");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -232,7 +232,7 @@ const MesOperationList = ({todayOnly,isDetail,row}: IProps) => {
     <div className={'excelPageContainer'}>
       <EditListModal open={sheetModalOpen} setOpen={setSheetModalOpen} onRowChange={reload} />
       {
-        !isDetail &&
+        !isModal &&
         <PageHeader
             isSearch
             isCalendar
@@ -332,7 +332,7 @@ const MesOperationList = ({todayOnly,isDetail,row}: IProps) => {
       selectList={selectList}
       //@ts-ignore
       setSelectList={setSelectList}
-      width={!isDetail ?  '1576px' : '100%'}
+      width={!isModal ?  '1576px' : '100%'}
       height={setExcelTableHeight(basicRow.length)}
     />
       <PaginationComponent

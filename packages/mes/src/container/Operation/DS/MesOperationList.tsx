@@ -17,6 +17,7 @@ import {SF_ENDPOINT_SERVERLESS} from "shared/src/common/configset";
 import {useSelector} from "react-redux";
 import {selectUserInfo} from "shared/src/reducer/userInfo";
 import cookie from "react-cookies";
+import Notiflix from "notiflix";
 
 
 type RecordType = {
@@ -50,19 +51,22 @@ const MesOperationList = () => {
         {key : 'recordQuantity' , name : '수량'},
         {key : 'timeString' , name : '시간'},
         {key : 'detail' , name : '상세보기', formatter : ({row, onRowChange}) => {
+
+            console.log(row,'row!!')
+
             return (
                 <>
                     <ModalInfoButton onClick={onClickInfoButton}>클릭</ModalInfoButton>
-                    {
-                        row.isVisible &&
-                        <BasicModal
-                            backgroundColor={'DARKBLUE'}
-                            isOpen={row.isVisible}
-                            onClose={() => onRowChange({...row, isVisible : false})}
-                        >
-                            <MesOperationDetailList row={row} isDetail />
-                        </BasicModal>
-                    }
+                    {/*{*/}
+                    {/*    row.isVisible &&*/}
+                    {/*    <BasicModal*/}
+                    {/*        backgroundColor={'DARKBLUE'}*/}
+                    {/*        isOpen={row.isVisible}*/}
+                    {/*        onClose={() => onRowChange({...row, isVisible : false})}*/}
+                    {/*    >*/}
+                    {/*        <MesOperationDetailList/>*/}
+                    {/*    </BasicModal>*/}
+                    {/*}*/}
                 </>
             )
         }}
@@ -97,33 +101,34 @@ const MesOperationList = () => {
         const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/machine`, {
             headers : { Authorization : tokenData }
         })
-        if(result.status) {
-            setMachineList(result.data.response)
-        }
+
+        result.status === 200 && setMachineList(result.data.response)
     }
 
     const getRecordListAPi= async (selectedMachineList : string[], selectedDateList :  string[] ) => {
-        const tokenData = userInfo?.token;
-        const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
-        const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
 
-        const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/list`,{
-            params : {
-                start : new Date(selectDate.from).toISOString(),
-                end : new Date(selectDate.to).toISOString(),
-                machineCode : machineCodeList,
-                date : selectedDateList,
-                sorts : null,
-                orders : null
-            }},
-            {
-                headers : { Authorization : tokenData }
-            }
-        )
-
-        if(result.status) {
-            setRecordList(result.data.response)
+        try {
+            Notiflix.Loading.circle()
+            const tokenData = userInfo?.token;
+            const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
+            const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
+            const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/list`,{
+                    start : new Date(selectDate.from).toISOString(),
+                    end : new Date(selectDate.to).toISOString(),
+                    machineCode : machineCodeList,
+                    date : selectedDateList,
+                    sorts : null,
+                    orders : null
+                },
+                {
+                    headers : { Authorization : tokenData }
+                }
+            )
+            result.status === 200 && setRecordList(result.data.response)
+        }catch (e) {
+            Notiflix.Loading.remove()
         }
+
     }
 
     const onClickInfoButton = () => {
