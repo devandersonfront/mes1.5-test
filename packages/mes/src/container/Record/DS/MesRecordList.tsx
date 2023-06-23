@@ -9,8 +9,8 @@ import {NextPageContext} from 'next'
 import {SelectColumn} from 'react-data-grid'
 import styled from "styled-components";
 import moment from "moment";
-import BasicModal from "../../../../../shared/src/components/Modal/BasicModal";
-import {MesOperationList as MesOperationDetailList} from '../MesOperationList'
+import BasicModal from "shared/src/components/Modal/BasicModal";
+import {MesOperationList as MesOperationDetailList} from '../../Operation/MesOperationList'
 import { MultiSelect } from '@mantine/core';
 import axios from "axios";
 import {SF_ENDPOINT_SERVERLESS} from "shared/src/common/configset";
@@ -18,6 +18,7 @@ import {useSelector} from "react-redux";
 import {selectUserInfo} from "shared/src/reducer/userInfo";
 import cookie from "react-cookies";
 import Notiflix from "notiflix";
+import {MesRecordList} from "../MesRecordList";
 
 
 type RecordType = {
@@ -39,7 +40,7 @@ type MachineType = {
     name?: string
 }
 
-const MesOperationList = () => {
+const MesRecordListForDs = () => {
 
     const column = [
         {key : 'date' , name : '작업일자'},
@@ -52,21 +53,19 @@ const MesOperationList = () => {
         {key : 'timeString' , name : '시간'},
         {key : 'detail' , name : '상세보기', formatter : ({row, onRowChange}) => {
 
-            console.log(row,'row!!')
-
             return (
                 <>
-                    <ModalInfoButton onClick={onClickInfoButton}>클릭</ModalInfoButton>
-                    {/*{*/}
-                    {/*    row.isVisible &&*/}
-                    {/*    <BasicModal*/}
-                    {/*        backgroundColor={'DARKBLUE'}*/}
-                    {/*        isOpen={row.isVisible}*/}
-                    {/*        onClose={() => onRowChange({...row, isVisible : false})}*/}
-                    {/*    >*/}
-                    {/*        <MesOperationDetailList/>*/}
-                    {/*    </BasicModal>*/}
-                    {/*}*/}
+                    <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
+                    {
+                        row.isVisible &&
+                        <BasicModal
+                            backgroundColor={'DARKBLUE'}
+                            isOpen={row.isVisible}
+                            onClose={() => onRowChange({...row, isVisible : false})}
+                        >
+                            <MesRecordList isModal option={1} search={row.sheetCode} date={{from : selectDate.from , to : selectDate.to}}/>
+                        </BasicModal>
+                    }
                 </>
             )
         }}
@@ -124,15 +123,14 @@ const MesOperationList = () => {
                     headers : { Authorization : tokenData }
                 }
             )
-            result.status === 200 && setRecordList(result.data.response)
+            if(result.status === 200) {
+                Notiflix.Loading.remove()
+                setRecordList(result.data.response)
+            }
         }catch (e) {
             Notiflix.Loading.remove()
         }
 
-    }
-
-    const onClickInfoButton = () => {
-        setRecordList((row)=>({...row , isVisible : true}))
     }
 
     useEffect(()=>{
@@ -215,7 +213,7 @@ const MesOperationList = () => {
 
 }
 
-export {MesOperationList};
+export {MesRecordListForDs};
 
 const MultiSelectContainer = styled.div`
     display : flex;
