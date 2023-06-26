@@ -41,7 +41,7 @@ type MachineType = {
     name?: string
 }
 
-const MesRecordListForDs = () => {
+const AiMesRecordListForDs = () => {
 
     const column = [
         {key : 'date' , name : '작업일자'},
@@ -54,22 +54,22 @@ const MesRecordListForDs = () => {
         {key : 'timeString' , name : '시간'},
         {key : 'detail' , name : '상세보기', formatter : ({row, onRowChange}) => {
 
-            return (
-                <>
-                    <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
-                    {
-                        row.isVisible &&
-                        <BasicModal
-                            backgroundColor={'DARKBLUE'}
-                            isOpen={row.isVisible}
-                            onClose={() => onRowChange({...row, isVisible : false})}
-                        >
-                            <MesRecordList isModal option={1} search={row.sheetCode} date={{from : selectDate.from , to : selectDate.to}}/>
-                        </BasicModal>
-                    }
-                </>
-            )
-        }}
+                return (
+                    <>
+                        <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
+                        {
+                            row.isVisible &&
+                            <BasicModal
+                                backgroundColor={'DARKBLUE'}
+                                isOpen={row.isVisible}
+                                onClose={() => onRowChange({...row, isVisible : false})}
+                            >
+                                <AiMesRecord isModal option={1} search={row.sheetCode} date={{from : selectDate.from , to : selectDate.to}}/>
+                            </BasicModal>
+                        }
+                    </>
+                )
+            }}
     ]
     const userInfo = cookie.load('userInfo')
 
@@ -83,9 +83,9 @@ const MesRecordListForDs = () => {
         to: moment().format('YYYY-MM-DD')
     })
 
-    const getOperationDateApi = async () => {
+    const getAiOperationDateApi = async () => {
         const tokenData = userInfo?.token;
-        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/active_date`, {
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/ai/active_date`, {
             params : { start :selectDate.from , end : selectDate.to },
             headers : { Authorization : tokenData }
         })
@@ -96,23 +96,23 @@ const MesRecordListForDs = () => {
         }
     }
 
-    const getMachinesApi = async () => {
+    const getAiMachinesApi = async () => {
         const tokenData = userInfo?.token;
-        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/machine`, {
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/ai/machine`, {
             headers : { Authorization : tokenData }
         })
 
         result.status === 200 && setMachineList(result.data.response)
     }
 
-    const getRecordListAPi= async (selectedMachineList : string[], selectedDateList :  string[] ) => {
+    const getAiRecordListAPi= async (selectedMachineList : string[], selectedDateList :  string[] ) => {
 
         try {
             Notiflix.Loading.circle()
             const tokenData = userInfo?.token;
             const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
             const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
-            const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/list`,{
+            const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/ai/list`,{
                     start : selectDate.from,
                     end : selectDate.to,
                     machineCode : machineCodeList,
@@ -135,15 +135,15 @@ const MesRecordListForDs = () => {
     }
 
     useEffect(()=>{
-        getMachinesApi()
+        getAiMachinesApi()
     },[])
 
     useEffect(()=>{
-        getOperationDateApi()
+        getAiOperationDateApi()
     },[selectDate])
 
     useEffect(()=>{
-        getRecordListAPi(selectMachineName,selectRecordDate)
+        getAiRecordListAPi(selectMachineName,selectRecordDate)
     },[selectDate,selectMachineName,selectRecordDate])
 
     return (
@@ -152,7 +152,7 @@ const MesRecordListForDs = () => {
                 isCalendar
                 calendarTitle={'작업 기한'}
                 calendarType={'period'}
-                title={'작업일보 리스트 - 2'}
+                title={'작업일보 Ai 리스트 - 2'}
                 selectDate={selectDate}
                 //@ts-ignore
                 setSelectDate={setSelectDate}
@@ -214,7 +214,7 @@ const MesRecordListForDs = () => {
 
 }
 
-export {MesRecordListForDs};
+export {AiMesRecordListForDs};
 
 const MultiSelectContainer = styled.div`
     display : flex;
