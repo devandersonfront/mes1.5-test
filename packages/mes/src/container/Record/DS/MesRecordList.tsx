@@ -20,6 +20,7 @@ import cookie from "react-cookies";
 import Notiflix from "notiflix";
 import {MesRecordList} from "../MesRecordList";
 import {AiMesRecord} from "../AiMesRecord";
+import {TransferIsoTime} from "shared/src/common/transferIsoTime";
 
 
 type RecordType = {
@@ -56,7 +57,9 @@ const MesRecordListForDs = () => {
 
             return (
                 <>
-                    <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
+                    {
+                        row.sheetCode && <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
+                    }
                     {
                         row.isVisible &&
                         <BasicModal
@@ -113,8 +116,8 @@ const MesRecordListForDs = () => {
             const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
             const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
             const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/list`,{
-                    start : selectDate.from,
-                    end : selectDate.to,
+                    start : TransferIsoTime(selectDate.from),
+                    end : TransferIsoTime(selectDate.to),
                     machineCode : machineCodeList,
                     date : selectedDateList,
                     sorts : null,
@@ -126,7 +129,7 @@ const MesRecordListForDs = () => {
             )
             if(result.status === 200) {
                 Notiflix.Loading.remove()
-                setRecordList(result.data.response)
+                setRecordList(result.data.response.map((result)=>({...result , date : moment(new Date(result.date)).format('YYYY-MM-DD')})))
             }
         }catch (e) {
             Notiflix.Loading.remove()
@@ -181,7 +184,7 @@ const MesRecordListForDs = () => {
                     clearable
                 />
                 <MultiSelect
-                    data={machineList.map((machine)=>machine.name)}
+                    data={machineList.map((machine)=> machine.name)}
                     onChange={setSelectMachineName}
                     label="기계"
                     placeholder="검색할 기계를 선택해주세요"
