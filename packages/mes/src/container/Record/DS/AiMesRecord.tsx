@@ -87,7 +87,7 @@ const AiMesRecordListForDs = () => {
     const getAiOperationDateApi = async () => {
         const tokenData = userInfo?.token;
         const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/ai/active_date`, {
-            params : { start :convertToISODate(selectDate.from) , end : convertToISODate(selectDate.from) },
+            params : { start :convertToISODate(selectDate.from) , end : convertToISODate(selectDate.to) },
             headers : { Authorization : tokenData }
         })
 
