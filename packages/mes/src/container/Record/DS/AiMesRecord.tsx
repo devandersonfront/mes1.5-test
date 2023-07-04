@@ -20,6 +20,7 @@ import cookie from "react-cookies";
 import Notiflix from "notiflix";
 import {MesRecordList} from "../MesRecordList";
 import {AiMesRecord} from "../AiMesRecord";
+import {convertIsoTimeToMMSSHH, convertToDateTime, convertToISODate} from "shared/src/common/convertIsoDate";
 
 
 type RecordType = {
@@ -85,20 +86,20 @@ const AiMesRecordListForDs = () => {
 
     const getAiOperationDateApi = async () => {
         const tokenData = userInfo?.token;
-        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/ai/active_date`, {
-            params : { start :selectDate.from , end : selectDate.to },
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/ai/active_date`, {
+            params : { start :convertToISODate(selectDate.from) , end : convertToISODate(selectDate.from) },
             headers : { Authorization : tokenData }
         })
 
         if(result.status === 200) {
             const operationDateList = result.data.response
-            setRecordDate(operationDateList)
+            setRecordDate(operationDateList.map((list)=> convertToDateTime(list.date)))
         }
     }
 
     const getAiMachinesApi = async () => {
         const tokenData = userInfo?.token;
-        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/ai/machine`, {
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/ai/machine`, {
             headers : { Authorization : tokenData }
         })
 
@@ -112,11 +113,11 @@ const AiMesRecordListForDs = () => {
             const tokenData = userInfo?.token;
             const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
             const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
-            const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/ai/list`,{
-                    start : selectDate.from,
-                    end : selectDate.to,
+            const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/ai/list`,{
+                    start : convertToISODate(selectDate.from),
+                    end : convertToISODate(selectDate.to),
                     machineCode : machineCodeList,
-                    date : selectedDateList,
+                    date : selectedDateList.map((date)=> convertToISODate(date)),
                     sorts : null,
                     orders : null
                 },
@@ -126,7 +127,11 @@ const AiMesRecordListForDs = () => {
             )
             if(result.status === 200) {
                 Notiflix.Loading.remove()
-                setRecordList(result.data.response)
+                setRecordList(result.data.response.map((result)=>({
+                    ...result ,
+                    date : convertToDateTime(result.date),
+                    timeString : (result.start && result.end) ? `${convertIsoTimeToMMSSHH(result.start)} ~ ${convertIsoTimeToMMSSHH(result.end)}` : ''
+                })))
             }
         }catch (e) {
             Notiflix.Loading.remove()

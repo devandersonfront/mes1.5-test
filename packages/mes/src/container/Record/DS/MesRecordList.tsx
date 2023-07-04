@@ -20,7 +20,11 @@ import cookie from "react-cookies";
 import Notiflix from "notiflix";
 import {MesRecordList} from "../MesRecordList";
 import {AiMesRecord} from "../AiMesRecord";
-import {TransferIsoTime} from "shared/src/common/transferIsoTime";
+import {
+    convertIsoTimeToMMSSHH,
+    convertToDateTime,
+    convertToISODate
+} from "shared/src/common/convertIsoDate";
 
 
 type RecordType = {
@@ -49,12 +53,14 @@ const MesRecordListForDs = () => {
         {key : 'machineName' , name : '기계'},
         {key : 'machineCode' , name : '기계CODE'},
         {key : 'customerModelName' , name : '모델'},
+        {key : 'confirmCustomerModelName' , name : ''},
         {key : 'productName' , name : '품목명'},
         {key : 'productCode' , name : '품목CODE'},
+        {key : 'confirmProductCode' , name : ''},
+        {key : 'confirmProductName' , name : ''},
         {key : 'recordQuantity' , name : '수량'},
         {key : 'timeString' , name : '시간'},
         {key : 'detail' , name : '상세보기', formatter : ({row, onRowChange}) => {
-
             return (
                 <>
                     {
@@ -88,20 +94,20 @@ const MesRecordListForDs = () => {
 
     const getOperationDateApi = async () => {
         const tokenData = userInfo?.token;
-        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/active_date`, {
-            params : { start :selectDate.from , end : selectDate.to },
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/all/active_date`, {
+            params : { start :convertToISODate(selectDate.from) , end : convertToISODate(selectDate.to) },
             headers : { Authorization : tokenData }
         })
 
         if(result.status === 200) {
             const operationDateList = result.data.response
-            setRecordDate(operationDateList)
+            setRecordDate(operationDateList.map((list)=> convertToDateTime(list.date)))
         }
     }
 
     const getMachinesApi = async () => {
         const tokenData = userInfo?.token;
-        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/machine`, {
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/all/machine`, {
             headers : { Authorization : tokenData }
         })
 
@@ -109,17 +115,16 @@ const MesRecordListForDs = () => {
     }
 
     const getRecordListAPi= async (selectedMachineList : string[], selectedDateList :  string[] ) => {
-
         try {
             Notiflix.Loading.circle()
             const tokenData = userInfo?.token;
             const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
             const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
-            const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/dev/mes15/operation_record/all/list`,{
-                    start : TransferIsoTime(selectDate.from),
-                    end : TransferIsoTime(selectDate.to),
+            const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/all/list`,{
+                    start : convertToISODate(selectDate.from),
+                    end : convertToISODate(selectDate.to),
                     machineCode : machineCodeList,
-                    date : selectedDateList,
+                    date : selectedDateList.map((date)=> convertToISODate(date)),
                     sorts : null,
                     orders : null
                 },
@@ -129,12 +134,15 @@ const MesRecordListForDs = () => {
             )
             if(result.status === 200) {
                 Notiflix.Loading.remove()
-                setRecordList(result.data.response.map((result)=>({...result , date : moment(new Date(result.date)).format('YYYY-MM-DD')})))
+                setRecordList(result.data.response.map((result)=>({
+                    ...result ,
+                    date : convertToDateTime(result.date),
+                    timeString : (result.start && result.end) ? `${convertIsoTimeToMMSSHH(result.start)} ~ ${convertIsoTimeToMMSSHH(result.end)}` : ''
+                })))
             }
         }catch (e) {
             Notiflix.Loading.remove()
         }
-
     }
 
     useEffect(()=>{
