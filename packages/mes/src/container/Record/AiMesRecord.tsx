@@ -305,6 +305,7 @@ const AiMesRecord = ({search,option,isModal,date}: IProps) => {
                 molds: row.operationRecord?.molds,
                 tools: row.operationRecord?.tools,
                 worked_product: row.recordProductName?.length > 0 ? row.recordProductName : "-",
+                machine_id : row.machine?.machine?.name,
                 reload: _reload,
             }
         })
