@@ -881,7 +881,8 @@ export const columnlist: any = {
     { key: "poor_quantity", name: "불량 수량", formatter: DefectInfoModal, width: 118, textAlign: 'center'},
     { key: 'mold_id', name: '금형', formatter: MoldListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true, theme:"aiModal"},
     { key: 'tool_id', name: '공구', formatter: ToolListModal, width: 118, modalInitData: BomRegisterInit ,unprintable : true, theme:"aiModal"},
-    { key: 'machine_id', name: '기계', formatter: MachineSelectModal, textAlign: 'center', type:"ai"},
+    // { key: 'machine_id', name: '기계', formatter: MachineSelectModal, textAlign: 'center', type:"ai"},
+    { key: 'machine_id', name: '기계',textAlign: 'center', type:"ai"},
     { key: 'prediction', name : '예측', width: 118},
     { key : 'confidence', name : '유사도', width: 118}
   ],
