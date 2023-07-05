@@ -41,9 +41,10 @@ interface IProps {
   onDoubleClick?: (row: Array<any>, col?:any) => void
   onRowClick?: (row: any) => void
   rowKeyGetter?: (row: any) => any
+  showColorOnClick ?: boolean
 }
 
-const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff, onDoubleClick, onRowClick, rowKeyGetter}: IProps) => {
+const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, row, width, maxWidth, rowHeight, height, maxHeight, editable, resizable, resizeSave, selectable, setRow, setSelectRow, selectList, setSelectList, type, disableVirtualization, selectPage, setSelectPage, overflow, headerAlign, clickable, scrollEnd, scrollOnOff, onDoubleClick, onRowClick, rowKeyGetter,showColorOnClick}: IProps) => {
   const [ selectedRows, setSelectedRows ] = useState<ReadonlySet<number>>(selectList ?? new Set())
 
   useEffect(() => {
@@ -186,8 +187,15 @@ const ExcelTable = ({className,customHeaderRowHeight,headerList, setHeaderList, 
       }}
       theme={scrollState}
       state={type}
-      onRowClick={(row,col) => {
-        onRowClick && onRowClick(row)
+      onRowClick={(clickedRow,col) => {
+        if(showColorOnClick){
+          const selectedIndex = row.indexOf(clickedRow)
+          row.forEach((data,index)=>{
+            if(index === selectedIndex) data.color = 'lightBlue'
+            else data.color = undefined
+          })
+        }
+        onRowClick && onRowClick(clickedRow)
       }}
       onRowDoubleClick={(row,col) => {
         onDoubleClick && onDoubleClick(row, col)
@@ -263,6 +271,9 @@ const DataGridTable = styled(DataGrid)`
   }
   .darkGray .rdg-cell{
      background : #282b2c !important;
+  }
+   .lightBlue .rdg-cell{
+     background : rgb(25, 100, 150) !important;
   }
 
   ${(props:any) => props.state === "searchModal" ? `
