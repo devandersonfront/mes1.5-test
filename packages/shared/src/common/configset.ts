@@ -47,6 +47,7 @@ export const SF_ENDPOINT_S3 = process.env.NEXT_PUBLIC_SF_ENDPOINT_S3
 export const SF_PORT = ``
 export const SF_ENDPOINT_BARCODE = `http://${isLocalhost()}:9408`
 export const SF_AI_ADDRESS = `http://${process.env.NEXT_PUBLIC_SF_AI_ADDRESS}`
+export const SF_ENDPOINT_SERVERLESS = `https://${process.env.NEXT_PUBLIC_SF_ENDPOINT_SERVERLESS}`
 
 
 // export const SF_ENDPOINT_BARCODE = `http://${isLocalhost()}:18080`

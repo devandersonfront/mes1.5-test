@@ -34,9 +34,11 @@ interface IProps {
     page?: number;
     search?: string;
     option?: number;
+    isModal?:boolean
+    date ?: {from :string , to : string}
 }
 
-const AiMesRecord = ({}: IProps) => {
+const AiMesRecord = ({search,option,isModal,date}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [recordState, setRecordState] = useState<number>(0)
@@ -44,12 +46,12 @@ const AiMesRecord = ({}: IProps) => {
     const [deleteBasic, setDeleteBasic] = useState<any>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiRecordListV2"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [optionIndex, setOptionIndex] = useState<number>(0)
-    const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
+    const [optionIndex, setOptionIndex] = useState<number>(option ?? 0)
+    const [selectDate, setSelectDate] = useState<{from:string, to:string}>(date ? {from : date.from , to : date.to} : {
         from: moment().subtract(1,'month').format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD')
     });
-    const [keyword, setKeyword] = useState<string>("");
+    const [keyword, setKeyword] = useState<string>(search ?? "");
     const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
         page: 1,
         total: 1,
@@ -422,35 +424,37 @@ const AiMesRecord = ({}: IProps) => {
     }
     return (
         <div className={'excelPageContainer'}>
-            <PageHeader
-                title={"AI 작업 일보 리스트"}
-                buttons={["저장하기", "삭제",]}
-                buttonsOnclick={(e) => {
-                    switch (e) {
-                        case 0: {
-                            SaveBasic()
-                            break;
-                        }
-                        case 1: {
-                            if (selectList.size === 0) {
-                                return Notiflix.Report.warning(
-                                    "경고",
-                                    "데이터를 선택해 주시기 바랍니다.",
-                                    "확인"
-                                );
+            {
+                !isModal && <PageHeader
+                    title={"AI 작업 일보 리스트"}
+                    buttons={["저장하기", "삭제",]}
+                    buttonsOnclick={(e) => {
+                        switch (e) {
+                            case 0: {
+                                SaveBasic()
+                                break;
                             }
-                            Notiflix.Confirm.show(
-                                "경고",
-                                "삭제하시겠습니까?",
-                                "확인",
-                                "취소",
-                                () => DeleteBasic()
-                            );
-                            break;
+                            case 1: {
+                                if (selectList.size === 0) {
+                                    return Notiflix.Report.warning(
+                                        "경고",
+                                        "데이터를 선택해 주시기 바랍니다.",
+                                        "확인"
+                                    );
+                                }
+                                Notiflix.Confirm.show(
+                                    "경고",
+                                    "삭제하시겠습니까?",
+                                    "확인",
+                                    "취소",
+                                    () => DeleteBasic()
+                                );
+                                break;
+                            }
                         }
-                    }
-                }}
-            />
+                    }}
+                />
+            }
             <ExcelTable
                 editable
                 resizable
@@ -485,7 +489,7 @@ const AiMesRecord = ({}: IProps) => {
                 selectList={selectList}
                 //@ts-ignore
                 setSelectList={setSelectList}
-                width={1576}
+                width={!isModal ? 1576 : '100%'}
                 height={setExcelTableHeight(basicRow.length)}
             />
             <PaginationComponent

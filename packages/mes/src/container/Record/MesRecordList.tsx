@@ -31,9 +31,11 @@ interface IProps {
     page?: number;
     search?: string;
     option?: number;
+    isModal?: boolean
+    date ?: {from : string , to : string}
 }
 
-const MesRecordList = ({}: IProps) => {
+const MesRecordList = ({search,option,isModal,date}: IProps) => {
     const router = useRouter()
     const dispatch = useDispatch()
     const [excelOpen, setExcelOpen] = useState<boolean>(false)
@@ -42,13 +44,13 @@ const MesRecordList = ({}: IProps) => {
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["cncRecordListV2"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
     const [optionList, setOptionList] = useState<string[]>(['수주번호', '지시 고유 번호', 'CODE', '품명', 'LOT 번호', '작업자'])
-    const [optionIndex, setOptionIndex] = useState<number>(0)
-    const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
+    const [optionIndex, setOptionIndex] = useState<number>(option ?? 0)
+    const [selectDate, setSelectDate] = useState<{from:string, to:string}>(date ? {from : date.from , to : date.to} : {
         from: moment().subtract(1,'month').format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD')
     });
 
-    const [keyword, setKeyword] = useState<string>("");
+    const [keyword, setKeyword] = useState<string>(search ?? "");
     const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
         page: 1,
         total: 1,
@@ -266,78 +268,80 @@ const MesRecordList = ({}: IProps) => {
     }
     return (
         <div className={'excelPageContainer'}>
-            <PageHeader
-                isSearch
-                isCalendar
-                isRadio
-                radioTexts={["종료","미완료"]}
-                radioValue={recordState}
-                onChangeRadioValues={onRadioChange}
-                searchOptionList={optionList}
-                onChangeSearchOption={(e) => {
-                    setOptionIndex(e);
-                }}
-                searchKeyword={keyword}
-                onSearch={reload}
-                calendarTitle={"종료일"}
-                calendarType={"period"}
-                selectDate={selectDate}
-                //@ts-ignore
-                setSelectDate={onSelectDate}
-                //실제사용
-                title={"작업 일보 리스트"}
-                buttons={["항목 관리", "수정하기", "삭제"]}
-                buttonsOnclick={(e) => {
-                    switch (e) {
-                        case 0:
-                            router.push(`/mes/item/manage/recordV2`);
-                            break
-                        case 1: {
-                            if (selectList.size === 1) {
-                                dispatch(setModifyInitData({
-                                    modifyInfo: basicRow.map(v => {
-                                        if (selectList.has(v.id)) {
-                                            return v
-                                        }
-                                    }).filter(v => v),
-                                    type: 'workModify'
-                                }))
-                                setExcelOpen(true);
-                            } else if (selectList.size === 0) {
-                                Notiflix.Report.warning(
-                                    "경고",
-                                    "데이터를 선택해 주시기 바랍니다.",
-                                    "확인"
-                                );
-                            } else {
-                                Notiflix.Report.warning(
-                                    "경고",
-                                    "작업일보는 한 개씩만 수정 가능합니다.",
-                                    "확인"
-                                );
+            {
+                !isModal && <PageHeader
+                    isSearch
+                    isCalendar
+                    isRadio
+                    radioTexts={["종료","미완료"]}
+                    radioValue={recordState}
+                    onChangeRadioValues={onRadioChange}
+                    searchOptionList={optionList}
+                    onChangeSearchOption={(e) => {
+                        setOptionIndex(e);
+                    }}
+                    searchKeyword={keyword}
+                    onSearch={reload}
+                    calendarTitle={"종료일"}
+                    calendarType={"period"}
+                    selectDate={selectDate}
+                    //@ts-ignore
+                    setSelectDate={onSelectDate}
+                    //실제사용
+                    title={"작업 일보 리스트"}
+                    buttons={["항목 관리", "수정하기", "삭제"]}
+                    buttonsOnclick={(e) => {
+                        switch (e) {
+                            case 0:
+                                router.push(`/mes/item/manage/recordV2`);
+                                break
+                            case 1: {
+                                if (selectList.size === 1) {
+                                    dispatch(setModifyInitData({
+                                        modifyInfo: basicRow.map(v => {
+                                            if (selectList.has(v.id)) {
+                                                return v
+                                            }
+                                        }).filter(v => v),
+                                        type: 'workModify'
+                                    }))
+                                    setExcelOpen(true);
+                                } else if (selectList.size === 0) {
+                                    Notiflix.Report.warning(
+                                        "경고",
+                                        "데이터를 선택해 주시기 바랍니다.",
+                                        "확인"
+                                    );
+                                } else {
+                                    Notiflix.Report.warning(
+                                        "경고",
+                                        "작업일보는 한 개씩만 수정 가능합니다.",
+                                        "확인"
+                                    );
+                                }
+                                break;
                             }
-                            break;
-                        }
-                        case 2: {
-                            if (selectList.size === 0) {
-                                return Notiflix.Report.warning(
+                            case 2: {
+                                if (selectList.size === 0) {
+                                    return Notiflix.Report.warning(
+                                        "경고",
+                                        "데이터를 선택해 주시기 바랍니다.",
+                                        "확인"
+                                    );
+                                }
+                                Notiflix.Confirm.show(
                                     "경고",
-                                    "데이터를 선택해 주시기 바랍니다.",
-                                    "확인"
+                                    "삭제하시겠습니까?",
+                                    "확인",
+                                    "취소",
+                                    () => DeleteBasic()
                                 );
+                                break;
                             }
-                            Notiflix.Confirm.show(
-                                "경고",
-                                "삭제하시겠습니까?",
-                                "확인",
-                                "취소",
-                                () => DeleteBasic()
-                            );
-                            break;
                         }
-                    }
-                }}
-            />
+                    }}
+                />
+            }
             <ExcelTable
                 editable
                 resizable
@@ -356,7 +360,7 @@ const MesRecordList = ({}: IProps) => {
                 selectList={selectList}
                 //@ts-ignore
                 setSelectList={setSelectList}
-                width={1576}
+                width={!isModal ? 1576 : '100%'}
                 height={setExcelTableHeight(basicRow.length)}
             />
             <PaginationComponent
