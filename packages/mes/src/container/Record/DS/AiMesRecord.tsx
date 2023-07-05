@@ -59,7 +59,9 @@ const AiMesRecordListForDs = () => {
         {key : 'detail' , name : '상세보기', formatter : ({row, onRowChange}) => {
                 return (
                     <>
-                        <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
+                        {
+                            row.ai_record_id && <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
+                        }
                         {
                             row.isVisible &&
                             <BasicModal
