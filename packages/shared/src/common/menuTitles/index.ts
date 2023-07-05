@@ -1,5 +1,6 @@
 import {titles, dohwaTitles, bkTitles, customTitles, eunhaeTitles} from './titles'
 import {auth} from './auth'
+import cookie from "react-cookies";
 
 function toMenu(title: string, url: string, subMenu ?: string[]) {
   return {title,url,subMenu}
@@ -75,6 +76,9 @@ export const BasicTitles = (customTarget?: string) => {
 }
 
 export const MesTitles = (customTarget?: string) => {
+
+  const userInfo = cookie.load('userInfo')
+
   const mesDefault = {
     businessMgmt: toMenu(titles.businessMgmt, '',['_orderReg','_orderList','_deliveryReg','_deliveryList']),
     _orderReg: toMenu(titles._orderReg, '/mes/order/register'),
@@ -82,11 +86,17 @@ export const MesTitles = (customTarget?: string) => {
     _deliveryReg: toMenu(titles._deliveryReg,'/mes/delivery/register'),
     _deliveryList: toMenu(titles._deliveryList,'/mes/delivery/list'),
 
-    pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opComList']),
+    pmReg: toMenu(
+        titles.pmReg,'',
+        userInfo?.company !== '4XX21Z'
+            ? ['_opReg','_opList', '_todayOpList','_opReList','_opComList']
+            : ['_opReg','_opList', '_todayOpList','_opReList','_opReListDS','_opComList']
+    ),
     _opReg: toMenu(titles._opReg,'/mes/operationV1u/register'),
     _opList: toMenu(titles._opList,'/mes/operationV1u/list'),
     _todayOpList: toMenu(titles._todayOpList,'/mes/operationV1u/list/today'),
     _opReList: toMenu(titles._opReList,'/mes/recordV2/list'),
+    _opReListDS : toMenu(titles._opReListDS,'/mes/record/list'),
     _opComList: toMenu(titles._opComList,'/mes/finishV2/list'),
 
     rawMgmt: toMenu(titles.mesRawMgmt, '' , ['_rawReg','_rawInputList','_rawStock', '_rawExportList']),
@@ -173,8 +183,13 @@ export const MesTitles = (customTarget?: string) => {
     }
     case 'ai': return {
       ...mesDefault,
-      pmReg: toMenu(titles.pmReg,'',['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList', ]),
+      pmReg: toMenu(titles.pmReg,'',
+          userInfo?.company !== '4XX21Z'
+          ? ['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList']
+          : ['_opReg','_opList', '_todayOpList','_opReList','_opReListDS','_opAiReList','_opAiReListDS','_opComList']
+      ),
       _opAiReList: toMenu(titles._opAiReList,'/mes/ai/recordV2/list'),
+      _opAiReListDS : toMenu(titles._opAiReListDS, '/mes/ai/record/list')
     }
     case 'custom' : return {
       ...mesDefault,
