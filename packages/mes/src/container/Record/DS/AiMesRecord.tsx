@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {
     BarcodeModal,
     ExcelTable,
-    Header as PageHeader, RequestMethod,
+    Header as PageHeader, RequestMethod, UnitContainer,
 } from 'shared'
 import {NextPageContext} from 'next'
 // @ts-ignore
@@ -53,8 +53,10 @@ const AiMesRecordListForDs = () => {
         {key : 'productCode' , name : '품목CODE'},
         {key : 'recordQuantity' , name : '수량'},
         {key : 'timeString' , name : '시간'},
+        {key : 'confidence' , name : '유사도', formatter : ({row,column,onRowChange}) => {
+            return <UnitContainer row={{...row , confidence : row?.confidence ? row.confidence.toFixed(4) * 100 : 0 }} column={{...column , unitData: "%"}} onRowChange={onRowChange}/>
+        }},
         {key : 'detail' , name : '상세보기', formatter : ({row, onRowChange}) => {
-
                 return (
                     <>
                         <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
@@ -65,7 +67,7 @@ const AiMesRecordListForDs = () => {
                                 isOpen={row.isVisible}
                                 onClose={() => onRowChange({...row, isVisible : false})}
                             >
-                                <AiMesRecord isModal option={1} search={row.sheetCode} date={{from : selectDate.from , to : selectDate.to}}/>
+                                <AiMesRecord isModal option={6} search={row.ai_record_id} date={{from : selectDate.from , to : selectDate.to}}/>
                             </BasicModal>
                         }
                     </>

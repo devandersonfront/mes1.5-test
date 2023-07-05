@@ -53,18 +53,15 @@ const MesRecordListForDs = () => {
         {key : 'machineName' , name : '기계'},
         {key : 'machineCode' , name : '기계CODE'},
         {key : 'customerModelName' , name : '모델'},
-        {key : 'confirmCustomerModelName' , name : ''},
         {key : 'productName' , name : '품목명'},
         {key : 'productCode' , name : '품목CODE'},
-        {key : 'confirmProductCode' , name : ''},
-        {key : 'confirmProductName' , name : ''},
         {key : 'recordQuantity' , name : '수량'},
         {key : 'timeString' , name : '시간'},
         {key : 'detail' , name : '상세보기', formatter : ({row, onRowChange}) => {
             return (
                 <>
                     {
-                        row.sheetCode && <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
+                        row.record_id && <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
                     }
                     {
                         row.isVisible &&
@@ -73,7 +70,7 @@ const MesRecordListForDs = () => {
                             isOpen={row.isVisible}
                             onClose={() => onRowChange({...row, isVisible : false})}
                         >
-                            <MesRecordList isModal option={1} search={row.sheetCode} date={{from : selectDate.from , to : selectDate.to}}/>
+                            <MesRecordList isModal option={6} search={row.record_id} date={{from : selectDate.from , to : selectDate.to}}/>
                         </BasicModal>
                     }
                 </>
