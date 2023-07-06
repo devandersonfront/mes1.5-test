@@ -28,7 +28,7 @@ export const menuSelect = (type: IMenu) => {
         case 'BASIC'  :
             return BASIC_MENUS
         case 'MES'    :
-            return MES_MENUS
+            return MES_MENUS()
         case 'PMS'    :
             return PMS_MENUS()
         case 'CNC'    :
@@ -139,18 +139,22 @@ const BASIC_MENUS: IMenuType[] = BasicOrder(customTarget).map(menu => {
     }
 })
 
-const MES_MENUS: IMenuType[] = MesOrder(customTarget).map(menu => ({
-    title:MesTitles(customTarget)[menu].title,
-    url: MesTitles(customTarget)[menu].url,
-    subMenu: MesTitles(customTarget)[menu]?.subMenu?.map(sub => ({
-        title: MesTitles(customTarget)[sub].title,
-        url: MesTitles(customTarget)[sub].url,
-        subMenu : MesTitles(customTarget)[sub]?.subMenu?.map(third => ({
-            title: MesTitles(customTarget)[third]?.title,
-            url: MesTitles(customTarget)[third]?.url
+const MES_MENUS = () => {
+    const user = cookie.load('userInfo')
+    let companyTarget = user?.company === '4XX21Z' ? 'ds' : process.env.NEXT_PUBLIC_COMPANY_TARGET
+    return MesOrder(customTarget).map(menu => ({
+        title:MesTitles(customTarget,companyTarget)[menu].title,
+        url: MesTitles(customTarget,companyTarget)[menu].url,
+        subMenu: MesTitles(customTarget,companyTarget)[menu]?.subMenu?.map(sub => ({
+            title: MesTitles(customTarget,companyTarget)[sub].title,
+            url: MesTitles(customTarget,companyTarget)[sub].url,
+            subMenu : MesTitles(customTarget,companyTarget)[sub]?.subMenu?.map(third => ({
+                title: MesTitles(customTarget,companyTarget)[third]?.title,
+                url: MesTitles(customTarget,companyTarget)[third]?.url
+            }))
         }))
     }))
-}))
+}
 
 const PMS_MENUS = () => {
     const user = cookie.load('userInfo')
