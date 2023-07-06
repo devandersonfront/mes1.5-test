@@ -46,12 +46,10 @@ const AiMesRecord = ({search,option,isModal,date}: IProps) => {
     const [deleteBasic, setDeleteBasic] = useState<any>([])
     const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["aiRecordListV2"])
     const [selectList, setSelectList] = useState<Set<number>>(new Set())
-    const [optionIndex, setOptionIndex] = useState<number>(option ?? 0)
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>(date ? {from : date.from , to : date.to} : {
         from: moment().subtract(1,'month').format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD')
     });
-    const [keyword, setKeyword] = useState<string>(search ?? "");
     const [pageInfo, setPageInfo] = useState<{ page: number; total: number }>({
         page: 1,
         total: 1,
@@ -59,7 +57,6 @@ const AiMesRecord = ({search,option,isModal,date}: IProps) => {
     const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
 
     const reload = (keyword?:string, date?:{from:string, to:string}, sortingOptions?: TableSortingOptionType, radioIdx?: number) => {
-        setKeyword(keyword)
         if(pageInfo.page > 1) {
             setPageInfo({...pageInfo, page: 1})
         } else {
@@ -67,7 +64,7 @@ const AiMesRecord = ({search,option,isModal,date}: IProps) => {
         }
     }
     useEffect(() => {
-        getData(pageInfo.page, keyword)
+        getData(pageInfo.page,search)
     }, [pageInfo.page]);
 
     useEffect(() => {
@@ -83,8 +80,7 @@ const AiMesRecord = ({search,option,isModal,date}: IProps) => {
     const getRequestParams = (keyword?: string, date?: {from:string, to:string},  _sortingOptions?: TableSortingOptionType, radioIdx?: number) => {
         let params = {}
         if(keyword) {
-            params['keyword'] = keyword
-            params['opt'] = optionIndex
+            params['aiRecordIds'] = keyword
         }
         params['from'] = date ? date.from: selectDate.from
         params['to'] = date ? date.to : selectDate.to
@@ -424,8 +420,7 @@ const AiMesRecord = ({search,option,isModal,date}: IProps) => {
     }
     return (
         <div className={'excelPageContainer'}>
-            {
-                !isModal && <PageHeader
+           <PageHeader
                     title={"AI 작업 일보 리스트"}
                     buttons={["저장하기", "삭제",]}
                     buttonsOnclick={(e) => {
@@ -453,8 +448,7 @@ const AiMesRecord = ({search,option,isModal,date}: IProps) => {
                             }
                         }
                     }}
-                />
-            }
+            />
             <ExcelTable
                 editable
                 resizable
