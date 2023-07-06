@@ -75,9 +75,7 @@ export const BasicTitles = (customTarget?: string) => {
   }
 }
 
-export const MesTitles = (customTarget?: string) => {
-
-  const userInfo = cookie.load('userInfo')
+export const MesTitles = (customTarget?: string, companyTitles?: string) => {
 
   const mesDefault = {
     businessMgmt: toMenu(titles.businessMgmt, '',['_orderReg','_orderList','_deliveryReg','_deliveryList']),
@@ -88,10 +86,11 @@ export const MesTitles = (customTarget?: string) => {
 
     pmReg: toMenu(
         titles.pmReg,'',
-        userInfo?.company !== '4XX21Z'
+        companyTitles !== 'ds'
             ? ['_opReg','_opList', '_todayOpList','_opReList','_opComList']
             : ['_opReg','_opList', '_todayOpList','_opReList','_opReListDS','_opComList']
     ),
+
     _opReg: toMenu(titles._opReg,'/mes/operationV1u/register'),
     _opList: toMenu(titles._opList,'/mes/operationV1u/list'),
     _todayOpList: toMenu(titles._todayOpList,'/mes/operationV1u/list/today'),
@@ -184,7 +183,7 @@ export const MesTitles = (customTarget?: string) => {
     case 'ai': return {
       ...mesDefault,
       pmReg: toMenu(titles.pmReg,'',
-          userInfo?.company !== '4XX21Z'
+          companyTitles !== 'ds'
           ? ['_opReg','_opList', '_todayOpList','_opReList','_opAiReList','_opComList']
           : ['_opReg','_opList', '_todayOpList','_opReList','_opReListDS','_opAiReList','_opAiReListDS','_opComList']
       ),
