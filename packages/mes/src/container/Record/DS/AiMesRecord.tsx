@@ -45,12 +45,9 @@ type MachineType = {
 const AiMesRecordListForDs = () => {
 
     const column = [
-        {key : 'date' , name : '작업일자'},
-        {key : 'machineName' , name : '기계'},
-        {key : 'machineCode' , name : '기계CODE'},
         {key : 'customerModelName' , name : '모델'},
+        {key : 'productCode' , name : 'CODE'},
         {key : 'productName' , name : '품목명'},
-        {key : 'productCode' , name : '품목CODE'},
         {key : 'recordQuantity' , name : '수량'},
         {key : 'timeString' , name : '시간'},
         {key : 'confidence' , name : '유사도', formatter : ({row,column,onRowChange}) => {
@@ -79,9 +76,9 @@ const AiMesRecordListForDs = () => {
     const userInfo = cookie.load('userInfo')
 
     const [recordDate , setRecordDate] = useState<string[]>([])
-    const [selectRecordDate , setSelectRecordDate] = useState<string[]>([])
+    const [selectRecordDate , setSelectRecordDate] = useState<{date : string , color ?: string}>()
     const [machineList , setMachineList] = useState<MachineType[]>([])
-    const [selectMachineName , setSelectMachineName] = useState<string[]>([])
+    const [selectMachineName , setSelectMachineName] = useState<{machineName : string , color?:string}>()
     const [recordList, setRecordList] = useState<RecordType[]>([])
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
         from: moment().subtract(1,'month').format('YYYY-MM-DD'),
@@ -97,7 +94,8 @@ const AiMesRecordListForDs = () => {
 
         if(result.status === 200) {
             const operationDateList = result.data.response
-            setRecordDate(operationDateList.map((list)=> convertToDateTime(list.date)))
+            const convertedOperationList = operationDateList.map((list)=> convertToDateTime(list.date))
+            setRecordDate(convertedOperationList.map((result)=>({date : result})))
         }
     }
 
@@ -107,21 +105,22 @@ const AiMesRecordListForDs = () => {
             headers : { Authorization : tokenData }
         })
 
-        result.status === 200 && setMachineList(result.data.response)
+        if(result.status === 200){
+            const convertedMachines = result.data.response
+            setMachineList(convertedMachines.map((machine)=>({machineName : machine.name , mfrCode : machine.mfrCode})))
+        }
     }
 
-    const getAiRecordListAPi= async (selectedMachineList : string[], selectedDateList :  string[] ) => {
+    const getAiRecordListAPi= async (selectedMachineList : any, selectedDateList :  any ) => {
 
         try {
             Notiflix.Loading.circle()
             const tokenData = userInfo?.token;
-            const machineNameList = machineList.filter((machine) => selectedMachineList.includes(machine.name))
-            const machineCodeList = machineNameList.map((machine) => machine.mfrCode);
             const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/ai/list`,{
-                    start : convertToISODate(selectDate.from),
-                    end : convertToISODate(selectDate.to),
-                    machineCode : machineCodeList,
-                    date : selectedDateList.map((date)=> convertToISODate(date)),
+                    start : convertToISODate(selectedDateList.date),
+                    end : convertToISODate(selectedDateList.date),
+                    machineCode : [selectedMachineList.mfrCode],
+                    date : [convertToISODate(selectedDateList.date)],
                     sorts : null,
                     orders : null
                 },
@@ -144,16 +143,16 @@ const AiMesRecordListForDs = () => {
     }
 
     useEffect(()=>{
-        getAiMachinesApi()
-    },[])
-
-    useEffect(()=>{
         getAiOperationDateApi()
     },[selectDate])
 
     useEffect(()=>{
+        getAiMachinesApi()
+    },[selectRecordDate])
+
+    useEffect(()=>{
         getAiRecordListAPi(selectMachineName,selectRecordDate)
-    },[selectDate,selectMachineName,selectRecordDate])
+    },[selectMachineName,selectRecordDate])
 
     return (
         <>
@@ -166,58 +165,46 @@ const AiMesRecordListForDs = () => {
                 //@ts-ignore
                 setSelectDate={setSelectDate}
             />
-            <MultiSelectContainer>
-                <MultiSelect
-                    data={recordDate}
-                    onChange={setSelectRecordDate}
-                    label="작업일자"
-                    placeholder="검색할 작업일자를 선택해주세요"
-                    styles={{
-                        root : {
-                            backgroundColor : 'inherit',
-                            marginRight : 10,
-                            minWidth : 300,
-                        },
-                        label : {
-                            color : '#FFFFFF'
-                        },
-                        input : {
-                            backgroundColor : 'inherit',
-                            color : '#FFFFFF'
+            <TableSection>
+                <WorkDateTableContainer>
+                    <ExcelTable
+                        showColorOnClick
+                        width={'100%'}
+                        headerList={[{key : 'date' , name : '작업일자'}]}
+                        row={recordDate}
+                        onRowClick={(selectDate)=>{
+                            setSelectRecordDate(selectDate)
+                            setSelectMachineName(undefined)
+                        }}
+                    />
+                </WorkDateTableContainer>
+                {
+                    selectRecordDate &&
+                    <>
+                        <MachineTableContainer>
+                            <ExcelTable
+                                showColorOnClick
+                                width={'100%'}
+                                headerList={[{key : 'machineName' , name : '기계'},]}
+                                row={machineList}
+                                onRowClick={setSelectMachineName}
+                            />
+                        </MachineTableContainer>
+                        {
+                            selectMachineName &&
+                            <RecordTableContainer>
+                                <ExcelTable
+                                    showColorOnClick
+                                    width={'100%'}
+                                    headerList={column}
+                                    setRow={setRecordList}
+                                    row={recordList}
+                                />
+                            </RecordTableContainer>
                         }
-                    }}
-                    clearButtonProps={{ 'aria-label': 'Clear selection' }}
-                    clearable
-                />
-                <MultiSelect
-                    data={machineList.map((machine)=>machine.name)}
-                    onChange={setSelectMachineName}
-                    label="기계"
-                    placeholder="검색할 기계를 선택해주세요"
-                    styles={{
-                        root : {
-                            backgroundColor : 'inherit',
-                            marginRight : 10,
-                            minWidth : 300,
-                        },
-                        label : {
-                            color : '#FFFFFF'
-                        },
-                        input : {
-                            backgroundColor : 'inherit',
-                            color : '#FFFFFF'
-                        }
-                    }}
-                    clearButtonProps={{ 'aria-label': 'Clear selection' }}
-                    clearable
-                />
-            </MultiSelectContainer>
-            <ExcelTable
-                width={'100%'}
-                headerList={column}
-                setRow={setRecordList}
-                row={recordList}
-            />
+                    </>
+                }
+            </TableSection>
         </>
     )
 
@@ -228,6 +215,22 @@ export {AiMesRecordListForDs};
 const MultiSelectContainer = styled.div`
     display : flex;
     margin-bottom : 10px;
+`
+
+const TableSection = styled.div`
+    width: 100%;
+    display : flex;
+    gap : 20px;
+`
+
+const WorkDateTableContainer = styled.div`
+    flex : 0 0 15%;
+`
+const MachineTableContainer = styled.div`
+    flex : 0 0 15%;
+`
+const RecordTableContainer = styled.div`
+    flex : 0 0 65%;
 `
 
 const ModalInfoButton = styled.div`
