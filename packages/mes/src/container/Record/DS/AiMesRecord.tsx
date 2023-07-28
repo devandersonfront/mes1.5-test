@@ -111,6 +111,9 @@ const AiMesRecordListForDs = () => {
         }
     }
 
+
+
+
     const getAiRecordListAPi= async (selectedMachineList : any, selectedDateList :  any ) => {
 
         try {
@@ -119,7 +122,7 @@ const AiMesRecordListForDs = () => {
             const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/ai/list`,{
                     start : convertToISODate(selectedDateList.date),
                     end : convertToISODate(selectedDateList.date),
-                    machineCode : [selectedMachineList.mfrCode],
+                    machineCode : selectedMachineList ? [selectedMachineList.mfrCode] : undefined,
                     date : [convertToISODate(selectedDateList.date)],
                     sorts : null,
                     orders : null
@@ -130,7 +133,7 @@ const AiMesRecordListForDs = () => {
             )
             if(result.status === 200) {
                 Notiflix.Loading.remove()
-                setRecordList(result.data.response.map((result)=>({
+                setRecordList(result.data.response.filter((record)=>record.ai_record_id).map((result)=>({
                     ...result ,
                     date : convertToDateTime(result.date),
                     timeString : (result.start && result.end) ? `${convertIsoTimeToMMSSHH(result.start)} ~ ${convertIsoTimeToMMSSHH(result.end)}` : ''
@@ -190,18 +193,15 @@ const AiMesRecordListForDs = () => {
                                 onRowClick={setSelectMachineName}
                             />
                         </MachineTableContainer>
-                        {
-                            selectMachineName &&
-                            <RecordTableContainer>
-                                <ExcelTable
-                                    showColorOnClick
-                                    width={'100%'}
-                                    headerList={column}
-                                    setRow={setRecordList}
-                                    row={recordList}
-                                />
-                            </RecordTableContainer>
-                        }
+                        <RecordTableContainer>
+                            <ExcelTable
+                                showColorOnClick
+                                width={'100%'}
+                                headerList={column}
+                                setRow={setRecordList}
+                                row={recordList}
+                            />
+                        </RecordTableContainer>
                     </>
                 }
             </TableSection>

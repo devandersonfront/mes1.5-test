@@ -6,7 +6,8 @@ export {MesOperationModify} from './container/Operation/MesOperationModify'
 
 //작업일보 DS 전용
 export {MesRecordListForDs} from './container/Record/DS/MesRecordList'
-
+export {MesOperationListDS} from './container/Operation/DS/MesOperationList'
+export {MesFinishListDS} from './container/FinishWork/DS/MesFinishList'
 //불량 이력 관리
 
 export {MesDefectRegister} from './container/Defect/MesDefectRegister'

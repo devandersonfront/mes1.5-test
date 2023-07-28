@@ -18,8 +18,8 @@ import {useSelector} from "react-redux";
 import {selectUserInfo} from "shared/src/reducer/userInfo";
 import cookie from "react-cookies";
 import Notiflix from "notiflix";
-import {MesRecordList} from "../MesRecordList";
-import {AiMesRecord} from "../AiMesRecord";
+import {MesFinishList} from "../MesFinishList";
+
 import {
     convertIsoTimeToMMSSHH,
     convertToDateTime,
@@ -27,14 +27,14 @@ import {
 } from "shared/src/common/convertIsoDate";
 
 
-type RecordType = {
+type FinishType = {
     date : string
     customerModelName : string
     machineName : string
     machineCode : string
     productCode : string
     productName : string
-    recordQuantity : string
+    FinishQuantity : string
     timeString : string
 }
 
@@ -45,42 +45,41 @@ type MachineType = {
     mfrName?: string,
     name?: string
 }
-
-const MesRecordListForDs = () => {
+const MesFinishListDS = () => {
 
     const column = [
         {key : 'customerModelName' , name : '모델'},
         {key : 'productCode' , name : 'CODE'},
         {key : 'productName' , name : '품목명'},
-        {key : 'recordQuantity' , name : '수량'},
+        {key : 'FinishQuantity' , name : '수량'},
         {key : 'timeString' , name : '시간'},
         {key : 'detail' , name : '상세보기', formatter : ({row, onRowChange}) => {
-            return (
-                <>
-                    {
-                        row.record_id && <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
-                    }
-                    {
-                        row.isVisible &&
-                        <BasicModal
-                            backgroundColor={'DARKBLUE'}
-                            isOpen={row.isVisible}
-                            onClose={() => onRowChange({...row, isVisible : false})}
-                        >
-                            <MesRecordList isModal option={6} search={row.record_id} date={{from : selectDate.from , to : selectDate.to}}/>
-                        </BasicModal>
-                    }
-                </>
-            )
-        }}
+                return (
+                    <>
+                        {
+                            row.os_id && <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
+                        }
+                        {
+                            row.isVisible &&
+                            <BasicModal
+                                backgroundColor={'DARKBLUE'}
+                                isOpen={row.isVisible}
+                                onClose={() => onRowChange({...row, isVisible : false})}
+                            >
+                                <MesFinishList isModal option={7} search={row.os_id} date={{from : selectDate.from , to : selectDate.to}}/>
+                            </BasicModal>
+                        }
+                    </>
+                )
+            }}
     ]
     const userInfo = cookie.load('userInfo')
 
-    const [recordDate , setRecordDate] = useState<string[]>([])
-    const [selectRecordDate , setSelectRecordDate] = useState<{date : string , color ?: string}>()
+    const [finishDate , setFinishDate] = useState<string[]>([])
+    const [selectFinishDate , setSelectFinishDate] = useState<{date : string , color ?: string}>()
     const [machineList , setMachineList] = useState<MachineType[]>([])
     const [selectMachineName , setSelectMachineName] = useState<{machineName : string , color?:string}>()
-    const [recordList, setRecordList] = useState<RecordType[]>([])
+    const [finishList, setFinishList] = useState<FinishType[]>([])
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
         from: moment().subtract(1,'month').format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD')
@@ -88,21 +87,21 @@ const MesRecordListForDs = () => {
 
     const getOperationDateApi = async () => {
         const tokenData = userInfo?.token;
-        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/all/active_date`, {
-            params : { start :convertToISODate(selectDate.from) , end : convertToISODate(selectDate.to) },
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_sheet/all/active_date`, {
+            params : { start :convertToISODate(selectDate.from) , end : convertToISODate(selectDate.to) , fin : true},
             headers : { Authorization : tokenData }
         })
 
         if(result.status === 200) {
             const operationDateList = result.data.response
             const convertedOperationList = operationDateList.map((list)=> convertToDateTime(list.date))
-            setRecordDate(convertedOperationList.map((result)=>({date : result})))
+            setFinishDate(convertedOperationList.map((result)=>({date : result})))
         }
     }
 
     const getMachinesApi = async () => {
         const tokenData = userInfo?.token;
-        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/all/machine`, {
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_sheet/all/machine`, {
             headers : { Authorization : tokenData }
         })
 
@@ -112,17 +111,18 @@ const MesRecordListForDs = () => {
         }
     }
 
-    const getRecordListAPi= async (selectedMachineList : any, selectedDateList : any ) => {
+    const getFinishListAPi= async (selectedMachineList : any, selectedDateList : any ) => {
         try {
             Notiflix.Loading.circle()
             const tokenData = userInfo?.token;
-            const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/all/list`,{
+            const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_sheet/all/list`,{
                     start : convertToISODate(selectedDateList.date),
                     end : convertToISODate(selectedDateList.date),
                     machineCode : selectedMachineList ? [selectedMachineList.mfrCode] : undefined,
                     date : [convertToISODate(selectedDateList.date)],
                     sorts : null,
-                    orders : null
+                    orders : null,
+                    fin : true
                 },
                 {
                     headers : { Authorization : tokenData }
@@ -130,7 +130,7 @@ const MesRecordListForDs = () => {
             )
             if(result.status === 200) {
                 Notiflix.Loading.remove()
-                setRecordList(result.data.response.filter((record)=>record.record_id).map((result)=>({
+                setFinishList(result.data.response.filter((record)=>record.os_id).map((result)=>({
                     ...result ,
                     date : convertToDateTime(result.date),
                     timeString : (result.start && result.end) ? `${convertIsoTimeToMMSSHH(result.start)} ~ ${convertIsoTimeToMMSSHH(result.end)}` : ''
@@ -148,11 +148,11 @@ const MesRecordListForDs = () => {
 
     useEffect(()=>{
         getMachinesApi()
-    },[selectRecordDate])
+    },[selectFinishDate])
 
     useEffect(()=>{
-        getRecordListAPi(selectMachineName,selectRecordDate)
-    },[selectMachineName,selectRecordDate])
+        getFinishListAPi(selectMachineName,selectFinishDate)
+    },[selectMachineName,selectFinishDate])
 
     return (
         <>
@@ -160,12 +160,12 @@ const MesRecordListForDs = () => {
                 isCalendar
                 calendarTitle={'작업 기한'}
                 calendarType={'period'}
-                title={'작업일보 리스트 - 2'}
+                title={'작업 완료 리스트-2'}
                 selectDate={selectDate}
                 //@ts-ignore
                 setSelectDate={(selectDate : {from:string, to:string})=>{
                     setSelectDate(selectDate)
-                    setSelectRecordDate(null)
+                    setSelectFinishDate(null)
                 }}
             />
             <TableSection>
@@ -174,15 +174,15 @@ const MesRecordListForDs = () => {
                         showColorOnClick
                         width={'100%'}
                         headerList={[{key : 'date' , name : '작업일자'}]}
-                        row={recordDate}
+                        row={finishDate}
                         onRowClick={(selectDate)=>{
-                            setSelectRecordDate(selectDate)
+                            setSelectFinishDate(selectDate)
                             setSelectMachineName(undefined)
                         }}
                     />
                 </WorkDateTableContainer>
                 {
-                    selectRecordDate &&
+                    selectFinishDate &&
                     <>
                         <MachineTableContainer>
                             <ExcelTable
@@ -193,15 +193,15 @@ const MesRecordListForDs = () => {
                                 onRowClick={setSelectMachineName}
                             />
                         </MachineTableContainer>
-                        <RecordTableContainer>
+                        <FinishTableContainer>
                             <ExcelTable
                                 showColorOnClick
                                 width={'100%'}
                                 headerList={column}
-                                setRow={setRecordList}
-                                row={recordList}
+                                setRow={setFinishList}
+                                row={finishList}
                             />
-                        </RecordTableContainer>
+                        </FinishTableContainer>
                     </>
                 }
             </TableSection>
@@ -210,7 +210,7 @@ const MesRecordListForDs = () => {
 
 }
 
-export {MesRecordListForDs};
+export {MesFinishListDS};
 
 const MultiSelectContainer = styled.div`
     display : flex;
@@ -229,7 +229,7 @@ const WorkDateTableContainer = styled.div`
 const MachineTableContainer = styled.div`
     flex : 0 0 15%;
 `
-const RecordTableContainer = styled.div`
+const FinishTableContainer = styled.div`
     flex : 0 0 65%;
 `
 
