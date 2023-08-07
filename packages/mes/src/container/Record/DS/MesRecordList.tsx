@@ -121,8 +121,8 @@ const MesRecordListForDs = () => {
                     end : convertToISODate(selectedDateList.date),
                     machineCode : selectedMachineList ? [selectedMachineList.mfrCode] : undefined,
                     date : [convertToISODate(selectedDateList.date)],
-                    sorts : null,
-                    orders : null
+                    sorts : "sortIndex",
+                    orders : "ASC",
                 },
                 {
                     headers : { Authorization : tokenData }

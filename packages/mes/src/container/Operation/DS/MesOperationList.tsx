@@ -92,7 +92,7 @@ const MesOperationListDS = ({todayOnly} : MesOperationListDSType) => {
     const getOperationDateApi = async () => {
         const tokenData = userInfo?.token;
         const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_sheet/all/active_date`, {
-            params : { start :convertToISODate(selectDate.from) , end : convertToISODate(selectDate.to) },
+            params : { start :convertToISODate(selectDate.from) , end : convertToISODate(selectDate.to)  , fin : false},
             headers : { Authorization : tokenData }
         })
 
@@ -124,8 +124,9 @@ const MesOperationListDS = ({todayOnly} : MesOperationListDSType) => {
                     end : convertToISODate(selectedDateList.date),
                     machineCode : selectedMachineList ? [selectedMachineList.mfrCode] : undefined,
                     date : [convertToISODate(selectedDateList.date)],
-                    sorts : null,
-                    orders : null
+                    sorts : 'sortIndex',
+                    orders : "ASC",
+                    fin: false // true: 완료 false: 미완료
                 },
                 {
                     headers : { Authorization : tokenData }
