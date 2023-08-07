@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {
     BarcodeModal,
     ExcelTable,
-    Header as PageHeader, RequestMethod, UnitContainer,
+    Header as PageHeader, RequestMethod,
 } from 'shared'
 import {NextPageContext} from 'next'
 // @ts-ignore
@@ -18,19 +18,23 @@ import {useSelector} from "react-redux";
 import {selectUserInfo} from "shared/src/reducer/userInfo";
 import cookie from "react-cookies";
 import Notiflix from "notiflix";
-import {MesRecordList} from "../MesRecordList";
-import {AiMesRecord} from "../AiMesRecord";
-import {convertIsoTimeToMMSSHH, convertToDateTime, convertToISODate} from "shared/src/common/convertIsoDate";
+import {MesOperationList} from "../MesOperationList";
+
+import {
+    convertIsoTimeToMMSSHH,
+    convertToDateTime,
+    convertToISODate
+} from "shared/src/common/convertIsoDate";
 
 
-type RecordType = {
+type OperationType = {
     date : string
     customerModelName : string
     machineName : string
     machineCode : string
     productCode : string
     productName : string
-    recordQuantity : string
+    OperationQuantity : string
     timeString : string
 }
 
@@ -40,24 +44,24 @@ type MachineType = {
     type: string,
     mfrName?: string,
     name?: string
+
+}
+type MesOperationListDSType = {
+    todayOnly ?: boolean
 }
 
-const AiMesRecordListForDs = () => {
+const MesOperationListDS = ({todayOnly} : MesOperationListDSType) => {
 
     const column = [
         {key : 'customerModelName' , name : '모델'},
         {key : 'productCode' , name : 'CODE'},
         {key : 'productName' , name : '품목명'},
-        {key : 'recordQuantity' , name : '수량'},
-        {key : 'timeString' , name : '시간'},
-        {key : 'confidence' , name : '유사도', formatter : ({row,column,onRowChange}) => {
-            return <UnitContainer row={{...row , confidence : row?.confidence ? row.confidence.toFixed(4) * 100 : 0 }} column={{...column , unitData: "%"}} onRowChange={onRowChange}/>
-        }},
+        {key : 'goal' , name : '목표 생산량'},
         {key : 'detail' , name : '상세보기', formatter : ({row, onRowChange}) => {
                 return (
                     <>
                         {
-                            row.ai_record_id && <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
+                            row.os_id && <ModalInfoButton onClick={()=> onRowChange({...row , isVisible : true})}>클릭</ModalInfoButton>
                         }
                         {
                             row.isVisible &&
@@ -66,7 +70,7 @@ const AiMesRecordListForDs = () => {
                                 isOpen={row.isVisible}
                                 onClose={() => onRowChange({...row, isVisible : false})}
                             >
-                                <AiMesRecord isModal option={6} search={row.ai_record_id} date={{from : selectDate.from , to : selectDate.to}}/>
+                                <MesOperationList todayOnly={todayOnly} isModal option={7} search={row.os_id} date={{from : selectDate.from , to : selectDate.to}}/>
                             </BasicModal>
                         }
                     </>
@@ -75,33 +79,33 @@ const AiMesRecordListForDs = () => {
     ]
     const userInfo = cookie.load('userInfo')
 
-    const [recordDate , setRecordDate] = useState<string[]>([])
-    const [selectRecordDate , setSelectRecordDate] = useState<{date : string , color ?: string}>()
+    const [operationDate , setOperationDate] = useState<string[]>([])
+    const [selectOperationDate , setSelectOperationDate] = useState<{date : string , color ?: string}>()
     const [machineList , setMachineList] = useState<MachineType[]>([])
     const [selectMachineName , setSelectMachineName] = useState<{machineName : string , color?:string}>()
-    const [recordList, setRecordList] = useState<RecordType[]>([])
+    const [operationList, setOperationList] = useState<OperationType[]>([])
     const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
-        from: moment().subtract(1,'month').format('YYYY-MM-DD'),
+        from: todayOnly ? moment().format('YYYY-MM-DD') : moment().subtract(1,'month').format('YYYY-MM-DD'),
         to: moment().format('YYYY-MM-DD')
     })
 
-    const getAiOperationDateApi = async () => {
+    const getOperationDateApi = async () => {
         const tokenData = userInfo?.token;
-        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/ai/active_date`, {
-            params : { start :convertToISODate(selectDate.from) , end : convertToISODate(selectDate.to) },
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_sheet/all/active_date`, {
+            params : { start :convertToISODate(selectDate.from) , end : convertToISODate(selectDate.to)  , fin : false},
             headers : { Authorization : tokenData }
         })
 
         if(result.status === 200) {
             const operationDateList = result.data.response
             const convertedOperationList = operationDateList.map((list)=> convertToDateTime(list.date))
-            setRecordDate(convertedOperationList.map((result)=>({date : result})))
+            setOperationDate(convertedOperationList.map((result)=>({date : result})))
         }
     }
 
-    const getAiMachinesApi = async () => {
+    const getMachinesApi = async () => {
         const tokenData = userInfo?.token;
-        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/ai/machine`, {
+        const result = await axios.get(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_sheet/all/machine`, {
             headers : { Authorization : tokenData }
         })
 
@@ -111,21 +115,18 @@ const AiMesRecordListForDs = () => {
         }
     }
 
-
-
-
-    const getAiRecordListAPi= async (selectedMachineList : any, selectedDateList :  any ) => {
-
+    const getOperationListAPi= async (selectedMachineList : any, selectedDateList : any ) => {
         try {
             Notiflix.Loading.circle()
             const tokenData = userInfo?.token;
-            const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_record/ai/list`,{
+            const result = await axios.post(`${SF_ENDPOINT_SERVERLESS}/mes15/operation_sheet/all/list`,{
                     start : convertToISODate(selectedDateList.date),
                     end : convertToISODate(selectedDateList.date),
                     machineCode : selectedMachineList ? [selectedMachineList.mfrCode] : undefined,
                     date : [convertToISODate(selectedDateList.date)],
-                    sorts : "sortIndex",
+                    sorts : 'sortIndex',
                     orders : "ASC",
+                    fin: false // true: 완료 false: 미완료
                 },
                 {
                     headers : { Authorization : tokenData }
@@ -133,7 +134,7 @@ const AiMesRecordListForDs = () => {
             )
             if(result.status === 200) {
                 Notiflix.Loading.remove()
-                setRecordList(result.data.response.filter((record)=>record.ai_record_id).map((result)=>({
+                setOperationList(result.data.response.filter((record)=>record.os_id).map((result)=>({
                     ...result ,
                     date : convertToDateTime(result.date),
                     timeString : (result.start && result.end) ? `${convertIsoTimeToMMSSHH(result.start)} ~ ${convertIsoTimeToMMSSHH(result.end)}` : ''
@@ -146,27 +147,30 @@ const AiMesRecordListForDs = () => {
     }
 
     useEffect(()=>{
-        getAiOperationDateApi()
+        getOperationDateApi()
     },[selectDate])
 
     useEffect(()=>{
-        getAiMachinesApi()
-    },[selectRecordDate])
+        getMachinesApi()
+    },[selectOperationDate])
 
     useEffect(()=>{
-        getAiRecordListAPi(selectMachineName,selectRecordDate)
-    },[selectMachineName,selectRecordDate])
+        getOperationListAPi(selectMachineName,selectOperationDate)
+    },[selectMachineName,selectOperationDate])
 
     return (
         <>
             <PageHeader
-                isCalendar
+                isCalendar={!todayOnly}
                 calendarTitle={'작업 기한'}
                 calendarType={'period'}
-                title={'작업일보 Ai 리스트 - 2'}
+                title={todayOnly ? '금일 작업지시서 리스트 - 2' :'작업지시서 리스트 - 2'}
                 selectDate={selectDate}
                 //@ts-ignore
-                setSelectDate={setSelectDate}
+                setSelectDate={(selectDate : {from:string, to:string})=>{
+                    setSelectDate(selectDate)
+                    setSelectOperationDate(null)
+                }}
             />
             <TableSection>
                 <WorkDateTableContainer>
@@ -174,15 +178,15 @@ const AiMesRecordListForDs = () => {
                         showColorOnClick
                         width={'100%'}
                         headerList={[{key : 'date' , name : '작업일자'}]}
-                        row={recordDate}
+                        row={operationDate}
                         onRowClick={(selectDate)=>{
-                            setSelectRecordDate(selectDate)
+                            setSelectOperationDate(selectDate)
                             setSelectMachineName(undefined)
                         }}
                     />
                 </WorkDateTableContainer>
                 {
-                    selectRecordDate &&
+                    selectOperationDate &&
                     <>
                         <MachineTableContainer>
                             <ExcelTable
@@ -193,15 +197,15 @@ const AiMesRecordListForDs = () => {
                                 onRowClick={setSelectMachineName}
                             />
                         </MachineTableContainer>
-                        <RecordTableContainer>
+                        <OperationTableContainer>
                             <ExcelTable
                                 showColorOnClick
                                 width={'100%'}
                                 headerList={column}
-                                setRow={setRecordList}
-                                row={recordList}
+                                setRow={setOperationList}
+                                row={operationList}
                             />
-                        </RecordTableContainer>
+                        </OperationTableContainer>
                     </>
                 }
             </TableSection>
@@ -210,7 +214,7 @@ const AiMesRecordListForDs = () => {
 
 }
 
-export {AiMesRecordListForDs};
+export {MesOperationListDS};
 
 const MultiSelectContainer = styled.div`
     display : flex;
@@ -229,7 +233,7 @@ const WorkDateTableContainer = styled.div`
 const MachineTableContainer = styled.div`
     flex : 0 0 15%;
 `
-const RecordTableContainer = styled.div`
+const OperationTableContainer = styled.div`
     flex : 0 0 65%;
 `
 
