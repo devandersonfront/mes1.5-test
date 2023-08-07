@@ -26,23 +26,25 @@ interface IProps {
   page?: number
   search?: string
   option?: number
+  isModal?: boolean
+  date ?: {from : string , to : string}
 }
 
 const optionList = ['지시고유번호', '거래처', '모델', 'code',  '품명']
 
-const MesFinishList = ({page, search, option}: IProps) => {
+const MesFinishList = ({page, search, option,isModal,date}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["finishListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionIndex, setOptionIndex] = useState<number>(0)
-  const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
+  const [optionIndex, setOptionIndex] = useState<number>(option ?? 0)
+  const [selectDate, setSelectDate] = useState<{from:string, to:string}>(date ? {from : date.from , to : date.to} : {
     from: moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
   });
   const [sortingOptions, setSortingOptions] = useState<{orders:string[], sorts:string[]}>({orders:[], sorts:[]})
-  const [keyword, setKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string>(search ?? "");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -152,33 +154,36 @@ const MesFinishList = ({page, search, option}: IProps) => {
 
   return (
     <div className={'excelPageContainer'}>
-      <PageHeader
-        isSearch
-        isCalendar
-        searchOptionList={optionList}
-        optionIndex={optionIndex}
-        searchKeyword={keyword}
-        onSearch={reload}
-        onChangeSearchOption={(option) => {
-          setOptionIndex(option)
-        }}
-        calendarTitle={'작업 기한'}
-        calendarType={'period'}
-        selectDate={selectDate}
-        //@ts-ignore
-        setSelectDate={onSelectDate}
-        title={"작업 완료 리스트"}
-        buttons={["항목관리"]}
-        buttonsOnclick={(index) => {
-          switch (index) {
-            case 0:
-              router.push(`/mes/item/manage/finishV2`);
-              break
-            default:
-              break
-          }
-        }}
-      />
+      {
+        !isModal &&
+        <PageHeader
+            isSearch
+            isCalendar
+            searchOptionList={optionList}
+            optionIndex={optionIndex}
+            searchKeyword={keyword}
+            onSearch={reload}
+            onChangeSearchOption={(option) => {
+              setOptionIndex(option)
+            }}
+            calendarTitle={'작업 기한'}
+            calendarType={'period'}
+            selectDate={selectDate}
+            //@ts-ignore
+            setSelectDate={onSelectDate}
+            title={"작업 완료 리스트"}
+            buttons={["항목관리"]}
+            buttonsOnclick={(index) => {
+              switch (index) {
+                case 0:
+                  router.push(`/mes/item/manage/finishV2`);
+                  break
+                default:
+                  break
+              }
+            }}
+        />
+      }
       <ExcelTable
         editable
         resizable
@@ -213,7 +218,7 @@ const MesFinishList = ({page, search, option}: IProps) => {
         selectList={selectList}
         //@ts-ignore
         setSelectList={setSelectList}
-        width={1576}
+        width={!isModal ? 1576 : '100%'}
         height={setExcelTableHeight(basicRow.length)}
       />
       <PaginationComponent

@@ -28,24 +28,27 @@ interface IProps {
   search?: string
   option?: number
   todayOnly?: boolean
+  isModal?: boolean
+  date ?: {from : string , to : string}
 }
 
 const optionList = ['지시 고유 번호', '거래처명', '모델', 'CODE', '품명']
 
-const MesOperationList = ({todayOnly}: IProps) => {
+const MesOperationList = ({todayOnly,search,option,isModal,date}: IProps) => {
   const router = useRouter()
   const dispatch = useDispatch()
 
   const [basicRow, setBasicRow] = useState<Array<any>>([])
   const [column, setColumn] = useState<Array<IExcelHeaderType>>( columnlist["operationListV2"])
   const [selectList, setSelectList] = useState<Set<number>>(new Set())
-  const [optionIndex, setOptionIndex] = useState<number>(0)
+  const [optionIndex, setOptionIndex] = useState<number>(option ?? 0)
   const [sortingOptions, setSortingOptions] = useState<TableSortingOptionType>({orders:[], sorts:[]})
-  const [selectDate, setSelectDate] = useState<{from:string, to:string}>({
+  const [selectDate, setSelectDate] = useState<{from:string, to:string}>(date ? {from : date.from , to : date.to} :{
     from: todayOnly ?  moment().format('YYYY-MM-DD') : moment().subtract(1,'month').format('YYYY-MM-DD'),
     to: moment().format('YYYY-MM-DD')
   })
-  const [keyword, setKeyword] = useState<string>("");
+
+  const [keyword, setKeyword] = useState<string>(search ?? "");
   const [pageInfo, setPageInfo] = useState<{page: number, total: number}>({
     page: 1,
     total: 1
@@ -229,114 +232,117 @@ const MesOperationList = ({todayOnly}: IProps) => {
   return (
     <div className={'excelPageContainer'}>
       <EditListModal open={sheetModalOpen} setOpen={setSheetModalOpen} onRowChange={reload} />
-        <PageHeader
-            isSearch
-            isCalendar
-            searchOptionList={optionList}
-            optionIndex={optionIndex}
-            calendarTitle={'작업 기한'}
-            calendarType={'period'}
-            selectDate={selectDate}
-            searchKeyword={keyword}
-            onSearch={reload}
-            onChangeSearchOption={(option) => {
-              setOptionIndex(option)
-            }}
-            //@ts-ignore
-            setSelectDate={onSelectDate}
-            //실제사용
-            title={`${todayOnly ? '금일 ' : ''}작업지시서 리스트`}
-            buttons={
-              ['추천 작업지시서', todayOnly ? '' : '항목 관리', '수정하기', '삭제']
-            }
-            buttonsOnclick={
-              (e) => {
-                switch(e) {
-                  case 0:
-                    setSheetModalOpen(true)
-                    break
-                  case 1:
-                    router.push(`/mes/item/manage/operationV1u`);
-                    break;
-                  case 2:
-                    if(selectList.size === 0){
-                      Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
-                    }else if(selectList.size === 1){
-                      dispatch(setModifyInitData({
-                        modifyInfo: basicRow.map(v => {
-                          if (selectList.has(v.id)) {
-                            return v
-                          }
-                        }).filter(v => v),
-                        type: 'order'
-                      }))
-                      router.push('/mes/operationV1u/modify')
-                    }else{
-                      Notiflix.Report.warning("경고","데이터를 하나만 선택해주시기 바랍니다.","확인");
-                    }
-                    break;
-                  case 3:
-                    if(selectList.size <= 0) {
-                      return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
-                    }
-                    Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
-                        ()=>{
-                          DeleteBasic()
-                        },
-                        ()=>{}
-                    )
-                    break;
-                }
-
+      {
+        !isModal &&
+          <PageHeader
+              isSearch
+              isCalendar
+              searchOptionList={optionList}
+              optionIndex={optionIndex}
+              calendarTitle={'작업 기한'}
+              calendarType={'period'}
+              selectDate={selectDate}
+              searchKeyword={keyword}
+              onSearch={reload}
+              onChangeSearchOption={(option) => {
+                setOptionIndex(option)
+              }}
+              //@ts-ignore
+              setSelectDate={onSelectDate}
+              //실제사용
+              title={`${todayOnly ? '금일 ' : ''}작업지시서 리스트`}
+              buttons={
+                ['추천 작업지시서', todayOnly ? '' : '항목 관리', '수정하기', '삭제']
               }
-              // onClickHeaderButton
-            }
-        />
-    <ExcelTable
-      editable
-      resizable
-      resizeSave
-      selectable
-      headerList={[
-        SelectColumn,
-        ...addColumnClass(column)
-      ]}
-      row={basicRow}
-      // setRow={setBasicRow}
-      setRow={(e) => {
-        let tmp: Set<any> = selectList
-        let tmpRes = e.map(v => {
-          if(v.isChange) {
-              tmp.add(v.id)
-              v.isChange = false
-          }
-          if(v.update || v.finish){
-            reload()
-            return {
-              ...v,
-              update: undefined,
-              finish: undefined,
-            }
-          }
-          return { ...v, }
-        })
+              buttonsOnclick={
+                (e) => {
+                  switch(e) {
+                    case 0:
+                      setSheetModalOpen(true)
+                      break
+                    case 1:
+                      router.push(`/mes/item/manage/operationV1u`);
+                      break;
+                    case 2:
+                      if(selectList.size === 0){
+                        Notiflix.Report.warning("경고","데이터를 선택해주시기 바랍니다.","확인");
+                      }else if(selectList.size === 1){
+                        dispatch(setModifyInitData({
+                          modifyInfo: basicRow.map(v => {
+                            if (selectList.has(v.id)) {
+                              return v
+                            }
+                          }).filter(v => v),
+                          type: 'order'
+                        }))
+                        router.push('/mes/operationV1u/modify')
+                      }else{
+                        Notiflix.Report.warning("경고","데이터를 하나만 선택해주시기 바랍니다.","확인");
+                      }
+                      break;
+                    case 3:
+                      if(selectList.size <= 0) {
+                        return  Notiflix.Report.warning("경고","데이터를 선택해 주시기 바랍니다.","확인" )
+                      }
+                      Notiflix.Confirm.show("경고","삭제하시겠습니까?","확인","취소",
+                          ()=>{
+                            DeleteBasic()
+                          },
+                          ()=>{}
+                      )
+                      break;
+                  }
 
-        setSelectList(tmp)
-        setBasicRow([...tmpRes])
-      }}
-      selectList={selectList}
-      //@ts-ignore
-      setSelectList={setSelectList}
-      width={'1576px'}
-      height={setExcelTableHeight(basicRow.length)}
-    />
-      <PaginationComponent
-          currentPage={pageInfo.page}
-          totalPage={pageInfo.total}
-          setPage={(page) => {
-            setPageInfo({...pageInfo, page: page})
-          }}
-      />
+                }
+                // onClickHeaderButton
+              }
+          />
+      }
+          <ExcelTable
+              editable
+              resizable
+              resizeSave
+              selectable
+              headerList={[
+                SelectColumn,
+                ...addColumnClass(column)
+              ]}
+              row={basicRow}
+              // setRow={setBasicRow}
+              setRow={(e) => {
+                let tmp: Set<any> = selectList
+                let tmpRes = e.map(v => {
+                  if(v.isChange) {
+                    tmp.add(v.id)
+                    v.isChange = false
+                  }
+                  if(v.update || v.finish){
+                    reload()
+                    return {
+                      ...v,
+                      update: undefined,
+                      finish: undefined,
+                    }
+                  }
+                  return { ...v, }
+                })
+
+                setSelectList(tmp)
+                setBasicRow([...tmpRes])
+              }}
+              selectList={selectList}
+              //@ts-ignore
+              setSelectList={setSelectList}
+              width={!isModal ? 1576 : '100%'}
+              height={setExcelTableHeight(basicRow.length)}
+          />
+          <PaginationComponent
+              currentPage={pageInfo.page}
+              totalPage={pageInfo.total}
+              setPage={(page) => {
+                setPageInfo({...pageInfo, page: page})
+              }}
+          />
     </div>
   );
 }
